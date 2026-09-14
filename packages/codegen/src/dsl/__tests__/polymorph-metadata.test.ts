@@ -48,7 +48,14 @@ describe('polymorph metadata registration', () => {
 		});
 
 		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
-		const choice = (result as unknown as { members: unknown[] }).members[1] as { members: unknown[] };
+		// Sibling variants hoist whole-arm: each deposited body carries the
+		// parent's `left` before its own arm, and the parent collapses to the
+		// pure choice of the two named aliases.
+		const eq = ctx.deposits.get('_assignment_eq') as unknown as { type: string; members: { name?: string; type: string }[] };
+		expect(eq.type).toBe('SEQ');
+		expect(eq.members[0]).toMatchObject({ type: 'SYMBOL', name: 'left' });
+		const choice = result as unknown as { type: string; members: unknown[] };
+		expect(choice.type).toBe('CHOICE');
 		// `hidden`/`inline: true` on each inner SYMBOL come from the canonical
 		// `sym()` builder (transform.ts's `makePolymorphAliasNode` routes
 		// through it, per project convention — "always use the rule builder

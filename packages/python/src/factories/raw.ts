@@ -772,32 +772,21 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 	);
 }
 
-export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Built {
-	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
-	const _exception = config.exception;
-	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClause['_suite']>>(config.suite, [
-		['\n', TSKindId._SuiteEmpty] as const
-	]);
+export function buildExceptClause(value: T.ExceptClauseException | T.ExceptClauseArm1): T.ExceptClause.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExceptClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_star_marker,
-				_exception,
-				_suite,
+				_content,
 				$with: {
-					starMarker: (value?: NonNullable<T.ExceptClause.Config>['starMarker']) =>
-						buildExceptClause({ ...config, starMarker: value }),
-					exception: (value?: T.ExceptClauseException) => buildExceptClause({ ...config, exception: value }),
-					suite: (value: NonNullable<T.ExceptClause.Config>['suite']) => buildExceptClause({ ...config, suite: value })
+					content: (value: T.ExceptClauseException | T.ExceptClauseArm1) => buildExceptClause(value)
 				}
 			},
 			{
-				starMarker: () => _star_marker,
-				exception: () => _exception,
-				suite: () => _suite
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -2255,25 +2244,20 @@ export function buildLambdaWithinForInClause(
 	);
 }
 
-export function buildAssignment(config: T.Assignment.Config): T.Assignment.Built {
-	const _left = config.left;
-	const _content = config.content;
+export function buildAssignment(value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped): T.Assignment.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Assignment as const,
 				$source: 2 as const,
 				$named: true as const,
-				_left,
 				_content,
 				$with: {
-					left: (value: T.Pattern | T.PatternList) => buildAssignment({ ...config, left: value }),
-					content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) =>
-						buildAssignment({ ...config, content: value })
+					content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) => buildAssignment(value)
 				}
 			},
 			{
-				left: () => _left,
 				content: () => _content
 			}
 		),
@@ -4458,49 +4442,87 @@ export function buildExceptClauseExceptionList(...children: T.Expression[]): T.E
 	);
 }
 
-export function buildExceptClauseException(
-	value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList
-): T.ExceptClauseException.Built {
-	const _content = value;
+export function buildExceptClauseException(config: T.ExceptClauseException.Config): T.ExceptClauseException.Built {
+	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
+	const _content = config.content;
+	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClauseException['_suite']>>(config.suite, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExceptClauseException as const,
 				$source: 2 as const,
 				$named: true as const,
+				_star_marker,
 				_content,
+				_suite,
 				$with: {
-					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) => buildExceptClauseException(value)
+					starMarker: (value?: NonNullable<T.ExceptClauseException.Config>['starMarker']) =>
+						buildExceptClauseException({ ...config, starMarker: value }),
+					content: (value: T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList) =>
+						buildExceptClauseException({ ...config, content: value }),
+					suite: (value: NonNullable<T.ExceptClauseException.Config>['suite']) =>
+						buildExceptClauseException({ ...config, suite: value })
 				}
 			},
 			{
-				content: () => _content
+				starMarker: () => _star_marker,
+				content: () => _content,
+				suite: () => _suite
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildAssignmentEq(
-	value: T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-): T.AssignmentEq.Built {
-	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(value, []);
+export function buildExceptClauseArm1(config: T.ExceptClauseArm1.Config): T.ExceptClauseArm1.Built {
+	const _star_marker = coerceBooleanKeywordStorage(config.starMarker);
+	const _suite = coerceMixedEnumStorage<NonNullable<T.ExceptClauseArm1['_suite']>>(config.suite, [
+		['\n', TSKindId._SuiteEmpty] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_star_marker,
+				_suite,
+				$with: {
+					starMarker: (value?: NonNullable<T.ExceptClauseArm1.Config>['starMarker']) =>
+						buildExceptClauseArm1({ ...config, starMarker: value }),
+					suite: (value: NonNullable<T.ExceptClauseArm1.Config>['suite']) =>
+						buildExceptClauseArm1({ ...config, suite: value })
+				}
+			},
+			{
+				starMarker: () => _star_marker,
+				suite: () => _suite
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq.Built {
+	const _left = config.left;
+	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentEq['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.AssignmentEq as const,
 				$source: 2 as const,
 				$named: true as const,
+				_left,
 				_right,
 				$with: {
-					right: (
-						value: NonNullable<
-							T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield
-						>
-					) => buildAssignmentEq(value)
+					left: (value: T.Pattern | T.PatternList) => buildAssignmentEq({ ...config, left: value }),
+					right: (value: NonNullable<T.AssignmentEq.Config>['right']) => buildAssignmentEq({ ...config, right: value })
 				}
 			},
 			{
+				left: () => _left,
 				right: () => _right
 			}
 		),
@@ -4508,37 +4530,24 @@ export function buildAssignmentEq(
 	);
 }
 
-export function buildAssignmentType(value: T.Type): ReturnType<typeof _buildAssignmentType>;
-export function buildAssignmentType(
-	value: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType
-): ReturnType<typeof _buildAssignmentType>;
-export function buildAssignmentType(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildAssignmentType(args[0] as T.Type);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.Type as const);
-	return prebuilt
-		? _buildAssignmentType(args[0] as T.Type)
-		: _buildAssignmentType((buildType as (...a: unknown[]) => unknown)(...args) as T.Type);
-}
-function _buildAssignmentType(value: T.Type): T.AssignmentType.Built {
-	const _type = value;
+export function buildAssignmentType(config: T.AssignmentType.Config): T.AssignmentType.Built {
+	const _left = config.left;
+	const _type = config.type;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.AssignmentType as const,
 				$source: 2 as const,
 				$named: true as const,
+				_left,
 				_type,
 				$with: {
-					type: (value: T.Type) => buildAssignmentType(value)
+					left: (value: T.Pattern | T.PatternList) => buildAssignmentType({ ...config, left: value }),
+					type: (value: T.Type) => buildAssignmentType({ ...config, type: value })
 				}
 			},
 			{
+				left: () => _left,
 				type: () => _type
 			}
 		),
@@ -4547,6 +4556,7 @@ function _buildAssignmentType(value: T.Type): T.AssignmentType.Built {
 }
 
 export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.AssignmentTyped.Built {
+	const _left = config.left;
 	const _type = config.type;
 	const _right = coerceMixedEnumStorage<NonNullable<T.AssignmentTyped['_right']>>(config.right, []);
 	return withMethods(
@@ -4555,15 +4565,18 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 				$type: TSKindId.AssignmentTyped as const,
 				$source: 2 as const,
 				$named: true as const,
+				_left,
 				_type,
 				_right,
 				$with: {
+					left: (value: T.Pattern | T.PatternList) => buildAssignmentTyped({ ...config, left: value }),
 					type: (value: T.Type) => buildAssignmentTyped({ ...config, type: value }),
 					right: (value: NonNullable<T.AssignmentTyped.Config>['right']) =>
 						buildAssignmentTyped({ ...config, right: value })
 				}
 			},
 			{
+				left: () => _left,
 				type: () => _type,
 				right: () => _right
 			}
@@ -5080,6 +5093,7 @@ export type FluentKindMap = {
 	_simple_pattern_negative: T.SimplePatternNegative.Built;
 	_except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	_except_clause_exception: T.ExceptClauseException.Built;
+	_except_clause_arm1: T.ExceptClauseArm1.Built;
 	_assignment_eq: T.AssignmentEq.Built;
 	_assignment_type: T.AssignmentType.Built;
 	_assignment_typed: T.AssignmentTyped.Built;
@@ -5251,6 +5265,7 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_exception_list: buildExceptClauseExceptionList,
 	_except_clause_exception: buildExceptClauseException,
+	_except_clause_arm1: buildExceptClauseArm1,
 	_assignment_eq: buildAssignmentEq,
 	_assignment_type: buildAssignmentType,
 	_assignment_typed: buildAssignmentTyped,

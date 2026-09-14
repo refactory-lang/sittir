@@ -1,7 +1,7 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
-import { transform as transformFn } from '../transform/transform.ts';
+import { transform as transformFn, implicitArmHiddenNames } from '../transform/transform.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
@@ -42,6 +42,9 @@ export interface WireContext {
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
+	readonly extraRuleNames: ReadonlySet<string>;
+	readonly precedenceRankedNames: ReadonlySet<string>;
+	readonly preRegisteredHidden: Set<string>;
 }
 
 export interface RefineForm {
@@ -79,6 +82,14 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 	return true;
 }
 
+export function wireHasPreRegisteredRule(name: string): boolean {
+	return currentContext?.preRegisteredHidden.has(name) ?? false;
+}
+
+export function wireIsPrecedenceRankedRule(name: string): boolean {
+	return currentContext?.precedenceRankedNames.has(name) ?? false;
+}
+
 export function wireRegisterSymbolRename(oldName: string, newName: string): boolean {
 	if (!currentContext) return false;
 	currentContext.symbolRenames.set(oldName, newName);
@@ -99,6 +110,10 @@ export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
+export function wireIsExtraRule(name: string): boolean {
+	return currentContext?.extraRuleNames.has(name) ?? false;
+}
+
 export function withWireContext<T>(
 	ruleKind: string | null,
 	fn: (ctx: WireContext) => T
@@ -115,7 +130,10 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		options: undefined,
 		currentRuleKind: ruleKind,
-		authoredRuleNames: new Set()
+		authoredRuleNames: new Set(),
+		extraRuleNames: new Set(),
+		precedenceRankedNames: new Set(),
+		preRegisteredHidden: new Set()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -284,14 +302,17 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		expectTestFailures: cfg.expectTestFailures,
 		options: cfg.options,
 		currentRuleKind: null,
-		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
+		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+		extraRuleNames: extraRuleNames(cfg, baseArg),
+		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
+		preRegisteredHidden: new Set()
 	};
 
 	const patches = cfg.patches ?? {};
 	const outRules: Record<string, RuleFn> = { ...cfg.rules } as Record<string, RuleFn>;
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
-	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
+	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), baseArg);
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
@@ -463,9 +484,56 @@ function placeholderHiddenName(value: unknown, parentKind: string): string | und
 }
 
 interface BaseArg {
-	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown };
+	grammar?: { rules?: Record<string, RuleFn>; externals?: unknown; extras?: unknown; precedences?: unknown };
 	rules?: Record<string, RuleFn>;
 	externals?: unknown;
+	extras?: unknown;
+	precedences?: unknown;
+}
+
+function symbolNamesOf(entries: unknown): Set<string> {
+	const names = new Set<string>();
+	for (const entry of Array.isArray(entries) ? entries : []) {
+		if (typeof entry === 'string') {
+			names.add(entry);
+			continue;
+		}
+		const symbol = entry as { type?: unknown; name?: unknown } | null;
+		if (symbol && typeof symbol === 'object' && symbol.type === 'SYMBOL' && typeof symbol.name === 'string') {
+			names.add(symbol.name);
+		}
+	}
+	return names;
+}
+
+function precedenceRankedNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const basePrecedences = base?.grammar?.precedences ?? base?.precedences;
+	const previous = withStringGlobalShim(() =>
+		typeof basePrecedences === 'function'
+			? (basePrecedences as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), [])
+			: basePrecedences
+	);
+	const own = (cfg as { precedences?: unknown }).precedences;
+	const groups =
+		typeof own === 'function'
+			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous ?? []))
+			: (own ?? previous);
+	const names = new Set<string>();
+	for (const group of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group)) names.add(name);
+	return names;
+}
+
+function extraRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
+	const baseExtras = base?.grammar?.extras ?? base?.extras;
+	const previous = withStringGlobalShim(() =>
+		typeof baseExtras === 'function' ? (baseExtras as (dollar: unknown) => unknown)(makeSimpleDollarProxy()) : baseExtras
+	);
+	const own = (cfg as { extras?: unknown }).extras;
+	const entries =
+		typeof own === 'function'
+			? withStringGlobalShim(() => (own as (dollar: unknown, previous: unknown) => unknown)(makeSimpleDollarProxy(), previous))
+			: (own ?? previous);
+	return symbolNamesOf(entries);
 }
 
 function baseExternalNames(base: BaseArg | undefined): ReadonlySet<string> {
@@ -492,16 +560,39 @@ function injectPlaceholderHiddenRules(
 	rules: Record<string, RuleFn>,
 	patches: PatchesConfig,
 	context: WireContext,
-	externals: ReadonlySet<string>
+	externals: ReadonlySet<string>,
+	base?: BaseArg
 ): void {
+	const register = (hiddenName: string): void => {
+		if (hiddenName in rules || externals.has(hiddenName)) return;
+		rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		context.preRegisteredHidden.add(hiddenName);
+	};
+	const baseRules = (base?.grammar?.rules ?? base?.rules ?? {}) as Record<string, RuleFn>;
+	const $ = makeSimpleDollarProxy();
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
 			for (const value of Object.values(patchMap)) {
 				const hiddenName = placeholderHiddenName(value, kind);
-				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
-				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+				if (hiddenName !== undefined) register(hiddenName);
 			}
+			const variantEntries = Object.entries(patchMap).filter((e): e is [string, VariantPlaceholder] => isVariantPlaceholder(e[1]));
+			if (variantEntries.length === 0) continue;
+			const baseRule = baseRules[kind] as unknown;
+			if (!baseRule) continue;
+			let body: RuntimeRule;
+			try {
+				const evaluated =
+					typeof baseRule === 'function'
+						? withStringGlobalShim(() => (baseRule as RuleFn).call(undefined, $, undefined))
+						: baseRule;
+				if (!evaluated || typeof evaluated !== 'object' || typeof (evaluated as { type?: unknown }).type !== 'string') continue;
+				body = structuredClone(evaluated) as RuntimeRule;
+			} catch {
+				continue;
+			}
+			for (const name of implicitArmHiddenNames(body, variantEntries, kind)) register(name);
 		}
 	}
 }
@@ -536,6 +627,7 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 		}
 	};
 }
+
 
 function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
 	return buildWiredConflictsFn(userConflicts, context);

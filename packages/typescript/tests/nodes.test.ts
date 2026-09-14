@@ -479,7 +479,13 @@ describe('import_clause sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					_content: {
+						$type: TSKindId.ImportSpecifierName,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+					} as any
 				} as any
 			]
 		} as any);
@@ -545,36 +551,58 @@ describe('named_imports', () => {
 describe('import_specifier', () => {
 	it('factory produces correct type', () => {
 		const node = ir.importSpecifier({
-			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
+			$type: TSKindId.ImportSpecifierName,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		} as any);
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.importSpecifier({
-			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
 describe('import_specifier sub-factories', () => {
-	it('type builds the parent', () => {
-		const node = ir.importSpecifier.type({
-			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+	it('name builds the parent', () => {
+		const node = ir.importSpecifier.name({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
-		const seated = (node as any).importKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.TypeKeyword);
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierName);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('typeof builds the parent', () => {
-		const node = ir.importSpecifier.typeof({
-			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+	it('name.type builds the parent', () => {
+		const node = ir.importSpecifier.name.type({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
-		const seated = (node as any).importKind();
-		expect(seated?.$text ?? seated).toBe(TSKindId.TypeofKeyword);
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierName);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as.type builds the parent', () => {
+		const node = ir.importSpecifier.as.type({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportSpecifier);
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierAs);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('name.typeof builds the parent', () => {
+		const node = ir.importSpecifier.name.typeof({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportSpecifier);
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierName);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('as.typeof builds the parent', () => {
+		const node = ir.importSpecifier.as.typeof({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.ImportSpecifier);
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierAs);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('as builds the parent', () => {
@@ -583,7 +611,7 @@ describe('import_specifier sub-factories', () => {
 			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportSpecifier);
-		expect((node as any).content()).toBeDefined();
+		expect((node as any).content()?.$type).toBe(TSKindId.ImportSpecifierAs);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1021,15 +1049,15 @@ describe('for_statement', () => {
 describe('for_in_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.forInStatement({
-			content: {
+			forHeader: {
 				$type: TSKindId.ForHeaderLhs,
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				_operator: TSKindId.InKeyword as never,
+				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
@@ -1037,15 +1065,15 @@ describe('for_in_statement', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.forInStatement({
-			content: {
+			forHeader: {
 				$type: TSKindId.ForHeaderLhs,
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				_operator: TSKindId.InKeyword as never,
+				_right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 			} as any,
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -1055,167 +1083,36 @@ describe('for_in_statement', () => {
 describe('for_in_statement sub-factories', () => {
 	it('lhs builds the parent', () => {
 		const node = ir.forInStatement.lhs({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lhs.parenthesizedExpression builds the parent', () => {
-		const node = ir.forInStatement.lhs.parenthesizedExpression({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lhs.parenthesizedExpressionTyped builds the parent', () => {
-		const node = ir.forInStatement.lhs.parenthesizedExpressionTyped({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lhs.sequenceExpression builds the parent', () => {
-		const node = ir.forInStatement.lhs.sequenceExpression({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('varKind.identifier builds the parent', () => {
-		const node = ir.forInStatement.varKind.identifier({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ left: ['test'] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('letConstKind.identifier builds the parent', () => {
-		const node = ir.forInStatement.letConstKind.identifier({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ kind: 'let', left: ['test'] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lhs.decoratorMemberExpression builds the parent', () => {
-		const node = ir.forInStatement.lhs.decoratorMemberExpression({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [
-				{
-					object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					property: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('lhs.decoratorCallExpression builds the parent', () => {
-		const node = ir.forInStatement.lhs.decoratorCallExpression({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [
-				{
-					function: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
-				}
-			]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLhs);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLhs);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('varKind builds the parent', () => {
 		const node = ir.forInStatement.varKind({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('varKind.objectPattern builds the parent', () => {
-		const node = ir.forInStatement.varKind.objectPattern({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ left: [] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('letConstKind.objectPattern builds the parent', () => {
-		const node = ir.forInStatement.letConstKind.objectPattern({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ kind: 'let', left: [] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('varKind.arrayPattern builds the parent', () => {
-		const node = ir.forInStatement.varKind.arrayPattern({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ left: [] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderVarKind);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('letConstKind.arrayPattern builds the parent', () => {
-		const node = ir.forInStatement.letConstKind.arrayPattern({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
-			content: [{ kind: 'let', left: [] }]
-		});
-		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderVarKind);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('letConstKind builds the parent', () => {
 		const node = ir.forInStatement.letConstKind({
-			operator: 'in',
-			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
 			kind: 'let',
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: 'in',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ForInStatement);
-		expect((node as any).content()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
+		expect((node as any).forHeader()?.$type).toBe(TSKindId.ForHeaderLetConstKind);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1667,13 +1564,14 @@ describe('parenthesized_expression sub-factories', () => {
 	});
 	it('sequence builds the parent', () => {
 		const node = ir.parenthesizedExpression.sequence({
-			$type: TSKindId.Undefined,
-			$text: 'undefined',
+			$type: TSKindId.SequenceExpression,
+			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
 		} as any);
 		expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
-		expect((node as any).content()?.$type).toBe(TSKindId.SequenceExpression);
+		expect((node as any).content()?.$type).toBe(TSKindId.ParenthesizedExpressionSequence);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
@@ -2713,7 +2611,15 @@ describe('assignment_expression sub-factories', () => {
 	it('parenthesizedExpression.sequence builds the parent', () => {
 		const node = ir.assignmentExpression.parenthesizedExpression.sequence({
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+			left: [
+				{
+					$type: TSKindId.SequenceExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+				} as any
+			]
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentExpression);
 		expect((node as any).left()).toBeDefined();
@@ -2867,7 +2773,15 @@ describe('augmented_assignment_expression sub-factories', () => {
 		const node = ir.augmentedAssignmentExpression.parenthesizedExpression.sequence({
 			operator: '+=',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			left: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+			left: [
+				{
+					$type: TSKindId.SequenceExpression,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+				} as any
+			]
 		});
 		expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
 		expect((node as any).left()).toBeDefined();
@@ -6001,133 +5915,138 @@ describe('construct_signature', () => {
 describe('index_signature', () => {
 	it('factory produces correct type', () => {
 		const node = ir.indexSignature({
-			content: {
-				$type: TSKindId.MappedTypeClause,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			type: {
+			$type: TSKindId.IndexSignatureColon,
+			$text: 'test',
+			$source: 2,
+			$named: true,
+			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_index_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			_type: {
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',
 				$source: 2,
 				$named: true,
 				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 			} as any
-		});
+		} as any);
 		expect(node.$type).toBe(TSKindId.IndexSignature);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.indexSignature({
-			content: {
-				$type: TSKindId.MappedTypeClause,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			type: {
-				$type: TSKindId.TypeAnnotation,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
 describe('index_signature sub-factories', () => {
-	it('dash builds the parent', () => {
-		const node = ir.indexSignature.dash({
-			content: {
-				$type: TSKindId.MappedTypeClause,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			type: {
-				$type: TSKindId.TypeAnnotation,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.IndexSignature);
-		const seated = (node as any).sign();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Dash);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('plus builds the parent', () => {
-		const node = ir.indexSignature.plus({
-			content: {
-				$type: TSKindId.MappedTypeClause,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			type: {
-				$type: TSKindId.TypeAnnotation,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.IndexSignature);
-		const seated = (node as any).sign();
-		expect(seated?.$text ?? seated).toBe(TSKindId.Plus);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 	it('colon builds the parent', () => {
 		const node = ir.indexSignature.colon({
-			type: {
-				$type: TSKindId.TypeAnnotation,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			indexType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.IndexSignature);
-		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureColon);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('colon.identifier builds the parent', () => {
-		const node = ir.indexSignature.colon.identifier({
+			indexType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: {
 				$type: TSKindId.TypeAnnotation,
 				$text: 'test',
 				$source: 2,
 				$named: true,
 				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			content: [
-				{ indexType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: ['test'] }
-			]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.IndexSignature);
 		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureColon);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('mappedTypeClause builds the mapped_type_clause form', () => {
+	it('colon.dash builds the parent', () => {
+		const node = ir.indexSignature.colon.dash({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			indexType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.IndexSignature);
+		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureColon);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('mappedTypeClause.dash builds the parent', () => {
+		const node = ir.indexSignature.mappedTypeClause.dash({
+			mappedTypeClause: {
+				$type: TSKindId.MappedTypeClause,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.IndexSignature);
+		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureMappedTypeClause);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('colon.plus builds the parent', () => {
+		const node = ir.indexSignature.colon.plus({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			indexType: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.IndexSignature);
+		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureColon);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('mappedTypeClause.plus builds the parent', () => {
+		const node = ir.indexSignature.mappedTypeClause.plus({
+			mappedTypeClause: {
+				$type: TSKindId.MappedTypeClause,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.IndexSignature);
+		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureMappedTypeClause);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('mappedTypeClause builds the parent', () => {
 		const node = ir.indexSignature.mappedTypeClause({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			mappedTypeClause: {
+				$type: TSKindId.MappedTypeClause,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any,
+			type: {
+				$type: TSKindId.TypeAnnotation,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
 		});
-		expect(node.$type).toBe(TSKindId.MappedTypeClause);
+		expect(node.$type).toBe(TSKindId.IndexSignature);
+		expect((node as any).content()?.$type).toBe(TSKindId.IndexSignatureMappedTypeClause);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

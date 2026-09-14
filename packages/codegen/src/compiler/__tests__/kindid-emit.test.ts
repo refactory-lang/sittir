@@ -30,6 +30,7 @@ function makeMinimalFixture(): {
 			factoryInline: [],
 			inline: [],
 			conflicts: [],
+			precedences: [],
 			word: null,
 			references: []
 		},

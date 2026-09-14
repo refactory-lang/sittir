@@ -6,10 +6,10 @@ export function rebuildFormatGenerated() {
 		statements: [ir.importStatement.clauseFrom.strict({
 			importClause: TSKindId.TypeKeyword,
 			fromClause: {
-				importClause: ir.importClause.strict(ir.namedImports.strict({ delimiter: Delimiter.None }, ir.importSpecifier.strict({
-					content: ir.identifier("FormatRecord"),
-				}), ir.importSpecifier.strict({
-					content: ir.identifier("FormatTrivia"),
+				importClause: ir.importClause.strict(ir.namedImports.strict({ delimiter: Delimiter.None }, ir.importSpecifier.name.strict({
+					name: ir.identifier("FormatRecord"),
+				}), ir.importSpecifier.name.strict({
+					name: ir.identifier("FormatTrivia"),
 				}))),
 				source: ir.string.single.strict(ir.unescapedSingleStringFragment("@sittir/types")),
 			},
@@ -209,8 +209,6 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.letConstKind.strict({
-					operator: TSKindId.OfKeyword,
-					right: ir.identifier("sorted"),
 					body: ir.statementBlock.strict({
 						statements: [ir.lexicalDeclaration.strict({
 							kind: TSKindId.ConstKeyword,
@@ -278,6 +276,8 @@ export function rebuildFormatGenerated() {
 					}),
 					kind: TSKindId.ConstKeyword,
 					left: ir.identifier("item"),
+					operator: TSKindId.OfKeyword,
+					right: ir.identifier("sorted"),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,
@@ -503,15 +503,6 @@ export function rebuildFormatGenerated() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.letConstKind.strict({
-					operator: TSKindId.OfKeyword,
-					right: ir.callExpression.call.strict({
-						function: ir.memberExpression.strict({
-							object: ir.identifier("Object"),
-							separator: TSKindId.Dot,
-							property: ir.identifier("entries"),
-						}),
-						arguments: ir.arguments.strict(ir.identifier("kinds")),
-					}),
 					body: ir.statementBlock.strict({
 						statements: [ir.expressionStatement.strict({
 							expression: ir.assignmentExpression.strict({
@@ -530,6 +521,15 @@ export function rebuildFormatGenerated() {
 					}),
 					kind: TSKindId.ConstKeyword,
 					left: ir.arrayPattern.strict(ir.identifier("key"), ir.identifier("sub")),
+					operator: TSKindId.OfKeyword,
+					right: ir.callExpression.call.strict({
+						function: ir.memberExpression.strict({
+							object: ir.identifier("Object"),
+							separator: TSKindId.Dot,
+							property: ir.identifier("entries"),
+						}),
+						arguments: ir.arguments.strict(ir.identifier("kinds")),
+					}),
 				}), ir.returnStatement.strict({
 					expression: ir.identifier("result"),
 					terminator: TSKindId.Semi,

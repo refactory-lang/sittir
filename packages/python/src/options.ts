@@ -23,7 +23,6 @@ export type AddressRoot =
 	| 'argument_list_elements'
 	| 'as_pattern'
 	| 'assert_statement'
-	| 'assignment'
 	| 'assignment_eq'
 	| 'assignment_type'
 	| 'assignment_typed'
@@ -66,7 +65,8 @@ export type AddressRoot =
 	| 'elif_clause'
 	| 'else_clause'
 	| 'escape_sequence'
-	| 'except_clause'
+	| 'except_clause_arm1'
+	| 'except_clause_exception'
 	| 'except_clause_exception_as'
 	| 'except_clause_exception_list'
 	| 'exec_statement'
@@ -287,7 +287,6 @@ export interface AddressBranch {
 	readonly 'assert_statement/expression/subscript': 'after';
 	readonly 'assert_statement/expression/tuple': 'after';
 	readonly 'assert_statement/expression/unary_operator': 'after';
-	readonly assignment: 'after' | 'before';
 	readonly assignment_eq: 'after' | 'before' | 'eq';
 	readonly 'assignment_eq/eq': 'after' | 'before';
 	readonly assignment_type: 'after' | 'before' | 'colon';
@@ -529,10 +528,14 @@ export interface AddressBranch {
 	readonly 'else_clause/else_keyword': 'after' | 'before';
 	readonly escape_sequence: 'bslash';
 	readonly 'escape_sequence/bslash': 'after';
-	readonly except_clause: 'after' | 'before' | 'colon' | 'except_keyword' | 'star_marker';
-	readonly 'except_clause/colon': 'after' | 'before';
-	readonly 'except_clause/except_keyword': 'after' | 'before';
-	readonly 'except_clause/star_marker': 'after' | 'before';
+	readonly except_clause_arm1: 'after' | 'before' | 'colon' | 'except_keyword' | 'star_marker';
+	readonly 'except_clause_arm1/colon': 'after' | 'before';
+	readonly 'except_clause_arm1/except_keyword': 'after' | 'before';
+	readonly 'except_clause_arm1/star_marker': 'after' | 'before';
+	readonly except_clause_exception: 'after' | 'before' | 'colon' | 'except_keyword' | 'star_marker';
+	readonly 'except_clause_exception/colon': 'after' | 'before';
+	readonly 'except_clause_exception/except_keyword': 'after' | 'before';
+	readonly 'except_clause_exception/star_marker': 'after' | 'before';
 	readonly except_clause_exception_as: 'after' | 'as_keyword' | 'before';
 	readonly 'except_clause_exception_as/as_keyword': 'after' | 'before';
 	readonly except_clause_exception_list: 'value';
@@ -1169,7 +1172,9 @@ export interface AddressBranch {
 	readonly 'simple_statements_elements/simple_statement':
 		| 'as_pattern'
 		| 'assert_statement'
-		| 'assignment'
+		| 'assignment_eq'
+		| 'assignment_type'
+		| 'assignment_typed'
 		| 'attribute'
 		| 'augmented_assignment'
 		| 'await'
@@ -1212,7 +1217,9 @@ export interface AddressBranch {
 		| 'yield';
 	readonly 'simple_statements_elements/simple_statement/as_pattern': 'after';
 	readonly 'simple_statements_elements/simple_statement/assert_statement': 'after';
-	readonly 'simple_statements_elements/simple_statement/assignment': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_eq': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_type': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_typed': 'after';
 	readonly 'simple_statements_elements/simple_statement/attribute': 'after';
 	readonly 'simple_statements_elements/simple_statement/augmented_assignment': 'after';
 	readonly 'simple_statements_elements/simple_statement/await': 'after';
@@ -1383,8 +1390,9 @@ export interface AddressBranch {
 	readonly suite_block: 'after' | 'before';
 	readonly try_statement: 'after' | 'before' | 'colon' | 'except_clauses' | 'try_keyword';
 	readonly 'try_statement/colon': 'after' | 'before';
-	readonly 'try_statement/except_clauses': 'except_clause' | 'separator';
-	readonly 'try_statement/except_clauses/except_clause': 'after';
+	readonly 'try_statement/except_clauses': 'except_clause_arm1' | 'except_clause_exception' | 'separator';
+	readonly 'try_statement/except_clauses/except_clause_arm1': 'after';
+	readonly 'try_statement/except_clauses/except_clause_exception': 'after';
 	readonly 'try_statement/try_keyword': 'after' | 'before';
 	readonly tuple: 'after' | 'before' | 'lparen' | 'rparen';
 	readonly 'tuple/lparen': 'after' | 'before';
@@ -1601,8 +1609,6 @@ export interface AddressLeaf {
 	readonly 'assert_statement/expression/subscript/after': SpacingArm;
 	readonly 'assert_statement/expression/tuple/after': SpacingArm;
 	readonly 'assert_statement/expression/unary_operator/after': SpacingArm;
-	readonly 'assignment/after': SpacingArm;
-	readonly 'assignment/before': SpacingArm;
 	readonly 'assignment_eq/after': SpacingArm;
 	readonly 'assignment_eq/before': SpacingArm;
 	readonly 'assignment_eq/eq/after': SpacingArm;
@@ -1855,14 +1861,22 @@ export interface AddressLeaf {
 	readonly 'else_clause/else_keyword/after': SpacingArm;
 	readonly 'else_clause/else_keyword/before': SpacingArm;
 	readonly 'escape_sequence/bslash/after': SpacingArm;
-	readonly 'except_clause/after': SpacingArm;
-	readonly 'except_clause/before': SpacingArm;
-	readonly 'except_clause/colon/after': SpacingArm;
-	readonly 'except_clause/colon/before': SpacingArm;
-	readonly 'except_clause/except_keyword/after': SpacingArm;
-	readonly 'except_clause/except_keyword/before': SpacingArm;
-	readonly 'except_clause/star_marker/after': SpacingArm;
-	readonly 'except_clause/star_marker/before': SpacingArm;
+	readonly 'except_clause_arm1/after': SpacingArm;
+	readonly 'except_clause_arm1/before': SpacingArm;
+	readonly 'except_clause_arm1/colon/after': SpacingArm;
+	readonly 'except_clause_arm1/colon/before': SpacingArm;
+	readonly 'except_clause_arm1/except_keyword/after': SpacingArm;
+	readonly 'except_clause_arm1/except_keyword/before': SpacingArm;
+	readonly 'except_clause_arm1/star_marker/after': SpacingArm;
+	readonly 'except_clause_arm1/star_marker/before': SpacingArm;
+	readonly 'except_clause_exception/after': SpacingArm;
+	readonly 'except_clause_exception/before': SpacingArm;
+	readonly 'except_clause_exception/colon/after': SpacingArm;
+	readonly 'except_clause_exception/colon/before': SpacingArm;
+	readonly 'except_clause_exception/except_keyword/after': SpacingArm;
+	readonly 'except_clause_exception/except_keyword/before': SpacingArm;
+	readonly 'except_clause_exception/star_marker/after': SpacingArm;
+	readonly 'except_clause_exception/star_marker/before': SpacingArm;
 	readonly 'except_clause_exception_as/after': SpacingArm;
 	readonly 'except_clause_exception_as/as_keyword/after': SpacingArm;
 	readonly 'except_clause_exception_as/as_keyword/before': SpacingArm;
@@ -2366,7 +2380,9 @@ export interface AddressLeaf {
 	readonly 'simple_statements/before': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/as_pattern/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/assert_statement/after': SpacingArm;
-	readonly 'simple_statements_elements/simple_statement/assignment/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_eq/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_type/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_typed/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/attribute/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/augmented_assignment/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/await/after': SpacingArm;
@@ -2496,7 +2512,8 @@ export interface AddressLeaf {
 	readonly 'try_statement/before': SpacingArm;
 	readonly 'try_statement/colon/after': SpacingArm;
 	readonly 'try_statement/colon/before': SpacingArm;
-	readonly 'try_statement/except_clauses/except_clause/after': SpacingArm;
+	readonly 'try_statement/except_clauses/except_clause_arm1/after': SpacingArm;
+	readonly 'try_statement/except_clauses/except_clause_exception/after': SpacingArm;
 	readonly 'try_statement/except_clauses/separator': SpacingArm;
 	readonly 'try_statement/try_keyword/after': SpacingArm;
 	readonly 'try_statement/try_keyword/before': SpacingArm;

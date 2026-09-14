@@ -2868,7 +2868,7 @@ parents.
  *   the base.
  * @remarks
  * Tree-sitter CLI inherits externals, extras, supertypes, inline,
- * conflicts, and word implicitly when extending a base grammar. This
+ * conflicts, precedences, and word implicitly when extending a base grammar. This
  * function models the same behaviour so downstream phases see the full
  * declaration set instead of an empty list.
  */
@@ -2897,8 +2897,11 @@ parents.
 ```text
 /**
  * Run all the metadata callbacks (extras, externals, supertypes,
- * inline, conflicts, word) and write their results into the supplied
- * accumulators. Pulled out of grammarFn so the call site can wrap it
+ * inline, conflicts, precedences, word) and write their results into the
+ * supplied accumulators. A precedences group keeps each entry's name: a
+ * named precedence as its string, a rule reference as the rule's name, so
+ * wire's precedence-ranked check reads the same table on this side as the
+ * tree-sitter CLI hands it. Pulled out of grammarFn so the call site can wrap it
  * in `withRoleScope` cleanly.
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`

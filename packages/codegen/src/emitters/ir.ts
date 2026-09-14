@@ -558,6 +558,6 @@ function emitSynonymAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 		if (!node?.rawFactoryName) continue;
 		const irKey = node.irKey ?? memberKeyFor(primaryKind, '');
 		fns.push(`  // ${role} → ${primaryKind}`);
-		fns.push(`  get ${canonicalName}() { return ir.${irKey}; },`);
+		fns.push(`  get ${canonicalName}(): (typeof ir)['${irKey}'] { return ir.${irKey}; },`);
 	}
 }

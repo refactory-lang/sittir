@@ -2344,6 +2344,10 @@ lifted into that arm.
 // options-leading overload, not the rest tuple).
 ```
 
+### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
+
+Emits the role-named getters on `synonym` (`function`, `class`, `method`, `module`, `interface`), each returning the `ir` member for the role's primary kind. Each getter is annotated with the `ir` member type it returns, `(typeof ir)['<key>']`. `ir` carries an explicit annotation, so the indexed type resolves without inference; left inferred, a large overlay surface (rust's `struct_item` with its whole-arm variants) exceeds what the declaration emitter will serialize (TS7056).
+
 ### `packages/codegen/src/emitters/ir.ts::bundleExpr`
 
 ```text
@@ -14674,6 +14678,10 @@ leaf has no `strict` at all because its strict and loose forms are one call. A
 child in a cycle with its parent cannot be declared first, so it keeps the raw
 builder.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::childChains`
+
+The chained arm keys a child's own entry carries under the arm a grand arm reaches. A parent that mounts a child variant's arms (`except_clause`'s `exception.list`, reached through the `exception` variant) mounts the child's chain beneath it the same way, as another route onto the child's composed `list.block`, so the parent spells `exception.list.block` without composing a chain of its own. Composing it at the parent would apply the inner arm to the parent's builder instead of the variant's. `wires.order` emits a child before its parent, so the child's chains are recorded first.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::composeAcrossSlots`
 
 Arms of one slot chain onto arms of another. A kind with two arm-seated slots
@@ -14685,6 +14693,8 @@ arms are emitted again under each earlier arm, applied to it, giving
 a call expression has no `typeof` for the parameter types. Only a kind whose
 arms span two slots emits any of this.
 
+
+Each chain it builds is recorded by the outer arm's name, so a parent that mounts this kind's arms can mount the chains too (`childChains`).
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::isChoiceGroup`
 
 Whether a slot's value is a group that is ITSELF a choice. Such a group has

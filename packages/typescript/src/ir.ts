@@ -33,23 +33,23 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_signature
-	get function() {
+	get function(): (typeof ir)['functionSignature'] {
 		return ir.functionSignature;
 	},
 	// definition.class → abstract_class_declaration
-	get class() {
+	get class(): (typeof ir)['abstractClassDeclaration'] {
 		return ir.abstractClassDeclaration;
 	},
 	// definition.method → method_signature
-	get method() {
+	get method(): (typeof ir)['methodSignature'] {
 		return ir.methodSignature;
 	},
 	// definition.module → module
-	get module() {
+	get module(): (typeof ir)['module'] {
 		return ir.module;
 	},
 	// definition.interface → interface_declaration
-	get interface() {
+	get interface(): (typeof ir)['interfaceDeclaration'] {
 		return ir.interfaceDeclaration;
 	}
 } as const;

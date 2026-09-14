@@ -755,12 +755,6 @@ export default grammar(
 							optional(field('terminator', $._semicolon))
 						)
 					),
-				optional_parameter: ($, original) => original,
-
-				public_field_definition: ($, original) => original,
-
-				required_parameter: ($, original) => original, //TODO: remove?
-
 				object_type: ($) =>
 					refine(
 						seq(

@@ -305,11 +305,9 @@ function _buildNamespaceImport(value: T.Identifier): T.NamespaceImport.Built {
 export function buildNamedImports(value?: T.ImportSpecifiers): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildNamedImports>;
-export function buildNamedImports(
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>
-): ReturnType<typeof _buildNamedImports>;
+export function buildNamedImports(...elements: NonEmptyArray<T.ImportSpecifier>): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildNamedImports(args[0] as T.ImportSpecifiers);
@@ -344,31 +342,20 @@ function _buildNamedImports(value?: T.ImportSpecifiers): T.NamedImports.Built {
 	);
 }
 
-export function buildImportSpecifier(config: T.ImportSpecifier.Config): T.ImportSpecifier.Built {
-	const _import_kind = coerceKindEnumStorage<NonNullable<T.ImportSpecifier['_import_kind']>>(config.importKind, [
-		['type', TSKindId.TypeKeyword] as const,
-		['typeof', TSKindId.TypeofKeyword] as const
-	]);
-	const _content = coerceMixedEnumStorage<NonNullable<T.ImportSpecifier['_content']>>(config.content, [
-		['type', TSKindId.TypeKeyword] as const
-	]);
+export function buildImportSpecifier(value: T.ImportSpecifierName | T.ImportSpecifierAs): T.ImportSpecifier.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ImportSpecifier as const,
 				$source: 2 as const,
 				$named: true as const,
-				_import_kind,
 				_content,
 				$with: {
-					importKind: (value?: NonNullable<T.ImportSpecifier.Config>['importKind']) =>
-						buildImportSpecifier({ ...config, importKind: value }),
-					content: (value: NonNullable<T.ImportSpecifier.Config>['content']) =>
-						buildImportSpecifier({ ...config, content: value })
+					content: (value: T.ImportSpecifierName | T.ImportSpecifierAs) => buildImportSpecifier(value)
 				}
 			},
 			{
-				importKind: () => _import_kind,
 				content: () => _content
 			}
 		),
@@ -671,12 +658,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Built {
 	const _await_marker = coerceBooleanKeywordStorage(config.awaitMarker);
-	const _content = config.content;
-	const _operator = coerceKindEnumStorage<NonNullable<T.ForInStatement['_operator']>>(config.operator, [
-		['in', TSKindId.InKeyword] as const,
-		['of', TSKindId.OfKeyword] as const
-	]);
-	const _right = coerceMixedEnumStorage<NonNullable<T.ForInStatement['_right']>>(config.right, []);
+	const _for_header = config.forHeader;
 	const _body = coerceMixedEnumStorage<NonNullable<T.ForInStatement['_body']>>(config.body, []);
 	return withMethods(
 		withAccessors(
@@ -685,28 +667,42 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 				$source: 2 as const,
 				$named: true as const,
 				_await_marker,
-				_content,
-				_operator,
-				_right,
+				_for_header,
 				_body,
 				$with: {
 					awaitMarker: (value?: NonNullable<T.ForInStatement.Config>['awaitMarker']) =>
 						buildForInStatement({ ...config, awaitMarker: value }),
-					content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
-						buildForInStatement({ ...config, content: value }),
-					operator: (value: NonNullable<T.ForInStatement.Config>['operator']) =>
-						buildForInStatement({ ...config, operator: value }),
-					right: (value: NonNullable<T.ForInStatement.Config>['right']) =>
-						buildForInStatement({ ...config, right: value }),
+					forHeader: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
+						buildForInStatement({ ...config, forHeader: value }),
 					body: (value: NonNullable<T.ForInStatement.Config>['body']) => buildForInStatement({ ...config, body: value })
 				}
 			},
 			{
 				awaitMarker: () => _await_marker,
-				content: () => _content,
-				operator: () => _operator,
-				right: () => _right,
+				forHeader: () => _for_header,
 				body: () => _body
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildForHeader(config: T.ForHeader.Config): T.ForHeader.Built {
+	const _content = config.content;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForHeader as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
+						buildForHeader({ ...config, content: value })
+				}
+			},
+			{
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -1128,7 +1124,7 @@ function _buildFinallyClause(value: T.StatementBlock): T.FinallyClause.Built {
 export function buildParenthesizedExpression(
 	value:
 		| T.ParenthesizedExpressionTyped
-		| T.SequenceExpression
+		| T.ParenthesizedExpressionSequence
 		| T.Identifier
 		| T.DecoratorMemberExpression
 		| T.DecoratorCallExpression
@@ -1145,7 +1141,7 @@ export function buildParenthesizedExpression(
 					content: (
 						value:
 							| T.ParenthesizedExpressionTyped
-							| T.SequenceExpression
+							| T.ParenthesizedExpressionSequence
 							| T.Identifier
 							| T.DecoratorMemberExpression
 							| T.DecoratorCallExpression
@@ -5198,41 +5194,23 @@ export function buildConstructSignature(config: T.ConstructSignature.Config): T.
 	);
 }
 
-export function buildIndexSignature(config: T.IndexSignature.Config): T.IndexSignature.Built {
-	const _sign = coerceKindEnumStorage<NonNullable<T.IndexSignature['_sign']>>(config.sign, [
-		['-', TSKindId.Dash] as const,
-		['+', TSKindId.Plus] as const
-	]);
-	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
-	const _content = config.content;
-	const _type = config.type;
+export function buildIndexSignature(
+	value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause
+): T.IndexSignature.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.IndexSignature as const,
 				$source: 2 as const,
 				$named: true as const,
-				_sign,
-				_readonly_marker,
 				_content,
-				_type,
 				$with: {
-					sign: (value?: NonNullable<T.IndexSignature.Config>['sign']) =>
-						buildIndexSignature({ ...config, sign: value }),
-					readonlyMarker: (value?: NonNullable<T.IndexSignature.Config>['readonlyMarker']) =>
-						buildIndexSignature({ ...config, readonlyMarker: value }),
-					content: (value: T.IndexSignatureColon | T.MappedTypeClause) =>
-						buildIndexSignature({ ...config, content: value }),
-					type: (
-						value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
-					) => buildIndexSignature({ ...config, type: value })
+					content: (value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause) => buildIndexSignature(value)
 				}
 			},
 			{
-				sign: () => _sign,
-				readonlyMarker: () => _readonly_marker,
-				content: () => _content,
-				type: () => _type
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -5479,17 +5457,14 @@ function _buildExportSpecifiers(
 }
 
 export function buildImportSpecifiers(
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>
+	...elements: NonEmptyArray<T.ImportSpecifier>
 ): ReturnType<typeof _buildImportSpecifiers>;
 export function buildImportSpecifiers(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs)
-	)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.ImportSpecifier)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5498,24 +5473,15 @@ export function buildImportSpecifiers(
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs
-	>;
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.ImportSpecifier>;
 	return _buildImportSpecifiers(elements, options);
 }
 function _buildImportSpecifiers(
-	elements: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>,
+	elements: NonEmptyArray<T.ImportSpecifier>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Built {
 	_assertNonEmpty(elements, '_import_specifiers.elements');
-	const _mapped = elements.map(
-		(e): T.ImportSpecifier =>
-			isNodeData(e) && e.$type === TSKindId.ImportSpecifier
-				? (e as T.ImportSpecifier)
-				: buildImportSpecifier({ content: e } as Parameters<typeof buildImportSpecifier>[0])
-	);
-	_assertNonEmpty(_mapped, '_import_specifiers.elements');
-	const _import_specifier = _mapped;
+	const _import_specifier = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withAccessors(
@@ -5526,9 +5492,7 @@ function _buildImportSpecifiers(
 				_import_specifier,
 				_delimiter,
 				$with: {
-					importSpecifiers: (
-						...vs: NonEmptyArray<T.ImportSpecifier | T.Identifier | TSKindId.TypeKeyword | T.ImportSpecifierAs>
-					) => buildImportSpecifiers(options, ...vs),
+					importSpecifiers: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildImportSpecifiers(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
 				}
@@ -6333,6 +6297,11 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config): T.ClassB
 }
 
 export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): T.IndexSignatureColon.Built {
+	const _sign = coerceKindEnumStorage<NonNullable<T.IndexSignatureColon['_sign']>>(config.sign, [
+		['-', TSKindId.Dash] as const,
+		['+', TSKindId.Plus] as const
+	]);
+	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
 	const _name = coerceMixedEnumStorage<NonNullable<T.IndexSignatureColon['_name']>>(config.name, [
 		['declare', TSKindId.DeclareKeyword] as const,
 		['namespace', TSKindId.NamespaceKeyword] as const,
@@ -6358,24 +6327,81 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		['let', TSKindId.LetKeyword] as const
 	]);
 	const _index_type = coerceMixedEnumStorage<NonNullable<T.IndexSignatureColon['_index_type']>>(config.indexType, []);
+	const _type = config.type;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.IndexSignatureColon as const,
 				$source: 2 as const,
 				$named: true as const,
+				_sign,
+				_readonly_marker,
 				_name,
 				_index_type,
+				_type,
 				$with: {
+					sign: (value?: NonNullable<T.IndexSignatureColon.Config>['sign']) =>
+						buildIndexSignatureColon({ ...config, sign: value }),
+					readonlyMarker: (value?: NonNullable<T.IndexSignatureColon.Config>['readonlyMarker']) =>
+						buildIndexSignatureColon({ ...config, readonlyMarker: value }),
 					name: (value: NonNullable<T.IndexSignatureColon.Config>['name']) =>
 						buildIndexSignatureColon({ ...config, name: value }),
 					indexType: (value: NonNullable<T.IndexSignatureColon.Config>['indexType']) =>
-						buildIndexSignatureColon({ ...config, indexType: value })
+						buildIndexSignatureColon({ ...config, indexType: value }),
+					type: (
+						value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+					) => buildIndexSignatureColon({ ...config, type: value })
 				}
 			},
 			{
+				sign: () => _sign,
+				readonlyMarker: () => _readonly_marker,
 				name: () => _name,
-				indexType: () => _index_type
+				indexType: () => _index_type,
+				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIndexSignatureMappedTypeClause(
+	config: T.IndexSignatureMappedTypeClause.Config
+): T.IndexSignatureMappedTypeClause.Built {
+	const _sign = coerceKindEnumStorage<NonNullable<T.IndexSignatureMappedTypeClause['_sign']>>(config.sign, [
+		['-', TSKindId.Dash] as const,
+		['+', TSKindId.Plus] as const
+	]);
+	const _readonly_marker = coerceBooleanKeywordStorage(config.readonlyMarker);
+	const _mapped_type_clause = config.mappedTypeClause;
+	const _type = config.type;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IndexSignatureMappedTypeClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_sign,
+				_readonly_marker,
+				_mapped_type_clause,
+				_type,
+				$with: {
+					sign: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']) =>
+						buildIndexSignatureMappedTypeClause({ ...config, sign: value }),
+					readonlyMarker: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker']) =>
+						buildIndexSignatureMappedTypeClause({ ...config, readonlyMarker: value }),
+					mappedTypeClause: (value: T.MappedTypeClause) =>
+						buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value }),
+					type: (
+						value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+					) => buildIndexSignatureMappedTypeClause({ ...config, type: value })
+				}
+			},
+			{
+				sign: () => _sign,
+				readonlyMarker: () => _readonly_marker,
+				mappedTypeClause: () => _mapped_type_clause,
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -6409,7 +6435,43 @@ export function buildImportStatementClauseFrom(
 	);
 }
 
+export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Built {
+	const _import_kind = coerceKindEnumStorage<NonNullable<T.ImportSpecifierName['_import_kind']>>(config.importKind, [
+		['type', TSKindId.TypeKeyword] as const,
+		['typeof', TSKindId.TypeofKeyword] as const
+	]);
+	const _name = coerceMixedEnumStorage<NonNullable<T.ImportSpecifierName['_name']>>(config.name, [
+		['type', TSKindId.TypeKeyword] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ImportSpecifierName as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_kind,
+				_name,
+				$with: {
+					importKind: (value?: NonNullable<T.ImportSpecifierName.Config>['importKind']) =>
+						buildImportSpecifierName({ ...config, importKind: value }),
+					name: (value: NonNullable<T.ImportSpecifierName.Config>['name']) =>
+						buildImportSpecifierName({ ...config, name: value })
+				}
+			},
+			{
+				importKind: () => _import_kind,
+				name: () => _name
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.ImportSpecifierAs.Built {
+	const _import_kind = coerceKindEnumStorage<NonNullable<T.ImportSpecifierAs['_import_kind']>>(config.importKind, [
+		['type', TSKindId.TypeKeyword] as const,
+		['typeof', TSKindId.TypeofKeyword] as const
+	]);
 	const _name = coerceMixedEnumStorage<NonNullable<T.ImportSpecifierAs['_name']>>(config.name, [
 		['type', TSKindId.TypeKeyword] as const
 	]);
@@ -6422,9 +6484,12 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 				$type: TSKindId.ImportSpecifierAs as const,
 				$source: 2 as const,
 				$named: true as const,
+				_import_kind,
 				_name,
 				_alias,
 				$with: {
+					importKind: (value?: NonNullable<T.ImportSpecifierAs.Config>['importKind']) =>
+						buildImportSpecifierAs({ ...config, importKind: value }),
 					name: (value: NonNullable<T.ImportSpecifierAs.Config>['name']) =>
 						buildImportSpecifierAs({ ...config, name: value }),
 					alias: (value: NonNullable<T.ImportSpecifierAs.Config>['alias']) =>
@@ -6432,6 +6497,7 @@ export function buildImportSpecifierAs(config: T.ImportSpecifierAs.Config): T.Im
 				}
 			},
 			{
+				importKind: () => _import_kind,
 				name: () => _name,
 				alias: () => _alias
 			}
@@ -6465,6 +6531,48 @@ export function buildParenthesizedExpressionTyped(
 			{
 				expression: () => _expression,
 				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildParenthesizedExpressionSequence(
+	value: T.SequenceExpression
+): ReturnType<typeof _buildParenthesizedExpressionSequence>;
+export function buildParenthesizedExpressionSequence(
+	...children: T.Expression[]
+): ReturnType<typeof _buildParenthesizedExpressionSequence>;
+export function buildParenthesizedExpressionSequence(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildParenthesizedExpressionSequence(args[0] as T.SequenceExpression);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.SequenceExpression as const);
+	return prebuilt
+		? _buildParenthesizedExpressionSequence(args[0] as T.SequenceExpression)
+		: _buildParenthesizedExpressionSequence(
+				(buildSequenceExpression as (...a: unknown[]) => unknown)(...args) as T.SequenceExpression
+			);
+}
+function _buildParenthesizedExpressionSequence(value: T.SequenceExpression): T.ParenthesizedExpressionSequence.Built {
+	const _sequence_expression = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ParenthesizedExpressionSequence as const,
+				$source: 2 as const,
+				$named: true as const,
+				_sequence_expression,
+				$with: {
+					sequenceExpression: (value: T.SequenceExpression) => buildParenthesizedExpressionSequence(value)
+				}
+			},
+			{
+				sequenceExpression: () => _sequence_expression
 			}
 		),
 		methodsEngine
@@ -7102,8 +7210,13 @@ export function buildVariableDeclaratorDefinite(
 	);
 }
 
-export function buildForHeaderLhs(value: T._LhsExpression | T.ParenthesizedExpression): T.ForHeaderLhs.Built {
-	const _left = coerceMixedEnumStorage<NonNullable<T.ForHeaderLhs['_left']>>(value, []);
+export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs.Built {
+	const _left = coerceMixedEnumStorage<NonNullable<T.ForHeaderLhs['_left']>>(config.left, []);
+	const _operator = coerceKindEnumStorage<NonNullable<T.ForHeaderLhs['_operator']>>(config.operator, [
+		['in', TSKindId.InKeyword] as const,
+		['of', TSKindId.OfKeyword] as const
+	]);
+	const _right = coerceMixedEnumStorage<NonNullable<T.ForHeaderLhs['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -7111,12 +7224,19 @@ export function buildForHeaderLhs(value: T._LhsExpression | T.ParenthesizedExpre
 				$source: 2 as const,
 				$named: true as const,
 				_left,
+				_operator,
+				_right,
 				$with: {
-					left: (value: NonNullable<T._LhsExpression | T.ParenthesizedExpression>) => buildForHeaderLhs(value)
+					left: (value: NonNullable<T.ForHeaderLhs.Config>['left']) => buildForHeaderLhs({ ...config, left: value }),
+					operator: (value: NonNullable<T.ForHeaderLhs.Config>['operator']) =>
+						buildForHeaderLhs({ ...config, operator: value }),
+					right: (value: NonNullable<T.ForHeaderLhs.Config>['right']) => buildForHeaderLhs({ ...config, right: value })
 				}
 			},
 			{
-				left: () => _left
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -7126,6 +7246,11 @@ export function buildForHeaderLhs(value: T._LhsExpression | T.ParenthesizedExpre
 export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForHeaderVarKind.Built {
 	const _left = config.left;
 	const _value = coerceMixedEnumStorage<NonNullable<T.ForHeaderVarKind['_value']>>(config.value, []);
+	const _operator = coerceKindEnumStorage<NonNullable<T.ForHeaderVarKind['_operator']>>(config.operator, [
+		['in', TSKindId.InKeyword] as const,
+		['of', TSKindId.OfKeyword] as const
+	]);
+	const _right = coerceMixedEnumStorage<NonNullable<T.ForHeaderVarKind['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -7134,16 +7259,24 @@ export function buildForHeaderVarKind(config: T.ForHeaderVarKind.Config): T.ForH
 				$named: true as const,
 				_left,
 				_value,
+				_operator,
+				_right,
 				$with: {
 					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
 						buildForHeaderVarKind({ ...config, left: value }),
 					value: (value?: NonNullable<T.ForHeaderVarKind.Config>['value']) =>
-						buildForHeaderVarKind({ ...config, value: value })
+						buildForHeaderVarKind({ ...config, value: value }),
+					operator: (value: NonNullable<T.ForHeaderVarKind.Config>['operator']) =>
+						buildForHeaderVarKind({ ...config, operator: value }),
+					right: (value: NonNullable<T.ForHeaderVarKind.Config>['right']) =>
+						buildForHeaderVarKind({ ...config, right: value })
 				}
 			},
 			{
 				left: () => _left,
-				value: () => _value
+				value: () => _value,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -7157,6 +7290,11 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 	]);
 	const _left = config.left;
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
+	const _operator = coerceKindEnumStorage<NonNullable<T.ForHeaderLetConstKind['_operator']>>(config.operator, [
+		['in', TSKindId.InKeyword] as const,
+		['of', TSKindId.OfKeyword] as const
+	]);
+	const _right = coerceMixedEnumStorage<NonNullable<T.ForHeaderLetConstKind['_right']>>(config.right, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -7166,19 +7304,27 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 				_kind,
 				_left,
 				_automatic_semicolon,
+				_operator,
+				_right,
 				$with: {
 					kind: (value: NonNullable<T.ForHeaderLetConstKind.Config>['kind']) =>
 						buildForHeaderLetConstKind({ ...config, kind: value }),
 					left: (value: T.Identifier | T.ObjectPattern | T.ArrayPattern) =>
 						buildForHeaderLetConstKind({ ...config, left: value }),
 					automaticSemicolon: (value?: NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']) =>
-						buildForHeaderLetConstKind({ ...config, automaticSemicolon: value })
+						buildForHeaderLetConstKind({ ...config, automaticSemicolon: value }),
+					operator: (value: NonNullable<T.ForHeaderLetConstKind.Config>['operator']) =>
+						buildForHeaderLetConstKind({ ...config, operator: value }),
+					right: (value: NonNullable<T.ForHeaderLetConstKind.Config>['right']) =>
+						buildForHeaderLetConstKind({ ...config, right: value })
 				}
 			},
 			{
 				kind: () => _kind,
 				left: () => _left,
-				automaticSemicolon: () => _automatic_semicolon
+				automaticSemicolon: () => _automatic_semicolon,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -7279,6 +7425,7 @@ export type FluentKindMap = {
 	switch_statement: T.SwitchStatement.Built;
 	for_statement: T.ForStatement.Built;
 	for_in_statement: T.ForInStatement.Built;
+	_for_header: T.ForHeader.Built;
 	while_statement: T.WhileStatement.Built;
 	do_statement: T.DoStatement.Built;
 	try_statement: T.TryStatement.Built;
@@ -7458,9 +7605,12 @@ export type FluentKindMap = {
 	_class_body_method_sig: T.ClassBodyMethodSig.Built;
 	_class_body_member: T.ClassBodyMember.Built;
 	_index_signature_colon: T.IndexSignatureColon.Built;
+	_index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Built;
 	_import_statement_clause_from: T.ImportStatementClauseFrom.Built;
+	_import_specifier_name: T.ImportSpecifierName.Built;
 	_import_specifier_as: T.ImportSpecifierAs.Built;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
+	_parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Built;
 	_call_expression_call: T.CallExpressionCall.Built;
 	_call_expression_template_call: T.CallExpressionTemplateCall.Built;
 	_call_expression_member: T.CallExpressionMember.Built;
@@ -7514,6 +7664,7 @@ export const _factoryMap = {
 	switch_statement: buildSwitchStatement,
 	for_statement: buildForStatement,
 	for_in_statement: buildForInStatement,
+	_for_header: buildForHeader,
 	while_statement: buildWhileStatement,
 	do_statement: buildDoStatement,
 	try_statement: buildTryStatement,
@@ -7693,9 +7844,12 @@ export const _factoryMap = {
 	_class_body_method_sig: buildClassBodyMethodSig,
 	_class_body_member: buildClassBodyMember,
 	_index_signature_colon: buildIndexSignatureColon,
+	_index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	_import_statement_clause_from: buildImportStatementClauseFrom,
+	_import_specifier_name: buildImportSpecifierName,
 	_import_specifier_as: buildImportSpecifierAs,
 	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
+	_parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
 	_call_expression_call: buildCallExpressionCall,
 	_call_expression_template_call: buildCallExpressionTemplateCall,
 	_call_expression_member: buildCallExpressionMember,

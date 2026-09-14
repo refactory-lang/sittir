@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 420,
+  "nodeCount": 425,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -76,14 +76,14 @@
       "definedBy": "override",
       "childKind": {
         "mod_item_external": "external",
-        "declaration_list": "inline"
+        "mod_item_inline": "inline"
       }
     },
     "foreign_mod_item": {
       "definedBy": "override",
       "childKind": {
         "foreign_mod_item_semi": "semi",
-        "declaration_list": "body"
+        "foreign_mod_item_body": "body"
       }
     },
     "struct_item": {
@@ -121,7 +121,7 @@
       "definedBy": "override",
       "childKind": {
         "pointer_type_const": "const",
-        "mutable_specifier": "mut"
+        "pointer_type_mut": "mut"
       }
     },
     "delim_token_tree": {
@@ -159,7 +159,8 @@
     "match_arm": {
       "definedBy": "override",
       "childKind": {
-        "match_arm_with_comma": "with_comma"
+        "match_arm_with_comma": "with_comma",
+        "match_arm_block_ending": "block_ending"
       }
     },
     "closure_expression": {
@@ -172,6 +173,7 @@
     "field_pattern": {
       "definedBy": "override",
       "childKind": {
+        "field_pattern_shorthand": "shorthand",
         "field_pattern_named": "named"
       }
     },
@@ -220,9 +222,6 @@
     },
     "token_repetition.tokens": {
       "primitive_type": "_primitive_type"
-    },
-    "struct_item.name": {
-      "type_identifier": "identifier"
     },
     "union_item.name": {
       "type_identifier": "identifier"
@@ -350,10 +349,6 @@
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
-    "pointer_type.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
-    },
     "abstract_type.trait": {
       "type_identifier": "identifier"
     },
@@ -404,9 +399,6 @@
     "struct_pattern.type": {
       "type_identifier": "identifier"
     },
-    "field_pattern.content": {
-      "shorthand_field_identifier": "identifier"
-    },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
@@ -432,6 +424,14 @@
     },
     "_function_type_trait_form.trait": {
       "type_identifier": "identifier"
+    },
+    "_pointer_type_const.type": {
+      "type_identifier": "identifier",
+      "primitive_type": "_primitive_type"
+    },
+    "_pointer_type_mut.type": {
+      "type_identifier": "identifier",
+      "primitive_type": "_primitive_type"
     },
     "_block_comment_doc_outer.doc": {
       "doc_comment": "_block_comment_content"
@@ -469,8 +469,20 @@
       "token_tree": "delim_token_tree",
       "primitive_type": "_primitive_type"
     },
+    "_field_pattern_shorthand.name": {
+      "shorthand_field_identifier": "identifier"
+    },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
+    },
+    "_struct_item_brace.name": {
+      "type_identifier": "identifier"
+    },
+    "_struct_item_tuple.name": {
+      "type_identifier": "identifier"
+    },
+    "_struct_item_unit.name": {
+      "type_identifier": "identifier"
     },
     "_attributed_parameter.content": {
       "type_identifier": "identifier",
@@ -526,13 +538,6 @@
       }
     },
     "macro_definition": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -690,20 +695,6 @@
       }
     },
     "mod_item": {
-      "visibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -712,25 +703,11 @@
         "nonEmpty": false,
         "wireKeys": [
           "_mod_item_external",
-          "_declaration_list"
+          "_mod_item_inline"
         ]
       }
     },
     "foreign_mod_item": {
-      "visibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "extern_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -739,7 +716,7 @@
         "nonEmpty": false,
         "wireKeys": [
           "_foreign_mod_item_semi",
-          "_declaration_list"
+          "_foreign_mod_item_body"
         ]
       }
     },
@@ -753,27 +730,6 @@
       }
     },
     "struct_item": {
-      "visibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -1915,15 +1871,8 @@
         "nonEmpty": false,
         "wireKeys": [
           "_pointer_type_const",
-          "_mutable_specifier"
+          "_pointer_type_mut"
         ]
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "abstract_type": {
@@ -2416,20 +2365,6 @@
       }
     },
     "match_arm": {
-      "attributes": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2438,17 +2373,7 @@
         "nonEmpty": false,
         "wireKeys": [
           "_match_arm_with_comma",
-          "_unsafe_block",
-          "_async_block",
-          "_gen_block",
-          "_try_block",
-          "_block",
-          "_if_expression",
-          "_match_expression",
-          "_while_expression",
-          "_loop_expression",
-          "_for_expression",
-          "_const_block"
+          "_match_arm_block_ending"
         ]
       }
     },
@@ -2577,34 +2502,6 @@
       }
     },
     "closure_expression": {
-      "static_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "async_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "move_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2892,20 +2789,6 @@
       }
     },
     "field_pattern": {
-      "ref_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "mutable_specifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2913,7 +2796,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_shorthand_field_identifier",
+          "_field_pattern_shorthand",
           "_field_pattern_named"
         ]
       }
@@ -3331,6 +3214,34 @@
       }
     },
     "_closure_expression_block": {
+      "static_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "async_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "move_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "parameters": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "return_type": {
         "unnamed": false,
         "slotCount": 1,
@@ -3347,6 +3258,34 @@
       }
     },
     "_closure_expression_expr": {
+      "static_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "async_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "move_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "parameters": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
@@ -3399,6 +3338,45 @@
         "nonEmpty": false
       }
     },
+    "_mod_item_external": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_mod_item_inline": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_or_pattern_binary": {
       "left": {
         "unnamed": false,
@@ -3417,6 +3395,24 @@
     },
     "_or_pattern_prefix": {
       "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_pointer_type_const": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_pointer_type_mut": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3474,7 +3470,83 @@
         "nonEmpty": false
       }
     },
+    "_foreign_mod_item_semi": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "extern_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_foreign_mod_item_body": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "extern_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_match_arm_with_comma": {
+      "attributes": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_match_arm_block_ending": {
+      "attributes": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "value": {
         "unnamed": false,
         "slotCount": 1,
@@ -3600,7 +3672,44 @@
         "nonEmpty": false
       }
     },
+    "_field_pattern_shorthand": {
+      "ref_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "mutable_specifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_field_pattern_named": {
+      "ref_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "mutable_specifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -3617,6 +3726,13 @@
       }
     },
     "_macro_definition_paren": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
@@ -3626,6 +3742,13 @@
       }
     },
     "_macro_definition_bracket": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
@@ -3635,6 +3758,13 @@
       }
     },
     "_macro_definition_brace": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "macro_rules": {
         "unnamed": false,
         "slotCount": 1,
@@ -3705,6 +3835,27 @@
       }
     },
     "_struct_item_brace": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_parameters": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "where_clause": {
         "unnamed": false,
         "slotCount": 1,
@@ -3721,6 +3872,27 @@
       }
     },
     "_struct_item_tuple": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_parameters": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
@@ -3729,6 +3901,29 @@
         "nonEmpty": false
       },
       "where_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_struct_item_unit": {
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4770,6 +4965,90 @@
       },
       "slots": [
         {
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_static_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_static_marker",
+              "parseKind": "_kw_static_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "async_marker",
+          "propertyName": "asyncMarker",
+          "paramName": "asyncMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_async_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_move_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_move_marker",
+              "parseKind": "_kw_move_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "propertyName": "parameters",
+          "paramName": "parameters",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "closure_parameters"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "closure_parameters",
+              "parseKind": "closure_parameters",
+              "unresolved": true
+            }
+          ]
+        },
+        {
           "name": "return_type",
           "propertyName": "returnType",
           "paramName": "returnType",
@@ -4815,13 +5094,17 @@
       "name": "_closure_expression_block",
       "factoryShape": "config",
       "factoryFields": [
+        "static_marker",
+        "async_marker",
+        "move_marker",
+        "parameters",
         "return_type",
         "body"
       ]
     },
     {
       "kind": "_closure_expression_expr",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "ClosureExpressionExpr",
       "factoryName": "_closureExpressionExpr",
       "irKey": "closureExpressionExpr",
@@ -4830,6 +5113,90 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "static_marker",
+          "propertyName": "staticMarker",
+          "paramName": "staticMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_static_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_static_marker",
+              "parseKind": "_kw_static_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "async_marker",
+          "propertyName": "asyncMarker",
+          "paramName": "asyncMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_async_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "move_marker",
+          "propertyName": "moveMarker",
+          "paramName": "moveMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_move_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_move_marker",
+              "parseKind": "_kw_move_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "propertyName": "parameters",
+          "paramName": "parameters",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "closure_parameters"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "closure_parameters",
+              "parseKind": "closure_parameters",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "body",
           "propertyName": "body",
@@ -4859,8 +5226,12 @@
         }
       ],
       "name": "_closure_expression_expr",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "static_marker",
+        "async_marker",
+        "move_marker",
+        "parameters",
         "body"
       ]
     },
@@ -5438,6 +5809,48 @@
       },
       "slots": [
         {
+          "name": "ref_marker",
+          "propertyName": "refMarker",
+          "paramName": "refMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_ref_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_ref_marker",
+              "parseKind": "_kw_ref_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "mutable_specifier",
+          "propertyName": "mutableSpecifier",
+          "paramName": "mutableSpecifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "mutable_specifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
@@ -5483,23 +5896,238 @@
       "name": "_field_pattern_named",
       "factoryShape": "config",
       "factoryFields": [
+        "ref_marker",
+        "mutable_specifier",
         "name",
         "pattern"
       ]
     },
     {
-      "kind": "_foreign_mod_item_semi",
-      "modelType": "token",
-      "typeName": "ForeignModItemSemi",
-      "irKey": "foreignModItemSemi",
-      "hidden": true,
+      "kind": "_field_pattern_shorthand",
+      "modelType": "branch",
+      "typeName": "FieldPatternShorthand",
+      "factoryName": "_fieldPatternShorthand",
+      "irKey": "fieldPatternShorthand",
+      "hidden": false,
       "annotations": {
         "hoisted": true
       },
-      "isParameterless": true,
-      "stampExpression": "\";\" as const",
-      "word": false,
-      "text": ";"
+      "slots": [
+        {
+          "name": "ref_marker",
+          "propertyName": "refMarker",
+          "paramName": "refMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "_kw_ref_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_kw_ref_marker",
+              "parseKind": "_kw_ref_marker",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "mutable_specifier",
+          "propertyName": "mutableSpecifier",
+          "paramName": "mutableSpecifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "mutable_specifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "shorthand_field_identifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_field_pattern_shorthand",
+      "factoryShape": "config",
+      "factoryFields": [
+        "ref_marker",
+        "mutable_specifier",
+        "name"
+      ]
+    },
+    {
+      "kind": "_foreign_mod_item_body",
+      "modelType": "branch",
+      "typeName": "ForeignModItemBody",
+      "factoryName": "_foreignModItemBody",
+      "irKey": "foreignModItemBody",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "extern_modifier",
+          "propertyName": "externModifier",
+          "paramName": "externModifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "extern_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "extern_modifier",
+              "parseKind": "extern_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "declaration_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration_list",
+              "parseKind": "declaration_list",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_foreign_mod_item_body",
+      "factoryShape": "config",
+      "factoryFields": [
+        "visibility_modifier",
+        "extern_modifier",
+        "body"
+      ]
+    },
+    {
+      "kind": "_foreign_mod_item_semi",
+      "modelType": "branch",
+      "typeName": "ForeignModItemSemi",
+      "factoryName": "_foreignModItemSemi",
+      "irKey": "foreignModItemSemi",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "extern_modifier",
+          "propertyName": "externModifier",
+          "paramName": "externModifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "extern_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "extern_modifier",
+              "parseKind": "extern_modifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_foreign_mod_item_semi",
+      "factoryShape": "config",
+      "factoryFields": [
+        "visibility_modifier",
+        "extern_modifier"
+      ]
     },
     {
       "kind": "_function_type_fn_form",
@@ -6152,7 +6780,7 @@
     },
     {
       "kind": "_macro_definition_brace",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBrace",
       "factoryName": "_macroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
@@ -6162,6 +6790,27 @@
       },
       "slots": [
         {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
           "name": "macro_rules",
           "propertyName": "macroRules",
           "paramName": "macroRules",
@@ -6178,21 +6827,25 @@
               "multiplicity": "optional",
               "name": "_macro_rules",
               "parseKind": "macro_rules",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "_macro_rules",
+                "shape": "tuple"
+              }
             }
           ]
         }
       ],
       "name": "_macro_definition_brace",
-      "factoryShape": "forwarded",
-      "forwardsTo": "_macro_rules",
+      "factoryShape": "config",
       "factoryFields": [
+        "name",
         "macro_rules"
       ]
     },
     {
       "kind": "_macro_definition_bracket",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBracket",
       "factoryName": "_macroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
@@ -6202,45 +6855,26 @@
       },
       "slots": [
         {
-          "name": "macro_rules",
-          "propertyName": "macroRules",
-          "paramName": "macroRules",
-          "required": false,
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_macro_rules"
+            "identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_macro_rules",
-              "parseKind": "macro_rules",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ]
-        }
-      ],
-      "name": "_macro_definition_bracket",
-      "factoryShape": "forwarded",
-      "forwardsTo": "_macro_rules",
-      "factoryFields": [
-        "macro_rules"
-      ]
-    },
-    {
-      "kind": "_macro_definition_paren",
-      "modelType": "envelope",
-      "typeName": "MacroDefinitionParen",
-      "factoryName": "_macroDefinitionParen",
-      "irKey": "macroDefinitionParen",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
+        },
         {
           "name": "macro_rules",
           "propertyName": "macroRules",
@@ -6258,15 +6892,84 @@
               "multiplicity": "optional",
               "name": "_macro_rules",
               "parseKind": "macro_rules",
+              "unresolved": true,
+              "seat": {
+                "kind": "_macro_rules",
+                "shape": "tuple"
+              }
+            }
+          ]
+        }
+      ],
+      "name": "_macro_definition_bracket",
+      "factoryShape": "config",
+      "factoryFields": [
+        "name",
+        "macro_rules"
+      ]
+    },
+    {
+      "kind": "_macro_definition_paren",
+      "modelType": "branch",
+      "typeName": "MacroDefinitionParen",
+      "factoryName": "_macroDefinitionParen",
+      "irKey": "macroDefinitionParen",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "macro_rules",
+          "propertyName": "macroRules",
+          "paramName": "macroRules",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_macro_rules"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_macro_rules",
+              "parseKind": "macro_rules",
+              "unresolved": true,
+              "seat": {
+                "kind": "_macro_rules",
+                "shape": "tuple"
+              }
             }
           ]
         }
       ],
       "name": "_macro_definition_paren",
-      "factoryShape": "forwarded",
-      "forwardsTo": "_macro_rules",
+      "factoryShape": "config",
       "factoryFields": [
+        "name",
         "macro_rules"
       ]
     },
@@ -6293,8 +6996,179 @@
       ]
     },
     {
+      "kind": "_match_arm_block_ending",
+      "modelType": "branch",
+      "typeName": "MatchArmBlockEnding",
+      "factoryName": "_matchArmBlockEnding",
+      "irKey": "matchArmBlockEnding",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "attribute_item",
+            "inner_attribute_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "parseKind": "attribute_item",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "inner_attribute_item",
+              "parseKind": "inner_attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "match_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_pattern",
+              "parseKind": "match_pattern",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "unsafe_block",
+            "async_block",
+            "gen_block",
+            "try_block",
+            "block",
+            "if_expression",
+            "match_expression",
+            "while_expression",
+            "loop_expression",
+            "for_expression",
+            "const_block"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "unsafe_block",
+              "parseKind": "unsafe_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "async_block",
+              "parseKind": "async_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "gen_block",
+              "parseKind": "gen_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "try_block",
+              "parseKind": "try_block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "block",
+              "parseKind": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "if_expression",
+              "parseKind": "if_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_expression",
+              "parseKind": "match_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "while_expression",
+              "parseKind": "while_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "loop_expression",
+              "parseKind": "loop_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "for_expression",
+              "parseKind": "for_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "const_block",
+              "parseKind": "const_block",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_match_arm_block_ending",
+      "factoryShape": "config",
+      "factoryFields": [
+        "attributes",
+        "pattern",
+        "value"
+      ]
+    },
+    {
       "kind": "_match_arm_with_comma",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "MatchArmWithComma",
       "factoryName": "_matchArmWithComma",
       "irKey": "matchArmWithComma",
@@ -6303,6 +7177,56 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "attribute_item",
+            "inner_attribute_item"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "parseKind": "attribute_item",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "inner_attribute_item",
+              "parseKind": "inner_attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "propertyName": "pattern",
+          "paramName": "pattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "match_pattern"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "match_pattern",
+              "parseKind": "match_pattern",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "value",
           "propertyName": "value",
@@ -6326,8 +7250,10 @@
         }
       ],
       "name": "_match_arm_with_comma",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "attributes",
+        "pattern",
         "value"
       ]
     },
@@ -6394,17 +7320,147 @@
     },
     {
       "kind": "_mod_item_external",
-      "modelType": "token",
+      "modelType": "branch",
       "typeName": "ModItemExternal",
+      "factoryName": "_modItemExternal",
       "irKey": "modItemExternal",
-      "hidden": true,
+      "hidden": false,
       "annotations": {
         "hoisted": true
       },
-      "isParameterless": true,
-      "stampExpression": "\";\" as const",
-      "word": false,
-      "text": ";"
+      "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_mod_item_external",
+      "factoryShape": "config",
+      "factoryFields": [
+        "visibility_modifier",
+        "name"
+      ]
+    },
+    {
+      "kind": "_mod_item_inline",
+      "modelType": "branch",
+      "typeName": "ModItemInline",
+      "factoryName": "_modItemInline",
+      "irKey": "modItemInline",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "declaration_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration_list",
+              "parseKind": "declaration_list",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_mod_item_inline",
+      "factoryShape": "config",
+      "factoryFields": [
+        "visibility_modifier",
+        "name",
+        "body"
+      ]
     },
     {
       "kind": "_newline",
@@ -6707,19 +7763,81 @@
     },
     {
       "kind": "_pointer_type_const",
-      "modelType": "token",
+      "modelType": "envelope",
       "typeName": "PointerTypeConst",
-      "factoryName": "pointerTypeConst",
+      "factoryName": "_pointerTypeConst",
       "irKey": "pointerTypeConst",
       "hidden": false,
       "annotations": {
         "hoisted": true
       },
-      "isParameterless": true,
-      "stampExpression": "\"const\" as const",
-      "word": true,
-      "text": "const",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_type",
+              "parseKind": "_type",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_pointer_type_const",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "type"
+      ]
+    },
+    {
+      "kind": "_pointer_type_mut",
+      "modelType": "envelope",
+      "typeName": "PointerTypeMut",
+      "factoryName": "_pointerTypeMut",
+      "irKey": "pointerTypeMut",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_type",
+              "parseKind": "_type",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_pointer_type_mut",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "type"
+      ]
     },
     {
       "kind": "_primitive_type",
@@ -7420,6 +8538,69 @@
       },
       "slots": [
         {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "type_identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "type_parameters",
+          "propertyName": "typeParameters",
+          "paramName": "typeParameters",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_parameters"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_parameters",
+              "parseKind": "type_parameters",
+              "unresolved": true
+            }
+          ]
+        },
+        {
           "name": "where_clause",
           "propertyName": "whereClause",
           "paramName": "whereClause",
@@ -7465,6 +8646,9 @@
       "name": "_struct_item_brace",
       "factoryShape": "config",
       "factoryFields": [
+        "visibility_modifier",
+        "name",
+        "type_parameters",
         "where_clause",
         "body"
       ]
@@ -7480,6 +8664,69 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "type_identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "type_parameters",
+          "propertyName": "typeParameters",
+          "paramName": "typeParameters",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_parameters"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_parameters",
+              "parseKind": "type_parameters",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "body",
           "propertyName": "body",
@@ -7526,23 +8773,95 @@
       "name": "_struct_item_tuple",
       "factoryShape": "config",
       "factoryFields": [
+        "visibility_modifier",
+        "name",
+        "type_parameters",
         "body",
         "where_clause"
       ]
     },
     {
       "kind": "_struct_item_unit",
-      "modelType": "token",
+      "modelType": "branch",
       "typeName": "StructItemUnit",
+      "factoryName": "_structItemUnit",
       "irKey": "structItemUnit",
-      "hidden": true,
+      "hidden": false,
       "annotations": {
         "hoisted": true
       },
-      "isParameterless": true,
-      "stampExpression": "\";\" as const",
-      "word": false,
-      "text": ";"
+      "slots": [
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "visibility_modifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "type_identifier",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "type_parameters",
+          "propertyName": "typeParameters",
+          "paramName": "typeParameters",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "type_parameters"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "type_parameters",
+              "parseKind": "type_parameters",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_struct_item_unit",
+      "factoryShape": "config",
+      "factoryFields": [
+        "visibility_modifier",
+        "name",
+        "type_parameters"
+      ]
     },
     {
       "kind": "_struct_pattern_elements",
@@ -10458,96 +11777,12 @@
     },
     {
       "kind": "closure_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ClosureExpression",
       "factoryName": "closureExpression",
       "irKey": "closureExpression",
       "hidden": false,
       "slots": [
-        {
-          "name": "static_marker",
-          "propertyName": "staticMarker",
-          "paramName": "staticMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "_kw_static_marker"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "async_marker",
-          "propertyName": "asyncMarker",
-          "paramName": "asyncMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "move_marker",
-          "propertyName": "moveMarker",
-          "paramName": "moveMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "_kw_move_marker"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_move_marker",
-              "parseKind": "_kw_move_marker",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "closure_parameters"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "closure_parameters",
-              "parseKind": "closure_parameters",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -10588,12 +11823,8 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "static_marker",
-        "async_marker",
-        "move_marker",
-        "parameters",
         "content"
       ]
     },
@@ -12374,54 +13605,12 @@
     },
     {
       "kind": "field_pattern",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "FieldPattern",
       "factoryName": "fieldPattern",
       "irKey": "fieldPattern",
       "hidden": false,
       "slots": [
-        {
-          "name": "ref_marker",
-          "propertyName": "refMarker",
-          "paramName": "refMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "_kw_ref_marker"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_kw_ref_marker",
-              "parseKind": "_kw_ref_marker",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "paramName": "mutableSpecifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [
-            "mutable_specifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -12431,16 +13620,21 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "_field_pattern_shorthand",
             "_field_pattern_named"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "shorthand_field_identifier",
-              "unresolved": true
+              "name": "_field_pattern_shorthand",
+              "parseKind": "field_pattern_shorthand",
+              "unresolved": true,
+              "seat": {
+                "kind": "_field_pattern_shorthand",
+                "shape": "arm",
+                "mount": "shorthand"
+              }
             },
             {
               "kind": "node-ref",
@@ -12457,10 +13651,8 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "ref_marker",
-        "mutable_specifier",
         "content"
       ]
     },
@@ -12636,54 +13828,12 @@
     },
     {
       "kind": "foreign_mod_item",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ForeignModItem",
       "factoryName": "foreignModItem",
       "irKey": "foreignModItem",
       "hidden": false,
       "slots": [
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "parseKind": "visibility_modifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "extern_modifier",
-          "propertyName": "externModifier",
-          "paramName": "externModifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "extern_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "extern_modifier",
-              "parseKind": "extern_modifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -12691,10 +13841,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "_foreign_mod_item_semi",
-            "declaration_list"
+            "_foreign_mod_item_body"
           ],
           "values": [
             {
@@ -12712,17 +13862,20 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "declaration_list",
-              "parseKind": "declaration_list",
-              "unresolved": true
+              "name": "_foreign_mod_item_body",
+              "parseKind": "foreign_mod_item_body",
+              "unresolved": true,
+              "seat": {
+                "kind": "_foreign_mod_item_body",
+                "shape": "arm",
+                "mount": "body"
+              }
             }
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "visibility_modifier",
-        "extern_modifier",
         "content"
       ]
     },
@@ -14933,33 +16086,12 @@
     },
     {
       "kind": "macro_definition",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "MacroDefinition",
       "factoryName": "macroDefinition",
       "irKey": "macroDefinition",
       "hidden": false,
       "slots": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -15013,9 +16145,8 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
         "content"
       ]
     },
@@ -15154,62 +16285,12 @@
     },
     {
       "kind": "match_arm",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "MatchArm",
       "factoryName": "matchArm",
       "irKey": "matchArm",
       "hidden": false,
       "slots": [
-        {
-          "name": "attributes",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "attribute_item",
-            "inner_attribute_item"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "attribute_item",
-              "parseKind": "attribute_item",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "inner_attribute_item",
-              "parseKind": "inner_attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "match_pattern"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "match_pattern",
-              "parseKind": "match_pattern",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -15220,17 +16301,7 @@
           "storage": "verbatim",
           "kinds": [
             "_match_arm_with_comma",
-            "unsafe_block",
-            "async_block",
-            "gen_block",
-            "try_block",
-            "block",
-            "if_expression",
-            "match_expression",
-            "while_expression",
-            "loop_expression",
-            "for_expression",
-            "const_block"
+            "_match_arm_block_ending"
           ],
           "values": [
             {
@@ -15248,87 +16319,20 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "unsafe_block",
-              "parseKind": "unsafe_block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "async_block",
-              "parseKind": "async_block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "gen_block",
-              "parseKind": "gen_block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "try_block",
-              "parseKind": "try_block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "if_expression",
-              "parseKind": "if_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "match_expression",
-              "parseKind": "match_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "while_expression",
-              "parseKind": "while_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "loop_expression",
-              "parseKind": "loop_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "for_expression",
-              "parseKind": "for_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "const_block",
-              "parseKind": "const_block",
-              "unresolved": true
+              "name": "_match_arm_block_ending",
+              "parseKind": "match_arm_block_ending",
+              "unresolved": true,
+              "seat": {
+                "kind": "_match_arm_block_ending",
+                "shape": "arm",
+                "mount": "blockEnding"
+              }
             }
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "attributes",
-        "pattern",
         "content"
       ]
     },
@@ -15538,54 +16542,12 @@
     },
     {
       "kind": "mod_item",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ModItem",
       "factoryName": "modItem",
       "irKey": "modItem",
       "hidden": false,
       "slots": [
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "parseKind": "visibility_modifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -15593,10 +16555,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "_mod_item_external",
-            "declaration_list"
+            "_mod_item_inline"
           ],
           "values": [
             {
@@ -15614,17 +16576,20 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "declaration_list",
-              "parseKind": "declaration_list",
-              "unresolved": true
+              "name": "_mod_item_inline",
+              "parseKind": "mod_item_inline",
+              "unresolved": true,
+              "seat": {
+                "kind": "_mod_item_inline",
+                "shape": "arm",
+                "mount": "inline"
+              }
             }
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "visibility_modifier",
-        "name",
         "content"
       ]
     },
@@ -16143,7 +17108,7 @@
     },
     {
       "kind": "pointer_type",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "PointerType",
       "factoryName": "pointerType",
       "irKey": "pointerType",
@@ -16156,10 +17121,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "kindEnum",
+          "storage": "verbatim",
           "kinds": [
             "_pointer_type_const",
-            "mutable_specifier"
+            "_pointer_type_mut"
           ],
           "values": [
             {
@@ -16177,38 +17142,21 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "_type"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_type",
-              "parseKind": "_type",
-              "unresolved": true
+              "name": "_pointer_type_mut",
+              "parseKind": "pointer_type_mut",
+              "unresolved": true,
+              "seat": {
+                "kind": "_pointer_type_mut",
+                "shape": "arm",
+                "mount": "mut"
+              }
             }
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "content",
-        "type"
+        "content"
       ]
     },
     {
@@ -18043,75 +18991,12 @@
     },
     {
       "kind": "struct_item",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "StructItem",
       "factoryName": "structItem",
       "irKey": "structItem",
       "hidden": false,
       "slots": [
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "visibility_modifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "parseKind": "visibility_modifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "identifier"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "type_identifier",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_parameters",
-          "propertyName": "typeParameters",
-          "paramName": "typeParameters",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "type_parameters"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "type_parameters",
-              "parseKind": "type_parameters",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -18119,7 +19004,7 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "_struct_item_brace",
             "_struct_item_tuple",
@@ -18165,11 +19050,8 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "visibility_modifier",
-        "name",
-        "type_parameters",
         "content"
       ]
     },

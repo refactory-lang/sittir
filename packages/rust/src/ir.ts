@@ -36,23 +36,23 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_item
-	get function() {
+	get function(): (typeof ir)['functionItem'] {
 		return ir.functionItem;
 	},
 	// definition.class → struct_item
-	get class() {
+	get class(): (typeof ir)['structItem'] {
 		return ir.structItem;
 	},
 	// definition.method → function_item
-	get method() {
+	get method(): (typeof ir)['functionItem'] {
 		return ir.functionItem;
 	},
 	// definition.module → mod_item
-	get module() {
+	get module(): (typeof ir)['modItem'] {
 		return ir.modItem;
 	},
 	// definition.interface → trait_item
-	get interface() {
+	get interface(): (typeof ir)['traitItem'] {
 		return ir.traitItem;
 	}
 } as const;

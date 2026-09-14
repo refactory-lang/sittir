@@ -3751,6 +3751,12 @@ function wireRegisterConflict(names) {
   }
   return true;
 }
+function wireHasPreRegisteredRule(name) {
+  return currentContext?.preRegisteredHidden.has(name) ?? false;
+}
+function wireIsPrecedenceRankedRule(name) {
+  return currentContext?.precedenceRankedNames.has(name) ?? false;
+}
 function wireRegisterSymbolRename(oldName, newName) {
   if (!currentContext) return false;
   currentContext.symbolRenames.set(oldName, newName);
@@ -3766,6 +3772,9 @@ function wireRegisterRefineForms(kind, forms) {
 }
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
+}
+function wireIsExtraRule(name) {
+  return currentContext?.extraRuleNames.has(name) ?? false;
 }
 function wire(config, base2) {
   const cfg = config;
@@ -3786,12 +3795,15 @@ function wire(config, base2) {
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
     currentRuleKind: null,
-    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
+    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+    extraRuleNames: extraRuleNames(cfg, baseArg),
+    precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
+    preRegisteredHidden: /* @__PURE__ */ new Set()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
   composeOrSynthesizePatchedParents(outRules, patches, context);
-  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg));
+  injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), baseArg);
   if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.injects || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
@@ -3921,6 +3933,40 @@ function placeholderHiddenName(value, parentKind) {
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
 }
+function symbolNamesOf(entries) {
+  const names = /* @__PURE__ */ new Set();
+  for (const entry of Array.isArray(entries) ? entries : []) {
+    if (typeof entry === "string") {
+      names.add(entry);
+      continue;
+    }
+    const symbol = entry;
+    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function precedenceRankedNames(cfg, base2) {
+  const basePrecedences = base2?.grammar?.precedences ?? base2?.precedences;
+  const previous = withStringGlobalShim(
+    () => typeof basePrecedences === "function" ? basePrecedences(makeSimpleDollarProxy(), []) : basePrecedences
+  );
+  const own = cfg.precedences;
+  const groups = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous ?? [])) : own ?? previous;
+  const names = /* @__PURE__ */ new Set();
+  for (const group2 of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group2)) names.add(name);
+  return names;
+}
+function extraRuleNames(cfg, base2) {
+  const baseExtras = base2?.grammar?.extras ?? base2?.extras;
+  const previous = withStringGlobalShim(
+    () => typeof baseExtras === "function" ? baseExtras(makeSimpleDollarProxy()) : baseExtras
+  );
+  const own = cfg.extras;
+  const entries = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous)) : own ?? previous;
+  return symbolNamesOf(entries);
+}
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
   const entries = typeof externals === "function" ? withStringGlobalShim(() => externals(makeSimpleDollarProxy())) : externals;
@@ -3937,15 +3983,34 @@ function baseExternalNames(base2) {
   }
   return names;
 }
-function injectPlaceholderHiddenRules(rules, patches, context, externals) {
+function injectPlaceholderHiddenRules(rules, patches, context, externals, base2) {
+  const register = (hiddenName) => {
+    if (hiddenName in rules || externals.has(hiddenName)) return;
+    rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+    context.preRegisteredHidden.add(hiddenName);
+  };
+  const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
+  const $ = makeSimpleDollarProxy();
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
     for (const patchMap of patchSetsOf(entry)) {
       for (const value of Object.values(patchMap)) {
         const hiddenName = placeholderHiddenName(value, kind);
-        if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
-        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+        if (hiddenName !== void 0) register(hiddenName);
       }
+      const variantEntries = Object.entries(patchMap).filter((e) => isVariantPlaceholder(e[1]));
+      if (variantEntries.length === 0) continue;
+      const baseRule = baseRules[kind];
+      if (!baseRule) continue;
+      let body;
+      try {
+        const evaluated = typeof baseRule === "function" ? withStringGlobalShim(() => baseRule.call(void 0, $, void 0)) : baseRule;
+        if (!evaluated || typeof evaluated !== "object" || typeof evaluated.type !== "string") continue;
+        body = structuredClone(evaluated);
+      } catch {
+        continue;
+      }
+      for (const name of implicitArmHiddenNames(body, variantEntries, kind)) register(name);
     }
   }
 }
@@ -4458,8 +4523,13 @@ function applyVariantPatches(rule, variantEntries) {
   }
   return result;
 }
-function tryHoistSiblingVariants(rule, variantEntries) {
-  const { bail, precStack, core } = peelPrecWrappersFromRule(rule);
+function planSiblingVariantHoist(rule, variantEntries, parentKind, onBail = () => {
+}) {
+  const bail = (reason) => {
+    onBail(reason);
+    return null;
+  };
+  const { precStack, core } = peelPrecWrappersFromRule(rule);
   const t = core.type;
   if (!t) return bail("core rule has no type after prec peeling");
   if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
@@ -4472,16 +4542,75 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice2 = seqMembers[resolvedPos];
-  if (!choice2 || !isChoiceType(choice2.type))
-    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  const choice2 = asChoice(seqMembers[resolvedPos]);
+  if (!choice2) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not choice/CHOICE`);
   const choiceMembers = membersOf2(choice2);
-  const anyEmpty = parsed.some(
-    (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
+  const targeted = new Set(parsed.map((p) => p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx));
+  const unnamed = choiceMembers.map((_, i) => i).filter((i) => !targeted.has(i));
+  const referenced = referencedNames(choice2);
+  const taken = new Set(parsed.map((p) => variantMintName(p.v)));
+  const implicit = [];
+  const candidates = unnamed.length === 1 ? ["arm"] : [];
+  for (let ordinal = 1; candidates.length < unnamed.length + referenced.size + taken.size + 1; ordinal++) candidates.push(`arm${ordinal}`);
+  const free = candidates.filter(
+    (name) => !taken.has(name) && !referenced.has(polymorphHiddenName(parentKind, name)) && !referenced.has(polymorphVisibleName(parentKind, name))
   );
-  if (!anyEmpty) return null;
+  for (const [n, altIdx] of unnamed.entries()) {
+    const v = variant(free[n]);
+    implicit.push(v);
+    parsed.push({ key: `${resolvedPos}/${altIdx}`, v, choicePos: resolvedPos, altIdx });
+  }
+  parsed.sort((a, b) => a.altIdx - b.altIdx);
+  const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
+  const emptyArm = choiceMembers.findIndex(
+    (arm2) => (isBlank(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
+  );
+  if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
+  const bareArm = choiceMembers.findIndex(
+    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
+  );
+  if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
+  return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, implicit };
+}
+function isBlank(rule) {
+  return rule.type === "BLANK";
+}
+function asChoice(rule) {
+  if (!rule) return null;
+  if (isChoiceType(rule.type)) return rule;
+  if (rule.type === "OPTIONAL") {
+    const content = rule.content;
+    return { type: "CHOICE", members: [content, { type: "BLANK" }] };
+  }
+  return null;
+}
+function referencedNames(rule, out = /* @__PURE__ */ new Set()) {
+  if (!rule || typeof rule !== "object") return out;
+  const r = rule;
+  if (r.type === "SYMBOL" && typeof r.name === "string") out.add(r.name);
+  if (r.type === "ALIAS" && typeof r.value === "string") out.add(r.value);
+  if (r.content !== void 0) referencedNames(r.content, out);
+  for (const m of r.members ?? []) referencedNames(m, out);
+  return out;
+}
+function implicitArmHiddenNames(rule, variantEntries, parentKind) {
+  const plan = planSiblingVariantHoist(rule, variantEntries, parentKind);
+  return plan === null ? [] : plan.implicit.map((v) => polymorphHiddenName(parentKind, variantMintName(v)));
+}
+function tryHoistSiblingVariants(rule, variantEntries) {
+  const { bail } = peelPrecWrappersFromRule(rule);
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
+  const plan = planSiblingVariantHoist(rule, variantEntries, parentKind, (reason) => bail(reason));
+  if (plan === null) return null;
+  const { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed } = plan;
+  if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
+  if (wireIsPrecedenceRankedRule(parentKind))
+    return bail(`'${parentKind}' is ranked by name in the grammar's precedences; its variants would reduce unranked`);
+  const authored = parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
+  if (authored !== void 0) return bail(`'${authored}' is an authored rule and would not carry the hoisted scaffolding`);
+  const unregistered = plan.implicit.map((v) => polymorphHiddenName(parentKind, variantMintName(v))).find((name) => !wireHasPreRegisteredRule(name));
+  if (unregistered !== void 0) return bail(`implicit arm '${unregistered}' was not pre-registered at wire time`);
   return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
@@ -4520,7 +4649,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     const lift = enrichLiftArmOf(altMember);
     if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
     const altContent = lift === null ? altMember : lift.body;
-    const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
+    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
     const hoistedSeq = reconstructContainer(core, hoistedMembers);
     const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
     if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
@@ -5655,10 +5784,6 @@ var grammar_sittir_default = grammar(
             optional(field("terminator", $._semicolon))
           )
         ),
-        optional_parameter: ($, original) => original,
-        public_field_definition: ($, original) => original,
-        required_parameter: ($, original) => original,
-        //TODO: remove?
         object_type: ($) => refine(
           seq(
             field("opening", choice("{", "{|")),

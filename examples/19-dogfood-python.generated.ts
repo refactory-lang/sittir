@@ -26,13 +26,13 @@ export function rebuildPython4spaceGenerated() {
 					object: ir.identifier("self"),
 					attribute: ir.identifier("user_id"),
 				}),
-				content: [ir.identifier("user_id")],
+				right: ir.identifier("user_id"),
 			}))), ir.simpleStatements.strict({ delimiter: Delimiter.None }, ir.expressionStatement.strict(ir.assignment.eq.strict({
 				left: ir.attribute.strict({
 					object: ir.identifier("self"),
 					attribute: ir.identifier("name"),
 				}),
-				content: [ir.identifier("name")],
+				right: ir.identifier("name"),
 			}))))],
 		}), ir.functionDefinition.block.strict({
 			name: ir.identifier("greet"),

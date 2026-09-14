@@ -3386,9 +3386,10 @@ refused — the arm is wrong, not merely inapplicable.
 ```text
 /**
  * Supertype kind name to its transitive member set, both hidden and
- * visible spellings of every member. Consumed by the wrap emitter's
- * `SUPERTYPE_MEMBERS` table and by the options emitter's supertype × slot
- * groups, so both agree on what "a member of `_expression`" means.
+ * visible spellings of every member: the wrap emitter's `SUPERTYPE_MEMBERS`
+ * table, which drives read-time drilling through transparent supertypes,
+ * so only true supertypes belong here. `supertypeMembersByPublicName` is
+ * the wider union map the options emitter uses.
  */
 ```
 
@@ -3835,13 +3836,26 @@ supertype matches every site whose segment names one of its members, through
 the members' sites the way the flat `Members` fan-out did; a site path itself
 always names the concrete kind.
 
+### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
+
+The direct member names of a union node, or `null` for a node that is not one: a supertype's subtype names, a polymorph parent's symbol arms. The membership predicate `supertypeMembersByPublicName` hands to `buildMembersMap`.
+
+### `packages/codegen/src/compiler/model/supertype-members.ts::buildMembersMap`
+
+The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members in hidden and visible spellings, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
 
-`buildSupertypeMembersMap` keyed and valued by public kind names: the form an
-address spells, so a `(supertype)` segment can be compared with a site's
-concrete kind without either side stripping underscores at the comparison.
-Built once per caller and threaded into `matchAddress` and `resolveBindings`
-rather than derived inside them, so the membership has one source.
+The union map keyed and valued by public kind names: the form an address
+spells, so a `(supertype)` segment can be compared with a site's concrete kind
+without either side stripping underscores at the comparison. A union here is a
+supertype (members = its subtypes) or a polymorph parent (members = the symbol
+arms of its pure choice), so an address naming a variant parent reaches the
+sites on its variants exactly as one naming `_expression` reaches expressions;
+a polymorph parent is not transparent at read, which is why it is absent from
+`buildSupertypeMembersMap`. Built once per caller and threaded into
+`matchAddress` and `resolveBindings` rather than derived inside them, so the
+membership has one source.
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
 

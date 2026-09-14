@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 281,
+  "nodeCount": 282,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -53,6 +53,13 @@
       "definedBy": "override",
       "childKind": {
         "match_block_block": "block"
+      }
+    },
+    "except_clause": {
+      "definedBy": "override",
+      "childKind": {
+        "except_clause_exception": "exception",
+        "except_clause_arm1": "arm1"
       }
     },
     "with_clause": {
@@ -131,10 +138,6 @@
       "suite_inline": "_simple_statements",
       "suite_empty": "_newline"
     },
-    "except_clause.suite": {
-      "suite_inline": "_simple_statements",
-      "suite_empty": "_newline"
-    },
     "finally_clause.block": {
       "suite_inline": "_simple_statements",
       "suite_empty": "_newline"
@@ -163,6 +166,14 @@
     },
     "format_specifier.content": {
       "format_expression": "interpolation"
+    },
+    "_except_clause_exception.suite": {
+      "suite_inline": "_simple_statements",
+      "suite_empty": "_newline"
+    },
+    "_except_clause_arm1.suite": {
+      "suite_inline": "_simple_statements",
+      "suite_empty": "_newline"
     }
   },
   "factorySlots": {
@@ -695,30 +706,15 @@
       }
     },
     "except_clause": {
-      "star_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "exception": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "suite": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_suite_inline",
-          "_suite_block",
-          "_suite_empty"
+          "_except_clause_exception",
+          "_except_clause_arm1"
         ]
       }
     },
@@ -1449,13 +1445,6 @@
       }
     },
     "assignment": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2465,6 +2454,13 @@
       }
     },
     "_except_clause_exception": {
+      "star_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2475,9 +2471,49 @@
           "_except_clause_exception_as",
           "_except_clause_exception_list"
         ]
+      },
+      "suite": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_suite_inline",
+          "_suite_block",
+          "_suite_empty"
+        ]
+      }
+    },
+    "_except_clause_arm1": {
+      "star_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suite": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_suite_inline",
+          "_suite_block",
+          "_suite_empty"
+        ]
       }
     },
     "_assignment_eq": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "right": {
         "unnamed": false,
         "slotCount": 1,
@@ -2487,6 +2523,13 @@
       }
     },
     "_assignment_type": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
@@ -2496,6 +2539,13 @@
       }
     },
     "_assignment_typed": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
@@ -2683,7 +2733,7 @@
     },
     {
       "kind": "_assignment_eq",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "AssignmentEq",
       "factoryName": "_assignmentEq",
       "irKey": "assignmentEq",
@@ -2692,6 +2742,35 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern",
+            "pattern_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "parseKind": "pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern_list",
+              "parseKind": "pattern_list",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "right",
           "propertyName": "right",
@@ -2755,14 +2834,15 @@
         }
       ],
       "name": "_assignment_eq",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
+        "left",
         "right"
       ]
     },
     {
       "kind": "_assignment_type",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "AssignmentType",
       "factoryName": "_assignmentType",
       "irKey": "assignmentType",
@@ -2771,6 +2851,35 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern",
+            "pattern_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "parseKind": "pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern_list",
+              "parseKind": "pattern_list",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "type",
           "propertyName": "type",
@@ -2794,9 +2903,9 @@
         }
       ],
       "name": "_assignment_type",
-      "factoryShape": "forwarded",
-      "forwardsTo": "type",
+      "factoryShape": "config",
       "factoryFields": [
+        "left",
         "type"
       ]
     },
@@ -2811,6 +2920,35 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "pattern",
+            "pattern_list"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern",
+              "parseKind": "pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pattern_list",
+              "parseKind": "pattern_list",
+              "unresolved": true
+            }
+          ]
+        },
         {
           "name": "type",
           "propertyName": "type",
@@ -2897,6 +3035,7 @@
       "name": "_assignment_typed",
       "factoryShape": "config",
       "factoryFields": [
+        "left",
         "type",
         "right"
       ]
@@ -3183,8 +3322,87 @@
       "text": "\n\n\n"
     },
     {
+      "kind": "_except_clause_arm1",
+      "modelType": "branch",
+      "typeName": "ExceptClauseArm1",
+      "factoryName": "_exceptClauseArm1",
+      "irKey": "exceptClauseArm1",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "star_marker",
+          "propertyName": "starMarker",
+          "paramName": "starMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ]
+        },
+        {
+          "name": "suite",
+          "propertyName": "suite",
+          "paramName": "suite",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_simple_statements",
+            "_suite_block",
+            "_newline"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_simple_statements",
+              "parseKind": "suite_inline",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_suite_block",
+              "parseKind": "suite_block",
+              "unresolved": true,
+              "seat": {
+                "kind": "_suite_block",
+                "shape": "arm",
+                "mount": "block"
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "suite_empty",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "name": "_except_clause_arm1",
+      "factoryShape": "config",
+      "factoryFields": [
+        "star_marker",
+        "suite"
+      ]
+    },
+    {
       "kind": "_except_clause_exception",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "ExceptClauseException",
       "factoryName": "_exceptClauseException",
       "irKey": "exceptClauseException",
@@ -3193,6 +3411,24 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "star_marker",
+          "propertyName": "starMarker",
+          "paramName": "starMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ]
+        },
         {
           "name": "content",
           "propertyName": "content",
@@ -3226,12 +3462,56 @@
               }
             }
           ]
+        },
+        {
+          "name": "suite",
+          "propertyName": "suite",
+          "paramName": "suite",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "_simple_statements",
+            "_suite_block",
+            "_newline"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_simple_statements",
+              "parseKind": "suite_inline",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_suite_block",
+              "parseKind": "suite_block",
+              "unresolved": true,
+              "seat": {
+                "kind": "_suite_block",
+                "shape": "arm",
+                "mount": "block"
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "suite_empty",
+              "unresolved": true
+            }
+          ]
         }
       ],
       "name": "_except_clause_exception",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "star_marker",
+        "content",
+        "suite"
       ]
     },
     {
@@ -4762,41 +5042,12 @@
     },
     {
       "kind": "assignment",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "Assignment",
       "factoryName": "assignment",
       "irKey": "assignment",
       "hidden": false,
       "slots": [
-        {
-          "name": "left",
-          "propertyName": "left",
-          "paramName": "left",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "pattern",
-            "pattern_list"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern",
-              "parseKind": "pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "pattern_list",
-              "parseKind": "pattern_list",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "content",
           "propertyName": "content",
@@ -4850,9 +5101,8 @@
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "left",
         "content"
       ]
     },
@@ -7371,45 +7621,28 @@
     },
     {
       "kind": "except_clause",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ExceptClause",
       "factoryName": "exceptClause",
       "irKey": "exceptClause",
       "hidden": false,
       "slots": [
         {
-          "name": "star_marker",
-          "propertyName": "starMarker",
-          "paramName": "starMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "boolean",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "*",
-              "parseKind": "star"
-            }
-          ]
-        },
-        {
-          "name": "exception",
-          "propertyName": "exception",
-          "paramName": "exception",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "_except_clause_exception"
+            "_except_clause_exception",
+            "_except_clause_arm1"
           ],
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_except_clause_exception",
               "parseKind": "except_clause_exception",
               "unresolved": true,
@@ -7418,57 +7651,25 @@
                 "shape": "arm",
                 "mount": "exception"
               }
-            }
-          ]
-        },
-        {
-          "name": "suite",
-          "propertyName": "suite",
-          "paramName": "suite",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "mixedEnum",
-          "kinds": [
-            "_simple_statements",
-            "_suite_block",
-            "_newline"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_simple_statements",
-              "parseKind": "suite_inline",
-              "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_suite_block",
-              "parseKind": "suite_block",
+              "name": "_except_clause_arm1",
+              "parseKind": "except_clause_arm1",
               "unresolved": true,
               "seat": {
-                "kind": "_suite_block",
+                "kind": "_except_clause_arm1",
                 "shape": "arm",
-                "mount": "block"
+                "mount": "arm1"
               }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "suite_empty",
-              "unresolved": true
             }
           ]
         }
       ],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "star_marker",
-        "exception",
-        "suite"
+        "content"
       ]
     },
     {

@@ -25,6 +25,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: []
 	};

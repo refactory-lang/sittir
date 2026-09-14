@@ -42,11 +42,11 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_definition
-	get function() {
+	get function(): (typeof ir)['functionDefinition'] {
 		return ir.functionDefinition;
 	},
 	// definition.class → class_definition
-	get class() {
+	get class(): (typeof ir)['classDefinition'] {
 		return ir.classDefinition;
 	}
 } as const;

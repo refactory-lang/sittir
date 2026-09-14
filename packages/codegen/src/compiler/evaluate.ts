@@ -289,6 +289,7 @@ interface MetadataSinks {
 	factoryInline: string[];
 	inline: string[];
 	conflicts: string[][];
+	precedences: string[][];
 }
 
 interface EvaluateCtx {
@@ -331,9 +332,10 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const factoryInline: string[] = [];
 	const inline: string[] = [];
 	const conflicts: string[][] = [];
+	const precedences: string[][] = [];
 	let word: string | null = null;
 
-	const sinks: MetadataSinks = { extras, externals, supertypes, factoryInline, inline, conflicts };
+	const sinks: MetadataSinks = { extras, externals, supertypes, factoryInline, inline, conflicts, precedences };
 	const ctx: EvaluateCtx = {
 		rules,
 		provenanceByKind,
@@ -384,6 +386,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		factoryInline,
 		inline,
 		conflicts,
+		precedences,
 		word,
 		references,
 		ruleCatalog: identified.ruleCatalog,
@@ -958,6 +961,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		factoryInline?: string[];
 		inline?: string[];
 		conflicts?: string[][];
+		precedences?: string[][];
 		word?: string;
 	} | null;
 	if (inherited) {
@@ -969,6 +973,7 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 		}
 		if (!opts.inline && Array.isArray(inherited.inline)) sinks.inline.push(...inherited.inline);
 		if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts);
+		if (!opts.precedences && Array.isArray(inherited.precedences)) sinks.precedences.push(...inherited.precedences);
 		if (!opts.word && inherited.word) setWord(inherited.word);
 	}
 }
@@ -998,6 +1003,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		factoryInline?: string[];
 		inline?: string[];
 		conflicts?: string[][];
+		precedences?: string[][];
 		word?: string;
 	} | null;
 	if (opts.extras) {
@@ -1060,6 +1066,26 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 							.filter(Boolean)
 					);
 				}
+			}
+		}
+	}
+
+	if (opts.precedences) {
+		const $ = createProxy('_precedences_', refs);
+		const basePrecedences = baseGrammar?.precedences ?? [];
+		const result = opts.precedences.call($, $, basePrecedences);
+		if (Array.isArray(result)) {
+			for (const group of result) {
+				if (!Array.isArray(group)) continue;
+				sinks.precedences.push(
+					group
+						.map((entry) => {
+							if (typeof entry === 'string') return entry;
+							const n = coerceToRule(entry);
+							return n.type === SYMBOL ? n.name : '';
+						})
+						.filter(Boolean)
+				);
 			}
 		}
 	}

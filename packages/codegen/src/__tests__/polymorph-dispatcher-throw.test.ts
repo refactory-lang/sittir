@@ -1,6 +1,7 @@
 /**
  * polymorph-dispatcher-throw.test.ts — asserts generated from() resolver
- * error behavior for a polymorph parent (python `assignment`).
+ * error behavior for a variant kind (python `assignment.eq`, the arm that
+ * carries the parent's `left`; the parent itself is a pure choice).
  *
  * Covers the two silent-failure gaps fixed in the `_resolveOne` family and
  * the `from()` call-emission site (packages/codegen/src/emitters/from.ts):
@@ -26,9 +27,9 @@ let assignment: Dispatcher;
 
 beforeAll(async () => {
 	const mod = (await import('../../../python/src/ir.ts' as string)) as {
-		ir: { assignment: Dispatcher };
+		ir: { assignment: Dispatcher & { eq: Dispatcher } };
 	};
-	assignment = mod.ir.assignment;
+	assignment = mod.ir.assignment.eq;
 });
 
 describe('generated from() resolver — silent-failure gaps', () => {
@@ -49,7 +50,7 @@ describe('generated from() resolver — silent-failure gaps', () => {
 	});
 
 	it('throws a purpose-built "Missing required slot" error when a required slot resolves to undefined (Gap A)', () => {
-		expect(() => assignment({})).toThrow(/Missing required slot 'left' on assignment\.from\(\)/);
+		expect(() => assignment({})).toThrow(/Missing required slot 'left' on \w*assignment\w*\.from\(\)/);
 	});
 
 	it('throws on null input (malformed)', () => {

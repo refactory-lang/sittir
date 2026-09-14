@@ -272,7 +272,8 @@ function composeAcrossSlots(
 	nodeMap: NodeMap,
 	seated: FlavorRefs | undefined,
 	armEntries: Map<string, ArmEntry>,
-	methods: string[]
+	methods: string[],
+	chainsByArm: Map<string, string[]>
 ): void {
 	const slots = wireSet.node instanceof AbstractAssembledCompound ? wireSet.node.slots : [];
 	const indexOf = (sub: SubFactory): number => slots.indexOf(sub.slot);
@@ -304,6 +305,7 @@ function composeAcrossSlots(
 				named = true;
 			}
 			methods.push(...chained.method);
+			chainsByArm.set(outer.name, [...(chainsByArm.get(outer.name) ?? []), inner.name]);
 			host.children.set(inner.name, {
 				sub: inner,
 				line: `strict: ${chained.strictApply}, coerce: ${chained.coerceApply}`,
@@ -419,6 +421,11 @@ function nestingArmOf(sub: SubFactory, subs: readonly SubFactory[]): { host: str
 			other.arm.path[other.arm.path.length - 1] === key
 	);
 	return { host: host.name, key: collides ? sub.name : key };
+}
+
+function childChains(sub: SubFactory, chainedByKind: ReadonlyMap<string, ReadonlyMap<string, readonly string[]>>): readonly string[] {
+	if (sub.arm.via !== 'node' || sub.arm.path.length === 0) return [];
+	return chainedByKind.get(sub.arm.child.kind)?.get(sub.arm.path[sub.arm.path.length - 1]!) ?? [];
 }
 
 function methodName(parentKey: string, subName: string): string {
@@ -766,6 +773,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const blocks: string[] = [];
 	let usesKindId = false;
 	let emittedHelpers = false;
+	const chainedByKind = new Map<string, Map<string, string[]>>();
 
 	for (const kind of wires.order) {
 		const wireSet = wires.byKind.get(kind)!;
@@ -807,8 +815,23 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			} else {
 				host.children.set(under.key, entry);
 			}
+			for (const chain of childChains(sub, chainedByKind)) {
+				if (sub.arm.via !== 'node') break;
+				const chainedSub: SubFactory = { ...sub, arm: { ...sub.arm, path: [...sub.arm.path, chain] } };
+				const emission = emitSub(wireSet.node, wireSet.parentKey, chainedSub, wires, nodeMap, seated?.refs, `${sub.name}$${chain}`);
+				if (emission === undefined || emission.coerceApply === undefined || emission.coerceType === undefined) continue;
+				methods.push(...emission.method);
+				entry.children.set(chain, {
+					sub: chainedSub,
+					line: `strict: ${emission.strictApply}, coerce: ${emission.coerceApply}`,
+					type: `strict: ${emission.strictType}; coerce: ${emission.coerceType}`,
+					children: new Map()
+				});
+			}
 		}
-		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods);
+		const chained = new Map<string, string[]>();
+		composeAcrossSlots(wireSet, wires, nodeMap, seated?.refs, armEntries, methods, chained);
+		chainedByKind.set(kind, chained);
 		for (const [name, entry] of armEntries) {
 			const rendered = renderArm(name, entry);
 			wireLines.push(`	${rendered.line},`);

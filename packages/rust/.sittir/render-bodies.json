@@ -365,8 +365,50 @@
 			"field": "closure_expression_block_before"
 		},
 		{
-			"kind": "seam",
-			"field": "dash_gt_before"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "move_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "move_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
 		},
 		{
 			"kind": "if",
@@ -374,6 +416,10 @@
 				{
 					"test": "return_type",
 					"body": [
+						{
+							"kind": "seam",
+							"field": "dash_gt_before"
+						},
 						{
 							"kind": "text",
 							"text": "->"
@@ -411,8 +457,62 @@
 	],
 	"_closure_expression_expr": [
 		{
+			"kind": "seam",
+			"field": "closure_expression_expr_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "move_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "move_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
 			"kind": "slot",
 			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "closure_expression_expr_after"
 		}
 	],
 	"_delim_token_tree_brace": [
@@ -603,6 +703,34 @@
 			"field": "field_pattern_named_before"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "ref_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "ref_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "mutable_specifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "mutable_specifier"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
 			"name": "name"
 		},
@@ -625,6 +753,120 @@
 		{
 			"kind": "seam",
 			"field": "field_pattern_named_after"
+		}
+	],
+	"_field_pattern_shorthand": [
+		{
+			"kind": "seam",
+			"field": "field_pattern_shorthand_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "ref_marker",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "ref_marker"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "mutable_specifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "mutable_specifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "field_pattern_shorthand_after"
+		}
+	],
+	"_foreign_mod_item_body": [
+		{
+			"kind": "seam",
+			"field": "foreign_mod_item_body_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "extern_modifier"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "foreign_mod_item_body_after"
+		}
+	],
+	"_foreign_mod_item_semi": [
+		{
+			"kind": "seam",
+			"field": "foreign_mod_item_semi_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "extern_modifier"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_after"
+		},
+		{
+			"kind": "seam",
+			"field": "foreign_mod_item_semi_after"
 		}
 	],
 	"_function_type_fn_form": [
@@ -828,6 +1070,22 @@
 		},
 		{
 			"kind": "seam",
+			"field": "macro_rules_bang_before"
+		},
+		{
+			"kind": "text",
+			"text": "macro_rules!"
+		},
+		{
+			"kind": "seam",
+			"field": "macro_rules_bang_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
 			"field": "lbrace_before"
 		},
 		{
@@ -873,6 +1131,22 @@
 		{
 			"kind": "seam",
 			"field": "macro_definition_bracket_before"
+		},
+		{
+			"kind": "seam",
+			"field": "macro_rules_bang_before"
+		},
+		{
+			"kind": "text",
+			"text": "macro_rules!"
+		},
+		{
+			"kind": "seam",
+			"field": "macro_rules_bang_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -933,6 +1207,22 @@
 		{
 			"kind": "seam",
 			"field": "macro_definition_paren_before"
+		},
+		{
+			"kind": "seam",
+			"field": "macro_rules_bang_before"
+		},
+		{
+			"kind": "text",
+			"text": "macro_rules!"
+		},
+		{
+			"kind": "seam",
+			"field": "macro_rules_bang_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
 		},
 		{
 			"kind": "seam",
@@ -1003,10 +1293,64 @@
 			"field": "macro_rules_after"
 		}
 	],
+	"_match_arm_block_ending": [
+		{
+			"kind": "seam",
+			"field": "match_arm_block_ending_before"
+		},
+		{
+			"kind": "slot",
+			"name": "attributes"
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_before"
+		},
+		{
+			"kind": "text",
+			"text": "=>"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_after"
+		},
+		{
+			"kind": "slot",
+			"name": "value"
+		},
+		{
+			"kind": "seam",
+			"field": "match_arm_block_ending_after"
+		}
+	],
 	"_match_arm_with_comma": [
 		{
 			"kind": "seam",
 			"field": "match_arm_with_comma_before"
+		},
+		{
+			"kind": "slot",
+			"name": "attributes"
+		},
+		{
+			"kind": "slot",
+			"name": "pattern"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_before"
+		},
+		{
+			"kind": "text",
+			"text": "=>"
+		},
+		{
+			"kind": "seam",
+			"field": "eq_gt_after"
 		},
 		{
 			"kind": "slot",
@@ -1045,6 +1389,102 @@
 		{
 			"kind": "seam",
 			"field": "match_block_arms_after"
+		}
+	],
+	"_mod_item_external": [
+		{
+			"kind": "seam",
+			"field": "mod_item_external_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "mod_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "mod"
+		},
+		{
+			"kind": "seam",
+			"field": "mod_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_after"
+		},
+		{
+			"kind": "seam",
+			"field": "mod_item_external_after"
+		}
+	],
+	"_mod_item_inline": [
+		{
+			"kind": "seam",
+			"field": "mod_item_inline_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "mod_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "mod"
+		},
+		{
+			"kind": "seam",
+			"field": "mod_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "mod_item_inline_after"
 		}
 	],
 	"_or_pattern_binary": [
@@ -1143,6 +1583,74 @@
 		{
 			"kind": "seam",
 			"field": "patterns_after"
+		}
+	],
+	"_pointer_type_const": [
+		{
+			"kind": "seam",
+			"field": "pointer_type_const_before"
+		},
+		{
+			"kind": "seam",
+			"field": "star_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "seam",
+			"field": "const_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "const"
+		},
+		{
+			"kind": "seam",
+			"field": "const_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "pointer_type_const_after"
+		}
+	],
+	"_pointer_type_mut": [
+		{
+			"kind": "seam",
+			"field": "pointer_type_mut_before"
+		},
+		{
+			"kind": "seam",
+			"field": "star_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "text",
+			"text": "mut"
+		},
+		{
+			"kind": "slot",
+			"name": "type"
+		},
+		{
+			"kind": "seam",
+			"field": "pointer_type_mut_after"
 		}
 	],
 	"_range_expression_binary": [
@@ -1316,6 +1824,50 @@
 			"kind": "if",
 			"arms": [
 				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "struct"
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
 					"test": "where_clause",
 					"body": [
 						{
@@ -1339,6 +1891,50 @@
 		{
 			"kind": "seam",
 			"field": "struct_item_tuple_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "struct"
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "slot",
@@ -1373,6 +1969,72 @@
 		{
 			"kind": "seam",
 			"field": "struct_item_tuple_after"
+		}
+	],
+	"_struct_item_unit": [
+		{
+			"kind": "seam",
+			"field": "struct_item_unit_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "visibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "visibility_modifier"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "struct"
+		},
+		{
+			"kind": "seam",
+			"field": "struct_keyword_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "semi_before"
+		},
+		{
+			"kind": "text",
+			"text": ";"
+		},
+		{
+			"kind": "seam",
+			"field": "semi_after"
+		},
+		{
+			"kind": "seam",
+			"field": "struct_item_unit_after"
 		}
 	],
 	"_struct_pattern_elements": [
@@ -2668,62 +3330,8 @@
 	],
 	"closure_expression": [
 		{
-			"kind": "seam",
-			"field": "closure_expression_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "static_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "static_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "async_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "async_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "move_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "move_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "slot",
-			"name": "parameters"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "closure_expression_after"
 		}
 	],
 	"closure_parameters": [
@@ -3664,44 +4272,8 @@
 	],
 	"field_pattern": [
 		{
-			"kind": "seam",
-			"field": "field_pattern_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "ref_marker",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "ref_marker"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "mutable_specifier",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "mutable_specifier"
-						}
-					]
-				}
-			]
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "field_pattern_after"
 		}
 	],
 	"for_expression": [
@@ -3841,34 +4413,8 @@
 	],
 	"foreign_mod_item": [
 		{
-			"kind": "seam",
-			"field": "foreign_mod_item_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "visibility_modifier",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "visibility_modifier"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "slot",
-			"name": "extern_modifier"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "foreign_mod_item_after"
 		}
 	],
 	"function_item": [
@@ -5075,32 +5621,8 @@
 	],
 	"macro_definition": [
 		{
-			"kind": "seam",
-			"field": "macro_definition_before"
-		},
-		{
-			"kind": "seam",
-			"field": "macro_rules_bang_before"
-		},
-		{
-			"kind": "text",
-			"text": "macro_rules!"
-		},
-		{
-			"kind": "seam",
-			"field": "macro_rules_bang_after"
-		},
-		{
-			"kind": "slot",
-			"name": "name"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "macro_definition_after"
 		}
 	],
 	"macro_invocation": [
@@ -5171,36 +5693,8 @@
 	],
 	"match_arm": [
 		{
-			"kind": "seam",
-			"field": "match_arm_before"
-		},
-		{
-			"kind": "slot",
-			"name": "attributes"
-		},
-		{
-			"kind": "slot",
-			"name": "pattern"
-		},
-		{
-			"kind": "seam",
-			"field": "eq_gt_before"
-		},
-		{
-			"kind": "text",
-			"text": "=>"
-		},
-		{
-			"kind": "seam",
-			"field": "eq_gt_after"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "match_arm_after"
 		}
 	],
 	"match_block": [
@@ -5333,46 +5827,8 @@
 	],
 	"mod_item": [
 		{
-			"kind": "seam",
-			"field": "mod_item_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "visibility_modifier",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "visibility_modifier"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "mod_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "mod"
-		},
-		{
-			"kind": "seam",
-			"field": "mod_keyword_after"
-		},
-		{
-			"kind": "slot",
-			"name": "name"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "mod_item_after"
 		}
 	],
 	"mut_pattern": [
@@ -5605,35 +6061,8 @@
 	],
 	"pointer_type": [
 		{
-			"kind": "seam",
-			"field": "pointer_type_before"
-		},
-		{
-			"kind": "seam",
-			"field": "star_before"
-		},
-		{
-			"kind": "text",
-			"text": "*"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "seam",
-			"field": "star_after"
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "slot",
-			"name": "type"
-		},
-		{
-			"kind": "seam",
-			"field": "pointer_type_after"
 		}
 	],
 	"qualified_type": [
@@ -6425,60 +6854,8 @@
 	],
 	"struct_item": [
 		{
-			"kind": "seam",
-			"field": "struct_item_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "visibility_modifier",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "visibility_modifier"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "seam",
-			"field": "struct_keyword_before"
-		},
-		{
-			"kind": "text",
-			"text": "struct"
-		},
-		{
-			"kind": "seam",
-			"field": "struct_keyword_after"
-		},
-		{
-			"kind": "slot",
-			"name": "name"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "type_parameters",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "type_parameters"
-						}
-					]
-				}
-			]
-		},
-		{
 			"kind": "slot",
 			"name": "content"
-		},
-		{
-			"kind": "seam",
-			"field": "struct_item_after"
 		}
 	],
 	"struct_pattern": [

@@ -5,8 +5,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { transform } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
-import { withWireContext } from '../wire/wire.ts';
+import { withWireContext, getCurrentWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+
+const ctx0 = () => getCurrentWireContext()!;
 
 describe('tryHoistSiblingVariants (via transform)', () => {
 	beforeAll(() => installFakeDsl());
@@ -55,20 +57,54 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		// keys on instead of a registered pair.
 	});
 
-	it('skips hoist when no variant alternative matches empty (non-empty alts go per-patch)', () => {
-		const { ctx } = withWireContext('nonempty', () => {
+	it('hoists non-empty sibling variants whole-arm too: each variant carries the scaffolding and the parent is a pure choice', () => {
+		const { ctx, result } = withWireContext('nonempty', () => {
 			const g = globalThis as any;
 			const original = g.seq(
 				{ type: 'STRING', value: '(' } as any,
 				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'SYMBOL', name: 'Y' } as any),
 				{ type: 'STRING', value: ')' } as any
 			);
-			transform(original, {
+			return transform(original, {
 				'1/0': variant('x'),
 				'1/1': variant('y')
 			});
 		});
-		expect(ctx.conflictGroups).toEqual([]);
+		expect([...ctx.deposits.keys()].sort()).toEqual(['_nonempty_x', '_nonempty_y']);
+		const x = ctx.deposits.get('_nonempty_x') as unknown as { type: string; members: { type: string; value?: string; name?: string }[] };
+		expect(x.type).toBe('SEQ');
+		expect(x.members.map((m) => m.value ?? m.name)).toEqual(['(', 'X', ')']);
+		expect((result as { type: string }).type).toBe('CHOICE');
+		expect(ctx.conflictGroups).toEqual([['_nonempty_x', '_nonempty_y'], ['_nonempty_x'], ['_nonempty_y']]);
+	});
+
+	it('mints an implicit variant for an arm no variant() names, under the arm naming taxonomy', () => {
+		const { ctx } = withWireContext('partial', () => {
+			ctx0().preRegisteredHidden.add('_partial_arm');
+			const g = globalThis as any;
+			const original = g.seq(
+				{ type: 'STRING', value: '[' } as any,
+				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'BLANK' } as any),
+				{ type: 'STRING', value: ']' } as any
+			);
+			return transform(original, { '1/0': variant('x') });
+		});
+		expect([...ctx.deposits.keys()].sort()).toEqual(['_partial_arm', '_partial_x']);
+		const bare = ctx.deposits.get('_partial_arm') as unknown as { members: { type: string; value?: string }[] };
+		expect(bare.members.map((m) => m.value ?? m.type)).toEqual(['[', ']']);
+	});
+
+	it('bails when an implicit arm was not pre-registered, so the parser never meets an undefined symbol', () => {
+		const { ctx } = withWireContext('unregistered', () => {
+			const g = globalThis as any;
+			const original = g.seq(
+				{ type: 'STRING', value: '[' } as any,
+				g.choice({ type: 'SYMBOL', name: 'X' } as any, { type: 'BLANK' } as any),
+				{ type: 'STRING', value: ']' } as any
+			);
+			return transform(original, { '1/0': variant('x') });
+		});
+		expect(ctx.deposits.has('_unregistered_arm')).toBe(false);
 	});
 
 	it('bails on mixed choice positions (variants at different choicePos)', () => {

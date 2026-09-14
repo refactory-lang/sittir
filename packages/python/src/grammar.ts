@@ -159,13 +159,7 @@ export type PythonGrammar = {
 	readonly assignment: {
 		type: 'assignment';
 		named: true;
-		fields: {
-			left: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'pattern'; named: true }, { type: 'pattern_list'; named: true }];
-			};
-		};
+		fields: {};
 		children: {
 			multiple: false;
 			required: true;
@@ -180,6 +174,11 @@ export type PythonGrammar = {
 		type: 'assignment_eq';
 		named: true;
 		fields: {
+			left: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'pattern'; named: true }, { type: 'pattern_list'; named: true }];
+			};
 			right: {
 				multiple: false;
 				required: true;
@@ -197,12 +196,24 @@ export type PythonGrammar = {
 	readonly assignment_type: {
 		type: 'assignment_type';
 		named: true;
-		fields: { type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] } };
+		fields: {
+			left: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'pattern'; named: true }, { type: 'pattern_list'; named: true }];
+			};
+			type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
+		};
 	};
 	readonly assignment_typed: {
 		type: 'assignment_typed';
 		named: true;
 		fields: {
+			left: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'pattern'; named: true }, { type: 'pattern_list'; named: true }];
+			};
 			right: {
 				multiple: false;
 				required: true;
@@ -685,10 +696,17 @@ export type PythonGrammar = {
 	readonly except_clause: {
 		type: 'except_clause';
 		named: true;
-		fields: {
-			exception: { multiple: false; required: false; types: [{ type: 'except_clause_exception'; named: true }] };
-			star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] };
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'except_clause_arm1'; named: true }, { type: 'except_clause_exception'; named: true }];
 		};
+	};
+	readonly except_clause_arm1: {
+		type: 'except_clause_arm1';
+		named: true;
+		fields: { star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] } };
 		children: {
 			multiple: false;
 			required: true;
@@ -702,13 +720,16 @@ export type PythonGrammar = {
 	readonly except_clause_exception: {
 		type: 'except_clause_exception';
 		named: true;
-		fields: {};
+		fields: { star_marker: { multiple: false; required: false; types: [{ type: '*'; named: false }] } };
 		children: {
-			multiple: false;
+			multiple: true;
 			required: true;
 			types: [
 				{ type: 'except_clause_exception_as'; named: true },
-				{ type: 'except_clause_exception_list'; named: true }
+				{ type: 'except_clause_exception_list'; named: true },
+				{ type: 'suite_block'; named: true },
+				{ type: 'suite_empty'; named: true },
+				{ type: 'suite_inline'; named: true }
 			];
 		};
 	};

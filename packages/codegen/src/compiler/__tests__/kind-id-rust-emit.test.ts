@@ -30,6 +30,7 @@ function makeMinimalFixture(): {
 			factoryInline: [],
 			inline: [],
 			conflicts: [],
+			precedences: [],
 			word: null,
 			references: []
 		},
@@ -154,6 +155,7 @@ describe('emitKindIdRust', () => {
 			factoryInline: [],
 			inline: [],
 			conflicts: [],
+			precedences: [],
 			word: null,
 			references: []
 		};

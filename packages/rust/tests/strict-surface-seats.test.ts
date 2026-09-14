@@ -5,9 +5,9 @@ import { describe, expect, it } from 'vitest';
 import { ir } from '../src/index.ts';
 
 const arm = () =>
-	ir.matchArm.strict({
+	ir.matchArm.blockEnding.strict({
 		pattern: ir.matchPattern.strict({ pattern: ir.identifier('x') }),
-		content: ir.block.strict({})
+		value: ir.block.strict({})
 	});
 const last = () =>
 	ir.lastMatchArm.strict({

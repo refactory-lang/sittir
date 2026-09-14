@@ -20,11 +20,9 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // coercion rebuild renders those same arms as empty `{}` and drops the
 // `sort_by` comparator, both of which are constructible below.
 //
-// A form constructor whose seat holds the child's ARGUMENT TUPLE takes an
-// array there — `ir.matchArm.withComma({ pattern, content: [expr] })`. A bare
-// value in that position is a type error, and the runtime diagnostic it
-// produces when the types are bypassed is opaque ("seated is not iterable",
-// "Spread syntax requires ...iterable"), which is worth fixing on its own.
+// A match arm is built through its variant, which carries the whole arm:
+// `ir.matchArm.withComma({ pattern, value: expr })`. The parent kind is
+// the pure choice of its variants and seats one of them.
 // Open issues on this surface: docs/factory-surface-issues.md
 
 const id = (text: string) => ir.identifier(text);
@@ -107,8 +105,8 @@ function armPattern(variant: string, [first, second]: readonly [string, string])
 		pattern: ir.structPattern.strict({
 			type: scopedTy(id('SpliceError'), variant),
 			fields: ir.structPatternElements.strict(
-				ir.fieldPattern.strict({ content: id(first) }),
-				ir.fieldPattern.strict({ content: id(second) })
+				ir.fieldPattern.shorthand.strict({ name: id(first) }),
+				ir.fieldPattern.shorthand.strict({ name: id(second) })
 			),
 		}),
 	});
@@ -147,16 +145,16 @@ export function displayImplStrict() {
 						trailingExpression: ir.matchExpression.strict({
 							value: ir.self(),
 							body: ir.matchBlock.strict({
-								// A comma-terminated arm carrying a macro invocation: the
-								// `content` seat holds the child's argument tuple.
+								// A comma-terminated arm carrying a macro invocation: the arm
+								// variant holds the whole arm, its pattern and its value.
 								matchArm: [
 									ir.matchArm.withComma({
 										pattern: armPattern('InvalidRange', ['start', 'end'] as const),
-										content: [writeCall('invalid edit range: start={start}, end={end}')],
+										value: writeCall('invalid edit range: start={start}, end={end}'),
 									}),
 									ir.matchArm.withComma({
 										pattern: armPattern('OutOfBounds', ['end', 'source_len'] as const),
-										content: [writeCall('edit out of bounds: end={end} > source length={source_len}')],
+										value: writeCall('edit out of bounds: end={end} > source length={source_len}'),
 									}),
 								],
 								lastArm: ir.lastMatchArm.strict({

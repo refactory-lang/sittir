@@ -15,7 +15,7 @@ import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
-import { isVariantPlaceholder, variantMintName } from '../primitives/variant.ts';
+import { isVariantPlaceholder, variant, variantMintName } from '../primitives/variant.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
@@ -29,6 +29,9 @@ import {
 	wireRegisterSyntheticRule,
 	wireRegisterConflict,
 	wireGetCurrentRuleKind,
+	wireIsExtraRule,
+	wireIsPrecedenceRankedRule,
+	wireHasPreRegisteredRule,
 	polymorphVisibleName,
 	polymorphHiddenName
 } from '../wire/wire.ts';
@@ -148,11 +151,28 @@ function applyVariantPatches(
 	return result;
 }
 
-function tryHoistSiblingVariants(
+export interface SiblingVariantHoistPlan {
+	readonly core: RuntimeRule;
+	readonly precStack: ReadonlyArray<RuntimeRule>;
+	readonly seqMembers: RuntimeRule[];
+	readonly resolvedPos: number;
+	readonly choice: RuntimeRule;
+	readonly choiceMembers: RuntimeRule[];
+	readonly parsed: Array<{ key: string; v: VariantPlaceholder; choicePos: number; altIdx: number }>;
+	readonly implicit: ReadonlyArray<VariantPlaceholder>;
+}
+
+export function planSiblingVariantHoist(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
-): { rule: RuntimeRule; consumed: Set<string> } | null {
-	const { bail, precStack, core } = peelPrecWrappersFromRule(rule);
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	parentKind: string,
+	onBail: (reason: string) => void = () => {}
+): SiblingVariantHoistPlan | null {
+	const bail = (reason: string): null => {
+		onBail(reason);
+		return null;
+	};
+	const { precStack, core } = peelPrecWrappersFromRule(rule);
 	const t = core.type;
 	if (!t) return bail('core rule has no type after prec peeling');
 	if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
@@ -165,16 +185,92 @@ function tryHoistSiblingVariants(
 		);
 	const seqMembers = [...membersOf(core)];
 	const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-	const choice = seqMembers[resolvedPos];
-	if (!choice || !isChoiceType(choice.type))
-		return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
+	const choice = asChoice(seqMembers[resolvedPos]);
+	if (!choice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not choice/CHOICE`);
 	const choiceMembers = membersOf(choice);
-	const anyEmpty = parsed.some((p) =>
-		matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx]!)
+	const targeted = new Set(parsed.map((p) => (p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx)));
+	const unnamed = choiceMembers.map((_, i) => i).filter((i) => !targeted.has(i));
+	const referenced = referencedNames(choice);
+	const taken = new Set(parsed.map((p) => variantMintName(p.v)));
+	const implicit: VariantPlaceholder[] = [];
+	const candidates = unnamed.length === 1 ? ['arm'] : [];
+	for (let ordinal = 1; candidates.length < unnamed.length + referenced.size + taken.size + 1; ordinal++) candidates.push(`arm${ordinal}`);
+	const free = candidates.filter(
+		(name) =>
+			!taken.has(name) &&
+			!referenced.has(polymorphHiddenName(parentKind, name)) &&
+			!referenced.has(polymorphVisibleName(parentKind, name))
 	);
-	if (!anyEmpty) return null;
+	for (const [n, altIdx] of unnamed.entries()) {
+		const v = variant(free[n]!);
+		implicit.push(v);
+		parsed.push({ key: `${resolvedPos}/${altIdx}`, v, choicePos: resolvedPos, altIdx });
+	}
+	parsed.sort((a, b) => a.altIdx - b.altIdx);
+	const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
+	const emptyArm = choiceMembers.findIndex(
+		(arm) => (isBlank(arm) || matchesEmpty(arm)) && scaffolding.every((m) => matchesEmpty(m))
+	);
+	if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
+	const bareArm = choiceMembers.findIndex((arm) =>
+		variantBranchIsUnmaterializable({ type: 'SEQ', members: [...scaffolding, ...(isBlank(arm) ? [] : [arm])] } as unknown as RuntimeRule)
+	);
+	if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
+	return { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed, implicit };
+}
+
+function isBlank(rule: RuntimeRule): boolean {
+	return (rule.type as string) === 'BLANK';
+}
+
+function asChoice(rule: RuntimeRule | undefined): RuntimeRule | null {
+	if (!rule) return null;
+	if (isChoiceType(rule.type)) return rule;
+	if ((rule.type as string) === 'OPTIONAL') {
+		const content = (rule as unknown as { content: RuntimeRule }).content;
+		return { type: 'CHOICE', members: [content, { type: 'BLANK' }] } as unknown as RuntimeRule;
+	}
+	return null;
+}
+
+function referencedNames(rule: unknown, out: Set<string> = new Set()): Set<string> {
+	if (!rule || typeof rule !== 'object') return out;
+	const r = rule as { type?: string; name?: unknown; value?: unknown; content?: unknown; members?: unknown[] };
+	if (r.type === 'SYMBOL' && typeof r.name === 'string') out.add(r.name);
+	if (r.type === 'ALIAS' && typeof r.value === 'string') out.add(r.value);
+	if (r.content !== undefined) referencedNames(r.content, out);
+	for (const m of r.members ?? []) referencedNames(m, out);
+	return out;
+}
+
+export function implicitArmHiddenNames(
+	rule: RuntimeRule,
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	parentKind: string
+): string[] {
+	const plan = planSiblingVariantHoist(rule, variantEntries, parentKind);
+	return plan === null ? [] : plan.implicit.map((v) => polymorphHiddenName(parentKind, variantMintName(v)));
+}
+
+function tryHoistSiblingVariants(
+	rule: RuntimeRule,
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+): { rule: RuntimeRule; consumed: Set<string> } | null {
+	const { bail } = peelPrecWrappersFromRule(rule);
 	const parentKind = wireGetCurrentRuleKind();
 	if (!parentKind) return bail('no current rule kind (variant()/transform() called outside rule callback?)');
+	const plan = planSiblingVariantHoist(rule, variantEntries, parentKind, (reason) => bail(reason));
+	if (plan === null) return null;
+	const { core, precStack, seqMembers, resolvedPos, choice, choiceMembers, parsed } = plan;
+	if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
+	if (wireIsPrecedenceRankedRule(parentKind))
+		return bail(`'${parentKind}' is ranked by name in the grammar's precedences; its variants would reduce unranked`);
+	const authored = parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
+	if (authored !== undefined) return bail(`'${authored}' is an authored rule and would not carry the hoisted scaffolding`);
+	const unregistered = plan.implicit
+		.map((v) => polymorphHiddenName(parentKind, variantMintName(v)))
+		.find((name) => !wireHasPreRegisteredRule(name));
+	if (unregistered !== undefined) return bail(`implicit arm '${unregistered}' was not pre-registered at wire time`);
 	return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
 }
 
@@ -247,7 +343,7 @@ function buildHoistedVariants(
 		const lift = enrichLiftArmOf(altMember);
 		if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
 		const altContent = lift === null ? altMember : lift.body;
-		const hoistedMembers = seqMembers.map((m, i) => (i === resolvedPos ? altContent : m));
+		const hoistedMembers = seqMembers.flatMap((m, i) => (i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]));
 		const hoistedSeq = reconstructContainer(core, hoistedMembers);
 		const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
 		if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {

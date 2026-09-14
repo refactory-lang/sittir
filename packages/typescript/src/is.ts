@@ -95,6 +95,9 @@ export interface IsGuards {
 	forInStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInStatement };
+	ForHeader<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeader };
 	whileStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WhileStatement };
@@ -611,6 +614,7 @@ export interface AssertGuards {
 	switchStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SwitchStatement };
 	forStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForStatement };
 	forInStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForInStatement };
+	ForHeader(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForHeader };
 	whileStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WhileStatement };
 	doStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.DoStatement };
 	tryStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TryStatement };
@@ -932,19 +936,19 @@ const _supertype_expression_ids = new Set<number>([
 	282, 283, 284, 292, 281, 244, 246, 240, 252, 251, 250, 253, 239, 219
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	242, 241, 216, 105, 1, 445, 100, 101, 98, 255, 256, 258, 102, 103, 104, 220, 224, 230, 234, 232, 227, 259, 238, 276
+	242, 241, 216, 105, 1, 448, 100, 101, 98, 255, 256, 258, 102, 103, 104, 220, 224, 230, 234, 232, 227, 259, 238, 276
 ]);
 const _supertype_formalParameter_ids = new Set<number>([304, 305]);
-const _supertype_lhsExpression_ids = new Set<number>([241, 242, 105, 1, 445, 221, 225, 276]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([241, 242, 445, 1, 216, 276]);
+const _supertype_lhsExpression_ids = new Set<number>([241, 242, 105, 1, 448, 221, 225, 276]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([241, 242, 448, 1, 216, 276]);
 const _supertype_destructuringPattern_ids = new Set<number>([221, 225]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
 const _supertype_pattern_ids = new Set<number>([268]);
 const _supertype_propertyName_ids = new Set<number>([99, 255, 98, 273]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 445]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 445]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 445]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 445]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 448]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 448]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 448]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 448]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([359, 356, 321, 325, 311, 312]);
 const _supertype_tupleTypeMember_ids = new Set<number>([316, 317, 318, 319]);
@@ -974,6 +978,7 @@ export const is = {
 	switchStatement: _g(TSKindId.SwitchStatement),
 	forStatement: _g(TSKindId.ForStatement),
 	forInStatement: _g(TSKindId.ForInStatement),
+	ForHeader: _g(TSKindId.ForHeader),
 	whileStatement: _g(TSKindId.WhileStatement),
 	doStatement: _g(TSKindId.DoStatement),
 	tryStatement: _g(TSKindId.TryStatement),
@@ -1195,6 +1200,7 @@ export const assert = {
 	switchStatement: _makeAssert('switchStatement', is.switchStatement as _AnyGuard),
 	forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
 	forInStatement: _makeAssert('forInStatement', is.forInStatement as _AnyGuard),
+	ForHeader: _makeAssert('ForHeader', is.ForHeader as _AnyGuard),
 	whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
 	doStatement: _makeAssert('doStatement', is.doStatement as _AnyGuard),
 	tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),

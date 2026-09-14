@@ -179,7 +179,7 @@ export function displayImpl() {
 						// kept here only because this module is the coercion exhibit.
 						body: ir.matchBlock.strict({
 							matchArm: [
-								ir.matchArm({
+								ir.matchArm.blockEnding({
 									// GAP B: `match_arm.pattern` is a `match_pattern` whose own
 									// required slot is also called `pattern`, and the coercer
 									// takes no bare pattern for it — every arm spells the wrapper.
@@ -187,28 +187,27 @@ export function displayImpl() {
 										pattern: {
 											kind: 'struct_pattern',
 											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'InvalidRange' },
-											fields: [{ content: 'start' }, { content: 'end' }],
+											fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
 										},
 									},
 									// CLOSED (were two GAP A rows): both shapes build today.
 									// `ir.delimTokenTree.paren({ delimTokens: ['f', ',', '"{}"'] })`
 									// renders `(f,"{}")`, and `ir.matchArm.withComma({ pattern,
-									// content: [expr] })` renders a comma-terminated arm — its
-									// `content` seat holds the child's ARGUMENT TUPLE, so the value
-									// goes in an array. `17-dogfood-rust-strict.ts` builds the real
-									// `write!(f, …)` arms; this bare block is left as the coercion
-									// exhibit's closest shape.
-									content: ir.block.strict(),
+									// value })` renders a comma-terminated arm: each arm variant
+									// carries the whole arm. `17-dogfood-rust-strict.ts` builds the
+									// real `write!(f, …)` arms; this bare block is left as the
+									// coercion exhibit's closest shape.
+									value: ir.block.strict(),
 								}),
-								ir.matchArm({
+								ir.matchArm.blockEnding({
 									pattern: {
 										pattern: {
 											kind: 'struct_pattern',
 											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'OutOfBounds' },
-											fields: [{ content: 'end' }, { content: 'source_len' }],
+											fields: [ir.fieldPattern.shorthand({ name: 'end' }), ir.fieldPattern.shorthand({ name: 'source_len' })],
 										},
 									},
-									content: ir.block.strict(),
+									value: ir.block.strict(),
 								}),
 							],
 							lastArm: ir.lastMatchArm({
@@ -216,7 +215,7 @@ export function displayImpl() {
 									pattern: {
 										kind: 'struct_pattern',
 										type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'NonCharBoundary' },
-										fields: [{ content: 'start' }, { content: 'end' }],
+										fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
 									},
 								},
 								value: ir.block.strict(),

@@ -42,6 +42,7 @@ describe('NodeMap back-pointer maps', () => {
 			factoryInline: [],
 			inline: [],
 			conflicts: [],
+			precedences: [],
 			word: null,
 			references: []
 		};
@@ -69,6 +70,7 @@ describe('NodeMap back-pointer maps', () => {
 			factoryInline: [],
 			inline: [],
 			conflicts: [],
+			precedences: [],
 			word: null,
 			references: []
 		};

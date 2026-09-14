@@ -46,6 +46,7 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: [],
 		...overrides

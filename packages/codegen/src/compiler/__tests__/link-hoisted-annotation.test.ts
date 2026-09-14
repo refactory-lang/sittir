@@ -15,6 +15,7 @@ function raw(rules: Record<string, Rule<'evaluate'>>): RawGrammar {
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: []
 	};

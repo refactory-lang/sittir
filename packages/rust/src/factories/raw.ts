@@ -108,25 +108,23 @@ export function buildExpressionStatement(
 	);
 }
 
-export function buildMacroDefinition(config: T.MacroDefinition.Config): T.MacroDefinition.Built {
-	const _name = config.name;
-	const _content = config.content;
+export function buildMacroDefinition(
+	value: T.MacroDefinitionParen | T.MacroDefinitionBracket | T.MacroDefinitionBrace
+): T.MacroDefinition.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinition as const,
 				$source: 2 as const,
 				$named: true as const,
-				_name,
 				_content,
 				$with: {
-					name: (value: T.Identifier) => buildMacroDefinition({ ...config, name: value }),
 					content: (value: T.MacroDefinitionParen | T.MacroDefinitionBracket | T.MacroDefinitionBrace) =>
-						buildMacroDefinition({ ...config, content: value })
+						buildMacroDefinition(value)
 				}
 			},
 			{
-				name: () => _name,
 				content: () => _content
 			}
 		),
@@ -438,30 +436,20 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 	);
 }
 
-export function buildModItem(config: T.ModItem.Config): T.ModItem.Built {
-	const _visibility_modifier = config.visibilityModifier;
-	const _name = config.name;
-	const _content = coerceMixedEnumStorage<NonNullable<T.ModItem['_content']>>(config.content, [
-		[';', TSKindId.ModItemExternal] as const
-	]);
+export function buildModItem(value: T.ModItemExternal | T.ModItemInline): T.ModItem.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ModItem as const,
 				$source: 2 as const,
 				$named: true as const,
-				_visibility_modifier,
-				_name,
 				_content,
 				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) => buildModItem({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildModItem({ ...config, name: value }),
-					content: (value: NonNullable<T.ModItem.Config>['content']) => buildModItem({ ...config, content: value })
+					content: (value: T.ModItemExternal | T.ModItemInline) => buildModItem(value)
 				}
 			},
 			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
 				content: () => _content
 			}
 		),
@@ -469,32 +457,20 @@ export function buildModItem(config: T.ModItem.Config): T.ModItem.Built {
 	);
 }
 
-export function buildForeignModItem(config: T.ForeignModItem.Config): T.ForeignModItem.Built {
-	const _visibility_modifier = config.visibilityModifier;
-	const _extern_modifier = config.externModifier;
-	const _content = coerceMixedEnumStorage<NonNullable<T.ForeignModItem['_content']>>(config.content, [
-		[';', TSKindId.ForeignModItemSemi] as const
-	]);
+export function buildForeignModItem(value: T.ForeignModItemSemi | T.ForeignModItemBody): T.ForeignModItem.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ForeignModItem as const,
 				$source: 2 as const,
 				$named: true as const,
-				_visibility_modifier,
-				_extern_modifier,
 				_content,
 				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildForeignModItem({ ...config, visibilityModifier: value }),
-					externModifier: (value: T.ExternModifier) => buildForeignModItem({ ...config, externModifier: value }),
-					content: (value: NonNullable<T.ForeignModItem.Config>['content']) =>
-						buildForeignModItem({ ...config, content: value })
+					content: (value: T.ForeignModItemSemi | T.ForeignModItemBody) => buildForeignModItem(value)
 				}
 			},
 			{
-				visibilityModifier: () => _visibility_modifier,
-				externModifier: () => _extern_modifier,
 				content: () => _content
 			}
 		),
@@ -521,36 +497,20 @@ export function buildDeclarationList(...children: T.DeclarationStatement[]): T.D
 	);
 }
 
-export function buildStructItem(config: T.StructItem.Config): T.StructItem.Built {
-	const _visibility_modifier = config.visibilityModifier;
-	const _name = config.name;
-	const _type_parameters = config.typeParameters;
-	const _content = coerceMixedEnumStorage<NonNullable<T.StructItem['_content']>>(config.content, [
-		[';', TSKindId.StructItemUnit] as const
-	]);
+export function buildStructItem(value: T.StructItemBrace | T.StructItemTuple | T.StructItemUnit): T.StructItem.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.StructItem as const,
 				$source: 2 as const,
 				$named: true as const,
-				_visibility_modifier,
-				_name,
-				_type_parameters,
 				_content,
 				$with: {
-					visibilityModifier: (value?: T.VisibilityModifier) =>
-						buildStructItem({ ...config, visibilityModifier: value }),
-					name: (value: T.Identifier) => buildStructItem({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildStructItem({ ...config, typeParameters: value }),
-					content: (value: NonNullable<T.StructItem.Config>['content']) =>
-						buildStructItem({ ...config, content: value })
+					content: (value: T.StructItemBrace | T.StructItemTuple | T.StructItemUnit) => buildStructItem(value)
 				}
 			},
 			{
-				visibilityModifier: () => _visibility_modifier,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
 				content: () => _content
 			}
 		),
@@ -2436,12 +2396,8 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 	);
 }
 
-export function buildPointerType(config: T.PointerType.Config): T.PointerType.Built {
-	const _content = coerceKindEnumStorage<NonNullable<T.PointerType['_content']>>(config.content, [
-		['const', TSKindId.PointerTypeConst] as const,
-		['mut', TSKindId.MutableSpecifier] as const
-	]);
-	const _type = coerceMixedEnumStorage<NonNullable<T.PointerType['_type']>>(config.type, []);
+export function buildPointerType(value: T.PointerTypeConst | T.PointerTypeMut): T.PointerType.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
@@ -2449,16 +2405,12 @@ export function buildPointerType(config: T.PointerType.Config): T.PointerType.Bu
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				_type,
 				$with: {
-					content: (value: NonNullable<T.PointerType.Config>['content']) =>
-						buildPointerType({ ...config, content: value }),
-					type: (value: NonNullable<T.PointerType.Config>['type']) => buildPointerType({ ...config, type: value })
+					content: (value: T.PointerTypeConst | T.PointerTypeMut) => buildPointerType(value)
 				}
 			},
 			{
-				content: () => _content,
-				type: () => _type
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -3429,43 +3381,20 @@ export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
 	);
 }
 
-export function buildMatchArm(config: T.MatchArm.Config): T.MatchArm.Built {
-	const _attributes = config.attributes ?? [];
-	const _pattern = config.pattern;
-	const _content = config.content;
+export function buildMatchArm(value: T.MatchArmWithComma | T.MatchArmBlockEnding): T.MatchArm.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MatchArm as const,
 				$source: 2 as const,
 				$named: true as const,
-				_attributes,
-				_pattern,
 				_content,
 				$with: {
-					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-						buildMatchArm({ ...config, attributes: values }),
-					pattern: (value: T.MatchPattern) => buildMatchArm({ ...config, pattern: value }),
-					content: (
-						value:
-							| T.MatchArmWithComma
-							| T.UnsafeBlock
-							| T.AsyncBlock
-							| T.GenBlock
-							| T.TryBlock
-							| T.Block
-							| T.IfExpression
-							| T.MatchExpression
-							| T.WhileExpression
-							| T.LoopExpression
-							| T.ForExpression
-							| T.ConstBlock
-					) => buildMatchArm({ ...config, content: value })
+					content: (value: T.MatchArmWithComma | T.MatchArmBlockEnding) => buildMatchArm(value)
 				}
 			},
 			{
-				attributes: () => _attributes,
-				pattern: () => _pattern,
 				content: () => _content
 			}
 		),
@@ -3663,40 +3592,22 @@ function _buildConstBlock(value: T.Block): T.ConstBlock.Built {
 	);
 }
 
-export function buildClosureExpression(config: T.ClosureExpression.Config): T.ClosureExpression.Built {
-	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
-	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _parameters = config.parameters;
-	const _content = config.content;
+export function buildClosureExpression(
+	value: T.ClosureExpressionBlock | T.ClosureExpressionExpr
+): T.ClosureExpression.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ClosureExpression as const,
 				$source: 2 as const,
 				$named: true as const,
-				_static_marker,
-				_async_marker,
-				_move_marker,
-				_parameters,
 				_content,
 				$with: {
-					staticMarker: (value?: NonNullable<T.ClosureExpression.Config>['staticMarker']) =>
-						buildClosureExpression({ ...config, staticMarker: value }),
-					asyncMarker: (value?: NonNullable<T.ClosureExpression.Config>['asyncMarker']) =>
-						buildClosureExpression({ ...config, asyncMarker: value }),
-					moveMarker: (value?: NonNullable<T.ClosureExpression.Config>['moveMarker']) =>
-						buildClosureExpression({ ...config, moveMarker: value }),
-					parameters: (value: T.ClosureParameters) => buildClosureExpression({ ...config, parameters: value }),
-					content: (value: T.ClosureExpressionBlock | T.ClosureExpressionExpr) =>
-						buildClosureExpression({ ...config, content: value })
+					content: (value: T.ClosureExpressionBlock | T.ClosureExpressionExpr) => buildClosureExpression(value)
 				}
 			},
 			{
-				staticMarker: () => _static_marker,
-				asyncMarker: () => _async_marker,
-				moveMarker: () => _move_marker,
-				parameters: () => _parameters,
 				content: () => _content
 			}
 		),
@@ -4219,30 +4130,20 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 	);
 }
 
-export function buildFieldPattern(config: T.FieldPattern.Config): T.FieldPattern.Built {
-	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
-	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _content = config.content;
+export function buildFieldPattern(value: T.FieldPatternShorthand | T.FieldPatternNamed): T.FieldPattern.Built {
+	const _content = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.FieldPattern as const,
 				$source: 2 as const,
 				$named: true as const,
-				_ref_marker,
-				_mutable_specifier,
 				_content,
 				$with: {
-					refMarker: (value?: NonNullable<T.FieldPattern.Config>['refMarker']) =>
-						buildFieldPattern({ ...config, refMarker: value }),
-					mutableSpecifier: (value?: NonNullable<T.FieldPattern.Config>['mutableSpecifier']) =>
-						buildFieldPattern({ ...config, mutableSpecifier: value }),
-					content: (value: T.Identifier | T.FieldPatternNamed) => buildFieldPattern({ ...config, content: value })
+					content: (value: T.FieldPatternShorthand | T.FieldPatternNamed) => buildFieldPattern(value)
 				}
 			},
 			{
-				refMarker: () => _ref_marker,
-				mutableSpecifier: () => _mutable_specifier,
 				content: () => _content
 			}
 		),
@@ -5932,6 +5833,10 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 }
 
 export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config): T.ClosureExpressionBlock.Built {
+	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
+	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _parameters = config.parameters;
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
 		config.returnType,
 		[]
@@ -5943,15 +5848,30 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 				$type: TSKindId.ClosureExpressionBlock as const,
 				$source: 2 as const,
 				$named: true as const,
+				_static_marker,
+				_async_marker,
+				_move_marker,
+				_parameters,
 				_return_type,
 				_body,
 				$with: {
+					staticMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['staticMarker']) =>
+						buildClosureExpressionBlock({ ...config, staticMarker: value }),
+					asyncMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['asyncMarker']) =>
+						buildClosureExpressionBlock({ ...config, asyncMarker: value }),
+					moveMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['moveMarker']) =>
+						buildClosureExpressionBlock({ ...config, moveMarker: value }),
+					parameters: (value: T.ClosureParameters) => buildClosureExpressionBlock({ ...config, parameters: value }),
 					returnType: (value?: NonNullable<T.ClosureExpressionBlock.Config>['returnType']) =>
 						buildClosureExpressionBlock({ ...config, returnType: value }),
 					body: (value: T.Block) => buildClosureExpressionBlock({ ...config, body: value })
 				}
 			},
 			{
+				staticMarker: () => _static_marker,
+				asyncMarker: () => _async_marker,
+				moveMarker: () => _move_marker,
+				parameters: () => _parameters,
 				returnType: () => _return_type,
 				body: () => _body
 			}
@@ -5960,8 +5880,12 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	);
 }
 
-export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Underscore): T.ClosureExpressionExpr.Built {
-	const _body = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(value, [
+export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config): T.ClosureExpressionExpr.Built {
+	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
+	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
+	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
+	const _parameters = config.parameters;
+	const _body = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body, [
 		['_', TSKindId.Underscore] as const
 	]);
 	return withMethods(
@@ -5970,12 +5894,28 @@ export function buildClosureExpressionExpr(value: T.Expression | TSKindId.Unders
 				$type: TSKindId.ClosureExpressionExpr as const,
 				$source: 2 as const,
 				$named: true as const,
+				_static_marker,
+				_async_marker,
+				_move_marker,
+				_parameters,
 				_body,
 				$with: {
-					body: (value: NonNullable<T.Expression | TSKindId.Underscore>) => buildClosureExpressionExpr(value)
+					staticMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['staticMarker']) =>
+						buildClosureExpressionExpr({ ...config, staticMarker: value }),
+					asyncMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['asyncMarker']) =>
+						buildClosureExpressionExpr({ ...config, asyncMarker: value }),
+					moveMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['moveMarker']) =>
+						buildClosureExpressionExpr({ ...config, moveMarker: value }),
+					parameters: (value: T.ClosureParameters) => buildClosureExpressionExpr({ ...config, parameters: value }),
+					body: (value: NonNullable<T.ClosureExpressionExpr.Config>['body']) =>
+						buildClosureExpressionExpr({ ...config, body: value })
 				}
 			},
 			{
+				staticMarker: () => _static_marker,
+				asyncMarker: () => _async_marker,
+				moveMarker: () => _move_marker,
+				parameters: () => _parameters,
 				body: () => _body
 			}
 		),
@@ -6125,6 +6065,62 @@ function _buildFunctionTypeFnForm(value?: T.FunctionModifiers): T.FunctionTypeFn
 	);
 }
 
+export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModItemExternal.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _name = config.name;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ModItemExternal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier,
+				_name,
+				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildModItemExternal({ ...config, visibilityModifier: value }),
+					name: (value: T.Identifier) => buildModItemExternal({ ...config, name: value })
+				}
+			},
+			{
+				visibilityModifier: () => _visibility_modifier,
+				name: () => _name
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _name = config.name;
+	const _body = config.body;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ModItemInline as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier,
+				_name,
+				_body,
+				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildModItemInline({ ...config, visibilityModifier: value }),
+					name: (value: T.Identifier) => buildModItemInline({ ...config, name: value }),
+					body: (value: T.DeclarationList) => buildModItemInline({ ...config, body: value })
+				}
+			},
+			{
+				visibilityModifier: () => _visibility_modifier,
+				name: () => _name,
+				body: () => _body
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatternBinary.Built {
 	const _left = coerceMixedEnumStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left, []);
 	const _right = coerceMixedEnumStorage<NonNullable<T.OrPatternBinary['_right']>>(config.right, []);
@@ -6167,6 +6163,48 @@ export function buildOrPatternPrefix(value: T.Pattern): T.OrPatternPrefix.Built 
 			},
 			{
 				right: () => _right
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPointerTypeConst(value: T.Type): T.PointerTypeConst.Built {
+	const _type = coerceMixedEnumStorage<NonNullable<T.PointerTypeConst['_type']>>(value, []);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PointerTypeConst as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				$with: {
+					type: (value: NonNullable<T.Type>) => buildPointerTypeConst(value)
+				}
+			},
+			{
+				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPointerTypeMut(value: T.Type): T.PointerTypeMut.Built {
+	const _type = coerceMixedEnumStorage<NonNullable<T.PointerTypeMut['_type']>>(value, []);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PointerTypeMut as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				$with: {
+					type: (value: NonNullable<T.Type>) => buildPointerTypeMut(value)
+				}
+			},
+			{
+				type: () => _type
 			}
 		),
 		methodsEngine
@@ -6272,20 +6310,129 @@ export function buildExpressionStatementWithSemi(value: T.Expression): T.Express
 	);
 }
 
-export function buildMatchArmWithComma(value: T.Expression): T.MatchArmWithComma.Built {
-	const _value = coerceMixedEnumStorage<NonNullable<T.MatchArmWithComma['_value']>>(value, []);
+export function buildForeignModItemSemi(config: T.ForeignModItemSemi.Config): T.ForeignModItemSemi.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _extern_modifier = config.externModifier;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForeignModItemSemi as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier,
+				_extern_modifier,
+				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildForeignModItemSemi({ ...config, visibilityModifier: value }),
+					externModifier: (value: T.ExternModifier) => buildForeignModItemSemi({ ...config, externModifier: value })
+				}
+			},
+			{
+				visibilityModifier: () => _visibility_modifier,
+				externModifier: () => _extern_modifier
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _extern_modifier = config.externModifier;
+	const _body = config.body;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ForeignModItemBody as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier,
+				_extern_modifier,
+				_body,
+				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildForeignModItemBody({ ...config, visibilityModifier: value }),
+					externModifier: (value: T.ExternModifier) => buildForeignModItemBody({ ...config, externModifier: value }),
+					body: (value: T.DeclarationList) => buildForeignModItemBody({ ...config, body: value })
+				}
+			},
+			{
+				visibilityModifier: () => _visibility_modifier,
+				externModifier: () => _extern_modifier,
+				body: () => _body
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Built {
+	const _attributes = config.attributes ?? [];
+	const _pattern = config.pattern;
+	const _value = coerceMixedEnumStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value, []);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MatchArmWithComma as const,
 				$source: 2 as const,
 				$named: true as const,
+				_attributes,
+				_pattern,
 				_value,
 				$with: {
-					value: (value: NonNullable<T.Expression>) => buildMatchArmWithComma(value)
+					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+						buildMatchArmWithComma({ ...config, attributes: values }),
+					pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+					value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
+						buildMatchArmWithComma({ ...config, value: value })
 				}
 			},
 			{
+				attributes: () => _attributes,
+				pattern: () => _pattern,
+				value: () => _value
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Built {
+	const _attributes = config.attributes ?? [];
+	const _pattern = config.pattern;
+	const _value = config.value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MatchArmBlockEnding as const,
+				$source: 2 as const,
+				$named: true as const,
+				_attributes,
+				_pattern,
+				_value,
+				$with: {
+					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+						buildMatchArmBlockEnding({ ...config, attributes: values }),
+					pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+					value: (
+						value:
+							| T.UnsafeBlock
+							| T.AsyncBlock
+							| T.GenBlock
+							| T.TryBlock
+							| T.Block
+							| T.IfExpression
+							| T.MatchExpression
+							| T.WhileExpression
+							| T.LoopExpression
+							| T.ForExpression
+							| T.ConstBlock
+					) => buildMatchArmBlockEnding({ ...config, value: value })
+				}
+			},
+			{
+				attributes: () => _attributes,
+				pattern: () => _pattern,
 				value: () => _value
 			}
 		),
@@ -6726,7 +6873,40 @@ export function buildDelimTokenTreeBrace(
 	);
 }
 
+export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Built {
+	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
+	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
+	const _name = config.name;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FieldPatternShorthand as const,
+				$source: 2 as const,
+				$named: true as const,
+				_ref_marker,
+				_mutable_specifier,
+				_name,
+				$with: {
+					refMarker: (value?: NonNullable<T.FieldPatternShorthand.Config>['refMarker']) =>
+						buildFieldPatternShorthand({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier']) =>
+						buildFieldPatternShorthand({ ...config, mutableSpecifier: value }),
+					name: (value: T.Identifier) => buildFieldPatternShorthand({ ...config, name: value })
+				}
+			},
+			{
+				refMarker: () => _ref_marker,
+				mutableSpecifier: () => _mutable_specifier,
+				name: () => _name
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Built {
+	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
+	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = config.name;
 	const _pattern = coerceMixedEnumStorage<NonNullable<T.FieldPatternNamed['_pattern']>>(config.pattern, []);
 	return withMethods(
@@ -6735,15 +6915,23 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 				$type: TSKindId.FieldPatternNamed as const,
 				$source: 2 as const,
 				$named: true as const,
+				_ref_marker,
+				_mutable_specifier,
 				_name,
 				_pattern,
 				$with: {
+					refMarker: (value?: NonNullable<T.FieldPatternNamed.Config>['refMarker']) =>
+						buildFieldPatternNamed({ ...config, refMarker: value }),
+					mutableSpecifier: (value?: NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier']) =>
+						buildFieldPatternNamed({ ...config, mutableSpecifier: value }),
 					name: (value: T.Identifier) => buildFieldPatternNamed({ ...config, name: value }),
 					pattern: (value: NonNullable<T.FieldPatternNamed.Config>['pattern']) =>
 						buildFieldPatternNamed({ ...config, pattern: value })
 				}
 			},
 			{
+				refMarker: () => _ref_marker,
+				mutableSpecifier: () => _mutable_specifier,
 				name: () => _name,
 				pattern: () => _pattern
 			}
@@ -6752,41 +6940,24 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	);
 }
 
-export function buildMacroDefinitionParen(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionParen>;
-export function buildMacroDefinitionParen(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionParen>;
-export function buildMacroDefinitionParen(
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionParen>;
-export function buildMacroDefinitionParen(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionParen(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionParen(args[0] as T.MacroRules)
-		: _buildMacroDefinitionParen((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionParen.Built {
-	const _macro_rules = value;
+export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Built {
+	const _name = config.name;
+	const _macro_rules = config.macroRules;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionParen as const,
 				$source: 2 as const,
 				$named: true as const,
+				_name,
 				_macro_rules,
 				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen(value)
+					name: (value: T.Identifier) => buildMacroDefinitionParen({ ...config, name: value }),
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen({ ...config, macroRules: value })
 				}
 			},
 			{
+				name: () => _name,
 				macroRules: () => _macro_rules
 			}
 		),
@@ -6794,41 +6965,24 @@ function _buildMacroDefinitionParen(value?: T.MacroRules): T.MacroDefinitionPare
 	);
 }
 
-export function buildMacroDefinitionBracket(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBracket>;
-export function buildMacroDefinitionBracket(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionBracket>;
-export function buildMacroDefinitionBracket(
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionBracket>;
-export function buildMacroDefinitionBracket(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionBracket(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionBracket(args[0] as T.MacroRules)
-		: _buildMacroDefinitionBracket((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBracket.Built {
-	const _macro_rules = value;
+export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Built {
+	const _name = config.name;
+	const _macro_rules = config.macroRules;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionBracket as const,
 				$source: 2 as const,
 				$named: true as const,
+				_name,
 				_macro_rules,
 				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket(value)
+					name: (value: T.Identifier) => buildMacroDefinitionBracket({ ...config, name: value }),
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket({ ...config, macroRules: value })
 				}
 			},
 			{
+				name: () => _name,
 				macroRules: () => _macro_rules
 			}
 		),
@@ -6836,41 +6990,24 @@ function _buildMacroDefinitionBracket(value?: T.MacroRules): T.MacroDefinitionBr
 	);
 }
 
-export function buildMacroDefinitionBrace(value?: T.MacroRules): ReturnType<typeof _buildMacroDefinitionBrace>;
-export function buildMacroDefinitionBrace(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionBrace>;
-export function buildMacroDefinitionBrace(
-	...elements: NonEmptyArray<T.MacroRule>
-): ReturnType<typeof _buildMacroDefinitionBrace>;
-export function buildMacroDefinitionBrace(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildMacroDefinitionBrace(args[0] as T.MacroRules);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.MacroRules as const);
-	return prebuilt
-		? _buildMacroDefinitionBrace(args[0] as T.MacroRules)
-		: _buildMacroDefinitionBrace((buildMacroRules as (...a: unknown[]) => unknown)(...args) as T.MacroRules);
-}
-function _buildMacroDefinitionBrace(value?: T.MacroRules): T.MacroDefinitionBrace.Built {
-	const _macro_rules = value;
+export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Built {
+	const _name = config.name;
+	const _macro_rules = config.macroRules;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MacroDefinitionBrace as const,
 				$source: 2 as const,
 				$named: true as const,
+				_name,
 				_macro_rules,
 				$with: {
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace(value)
+					name: (value: T.Identifier) => buildMacroDefinitionBrace({ ...config, name: value }),
+					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace({ ...config, macroRules: value })
 				}
 			},
 			{
+				name: () => _name,
 				macroRules: () => _macro_rules
 			}
 		),
@@ -6983,6 +7120,9 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 }
 
 export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
 	const _body = config.body;
 	return withMethods(
@@ -6991,14 +7131,24 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 				$type: TSKindId.StructItemBrace as const,
 				$source: 2 as const,
 				$named: true as const,
+				_visibility_modifier,
+				_name,
+				_type_parameters,
 				_where_clause,
 				_body,
 				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildStructItemBrace({ ...config, visibilityModifier: value }),
+					name: (value: T.Identifier) => buildStructItemBrace({ ...config, name: value }),
+					typeParameters: (value?: T.TypeParameters) => buildStructItemBrace({ ...config, typeParameters: value }),
 					whereClause: (value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value }),
 					body: (value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
 				}
 			},
 			{
+				visibilityModifier: () => _visibility_modifier,
+				name: () => _name,
+				typeParameters: () => _type_parameters,
 				whereClause: () => _where_clause,
 				body: () => _body
 			}
@@ -7008,6 +7158,9 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 }
 
 export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
 	const _body = config.body;
 	const _where_clause = config.whereClause;
 	return withMethods(
@@ -7016,16 +7169,56 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 				$type: TSKindId.StructItemTuple as const,
 				$source: 2 as const,
 				$named: true as const,
+				_visibility_modifier,
+				_name,
+				_type_parameters,
 				_body,
 				_where_clause,
 				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildStructItemTuple({ ...config, visibilityModifier: value }),
+					name: (value: T.Identifier) => buildStructItemTuple({ ...config, name: value }),
+					typeParameters: (value?: T.TypeParameters) => buildStructItemTuple({ ...config, typeParameters: value }),
 					body: (value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value }),
 					whereClause: (value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
 				}
 			},
 			{
+				visibilityModifier: () => _visibility_modifier,
+				name: () => _name,
+				typeParameters: () => _type_parameters,
 				body: () => _body,
 				whereClause: () => _where_clause
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructItemUnit.Built {
+	const _visibility_modifier = config.visibilityModifier;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.StructItemUnit as const,
+				$source: 2 as const,
+				$named: true as const,
+				_visibility_modifier,
+				_name,
+				_type_parameters,
+				$with: {
+					visibilityModifier: (value?: T.VisibilityModifier) =>
+						buildStructItemUnit({ ...config, visibilityModifier: value }),
+					name: (value: T.Identifier) => buildStructItemUnit({ ...config, name: value }),
+					typeParameters: (value?: T.TypeParameters) => buildStructItemUnit({ ...config, typeParameters: value })
+				}
+			},
+			{
+				visibilityModifier: () => _visibility_modifier,
+				name: () => _name,
+				typeParameters: () => _type_parameters
 			}
 		),
 		methodsEngine
@@ -7557,13 +7750,20 @@ export type FluentKindMap = {
 	_visibility_modifier_pub_in_path: T.VisibilityModifierPubInPath.Built;
 	_function_type_trait_form: T.FunctionTypeTraitForm.Built;
 	_function_type_fn_form: T.FunctionTypeFnForm.Built;
+	_mod_item_external: T.ModItemExternal.Built;
+	_mod_item_inline: T.ModItemInline.Built;
 	_or_pattern_binary: T.OrPatternBinary.Built;
 	_or_pattern_prefix: T.OrPatternPrefix.Built;
+	_pointer_type_const: T.PointerTypeConst.Built;
+	_pointer_type_mut: T.PointerTypeMut.Built;
 	_range_expression_binary: T.RangeExpressionBinary.Built;
 	_range_expression_postfix: T.RangeExpressionPostfix.Built;
 	_range_expression_prefix: T.RangeExpressionPrefix.Built;
 	_expression_statement_with_semi: T.ExpressionStatementWithSemi.Built;
+	_foreign_mod_item_semi: T.ForeignModItemSemi.Built;
+	_foreign_mod_item_body: T.ForeignModItemBody.Built;
 	_match_arm_with_comma: T.MatchArmWithComma.Built;
+	_match_arm_block_ending: T.MatchArmBlockEnding.Built;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
 	_line_comment_doc_outer: T.LineCommentDocOuter.Built;
 	_line_comment_doc_inner: T.LineCommentDocInner.Built;
@@ -7579,6 +7779,7 @@ export type FluentKindMap = {
 	_delim_token_tree_paren: T.DelimTokenTreeParen.Built;
 	_delim_token_tree_bracket: T.DelimTokenTreeBracket.Built;
 	_delim_token_tree_brace: T.DelimTokenTreeBrace.Built;
+	_field_pattern_shorthand: T.FieldPatternShorthand.Built;
 	_field_pattern_named: T.FieldPatternNamed.Built;
 	_macro_definition_paren: T.MacroDefinitionParen.Built;
 	_macro_definition_bracket: T.MacroDefinitionBracket.Built;
@@ -7588,6 +7789,7 @@ export type FluentKindMap = {
 	_range_pattern_with_left: T.RangePatternWithLeft.Built;
 	_struct_item_brace: T.StructItemBrace.Built;
 	_struct_item_tuple: T.StructItemTuple.Built;
+	_struct_item_unit: T.StructItemUnit.Built;
 	_attributed_field_declaration: T.AttributedFieldDeclaration.Built;
 	_attributed_enum_variant: T.AttributedEnumVariant.Built;
 	_attributed_parameter: T.AttributedParameter.Built;
@@ -7797,13 +7999,20 @@ export const _factoryMap = {
 	_visibility_modifier_pub_in_path: buildVisibilityModifierPubInPath,
 	_function_type_trait_form: buildFunctionTypeTraitForm,
 	_function_type_fn_form: buildFunctionTypeFnForm,
+	_mod_item_external: buildModItemExternal,
+	_mod_item_inline: buildModItemInline,
 	_or_pattern_binary: buildOrPatternBinary,
 	_or_pattern_prefix: buildOrPatternPrefix,
+	_pointer_type_const: buildPointerTypeConst,
+	_pointer_type_mut: buildPointerTypeMut,
 	_range_expression_binary: buildRangeExpressionBinary,
 	_range_expression_postfix: buildRangeExpressionPostfix,
 	_range_expression_prefix: buildRangeExpressionPrefix,
 	_expression_statement_with_semi: buildExpressionStatementWithSemi,
+	_foreign_mod_item_semi: buildForeignModItemSemi,
+	_foreign_mod_item_body: buildForeignModItemBody,
 	_match_arm_with_comma: buildMatchArmWithComma,
+	_match_arm_block_ending: buildMatchArmBlockEnding,
 	_line_comment_regular_dslash: buildLineCommentRegularDslash,
 	_line_comment_doc_outer: buildLineCommentDocOuter,
 	_line_comment_doc_inner: buildLineCommentDocInner,
@@ -7819,6 +8028,7 @@ export const _factoryMap = {
 	_delim_token_tree_paren: buildDelimTokenTreeParen,
 	_delim_token_tree_bracket: buildDelimTokenTreeBracket,
 	_delim_token_tree_brace: buildDelimTokenTreeBrace,
+	_field_pattern_shorthand: buildFieldPatternShorthand,
 	_field_pattern_named: buildFieldPatternNamed,
 	_macro_definition_paren: buildMacroDefinitionParen,
 	_macro_definition_bracket: buildMacroDefinitionBracket,
@@ -7828,6 +8038,7 @@ export const _factoryMap = {
 	_range_pattern_with_left: buildRangePatternWithLeft,
 	_struct_item_brace: buildStructItemBrace,
 	_struct_item_tuple: buildStructItemTuple,
+	_struct_item_unit: buildStructItemUnit,
 	_attributed_field_declaration: buildAttributedFieldDeclaration,
 	_attributed_enum_variant: buildAttributedEnumVariant,
 	_attributed_parameter: buildAttributedParameter,

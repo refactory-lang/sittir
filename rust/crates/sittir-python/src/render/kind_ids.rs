@@ -35,72 +35,72 @@ pub const FOR_KEYWORD: KindId = KindId(24);
 pub const IN_KEYWORD: KindId = KindId(25);
 pub const WHILE_KEYWORD: KindId = KindId(26);
 pub const TRY_KEYWORD: KindId = KindId(27);
-pub const EXCEPT_KEYWORD: KindId = KindId(28);
-pub const STAR2: KindId = KindId(29);
-pub const FINALLY_KEYWORD: KindId = KindId(30);
-pub const WITH_KEYWORD: KindId = KindId(31);
-pub const DEF_KEYWORD: KindId = KindId(32);
-pub const LPAREN: KindId = KindId(33);
-pub const RPAREN: KindId = KindId(34);
-pub const STAR_STAR: KindId = KindId(35);
-pub const GLOBAL_KEYWORD: KindId = KindId(36);
-pub const NONLOCAL_KEYWORD: KindId = KindId(37);
-pub const EXEC_KEYWORD: KindId = KindId(38);
-pub const TYPE_KEYWORD: KindId = KindId(39);
-pub const EQ: KindId = KindId(40);
-pub const CLASS_KEYWORD: KindId = KindId(41);
-pub const LBRACK: KindId = KindId(42);
-pub const RBRACK: KindId = KindId(43);
-pub const AT: KindId = KindId(44);
-pub const PIPE: KindId = KindId(45);
-pub const LBRACE: KindId = KindId(46);
-pub const RBRACE: KindId = KindId(47);
-pub const UNDERSCORE: KindId = KindId(48);
-pub const PLUS: KindId = KindId(49);
-pub const DASH: KindId = KindId(50);
-pub const NOT_KEYWORD: KindId = KindId(51);
-pub const AND_KEYWORD: KindId = KindId(52);
-pub const OR_KEYWORD: KindId = KindId(53);
-pub const SLASH: KindId = KindId(54);
-pub const PERCENT: KindId = KindId(55);
-pub const SLASH_SLASH: KindId = KindId(56);
-pub const AMP: KindId = KindId(57);
-pub const CARET: KindId = KindId(58);
-pub const LT_LT: KindId = KindId(59);
-pub const TILDE: KindId = KindId(60);
-pub const IS_KEYWORD: KindId = KindId(61);
-pub const LAMBDA_KEYWORD: KindId = KindId(62);
-pub const YIELD_KEYWORD: KindId = KindId(63);
-pub const ELLIPSIS: KindId = KindId(64);
-pub const ESCAPE_SEQUENCE: KindId = KindId(65);
-pub const BSLASH: KindId = KindId(66);
-pub const FORMAT_SPECIFIER_TOKEN1: KindId = KindId(67);
-pub const TYPE_CONVERSION: KindId = KindId(68);
-pub const INTEGER: KindId = KindId(69);
-pub const FLOAT: KindId = KindId(70);
-pub const PRINT_KEYWORD: KindId = KindId(71);
-pub const ASYNC_KEYWORD: KindId = KindId(72);
-pub const AWAIT_KEYWORD: KindId = KindId(73);
-pub const TRUE: KindId = KindId(74);
-pub const FALSE: KindId = KindId(75);
-pub const NONE: KindId = KindId(76);
-pub const COMMENT: KindId = KindId(77);
-pub const LINE_CONTINUATION: KindId = KindId(78);
-pub const SEMI: KindId = KindId(79);
-pub const DASH_GT: KindId = KindId(80);
-pub const PLUS_EQ: KindId = KindId(81);
-pub const DASH_EQ: KindId = KindId(82);
-pub const STAR_EQ: KindId = KindId(83);
-pub const SLASH_EQ: KindId = KindId(84);
-pub const AT_EQ: KindId = KindId(85);
-pub const SLASH_SLASH_EQ: KindId = KindId(86);
-pub const PERCENT_EQ: KindId = KindId(87);
-pub const STAR_STAR_EQ: KindId = KindId(88);
-pub const GT_GT_EQ: KindId = KindId(89);
-pub const LT_LT_EQ: KindId = KindId(90);
-pub const AMP_EQ: KindId = KindId(91);
-pub const CARET_EQ: KindId = KindId(92);
-pub const PIPE_EQ: KindId = KindId(93);
+pub const FINALLY_KEYWORD: KindId = KindId(28);
+pub const WITH_KEYWORD: KindId = KindId(29);
+pub const DEF_KEYWORD: KindId = KindId(30);
+pub const LPAREN: KindId = KindId(31);
+pub const RPAREN: KindId = KindId(32);
+pub const STAR_STAR: KindId = KindId(33);
+pub const GLOBAL_KEYWORD: KindId = KindId(34);
+pub const NONLOCAL_KEYWORD: KindId = KindId(35);
+pub const EXEC_KEYWORD: KindId = KindId(36);
+pub const TYPE_KEYWORD: KindId = KindId(37);
+pub const EQ: KindId = KindId(38);
+pub const CLASS_KEYWORD: KindId = KindId(39);
+pub const LBRACK: KindId = KindId(40);
+pub const RBRACK: KindId = KindId(41);
+pub const AT: KindId = KindId(42);
+pub const PIPE: KindId = KindId(43);
+pub const LBRACE: KindId = KindId(44);
+pub const RBRACE: KindId = KindId(45);
+pub const UNDERSCORE: KindId = KindId(46);
+pub const PLUS: KindId = KindId(47);
+pub const DASH: KindId = KindId(48);
+pub const NOT_KEYWORD: KindId = KindId(49);
+pub const AND_KEYWORD: KindId = KindId(50);
+pub const OR_KEYWORD: KindId = KindId(51);
+pub const SLASH: KindId = KindId(52);
+pub const PERCENT: KindId = KindId(53);
+pub const SLASH_SLASH: KindId = KindId(54);
+pub const AMP: KindId = KindId(55);
+pub const CARET: KindId = KindId(56);
+pub const LT_LT: KindId = KindId(57);
+pub const TILDE: KindId = KindId(58);
+pub const IS_KEYWORD: KindId = KindId(59);
+pub const LAMBDA_KEYWORD: KindId = KindId(60);
+pub const YIELD_KEYWORD: KindId = KindId(61);
+pub const ELLIPSIS: KindId = KindId(62);
+pub const ESCAPE_SEQUENCE: KindId = KindId(63);
+pub const BSLASH: KindId = KindId(64);
+pub const FORMAT_SPECIFIER_TOKEN1: KindId = KindId(65);
+pub const TYPE_CONVERSION: KindId = KindId(66);
+pub const INTEGER: KindId = KindId(67);
+pub const FLOAT: KindId = KindId(68);
+pub const PRINT_KEYWORD: KindId = KindId(69);
+pub const ASYNC_KEYWORD: KindId = KindId(70);
+pub const AWAIT_KEYWORD: KindId = KindId(71);
+pub const TRUE: KindId = KindId(72);
+pub const FALSE: KindId = KindId(73);
+pub const NONE: KindId = KindId(74);
+pub const COMMENT: KindId = KindId(75);
+pub const LINE_CONTINUATION: KindId = KindId(76);
+pub const SEMI: KindId = KindId(77);
+pub const DASH_GT: KindId = KindId(78);
+pub const PLUS_EQ: KindId = KindId(79);
+pub const DASH_EQ: KindId = KindId(80);
+pub const STAR_EQ: KindId = KindId(81);
+pub const SLASH_EQ: KindId = KindId(82);
+pub const AT_EQ: KindId = KindId(83);
+pub const SLASH_SLASH_EQ: KindId = KindId(84);
+pub const PERCENT_EQ: KindId = KindId(85);
+pub const STAR_STAR_EQ: KindId = KindId(86);
+pub const GT_GT_EQ: KindId = KindId(87);
+pub const LT_LT_EQ: KindId = KindId(88);
+pub const AMP_EQ: KindId = KindId(89);
+pub const CARET_EQ: KindId = KindId(90);
+pub const PIPE_EQ: KindId = KindId(91);
+pub const EXCEPT_KEYWORD: KindId = KindId(92);
+pub const STAR2: KindId = KindId(93);
 pub const LT: KindId = KindId(94);
 pub const LT_EQ: KindId = KindId(95);
 pub const EQ_EQ: KindId = KindId(96);
@@ -276,56 +276,57 @@ pub const _WILDCARD_PATTERN: KindId = KindId(265);
 pub const _SIMPLE_PATTERN_NEGATIVE: KindId = KindId(266);
 pub const _EXCEPT_CLAUSE_EXCEPTION_LIST: KindId = KindId(267);
 pub const _EXCEPT_CLAUSE_EXCEPTION: KindId = KindId(268);
-pub const _ASSIGNMENT_EQ: KindId = KindId(269);
-pub const _ASSIGNMENT_TYPE: KindId = KindId(270);
-pub const _ASSIGNMENT_TYPED: KindId = KindId(271);
-pub const _EXPRESSION_STATEMENT_TUPLE: KindId = KindId(272);
-pub const _WITH_CLAUSE_BARE: KindId = KindId(273);
-pub const _WITH_CLAUSE_PAREN: KindId = KindId(274);
-pub const _MATCH_BLOCK_BLOCK: KindId = KindId(275);
-pub const _SUITE_BLOCK: KindId = KindId(276);
-pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(277);
-pub const _YIELD_FROM_CLAUSE: KindId = KindId(278);
-pub const MODULE_REPEAT1: KindId = KindId(279);
-pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(280);
-pub const _IMPORT_LIST_REPEAT1: KindId = KindId(281);
-pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(282);
-pub const IF_STATEMENT_REPEAT1: KindId = KindId(283);
-pub const TRY_STATEMENT_REPEAT1: KindId = KindId(284);
-pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(285);
-pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(286);
-pub const DOTTED_NAME_REPEAT1: KindId = KindId(287);
-pub const UNION_PATTERN_REPEAT1: KindId = KindId(288);
-pub const _PARAMETERS_REPEAT1: KindId = KindId(289);
-pub const _PATTERNS_REPEAT1: KindId = KindId(290);
-pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(291);
-pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(292);
-pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(293);
-pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(294);
-pub const STRING_REPEAT1: KindId = KindId(295);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(296);
-pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(297);
-pub const _SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(298);
-pub const _SUBJECTS_REPEAT1: KindId = KindId(299);
-pub const _CASE_PATTERNS_REPEAT1: KindId = KindId(300);
-pub const _WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(301);
-pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(302);
-pub const _TYPES_REPEAT1: KindId = KindId(303);
-pub const _ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(304);
-pub const _EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(305);
-pub const _DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(306);
-pub const _PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(307);
-pub const _SUBSCRIPTS_REPEAT1: KindId = KindId(308);
-pub const _DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(309);
-pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(310);
-pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(311);
-pub const _EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(312);
-pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(313);
-pub const _AS_PATTERN_TARGET: KindId = KindId(314);
-pub const _FORMAT_EXPRESSION: KindId = KindId(315);
-pub const _NAMES: KindId = KindId(316);
-pub const _SUITE_EMPTY: KindId = KindId(317);
-pub const _SUITE_INLINE: KindId = KindId(318);
+pub const _EXCEPT_CLAUSE_ARM1: KindId = KindId(269);
+pub const _ASSIGNMENT_EQ: KindId = KindId(270);
+pub const _ASSIGNMENT_TYPE: KindId = KindId(271);
+pub const _ASSIGNMENT_TYPED: KindId = KindId(272);
+pub const _EXPRESSION_STATEMENT_TUPLE: KindId = KindId(273);
+pub const _WITH_CLAUSE_BARE: KindId = KindId(274);
+pub const _WITH_CLAUSE_PAREN: KindId = KindId(275);
+pub const _MATCH_BLOCK_BLOCK: KindId = KindId(276);
+pub const _SUITE_BLOCK: KindId = KindId(277);
+pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(278);
+pub const _YIELD_FROM_CLAUSE: KindId = KindId(279);
+pub const MODULE_REPEAT1: KindId = KindId(280);
+pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(281);
+pub const _IMPORT_LIST_REPEAT1: KindId = KindId(282);
+pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(283);
+pub const IF_STATEMENT_REPEAT1: KindId = KindId(284);
+pub const TRY_STATEMENT_REPEAT1: KindId = KindId(285);
+pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(286);
+pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(287);
+pub const DOTTED_NAME_REPEAT1: KindId = KindId(288);
+pub const UNION_PATTERN_REPEAT1: KindId = KindId(289);
+pub const _PARAMETERS_REPEAT1: KindId = KindId(290);
+pub const _PATTERNS_REPEAT1: KindId = KindId(291);
+pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(292);
+pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(293);
+pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(294);
+pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(295);
+pub const STRING_REPEAT1: KindId = KindId(296);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(297);
+pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(298);
+pub const _SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(299);
+pub const _SUBJECTS_REPEAT1: KindId = KindId(300);
+pub const _CASE_PATTERNS_REPEAT1: KindId = KindId(301);
+pub const _WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(302);
+pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(303);
+pub const _TYPES_REPEAT1: KindId = KindId(304);
+pub const _ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(305);
+pub const _EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(306);
+pub const _DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(307);
+pub const _PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(308);
+pub const _SUBSCRIPTS_REPEAT1: KindId = KindId(309);
+pub const _DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(310);
+pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(311);
+pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(312);
+pub const _EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(313);
+pub const _MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(314);
+pub const _AS_PATTERN_TARGET: KindId = KindId(315);
+pub const _FORMAT_EXPRESSION: KindId = KindId(316);
+pub const _NAMES: KindId = KindId(317);
+pub const _SUITE_EMPTY: KindId = KindId(318);
+pub const _SUITE_INLINE: KindId = KindId(319);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -358,72 +359,72 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         25 => "in", // "in_keyword"
         26 => "while", // "while_keyword"
         27 => "try", // "try_keyword"
-        28 => "except", // "except_keyword"
-        29 => "*", // "star2"
-        30 => "finally", // "finally_keyword"
-        31 => "with", // "with_keyword"
-        32 => "def", // "def_keyword"
-        33 => "(", // "lparen"
-        34 => ")", // "rparen"
-        35 => "**", // "star_star"
-        36 => "global", // "global_keyword"
-        37 => "nonlocal", // "nonlocal_keyword"
-        38 => "exec", // "exec_keyword"
-        39 => "type", // "type_keyword"
-        40 => "=", // "eq"
-        41 => "class", // "class_keyword"
-        42 => "[", // "lbrack"
-        43 => "]", // "rbrack"
-        44 => "@", // "at"
-        45 => "|", // "pipe"
-        46 => "{", // "lbrace"
-        47 => "}", // "rbrace"
-        48 => "_", // "underscore"
-        49 => "+", // "plus"
-        50 => "-", // "dash"
-        51 => "not", // "not_keyword"
-        52 => "and", // "and_keyword"
-        53 => "or", // "or_keyword"
-        54 => "/", // "slash"
-        55 => "%", // "percent"
-        56 => "//", // "slash_slash"
-        57 => "&", // "amp"
-        58 => "^", // "caret"
-        59 => "<<", // "lt_lt"
-        60 => "~", // "tilde"
-        61 => "is", // "is_keyword"
-        62 => "lambda", // "lambda_keyword"
-        63 => "yield", // "yield_keyword"
-        64 => "ellipsis", // "ellipsis"
-        65 => "escape_sequence", // "escape_sequence"
-        66 => "\\", // "bslash"
-        67 => "format_specifier_token1", // "format_specifier_token1"
-        68 => "type_conversion", // "type_conversion"
-        69 => "integer", // "integer"
-        70 => "float", // "float"
-        71 => "print", // "print_keyword"
-        72 => "async", // "async_keyword"
-        73 => "await", // "await_keyword"
-        74 => "true", // "true"
-        75 => "false", // "false"
-        76 => "none", // "none"
-        77 => "comment", // "comment"
-        78 => "line_continuation", // "line_continuation"
-        79 => ";", // "semi"
-        80 => "->", // "dash_gt"
-        81 => "+=", // "plus_eq"
-        82 => "-=", // "dash_eq"
-        83 => "*=", // "star_eq"
-        84 => "/=", // "slash_eq"
-        85 => "@=", // "at_eq"
-        86 => "//=", // "slash_slash_eq"
-        87 => "%=", // "percent_eq"
-        88 => "**=", // "star_star_eq"
-        89 => ">>=", // "gt_gt_eq"
-        90 => "<<=", // "lt_lt_eq"
-        91 => "&=", // "amp_eq"
-        92 => "^=", // "caret_eq"
-        93 => "|=", // "pipe_eq"
+        28 => "finally", // "finally_keyword"
+        29 => "with", // "with_keyword"
+        30 => "def", // "def_keyword"
+        31 => "(", // "lparen"
+        32 => ")", // "rparen"
+        33 => "**", // "star_star"
+        34 => "global", // "global_keyword"
+        35 => "nonlocal", // "nonlocal_keyword"
+        36 => "exec", // "exec_keyword"
+        37 => "type", // "type_keyword"
+        38 => "=", // "eq"
+        39 => "class", // "class_keyword"
+        40 => "[", // "lbrack"
+        41 => "]", // "rbrack"
+        42 => "@", // "at"
+        43 => "|", // "pipe"
+        44 => "{", // "lbrace"
+        45 => "}", // "rbrace"
+        46 => "_", // "underscore"
+        47 => "+", // "plus"
+        48 => "-", // "dash"
+        49 => "not", // "not_keyword"
+        50 => "and", // "and_keyword"
+        51 => "or", // "or_keyword"
+        52 => "/", // "slash"
+        53 => "%", // "percent"
+        54 => "//", // "slash_slash"
+        55 => "&", // "amp"
+        56 => "^", // "caret"
+        57 => "<<", // "lt_lt"
+        58 => "~", // "tilde"
+        59 => "is", // "is_keyword"
+        60 => "lambda", // "lambda_keyword"
+        61 => "yield", // "yield_keyword"
+        62 => "ellipsis", // "ellipsis"
+        63 => "escape_sequence", // "escape_sequence"
+        64 => "\\", // "bslash"
+        65 => "format_specifier_token1", // "format_specifier_token1"
+        66 => "type_conversion", // "type_conversion"
+        67 => "integer", // "integer"
+        68 => "float", // "float"
+        69 => "print", // "print_keyword"
+        70 => "async", // "async_keyword"
+        71 => "await", // "await_keyword"
+        72 => "true", // "true"
+        73 => "false", // "false"
+        74 => "none", // "none"
+        75 => "comment", // "comment"
+        76 => "line_continuation", // "line_continuation"
+        77 => ";", // "semi"
+        78 => "->", // "dash_gt"
+        79 => "+=", // "plus_eq"
+        80 => "-=", // "dash_eq"
+        81 => "*=", // "star_eq"
+        82 => "/=", // "slash_eq"
+        83 => "@=", // "at_eq"
+        84 => "//=", // "slash_slash_eq"
+        85 => "%=", // "percent_eq"
+        86 => "**=", // "star_star_eq"
+        87 => ">>=", // "gt_gt_eq"
+        88 => "<<=", // "lt_lt_eq"
+        89 => "&=", // "amp_eq"
+        90 => "^=", // "caret_eq"
+        91 => "|=", // "pipe_eq"
+        92 => "except", // "except_keyword"
+        93 => "*", // "star2"
         94 => "<", // "lt"
         95 => "<=", // "lt_eq"
         96 => "==", // "eq_eq"
@@ -599,56 +600,57 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         266 => "simple_pattern_negative", // "_simple_pattern_negative"
         267 => "except_clause_exception_list", // "_except_clause_exception_list"
         268 => "except_clause_exception", // "_except_clause_exception"
-        269 => "assignment_eq", // "_assignment_eq"
-        270 => "assignment_type", // "_assignment_type"
-        271 => "assignment_typed", // "_assignment_typed"
-        272 => "expression_statement_tuple", // "_expression_statement_tuple"
-        273 => "with_clause_bare", // "_with_clause_bare"
-        274 => "with_clause_paren", // "_with_clause_paren"
-        275 => "match_block_block", // "_match_block_block"
-        276 => "suite_block", // "_suite_block"
-        277 => "comparison_operator_comparator", // "_comparison_operator_comparator"
-        278 => "yield_from_clause", // "_yield_from_clause"
-        279 => "module_repeat1", // "module_repeat1"
-        280 => "import_prefix_repeat1", // "import_prefix_repeat1"
-        281 => "_import_list_repeat1", // "_import_list_repeat1"
-        282 => "assert_statement_repeat1", // "assert_statement_repeat1"
-        283 => "if_statement_repeat1", // "if_statement_repeat1"
-        284 => "try_statement_repeat1", // "try_statement_repeat1"
-        285 => "global_statement_repeat1", // "global_statement_repeat1"
-        286 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
-        287 => "dotted_name_repeat1", // "dotted_name_repeat1"
-        288 => "union_pattern_repeat1", // "union_pattern_repeat1"
-        289 => "_parameters_repeat1", // "_parameters_repeat1"
-        290 => "_patterns_repeat1", // "_patterns_repeat1"
-        291 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
-        292 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
-        293 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
-        294 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
-        295 => "string_repeat1", // "string_repeat1"
-        296 => "string_content_repeat1", // "string_content_repeat1"
-        297 => "format_specifier_repeat1", // "format_specifier_repeat1"
-        298 => "_simple_statements_elements_repeat1", // "_simple_statements_elements_repeat1"
-        299 => "_subjects_repeat1", // "_subjects_repeat1"
-        300 => "_case_patterns_repeat1", // "_case_patterns_repeat1"
-        301 => "_with_clause_with_items_repeat1", // "_with_clause_with_items_repeat1"
-        302 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
-        303 => "_types_repeat1", // "_types_repeat1"
-        304 => "_argument_list_elements_repeat1", // "_argument_list_elements_repeat1"
-        305 => "_expression_list_expressions_repeat1", // "_expression_list_expressions_repeat1"
-        306 => "_dict_pattern_elements_repeat1", // "_dict_pattern_elements_repeat1"
-        307 => "_pattern_list_patterns_repeat1", // "_pattern_list_patterns_repeat1"
-        308 => "_subscripts_repeat1", // "_subscripts_repeat1"
-        309 => "_dictionary_elements_repeat1", // "_dictionary_elements_repeat1"
-        310 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
-        311 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
-        312 => "_except_clause_exception_list_repeat1", // "_except_clause_exception_list_repeat1"
-        313 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
-        314 => "as_pattern_target", // "_as_pattern_target"
-        315 => "format_expression", // "_format_expression"
-        316 => "names", // "_names"
-        317 => "suite_empty", // "_suite_empty"
-        318 => "suite_inline", // "_suite_inline"
+        269 => "except_clause_arm1", // "_except_clause_arm1"
+        270 => "assignment_eq", // "_assignment_eq"
+        271 => "assignment_type", // "_assignment_type"
+        272 => "assignment_typed", // "_assignment_typed"
+        273 => "expression_statement_tuple", // "_expression_statement_tuple"
+        274 => "with_clause_bare", // "_with_clause_bare"
+        275 => "with_clause_paren", // "_with_clause_paren"
+        276 => "match_block_block", // "_match_block_block"
+        277 => "suite_block", // "_suite_block"
+        278 => "comparison_operator_comparator", // "_comparison_operator_comparator"
+        279 => "yield_from_clause", // "_yield_from_clause"
+        280 => "module_repeat1", // "module_repeat1"
+        281 => "import_prefix_repeat1", // "import_prefix_repeat1"
+        282 => "_import_list_repeat1", // "_import_list_repeat1"
+        283 => "assert_statement_repeat1", // "assert_statement_repeat1"
+        284 => "if_statement_repeat1", // "if_statement_repeat1"
+        285 => "try_statement_repeat1", // "try_statement_repeat1"
+        286 => "global_statement_repeat1", // "global_statement_repeat1"
+        287 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
+        288 => "dotted_name_repeat1", // "dotted_name_repeat1"
+        289 => "union_pattern_repeat1", // "union_pattern_repeat1"
+        290 => "_parameters_repeat1", // "_parameters_repeat1"
+        291 => "_patterns_repeat1", // "_patterns_repeat1"
+        292 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
+        293 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
+        294 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
+        295 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
+        296 => "string_repeat1", // "string_repeat1"
+        297 => "string_content_repeat1", // "string_content_repeat1"
+        298 => "format_specifier_repeat1", // "format_specifier_repeat1"
+        299 => "_simple_statements_elements_repeat1", // "_simple_statements_elements_repeat1"
+        300 => "_subjects_repeat1", // "_subjects_repeat1"
+        301 => "_case_patterns_repeat1", // "_case_patterns_repeat1"
+        302 => "_with_clause_with_items_repeat1", // "_with_clause_with_items_repeat1"
+        303 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
+        304 => "_types_repeat1", // "_types_repeat1"
+        305 => "_argument_list_elements_repeat1", // "_argument_list_elements_repeat1"
+        306 => "_expression_list_expressions_repeat1", // "_expression_list_expressions_repeat1"
+        307 => "_dict_pattern_elements_repeat1", // "_dict_pattern_elements_repeat1"
+        308 => "_pattern_list_patterns_repeat1", // "_pattern_list_patterns_repeat1"
+        309 => "_subscripts_repeat1", // "_subscripts_repeat1"
+        310 => "_dictionary_elements_repeat1", // "_dictionary_elements_repeat1"
+        311 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
+        312 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
+        313 => "_except_clause_exception_list_repeat1", // "_except_clause_exception_list_repeat1"
+        314 => "_match_block_block_repeat1", // "_match_block_block_repeat1"
+        315 => "as_pattern_target", // "_as_pattern_target"
+        316 => "format_expression", // "_format_expression"
+        317 => "names", // "_names"
+        318 => "suite_empty", // "_suite_empty"
+        319 => "suite_inline", // "_suite_inline"
         _ => "<unknown>",
     }
 }
@@ -657,7 +659,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 65 | 68 | 69 | 70 | 77 | 78 | 102 | 103 | 104 | 105 | 106 | 107 | 116 | 254)
+    matches!(kind.0, 1 | 63 | 66 | 67 | 68 | 75 | 76 | 102 | 103 | 104 | 105 | 106 | 107 | 116 | 254)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
@@ -673,12 +675,12 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (155, "names", &[6]),
     (156, "in_clause", &[6]),
     (166, "names", &[3]),
-    (169, "patterns", &[45]),
+    (169, "patterns", &[43]),
     (176, "parameter", &[6]),
     (177, "pattern", &[6]),
     (226, "element", &[6]),
     (227, "right", &[6]),
-    (241, "simple_statement", &[79]),
+    (241, "simple_statement", &[77]),
     (242, "subject", &[6]),
     (243, "case_pattern", &[6]),
     (244, "with_item", &[6]),
@@ -691,8 +693,8 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (261, "argument", &[6]),
     (262, "argument", &[6]),
     (267, "value", &[6]),
-    (272, "expression", &[6]),
-    (273, "with_item", &[6]),
+    (273, "expression", &[6]),
+    (274, "with_item", &[6]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

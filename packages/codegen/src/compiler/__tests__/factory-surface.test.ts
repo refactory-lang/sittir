@@ -106,10 +106,10 @@ describe('child factory surface classification', () => {
 	});
 
 	it('has no sole slot when markers sit beside the payload', () => {
-		// field_pattern's slots are [ref_marker, mutable_specifier, content]:
-		// three slots, so the kind is a branch with a config surface, never a
-		// container that positions one child.
-		expect(soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap)).toBeNull();
+		// A field pattern's named variant carries the whole arm: ref_marker,
+		// mutable_specifier, name and pattern, so the kind is a branch with a
+		// config surface, never a container that positions one child.
+		expect(soleSlotFacts(nodeMap.nodes.get('_field_pattern_named')!, nodeMap)).toBeNull();
 	});
 
 	it('classifies multi-user-slot branches as config', () => {
