@@ -200,7 +200,7 @@ Unchanged in mechanism: one query pass over `shape.scm ++ bindings.scm ++ user.s
 
 - The feature table as `packages/types/src/vocabulary/features.ts`, hand-maintained, from §4.3; one composition per language beside its context, with its term bindings.
 - Per-language contexts from each language's composition narrowed by its claims, which is what makes cross-language errors fire.
-- The `visibility` collapse and the `extends` / `implements` / `bases` split in the tree and the bindings.
+- The reversals the feature lens forces, in the tree and the bindings: `accessibility` into `visibility`; `heritage` into `extends` / `implements` / `bases`; `declaration.trait` into `declaration.interface` with `trait` as rust's term, since a trait and an interface share a name, type parameters, a supertype list and a member body, and today's `Trait` interface is wrong anyway, carrying a method's slots from the nested method claim in the rust binding.
 - The next bindings pass, driven by the `Unmapped` counts.
 - `sittir tool bindings-inventory`, the derivation promoted from `packages/tools/scripts/derive-vocabulary.py` with the totality, injectivity and DAG gates, reporting where the bindings and the authored tree disagree.
 - The structure builders and `$structure()`, then the round-trip lane, then the coercer's retirement.
@@ -230,4 +230,5 @@ Open: trivia and provenance on a structure (a structure has no coordinates; `doc
 | per-language contexts projected from each grammar's claims alone | a language is a composition of features, narrowed by its claims; features and terms are the portability API |
 | `heritage` converged across `extends`, `implements` and python's bases | three members of three features; members are shared by feature, never by slot |
 | `accessibility` beside `visibility` | one `visibility` member, its shape per language |
+| `declaration.trait` beside `declaration.interface` | one kind, `declaration.interface`, with `trait` as rust's term |
 | language-specific names erased into the canonical vocabulary | terms: a feature's names are parameters a language binds, aliases in both directions over one canonical path |
