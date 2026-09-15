@@ -555,7 +555,6 @@ export const ir: {
 	readonly types: typeof F.types;
 	readonly typeParametersElements: typeof F.typeParametersElements;
 	readonly tupleTypeMembers: typeof F.tupleTypeMembers;
-	readonly ambientDeclarationGlobal: typeof F.ambientDeclarationGlobal;
 	readonly ambientDeclarationModule: typeof F.ambientDeclarationModule;
 	readonly objectTypeContent: typeof F.objectTypeContent;
 	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
@@ -843,7 +842,6 @@ export const ir: {
 	types: F.types,
 	typeParametersElements: F.typeParametersElements,
 	tupleTypeMembers: F.tupleTypeMembers,
-	ambientDeclarationGlobal: F.ambientDeclarationGlobal,
 	ambientDeclarationModule: F.ambientDeclarationModule,
 	objectTypeContent: F.objectTypeContent,
 	exportStatementNamespaceExport: F.exportStatementNamespaceExport,

@@ -176,8 +176,8 @@ export type LeafStringMap = {
 	[TSKindId.AccessorKeyword]: 'accessor';
 	[TSKindId.OfKeyword]: 'of';
 	[TSKindId.DeleteKeyword]: 'delete';
-	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.FromKeyword]: 'from';
+	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.TargetKeyword]: 'target';
 	[TSKindId.MetaKeyword]: 'meta';
 };
@@ -561,17 +561,17 @@ export const enum TSKindId {
 	CatchClauseGroup = 376,
 	Kind = 377,
 	ForHeaderOperator = 378,
-	AmbientDeclarationGlobal = 379,
-	AmbientDeclarationModule = 380,
-	ObjectTypeContent = 381,
-	ExportStatementDefault = 382,
-	ExportStatementNamespaceExport = 383,
-	ExportStatementTypeExport = 384,
-	ExportStatementEqualsExport = 385,
-	BinaryExpressionIn = 386,
-	ClassBodyMethod = 387,
-	ClassBodyMethodSig = 388,
-	ClassBodyMember = 389,
+	AmbientDeclarationModule = 379,
+	ObjectTypeContent = 380,
+	ExportStatementDefault = 381,
+	ExportStatementNamespaceExport = 382,
+	ExportStatementTypeExport = 383,
+	ExportStatementEqualsExport = 384,
+	BinaryExpressionIn = 385,
+	ClassBodyMethod = 386,
+	ClassBodyMethodSig = 387,
+	ClassBodyMember = 388,
+	AmbientDeclarationGlobal = 389,
 	IndexSignatureColon = 390,
 	IndexSignatureMappedTypeClause = 391,
 	ImportStatementClauseFrom = 392,
@@ -1018,17 +1018,17 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[376, 'catch_clause_group'],
 	[377, '_kind'],
 	[378, '__for_header_operator'],
-	[379, 'ambient_declaration_global'],
-	[380, 'ambient_declaration_module'],
-	[381, 'object_type_content'],
-	[382, 'export_statement_default'],
-	[383, 'export_statement_namespace_export'],
-	[384, 'export_statement_type_export'],
-	[385, 'export_statement_equals_export'],
-	[386, 'binary_expression_in'],
-	[387, 'class_body_method'],
-	[388, 'class_body_method_sig'],
-	[389, 'class_body_member'],
+	[379, 'ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, 'export_statement_default'],
+	[382, 'export_statement_namespace_export'],
+	[383, 'export_statement_type_export'],
+	[384, 'export_statement_equals_export'],
+	[385, 'binary_expression_in'],
+	[386, 'class_body_method'],
+	[387, 'class_body_method_sig'],
+	[388, 'class_body_member'],
+	[389, 'ambient_declaration_global'],
 	[390, 'index_signature_colon'],
 	[391, 'index_signature_mapped_type_clause'],
 	[392, 'import_statement_clause_from'],
@@ -1476,17 +1476,17 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[376, 'catch_clause_group'],
 	[377, '_kind'],
 	[378, '__for_header_operator'],
-	[379, 'ambient_declaration_global'],
-	[380, 'ambient_declaration_module'],
-	[381, 'object_type_content'],
-	[382, 'export_statement_default'],
-	[383, 'export_statement_namespace_export'],
-	[384, 'export_statement_type_export'],
-	[385, 'export_statement_equals_export'],
-	[386, 'binary_expression_in'],
-	[387, 'class_body_method'],
-	[388, 'class_body_method_sig'],
-	[389, 'class_body_member'],
+	[379, 'ambient_declaration_module'],
+	[380, 'object_type_content'],
+	[381, 'export_statement_default'],
+	[382, 'export_statement_namespace_export'],
+	[383, 'export_statement_type_export'],
+	[384, 'export_statement_equals_export'],
+	[385, 'binary_expression_in'],
+	[386, 'class_body_method'],
+	[387, 'class_body_method_sig'],
+	[388, 'class_body_member'],
+	[389, 'ambient_declaration_global'],
 	[390, 'index_signature_colon'],
 	[391, 'index_signature_mapped_type_clause'],
 	[392, 'import_statement_clause_from'],
@@ -2317,8 +2317,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Kind;
 		case '__for_header_operator':
 			return TSKindId.ForHeaderOperator;
-		case 'ambient_declaration_global':
-			return TSKindId.AmbientDeclarationGlobal;
 		case 'ambient_declaration_module':
 			return TSKindId.AmbientDeclarationModule;
 		case 'object_type_content':
@@ -2339,6 +2337,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ClassBodyMethodSig;
 		case 'class_body_member':
 			return TSKindId.ClassBodyMember;
+		case 'ambient_declaration_global':
+			return TSKindId.AmbientDeclarationGlobal;
 		case 'index_signature_colon':
 			return TSKindId.IndexSignatureColon;
 		case 'index_signature_mapped_type_clause':
@@ -9900,12 +9900,6 @@ export interface CatchClauseGroup {
 	type(): TypeAnnotation | undefined;
 }
 
-export interface AmbientDeclarationGlobal {
-	readonly $type: TSKindId.AmbientDeclarationGlobal;
-	readonly _body: StatementBlock;
-	body(): StatementBlock;
-}
-
 export interface AmbientDeclarationModule {
 	readonly $type: TSKindId.AmbientDeclarationModule;
 	readonly _name: Identifier;
@@ -10228,6 +10222,12 @@ export interface ClassBodyMember {
 	};
 	content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
+}
+
+export interface AmbientDeclarationGlobal {
+	readonly $type: TSKindId.AmbientDeclarationGlobal;
+	readonly _body: StatementBlock;
+	body(): StatementBlock;
 }
 
 export interface IndexSignatureColon {
@@ -11872,7 +11872,6 @@ export interface TypeParametersElementsTree extends TreeNode<'type_parameters_el
 export interface TupleTypeMembersTree extends TreeNode<'tuple_type_members'> {}
 export interface ImportClauseGroupTree extends TreeNode<'import_clause_group'> {}
 export interface CatchClauseGroupTree extends TreeNode<'catch_clause_group'> {}
-export interface AmbientDeclarationGlobalTree extends TreeNode<'ambient_declaration_global'> {}
 export interface AmbientDeclarationModuleTree extends TreeNode<'ambient_declaration_module'> {}
 export interface ObjectTypeContentTree extends TreeNode<'object_type_content'> {}
 export interface ExportStatementNamespaceExportTree extends TreeNode<'export_statement_namespace_export'> {}
@@ -11882,6 +11881,7 @@ export interface BinaryExpressionInTree extends TreeNode<'binary_expression_in'>
 export interface ClassBodyMethodTree extends TreeNode<'class_body_method'> {}
 export interface ClassBodyMethodSigTree extends TreeNode<'class_body_method_sig'> {}
 export interface ClassBodyMemberTree extends TreeNode<'class_body_member'> {}
+export interface AmbientDeclarationGlobalTree extends TreeNode<'ambient_declaration_global'> {}
 export interface IndexSignatureColonTree extends TreeNode<'index_signature_colon'> {}
 export interface IndexSignatureMappedTypeClauseTree extends TreeNode<'index_signature_mapped_type_clause'> {}
 export interface ImportStatementClauseFromTree extends TreeNode<'import_statement_clause_from'> {}
@@ -12230,11 +12230,11 @@ export interface OfKeywordTree extends AnyTreeNode {
 export interface DeleteKeywordTree extends AnyTreeNode {
 	readonly type: 'delete_keyword';
 }
-export interface GlobalKeywordTree extends AnyTreeNode {
-	readonly type: 'global_keyword';
-}
 export interface FromKeywordTree extends AnyTreeNode {
 	readonly type: 'from_keyword';
+}
+export interface GlobalKeywordTree extends AnyTreeNode {
+	readonly type: 'global_keyword';
 }
 export interface TargetKeywordTree extends AnyTreeNode {
 	readonly type: 'target_keyword';
@@ -12814,7 +12814,6 @@ export type TypescriptNode =
 	| TupleTypeMembers
 	| ImportClauseGroup
 	| CatchClauseGroup
-	| AmbientDeclarationGlobal
 	| AmbientDeclarationModule
 	| ObjectTypeContent
 	| ExportStatementNamespaceExport
@@ -12824,6 +12823,7 @@ export type TypescriptNode =
 	| ClassBodyMethod
 	| ClassBodyMethodSig
 	| ClassBodyMember
+	| AmbientDeclarationGlobal
 	| IndexSignatureColon
 	| IndexSignatureMappedTypeClause
 	| ImportStatementClauseFrom
@@ -13017,7 +13017,6 @@ export interface KindMap {
 	tuple_type_members: TupleTypeMembers;
 	import_clause_group: ImportClauseGroup;
 	catch_clause_group: CatchClauseGroup;
-	ambient_declaration_global: AmbientDeclarationGlobal;
 	ambient_declaration_module: AmbientDeclarationModule;
 	object_type_content: ObjectTypeContent;
 	export_statement_namespace_export: ExportStatementNamespaceExport;
@@ -13027,6 +13026,7 @@ export interface KindMap {
 	class_body_method: ClassBodyMethod;
 	class_body_method_sig: ClassBodyMethodSig;
 	class_body_member: ClassBodyMember;
+	ambient_declaration_global: AmbientDeclarationGlobal;
 	index_signature_colon: IndexSignatureColon;
 	index_signature_mapped_type_clause: IndexSignatureMappedTypeClause;
 	import_statement_clause_from: ImportStatementClauseFrom;
@@ -14888,17 +14888,6 @@ export interface CatchClauseGroupNs extends NodeNs<
 	never,
 	'catch_clause_group'
 > {}
-export interface AmbientDeclarationGlobalNs extends NodeNs<
-	AmbientDeclarationGlobal,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	AmbientDeclarationGlobal.Built,
-	AmbientDeclarationGlobal.BuildArgs,
-	AmbientDeclarationGlobal.LooseArgs,
-	'body',
-	'ambient_declaration_global'
-> {}
 export interface AmbientDeclarationModuleNs extends NodeNs<
 	AmbientDeclarationModule,
 	LeafScalarMap,
@@ -14997,6 +14986,17 @@ export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember.LooseArgs,
 	never,
 	'class_body_member'
+> {}
+export interface AmbientDeclarationGlobalNs extends NodeNs<
+	AmbientDeclarationGlobal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	AmbientDeclarationGlobal.Built,
+	AmbientDeclarationGlobal.BuildArgs,
+	AmbientDeclarationGlobal.LooseArgs,
+	'body',
+	'ambient_declaration_global'
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
 	IndexSignatureColon,
@@ -15650,7 +15650,6 @@ export interface NamespaceMap {
 	[TSKindId.TupleTypeMembers]: TupleTypeMembersNs;
 	[TSKindId.ImportClauseGroup]: ImportClauseGroupNs;
 	[TSKindId.CatchClauseGroup]: CatchClauseGroupNs;
-	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
 	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModuleNs;
 	[TSKindId.ObjectTypeContent]: ObjectTypeContentNs;
 	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExportNs;
@@ -15660,6 +15659,7 @@ export interface NamespaceMap {
 	[TSKindId.ClassBodyMethod]: ClassBodyMethodNs;
 	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSigNs;
 	[TSKindId.ClassBodyMember]: ClassBodyMemberNs;
+	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobalNs;
 	[TSKindId.IndexSignatureColon]: IndexSignatureColonNs;
 	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClauseNs;
 	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFromNs;
@@ -19311,22 +19311,6 @@ export namespace CatchClauseGroup {
 	export type Tree = TreeFor<TSKindId.CatchClauseGroup>;
 	export type Kind = 'catch_clause_group';
 }
-export namespace AmbientDeclarationGlobal {
-	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export interface Built extends T.AmbientDeclarationGlobal, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: T.StatementBlock): T.AmbientDeclarationGlobal.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
-	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export type BuildArgs = [value: T.StatementBlock];
-	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.AmbientDeclarationGlobal>;
-	export type Kind = 'ambient_declaration_global';
-}
 export namespace AmbientDeclarationModule {
 	export type Config = ConfigFor<TSKindId.AmbientDeclarationModule>;
 	export interface Built extends T.AmbientDeclarationModule, NodeMethodsOf {
@@ -19575,6 +19559,22 @@ export namespace ClassBodyMember {
 	];
 	export type Tree = TreeFor<TSKindId.ClassBodyMember>;
 	export type Kind = 'class_body_member';
+}
+export namespace AmbientDeclarationGlobal {
+	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
+	export interface Built extends T.AmbientDeclarationGlobal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			body(value: T.StatementBlock): T.AmbientDeclarationGlobal.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
+	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
+	export type BuildArgs = [value: T.StatementBlock];
+	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.AmbientDeclarationGlobal>;
+	export type Kind = 'ambient_declaration_global';
 }
 export namespace IndexSignatureColon {
 	export type Config = ConfigFor<TSKindId.IndexSignatureColon>;

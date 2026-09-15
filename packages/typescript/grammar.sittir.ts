@@ -330,8 +330,11 @@ export default grammar(
 				ambient_declaration: {
 					'1/0': variant('declaration'),
 					'1/1': variant('global'),
-					'1/2': variant('module')
+					'1/2': variant('module'),
+					'1/1/1': field('body')
 				},
+
+				jsx_namespace_name: { 0: field('namespace'), 2: field('name') },
 
 				as_expression: {
 					2: field('type_annotation')
@@ -726,8 +729,6 @@ export default grammar(
 					};
 				},
 
-				jsx_namespace_name: ($) => seq(field('namespace', $._jsx_identifier), ':', field('name', $._jsx_identifier)),
-
 				// Upstream's `_extends_clause_single` (base grammar.js) carries two
 				// fields (value, type_arguments) but is never aliased visible, so it
 				// falls to the render layer's single-slot inline path and silently
@@ -743,7 +744,6 @@ export default grammar(
 						)
 					),
 
-				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				ambient_declaration_module: ($) =>
 					prec.right(
 						seq(

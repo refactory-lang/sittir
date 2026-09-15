@@ -221,6 +221,8 @@ export default grammar(
 					{ '3/2': alias('parenthesized_import_list') }
 				],
 				future_import_statement: { '3/1': alias('parenthesized_import_list') },
+				// See docs/python-grammar-sittir-glossary.md::_parenthesized_import_list
+				_parenthesized_import_list: { 1: alias('import_list') },
 
 				interpolation: {
 					'2/0': field('eq_marker')
@@ -333,8 +335,6 @@ export default grammar(
 				set_comprehension: ($) => seq('{', field('body', $.expression), $.comprehension_clauses, '}'),
 				generator_expression: ($) => seq('(', field('body', $.expression), $.comprehension_clauses, ')'),
 
-				// See docs/python-grammar-sittir-glossary.md::_parenthesized_import_list
-				_parenthesized_import_list: ($) => seq('(', alias($._import_list, $.import_list), ')'),
 				_print_arguments: ($) =>
 					seq(field('argument', $.expression), repeat(seq(',', field('argument', $.expression))), optional(',')),
 				_print_chevron_arguments: ($) => seq(repeat1(seq(',', field('argument', $.expression))), optional(',')),

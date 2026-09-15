@@ -5750,19 +5750,6 @@ describe('tuple_type_members', () => {
 	});
 });
 
-describe('ambient_declaration_global', () => {
-	it('factory produces correct type', () => {
-		const node = ir.ambientDeclarationGlobal({
-			$type: TSKindId.StatementBlock,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.AmbientDeclarationGlobal);
-		expect(node.$source).toBe(2);
-	});
-});
-
 describe('ambient_declaration_module', () => {
 	it('factory produces correct type', () => {
 		const node = ir.ambientDeclarationModule({

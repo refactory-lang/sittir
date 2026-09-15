@@ -3557,15 +3557,6 @@
         "nonEmpty": false
       }
     },
-    "ambient_declaration_global": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "ambient_declaration_module": {
       "name": {
         "unnamed": false,
@@ -3737,6 +3728,15 @@
         ]
       },
       "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "ambient_declaration_global": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -6030,7 +6030,12 @@
               "multiplicity": "single",
               "name": "ambient_declaration_global",
               "parseKind": "ambient_declaration_global",
-              "unresolved": true
+              "unresolved": true,
+              "seat": {
+                "kind": "ambient_declaration_global",
+                "shape": "arm",
+                "mount": "global"
+              }
             },
             {
               "kind": "node-ref",
@@ -6054,6 +6059,9 @@
       "factoryName": "ambientDeclarationGlobal",
       "irKey": "ambientDeclarationGlobal",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "body",
@@ -6077,6 +6085,7 @@
           ]
         }
       ],
+      "name": "ambient_declaration_global",
       "factoryShape": "forwarded",
       "forwardsTo": "statement_block",
       "factoryFields": [

@@ -12783,26 +12783,6 @@
         }
       ]
     },
-    "ambient_declaration_global": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "global"
-        },
-        {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "SYMBOL",
-            "name": "statement_block"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        }
-      ]
-    },
     "ambient_declaration_module": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -13323,6 +13303,29 @@
     "_kw_optional_marker": {
       "type": "STRING",
       "value": "?"
+    },
+    "ambient_declaration_global": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "global"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "statement_block"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
     },
     "index_signature_colon": {
       "type": "SEQ",

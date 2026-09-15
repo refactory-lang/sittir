@@ -193,7 +193,6 @@ export const _fromMap = {
 	tuple_type_members: coerceToTupleTypeMembers,
 	import_clause_group: coerceToImportClauseGroup,
 	catch_clause_group: coerceToCatchClauseGroup,
-	ambient_declaration_global: coerceToAmbientDeclarationGlobal,
 	ambient_declaration_module: coerceToAmbientDeclarationModule,
 	object_type_content: coerceToObjectTypeContent,
 	export_statement_namespace_export: coerceToExportStatementNamespaceExport,
@@ -203,6 +202,7 @@ export const _fromMap = {
 	class_body_method: coerceToClassBodyMethod,
 	class_body_method_sig: coerceToClassBodyMethodSig,
 	class_body_member: coerceToClassBodyMember,
+	ambient_declaration_global: coerceToAmbientDeclarationGlobal,
 	index_signature_colon: coerceToIndexSignatureColon,
 	index_signature_mapped_type_clause: coerceToIndexSignatureMappedTypeClause,
 	import_statement_clause_from: coerceToImportStatementClauseFrom,
@@ -377,7 +377,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	named_imports: new Set([369, 393, 394]),
 	else_clause: new Set([
 		160, 181, 189, 190, 191, 193, 195, 196, 197, 198, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 228, 231,
-		233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 380, 383, 384, 385, 407, 408
+		233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 382, 383, 384, 389, 407, 408
 	]),
 	debugger_statement: new Set([160]),
 	finally_clause: new Set([193]),
@@ -423,7 +423,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		416, 417, 448
 	]),
 	decorator_parenthesized_expression: new Set([1, 262, 263]),
-	ambient_declaration: new Set([190, 191, 193, 228, 231, 233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 380]),
+	ambient_declaration: new Set([190, 191, 193, 228, 231, 233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 389]),
 	enum_body: new Set([
 		1, 98, 99, 100, 101, 102, 103, 104, 105, 216, 219, 220, 224, 227, 230, 232, 234, 238, 239, 240, 241, 242, 244, 246,
 		250, 251, 252, 254, 255, 256, 258, 262, 263, 273, 276, 281, 282, 283, 284, 292, 300, 371, 395, 396, 397, 398, 399,
@@ -513,13 +513,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		334, 335, 336, 338, 339, 340, 341, 342, 343, 345, 354, 355, 356, 357, 358, 359, 374, 400, 401
 	]),
 	import_clause_group: new Set([1, 184, 185, 369, 393, 394]),
+	object_type_content: new Set([277, 346, 347, 352, 382, 383, 384, 390, 391, 407, 408]),
 	ambient_declaration_global: new Set([193]),
-	object_type_content: new Set([277, 346, 347, 352, 383, 384, 385, 390, 391, 407, 408]),
 	parenthesized_expression_sequence: new Set([254]),
 	arrow_function_parameter: new Set([1, 448]),
 	export_statement_default_from_star_from: new Set([255, 400, 401]),
 	export_statement_default_declaration_default_kw: new Set([
-		190, 191, 193, 228, 231, 233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 380, 413
+		190, 191, 193, 228, 231, 233, 279, 289, 290, 291, 292, 294, 296, 298, 301, 379, 389, 413
 	])
 };
 
@@ -681,8 +681,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_parameters_elements: TSKindId.TypeParametersElements,
 	tuple_type_members: TSKindId.TupleTypeMembers,
 	import_clause_group: TSKindId.ImportClauseGroup,
-	ambient_declaration_global: TSKindId.AmbientDeclarationGlobal,
 	object_type_content: TSKindId.ObjectTypeContent,
+	ambient_declaration_global: TSKindId.AmbientDeclarationGlobal,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
 	string_double: TSKindId.StringDouble,
 	string_single: TSKindId.StringSingle,
@@ -872,10 +872,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
 		case 'import_clause_group':
 			return F.buildImportClauseGroup(children[0] as Parameters<typeof F.buildImportClauseGroup>[0]);
-		case 'ambient_declaration_global':
-			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'object_type_content':
 			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
+		case 'ambient_declaration_global':
+			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'parenthesized_expression_sequence':
 			return F.buildParenthesizedExpressionSequence(
 				children[0] as Parameters<typeof F.buildParenthesizedExpressionSequence>[0]
@@ -7396,29 +7396,6 @@ export function coerceToCatchClauseGroup(input: T.CatchClauseGroup.Loose): Retur
 	});
 }
 
-export function resolveAmbientDeclarationGlobal_body(
-	value: T.AmbientDeclarationGlobal.LooseConfig['body']
-): T.AmbientDeclarationGlobal['_body'] {
-	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
-}
-
-export function coerceToAmbientDeclarationGlobal(
-	input: T.AmbientDeclarationGlobal.Loose
-): ReturnType<typeof F.buildAmbientDeclarationGlobal> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AmbientDeclarationGlobal)
-		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationGlobal>;
-	return F.buildAmbientDeclarationGlobal(
-		_requireField(
-			'ambient_declaration_global',
-			'body',
-			_resolveOneBranch<T.StatementBlock>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				'statement_block'
-			)
-		)
-	);
-}
-
 export function resolveAmbientDeclarationModule_name(
 	value: T.AmbientDeclarationModule.LooseConfig['name']
 ): T.AmbientDeclarationModule['_name'] {
@@ -7739,6 +7716,29 @@ export function coerceToClassBodyMember(input: T.ClassBodyMember.Loose): ReturnT
 		content: _requireField('class_body_member', 'content', resolveClassBodyMember_content(input.content)),
 		terminator: _requireField('class_body_member', 'terminator', resolveClassBodyMember_terminator(input.terminator))
 	});
+}
+
+export function resolveAmbientDeclarationGlobal_body(
+	value: T.AmbientDeclarationGlobal.LooseConfig['body']
+): T.AmbientDeclarationGlobal['_body'] {
+	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
+}
+
+export function coerceToAmbientDeclarationGlobal(
+	input: T.AmbientDeclarationGlobal.Loose
+): ReturnType<typeof F.buildAmbientDeclarationGlobal> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AmbientDeclarationGlobal)
+		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationGlobal>;
+	return F.buildAmbientDeclarationGlobal(
+		_requireField(
+			'ambient_declaration_global',
+			'body',
+			_resolveOneBranch<T.StatementBlock>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+				'statement_block'
+			)
+		)
+	);
 }
 
 export function resolveIndexSignatureColon_sign(
