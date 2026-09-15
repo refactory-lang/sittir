@@ -16,11 +16,15 @@
  *      astMatchPass`, `parityFixtures.pass`, `totals.pass`. This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
  *      top of it.
- *   2. Total drop — `totals.total` decreased AND `totals.fail` rose. A
- *      kind rename or split moves fixtures between validators (a flattened
- *      parent's own factory-level case disappears while its variants each
- *      gain a `from` case) and can shrink `total` net with `fail` flat;
- *      rule 1 already catches any actual loss in that case.
+ *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
+ *      (either direction). A kind rename or split moves fixtures between
+ *      validators (a flattened parent's own factory-level case disappears
+ *      while its variants each gain a `from` case) and can shrink `total`
+ *      net with `fail` UNCHANGED; rule 1 already catches any actual loss
+ *      in that case, so this rule only exempts the exact-unchanged-fail
+ *      shape. A `fail` DECREASE alongside the total drop (a failing
+ *      fixture quietly deleted) still trips this rule — that is not the
+ *      same shape as a rename and deserves a look, not an automatic pass.
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -473,7 +477,7 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 }
 
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	if (head.totals.total < base.totals.total && head.totals.fail > base.totals.fail) {
+	if (head.totals.total < base.totals.total && head.totals.fail !== base.totals.fail) {
 		return {
 			ok: false,
 			reason: 'total-drop',

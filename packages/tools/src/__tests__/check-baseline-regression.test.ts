@@ -229,7 +229,7 @@ describe('checkRegression', () => {
 		expect(verdict.reason).toBe('total-drop');
 	});
 
-	it('total fixture count decreased by removing an already-failing case — passes (fail dropped too, pass unchanged)', () => {
+	it('total fixture count decreased by removing an already-failing case — fail (deletion is not a rename, still needs a look)', () => {
 		const base = baseline();
 		base.totals = { pass: 149, fail: 1, total: 150 };
 		base.grammars.rust.validators.from.total = 10;
@@ -240,7 +240,8 @@ describe('checkRegression', () => {
 		head.grammars.rust.validators.from.total = 9;
 		head.grammars.rust.validators.from.failingKinds = [];
 		const verdict = checkRegression(base, head);
-		expect(verdict.ok).toBe(true);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('total-drop');
 	});
 
 	it('strictly improved counts pass — pass-count up, totals.fail down', () => {
