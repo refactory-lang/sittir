@@ -22,7 +22,8 @@
 		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
-		"@sittir/types": "workspace:*"
+		"@sittir/types": "workspace:*",
+		"@sittir/typescript": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^25.6.0",
