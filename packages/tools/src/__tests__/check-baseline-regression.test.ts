@@ -70,7 +70,8 @@ function entry(): GrammarEntry {
 			from: vr(10, 10),
 			roundtrip: rt(10, 10, 10)
 		},
-		parityFixtures: pf(10, 10)
+		parityFixtures: pf(10, 10),
+		supertypeKindCount: 0
 	};
 }
 
@@ -167,6 +168,82 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toContain('grammars.rust.validators.from.pass');
 		expect(verdict.details.before).toBe(10);
 		expect(verdict.details.after).toBe(9);
+	});
+
+	it('coverage pass drop explained by a new supertype — passes (a kind lost its own template path, not a failure)', () => {
+		const base = baseline();
+		base.grammars.typescript.supertypeKindCount = 5;
+		base.grammars.typescript.validators.coverage = vr(193, 193);
+		const head = clone(base);
+		head.grammars.typescript.supertypeKindCount = 6;
+		head.grammars.typescript.validators.coverage = vr(189, 189);
+		head.totals.pass = 149 - 4;
+		head.totals.total = 150 - 4;
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
+	});
+
+	it('factoryRoundtrip pass drop explained by a new supertype — passes (astMatchPass too)', () => {
+		const base = baseline();
+		base.grammars.python.supertypeKindCount = 2;
+		base.grammars.python.validators.factoryRoundtrip = rt(1390, 1390, 1390);
+		const head = clone(base);
+		head.grammars.python.supertypeKindCount = 5;
+		head.grammars.python.validators.factoryRoundtrip = rt(1368, 1368, 1368);
+		head.totals.pass = 149 - 22;
+		head.totals.total = 150 - 22;
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
+	});
+
+	it('coverage pass drop with supertypeKindCount unchanged — fail (nothing structural explains it)', () => {
+		const base = baseline();
+		base.grammars.typescript.validators.coverage = vr(193, 193);
+		const head = clone(base);
+		head.grammars.typescript.validators.coverage = vr(189, 193);
+		head.totals.pass = 149 - 4;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+	});
+
+	it('coverage pass drop alongside a new fail — fail (a new supertype does not excuse an actual regression)', () => {
+		const base = baseline();
+		base.grammars.typescript.supertypeKindCount = 5;
+		base.grammars.typescript.validators.coverage = vr(193, 193);
+		const head = clone(base);
+		head.grammars.typescript.supertypeKindCount = 6;
+		// total held flat (not just decreased) so checkTotalDrop's aggregate
+		// rule doesn't preempt this — isolating checkPassCounts specifically.
+		head.grammars.typescript.validators.coverage = vr(188, 193, ['kind_a']);
+		head.totals.pass = 149 - 5;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
+	});
+
+	it('from pass drop alongside a new supertype — fail (the exemption is coverage/factoryRoundtrip only)', () => {
+		const base = baseline();
+		base.grammars.typescript.supertypeKindCount = 5;
+		const head = clone(base);
+		head.grammars.typescript.supertypeKindCount = 6;
+		head.grammars.typescript.validators.from = vr(9, 10);
+		head.totals.pass = 149;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.typescript.validators.from.pass');
+	});
+
+	it('totals.pass alone dropping (every per-validator/parityFixtures pass unchanged) — passes (rule 1 no longer double-checks the aggregate)', () => {
+		const base = baseline();
+		const head = clone(base);
+		head.totals.pass = 149;
+		head.totals.total = 149;
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
 	});
 
 	it('schema violation detected — unsorted failingKinds is rejected', () => {

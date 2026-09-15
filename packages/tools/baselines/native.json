@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "ede9a6c",
+    "commit": "7078b7b",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -27,6 +27,7 @@
                 "pass": 1313,
                 "total": 1313
             },
+            "supertypeKindCount": 9,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -83,6 +84,7 @@
                 "pass": 1412,
                 "total": 1412
             },
+            "supertypeKindCount": 21,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -132,6 +134,7 @@
                 "pass": 1484,
                 "total": 1484
             },
+            "supertypeKindCount": 15,
             "validators": {
                 "coverage": {
                     "failingKinds": [],

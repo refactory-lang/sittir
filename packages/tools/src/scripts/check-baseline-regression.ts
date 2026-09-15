@@ -13,9 +13,15 @@
  * The six fail conditions:
  *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
  *      factoryRoundtrip}.pass`, `validators.{roundtrip,factoryRoundtrip}.
- *      astMatchPass`, `parityFixtures.pass`, `totals.pass`. This is what
+ *      astMatchPass`, `parityFixtures.pass`, per grammar. This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it.
+ *      top of it. `coverage`/`factoryRoundtrip` specifically are exempt
+ *      from this floor when the drop is explained by `supertypeKindCount`
+ *      rising for that grammar (a kind losing its own direct render/
+ *      factory path by becoming a supertype) AND that validator's own
+ *      fail count did not rise — see `supertypeExplainsDrop`. The
+ *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
+ *      is rule 2/3's job, not re-checked here.
  *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
  *      (either direction). A kind rename or split moves fixtures between
  *      validators (a flattened parent's own factory-level case disappears
@@ -401,48 +407,82 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // Pass-count drop — enumerate every monitored path and compare.
 // ---------------------------------------------------------------------------
 
-interface PassCountSample {
-	readonly path: string;
-	readonly value: number;
+/**
+ * `coverage` and `factoryRoundtrip` are the two validators whose
+ * denominator is tied to how many kinds have their own direct render
+ * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
+ * skips a supertype (no template of its own to check), and a supertype
+ * likewise has no raw builder for `factoryRoundtrip` to exercise. A kind
+ * crossing into that guard shrinks the denominator without touching the
+ * pass RATE — it isn't a new failure.
+ */
+const SUPERTYPE_EXPLAINED_VALIDATORS: readonly ValidatorName[] = ['coverage', 'factoryRoundtrip'];
+
+/**
+ * Whether a drop in one metric (`pass` or, for a roundtrip validator,
+ * `astMatchPass`) of `vName` for this grammar is explained by kinds
+ * becoming supertypes rather than a new failure: the grammar's
+ * `supertypeKindCount` rose, AND the validator's own fail count
+ * (`total - metric`) did not — the drop is fully accounted for by fewer
+ * cases needing that path, not by any of them going red. A base file
+ * committed before this fact existed reads as 0 — only how much the
+ * count rose matters here, not the true pre-existing count.
+ */
+function supertypeExplainsDrop(
+	baseGrammar: GrammarEntry,
+	headGrammar: GrammarEntry,
+	vName: ValidatorName,
+	metric: 'pass' | 'astMatchPass'
+): boolean {
+	if (!SUPERTYPE_EXPLAINED_VALIDATORS.includes(vName)) return false;
+	if ((headGrammar.supertypeKindCount ?? 0) <= (baseGrammar.supertypeKindCount ?? 0)) return false;
+	const b = baseGrammar.validators[vName] as RoundtripResult;
+	const h = headGrammar.validators[vName] as RoundtripResult;
+	return h.total - h[metric] <= b.total - b[metric];
 }
 
-function collectPassCounts(b: BackendBaseline): PassCountSample[] {
-	const out: PassCountSample[] = [];
+function passCountFail(path: string, before: number, after: number): RegressionVerdict {
+	return {
+		ok: false,
+		reason: 'pass-count-drop',
+		summary: `pass-count drop at ${path}: ${before} → ${after}`,
+		details: { path, before, after }
+	};
+}
+
+/**
+ * `totals.pass`/`totals.fail`/`totals.total`'s aggregate relationship is
+ * `checkTotalDrop`/`checkTotalFailRise`'s job (they run first, and reason
+ * about the aggregate directly) — not duplicated here as a third,
+ * conflicting floor on the same numbers. This function owns only the
+ * per-grammar, per-validator, and per-grammar parity-fixture floors.
+ */
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
-		const ge = b.grammars[g];
+		const baseGrammar = base.grammars[g];
+		const headGrammar = head.grammars[g];
 		for (const vName of VALIDATORS) {
-			const v = ge.validators[vName] as ValidatorResult;
-			out.push({
-				path: `grammars.${g}.validators.${vName}.pass`,
-				value: v.pass
-			});
+			const b = baseGrammar.validators[vName] as ValidatorResult;
+			const h = headGrammar.validators[vName] as ValidatorResult;
+			const path = `grammars.${g}.validators.${vName}.pass`;
+			if (h.pass < b.pass && !supertypeExplainsDrop(baseGrammar, headGrammar, vName, 'pass')) {
+				return passCountFail(path, b.pass, h.pass);
+			}
 			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
-				out.push({
-					path: `grammars.${g}.validators.${vName}.astMatchPass`,
-					value: (v as RoundtripResult).astMatchPass
-				});
+				const br = b as RoundtripResult;
+				const hr = h as RoundtripResult;
+				const astPath = `grammars.${g}.validators.${vName}.astMatchPass`;
+				if (hr.astMatchPass < br.astMatchPass && !supertypeExplainsDrop(baseGrammar, headGrammar, vName, 'astMatchPass')) {
+					return passCountFail(astPath, br.astMatchPass, hr.astMatchPass);
+				}
 			}
 		}
-		out.push({
-			path: `grammars.${g}.parityFixtures.pass`,
-			value: ge.parityFixtures.pass
-		});
-	}
-	out.push({ path: 'totals.pass', value: b.totals.pass });
-	return out;
-}
-
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	const baseSamples = new Map(collectPassCounts(base).map((s) => [s.path, s.value]));
-	for (const s of collectPassCounts(head)) {
-		const before = baseSamples.get(s.path) ?? 0;
-		if (s.value < before) {
-			return {
-				ok: false,
-				reason: 'pass-count-drop',
-				summary: `pass-count drop at ${s.path}: ${before} → ${s.value}`,
-				details: { path: s.path, before, after: s.value }
-			};
+		if (headGrammar.parityFixtures.pass < baseGrammar.parityFixtures.pass) {
+			return passCountFail(
+				`grammars.${g}.parityFixtures.pass`,
+				baseGrammar.parityFixtures.pass,
+				headGrammar.parityFixtures.pass
+			);
 		}
 	}
 	return null;
