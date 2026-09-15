@@ -370,13 +370,13 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	return [
 		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
 		`  if (typeof data === 'number') return data;`,
-		`  const node = _keepModelledSlots(data as unknown as _NodeData & { readonly $other?: T.${node.typeName} | readonly T.${node.typeName}[] }, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
+		`  const node = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(node, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ${JSON.stringify(allowedKinds)});`,
-		`  if (filtered === undefined && (typeof node.$text === 'string' || node.$nodeHandle != null)) {`,
-		`    return drillInSelf<T.${node.typeName}>(node as unknown as T.${node.typeName}, tree);`,
+		`  if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)) {`,
+		`    return drillInSelf<T.${node.typeName}>(node as T.${node.typeName}, tree);`,
 		`  }`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: node.$span }), tree);`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: (node as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
 }

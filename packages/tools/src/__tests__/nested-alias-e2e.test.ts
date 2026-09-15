@@ -8,8 +8,10 @@ const wasmPath = join(__dirname, '../../../python/.sittir/parser.wasm');
 async function parsePython(source: string) {
 	const { Parser, lang } = await loadLanguageForGrammar('python');
 	const parser = new Parser();
-	parser.setLanguage(lang as any);
-	return { lang: lang as any, tree: (parser as any).parse(source) };
+	parser.setLanguage(lang);
+	const tree = parser.parse(source);
+	if (!tree) throw new Error('expected parser to return a tree');
+	return { lang, tree };
 }
 
 describe('flattened polymorph — python assignment e2e', () => {
@@ -28,7 +30,8 @@ describe('flattened polymorph — python assignment e2e', () => {
 	it.skipIf(!existsSync(wasmPath))('assignment is a supertype over its variants, so queries on it still match', async () => {
 		const { lang } = await parsePython('');
 		const id = lang.idForNodeType('assignment', true);
-		const subtypes = (lang.subtypes(id) as number[]).map((s) => lang.nodeTypeForId(s)).sort();
+		if (id === null) throw new Error('expected an `assignment` kind id');
+		const subtypes = lang.subtypes(id).map((s) => lang.nodeTypeForId(s)).sort();
 		expect(subtypes).toEqual(['assignment_eq', 'assignment_type', 'assignment_typed']);
 	});
 });

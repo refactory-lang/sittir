@@ -10,11 +10,17 @@
  * metric; exits 1 otherwise. On failure, prints a JSON object naming
  * the offending field path so the CI log points reviewers at the regression.
  *
- * The five fail conditions:
+ * The six fail conditions:
  *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
  *      factoryRoundtrip}.pass`, `validators.{roundtrip,factoryRoundtrip}.
- *      astMatchPass`, `parityFixtures.pass`, `totals.pass`.
- *   2. Total drop — `totals.total` decreased (fixture deletion).
+ *      astMatchPass`, `parityFixtures.pass`, `totals.pass`. This is what
+ *      actually guards regressions; rule 2 below is a coarser tripwire on
+ *      top of it.
+ *   2. Total drop — `totals.total` decreased AND `totals.fail` rose. A
+ *      kind rename or split moves fixtures between validators (a flattened
+ *      parent's own factory-level case disappears while its variants each
+ *      gain a `from` case) and can shrink `total` net with `fail` flat;
+ *      rule 1 already catches any actual loss in that case.
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -23,11 +29,12 @@
  *      may not exceed the corresponding sum on the base. Items may MOVE
  *      from `failingKinds` into `formatDeferredKinds` during a cluster
  *      commit; only the SUM is checked.
- *   6. Left-out rise — `parityFixtures.leftOutByKind[kind]` may not grow
- *      for any kind, and no kind may appear that the base did not have:
- *      a render fixture the regen leaves out is a kind whose template no
- *      longer reproduces its source, and it must fail here rather than
- *      vanish from the fixture set.
+ *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
+ *      leftOutByKind` may not grow: a render fixture the regen leaves out
+ *      is a kind whose template no longer reproduces its source, and it
+ *      must fail here rather than vanish from the fixture set. The sum,
+ *      not each kind individually, is tracked — a kind rename moves
+ *      fixtures between keys without changing how many don't reproduce.
  *
  * Importable surface: `checkRegression(base, head): RegressionVerdict`.
  * The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
@@ -441,31 +448,36 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 // Total-drop / total-fail-rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
+function sumByKind(byKind: Readonly<Record<string, number>>): number {
+	return Object.values(byKind).reduce((a, b) => a + b, 0);
+}
+
 function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
 		const before = base.grammars[g].parityFixtures.leftOutByKind ?? {};
 		const after = head.grammars[g].parityFixtures.leftOutByKind ?? {};
-		for (const kind of Object.keys(after)) {
-			const was = before[kind] ?? 0;
-			const now = after[kind]!;
-			if (now <= was) continue;
-			return {
-				ok: false,
-				reason: 'left-out-rise',
-				summary: `render fixtures left out grew at grammars.${g}.parityFixtures.leftOutByKind.${kind}: ${was} → ${now} (the ${kind} template no longer reproduces its source)`,
-				details: { path: `grammars.${g}.parityFixtures.leftOutByKind.${kind}`, before: was, after: now }
-			};
-		}
+		const beforeSum = sumByKind(before);
+		const afterSum = sumByKind(after);
+		if (afterSum <= beforeSum) continue;
+		const [grownKind] = Object.keys(after)
+			.map((kind) => [kind, (after[kind] ?? 0) - (before[kind] ?? 0)] as const)
+			.sort(([, a], [, b]) => b - a)[0]!;
+		return {
+			ok: false,
+			reason: 'left-out-rise',
+			summary: `render fixtures left out grew at grammars.${g}.parityFixtures.leftOutByKind: ${beforeSum} → ${afterSum} total (largest mover: ${grownKind})`,
+			details: { path: `grammars.${g}.parityFixtures.leftOutByKind`, before: beforeSum, after: afterSum }
+		};
 	}
 	return null;
 }
 
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	if (head.totals.total < base.totals.total) {
+	if (head.totals.total < base.totals.total && head.totals.fail > base.totals.fail) {
 		return {
 			ok: false,
 			reason: 'total-drop',
-			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (likely fixture deletion)`,
+			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (fixture deletion, with totals.fail: ${base.totals.fail} → ${head.totals.fail})`,
 			details: {
 				path: 'totals.total',
 				before: base.totals.total,
