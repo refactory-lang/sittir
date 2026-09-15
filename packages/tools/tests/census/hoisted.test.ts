@@ -24,6 +24,17 @@ describe('hoistedCensus', () => {
 		});
 	});
 
+	it('counts a variant reached through its flattened parent\'s route as seated', () => {
+		const model = {
+			nodes: [
+				{ kind: 'parent', modelType: 'supertype' },
+				{ kind: 'parent_eq', annotations: { hoisted: true }, slots: [] }
+			],
+			variantRoutes: { parent_eq: 'parent.eq' }
+		};
+		expect(hoistedCensus(model)).toEqual({ hoisted: ['parent_eq'], seated: ['parent_eq'], unseated: [] });
+	});
+
 	it('accepts a keyed node map', () => {
 		const model = { nodes: { a: { kind: 'a', annotations: { hoisted: true } }, b: { kind: 'b' } } };
 		expect(hoistedCensus(model).hoisted).toEqual(['a']);

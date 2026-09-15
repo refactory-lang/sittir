@@ -2,18 +2,9 @@
  * Tests for `check-baseline-regression.ts` — feature 016 / T009.
  *
  * The CI regression-checker compares two `BackendBaseline` JSONs (base
- * vs head) and exits non-zero on any of the five verdict rules from
- * `specs/016-parity-regressions/contracts/baseline-json.md`:
- *
- *   1. Pass-count drop (any per-validator pass / astMatchPass /
- *      parityFixtures.pass / totals.pass).
- *   2. Total drop (totals.total decreased — fixture deletion).
- *   3. Total-fail rise (totals.fail increased).
- *   4. Schema violation (missing keys, unsorted arrays, missing
- *      formatDeferredKinds / formatDeferredByKind).
- *   5. Format-deferred-count rise within feature 016 (sum of
- *      `failingKinds + formatDeferredKinds` may not grow, but items
- *      may MOVE between the two arrays).
+ * vs head) and exits non-zero on any of the verdict rules documented on
+ * the module comment in `check-baseline-regression.ts` (kept current
+ * there; not duplicated here).
  *
  * Tests feed two in-memory BackendBaseline objects to `checkRegression`
  * to keep the surface free of file I/O — the CLI wrapper handles
@@ -123,16 +114,25 @@ describe('checkRegression', () => {
 		}
 	});
 
-	it('left-out rise detected — a kind the regen newly leaves out names its path', () => {
+	it('left-out rise detected — an uncompensated per-grammar sum rise names the grammar path', () => {
 		const base = baseline();
 		const head = clone(base);
 		head.grammars.typescript.parityFixtures.leftOutByKind = { for_statement: 1 };
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('left-out-rise');
-		expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.leftOutByKind.for_statement');
+		expect(verdict.details.path).toBe('grammars.typescript.parityFixtures.leftOutByKind');
 		expect(verdict.details.before).toBe(0);
 		expect(verdict.details.after).toBe(1);
+	});
+
+	it('left-out rename passes — a kind split moving the same fixtures to a new key does not raise the sum', () => {
+		const base = baseline();
+		base.grammars.python.parityFixtures.leftOutByKind = { assignment: 3 };
+		const head = clone(base);
+		head.grammars.python.parityFixtures.leftOutByKind = { assignment_eq: 3 };
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
 	});
 
 	it('left-out shrink passes — a kind the template reproduces again may leave the list', () => {
@@ -215,19 +215,32 @@ describe('checkRegression', () => {
 		expect(verdict.ok).toBe(true);
 	});
 
-	it('total fixture count decreased — fail (rule #2)', () => {
+	it('total fixture count decreased with a fail rise — fail (rule #2)', () => {
 		const base = baseline();
 		const head = clone(base);
 		head.totals.total = 149;
-		// Don't change pass — fail also drops by 1 (negative); we want the
-		// total-drop check to fire BEFORE total-fail-rise.
-		head.totals.pass = 149;
-		head.totals.fail = 0;
+		head.totals.pass = 148;
+		head.totals.fail = 1;
 		head.grammars.rust.validators.from.total = 9;
-		head.grammars.rust.validators.from.pass = 9;
+		head.grammars.rust.validators.from.pass = 8;
+		head.grammars.rust.validators.from.failingKinds = ['kind_a'];
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('total-drop');
+	});
+
+	it('total fixture count decreased by removing an already-failing case — passes (fail dropped too, pass unchanged)', () => {
+		const base = baseline();
+		base.totals = { pass: 149, fail: 1, total: 150 };
+		base.grammars.rust.validators.from.total = 10;
+		base.grammars.rust.validators.from.pass = 9;
+		base.grammars.rust.validators.from.failingKinds = ['kind_a'];
+		const head = clone(base);
+		head.totals = { pass: 149, fail: 0, total: 149 };
+		head.grammars.rust.validators.from.total = 9;
+		head.grammars.rust.validators.from.failingKinds = [];
+		const verdict = checkRegression(base, head);
+		expect(verdict.ok).toBe(true);
 	});
 
 	it('strictly improved counts pass — pass-count up, totals.fail down', () => {

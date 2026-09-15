@@ -417,6 +417,23 @@ inside another variant's subtree. The minted rule composes through them
 
 The name the minted rule takes: the enclosing variants' names then its own.
 
+### `packages/codegen/src/dsl/primitives/variant.ts::VariantOptions`
+
+`absent: true` marks the placeholder as the name of a variant choice's absent
+case. It goes on the path of the `optional()` that wraps the choice (`'1'`
+beside arm patches `'1/0/0'`, `'1/0/1'`), and names the variant minted from the
+parent's scaffolding without the optional. Without it the absent case is
+still minted, as `ABSENT_VARIANT_NAME`.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::ABSENT_VARIANT_NAME`
+
+`bare`: the variant name of an optional variant choice's absent case when
+the grammar does not name it.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::variant`
+
+Builds the placeholder; `options.absent` is carried only when set.
+
 ### `packages/codegen/src/dsl/primitives/spacing.ts::WHITESPACE_SUPERTYPE`
 
 `_whitespace`, the hidden supertype every grammar declares (in `supertypes:`

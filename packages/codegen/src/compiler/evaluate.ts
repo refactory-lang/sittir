@@ -33,7 +33,7 @@ import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
 import { isComplexBody, isNonInlinableLeafShape, isParserHiddenName } from '../dsl/rule-patterns.ts';
-import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
+import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
@@ -672,7 +672,7 @@ function prunePlaceholderOrphans(
 	wireCtx: WireContext
 ): void {
 	const protectedNames = new Set<string>([...wireCtx.deposits.keys(), ...ctx.sinks.supertypes]);
-	for (const name of collectUnreachableHiddenRules(rules, protectedNames)) {
+	for (const name of collectOrphanedRules(rules, protectedNames)) {
 		delete rules[name];
 	}
 }

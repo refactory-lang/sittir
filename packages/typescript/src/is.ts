@@ -9,10 +9,16 @@ import type {
 	AugmentedAssignmentLhs,
 	Declaration,
 	DestructuringPattern,
+	ExportStatement,
+	ExportStatementDefault,
 	Expression,
 	Expressions,
+	ForHeader,
 	FormalParameter,
 	ImportIdentifier,
+	ImportSpecifier,
+	IndexSignature,
+	MetaProperty,
 	ModuleExportName,
 	Pattern,
 	PrimaryExpression,
@@ -24,6 +30,8 @@ import type {
 	StatementIdentifier,
 	TupleTypeMember,
 	Type,
+	UpdateExpression,
+	VariableDeclarator,
 	Whitespace,
 	_Identifier,
 	_LhsExpression,
@@ -35,9 +43,6 @@ export interface IsGuards {
 	program<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Program };
-	exportStatement<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatement };
 	namespaceExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamespaceExport };
@@ -59,9 +64,6 @@ export interface IsGuards {
 	namedImports<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedImports };
-	importSpecifier<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecifier };
 	importAttribute<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportAttribute };
@@ -74,9 +76,6 @@ export interface IsGuards {
 	lexicalDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LexicalDeclaration };
-	variableDeclarator<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VariableDeclarator };
 	statementBlock<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StatementBlock };
@@ -95,9 +94,6 @@ export interface IsGuards {
 	forInStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInStatement };
-	ForHeader<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeader };
 	whileStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WhileStatement };
@@ -227,9 +223,6 @@ export interface IsGuards {
 	unaryExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnaryExpression };
-	updateExpression<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UpdateExpression };
 	sequenceExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SequenceExpression };
@@ -245,9 +238,6 @@ export interface IsGuards {
 	regex<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Regex };
-	metaProperty<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MetaProperty };
 	arguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Arguments };
@@ -493,9 +483,6 @@ export interface IsGuards {
 	constructSignature<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructSignature };
-	indexSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IndexSignature };
 	arrayType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArrayType };
@@ -514,52 +501,53 @@ export interface IsGuards {
 	functionType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FunctionType };
-	ExportSpecifiers<T extends { readonly $type: number } | number>(
+	exportSpecifiers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportSpecifiers };
-	ImportSpecifiers<T extends { readonly $type: number } | number>(
+	importSpecifiers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecifiers };
-	FormalParametersElements<T extends { readonly $type: number } | number>(
+	formalParametersElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersElements };
-	EnumBodyElements<T extends { readonly $type: number } | number>(
+	enumBodyElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumBodyElements };
-	Types<T extends { readonly $type: number } | number>(
+	types<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Types };
-	TypeParametersElements<T extends { readonly $type: number } | number>(
+	typeParametersElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParametersElements };
-	TupleTypeMembers<T extends { readonly $type: number } | number>(
+	tupleTypeMembers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleTypeMembers };
-	AmbientDeclarationGlobal<T extends { readonly $type: number } | number>(
+	ambientDeclarationGlobal<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationGlobal };
-	AmbientDeclarationModule<T extends { readonly $type: number } | number>(
+	ambientDeclarationModule<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationModule };
 	objectTypeContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ObjectTypeContent };
-	ExportStatementDefault<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementDefault };
-	ExportStatementNamespaceExport<T extends { readonly $type: number } | number>(
+	exportStatementNamespaceExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementNamespaceExport };
-	ExportStatementTypeExport<T extends { readonly $type: number } | number>(
+	exportStatementTypeExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementTypeExport };
-	ExportStatementEqualsExport<T extends { readonly $type: number } | number>(
+	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
+	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement;
 	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
 	declaration(v: { readonly $type: string | number } | number): v is Declaration;
+	importSpecifier(v: { readonly $type: string | number } | number): v is ImportSpecifier;
 	statement(v: { readonly $type: string | number } | number): v is Statement;
+	variableDeclarator(v: { readonly $type: string | number } | number): v is VariableDeclarator;
+	forHeader(v: { readonly $type: string | number } | number): v is ForHeader;
 	expressions(v: { readonly $type: string | number } | number): v is Expressions;
 	expression(v: { readonly $type: string | number } | number): v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
@@ -567,7 +555,9 @@ export interface IsGuards {
 	lhsExpression(v: { readonly $type: string | number } | number): v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
+	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
 	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
+	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
 	statementIdentifier(v: { readonly $type: string | number } | number): v is StatementIdentifier;
@@ -580,13 +570,14 @@ export interface IsGuards {
 	type(v: { readonly $type: string | number } | number): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType;
+	indexSignature(v: { readonly $type: string | number } | number): v is IndexSignature;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	exportStatementDefault(v: { readonly $type: string | number } | number): v is ExportStatementDefault;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	program(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Program };
-	exportStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportStatement };
 	namespaceExport(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamespaceExport };
 	exportClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportClause };
 	exportSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportSpecifier };
@@ -594,7 +585,6 @@ export interface AssertGuards {
 	importClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImportClause };
 	namespaceImport(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamespaceImport };
 	namedImports(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamedImports };
-	importSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImportSpecifier };
 	importAttribute(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImportAttribute };
 	expressionStatement(
 		v: { readonly $type: number } | number
@@ -605,16 +595,12 @@ export interface AssertGuards {
 	lexicalDeclaration(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.LexicalDeclaration };
-	variableDeclarator(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.VariableDeclarator };
 	statementBlock(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StatementBlock };
 	elseClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ElseClause };
 	ifStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IfStatement };
 	switchStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.SwitchStatement };
 	forStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForStatement };
 	forInStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForInStatement };
-	ForHeader(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ForHeader };
 	whileStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WhileStatement };
 	doStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.DoStatement };
 	tryStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TryStatement };
@@ -684,7 +670,6 @@ export interface AssertGuards {
 	): asserts v is { readonly $type: TSKindId.TernaryExpression };
 	binaryExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.BinaryExpression };
 	unaryExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UnaryExpression };
-	updateExpression(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UpdateExpression };
 	sequenceExpression(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SequenceExpression };
@@ -694,7 +679,6 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
 	regex(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Regex };
-	metaProperty(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MetaProperty };
 	arguments(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Arguments };
 	decorator(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Decorator };
 	decoratorMemberExpression(
@@ -848,49 +832,49 @@ export interface AssertGuards {
 	constructSignature(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ConstructSignature };
-	indexSignature(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IndexSignature };
 	arrayType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ArrayType };
 	tupleType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TupleType };
 	readonlyType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ReadonlyType };
 	unionType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UnionType };
 	intersectionType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IntersectionType };
 	functionType(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FunctionType };
-	ExportSpecifiers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportSpecifiers };
-	ImportSpecifiers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
-	FormalParametersElements(
+	exportSpecifiers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportSpecifiers };
+	importSpecifiers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ImportSpecifiers };
+	formalParametersElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.FormalParametersElements };
-	EnumBodyElements(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EnumBodyElements };
-	Types(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Types };
-	TypeParametersElements(
+	enumBodyElements(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EnumBodyElements };
+	types(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Types };
+	typeParametersElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TypeParametersElements };
-	TupleTypeMembers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
-	AmbientDeclarationGlobal(
+	tupleTypeMembers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
+	ambientDeclarationGlobal(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AmbientDeclarationGlobal };
-	AmbientDeclarationModule(
+	ambientDeclarationModule(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AmbientDeclarationModule };
 	objectTypeContent(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
-	ExportStatementDefault(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
-	ExportStatementNamespaceExport(
+	exportStatementNamespaceExport(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
-	ExportStatementTypeExport(
+	exportStatementTypeExport(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
-	ExportStatementEqualsExport(
+	exportStatementEqualsExport(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
+	exportStatement(v: { readonly $type: string | number } | number): asserts v is ExportStatement;
 	moduleExportName(v: { readonly $type: string | number } | number): asserts v is ModuleExportName;
 	declaration(v: { readonly $type: string | number } | number): asserts v is Declaration;
+	importSpecifier(v: { readonly $type: string | number } | number): asserts v is ImportSpecifier;
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
+	variableDeclarator(v: { readonly $type: string | number } | number): asserts v is VariableDeclarator;
+	forHeader(v: { readonly $type: string | number } | number): asserts v is ForHeader;
 	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
 	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
@@ -898,7 +882,9 @@ export interface AssertGuards {
 	lhsExpression(v: { readonly $type: string | number } | number): asserts v is _LhsExpression;
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
+	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
 	identifier(v: { readonly $type: string | number } | number): asserts v is _Identifier;
+	metaProperty(v: { readonly $type: string | number } | number): asserts v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): asserts v is PropertyName;
 	statementIdentifier(v: { readonly $type: string | number } | number): asserts v is StatementIdentifier;
@@ -913,7 +899,9 @@ export interface AssertGuards {
 	type(v: { readonly $type: string | number } | number): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): asserts v is TupleTypeMember;
 	primaryType(v: { readonly $type: string | number } | number): asserts v is PrimaryType;
+	indexSignature(v: { readonly $type: string | number } | number): asserts v is IndexSignature;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
+	exportStatementDefault(v: { readonly $type: string | number } | number): asserts v is ExportStatementDefault;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -924,25 +912,29 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
+const _supertype_exportStatement_ids = new Set<number>([384, 385, 383]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 255]);
 const _supertype_declaration_ids = new Set<number>([
 	231, 233, 228, 191, 190, 279, 290, 291, 292, 301, 298, 296, 294, 289
 ]);
+const _supertype_importSpecifier_ids = new Set<number>([393, 394]);
 const _supertype_statement_ids = new Set<number>([
-	174, 181, 206, 189, 193, 195, 196, 197, 198, 200, 201, 202, 203, 204, 205, 207, 208, 209, 210
+	181, 206, 189, 193, 195, 196, 197, 198, 200, 201, 202, 203, 204, 205, 207, 208, 209, 210
 ]);
+const _supertype_variableDeclarator_ids = new Set<number>([414, 415]);
+const _supertype_forHeader_ids = new Set<number>([418, 419, 420]);
 const _supertype_expressions_ids = new Set<number>([254]);
-const _supertype_expression_ids = new Set<number>([
-	282, 283, 284, 292, 281, 244, 246, 240, 252, 251, 250, 253, 239, 219
-]);
+const _supertype_expression_ids = new Set<number>([282, 283, 284, 292, 281, 244, 246, 240, 252, 251, 250, 239, 219]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	242, 241, 216, 105, 1, 448, 100, 101, 98, 255, 256, 258, 102, 103, 104, 220, 224, 230, 234, 232, 227, 259, 238, 276
+	242, 241, 216, 105, 1, 448, 100, 101, 98, 255, 256, 258, 102, 103, 104, 220, 224, 230, 234, 232, 227, 238, 276
 ]);
 const _supertype_formalParameter_ids = new Set<number>([304, 305]);
 const _supertype_lhsExpression_ids = new Set<number>([241, 242, 105, 1, 448, 221, 225, 276]);
 const _supertype_augmentedAssignmentLhs_ids = new Set<number>([241, 242, 448, 1, 216, 276]);
 const _supertype_destructuringPattern_ids = new Set<number>([221, 225]);
+const _supertype_updateExpression_ids = new Set<number>([402, 403]);
 const _supertype_identifier_ids = new Set<number>([105, 1]);
+const _supertype_metaProperty_ids = new Set<number>([416, 417]);
 const _supertype_pattern_ids = new Set<number>([268]);
 const _supertype_propertyName_ids = new Set<number>([99, 255, 98, 273]);
 const _supertype_statementIdentifier_ids = new Set<number>([1, 448]);
@@ -955,10 +947,11 @@ const _supertype_tupleTypeMember_ids = new Set<number>([316, 317, 318, 319]);
 const _supertype_primaryType_ids = new Set<number>([
 	342, 343, 1, 295, 327, 345, 354, 355, 341, 334, 335, 100, 340, 338, 336, 326, 324, 358, 357
 ]);
+const _supertype_indexSignature_ids = new Set<number>([390, 391]);
+const _supertype_exportStatementDefault_ids = new Set<number>([407, 408]);
 
 export const is = {
 	program: _g(TSKindId.Program),
-	exportStatement: _g(TSKindId.ExportStatement),
 	namespaceExport: _g(TSKindId.NamespaceExport),
 	exportClause: _g(TSKindId.ExportClause),
 	exportSpecifier: _g(TSKindId.ExportSpecifier),
@@ -966,19 +959,16 @@ export const is = {
 	importClause: _g(TSKindId.ImportClause),
 	namespaceImport: _g(TSKindId.NamespaceImport),
 	namedImports: _g(TSKindId.NamedImports),
-	importSpecifier: _g(TSKindId.ImportSpecifier),
 	importAttribute: _g(TSKindId.ImportAttribute),
 	expressionStatement: _g(TSKindId.ExpressionStatement),
 	variableDeclaration: _g(TSKindId.VariableDeclaration),
 	lexicalDeclaration: _g(TSKindId.LexicalDeclaration),
-	variableDeclarator: _g(TSKindId.VariableDeclarator),
 	statementBlock: _g(TSKindId.StatementBlock),
 	elseClause: _g(TSKindId.ElseClause),
 	ifStatement: _g(TSKindId.IfStatement),
 	switchStatement: _g(TSKindId.SwitchStatement),
 	forStatement: _g(TSKindId.ForStatement),
 	forInStatement: _g(TSKindId.ForInStatement),
-	ForHeader: _g(TSKindId.ForHeader),
 	whileStatement: _g(TSKindId.WhileStatement),
 	doStatement: _g(TSKindId.DoStatement),
 	tryStatement: _g(TSKindId.TryStatement),
@@ -1022,13 +1012,11 @@ export const is = {
 	ternaryExpression: _g(TSKindId.TernaryExpression),
 	binaryExpression: _g(TSKindId.BinaryExpression),
 	unaryExpression: _g(TSKindId.UnaryExpression),
-	updateExpression: _g(TSKindId.UpdateExpression),
 	sequenceExpression: _g(TSKindId.SequenceExpression),
 	string: _g(TSKindId.String),
 	templateString: _g(TSKindId.TemplateString),
 	templateSubstitution: _g(TSKindId.TemplateSubstitution),
 	regex: _g(TSKindId.Regex),
-	metaProperty: _g(TSKindId.MetaProperty),
 	arguments: _g(TSKindId.Arguments),
 	decorator: _g(TSKindId.Decorator),
 	decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
@@ -1110,31 +1098,33 @@ export const is = {
 	defaultType: _g(TSKindId.DefaultType),
 	constraint: _g(TSKindId.Constraint),
 	constructSignature: _g(TSKindId.ConstructSignature),
-	indexSignature: _g(TSKindId.IndexSignature),
 	arrayType: _g(TSKindId.ArrayType),
 	tupleType: _g(TSKindId.TupleType),
 	readonlyType: _g(TSKindId.ReadonlyType),
 	unionType: _g(TSKindId.UnionType),
 	intersectionType: _g(TSKindId.IntersectionType),
 	functionType: _g(TSKindId.FunctionType),
-	ExportSpecifiers: _g(TSKindId.ExportSpecifiers),
-	ImportSpecifiers: _g(TSKindId.ImportSpecifiers),
-	FormalParametersElements: _g(TSKindId.FormalParametersElements),
-	EnumBodyElements: _g(TSKindId.EnumBodyElements),
-	Types: _g(TSKindId.Types),
-	TypeParametersElements: _g(TSKindId.TypeParametersElements),
-	TupleTypeMembers: _g(TSKindId.TupleTypeMembers),
-	AmbientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
-	AmbientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
+	exportSpecifiers: _g(TSKindId.ExportSpecifiers),
+	importSpecifiers: _g(TSKindId.ImportSpecifiers),
+	formalParametersElements: _g(TSKindId.FormalParametersElements),
+	enumBodyElements: _g(TSKindId.EnumBodyElements),
+	types: _g(TSKindId.Types),
+	typeParametersElements: _g(TSKindId.TypeParametersElements),
+	tupleTypeMembers: _g(TSKindId.TupleTypeMembers),
+	ambientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
+	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
-	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
-	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
-	ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
-	ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
+	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
+	exportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
+	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
+	exportStatement: _sg(_supertype_exportStatement_ids),
 	moduleExportName: _sg(_supertype_moduleExportName_ids),
 	declaration: _sg(_supertype_declaration_ids),
+	importSpecifier: _sg(_supertype_importSpecifier_ids),
 	statement: _sg(_supertype_statement_ids),
+	variableDeclarator: _sg(_supertype_variableDeclarator_ids),
+	forHeader: _sg(_supertype_forHeader_ids),
 	expressions: _sg(_supertype_expressions_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
@@ -1142,7 +1132,9 @@ export const is = {
 	lhsExpression: _sg(_supertype_lhsExpression_ids),
 	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
+	updateExpression: _sg(_supertype_updateExpression_ids),
 	identifier: _sg(_supertype_identifier_ids),
+	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	propertyName: _sg(_supertype_propertyName_ids),
 	statementIdentifier: _sg(_supertype_statementIdentifier_ids),
@@ -1153,7 +1145,9 @@ export const is = {
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids),
-	whitespace: _sg(new Set<number>())
+	indexSignature: _sg(_supertype_indexSignature_ids),
+	whitespace: _sg(new Set<number>()),
+	exportStatementDefault: _sg(_supertype_exportStatementDefault_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1180,7 +1174,6 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	program: _makeAssert('program', is.program as _AnyGuard),
-	exportStatement: _makeAssert('exportStatement', is.exportStatement as _AnyGuard),
 	namespaceExport: _makeAssert('namespaceExport', is.namespaceExport as _AnyGuard),
 	exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
 	exportSpecifier: _makeAssert('exportSpecifier', is.exportSpecifier as _AnyGuard),
@@ -1188,19 +1181,16 @@ export const assert = {
 	importClause: _makeAssert('importClause', is.importClause as _AnyGuard),
 	namespaceImport: _makeAssert('namespaceImport', is.namespaceImport as _AnyGuard),
 	namedImports: _makeAssert('namedImports', is.namedImports as _AnyGuard),
-	importSpecifier: _makeAssert('importSpecifier', is.importSpecifier as _AnyGuard),
 	importAttribute: _makeAssert('importAttribute', is.importAttribute as _AnyGuard),
 	expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
 	variableDeclaration: _makeAssert('variableDeclaration', is.variableDeclaration as _AnyGuard),
 	lexicalDeclaration: _makeAssert('lexicalDeclaration', is.lexicalDeclaration as _AnyGuard),
-	variableDeclarator: _makeAssert('variableDeclarator', is.variableDeclarator as _AnyGuard),
 	statementBlock: _makeAssert('statementBlock', is.statementBlock as _AnyGuard),
 	elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
 	ifStatement: _makeAssert('ifStatement', is.ifStatement as _AnyGuard),
 	switchStatement: _makeAssert('switchStatement', is.switchStatement as _AnyGuard),
 	forStatement: _makeAssert('forStatement', is.forStatement as _AnyGuard),
 	forInStatement: _makeAssert('forInStatement', is.forInStatement as _AnyGuard),
-	ForHeader: _makeAssert('ForHeader', is.ForHeader as _AnyGuard),
 	whileStatement: _makeAssert('whileStatement', is.whileStatement as _AnyGuard),
 	doStatement: _makeAssert('doStatement', is.doStatement as _AnyGuard),
 	tryStatement: _makeAssert('tryStatement', is.tryStatement as _AnyGuard),
@@ -1250,13 +1240,11 @@ export const assert = {
 	ternaryExpression: _makeAssert('ternaryExpression', is.ternaryExpression as _AnyGuard),
 	binaryExpression: _makeAssert('binaryExpression', is.binaryExpression as _AnyGuard),
 	unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
-	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
 	sequenceExpression: _makeAssert('sequenceExpression', is.sequenceExpression as _AnyGuard),
 	string: _makeAssert('string', is.string as _AnyGuard),
 	templateString: _makeAssert('templateString', is.templateString as _AnyGuard),
 	templateSubstitution: _makeAssert('templateSubstitution', is.templateSubstitution as _AnyGuard),
 	regex: _makeAssert('regex', is.regex as _AnyGuard),
-	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
 	decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
 	decoratorMemberExpression: _makeAssert('decoratorMemberExpression', is.decoratorMemberExpression as _AnyGuard),
@@ -1353,34 +1341,36 @@ export const assert = {
 	defaultType: _makeAssert('defaultType', is.defaultType as _AnyGuard),
 	constraint: _makeAssert('constraint', is.constraint as _AnyGuard),
 	constructSignature: _makeAssert('constructSignature', is.constructSignature as _AnyGuard),
-	indexSignature: _makeAssert('indexSignature', is.indexSignature as _AnyGuard),
 	arrayType: _makeAssert('arrayType', is.arrayType as _AnyGuard),
 	tupleType: _makeAssert('tupleType', is.tupleType as _AnyGuard),
 	readonlyType: _makeAssert('readonlyType', is.readonlyType as _AnyGuard),
 	unionType: _makeAssert('unionType', is.unionType as _AnyGuard),
 	intersectionType: _makeAssert('intersectionType', is.intersectionType as _AnyGuard),
 	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
-	ExportSpecifiers: _makeAssert('ExportSpecifiers', is.ExportSpecifiers as _AnyGuard),
-	ImportSpecifiers: _makeAssert('ImportSpecifiers', is.ImportSpecifiers as _AnyGuard),
-	FormalParametersElements: _makeAssert('FormalParametersElements', is.FormalParametersElements as _AnyGuard),
-	EnumBodyElements: _makeAssert('EnumBodyElements', is.EnumBodyElements as _AnyGuard),
-	Types: _makeAssert('Types', is.Types as _AnyGuard),
-	TypeParametersElements: _makeAssert('TypeParametersElements', is.TypeParametersElements as _AnyGuard),
-	TupleTypeMembers: _makeAssert('TupleTypeMembers', is.TupleTypeMembers as _AnyGuard),
-	AmbientDeclarationGlobal: _makeAssert('AmbientDeclarationGlobal', is.AmbientDeclarationGlobal as _AnyGuard),
-	AmbientDeclarationModule: _makeAssert('AmbientDeclarationModule', is.AmbientDeclarationModule as _AnyGuard),
+	exportSpecifiers: _makeAssert('exportSpecifiers', is.exportSpecifiers as _AnyGuard),
+	importSpecifiers: _makeAssert('importSpecifiers', is.importSpecifiers as _AnyGuard),
+	formalParametersElements: _makeAssert('formalParametersElements', is.formalParametersElements as _AnyGuard),
+	enumBodyElements: _makeAssert('enumBodyElements', is.enumBodyElements as _AnyGuard),
+	types: _makeAssert('types', is.types as _AnyGuard),
+	typeParametersElements: _makeAssert('typeParametersElements', is.typeParametersElements as _AnyGuard),
+	tupleTypeMembers: _makeAssert('tupleTypeMembers', is.tupleTypeMembers as _AnyGuard),
+	ambientDeclarationGlobal: _makeAssert('ambientDeclarationGlobal', is.ambientDeclarationGlobal as _AnyGuard),
+	ambientDeclarationModule: _makeAssert('ambientDeclarationModule', is.ambientDeclarationModule as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
-	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
-	ExportStatementNamespaceExport: _makeAssert(
-		'ExportStatementNamespaceExport',
-		is.ExportStatementNamespaceExport as _AnyGuard
+	exportStatementNamespaceExport: _makeAssert(
+		'exportStatementNamespaceExport',
+		is.exportStatementNamespaceExport as _AnyGuard
 	),
-	ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
-	ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
+	exportStatementTypeExport: _makeAssert('exportStatementTypeExport', is.exportStatementTypeExport as _AnyGuard),
+	exportStatementEqualsExport: _makeAssert('exportStatementEqualsExport', is.exportStatementEqualsExport as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
+	exportStatement: _makeAssert('exportStatement', is.exportStatement as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
 	declaration: _makeAssert('declaration', is.declaration as _AnyGuard),
+	importSpecifier: _makeAssert('importSpecifier', is.importSpecifier as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
+	variableDeclarator: _makeAssert('variableDeclarator', is.variableDeclarator as _AnyGuard),
+	forHeader: _makeAssert('forHeader', is.forHeader as _AnyGuard),
 	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
@@ -1388,7 +1378,9 @@ export const assert = {
 	lhsExpression: _makeAssert('lhsExpression', is.lhsExpression as _AnyGuard),
 	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
+	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
 	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
+	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
 	statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
@@ -1402,7 +1394,9 @@ export const assert = {
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),
 	primaryType: _makeAssert('primaryType', is.primaryType as _AnyGuard),
-	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
+	indexSignature: _makeAssert('indexSignature', is.indexSignature as _AnyGuard),
+	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard),
+	exportStatementDefault: _makeAssert('exportStatementDefault', is.exportStatementDefault as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

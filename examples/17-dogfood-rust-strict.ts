@@ -49,7 +49,7 @@ export function useEditStrict() {
  */
 export function deriveStrict() {
 	return ir.attributeItem.strict(
-		ir.attribute.strict({
+		ir.attribute.input.strict({
 			path: id('derive'),
 			arguments: ir.delimTokenTree.paren.strict(
 				id('Debug'),
@@ -120,11 +120,10 @@ function writeCall(format: string) {
 }
 
 export function displayImplStrict() {
-	return ir.statement.impl.strict({
-		traitClause: ir.implItem.positiveClause(scopedTy(ns('std', 'fmt'), 'Display')),
+	return ir.statement.impl.body.positiveClause.strict({
+		traitClause: [scopedTy(ns('std', 'fmt'), 'Display')],
 		type: id('SpliceError'),
-		content: ir.implItem.body(
-			ir.declarationList.strict(
+		declarationList: ir.declarationList.strict(
 				ir.statement.function.strict({
 					name: id('fmt'),
 					parameters: ir.parameters.strict(
@@ -165,17 +164,16 @@ export function displayImplStrict() {
 						}),
 					}),
 				})
-			)
 		),
 	});
 }
 
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImplStrict() {
-	return ir.statement.impl.strict({
-		traitClause: ir.implItem.positiveClause(scopedTy(ns('std', 'error'), 'Error')),
+	return ir.statement.impl.body.positiveClause.strict({
+		traitClause: [scopedTy(ns('std', 'error'), 'Error')],
 		type: id('SpliceError'),
-		content: ir.implItem.body(ir.declarationList.strict()),
+		declarationList: ir.declarationList.strict(),
 	});
 }
 

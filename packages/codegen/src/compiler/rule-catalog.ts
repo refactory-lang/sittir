@@ -18,7 +18,7 @@ import {
 import type { Rule, RuleId, SymbolRef } from '../types/rule.ts';
 import { classifyByType } from '../dsl/rule-patterns.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { collectUnreachableHiddenRules } from '../util/reachable-rules.ts';
+import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
@@ -53,7 +53,7 @@ export function buildRuleCatalog(
 	const classificationById = new Map<RuleId, RuleClassification>();
 	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
 	const unreachable = new Set(
-		Object.keys(rules).some((name) => !name.startsWith('_')) ? collectUnreachableHiddenRules(rules, new Set(ctx.roots)) : []
+		Object.keys(rules).some((name) => !name.startsWith('_')) ? collectOrphanedRules(rules, new Set(ctx.roots)) : []
 	);
 
 	for (const ownerKind of Object.keys(rules)) {

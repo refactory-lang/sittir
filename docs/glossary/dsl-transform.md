@@ -136,12 +136,12 @@ elsewhere. It is what a literal segment matches against.
  * enrich already clause-hoisted into `_<parent>_group<N>` is ALSO
  * targeted by this grammar's own polymorphs/variant() config, the rename
  * needs to ADDITIONALLY deposit that same body under the name variant()
- * intends (`polymorphHiddenName`, e.g. `_export_statement_default`) — not
+ * intends (`polymorphVisibleName`, e.g. `export_statement_default`) — not
  * to replace the enrich-minted name (re-keying was ruled out:
  * base-grammar rules can't be deleted, and other consumers snapshot the
  * enrich-assigned name before the rename runs), purely additive, so a
  * NESTED/cascaded polymorphs entry keyed on the intended name (e.g.
- * typescript's `_export_statement_default: {0:'from_arm', 1:'decl_arm'}`)
+ * typescript's `export_statement_default: {0:'from_arm', 1:'decl_arm'}`)
  * finds real content instead of `undefined`.
  */
 ```
@@ -486,33 +486,38 @@ elsewhere. It is what a literal segment matches against.
  */
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::makePolymorphAliasNode`
+### `packages/codegen/src/dsl/transform/transform.ts::symbolRef`
 
-```text
-/**
- * Build the `alias($._<hiddenName>, $.<visibleName>)` node minted for a
- * polymorph variant arm: tree-sitter matches the hidden synthetic rule but
- * surfaces the visible kind name in parse trees. Shared by
- * `buildHoistedVariants` (hoisted-choice path) and `registerAliasedVariant`
- * (non-hoisted variant placeholder path) — both previously hand-rolled the
- * same `{type:'ALIAS', content:{type:'SYMBOL',...}}` literal.
- *
- * Routed through the runtime-injected `alias`/`sym` constructors (mirrors
- * `dsl/enrich.ts`'s `makeVisibleGroupAlias`/`makeGroupLiftSymbol`) per
- * project convention: "always use the rule builder functions" rather than
- * fabricate rule shapes by hand. `sym(hiddenName)` stamps
- * `hidden`/`inline: true` on the inner SYMBOL (since `hiddenName` is
- * `_`-prefixed) — this is provably inert for this call site: evaluate's exit
- * pass (`canonicalizeRawGrammar`) re-derives `hidden`
- * from the name independently (same result) and force-overrides `inline` to
- * `false` on any SYMBOL it finds directly under a named ALIAS, before link
- * ever runs. Link's own ALIAS resolver keeps this shape as the wrapper
- * (content resolved, not discarded) — `unhideAliasedTargets` later reads
- * `hidden` off the RULES-MAP entry the alias's SYMBOL name resolves to
- * (the deposited hidden rule), never off this leaf's own `.hidden` field.
- */
-```
+A reference to the rule `name`, built through the runtime-injected `sym`
+constructor so both runtimes stamp it the same way.
 
+### `packages/codegen/src/dsl/transform/transform.ts::ruleRef`
+
+The reference a minted rule's call site uses: a plain symbol when the rule
+name is also the node name (variants and enrich lifts mint visible rules
+directly), otherwise `alias($.<ruleName>, $.<nodeName>)` — the form an
+`alias()` placeholder still produces, since it keeps a hidden `_<name>`
+rule behind its visible face.
+
+### `packages/codegen/src/dsl/transform/transform.ts::registerIfPureVariantChoice`
+
+After a parent's variant patches resolve, register the parent for
+flattening when its rule (below any prec wrappers) is a choice of at least
+two arms and every arm is one of its own minted variant rules
+(`isMintedVariantArm`). Extras never register. Registration is a
+candidacy; the supertypes callback decides.
+
+### `packages/codegen/src/dsl/transform/transform.ts::isMintedVariantArm`
+
+An arm qualifies when, below prec wrappers, it is a symbol carrying the
+`variantOf` annotation for this parent AND wire deposited a rule under that
+name (or the grammar authored one standing in for the variant's body). The
+annotation alone is not enough: an unmaterializable variant arm keeps the
+original shared symbol (`implements_clause`, `crate`) with the annotation,
+and flattening over a shared kind would make an unrelated node a subtype.
+The minted names of the current patch set are not enough either: a parent
+patched by several sets (rust's `range_pattern`) mints its variants across
+calls.
 ### `packages/codegen/src/dsl/transform/transform.ts::transform`
 
 ```text
@@ -568,23 +573,13 @@ elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
-```text
-/**
- * Apply variant patches to a rule, using hoisting when any variant
- * targets an empty-matching alternative, falling back to per-patch
- * application otherwise.
- *
- * @remarks
- * If any variant would extract an empty-matching body, hoist ALL sibling
- * variants to the nearest enclosing scaffolding so none match empty.
- * Literals move into each alias body so tree-sitter accepts the extracted
- * hidden rules (named syntactic rules can't match empty).
- *
- * @param rule - The rule (after non-variant patches) to apply variants to.
- * @param variantEntries - Array of [pathKey, VariantPlaceholder] pairs.
- * @returns The rule with all variant patches applied.
- */
-```
+Apply a patch set's `variant()` entries: try the whole-arm hoist
+(`tryHoistSiblingVariants`) first, resolve every entry it did not consume per
+arm, then register the parent for flattening when it ended as a pure choice of
+its own variants. An absent variant only exists in the hoisted form, so when
+the set declares one (`variant(name, { absent: true })`) and the hoist does
+not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
+prints why the hoist bailed.
 
 #### body
 
@@ -601,15 +596,33 @@ elsewhere. It is what a literal segment matches against.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::planSiblingVariantHoist`
 
-The analysis half of the whole-arm hoist: peels precedence, requires a top-level seq with every `variant()` at one choice position, and pairs each arm no `variant()` names with the enrich lift that already carries it (`enrichLiftArmOf`). Enrich mints; `variant()` labels. An unnamed arm enrich did not lift has no name to take, so the plan bails and the parent keeps its per-arm form: minting a name here would be too late for tree-sitter's rule map. Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
+The analysis half of the whole-arm hoist: peels precedence, requires a top-level seq with every arm `variant()` at one choice position addressed the same way, and pairs each arm no `variant()` names with the enrich lift that already carries it (`enrichLiftArmOf`). Enrich mints; `variant()` labels. An unnamed arm enrich did not lift has no name to take, so the plan bails and the parent keeps its per-arm form: minting a name here would be too late for tree-sitter's rule map.
 
-### `packages/codegen/src/dsl/transform/transform.ts::asChoice`
+A choice under `optional()` (arm paths `N/0/M`) has one more arm, the absent case, which takes the variant declared with `{ absent: true }` at path `N` or else `ABSENT_VARIANT_NAME`; its body is the scaffolding alone. At most one absent variant may be declared, and only on an optional. Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
 
-The choice at a hoist position in the one shape both runtimes agree on: a `CHOICE` as is, and sittir's `OPTIONAL` as the `CHOICE[content, BLANK]` tree-sitter spells it, so an optional arm is an unnamed blank arm on both sides and a hoist decided on one side is decided on the other. The blank never reaches a hoisted body: sittir's DSL has no `BLANK` node, and a blank member of a sequence contributes nothing, so the arm's variant is the scaffolding alone. A plan whose blank (or empty-matching) arm would leave a variant matching the empty string bails, since tree-sitter rejects such a rule. A plan whose arm would hoist to a transparent unit production (no anonymous token, at most one named child: rust's input-less `attribute`, which is its path alone) bails too, by the same `variantBranchIsUnmaterializable` rule the per-arm variant form applies: such a variant has no shape of its own for the model to build.
+### `packages/codegen/src/dsl/transform/transform.ts::hoistChoiceOf`
+
+The arms at a hoist position in the one shape both runtimes agree on. For
+`N/M` paths: a choice as is, or an optional as `[content, BLANK]`. For
+`N/0/M` paths: an optional whose content is a choice, as its members plus a
+trailing `BLANK` — the absent arm, whose index is returned so the plan can name
+it. The blank never reaches a hoisted body: a blank member of a sequence
+contributes nothing, so its variant is the scaffolding alone. A plan whose
+blank (or empty-matching) arm would leave a variant matching the empty string
+bails, since tree-sitter rejects such a rule; so does one whose arm would
+hoist to a transparent unit production (no anonymous token, at most one named
+child), by the same `variantBranchIsUnmaterializable` rule the per-arm form
+applies.
+
+### `packages/codegen/src/dsl/transform/transform.ts::optionalContentOf`
+
+The content of an optional in either runtime's spelling: sittir's `OPTIONAL`
+node, or tree-sitter's `choice(content, blank)`. Recognising only one would
+let a hoist fire in one pipeline and bail in the other.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::isBlank`
 
-Whether a rule is tree-sitter's `BLANK`, the empty arm `asChoice` spells for an optional.
+Whether a rule is tree-sitter's `BLANK`, the absent arm `hoistChoiceOf` spells for an optional.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::tryHoistSiblingVariants`
 
@@ -630,8 +643,9 @@ Whether a rule is tree-sitter's `BLANK`, the empty arm `asChoice` spells for an 
  * similar inner shapes.
  *
  * Only handles the common case: top-level seq containing a choice whose
- * alternatives are the variant targets. Paths must all be `N/M` with
- * the same `N` (the choice's position in the seq). For more complex
+ * alternatives are the variant targets. Paths must all be `N/M` (or
+ * `N/0/M` through an optional) with the same `N` (the choice's position
+ * in the seq). For more complex
  * nestings, the caller falls back to per-patch variant extraction.
  */
 ```
@@ -666,21 +680,16 @@ Whether a rule is tree-sitter's `BLANK`, the empty arm `asChoice` spells for an 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::parseVariantPathsForHoist`
 
-```text
-/**
- * Parse variant patch entries into structured records for hoist analysis.
- *
- * @remarks
- * Each entry must be a two-segment `N/M` path with both segments being
- * plain indices. Kind-match and wildcard paths are not supported for
- * hoisting; the caller falls back to per-patch extraction if any entry
- * fails validation.
- *
- * @param variantEntries - Array of [pathKey, VariantPlaceholder] pairs.
- * @param bail - Bail function to call (and return) on validation failure.
- * @returns Parsed array or `null` if bail was invoked.
- */
-```
+Parse arm `variant()` entries into hoist paths. Every segment must be a plain
+index; `N/M` names arm `M` of the choice at seq position `N`, and `N/0/M` names
+arm `M` of the choice inside the optional at `N` (the `0` is the optional's
+single content slot). Anything else bails, and the caller resolves the entries
+per arm.
+
+### `packages/codegen/src/dsl/transform/transform.ts::HoistVariantPath`
+
+One hoist target: the entry's key and placeholder, the choice's seq position,
+the arm index, and whether the choice was reached through an optional.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::buildHoistedVariants`
 
@@ -802,15 +811,16 @@ wrapper is dropped, so the stamp must sit on the seq itself.
  * The enrich-minted lift behind a choice arm, when the arm is one.
  *
  * @remarks
- * enrich hoists a multi-slot choice arm into a hidden rule and replaces
- * the arm with `alias($._<parent>_arm<N>, $.<parent>_arm<N>)` before any
- * patch runs, so a variant() or alias() aimed at that arm sees the alias,
- * not the arm's body. Every lowering that names an arm — the variant
- * placeholder and alias placeholder in resolvePatch, the sibling hoist in
- * buildHoistedVariants — recognises the lift through this one helper, so
- * the patch's name REPLACES the minted `_arm<N>` identity instead of
- * wrapping it in a second hidden rule. Returns null for anything that is
- * not an alias over an enrich lift symbol with a registered body.
+ * enrich hoists a multi-slot choice arm into its own rule and replaces
+ * the arm with a reference to it (`$.<parent>_arm<N>`, or an alias over a
+ * hidden lift) before any patch runs, so a variant() or alias() aimed at
+ * that arm sees the reference, not the arm's body. Every lowering that
+ * names an arm — the variant placeholder and alias placeholder in
+ * resolvePatch, the sibling hoist in buildHoistedVariants — recognises the
+ * lift through this one helper BEFORE looking at the arm's type, so the
+ * patch's name REPLACES the minted `arm<N>` identity instead of wrapping
+ * it in a second rule. Returns null for anything that is not a symbol (or
+ * an alias over a symbol) naming an enrich lift with a registered body.
  */
 ```
 
@@ -821,15 +831,17 @@ wrapper is dropped, so the stamp must sit on the seq itself.
  * Re-home an enrich lift under a patch-chosen name.
  *
  * @remarks
- * The lift's body is deposited under `hiddenName` unless `rules:` already
+ * The lift's body is deposited under `ruleName` unless `rules:` already
  * authors a rule of that name — an authored body wins, which is how a
  * shared arm (one lift referenced from two parents, e.g. python's
  * parenthesized import list) gets a parent-neutral kind whose inner list
  * carries the same visible name as the bare arm. The old lift name is
- * registered with wireRegisterSymbolRename so conflict entries follow,
- * and the returned alias points at the new hidden rule with the new
- * visible name. The orphaned `_arm<N>` rule is pruned with every other
- * unreferenced rule.
+ * registered with wireRegisterSymbolRename so conflict entries follow.
+ * A variant passes the same name for rule and node and gets a plain
+ * symbol back; an alias() placeholder passes a hidden rule name and gets
+ * an alias — re-faced in place when the arm already was one, built fresh
+ * when the arm was a bare lift symbol. The orphaned `arm<N>` rule is
+ * pruned with every other unreferenced rule.
  */
 ```
 
@@ -1029,9 +1041,11 @@ on the way in; an authored body of that name is left as authored.
 
 ```text
 /**
- * Build the `alias($._hidden, $.visible)` node AND register the
- * hidden rule's body. Shared between variant() and alias() placeholders
- * because both need the same empty-match / prec handling.
+ * Register a minted rule's body under `ruleName` and return the
+ * reference to it (`ruleRef`): a symbol when `ruleName` is `nodeName`
+ * (variant()), an alias over the hidden rule otherwise (alias()). Shared
+ * between the two placeholders because both need the same empty-match /
+ * prec handling.
  *
  * Tree-sitter refuses to compile a named syntactic rule whose body
  * matches the empty string (it can't decide which copy-count to choose
@@ -1069,6 +1083,8 @@ on the way in; an authored body of that name is left as authored.
 The registered body is stamped `annotations.hoisted` inside `bodyWrapper`
 (before any prec wrapper), so the variant arm declares itself a seat on its
 parent; link collects the set from that stamp.
+
+Every body a variant deposits is stamped `hoisted`, including the single hidden symbol a variant arm names directly (`suite_inline` over `_simple_statements`): the deposited rule is a hoisted variant however its body is spelled, and an unstamped one would keep a flat `ir` binding and escape sub-factory mounting.
 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::factorOutEmptiness`
@@ -1363,6 +1379,13 @@ parent; link collects the set from that stamp.
  *  collapse without any phase having to forward it. */
 ```
 
+`withVariantAnnotation`'s fourth argument is the choice member the variant
+was hoisted from, before the arm was mint-wrapped. `isDefaultArm` reads that
+member's own `default` annotation (through an `ALIAS`'s content, same as the
+stamp above) and, when set, adds `default: true` to the same stamp — so a
+variant that also carries `arm.default` reaches the flattened-parent emitter
+as one arm fact, not two derivations of the same declaration.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
 #### body
@@ -1377,7 +1400,7 @@ parent; link collects the set from that stamp.
 
 ```text
 // Variant placeholder — variant('suffix'): auto-prefix with current
-// rule kind → alias('parentKind_suffix'). Registers polymorph metadata.
+// rule kind → the visible rule `parentKind_suffix`, referenced by symbol.
 // A group-lift deposit replaces an alias's content symbol only when that
 // symbol is an enrich-minted lift (the deposit is how the lift takes the
 // variant's name); a grammar-authored single symbol under an alias is
@@ -1497,6 +1520,8 @@ rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 // marker sub-slot within a group) likewise means the override names
 // the outer aggregate: wrap, don't rename.
 ```
+
+Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a node of its own — fielding it names that node, so the field wraps the reference like any other symbol; relabeling inside it would push the parent's field name onto the list's elements (rust `struct_pattern`'s `fields` became `structPatternElements` when lifts turned visible).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveFieldPlaceholder`
 

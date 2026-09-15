@@ -539,25 +539,19 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			// Structured multi-slot choice arms are group-lifted by
-			// mintStructuredChoiceArm into synthesized hidden rules
-			// referenced via named aliases — the promotion recurses into
+			// mintStructuredChoiceArm into synthesized visible rules
+			// referenced by symbol — the promotion recurses into
 			// the arms FIRST and lands inside the lifted rules, each
 			// `optional('<kw>')` becoming
 			// `optional(field('<kw>_marker', $._kw_<kw>_marker))`.
 			const rule = out.grammar.rules.stmt as {
 				type: 'CHOICE';
-				members: Array<{ type: 'ALIAS'; content: { type: 'SYMBOL'; name: string } }>;
+				members: Array<{ type: 'SYMBOL'; name: string }>;
 			};
-			expect(rule.members[0]).toMatchObject({
-				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_stmt_arm1' }
-			});
-			expect(rule.members[1]).toMatchObject({
-				type: 'ALIAS',
-				content: { type: 'SYMBOL', name: '_stmt_arm2' }
-			});
-			const group1 = out.grammar.rules._stmt_arm1 as { type: 'SEQ'; members: Rule[] };
-			const group2 = out.grammar.rules._stmt_arm2 as { type: 'SEQ'; members: Rule[] };
+			expect(rule.members[0]).toMatchObject({ type: 'SYMBOL', name: 'stmt_arm1' });
+			expect(rule.members[1]).toMatchObject({ type: 'SYMBOL', name: 'stmt_arm2' });
+			const group1 = out.grammar.rules.stmt_arm1 as { type: 'SEQ'; members: Rule[] };
+			const group2 = out.grammar.rules.stmt_arm2 as { type: 'SEQ'; members: Rule[] };
 			expect(group1.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: { type: 'FIELD', name: 'let_marker' }
@@ -940,9 +934,9 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			// Named after the field it fills (`_call_body`), not an opaque
+			// Named after the field it fills (`call_body`), not an opaque
 			// `_call_group1` ordinal.
-			expect(out.grammar.rules._call_body).toMatchObject({
+			expect(out.grammar.rules.call_body).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -954,12 +948,7 @@ describe('enrich()', () => {
 			const field = out.grammar.rules.call as { type: 'FIELD'; content: Rule };
 			expect(field.content).toMatchObject({
 				type: 'OPTIONAL',
-				content: {
-					type: 'ALIAS',
-					value: 'call_body',
-					named: true,
-					content: { type: 'SYMBOL', name: '_call_body' }
-				}
+				content: { type: 'SYMBOL', name: 'call_body' }
 			});
 		});
 
@@ -985,7 +974,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group).toMatchObject({
+			expect(out.grammar.rules.call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -1031,7 +1020,7 @@ describe('enrich()', () => {
 				arguments: { type: STRING, value: 'args' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_body).toBeDefined();
+			expect(out.grammar.rules.call_body).toBeDefined();
 			expect(out.grammar.rules._call_group1).toBeUndefined();
 			expect(out.grammar.rules.call_group1).toBeUndefined();
 		});
@@ -1096,8 +1085,8 @@ describe('enrich()', () => {
 				d: { type: STRING, value: 'd' }
 			});
 			const out = runEnrich(input);
-			// The first arm's body claims `_call_body` and keeps its own content.
-			expect(out.grammar.rules._call_body).toMatchObject({
+			// The first arm's body claims `call_body` and keeps its own content.
+			expect(out.grammar.rules.call_body).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -1105,7 +1094,7 @@ describe('enrich()', () => {
 				]
 			});
 			// The second arm falls back to an ordinal instead of overwriting it.
-			expect(out.grammar.rules._call_group).toMatchObject({
+			expect(out.grammar.rules.call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'c' },
@@ -1149,7 +1138,7 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._rule_a_body).toMatchObject({
+			expect(out.grammar.rules.rule_a_body).toMatchObject({
 				type: 'PREC_LEFT',
 				value: -2,
 				content: {
@@ -1160,7 +1149,7 @@ describe('enrich()', () => {
 					]
 				}
 			});
-			expect(out.grammar.rules._rule_b_body).toMatchObject({
+			expect(out.grammar.rules.rule_b_body).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
@@ -1199,14 +1188,14 @@ describe('enrich()', () => {
 				b: { type: STRING, value: 'b' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules._call_group).toMatchObject({
+			expect(out.grammar.rules.call_group).toMatchObject({
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: 'a' },
 					{ type: 'SYMBOL', name: 'b' }
 				]
 			});
-			expect(out.grammar.rules._call_items).toBeUndefined();
+			expect(out.grammar.rules.call_items).toBeUndefined();
 		});
 	});
 });

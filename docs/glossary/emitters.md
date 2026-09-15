@@ -4411,10 +4411,13 @@ values that may be absent, which is the elidable-list form.
 ```text
 /**
  * Collect hidden source kinds (leading `_`) referenced via any field
- * / child value slot across the node map. These are the kinds whose
- * factory stamps `$type: '_X'` at construction — emission paths
- * (factories, templates, types) must include them even though they're
- * hidden.
+ * / child value slot across the node map, and every hidden subtype a
+ * supertype aliases to a visible name (its `subtypeParseNames`). These are
+ * the kinds whose factory stamps `$type: '_X'` at construction — emission
+ * paths (factories, templates, types) must include them even though they're
+ * hidden. A flattened variant parent is a supertype whose variant children
+ * are aliased (`_assignment_eq` as `assignment_eq`), so they are reached
+ * through that alias, not through a slot.
  */
 ```
 
@@ -5863,6 +5866,15 @@ build error naming the kind and the slots.
 ### `packages/codegen/src/emitters/test.ts::emitSubFactoryTests`
 
 One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child.
+
+A kind's tests are addressed through its public spelling (`subFactoryBase`): its flat `ir` key when it is bundled (sub-factories are callable), or its flattened-parent route (`variantRoutePaths`) called through `.coerce`, the loose flavor that accepts the prebuilt nodes the dummy machinery passes. A kind with neither has no public path, and no sub-factory tests are emitted for it.
+
+### `packages/codegen/src/emitters/test.ts::subFactoryBase`
+
+The spelling generated sub-factory tests address a kind by, with the call
+flavor that spelling needs: the flat `ir` key (callable) for a bundled kind,
+the flattened-parent route plus `.coerce` for a variant reached only through
+its parent, or `undefined` when the kind has no public path.
 
 ### `packages/codegen/src/emitters/test.ts::emitSeparatedListTest`
 
@@ -10883,6 +10895,8 @@ that kind was left alone.
 
 Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
+`hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
+
 ### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
 
 ```text
@@ -11057,6 +11071,8 @@ Collects the polymorph wires once (`collectPolymorphWires`, silent) and
 hands each parent's wire set to `seatOf`, so the seats the model stamps are
 the routes the overlay emits from the same id tables. `emitNodeModel`
 passes the generator's `generatedIdTables` through for that reason.
+
+`variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::module`
 
@@ -12291,6 +12307,8 @@ The `ir` namespace's node-factory members come from `bundleEntries` — the same
 // hoisted bundle consts above.
 ```
 
+A flattened parent's namespace is its variant routes. The supertype-group namespaces (`ir.expression.binary`) skip flattened parents — a group would name members by subtype suffix and shadow the routes — and a flattened parent that is a member of another supertype's group appears there as its route object (`ir.statement.impl` is `ir.implItem`).
+
 ### `packages/codegen/src/emitters/ir.ts::GROUP_TOKEN_SYNONYMS`
 
 ```text
@@ -13118,6 +13136,8 @@ candidate list.
 // that arrived as a coordinate (`$nodeHandle`, no storage): the
 // transport slices its bytes from the tree, so it is its own member.
 ```
+
+After the kind-id pass-through the node is read through a typed local (`_NodeData` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to drill into at all, and its wrap returns the value unchanged.
 
 ### `packages/codegen/src/emitters/wrap.ts::isFieldBackedSeparatedList`
 
@@ -14337,6 +14357,8 @@ Import path each chain layer loads its predecessor from: index 0 (refines) impor
 
 Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
 
+Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
 Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
@@ -14348,6 +14370,25 @@ One bundled kind: `key` is the ir property key (irKey, falling back to camelCase
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 
 The single derivation of which kinds get bundles and under what names — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. A kind qualifies with both a raw factory and a coercer, compound or list class, not factoryInline, and a catalog entry. A hoisted non-list compound is excluded here rather than at `classifyFromEmission`: a form has a coercer and belongs on its parent's wire, but never gets a top-level `ir` key of its own. Lists are exempt because a hoisted separated list owns a public surface.
+
+### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
+
+The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory or to another qualifying flattened parent — a nested parent routes to that parent's own route object (`ir.exportStatement.default.from`). Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
+
+### `packages/codegen/src/emitters/overlays/module.ts::variantRoutePaths`
+
+The public path of every variant a flattened parent routes to, keyed by the
+variant kind (`assignment_eq` → `assignment.eq`). A nested parent's variants
+compose through the parent that routes to it (`exportStatement.default.from`).
+Codegen's single derivation of these paths: the test emitter addresses
+sub-factory tests through it, and `node-model.json5`'s `variantRoutes`
+publishes it for tools (the hoisted census, the factory-source printer).
+
+### `packages/codegen/src/emitters/overlays/module.ts::FlattenedVariantRoute`
+
+One variant route of a flattened parent: its name, the child kind, whether it
+is `arm.default`, and — when the child is itself a flattened parent — that
+parent's route key.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 
@@ -14485,6 +14526,11 @@ the map, because the seat rewrites its `strict`.
 A wire set also carries the parent's elements seats (`elementsSeatOf`) whose
 group factory is emitted; a parent with only seats still enters the map.
 
+An alias wire's child visits before its parent too, like a seat's group.
+`variantRouteOf` reads whether the child's entry is already emitted when the
+parent's route is written. A child emitted later would leave its route as a
+bare `{ strict, coerce }` pair and its own entry unreferenced.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
 Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), config seat (a path-empty config-shaped arm that does not merge, `seatsConfigChild`: the child's config object sits whole under the slot key, `{ function: { macro, arguments }, arguments }`), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
@@ -14595,6 +14641,18 @@ hoisted kind has no flat `ir` entry, so its parent's sub-factory is the one
 way to build it, whatever else the parent holds. Visible kinds in a second
 choice slot are not mounted — they are reachable on `ir` already.
 
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::grandArmCandidates`
+
+The arms a child contributes under the parent arm that reaches it: one
+candidate per entry of the child's own sub-factory set, with the path being
+that entry's name. A node entry is named for its leaf kind; a value entry
+(a token arm such as rust `range_pattern_with_left_with_right`'s `..=`) keeps
+its own name. `emittedArmPath` nests every one of them under the host arm,
+so `rangePattern.withLeft.withRight.dotDotEq` exists. The forwarding
+(lone-slot) path, the choice-slot walk and `hoistedCandidatesOf` all derive
+grand-arms here. If one of them skipped value entries, the child's token arms
+would be emitted with nothing referencing them.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::hoistedCandidatesOf`
 
 The shape-1 seat for a hoisted arm: one candidate per hoisted compound
@@ -14612,6 +14670,16 @@ value arm carrying its kind-id storage, a pattern becomes a node arm on its
 text factory. The seat
 passes the leaf's value through the parent's builder; the leaf keeps its
 shape and builder.
+
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::slotValuesOf`
+
+A slot's values as sub-factory derivation sees them: a value whose kind is a
+flattened parent (`AssembledSupertype.variantSubtypes`) expands into that
+parent's variant subtype refs, each carrying its stamped `variant` name and
+the slot value's multiplicity. A parent whose slot holds a flattened parent
+therefore mounts the variants as ordinary arms (`functionDefinition.block`
+for `_suite`'s `block` variant), exactly as it mounted the polymorph's forms
+before the polymorph was flattened.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::tupleSeatOf`
 
@@ -14940,7 +15008,7 @@ so `sharedKeysOf` can test those keys against the residual.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitPolymorphsOverlay`
 
-Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method — the pair is the child's own factories (`{ strict: F.<build> }`, plus the coercer when emitted). In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
+Static wiring for sub-factories over bundles. One module-local transformation method per sub-factory (`<parentKey>$<name>`), applied twice — once to the strict pair (`F.*`), once to the coerce pair (`C.*`). Wiring consts carry explicit type annotations (`typeof B.<key> & { <n>: { strict: <sig>; coerce: <sig> } }`) so declaration emit never exceeds the compiler's serialization limit. Coerce applications exist only where the coerce emitter actually emits the coercer (`classifyFromEmission === 'emit'`); a child with no coercer is seated with its strict builder inside the parent's coercer. Alias wires (`variantAliasWires`) emit inside the same wiring const with no method; each is the child's variant route (below), so a child with its own overlay entry keeps its sub-factories under the alias. In per-slot transport enums, id claims are ordered literal variants → enum-kind arms → other kind arms: alias-wire id sets legitimately overlap (identifier accepts primitive-keyword ids for OBJECT payloads carrying `$text`), but a bare number must reach the arm that can render it from the id alone — an `IdentifierTransport` built from a number has an empty `$text` and renders nothing. Parents emit DFS post-order so flattened wires reference the decorated child const above. Skipped sub-factories print `[codegen] <parent>: sub-factory <name> skipped (<reason>): <claimants>` on console.warn.
 
 A hoisted parent's wiring const is module-private — `const <factoryName>: {
 … } = { … }` with no `export` and no `...B.<key>` spread, since the bundle
@@ -14949,6 +15017,8 @@ through it (post-order).
 
 `NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
 ride in the erased-helper block for the splice methods.
+
+Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A variant route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 

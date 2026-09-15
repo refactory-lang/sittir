@@ -1169,23 +1169,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * @internal — mint the hidden-rule + visible-alias name pair for an inline-UNSAFE
- * seq body that enrich surfaces as a VISIBLE CST kind.
+ * @internal — mint the name of the visible rule an inline-UNSAFE body becomes,
+ * so enrich surfaces it as ONE clean CST kind.
  *
- * Unlike the prior content-alias approach (which aliased the multi-member seq
- * DIRECTLY — `alias(SEQ(...), $.name)`, which tree-sitter DISTRIBUTES across the
- * seq's members, scattering empty leaves), this registers a HIDDEN rule whose
- * body is the seq, exactly like the inline-safe clause-hoist path
- * (`clauseHoistSynthName`). The caller then references that hidden rule via a
- * symbol and wraps the symbol in `alias($._<name>, $.<name>)` so tree-sitter has
- * a single symbol-node to rename into ONE clean CST node.
+ * The body is registered as its own rule in `clauseGroupRules` and the caller
+ * references it by symbol. Aliasing the multi-member seq directly
+ * (`alias(SEQ(...), $.name)`) would not work: tree-sitter distributes such an
+ * alias across the seq's members, scattering empty leaves.
  *
- * Naming:
- *   - hidden rule  = `_<parent>_group<N>` (registered in `clauseGroupRules`)
- *   - visible alias = `<parent>_group<N>` (the same name without the `_`)
- * Per-parent 1-indexed `grp` counter; cross-parent dedupe via
- * `canonicalStringifyClause`. Returns `null` on a name collision with an existing
- * rule in `rulesBag` (caller leaves the body inline).
+ * Naming, first free candidate wins: a separated list's element-derived name;
+ * `<parent>_<field>` after the enclosing field; `<parent>_group<N>` /
+ * `<parent>_arm<N>` by per-parent ordinal. A candidate is taken when the base
+ * rules or `clauseGroupRules` already hold it (hidden or visible spelling), so a
+ * second body never overwrites the first. Cross-parent dedupe via
+ * `canonicalStringifyClause`. Returns `null` when even the ordinal collides with
+ * an existing rule (caller leaves the body inline).
  *
  * The visible name must NOT carry a leading `_` (tree-sitter would classify it
  * HIDDEN → the minted kind's slot is dropped at wrap/read), so `parentKind`'s
@@ -1448,8 +1446,10 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * @internal — wrap a SYMBOL ref to an inline-UNSAFE group's HIDDEN rule in a
- * TAGGED visible alias so the group surfaces as a single clean CST kind.
+ * @internal — wrap a SYMBOL ref to an existing HIDDEN rule that enrich promotes
+ * (a grammar-authored `_x` list or choice arm) in a TAGGED visible alias so it
+ * surfaces as a single clean CST kind. Rules enrich mints itself are visible by
+ * name and referenced by symbol; only a promoted hidden rule needs this alias.
  *
  * Shape (confirmed against generated grammar.json ALIAS nodes):
  *   `{ type: 'ALIAS', content: symbol($._<name>), named: true,

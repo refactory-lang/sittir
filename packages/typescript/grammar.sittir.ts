@@ -19,8 +19,8 @@ export default grammar(
 			name: 'typescript',
 			conflicts: ($, previous) => [
 				...(previous ?? []),
-				[$.sequence_expression, $._parenthesized_expression_typed],
-				[$.sequence_expression, $._parenthesized_expression_arm],
+				[$.sequence_expression, $.parenthesized_expression_typed],
+				[$.sequence_expression, $.parenthesized_expression_arm],
 				[$.primary_expression, $.arrow_function],
 				[$.readonly_type, $._kw_readonly_marker],
 				[$.abstract_method_signature, $._kw_abstract_marker],
@@ -82,60 +82,60 @@ export default grammar(
 				[$.primary_expression, $.rest_pattern, $.predefined_type],
 				[$.nested_identifier, $.nested_type_identifier],
 				[$._initializer, $.binary_expression],
-				[$.primary_expression, $._export_statement_namespace_export],
-				[$.binary_expression, $.unary_expression, $.instantiation_expression, $._call_expression_call],
-				[$.await_expression, $.binary_expression, $.instantiation_expression, $._call_expression_call],
-				[$.binary_expression, $.update_expression, $.instantiation_expression, $._call_expression_call],
-				[$.binary_expression, $.instantiation_expression, $._call_expression_call],
-				[$._type_query_call_expression_in_type_annotation, $._call_expression_call],
-				[$._type_query_call_expression, $._call_expression_call],
-				[$.primary_expression, $._export_statement_default],
+				[$.primary_expression, $.export_statement_namespace_export],
+				[$.binary_expression, $.unary_expression, $.instantiation_expression, $.call_expression_call],
+				[$.await_expression, $.binary_expression, $.instantiation_expression, $.call_expression_call],
+				[$.binary_expression, $.update_expression, $.instantiation_expression, $.call_expression_call],
+				[$.binary_expression, $.instantiation_expression, $.call_expression_call],
+				[$._type_query_call_expression_in_type_annotation, $.call_expression_call],
+				[$._type_query_call_expression, $.call_expression_call],
+				[$.primary_expression, $.export_statement_default],
 				[$.string],
-				[$.await_expression, $._update_expression_postfix],
-				[$.await_expression, $._update_expression_arm1],
-				[$.arrow_function, $._update_expression_arm1],
-				[$.await_expression, $._call_expression_call],
-				[$.instantiation_expression, $._call_expression_call],
-				[$.await_expression, $._binary_expression_arm],
-				[$.as_expression, $._binary_expression_arm],
-				[$._call_expression_call, $._binary_expression_arm],
-				// _binary_expression_arm (the `in`-operator arm, freshly extracted —
+				[$.await_expression, $.update_expression_postfix],
+				[$.await_expression, $.update_expression_arm1],
+				[$.arrow_function, $.update_expression_arm1],
+				[$.await_expression, $.call_expression_call],
+				[$.instantiation_expression, $.call_expression_call],
+				[$.await_expression, $.binary_expression_arm],
+				[$.as_expression, $.binary_expression_arm],
+				[$.call_expression_call, $.binary_expression_arm],
+				// binary_expression_arm (the `in`-operator arm, freshly extracted —
 				// same PREC-descent mechanism as call_expression's arms above) mirrors
 				// binary_expression's own conflict set: every continuation that used to
 				// share LR state with the whole (unsplit) binary_expression choice needs
 				// the same explicit GLR declaration now that this one arm has its own
 				// symbol boundary.
-				[$.call_expression, $._binary_expression_arm, $.unary_expression, $.instantiation_expression],
-				[$.call_expression, $.await_expression, $._binary_expression_arm, $.instantiation_expression],
-				[$.call_expression, $._binary_expression_arm, $.update_expression, $.instantiation_expression],
-				[$.call_expression, $._binary_expression_arm, $.instantiation_expression],
-				[$._initializer, $._binary_expression_arm],
-				[$._binary_expression_arm, $.unary_expression, $.instantiation_expression, $._call_expression_call],
-				[$.await_expression, $._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
-				[$._binary_expression_arm, $.update_expression, $.instantiation_expression, $._call_expression_call],
-				[$._binary_expression_arm, $.instantiation_expression, $._call_expression_call],
-				[$.subscript_expression, $._binary_expression_arm],
-				[$.member_expression, $._binary_expression_arm],
-				[$.member_expression, $.subscript_expression, $._binary_expression_arm],
-				[$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_arm],
-				[$.non_null_expression, $._binary_expression_arm],
-				[$.satisfies_expression, $._binary_expression_arm],
-				[$._binary_expression_arm, $._update_expression_postfix],
-				[$._binary_expression_arm, $._update_expression_prefix],
-				[$._binary_expression_arm, $._update_expression_arm1],
-				[$.ternary_expression, $._binary_expression_arm],
-				[$.arrow_function, $._call_expression_call],
-				[$.arrow_function, $._binary_expression_arm],
-				[$.expression, $._call_expression_template_call],
-				[$._variable_declarator_arm1, $._for_header_arm2],
-				[$.primary_expression, $._for_header_arm2],
-				[$._variable_declarator_arm1, $._for_header_let_const_kind],
-				[$._class_body_arm1, $._class_body_arm2],
-				[$.import, $._meta_property_arm2],
-				[$.primary_expression, $._meta_property_arm1],
-				[$._lhs_expression, $._export_statement_equals_export],
+				[$.call_expression, $.binary_expression_arm, $.unary_expression, $.instantiation_expression],
+				[$.call_expression, $.await_expression, $.binary_expression_arm, $.instantiation_expression],
+				[$.call_expression, $.binary_expression_arm, $.update_expression, $.instantiation_expression],
+				[$.call_expression, $.binary_expression_arm, $.instantiation_expression],
+				[$._initializer, $.binary_expression_arm],
+				[$.binary_expression_arm, $.unary_expression, $.instantiation_expression, $.call_expression_call],
+				[$.await_expression, $.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
+				[$.binary_expression_arm, $.update_expression, $.instantiation_expression, $.call_expression_call],
+				[$.binary_expression_arm, $.instantiation_expression, $.call_expression_call],
+				[$.subscript_expression, $.binary_expression_arm],
+				[$.member_expression, $.binary_expression_arm],
+				[$.member_expression, $.subscript_expression, $.binary_expression_arm],
+				[$.binary_expression, $.instantiation_expression, $.call_expression_call, $.binary_expression_arm],
+				[$.non_null_expression, $.binary_expression_arm],
+				[$.satisfies_expression, $.binary_expression_arm],
+				[$.binary_expression_arm, $.update_expression_postfix],
+				[$.binary_expression_arm, $.update_expression_prefix],
+				[$.binary_expression_arm, $.update_expression_arm1],
+				[$.ternary_expression, $.binary_expression_arm],
+				[$.arrow_function, $.call_expression_call],
+				[$.arrow_function, $.binary_expression_arm],
+				[$.expression, $.call_expression_template_call],
+				[$.variable_declarator_arm1, $.for_header_arm2],
+				[$.primary_expression, $.for_header_arm2],
+				[$.variable_declarator_arm1, $.for_header_let_const_kind],
+				[$.class_body_arm1, $.class_body_arm2],
+				[$.import, $.meta_property_arm2],
+				[$.primary_expression, $.meta_property_arm1],
+				[$._lhs_expression, $.export_statement_equals_export],
 				[$.object_assignment_pattern, $._lhs_expression],
-				[$.object_assignment_pattern, $._lhs_expression, $._export_statement_equals_export],
+				[$.object_assignment_pattern, $._lhs_expression, $.export_statement_equals_export],
 				[$.primary_expression, $._lhs_expression],
 				[$._lhs_expression, $.primary_type],
 				[$._lhs_expression, $.literal_type],
@@ -147,30 +147,30 @@ export default grammar(
 				[$.primary_expression, $._lhs_expression, $.predefined_type],
 				[$.constructor_type, $._call_signature],
 				[$._lhs_expression],
-				[$.await_expression, $._update_expression_prefix],
-				[$.arrow_function, $._update_expression_postfix],
-				[$.arrow_function, $._update_expression_prefix],
-				[$.primary_expression, $._export_statement_default_from],
-				[$.primary_expression, $._export_statement_default_declaration],
+				[$.await_expression, $.update_expression_prefix],
+				[$.arrow_function, $.update_expression_postfix],
+				[$.arrow_function, $.update_expression_prefix],
+				[$.primary_expression, $.export_statement_default_from],
+				[$.primary_expression, $.export_statement_default_declaration],
 				[$.primary_expression, $._parameter_name, $.readonly_type],
-				[$._class_body_method],
-				[$._class_body_method_sig, $._class_body_member],
+				[$.class_body_method],
+				[$.class_body_method_sig, $.class_body_member],
 				[$.public_field_definition],
 				[$.method_definition, $.public_field_definition],
 				[$.method_definition, $.method_signature, $.public_field_definition],
 				[$.abstract_method_signature, $.public_field_definition],
-				[$.primary_expression, $._for_header_lhs],
-				[$.primary_expression, $._for_header_var_kind],
-				[$.primary_expression, $._for_header_let_const_kind],
-				[$.variable_declarator, $._for_header_var_kind],
-				[$.variable_declarator, $._for_header_let_const_kind]
+				[$.primary_expression, $.for_header_lhs],
+				[$.primary_expression, $.for_header_var_kind],
+				[$.primary_expression, $.for_header_let_const_kind],
+				[$.variable_declarator, $.for_header_var_kind],
+				[$.variable_declarator, $.for_header_let_const_kind]
 			],
 			groups: {
 				jsx_opening_element_content: ($) =>
 					seq(
 						choice(
 							field('name', choice($._jsx_identifier, $.jsx_namespace_name)),
-							alias($._jsx_start_opening_element_arm, $.jsx_start_opening_element_arm)
+							$.jsx_start_opening_element_arm
 						),
 						repeat(field('attribute', $._jsx_attribute))
 					)
@@ -550,7 +550,7 @@ export default grammar(
 				// which filters to named children) — the wrapper becomes
 				// invisible at render time.
 				//
-				// `_export_statement_default`'s body is a top-level choice of
+				// `export_statement_default`'s body is a top-level choice of
 				// TWO structurally distinct shapes:
 				//   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
 				//   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
@@ -594,7 +594,7 @@ export default grammar(
 					'2': variant('default_import')
 				},
 
-				_export_statement_default: {
+				export_statement_default: {
 					0: variant('from'),
 					'0/1/0': variant('star_from'),
 					'0/1/1': variant('ns_from'),
@@ -616,9 +616,9 @@ export default grammar(
 				index_type_query: { 1: field('type') },
 				flow_maybe_type: { 1: field('type') },
 				array_type: { 0: field('type') },
-				_export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
-				_export_statement_type_export: { 4: field('terminator') },
-				_export_statement_equals_export: { 3: field('terminator') },
+				export_statement_namespace_export: { 3: field('name'), 4: field('terminator') },
+				export_statement_type_export: { 4: field('terminator') },
+				export_statement_equals_export: { 3: field('terminator') },
 
 				_for_header: {
 					'1/0': variant('lhs'),
@@ -743,8 +743,8 @@ export default grammar(
 						)
 					),
 
-				_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
-				_ambient_declaration_module: ($) =>
+				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
+				ambient_declaration_module: ($) =>
 					prec.right(
 						seq(
 							'module',

@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::ResolvedOptions;
 
-pub const SPACING_SITE_COUNT: usize = 1077;
+pub const SPACING_SITE_COUNT: usize = 1079;
 pub const DELIMITER_SITE_COUNT: usize = 20;
 
 pub const SITE_ALIASED_IMPORT_AS_KEYWORD_BEFORE: usize = 0;
@@ -955,133 +955,135 @@ pub const SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE: usize = 946;
 pub const SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER: usize = 947;
 pub const SITE_SUITE_BLOCK_SUITE_BLOCK_BEFORE: usize = 948;
 pub const SITE_SUITE_BLOCK_SUITE_BLOCK_AFTER: usize = 949;
-pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER: usize = 950;
-pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE: usize = 951;
-pub const SITE_TRY_STATEMENT_COLON_BEFORE: usize = 952;
-pub const SITE_TRY_STATEMENT_COLON_AFTER: usize = 953;
-pub const SITE_TRY_STATEMENT_TRY_KEYWORD_BEFORE: usize = 954;
-pub const SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER: usize = 955;
-pub const SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE: usize = 956;
-pub const SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER: usize = 957;
-pub const SITE_TUPLE_LPAREN_BEFORE: usize = 958;
-pub const SITE_TUPLE_LPAREN_AFTER: usize = 959;
-pub const SITE_TUPLE_RPAREN_BEFORE: usize = 960;
-pub const SITE_TUPLE_RPAREN_AFTER: usize = 961;
-pub const SITE_TUPLE_TUPLE_BEFORE: usize = 962;
-pub const SITE_TUPLE_TUPLE_AFTER: usize = 963;
-pub const SITE_TUPLE_PATTERN_LPAREN_BEFORE: usize = 964;
-pub const SITE_TUPLE_PATTERN_LPAREN_AFTER: usize = 965;
-pub const SITE_TUPLE_PATTERN_RPAREN_BEFORE: usize = 966;
-pub const SITE_TUPLE_PATTERN_RPAREN_AFTER: usize = 967;
-pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_BEFORE: usize = 968;
-pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_AFTER: usize = 969;
-pub const SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE: usize = 970;
-pub const SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER: usize = 971;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_BEFORE: usize = 972;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER: usize = 973;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE: usize = 974;
-pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER: usize = 975;
-pub const SITE_TYPE_PARAMETER_LBRACK_BEFORE: usize = 976;
-pub const SITE_TYPE_PARAMETER_LBRACK_AFTER: usize = 977;
-pub const SITE_TYPE_PARAMETER_RBRACK_BEFORE: usize = 978;
-pub const SITE_TYPE_PARAMETER_RBRACK_AFTER: usize = 979;
-pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE: usize = 980;
-pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 981;
-pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE: usize = 982;
-pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER: usize = 983;
-pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE: usize = 984;
-pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER: usize = 985;
-pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_BEFORE: usize = 986;
-pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 987;
-pub const SITE_TYPED_PARAMETER_COLON_BEFORE: usize = 988;
-pub const SITE_TYPED_PARAMETER_COLON_AFTER: usize = 989;
-pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_BEFORE: usize = 990;
-pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_AFTER: usize = 991;
-pub const SITE_TYPES_TYPE_AS_PATTERN_AFTER: usize = 992;
-pub const SITE_TYPES_TYPE_ATTRIBUTE_AFTER: usize = 993;
-pub const SITE_TYPES_TYPE_AWAIT_AFTER: usize = 994;
-pub const SITE_TYPES_TYPE_BINARY_OPERATOR_AFTER: usize = 995;
-pub const SITE_TYPES_TYPE_BOOLEAN_OPERATOR_AFTER: usize = 996;
-pub const SITE_TYPES_TYPE_CALL_AFTER: usize = 997;
-pub const SITE_TYPES_TYPE_COMPARISON_OPERATOR_AFTER: usize = 998;
-pub const SITE_TYPES_TYPE_CONCATENATED_STRING_AFTER: usize = 999;
-pub const SITE_TYPES_TYPE_CONDITIONAL_EXPRESSION_AFTER: usize = 1000;
-pub const SITE_TYPES_TYPE_CONSTRAINED_TYPE_AFTER: usize = 1001;
-pub const SITE_TYPES_TYPE_DICTIONARY_AFTER: usize = 1002;
-pub const SITE_TYPES_TYPE_DICTIONARY_COMPREHENSION_AFTER: usize = 1003;
-pub const SITE_TYPES_TYPE_GENERATOR_EXPRESSION_AFTER: usize = 1004;
-pub const SITE_TYPES_TYPE_GENERIC_TYPE_AFTER: usize = 1005;
-pub const SITE_TYPES_TYPE_LAMBDA_AFTER: usize = 1006;
-pub const SITE_TYPES_TYPE_LIST_AFTER: usize = 1007;
-pub const SITE_TYPES_TYPE_LIST_COMPREHENSION_AFTER: usize = 1008;
-pub const SITE_TYPES_TYPE_LIST_SPLAT_PATTERN_AFTER: usize = 1009;
-pub const SITE_TYPES_TYPE_MEMBER_TYPE_AFTER: usize = 1010;
-pub const SITE_TYPES_TYPE_NAMED_EXPRESSION_AFTER: usize = 1011;
-pub const SITE_TYPES_TYPE_NOT_OPERATOR_AFTER: usize = 1012;
-pub const SITE_TYPES_TYPE_PARENTHESIZED_EXPRESSION_AFTER: usize = 1013;
-pub const SITE_TYPES_TYPE_SET_AFTER: usize = 1014;
-pub const SITE_TYPES_TYPE_SET_COMPREHENSION_AFTER: usize = 1015;
-pub const SITE_TYPES_TYPE_SPLAT_TYPE_AFTER: usize = 1016;
-pub const SITE_TYPES_TYPE_STRING_AFTER: usize = 1017;
-pub const SITE_TYPES_TYPE_SUBSCRIPT_AFTER: usize = 1018;
-pub const SITE_TYPES_TYPE_TUPLE_AFTER: usize = 1019;
-pub const SITE_TYPES_TYPE_UNARY_OPERATOR_AFTER: usize = 1020;
-pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 1021;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 1022;
-pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 1023;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 1024;
-pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 1025;
-pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE: usize = 1026;
-pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER: usize = 1027;
-pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE: usize = 1028;
-pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER: usize = 1029;
-pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE: usize = 1030;
-pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER: usize = 1031;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 1032;
-pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 1033;
-pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 1034;
-pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 1035;
-pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 1036;
-pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 1037;
-pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 1038;
-pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 1039;
-pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 1040;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 1041;
-pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 1042;
-pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 1043;
-pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 1044;
-pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 1045;
-pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 1046;
-pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 1047;
-pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 1048;
-pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_BEFORE: usize = 1049;
-pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 1050;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 1051;
-pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 1052;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1053;
-pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 1054;
-pub const SITE_WITH_CLAUSE_PAREN_LPAREN_BEFORE: usize = 1055;
-pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 1056;
-pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 1057;
-pub const SITE_WITH_CLAUSE_PAREN_RPAREN_AFTER: usize = 1058;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 1059;
-pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 1060;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1061;
-pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 1062;
-pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 1063;
-pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 1064;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 1065;
-pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 1066;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 1067;
-pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 1068;
-pub const SITE_YIELD_YIELD_KEYWORD_BEFORE: usize = 1069;
-pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 1070;
-pub const SITE_YIELD_YIELD_BEFORE: usize = 1071;
-pub const SITE_YIELD_YIELD_AFTER: usize = 1072;
-pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_BEFORE: usize = 1073;
-pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 1074;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 1075;
-pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 1076;
+pub const SITE_SUITE_INLINE_SUITE_INLINE_BEFORE: usize = 950;
+pub const SITE_SUITE_INLINE_SUITE_INLINE_AFTER: usize = 951;
+pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_EXCEPT_CLAUSE_AFTER: usize = 952;
+pub const SITE_TRY_STATEMENT_EXCEPT_CLAUSES_SEPARATOR_SPACE: usize = 953;
+pub const SITE_TRY_STATEMENT_COLON_BEFORE: usize = 954;
+pub const SITE_TRY_STATEMENT_COLON_AFTER: usize = 955;
+pub const SITE_TRY_STATEMENT_TRY_KEYWORD_BEFORE: usize = 956;
+pub const SITE_TRY_STATEMENT_TRY_KEYWORD_AFTER: usize = 957;
+pub const SITE_TRY_STATEMENT_TRY_STATEMENT_BEFORE: usize = 958;
+pub const SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER: usize = 959;
+pub const SITE_TUPLE_LPAREN_BEFORE: usize = 960;
+pub const SITE_TUPLE_LPAREN_AFTER: usize = 961;
+pub const SITE_TUPLE_RPAREN_BEFORE: usize = 962;
+pub const SITE_TUPLE_RPAREN_AFTER: usize = 963;
+pub const SITE_TUPLE_TUPLE_BEFORE: usize = 964;
+pub const SITE_TUPLE_TUPLE_AFTER: usize = 965;
+pub const SITE_TUPLE_PATTERN_LPAREN_BEFORE: usize = 966;
+pub const SITE_TUPLE_PATTERN_LPAREN_AFTER: usize = 967;
+pub const SITE_TUPLE_PATTERN_RPAREN_BEFORE: usize = 968;
+pub const SITE_TUPLE_PATTERN_RPAREN_AFTER: usize = 969;
+pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_BEFORE: usize = 970;
+pub const SITE_TUPLE_PATTERN_TUPLE_PATTERN_AFTER: usize = 971;
+pub const SITE_TYPE_ALIAS_STATEMENT_EQ_BEFORE: usize = 972;
+pub const SITE_TYPE_ALIAS_STATEMENT_EQ_AFTER: usize = 973;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_BEFORE: usize = 974;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_KEYWORD_AFTER: usize = 975;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_BEFORE: usize = 976;
+pub const SITE_TYPE_ALIAS_STATEMENT_TYPE_ALIAS_STATEMENT_AFTER: usize = 977;
+pub const SITE_TYPE_PARAMETER_LBRACK_BEFORE: usize = 978;
+pub const SITE_TYPE_PARAMETER_LBRACK_AFTER: usize = 979;
+pub const SITE_TYPE_PARAMETER_RBRACK_BEFORE: usize = 980;
+pub const SITE_TYPE_PARAMETER_RBRACK_AFTER: usize = 981;
+pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_BEFORE: usize = 982;
+pub const SITE_TYPE_PARAMETER_TYPE_PARAMETER_AFTER: usize = 983;
+pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_BEFORE: usize = 984;
+pub const SITE_TYPED_DEFAULT_PARAMETER_COLON_AFTER: usize = 985;
+pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_BEFORE: usize = 986;
+pub const SITE_TYPED_DEFAULT_PARAMETER_EQ_AFTER: usize = 987;
+pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_BEFORE: usize = 988;
+pub const SITE_TYPED_DEFAULT_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 989;
+pub const SITE_TYPED_PARAMETER_COLON_BEFORE: usize = 990;
+pub const SITE_TYPED_PARAMETER_COLON_AFTER: usize = 991;
+pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_BEFORE: usize = 992;
+pub const SITE_TYPED_PARAMETER_TYPED_PARAMETER_AFTER: usize = 993;
+pub const SITE_TYPES_TYPE_AS_PATTERN_AFTER: usize = 994;
+pub const SITE_TYPES_TYPE_ATTRIBUTE_AFTER: usize = 995;
+pub const SITE_TYPES_TYPE_AWAIT_AFTER: usize = 996;
+pub const SITE_TYPES_TYPE_BINARY_OPERATOR_AFTER: usize = 997;
+pub const SITE_TYPES_TYPE_BOOLEAN_OPERATOR_AFTER: usize = 998;
+pub const SITE_TYPES_TYPE_CALL_AFTER: usize = 999;
+pub const SITE_TYPES_TYPE_COMPARISON_OPERATOR_AFTER: usize = 1000;
+pub const SITE_TYPES_TYPE_CONCATENATED_STRING_AFTER: usize = 1001;
+pub const SITE_TYPES_TYPE_CONDITIONAL_EXPRESSION_AFTER: usize = 1002;
+pub const SITE_TYPES_TYPE_CONSTRAINED_TYPE_AFTER: usize = 1003;
+pub const SITE_TYPES_TYPE_DICTIONARY_AFTER: usize = 1004;
+pub const SITE_TYPES_TYPE_DICTIONARY_COMPREHENSION_AFTER: usize = 1005;
+pub const SITE_TYPES_TYPE_GENERATOR_EXPRESSION_AFTER: usize = 1006;
+pub const SITE_TYPES_TYPE_GENERIC_TYPE_AFTER: usize = 1007;
+pub const SITE_TYPES_TYPE_LAMBDA_AFTER: usize = 1008;
+pub const SITE_TYPES_TYPE_LIST_AFTER: usize = 1009;
+pub const SITE_TYPES_TYPE_LIST_COMPREHENSION_AFTER: usize = 1010;
+pub const SITE_TYPES_TYPE_LIST_SPLAT_PATTERN_AFTER: usize = 1011;
+pub const SITE_TYPES_TYPE_MEMBER_TYPE_AFTER: usize = 1012;
+pub const SITE_TYPES_TYPE_NAMED_EXPRESSION_AFTER: usize = 1013;
+pub const SITE_TYPES_TYPE_NOT_OPERATOR_AFTER: usize = 1014;
+pub const SITE_TYPES_TYPE_PARENTHESIZED_EXPRESSION_AFTER: usize = 1015;
+pub const SITE_TYPES_TYPE_SET_AFTER: usize = 1016;
+pub const SITE_TYPES_TYPE_SET_COMPREHENSION_AFTER: usize = 1017;
+pub const SITE_TYPES_TYPE_SPLAT_TYPE_AFTER: usize = 1018;
+pub const SITE_TYPES_TYPE_STRING_AFTER: usize = 1019;
+pub const SITE_TYPES_TYPE_SUBSCRIPT_AFTER: usize = 1020;
+pub const SITE_TYPES_TYPE_TUPLE_AFTER: usize = 1021;
+pub const SITE_TYPES_TYPE_UNARY_OPERATOR_AFTER: usize = 1022;
+pub const SITE_TYPES_TYPE_UNION_TYPE_AFTER: usize = 1023;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_BEFORE: usize = 1024;
+pub const SITE_TYPES_TYPE_SEPARATOR_SPACE_AFTER: usize = 1025;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_BEFORE: usize = 1026;
+pub const SITE_UNARY_OPERATOR_UNARY_OPERATOR_AFTER: usize = 1027;
+pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_BEFORE: usize = 1028;
+pub const SITE_UNARY_OPERATOR_OPERATOR_PLUS_AFTER: usize = 1029;
+pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_BEFORE: usize = 1030;
+pub const SITE_UNARY_OPERATOR_OPERATOR_DASH_AFTER: usize = 1031;
+pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_BEFORE: usize = 1032;
+pub const SITE_UNARY_OPERATOR_OPERATOR_TILDE_AFTER: usize = 1033;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_LIST_PATTERN_AFTER: usize = 1034;
+pub const SITE_UNION_PATTERN_PATTERNS_CASE_TUPLE_PATTERN_AFTER: usize = 1035;
+pub const SITE_UNION_PATTERN_PATTERNS_CLASS_PATTERN_AFTER: usize = 1036;
+pub const SITE_UNION_PATTERN_PATTERNS_COMPLEX_PATTERN_AFTER: usize = 1037;
+pub const SITE_UNION_PATTERN_PATTERNS_CONCATENATED_STRING_AFTER: usize = 1038;
+pub const SITE_UNION_PATTERN_PATTERNS_DICT_PATTERN_AFTER: usize = 1039;
+pub const SITE_UNION_PATTERN_PATTERNS_SIMPLE_PATTERN_NEGATIVE_AFTER: usize = 1040;
+pub const SITE_UNION_PATTERN_PATTERNS_SPLAT_PATTERN_AFTER: usize = 1041;
+pub const SITE_UNION_PATTERN_PATTERNS_STRING_AFTER: usize = 1042;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE: usize = 1043;
+pub const SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER: usize = 1044;
+pub const SITE_UNION_TYPE_PIPE_BEFORE: usize = 1045;
+pub const SITE_UNION_TYPE_PIPE_AFTER: usize = 1046;
+pub const SITE_UNION_TYPE_UNION_TYPE_BEFORE: usize = 1047;
+pub const SITE_UNION_TYPE_UNION_TYPE_AFTER: usize = 1048;
+pub const SITE_WHILE_STATEMENT_COLON_BEFORE: usize = 1049;
+pub const SITE_WHILE_STATEMENT_COLON_AFTER: usize = 1050;
+pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_BEFORE: usize = 1051;
+pub const SITE_WHILE_STATEMENT_WHILE_KEYWORD_AFTER: usize = 1052;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_BEFORE: usize = 1053;
+pub const SITE_WHILE_STATEMENT_WHILE_STATEMENT_AFTER: usize = 1054;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1055;
+pub const SITE_WITH_CLAUSE_BARE_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 1056;
+pub const SITE_WITH_CLAUSE_PAREN_LPAREN_BEFORE: usize = 1057;
+pub const SITE_WITH_CLAUSE_PAREN_LPAREN_AFTER: usize = 1058;
+pub const SITE_WITH_CLAUSE_PAREN_RPAREN_BEFORE: usize = 1059;
+pub const SITE_WITH_CLAUSE_PAREN_RPAREN_AFTER: usize = 1060;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_BEFORE: usize = 1061;
+pub const SITE_WITH_CLAUSE_PAREN_WITH_CLAUSE_PAREN_AFTER: usize = 1062;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_BEFORE: usize = 1063;
+pub const SITE_WITH_CLAUSE_WITH_ITEMS_WITH_ITEM_SEPARATOR_SPACE_AFTER: usize = 1064;
+pub const SITE_WITH_STATEMENT_COLON_BEFORE: usize = 1065;
+pub const SITE_WITH_STATEMENT_COLON_AFTER: usize = 1066;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE: usize = 1067;
+pub const SITE_WITH_STATEMENT_WITH_KEYWORD_AFTER: usize = 1068;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_BEFORE: usize = 1069;
+pub const SITE_WITH_STATEMENT_WITH_STATEMENT_AFTER: usize = 1070;
+pub const SITE_YIELD_YIELD_KEYWORD_BEFORE: usize = 1071;
+pub const SITE_YIELD_YIELD_KEYWORD_AFTER: usize = 1072;
+pub const SITE_YIELD_YIELD_BEFORE: usize = 1073;
+pub const SITE_YIELD_YIELD_AFTER: usize = 1074;
+pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_BEFORE: usize = 1075;
+pub const SITE_YIELD_FROM_CLAUSE_FROM_KEYWORD_AFTER: usize = 1076;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: usize = 1077;
+pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: usize = 1078;
 pub const DELIM_ARGUMENT_LIST_ELEMENTS_ELEMENT: usize = 0;
 pub const DELIM_CASE_PATTERNS_CASE_PATTERN: usize = 1;
 pub const DELIM_COLLECTION_ELEMENTS_ELEMENT: usize = 2;
@@ -2055,6 +2057,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("subscripts", "subscript_separator_space_after", "comma_separator_space_after", 109, &[108, 109, 101, 110, 111]),
     ("suite_block", "suite_block_before", "suite_block_before", 108, &[108, 109, 101, 110, 111]),
     ("suite_block", "suite_block_after", "suite_block_after", 108, &[108, 109, 101, 110, 111]),
+    ("suite_inline", "suite_inline_before", "suite_inline_before", 108, &[108, 109, 101, 110, 111]),
+    ("suite_inline", "suite_inline_after", "suite_inline_after", 108, &[108, 109, 101, 110, 111]),
     ("try_statement", "except_clauses_except_clause_after", "except_clause_after", 108, &[108, 109, 101, 110, 111]),
     ("try_statement", "except_clauses_separator_space", "empty_separator_space", 108, &[108, 109, 101, 110, 111]),
     ("try_statement", "colon_before", "colon_before", 108, &[108, 109, 101, 110, 111]),
@@ -2362,6 +2366,7 @@ pub struct Options {
     pub subscript: Option<SubscriptOptions>,
     pub subscripts: Option<SubscriptsOptions>,
     pub suite_block: Option<SuiteBlockOptions>,
+    pub suite_inline: Option<SuiteInlineOptions>,
     pub try_statement: Option<TryStatementOptions>,
     pub tuple: Option<TupleOptions>,
     pub tuple_pattern: Option<TuplePatternOptions>,
@@ -2387,7 +2392,7 @@ pub struct Options {
 impl ::napi::bindgen_prelude::FromNapiValue for Options {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "aliased_import", "argument_list", "argument_list_elements", "as_pattern", "assert_statement", "assignment_eq", "assignment_type", "assignment_typed", "attribute", "augmented_assignment", "augmented_assignment_operator", "await", "binary_operator", "block", "boolean_operator", "call", "case_as_pattern", "case_clause", "case_list_pattern", "case_patterns", "case_tuple_pattern", "chevron", "class_definition", "class_pattern", "collection_elements", "comparison_operator", "comparison_operator_comparator", "complex_pattern", "comprehension_clauses", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dict_pattern_elements", "dictionary", "dictionary_comprehension", "dictionary_elements", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "escape_sequence", "except_clause", "except_clause_exception_as", "except_clause_exception_list", "exec_statement", "expression_list", "expression_list_expressions", "expression_statement_tuple", "finally_clause", "float", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "gap", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_list", "import_statement", "interpolation", "key_value_pattern", "keyword_argument", "keyword_pattern", "lambda", "lambda_within_for_in_clause", "line_continuation", "list", "list_comprehension", "list_pattern", "list_pattern_case_patterns", "list_splat", "list_splat_pattern", "match_block_block", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_import_list", "parenthesized_list_splat", "pattern_list", "pattern_list_patterns", "patterns", "print_arguments", "print_chevron_arguments", "print_statement_chevron", "print_statement_plain", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "simple_pattern_negative", "simple_statements", "simple_statements_elements", "slice", "slice_group", "splat_pattern", "splat_type", "string", "subjects", "subscript", "subscripts", "suite_block", "try_statement", "tuple", "tuple_pattern", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "types", "unary_operator", "unary_operator_operator", "union_pattern", "union_type", "while_statement", "with_clause_bare", "with_clause_paren", "with_clause_with_items", "with_statement", "yield", "yield_from_clause"], "")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "aliased_import", "argument_list", "argument_list_elements", "as_pattern", "assert_statement", "assignment_eq", "assignment_type", "assignment_typed", "attribute", "augmented_assignment", "augmented_assignment_operator", "await", "binary_operator", "block", "boolean_operator", "call", "case_as_pattern", "case_clause", "case_list_pattern", "case_patterns", "case_tuple_pattern", "chevron", "class_definition", "class_pattern", "collection_elements", "comparison_operator", "comparison_operator_comparator", "complex_pattern", "comprehension_clauses", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dict_pattern_elements", "dictionary", "dictionary_comprehension", "dictionary_elements", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "escape_sequence", "except_clause", "except_clause_exception_as", "except_clause_exception_list", "exec_statement", "expression_list", "expression_list_expressions", "expression_statement_tuple", "finally_clause", "float", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "gap", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_list", "import_statement", "interpolation", "key_value_pattern", "keyword_argument", "keyword_pattern", "lambda", "lambda_within_for_in_clause", "line_continuation", "list", "list_comprehension", "list_pattern", "list_pattern_case_patterns", "list_splat", "list_splat_pattern", "match_block_block", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_import_list", "parenthesized_list_splat", "pattern_list", "pattern_list_patterns", "patterns", "print_arguments", "print_chevron_arguments", "print_statement_chevron", "print_statement_plain", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "simple_pattern_negative", "simple_statements", "simple_statements_elements", "slice", "slice_group", "splat_pattern", "splat_type", "string", "subjects", "subscript", "subscripts", "suite_block", "suite_inline", "try_statement", "tuple", "tuple_pattern", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "types", "unary_operator", "unary_operator_operator", "union_pattern", "union_type", "while_statement", "with_clause_bare", "with_clause_paren", "with_clause_with_items", "with_statement", "yield", "yield_from_clause"], "")?;
         Ok(Self {
             indent: obj.get("indent")?,
             aliased_import: obj.get("aliased_import")?,
@@ -2509,6 +2514,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Options {
             subscript: obj.get("subscript")?,
             subscripts: obj.get("subscripts")?,
             suite_block: obj.get("suite_block")?,
+            suite_inline: obj.get("suite_inline")?,
             try_statement: obj.get("try_statement")?,
             tuple: obj.get("tuple")?,
             tuple_pattern: obj.get("tuple_pattern")?,
@@ -2656,6 +2662,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Options {
         obj.set("subscript", val.subscript)?;
         obj.set("subscripts", val.subscripts)?;
         obj.set("suite_block", val.suite_block)?;
+        obj.set("suite_inline", val.suite_inline)?;
         obj.set("try_statement", val.try_statement)?;
         obj.set("tuple", val.tuple)?;
         obj.set("tuple_pattern", val.tuple_pattern)?;
@@ -24402,6 +24409,34 @@ impl ::napi::bindgen_prelude::ToNapiValue for SuiteBlockOptions {
 }
 
 #[derive(Debug, Clone, Default)]
+pub struct SuiteInlineOptions {
+    pub after: Option<u16>,
+    pub before: Option<u16>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SuiteInlineOptions {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(suite_inline)")?;
+        Ok(Self {
+            after: obj.get("after")?,
+            before: obj.get("before")?,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SuiteInlineOptions {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
+        obj.set("after", val.after)?;
+        obj.set("before", val.before)?;
+        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
+    }
+}
+
+#[derive(Debug, Clone, Default)]
 pub struct TryStatementOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
@@ -30096,6 +30131,12 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     }
     if let Some(v) = options.suite_block.as_ref().and_then(|o| o.before) {
         set_spacing(&mut table, SITE_SUITE_BLOCK_SUITE_BLOCK_BEFORE, SPACING_SITES[SITE_SUITE_BLOCK_SUITE_BLOCK_BEFORE].4, v, "(suite_block)/before")?;
+    }
+    if let Some(v) = options.suite_inline.as_ref().and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_SUITE_INLINE_SUITE_INLINE_AFTER, SPACING_SITES[SITE_SUITE_INLINE_SUITE_INLINE_AFTER].4, v, "(suite_inline)/after")?;
+    }
+    if let Some(v) = options.suite_inline.as_ref().and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_SUITE_INLINE_SUITE_INLINE_BEFORE, SPACING_SITES[SITE_SUITE_INLINE_SUITE_INLINE_BEFORE].4, v, "(suite_inline)/before")?;
     }
     if let Some(v) = options.try_statement.as_ref().and_then(|o| o.after) {
         set_spacing(&mut table, SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER, SPACING_SITES[SITE_TRY_STATEMENT_TRY_STATEMENT_AFTER].4, v, "(try_statement)/after")?;

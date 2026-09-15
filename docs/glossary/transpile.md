@@ -225,33 +225,18 @@ build fails with "Missing symbols" for the
 
 ### `packages/codegen/src/transpile/prune-grammar-json.ts::pruneOrphanedPlaceholderRules`
 
-```text
-/**
- * Prune hidden rules that nothing reaches from `grammar.json`.
- *
- * Two populations land here:
- *  - `injectPlaceholderHiddenRules` (dsl/wire/wire.ts) conservatively
- *    pre-registers a `_kw_<name>`/`_<name>` rule for every one-arg
- *    field()/variant()/alias() placeholder before it's known whether the
- *    override actually needs a synthesized rule at that name, leaving
- *    `{type: 'BLANK'}` entries when it doesn't.
- *  - Enrich mints whose owner rule an override fully redeclares (and any
- *    hidden helper such a redeclaration strands) — the override body carries
- *    its own copy of the hoisted content, orphaning the raw mint.
- *
- * Neither population reaches parser.c/node-types.json (tree-sitter's own
- * compiler silently drops unreferenced named rules from real output) — this
- * keeps grammar.json, sittir's ground-truth view of the parser, in agreement.
- * `compiler/evaluate.ts`'s `pruneUnreachableHiddenRules` is the sittir-
- * pipeline twin over the same shared reachability traversal — the two MUST
- * stay in lockstep or the model diverges from the parser.
- *
- * Called after every `tree-sitter generate` invocation (both call sites:
- * `run-codegen.ts::runTreeSitterGenerate` and
- * `compile-parser.ts::compileParser`, which independently re-runs generate
- * before building the WASM binary).
- */
-```
+Prune the rules nothing reaches from `grammar.json` (`collectOrphanedRules`).
+Two populations land here: rules `injectPlaceholderHiddenRules` pre-registered
+for a placeholder that never deposited (a blank `_kw_<name>`, or a visible
+variant rule such as an unhoisted absent case), and enrich mints whose owner
+rule an override fully redeclares. Neither reaches parser.c/node-types.json;
+pruning keeps grammar.json, sittir's view of the parser, in agreement.
+`compiler/evaluate.ts`'s `prunePlaceholderOrphans` is the sittir-pipeline twin
+over the same traversal, and the two must stay in lockstep or the model
+diverges from the parser.
+
+Called after every `tree-sitter generate` invocation
+(`run-codegen.ts::runTreeSitterGenerate` and `compile-parser.ts::compileParser`).
 
 #### body
 

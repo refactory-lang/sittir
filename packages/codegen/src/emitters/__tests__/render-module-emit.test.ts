@@ -343,33 +343,17 @@ async function buildRustFixtureForParity() {
 // array_expression has two forms — semi (index 0) and list (index 1) —
 // so the bug mapped array_expression_list → "semi" instead of "list".
 
-it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
+// A variant parent's content slot pairs each variant kind with its own form.
+// function_type has two forms — trait_form (index 0) and fn_form (index 1) —
+// so pairing every variant with forms[0] would map function_type_fn_form onto
+// trait_form.
+it('variant pairing: function_type_fn_form renders through fn_form (not trait_form)', async () => {
 	const { grammar, nodeMap, generatedIdTables, templates } = await buildRustFixtureForParity();
 	const emit = emitRenderModule(grammar, templates, nodeMap, generatedIdTables);
-	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
-	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
-	// two polymorph forms onto ONE unnamed top-level-choice `content` slot
-	// (ArrayExpressionContentTransportSlot, same "unnamed top-level choice →
-	// content slot" convention as every other unnamed-choice case in this
-	// codebase) instead of two separate top-level struct fields with their own
-	// `_array_expression_list`/`_array_expression_semi` js_names. The
-	// regression this test guards against (the `|| true` find() predicate
-	// pairing every variantChildKind with forms[0]) is now verified through
-	// the enum's variant→render-fn mapping instead.
 	const transport = emit.transportRs.contents;
-	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
-	// Key regression guard: each variant must render via its OWN form, not
-	// both collapsing onto forms[0] (semi). Each arm now dispatches through
-	// `Render` (not the per-kind render fn directly) so leading/
-	// trailing comment trivia attached to the node renders too — the
-	// per-variant distinctness this test guards is still visible in the
-	// ArrayExpressionList vs ArrayExpressionSemi variant/inner-type pairing.
-	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => inner.render(w),'
-	);
-	expect(transport).toContain(
-		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => inner.render(w),'
-	);
+	expect(transport).toContain('pub enum FunctionTypeContentTransportSlot {');
+	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeFnForm(inner) => inner.render(w),');
+	expect(transport).toContain('FunctionTypeContentTransportSlot::FunctionTypeTraitForm(inner) => inner.render(w),');
 }, 60_000);
 
 describe('render options on transports', () => {
@@ -535,8 +519,8 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toContain('pub struct VerbatimTransport {');
 		// FunctionItem.name admits identifier and metavariable, both pattern-modeled.
 		expect(transportRs).toMatch(/pub enum FunctionItemNameTransportSlot \{[^}]*Verbatim\(VerbatimTransport\),/s);
-		// MacroDefinition.content admits three envelopes and no pattern kind.
-		expect(transportRs).toMatch(/pub enum MacroDefinitionContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
+		// TokenTree.content admits three envelopes and no pattern kind.
+		expect(transportRs).toMatch(/pub enum TokenTreeContentTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
 	it('binds a list view over site ids and writes a seam site as a call', async () => {

@@ -202,7 +202,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 
 export type NodeOrTerminal = NodeRef;
 
-export interface SubtypeRef {
+export interface SubtypeRef extends ArmFacts {
 	readonly name: string;
 	readonly storageKindId?: number;
 }
@@ -1887,9 +1887,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
 		super(kind, rule, { hidden: true });
 		this.#subtypes = subtypes.map(
-			(s): NodeOrTerminal => ({
-				node: { kind: 'unresolved-ref', name: s.name },
-				storageKindId: s.storageKindId,
+			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
+				node: { kind: 'unresolved-ref', name },
+				storageKindId,
+				...armFacts,
 				multiplicity: 'single'
 			})
 		);
@@ -1901,6 +1902,11 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 
 	get subtypeNames(): readonly string[] {
 		return this.#subtypes.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
+	}
+
+	get variantSubtypes(): readonly NodeBackedRef[] | undefined {
+		const refs = this.#subtypes.filter(isNodeRef);
+		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined) ? refs : undefined;
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

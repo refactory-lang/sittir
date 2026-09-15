@@ -69,7 +69,7 @@ import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
-import { deriveStructuralVariantChildren, isAliasMintedRef } from './variant-structural.ts';
+import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
@@ -96,7 +96,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly inline?: readonly string[];
 	readonly derivations: DerivationLog;
 	readonly applyPromotedRules: boolean;
-	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
+	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
 
 	constructor(
@@ -106,7 +106,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 			inline?: readonly string[];
 			derivations: DerivationLog;
 			applyPromotedRules: boolean;
-			hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
+			hiddenNamedArmChoices: ReadonlySet<string>;
 			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
@@ -116,7 +116,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.inline = init.inline;
 		this.derivations = init.derivations;
 		this.applyPromotedRules = init.applyPromotedRules;
-		this.hiddenChoicesWithNamedAliasMembers = init.hiddenChoicesWithNamedAliasMembers;
+		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries ?? [];
 	}
 
@@ -142,7 +142,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		repeatedShapes: []
 	};
 
-	const hiddenChoicesWithNamedAliasMembers = collectHiddenChoicesWithNamedAliasMembers(raw.rules);
+	const hiddenNamedArmChoices = collectHiddenNamedArmChoices(raw.rules);
 	const wordMatcherRegex = compileWordMatcher(raw.word, raw.rules);
 
 	const linkCtx = new LinkCtx({
@@ -154,7 +154,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		inline: raw.inline,
 		derivations,
 		applyPromotedRules,
-		hiddenChoicesWithNamedAliasMembers,
+		hiddenNamedArmChoices,
 		kindEntries
 	});
 	const rules: Record<string, Rule<'link'>> = {};
@@ -246,7 +246,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, grammarJsonInline, reachableFromRoot);
 
 	stampLinkMintedVisibility(rules, linkCtx);
-	const variantChildren = deriveStructuralVariantChildren(rules);
+	const variantChildren = deriveVariantChildren(rules);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
 		const rule = rules[kind];
@@ -773,7 +773,11 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 		const body = rules[r.name];
 		if (body === undefined) return r;
 		const { hidden: _sourceKindHidden, ...spliced } = body;
-		return rebaseRuleIds({ ...spliced, inlinedFrom: r.name } as Rule<'link'>, r.id ?? body.id);
+		const annotations = r.annotations === undefined ? spliced.annotations : { ...spliced.annotations, ...r.annotations };
+		return rebaseRuleIds(
+			{ ...spliced, inlinedFrom: r.name, ...(annotations === undefined ? {} : { annotations }) } as Rule<'link'>,
+			r.id ?? body.id
+		);
 	};
 	for (let pass = 0; pass < 64; pass++) {
 		let changed = false;
@@ -839,14 +843,18 @@ function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
 	return undefined;
 }
 
-function collectHiddenChoicesWithNamedAliasMembers(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
+function collectHiddenNamedArmChoices(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
 		if (
 			rule.type === CHOICE &&
 			rule.members.length > 0 &&
-			rule.members.every((m) => m.type === ALIAS && m.named && m.content.type === SYMBOL)
+			rule.members.every(
+				(m) =>
+					(m.type === ALIAS && m.named && m.content.type === SYMBOL) ||
+					(m.type === SYMBOL && m.annotations?.variantOf === name)
+			)
 		) {
 			out.add(name);
 		}
@@ -998,7 +1006,7 @@ export interface VariantChoiceLocation {
 }
 
 export function applyOverridePolymorphs(rules: Record<string, Rule<'link'>>, derivations: DerivationLog): void {
-	const structural = deriveStructuralVariantChildren(rules);
+	const structural = deriveVariantChildren(rules);
 	const parentToChildren = new Map<string, string[]>();
 	for (const [parentKind, variantChildren] of structural) {
 		const names = variantChildren.map((c) => c.name);
@@ -1454,7 +1462,7 @@ function classifyHiddenChoiceRule(
 	name: string,
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
-	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
+	const { supertypes, hiddenNamedArmChoices } = ctx;
 	const enumMembers = rule.members.map((m): StringRule<'link'> | SymbolRule<'link'> | undefined => {
 		if (m.type === STRING) return m;
 		if (m.type === SYMBOL) {
@@ -1489,7 +1497,7 @@ function classifyHiddenChoiceRule(
 		};
 	}
 
-	if (hiddenChoicesWithNamedAliasMembers.has(name) && !supertypes.has(name)) {
+	if (hiddenNamedArmChoices.has(name) && !supertypes.has(name)) {
 		return { rule };
 	}
 
@@ -1543,11 +1551,13 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				if (current.content.type === SYMBOL) {
 					const storageName = current.content.name;
 					const parseName = typeof current.value === 'string' && current.value.length > 0 ? current.value : undefined;
-					subtypes.push(
-						parseName !== undefined && parseName !== storageName
-							? { type: SYMBOL, name: storageName, aliasedTo: parseName }
-							: { type: SYMBOL, name: storageName }
-					);
+					const annotations = current.annotations ?? current.content.annotations;
+					subtypes.push({
+						type: SYMBOL,
+						name: storageName,
+						...(parseName !== undefined && parseName !== storageName ? { aliasedTo: parseName } : {}),
+						...(annotations === undefined ? {} : { annotations })
+					});
 				} else if (current.content.type === STRING) {
 					const entry = findEntryForLiteralText(ctx.kindEntries, current.content.value);
 					subtypes.push({
@@ -1920,21 +1930,13 @@ export interface ValidateGroupsArgs {
 	warn?: (msg: string) => void;
 }
 
-function resolveGroupsConfigKey(kind: string, rules: Record<string, Rule<'link'>>): string | undefined {
-	if (kind in rules) return kind;
-	if (!kind.startsWith('_')) return undefined;
-	const visibleName = kind.slice(1);
-	return visibleName in rules ? visibleName : undefined;
-}
-
 export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 	const { groups, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
 
 	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts) continue;
-		const resolvedKey = resolveGroupsConfigKey(kind, rules);
-		const root = resolvedKey !== undefined ? rules[resolvedKey] : undefined;
+		const root = rules[kind];
 		if (!root) {
 			throw new Error(`groups['${kind}']: kind not in rule map`);
 		}
@@ -2030,9 +2032,8 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 	for (const [kind, lifts] of Object.entries(args.groups)) {
 		if (!lifts || Object.keys(lifts).length === 0) continue;
-		const resolvedKey = resolveGroupsConfigKey(kind, newRules) ?? kind;
 		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length);
-		let parentBody = clone(newRules[resolvedKey]!);
+		let parentBody = clone(newRules[kind]!);
 
 		for (const path of sortedPaths) {
 			const discriminator = lifts[path]!;
@@ -2052,7 +2053,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 			synthesizedKinds.push(synName);
 		}
 
-		newRules[resolvedKey] = parentBody;
+		newRules[kind] = parentBody;
 	}
 
 	return { rules: newRules, synthesizedKinds };

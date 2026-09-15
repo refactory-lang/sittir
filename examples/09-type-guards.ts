@@ -10,7 +10,7 @@ export function summarizeTopLevelItems(source: string) {
 		if (isNode(stmt) && is.functionItem(stmt)) {
 			summaries.push(`Function: ${nodeText(stmt.name())}`);
 		} else if (isNode(stmt) && is.structItem(stmt)) {
-			summaries.push(`Struct: ${renderText(stmt.content().name())}`);
+			summaries.push(`Struct: ${renderText(stmt.name())}`);
 		}
 	}
 

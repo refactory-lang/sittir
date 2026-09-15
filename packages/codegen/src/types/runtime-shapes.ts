@@ -80,6 +80,10 @@ export const isStringType = <T>(t: T): t is T & { type: 'STRING' } & StringRule 
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
 export const isBlankType = (t: unknown): boolean => typeEq(t, 'BLANK');
+export const isEmptyBody = (rule: unknown): boolean => {
+	const r = rule as { type?: unknown; members?: readonly unknown[] } | undefined;
+	return isBlankType(r?.type) || (typeEq(r?.type, 'CHOICE') && r?.members?.length === 0);
+};
 
 export function matchesEmpty(rule: RuntimeRule): boolean {
 	const t = rule.type;

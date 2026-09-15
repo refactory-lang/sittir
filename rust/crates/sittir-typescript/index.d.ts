@@ -820,11 +820,6 @@ export interface ExportStatementDefaultFromTransport {
   _export_statement_default_from_after?: number
 }
 
-export interface ExportStatementDefaultTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<ExportStatementDefaultContentTransportSlot>
-}
-
 export interface ExportStatementEqualsExportTransport {
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
@@ -851,11 +846,6 @@ export interface ExportStatementNamespaceExportTransport {
   _namespace_keyword_after?: number
   _export_statement_namespace_export_before?: number
   _export_statement_namespace_export_after?: number
-}
-
-export interface ExportStatementTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<ExportStatementContentTransportSlot>
 }
 
 export interface ExportStatementTypeExportTransport {
@@ -969,11 +959,6 @@ export interface ForHeaderLhsTransport {
   _for_header_lhs_after?: number
 }
 
-export interface ForHeaderTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<ForHeaderContentTransportSlot>
-}
-
 export interface ForHeaderVarKindTransport {
   '$_trivia'?: TransportTrivia
   _left: SlotValue<ForHeaderVarKindLeftTransportSlot>
@@ -996,7 +981,7 @@ export interface ForInStatementTransport {
   '$_trivia'?: TransportTrivia
   _await_marker?: SlotValue<KwAwaitMarkerTransport>
   _body: SlotValue<Box<StatementTransport>>
-  _for_header: SlotValue<ForInStatementForHeaderTransportSlot>
+  _for_header: SlotValue<ForHeaderTransport>
   _for_keyword_before?: number
   _for_keyword_after?: number
   _for_in_statement_before?: number
@@ -1263,11 +1248,6 @@ export interface ImportSpecifiersTransport {
   _import_specifiers_after?: number
 }
 
-export interface ImportSpecifierTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<ImportSpecifierContentTransportSlot>
-}
-
 export interface ImportStatementClauseFromTransport {
   '$_trivia'?: TransportTrivia
   _source: SlotValue<StringTransport>
@@ -1328,11 +1308,6 @@ export interface IndexSignatureMappedTypeClauseTransport {
   _rbrack_after?: number
   _index_signature_mapped_type_clause_before?: number
   _index_signature_mapped_type_clause_after?: number
-}
-
-export interface IndexSignatureTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<IndexSignatureContentTransportSlot>
 }
 
 export interface IndexTypeQueryTransport {
@@ -1461,11 +1436,6 @@ export interface MemberExpressionTransport {
   _dot_after?: number
   _member_expression_before?: number
   _member_expression_after?: number
-}
-
-export interface MetaPropertyTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<MetaPropertyContentTransportSlot>
 }
 
 export interface MethodDefinitionTransport {
@@ -2362,11 +2332,6 @@ export interface UpdateExpressionPrefixTransport {
   _update_expression_prefix_after?: number
 }
 
-export interface UpdateExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<UpdateExpressionContentTransportSlot>>
-}
-
 export interface VariableDeclarationTransport {
   '$_trivia'?: TransportTrivia
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
@@ -2401,11 +2366,6 @@ export interface VariableDeclaratorPlainTransport {
   _eq_after?: number
   _variable_declarator_plain_before?: number
   _variable_declarator_plain_after?: number
-}
-
-export interface VariableDeclaratorTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<VariableDeclaratorContentTransportSlot>
 }
 
 export interface WhileStatementTransport {
