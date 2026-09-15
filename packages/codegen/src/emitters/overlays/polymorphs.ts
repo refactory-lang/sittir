@@ -69,6 +69,13 @@ function childRefs(
 	return { strict, coerce: coerceEmitted(child) ? `C.${child.fromFunctionName}` : strict };
 }
 
+interface VariantRoute {
+	readonly value: string;
+	readonly type: string;
+	readonly strict: string;
+	readonly coerce?: string;
+}
+
 export interface AliasWire {
 	readonly name: string;
 	readonly child: AssembledNode;
@@ -777,6 +784,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const chainedByKind = new Map<string, Map<string, string[]>>();
 	const emittedEntries = new Set<string>();
 	const seatedEntries = new Set<string>();
+	const coercibleSeats = new Set<string>();
 
 	for (const kind of wires.order) {
 		const wireSet = wires.byKind.get(kind)!;
@@ -856,6 +864,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		if (wireLines.length > 0) {
 			emittedEntries.add(wireSet.node.kind);
 			if (seated !== undefined) seatedEntries.add(wireSet.node.kind);
+			if (seated?.refs.coerce !== undefined) coercibleSeats.add(wireSet.node.kind);
 			if (!emittedHelpers && methods.length > 0) {
 				blocks.push(...ERASED_HELPERS);
 				emittedHelpers = true;
@@ -876,36 +885,51 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		}
 	}
 
-	function variantRouteOf(child: AssembledNode): { readonly value: string; readonly type: string } {
+	function variantRouteOf(child: AssembledNode): VariantRoute {
 		const entryKey = wires.keyByKind.get(child.kind);
 		if (entryKey !== undefined && wires.bundledKinds.has(child.kind) && !emittedEntries.has(child.kind)) {
-			return { value: `B.${entryKey}`, type: `typeof B.${entryKey}` };
+			return { value: `B.${entryKey}`, type: `typeof B.${entryKey}`, strict: `B.${entryKey}.strict`, coerce: `B.${entryKey}.coerce` };
 		}
 		const subFactories = entryKey !== undefined && emittedEntries.has(child.kind) ? entryKey : undefined;
 		if (subFactories !== undefined && (seatedEntries.has(child.kind) || !isHoistedCompound(child))) {
-			return { value: subFactories, type: `typeof ${subFactories}` };
+			const coercible = seatedEntries.has(child.kind) ? coercibleSeats.has(child.kind) : true;
+			return {
+				value: subFactories,
+				type: `typeof ${subFactories}`,
+				strict: `${subFactories}.strict`,
+				...(coercible ? { coerce: `${subFactories}.coerce` } : {})
+			};
 		}
 		const strictRef = `F.${child.rawFactoryName}`;
 		const coerceRef = wires.coerceEmitted(child) ? `C.${child.fromFunctionName}` : undefined;
 		const pairValue = coerceRef === undefined ? `strict: ${strictRef}` : `strict: ${strictRef}, coerce: ${coerceRef}`;
 		const pairType = coerceRef === undefined ? `strict: typeof ${strictRef}` : `strict: typeof ${strictRef}; coerce: typeof ${coerceRef}`;
+		const refs = { strict: strictRef, ...(coerceRef === undefined ? {} : { coerce: coerceRef }) };
 		return subFactories === undefined
-			? { value: `{ ${pairValue} }`, type: `{ ${pairType} }` }
-			: { value: `{ ${pairValue}, ...${subFactories} }`, type: `{ ${pairType} } & typeof ${subFactories}` };
+			? { value: `{ ${pairValue} }`, type: `{ ${pairType} }`, ...refs }
+			: { value: `{ ${pairValue}, ...${subFactories} }`, type: `{ ${pairType} } & typeof ${subFactories}`, ...refs };
 	}
 
+	const defaultRoutes = new Map<string, Pick<VariantRoute, 'strict' | 'coerce'>>();
 	for (const parent of flattenedVariantParents(nodeMap, generatedIdTables)) {
 		const lines: string[] = [];
 		const types: string[] = [];
-		for (const { name, child, nestedParentKey } of parent.variants) {
+		for (const route of parent.variants) {
+			const { name, child, nestedParentKey } = route;
+			const target = nestedParentKey === undefined ? variantRouteOf(child) : defaultRoutes.get(nestedParentKey);
+			if (route.default && target !== undefined) {
+				defaultRoutes.set(parent.key, target);
+				lines.unshift(`	strict: ${target.strict},`, ...(target.coerce === undefined ? [] : [`	coerce: ${target.coerce},`]));
+				types.unshift(`	readonly strict: typeof ${target.strict};`, ...(target.coerce === undefined ? [] : [`	readonly coerce: typeof ${target.coerce};`]));
+			}
 			if (nestedParentKey !== undefined) {
 				lines.push(`	${name}: ${nestedParentKey},`);
 				types.push(`	readonly ${name}: typeof ${nestedParentKey};`);
 				continue;
 			}
-			const route = variantRouteOf(child);
-			lines.push(`	${name}: ${route.value},`);
-			types.push(`	readonly ${name}: ${route.type};`);
+			const own = target as VariantRoute;
+			lines.push(`	${name}: ${own.value},`);
+			types.push(`	readonly ${name}: ${own.type};`);
 		}
 		blocks.push(`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', '');
 	}

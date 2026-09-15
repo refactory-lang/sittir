@@ -1379,6 +1379,13 @@ Every body a variant deposits is stamped `hoisted`, including the single hidden 
  *  collapse without any phase having to forward it. */
 ```
 
+`withVariantAnnotation`'s fourth argument is the choice member the variant
+was hoisted from, before the arm was mint-wrapped. `isDefaultArm` reads that
+member's own `default` annotation (through an `ALIAS`'s content, same as the
+stamp above) and, when set, adds `default: true` to the same stamp — so a
+variant that also carries `arm.default` reaches the flattened-parent emitter
+as one arm fact, not two derivations of the same declaration.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
 
 #### body

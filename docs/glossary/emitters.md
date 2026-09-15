@@ -10895,7 +10895,7 @@ that kind was left alone.
 
 Emits `attachProps` (property definition on a function — used by the coerce module's helpers), `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
 
-`hoistRoutes` does the same for a route object that is not itself a pair — a flattened parent (`{ eq: {strict, coerce}, … }`): each pair-valued member is hoisted, each nested route object recurses, and anything else is copied. A flattened parent's routes are therefore callable exactly like a bundle entry's sub-factories.
+`hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
 
@@ -14373,7 +14373,7 @@ The single derivation of which kinds get bundles and under what names — consum
 
 ### `packages/codegen/src/emitters/overlays/module.ts::flattenedVariantParents`
 
-The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory or to another qualifying flattened parent — a nested parent routes to that parent's own route object (`ir.exportStatement.default.from`). Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name.
+The supertypes that stand in for a flattened polymorph parent, each with its variant routes, so `ir.<parent>.<variant>` survives the parent losing its own node. A supertype qualifies when it has at least two subtypes, every subtype ref carries the `variant` / `variantOf` arm facts naming this supertype, and its ir key is a valid identifier not already taken. Each subtype must resolve to a kind with a raw factory or to another qualifying flattened parent — a nested parent routes to that parent's own route object (`ir.exportStatement.default.from`). Parents are accepted in rounds until nothing changes, so a nested parent is always listed, and emitted, before the parent that routes to it. The route name is the stamped `variant`, never a suffix recovered from the subtype's name. A route also carries `default` when the arm was declared with `arm.default` — at most one per parent, checked here (a second throws). A nested parent's default only propagates when the nested parent itself resolved a default; an undeclared default at any hop in the chain simply leaves the outer parent with none.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::variantRoutePaths`
 
@@ -14386,8 +14386,9 @@ publishes it for tools (the hoisted census, the factory-source printer).
 
 ### `packages/codegen/src/emitters/overlays/module.ts::FlattenedVariantRoute`
 
-One variant route of a flattened parent: its name, the child kind, and — when
-the child is itself a flattened parent — that parent's route key.
+One variant route of a flattened parent: its name, the child kind, whether it
+is `arm.default`, and — when the child is itself a flattened parent — that
+parent's route key.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 
@@ -15017,7 +15018,7 @@ through it (post-order).
 `NoneOf<T>` (every key of `T` forbidden) and `_built` (the `$type` probe)
 ride in the erased-helper block for the splice methods.
 
-Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A variant route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object.
+Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A variant route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 

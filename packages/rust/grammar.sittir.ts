@@ -215,6 +215,7 @@ export default grammar(
 
 				array_expression: [
 					{ 1: field('attributes'), '2/0/0': field('element') },
+					{ '2/1': arm.default },
 					{ '2/0': variant('semi'), '2/1': variant('list') }
 				],
 

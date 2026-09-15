@@ -5317,7 +5317,8 @@
           "name": "array_expression_list",
           "annotations": {
             "variant": "list",
-            "variantOf": "array_expression"
+            "variantOf": "array_expression",
+            "default": true
           }
         }
       ]
@@ -10780,7 +10781,10 @@
                 }
               ]
             }
-          ]
+          ],
+          "annotations": {
+            "default": true
+          }
         },
         {
           "type": "STRING",

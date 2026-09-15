@@ -12084,9 +12084,13 @@ export const referenceExpression: {
 };
 
 export const arrayExpression: {
+	readonly strict: typeof arrayExpressionList.strict;
+	readonly coerce: typeof arrayExpressionList.coerce;
 	readonly semi: { strict: typeof F.buildArrayExpressionSemi; coerce: typeof C.coerceToArrayExpressionSemi };
 	readonly list: typeof arrayExpressionList;
 } = {
+	strict: arrayExpressionList.strict,
+	coerce: arrayExpressionList.coerce,
 	semi: { strict: F.buildArrayExpressionSemi, coerce: C.coerceToArrayExpressionSemi },
 	list: arrayExpressionList
 };

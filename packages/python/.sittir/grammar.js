@@ -4469,8 +4469,13 @@ function isGroupPlaceholder(v) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
-function withVariantAnnotation(rule, variantName, parentKind) {
-  return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
+function withVariantAnnotation(rule, variantName, parentKind, arm2) {
+  return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
+}
+function isDefaultArm(arm2) {
+  const node = arm2;
+  const annotations = node?.type === "ALIAS" ? node.content?.annotations : node?.annotations;
+  return annotations?.default === true;
 }
 function symbolRef(name) {
   return nativeRuleFn("sym", "symbol")(name);
@@ -4715,7 +4720,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
       throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
     }
-    refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind), name });
+    refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
   }
   for (const { altIdx, lift } of lifted) {
     setGroupLiftRuleBody(lift.liftName, hoist(lift.body));

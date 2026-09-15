@@ -81,6 +81,7 @@ export interface FlattenedVariantRoute {
 	readonly name: string;
 	readonly child: AssembledNode;
 	readonly nestedParentKey?: string;
+	readonly default?: true;
 }
 
 export interface FlattenedVariantParent {
@@ -116,14 +117,18 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
 			const nestedParentKey = keyByParent.get(childKind);
 			if (nestedParentKey !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child, nestedParentKey });
+				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...(ref.default ? { default: true as const } : {}) });
 			} else if (child.rawFactoryName !== undefined) {
-				routes.push({ name: camelCase(ref.variant), child });
+				routes.push({ name: camelCase(ref.variant), child, ...(ref.default ? { default: true as const } : {}) });
 			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
 				waiting = true;
 			} else {
 				return null;
 			}
+		}
+		const defaults = routes.filter((route) => route.default);
+		if (defaults.length > 1) {
+			throw new Error(`arm.default: ${defaults.length} variants of '${kind}' are declared the default (${defaults.map((d) => d.name).join(', ')}); pick one`);
 		}
 		return waiting ? 'wait' : routes;
 	};

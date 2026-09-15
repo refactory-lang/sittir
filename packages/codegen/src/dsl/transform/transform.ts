@@ -23,6 +23,7 @@ import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
+import type { RuleAnnotations } from '../../types/rule.ts';
 import {
 	wireRegisterSymbolRename,
 	wireHasAuthoredRule,
@@ -51,8 +52,14 @@ import { makeRuleMetadata } from '../rule-metadata.ts';
 import { isHiddenKind } from '../rule-patterns.ts';
 import { nativeRuleFn } from '../enrich.ts';
 
-function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string): RuntimeRule {
-	return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
+function withVariantAnnotation(rule: unknown, variantName: string, parentKind: string, arm?: unknown): RuntimeRule {
+	return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...(isDefaultArm(arm) ? { default: true } : {}) });
+}
+
+function isDefaultArm(arm: unknown): boolean {
+	const node = arm as { type?: string; content?: { annotations?: RuleAnnotations }; annotations?: RuleAnnotations } | undefined;
+	const annotations = node?.type === 'ALIAS' ? node.content?.annotations : node?.annotations;
+	return annotations?.default === true;
 }
 
 function symbolRef(name: string): RuntimeRule {
@@ -377,7 +384,7 @@ function buildHoistedVariants(
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
-		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind), name });
+		refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
 	}
 	for (const { altIdx, lift } of lifted) {
 		setGroupLiftRuleBody(lift.liftName, hoist(lift.body));

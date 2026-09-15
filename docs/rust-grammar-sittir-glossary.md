@@ -408,6 +408,9 @@ overlap with `_type` is declared in `conflicts:`).
 				// above) now carries each element's attribute_item(s) + _expression
 				// pair as a self-contained unit, exactly as `attributed_argument`
 				// does for call arguments.
+				// `list` is `arm.default`: a bare list is what most callers mean
+				// by "an array expression", so the flattened `array_expression`
+				// route object is directly callable as that variant.
 ```
 
 ### `attribute` (`packages/rust/grammar.sittir.ts:426`)
