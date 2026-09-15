@@ -40,6 +40,7 @@ import { boundaryModulePath } from '../validate/common.ts';
 import { load } from '../codegen-surface.ts';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
+const { loadRawEntries } = await load('nodeTypesLoader');
 
 // ---------------------------------------------------------------------------
 // Schema types — see contracts/baseline-json.md
@@ -89,6 +90,19 @@ export interface GrammarEntry {
 		factoryRoundtrip: RoundtripResult;
 	};
 	parityFixtures: ParityFixtures;
+	/**
+	 * Named kinds with `subtypes` in `node-types.json` — supertypes with no
+	 * direct render/factory path of their own. A structural fact of the
+	 * grammar, known from `node-types.json` alone with no corpus run: the
+	 * regression checker uses a RISE here to explain a same-grammar drop in
+	 * `coverage`/`factoryRoundtrip` (a kind losing its own case by becoming
+	 * one, not a new failure). Optional because a baseline committed before
+	 * this field existed won't have it; an absent BASE count reads as 0 (a
+	 * baseline that never recorded the fact reads the same as one taken
+	 * before this feature existed — the gate only cares whether the count
+	 * rose, not by how much, so the true pre-existing count doesn't matter).
+	 */
+	supertypeKindCount?: number;
 }
 
 export interface BackendBaseline {
@@ -383,12 +397,16 @@ function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['
 	return { pass, fail: total - pass, total };
 }
 
+function computeSupertypeKindCount(grammar: Grammar): number {
+	return loadRawEntries(grammar).filter((e) => e.named && (e.subtypes?.length ?? 0) > 0).length;
+}
+
 async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
 		collectValidatorsForGrammar(grammar, backend),
 		collectParityFixtures(grammar, backend)
 	]);
-	return { validators, parityFixtures };
+	return { validators, parityFixtures, supertypeKindCount: computeSupertypeKindCount(grammar) };
 }
 
 export async function collectBaseline(): Promise<BackendBaseline> {

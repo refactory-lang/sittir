@@ -563,74 +563,6 @@ function withHoistedAnnotation(rule) {
   return withAnnotations(rule, { hoisted: true });
 }
 
-// packages/codegen/src/dsl/primitives/preference.ts
-function isPreference(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
-}
-function preference(arm2) {
-  return { __sittirPlaceholder: "preference", default: arm2 };
-}
-
-// packages/codegen/src/dsl/primitives/spacing.ts
-var EMPTY_SEPARATOR_TOKEN = "empty";
-var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
-function parseSpacingLabel(name) {
-  const m = SPACING_LABEL.exec(name);
-  if (!m) return void 0;
-  const token2 = m[1];
-  const side = m[2];
-  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
-  return side === void 0 ? void 0 : { token: token2, side };
-}
-var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
-function parseSeamLabel(name) {
-  if (parseSpacingLabel(name) !== void 0) return void 0;
-  const m = SEAM_LABEL.exec(name);
-  return m ? { token: m[1], side: m[2] } : void 0;
-}
-var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
-function parseFlankAddress(key) {
-  const m = FLANK_ADDRESS.exec(key);
-  return m ? { kind: m[1], side: m[2] } : void 0;
-}
-
-// packages/codegen/src/dsl/primitives/alias.ts
-function isAliasPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
-}
-function alias(rule, value) {
-  if (typeof rule === "string" && value === void 0) {
-    return {
-      __sittirPlaceholder: "alias",
-      name: rule
-    };
-  }
-  const native = globalThis.alias;
-  if (typeof native !== "function") {
-    throw new Error(
-      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
-    );
-  }
-  if (value !== void 0) {
-    return native(rule, value);
-  }
-  return native(rule, rule);
-}
-
-// packages/codegen/src/dsl/primitives/variant.ts
-function isVariantPlaceholder(v) {
-  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
-}
-function variant(name) {
-  return { __sittirPlaceholder: "variant", name };
-}
-function variantMintName(v) {
-  return [...v.nestedUnder ?? [], v.name].join("_");
-}
-function nestVariant(v, nestedUnder) {
-  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
-}
-
 // packages/codegen/src/types/rule-types.ts
 var SEQ = "SEQ";
 var OPTIONAL = "OPTIONAL";
@@ -741,6 +673,75 @@ var RuleWalker = class {
     return go(rule);
   }
 };
+
+// packages/codegen/src/dsl/primitives/preference.ts
+function isPreference(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "preference";
+}
+function preference(arm2) {
+  return { __sittirPlaceholder: "preference", default: arm2 };
+}
+
+// packages/codegen/src/dsl/primitives/spacing.ts
+var EMPTY_SEPARATOR_TOKEN = "empty";
+var SPACING_LABEL = /^([a-z][a-z0-9_]*?)_separator_space(?:_(before|after))?$/;
+function parseSpacingLabel(name) {
+  const m = SPACING_LABEL.exec(name);
+  if (!m) return void 0;
+  const token2 = m[1];
+  const side = m[2];
+  if (token2 === EMPTY_SEPARATOR_TOKEN) return side === void 0 ? { token: token2 } : void 0;
+  return side === void 0 ? void 0 : { token: token2, side };
+}
+var SEAM_LABEL = /^([a-z][a-z0-9_]*?)_(before|after)$/;
+function parseSeamLabel(name) {
+  if (parseSpacingLabel(name) !== void 0) return void 0;
+  const m = SEAM_LABEL.exec(name);
+  return m ? { token: m[1], side: m[2] } : void 0;
+}
+var FLANK_ADDRESS = /^(_*[a-z][a-z0-9_]*?)_(start|end)$/;
+function parseFlankAddress(key) {
+  const m = FLANK_ADDRESS.exec(key);
+  return m ? { kind: m[1], side: m[2] } : void 0;
+}
+
+// packages/codegen/src/dsl/primitives/alias.ts
+function isAliasPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
+}
+function alias(rule, value) {
+  if (typeof rule === "string" && value === void 0) {
+    return {
+      __sittirPlaceholder: "alias",
+      name: rule
+    };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  if (value !== void 0) {
+    return native(rule, value);
+  }
+  return native(rule, rule);
+}
+
+// packages/codegen/src/dsl/primitives/variant.ts
+var ABSENT_VARIANT_NAME = "bare";
+function isVariantPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
+}
+function variant(name, options) {
+  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {} };
+}
+function variantMintName(v) {
+  return [...v.nestedUnder ?? [], v.name].join("_");
+}
+function nestVariant(v, nestedUnder) {
+  return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
+}
 
 // packages/codegen/src/dsl/rule-metadata.ts
 function makeRuleMetadata(shape) {
@@ -1399,6 +1400,11 @@ function isLiteralChoiceContent(rule) {
   }
   return false;
 }
+function isHiddenKind(name, inlineList) {
+  if (name.startsWith("_")) return true;
+  if (inlineList && inlineList.includes(name)) return true;
+  return false;
+}
 function armsDifferOnlyByLiteralChoice(a, b) {
   let literalDeltas = 0;
   const peel = (r) => {
@@ -1536,7 +1542,7 @@ function enrich(baseInput) {
   const clauseGroupRules = {};
   const clauseDedupeMap = {};
   const groupDedupeMap = {};
-  const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
+  const visibleGroupSources = /* @__PURE__ */ new Set();
   const clauseGroupOwners = /* @__PURE__ */ new Map();
   const unaliasSink = { diagnostics: [], seen: /* @__PURE__ */ new Set() };
   const enrichedRules = {};
@@ -1576,7 +1582,7 @@ function enrich(baseInput) {
         clauseGroupRules,
         clauseDedupeMap,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         unaliasSink
       );
@@ -1604,7 +1610,7 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
+  collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
   for (const name of Object.keys(mergedRules)) {
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -1616,7 +1622,7 @@ function enrich(baseInput) {
       mergedRules[n] = b;
     }
   });
-  const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n)));
+  const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
@@ -1642,9 +1648,9 @@ function enrich(baseInput) {
       configurable: true
     });
   }
-  if (visibleGroupHiddenNames.size > 0) {
+  if (visibleGroupSources.size > 0) {
     Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
-      value: visibleGroupHiddenNames,
+      value: visibleGroupSources,
       enumerable: false,
       writable: false,
       configurable: true
@@ -1694,7 +1700,7 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
   }
   return r;
 }
-function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, unaliasSink) {
+function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupSources, clauseGroupOwners, unaliasSink) {
   let r = rule;
   const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
   r = applyClauseHoist(
@@ -1705,7 +1711,7 @@ function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag,
     clauseDedupeMap,
     clauseHoistCounter,
     groupDedupeMap,
-    visibleGroupHiddenNames,
+    visibleGroupSources,
     clauseGroupOwners
   );
   const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
@@ -2640,8 +2646,8 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules,
     return null;
   }
   claimed.add(fieldName);
-  const symbolRef = registerKwRule(inner, fieldName, kwRules, rulesBag);
-  if (symbolRef === null) {
+  const symbolRef2 = registerKwRule(inner, fieldName, kwRules, rulesBag);
+  if (symbolRef2 === null) {
     reportSkip(
       "optional-keyword-prefix",
       ruleName,
@@ -2649,7 +2655,7 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules,
     );
     return null;
   }
-  const fieldNode = makeField(fieldName, symbolRef);
+  const fieldNode = makeField(fieldName, symbolRef2);
   return rebuildOptional(optionalRule, fieldNode);
 }
 function rebuildOptional(optionalRule, newInner) {
@@ -2783,7 +2789,7 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, ambientPrec, enclosingFieldName) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupSources, clauseGroupOwners, ambientPrec, enclosingFieldName) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
     const recursedSeqBody = applyClauseHoist(
@@ -2794,7 +2800,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames,
+      visibleGroupSources,
       clauseGroupOwners,
       ambientPrec,
       enclosingFieldName
@@ -2814,20 +2820,20 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
-        const symbolRef = makeGroupLiftSymbol(rule, name);
+        const symbolRef2 = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
-          return rebuildOptional(rule, symbolRef);
+          return rebuildOptional(rule, symbolRef2);
         } else {
           const members = rule.members;
           const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = symbolRef;
+          newMembers[peeled.seqIdx] = symbolRef2;
           return { ...rule, members: newMembers };
         }
       }
       return rule;
     } else {
       counter.opt += 1;
-      const names = visibleGroupSynthName(
+      const name = visibleGroupSynthName(
         recursedSeqBody,
         parentKind,
         groupDedupeMap,
@@ -2837,17 +2843,16 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         ambientPrec,
         enclosingFieldName
       );
-      if (names !== null) {
-        visibleGroupHiddenNames.add(names.hiddenName);
-        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-        const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
-        const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+      if (name !== null) {
+        visibleGroupSources.add(name);
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        const groupRef = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
-          return rebuildOptional(rule, aliasRule);
+          return rebuildOptional(rule, groupRef);
         } else {
           const members = rule.members;
           const newMembers = members.slice();
-          newMembers[peeled.seqIdx] = aliasRule;
+          newMembers[peeled.seqIdx] = groupRef;
           return { ...rule, members: newMembers };
         }
       }
@@ -2873,7 +2878,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         ambientPrec,
         enclosingFieldName
@@ -2885,7 +2890,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupRules,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         /* @__PURE__ */ new Set(),
         ambientPrec,
@@ -2918,7 +2923,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         ambientPrec
       );
@@ -2939,7 +2944,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
           repeatFn(seqFn(run.info.separatorRule, run.info.element)),
           optionalFn(run.info.separatorRule)
         ) : seqFn(...run.info.flatMembers);
-        const names = visibleGroupSynthName(
+        const name = visibleGroupSynthName(
           body,
           parentKind,
           groupDedupeMap,
@@ -2948,12 +2953,11 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
           clauseGroupRules,
           ambientPrec
         );
-        if (names === null) continue;
-        visibleGroupHiddenNames.add(names.hiddenName);
-        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-        const symbolRef = makeGroupLiftSymbol(body, names.hiddenName);
-        const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
-        const replacement = isTail ? optionalFn(aliasRule) : aliasRule;
+        if (name === null) continue;
+        visibleGroupSources.add(name);
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+        const groupRef = makeGroupLiftSymbol(body, name);
+        const replacement = isTail ? optionalFn(groupRef) : groupRef;
         newMembers.splice(run.start, run.size, replacement);
         changed = true;
       }
@@ -2987,7 +2991,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         ambientPrec
       );
@@ -2999,7 +3003,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         clauseGroupRules,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames,
+        visibleGroupSources,
         clauseGroupOwners,
         collidingLeadingNames,
         ambientPrec
@@ -3022,7 +3026,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames,
+      visibleGroupSources,
       clauseGroupOwners,
       innerAmbientPrec,
       enclosingFieldName
@@ -3041,7 +3045,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames,
+      visibleGroupSources,
       clauseGroupOwners,
       ambientPrec,
       rule.name
@@ -3251,10 +3255,10 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHiddenNames, clauseGroupOwners) {
+function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupSources, clauseGroupOwners) {
   const byParentFlavor = /* @__PURE__ */ new Map();
   for (const hidden of Object.keys(mintedRules)) {
-    const m = /^_(.+)_(arm|group)(\d+)$/.exec(hidden);
+    const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
     if (!m) continue;
     const key = `${m[1]}_${m[2]}`;
     const bucket = byParentFlavor.get(key);
@@ -3265,22 +3269,23 @@ function collapseSingletonMintOrdinals(mergedRules, mintedRules, visibleGroupHid
   for (const [bare, hiddens] of byParentFlavor) {
     if (hiddens.length !== 1) continue;
     const oldHidden = hiddens[0];
-    const newHidden = `_${bare}`;
-    if (newHidden in mergedRules || bare in mergedRules) continue;
+    const visible = !oldHidden.startsWith("_");
+    const newHidden = visible ? bare : `_${bare}`;
+    if (`_${bare}` in mergedRules || bare in mergedRules) continue;
     renames.set(oldHidden, newHidden);
-    renames.set(oldHidden.replace(/^_/, ""), bare);
+    if (!visible) renames.set(oldHidden.replace(/^_/, ""), bare);
   }
   if (renames.size === 0) return;
   for (const [oldName, newName] of renames) {
-    if (oldName.startsWith("_") && oldName in mergedRules) {
+    if (oldName in mergedRules && (oldName.startsWith("_") || oldName in mintedRules)) {
       mergedRules[newName] = mergedRules[oldName];
       delete mergedRules[oldName];
     }
-    if (oldName.startsWith("_") && oldName in mintedRules) {
+    if (oldName in mintedRules) {
       mintedRules[newName] = mintedRules[oldName];
       delete mintedRules[oldName];
     }
-    if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
+    if (visibleGroupSources.delete(oldName)) visibleGroupSources.add(newName);
     const owner = clauseGroupOwners.get(oldName);
     if (owner !== void 0) {
       clauseGroupOwners.delete(oldName);
@@ -3312,16 +3317,14 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
-    const hiddenName2 = `_${existing}`;
-    if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = registeredBody;
-    return { visibleName: existing, hiddenName: hiddenName2 };
+    if (!(existing in clauseGroupRules)) clauseGroupRules[existing] = registeredBody;
+    return existing;
   }
   const base2 = parentKind.replace(/^_+/, "");
-  const register = (visibleName2, body = registeredBody) => {
-    const hiddenName2 = `_${visibleName2}`;
-    groupDedupeMap[key] = visibleName2;
-    clauseGroupRules[hiddenName2] = body;
-    return { visibleName: visibleName2, hiddenName: hiddenName2 };
+  const register = (name, body = registeredBody) => {
+    groupDedupeMap[key] = name;
+    clauseGroupRules[name] = body;
+    return name;
   };
   const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
   if (listInfo?.flankCarrying) {
@@ -3340,14 +3343,14 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
   }
   if (enclosingFieldName !== void 0) {
     const visibleName2 = `${base2}_${enclosingFieldName}`;
-    if (!(visibleName2 in rulesBag) && !(`_${visibleName2}` in rulesBag) && !(`_${visibleName2}` in clauseGroupRules)) {
+    if (!(visibleName2 in rulesBag) && !(`_${visibleName2}` in rulesBag) && !(visibleName2 in clauseGroupRules)) {
       return register(visibleName2);
     }
   }
   const ordinal = flavor === "arm" ? ++counter.arm : ++counter.grp;
   const visibleName = `${base2}_${flavor}${ordinal}`;
   const hiddenName = `_${visibleName}`;
-  if (visibleName in rulesBag || hiddenName in rulesBag) {
+  if (visibleName in rulesBag || hiddenName in rulesBag || visibleName in clauseGroupRules) {
     process.stderr.write(
       `enrich: visible-group skipped for '${parentKind}' \u2014 rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules
 `
@@ -3388,10 +3391,10 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
       if (!isStringType(norm.type) || typeof norm.value !== "string") return m;
       if (!matchesWordShape(norm.value, wordMatcher)) return m;
       const fieldName = `${norm.value}_marker`;
-      const symbolRef = registerKwRule(m, fieldName, kwRules, rulesBag);
-      if (symbolRef === null) return m;
+      const symbolRef2 = registerKwRule(m, fieldName, kwRules, rulesBag);
+      if (symbolRef2 === null) return m;
       armChanged = true;
-      return makeField(fieldName, symbolRef);
+      return makeField(fieldName, symbolRef2);
     });
     if (!armChanged) return arm2;
     changed = true;
@@ -3399,7 +3402,7 @@ function promotePermutationArmKeywords(choiceRule, kwRules, rulesBag, wordMatche
   });
   return changed ? { ...choiceRule, members: newMembers } : choiceRule;
 }
-function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
+function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupSources, clauseGroupOwners, collidingLeadingNames, ambientPrec, enclosingFieldName) {
   const t = arm2.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm2, collidingLeadingNames, rulesBag)) return null;
@@ -3413,7 +3416,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
       clauseGroupRules,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames,
+      visibleGroupSources,
       clauseGroupOwners,
       collidingLeadingNames,
       arm2,
@@ -3433,7 +3436,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, "arm");
     if (!promoted) return null;
     rulesBag[name] = withHoistedAnnotation(body);
-    visibleGroupHiddenNames.add(name);
+    visibleGroupSources.add(name);
     if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
     return makeVisibleGroupAlias(arm2, promoted.visibleName);
   }
@@ -3441,7 +3444,7 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
     if (ruleMatchesEmpty(arm2) || isInlineSafe(arm2, rulesBag)) return null;
     if (isSupertypeLike(arm2)) return null;
     if (isPermutationChoice(arm2, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher)) return null;
-    const names = visibleGroupSynthName(
+    const minted = visibleGroupSynthName(
       arm2,
       parentKind,
       groupDedupeMap,
@@ -3452,11 +3455,10 @@ function mintStructuredChoiceArm(arm2, parentKind, rulesBag, clauseGroupRules, c
       enclosingFieldName,
       "arm"
     );
-    if (!names) return null;
-    visibleGroupHiddenNames.add(names.hiddenName);
-    if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-    const symbolRef = makeGroupLiftSymbol(arm2, names.hiddenName);
-    return makeVisibleGroupAlias(symbolRef, names.visibleName);
+    if (minted === null) return null;
+    visibleGroupSources.add(minted);
+    if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+    return makeGroupLiftSymbol(arm2, minted);
   }
   return null;
 }
@@ -3468,10 +3470,10 @@ function makeGroupLiftSymbol(_referenceRule, name) {
     metadata: makeRuleMetadata({ author: "enrich", symbolSource: "group-lift" })
   };
 }
-function makeVisibleGroupAlias(symbolRef, name) {
+function makeVisibleGroupAlias(symbolRef2, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
-  return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: "enrich" }) };
+  return { ...aliasFn(symbolRef2, symbol(name)), metadata: makeRuleMetadata({ author: "enrich" }) };
 }
 function synthesizeFieldEnumRules(rules) {
   const fieldOccurrences = collectFieldEnumOccurrences(rules);
@@ -3741,6 +3743,9 @@ function wireRegisterSyntheticRule(name, content) {
   currentContext.deposits.set(name, content);
   return true;
 }
+function wireHasDeposit(name) {
+  return currentContext?.deposits.has(name) ?? false;
+}
 function wireRegisterSyntheticInline(name) {
   if (!currentContext) return false;
   if (currentContext.authoredRuleNames.has(name)) return false;
@@ -3757,6 +3762,14 @@ function wireRegisterConflict(names) {
   }
   return true;
 }
+function wireRegisterFlattenedParent(name) {
+  if (!currentContext) return false;
+  currentContext.flattenedParents.add(name);
+  return true;
+}
+function wireIsPrecedenceRankedRule(name) {
+  return currentContext?.precedenceRankedNames.has(name) ?? false;
+}
 function wireRegisterSymbolRename(oldName, newName) {
   if (!currentContext) return false;
   currentContext.symbolRenames.set(oldName, newName);
@@ -3767,6 +3780,9 @@ function wireHasAuthoredRule(name) {
 }
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
+}
+function wireIsExtraRule(name) {
+  return currentContext?.extraRuleNames.has(name) ?? false;
 }
 function wire(config, base2) {
   const cfg = config;
@@ -3787,7 +3803,11 @@ function wire(config, base2) {
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
     currentRuleKind: null,
-    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
+    authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
+    extraRuleNames: extraRuleNames(cfg, baseArg),
+    precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
+    flattenedParents: /* @__PURE__ */ new Set(),
+    aliasTargets: /* @__PURE__ */ new Set()
   };
   const patches = cfg.patches ?? {};
   const outRules = { ...cfg.rules };
@@ -3828,13 +3848,16 @@ function wire(config, base2) {
     }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
   }
+  recordAliasTargets(outRules, context);
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
+  const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
   const wired = {
     ...cfg,
     rules: outRules,
     ...conflicts === void 0 ? {} : { conflicts },
-    ...inline === void 0 ? {} : { inline }
+    ...inline === void 0 ? {} : { inline },
+    supertypes
   };
   Object.defineProperty(wired, "__wireContext__", {
     value: context,
@@ -3846,9 +3869,6 @@ function wire(config, base2) {
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;
   return `${visibleParent}_${suffix}`;
-}
-function polymorphHiddenName(parentKind, suffix) {
-  return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 function knownRuleNames(cfg, base2) {
   const baseRules = base2?.grammar?.rules ?? base2?.rules ?? {};
@@ -3910,17 +3930,50 @@ function composeOrSynthesizePatchedParents(rules, patches, context) {
   }
 }
 function buildPatchedParentFn(kind, patchSets, userFn, context) {
-  const isHidden = kind.startsWith("_");
   return function wiredPatchedParent($, original) {
-    const base2 = userFn ? userFn($, original) : isHidden && context.deposits.has(kind) ? context.deposits.get(kind) : original;
+    const base2 = userFn ? userFn($, original) : context.deposits.get(kind) ?? original;
     return patchSets.length === 0 ? base2 : transform(base2, ...patchSets);
   };
 }
 function placeholderHiddenName(value, parentKind) {
   if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-  if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
+  if (isVariantPlaceholder(value)) return polymorphVisibleName(parentKind, variantMintName(value));
   if (isAliasPlaceholder(value)) return `_${value.name}`;
   return void 0;
+}
+function symbolNamesOf(entries) {
+  const names = /* @__PURE__ */ new Set();
+  for (const entry of Array.isArray(entries) ? entries : []) {
+    if (typeof entry === "string") {
+      names.add(entry);
+      continue;
+    }
+    const symbol = entry;
+    if (symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function precedenceRankedNames(cfg, base2) {
+  const basePrecedences = base2?.grammar?.precedences ?? base2?.precedences;
+  const previous = withStringGlobalShim(
+    () => typeof basePrecedences === "function" ? basePrecedences(makeSimpleDollarProxy(), []) : basePrecedences
+  );
+  const own = cfg.precedences;
+  const groups = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous ?? [])) : own ?? previous;
+  const names = /* @__PURE__ */ new Set();
+  for (const group2 of Array.isArray(groups) ? groups : []) for (const name of symbolNamesOf(group2)) names.add(name);
+  return names;
+}
+function extraRuleNames(cfg, base2) {
+  const baseExtras = base2?.grammar?.extras ?? base2?.extras;
+  const previous = withStringGlobalShim(
+    () => typeof baseExtras === "function" ? baseExtras(makeSimpleDollarProxy()) : baseExtras
+  );
+  const own = cfg.extras;
+  const entries = typeof own === "function" ? withStringGlobalShim(() => own(makeSimpleDollarProxy(), previous)) : own ?? previous;
+  return symbolNamesOf(entries);
 }
 function baseExternalNames(base2) {
   const externals = base2?.grammar?.externals ?? base2?.externals;
@@ -3942,13 +3995,24 @@ function injectPlaceholderHiddenRules(rules, patches, context, externals) {
   for (const [kind, entry] of Object.entries(patches)) {
     if (!entry) continue;
     for (const patchMap of patchSetsOf(entry)) {
-      for (const value of Object.values(patchMap)) {
-        const hiddenName = placeholderHiddenName(value, kind);
+      const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
+      const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
+      if (defaultAbsent !== void 0) names.push(defaultAbsent);
+      for (const hiddenName of names) {
         if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
         rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
       }
     }
   }
+}
+function defaultAbsentVariantName(kind, patchMap) {
+  const variants = Object.entries(patchMap).filter((entry) => isVariantPlaceholder(entry[1]));
+  if (variants.some(([, v]) => v.absent === true)) return void 0;
+  const throughOptional = variants.some(([key]) => {
+    const segs = parsePath(key);
+    return segs.length === 3 && segs.every((s) => s.kind === "index") && segs[1].value === 0;
+  });
+  return throughOptional ? polymorphVisibleName(kind, ABSENT_VARIANT_NAME) : void 0;
 }
 function makeDeferredContentFn(context, hiddenName) {
   return function deferredHiddenRule(_$, previous) {
@@ -3977,6 +4041,28 @@ function wrapOneRuleFn(name, fn, context) {
       currentContext = prevContext;
     }
   };
+}
+function wrapSupertypesCallback(userSupertypes, context) {
+  return function wiredSupertypes($, previous) {
+    const base2 = userSupertypes ? userSupertypes.call(this, $, previous) : previous ?? [];
+    const listed = new Set(symbolNamesOf(base2));
+    const flattened = [...context.flattenedParents].filter((name) => !listed.has(name) && !context.aliasTargets.has(name)).map((name) => symbolizeRef($, name));
+    return [...base2, ...flattened];
+  };
+}
+function recordAliasTargets(rules, context) {
+  const walker = new RuleWalker();
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = function aliasRecordingRuleFn($, previous) {
+      const rule = fn.call(this, $, previous);
+      walker.fold(rule, context.aliasTargets, (targets, node) => {
+        const alias2 = node;
+        if (alias2.type === "ALIAS" && alias2.named !== false && typeof alias2.value === "string") targets.add(alias2.value);
+        return targets;
+      });
+      return rule;
+    };
+  }
 }
 function wrapConflictsCallback(userConflicts, context) {
   return buildWiredConflictsFn(userConflicts, context);
@@ -4383,13 +4469,21 @@ function isGroupPlaceholder(v) {
 }
 
 // packages/codegen/src/dsl/transform/transform.ts
-function withVariantAnnotation(rule, variantName, parentKind) {
-  return withAnnotations(rule, { variant: variantName, variantOf: parentKind });
+function withVariantAnnotation(rule, variantName, parentKind, arm2) {
+  return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
 }
-function makePolymorphAliasNode(hiddenName, visibleName) {
+function isDefaultArm(arm2) {
+  const node = arm2;
+  const annotations = node?.type === "ALIAS" ? node.content?.annotations : node?.annotations;
+  return annotations?.default === true;
+}
+function symbolRef(name) {
+  return nativeRuleFn("sym", "symbol")(name);
+}
+function ruleRef(ruleName, nodeName) {
+  if (ruleName === nodeName) return symbolRef(nodeName);
   const alias2 = nativeRuleFn("alias");
-  const sym = nativeRuleFn("sym", "symbol");
-  return alias2(sym(hiddenName), sym(visibleName));
+  return alias2(symbolRef(ruleName), symbolRef(nodeName));
 }
 function transform(original, ...patchSets) {
   let rule = original;
@@ -4443,47 +4537,141 @@ function partitionPatchesByVariant(patches) {
 function applyVariantPatches(rule, variantEntries) {
   const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
   const hoisted = tryHoistSiblingVariants(rule, ordered);
-  if (hoisted) {
-    let result2 = hoisted.rule;
-    for (const [key, value] of ordered) {
-      if (hoisted.consumed.has(key)) continue;
-      const segments = parsePath(key);
-      result2 = applyPath(result2, segments, (member, precStack) => resolvePatch(value, member, precStack));
+  if (hoisted === null) {
+    const absent = ordered.find(([, v]) => v.absent === true);
+    if (absent !== void 0) {
+      throw new Error(
+        `variant('${absent[1].name}', { absent: true }) at '${absent[0]}' on '${wireGetCurrentRuleKind()}': the absent case only exists when the sibling variants hoist whole-arm (run with SITTIR_DEBUG=1 for the reason they did not)`
+      );
     }
-    return result2;
   }
-  let result = rule;
+  let result = hoisted ? hoisted.rule : rule;
   for (const [key, value] of ordered) {
+    if (hoisted?.consumed.has(key)) continue;
     const segments = parsePath(key);
     result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
+  registerIfPureVariantChoice(result);
   return result;
 }
-function tryHoistSiblingVariants(rule, variantEntries) {
-  const { bail, precStack, core } = peelPrecWrappersFromRule(rule);
+function registerIfPureVariantChoice(rule) {
+  const parentKind = wireGetCurrentRuleKind();
+  if (!parentKind || wireIsExtraRule(parentKind)) return;
+  let core = rule;
+  while (isPrecWrapper(core)) core = contentOf2(core);
+  if (!isChoiceType(core.type)) return;
+  const arms = membersOf2(core);
+  if (arms.length < 2 || !arms.every((arm2) => isMintedVariantArm(arm2, parentKind))) return;
+  wireRegisterFlattenedParent(parentKind);
+}
+function isMintedVariantArm(arm2, parentKind) {
+  let node = arm2;
+  while (isPrecWrapper(node)) node = contentOf2(node);
+  const symbol = node;
+  if (symbol.type !== "SYMBOL" || typeof symbol.name !== "string" || symbol.annotations?.variantOf !== parentKind) return false;
+  return wireHasDeposit(symbol.name) || wireHasAuthoredRule(symbol.name);
+}
+function planSiblingVariantHoist(rule, variantEntries, onBail = () => {
+}) {
+  const bail = (reason) => {
+    onBail(reason);
+    return null;
+  };
+  const { precStack, core } = peelPrecWrappersFromRule(rule);
   const t = core.type;
   if (!t) return bail("core rule has no type after prec peeling");
   if (!isSeqType(t)) return bail(`core rule type '${t}' is not seq/SEQ`);
-  const parsed = parseVariantPathsForHoist(variantEntries, bail);
+  const absentEntries = variantEntries.filter(([, v]) => v.absent === true);
+  const parsed = parseVariantPathsForHoist(
+    variantEntries.filter(([, v]) => v.absent !== true),
+    bail
+  );
   if (parsed === null) return null;
-  const choicePos = parsed[0].choicePos;
+  if (parsed.length === 0) return bail("no variant arms to hoist");
+  const { choicePos, throughOptional } = parsed[0];
   if (parsed.some((p) => p.choicePos !== choicePos))
     return bail(
       `variant patches target mixed choice positions (${parsed.map((p) => p.choicePos).join(",")}) \u2014 hoist needs all siblings at one choice`
     );
+  if (parsed.some((p) => p.throughOptional !== throughOptional))
+    return bail("variant patches mix N/M and N/0/M paths \u2014 hoist needs all siblings addressed the same way");
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice2 = seqMembers[resolvedPos];
-  if (!choice2 || !isChoiceType(choice2.type))
-    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice2);
-  const anyEmpty = parsed.some(
-    (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
+  const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], throughOptional);
+  if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
+  const { choice: choice2, choiceMembers, absentIdx } = hoistChoice;
+  const armCount = throughOptional ? choiceMembers.length - 1 : choiceMembers.length;
+  for (const p of parsed) if (p.altIdx < 0) p.altIdx += armCount;
+  if (absentEntries.length > 1) return bail(`more than one absent variant declared (${absentEntries.map(([k]) => k).join(", ")})`);
+  for (const [key, v] of absentEntries) {
+    const segs = parsePath(key);
+    const head = segs[0];
+    const at = head?.kind === "index" ? head.value < 0 ? seqMembers.length + head.value : head.value : void 0;
+    if (segs.length !== 1 || at !== resolvedPos) return bail(`absent variant '${v.name}' at '${key}' does not address the optional at ${resolvedPos}`);
+    if (absentIdx === void 0) return bail(`absent variant '${v.name}' at '${key}' addresses a choice that is not optional`);
+  }
+  const declared = absentEntries[0];
+  if (absentIdx !== void 0 && (throughOptional || declared !== void 0) && !parsed.some((p) => p.altIdx === absentIdx)) {
+    parsed.push({
+      key: declared?.[0] ?? String(choicePos),
+      v: declared?.[1] ?? variant(ABSENT_VARIANT_NAME),
+      choicePos,
+      altIdx: absentIdx,
+      throughOptional
+    });
+  }
+  const targeted = new Set(parsed.map((p) => p.altIdx));
+  const lifted = [];
+  for (const altIdx of choiceMembers.map((_, i) => i).filter((i) => !targeted.has(i))) {
+    const lift = enrichLiftArmOf(choiceMembers[altIdx]);
+    if (lift === null) return bail(`arm ${altIdx} has no variant() and no enrich lift to carry it`);
+    lifted.push({ altIdx, lift });
+  }
+  const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
+  const emptyArm = choiceMembers.findIndex(
+    (arm2) => (isBlank(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
   );
-  if (!anyEmpty) return null;
+  if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
+  const bareArm = choiceMembers.findIndex(
+    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
+  );
+  if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
+  return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted };
+}
+function isBlank(rule) {
+  return rule.type === "BLANK";
+}
+function hoistChoiceOf(rule, throughOptional) {
+  if (!rule) return null;
+  const blank = { type: "BLANK" };
+  const content = optionalContentOf(rule);
+  if (content !== void 0) {
+    const members = throughOptional ? isChoiceType(content.type) ? [...membersOf2(content), blank] : null : [content, blank];
+    if (members === null) return null;
+    return { choice: { type: "CHOICE", members }, choiceMembers: members, absentIdx: members.length - 1 };
+  }
+  if (throughOptional || !isChoiceType(rule.type)) return null;
+  return { choice: rule, choiceMembers: [...membersOf2(rule)], absentIdx: void 0 };
+}
+function optionalContentOf(rule) {
+  if (rule.type === "OPTIONAL") return contentOf2(rule);
+  if (!isChoiceType(rule.type)) return void 0;
+  const members = membersOf2(rule);
+  return members.length === 2 && isBlank(members[1]) && !isBlank(members[0]) ? members[0] : void 0;
+}
+function tryHoistSiblingVariants(rule, variantEntries) {
+  const { bail } = peelPrecWrappersFromRule(rule);
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
+  const plan = planSiblingVariantHoist(rule, variantEntries, (reason) => bail(reason));
+  if (plan === null) return null;
+  const { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted } = plan;
+  if (wireIsExtraRule(parentKind)) return bail(`'${parentKind}' is an extra; a non-token rule may not appear inside an extra`);
+  if (wireIsPrecedenceRankedRule(parentKind))
+    return bail(`'${parentKind}' is ranked by name in the grammar's precedences; its variants would reduce unranked`);
+  const authored = parsed.map((p) => polymorphVisibleName(parentKind, variantMintName(p.v))).find((name) => wireHasAuthoredRule(name));
+  if (authored !== void 0) return bail(`'${authored}' is an authored rule and would not carry the hoisted scaffolding`);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -4504,33 +4692,46 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   const parsed = [];
   for (const [key, v] of variantEntries) {
     const segs = parsePath(key);
-    if (segs.length !== 2) return bail(`variant patch '${key}' has ${segs.length} segments (expected 2: N/M)`);
-    if (segs[0].kind !== "index" || segs[1].kind !== "index")
+    if (segs.some((s) => s.kind !== "index"))
       return bail(`variant patch '${key}' uses non-index segments (kind-match / wildcard not supported for hoist)`);
-    parsed.push({ key, v, choicePos: segs[0].value, altIdx: segs[1].value });
+    const values = segs.map((s) => s.value);
+    if (values.length === 2) {
+      parsed.push({ key, v, choicePos: values[0], altIdx: values[1], throughOptional: false });
+    } else if (values.length === 3 && values[1] === 0) {
+      parsed.push({ key, v, choicePos: values[0], altIdx: values[2], throughOptional: true });
+    } else {
+      return bail(`variant patch '${key}' has ${segs.length} segments (expected N/M, or N/0/M through an optional)`);
+    }
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack) {
+  const hoist = (altContent) => {
+    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
+    return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
+  };
   const refs = [];
   for (const p of parsed) {
     const resolvedAlt = p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx;
     const altMember = choiceMembers[resolvedAlt];
-    const visibleName = polymorphVisibleName(parentKind, variantMintName(p.v));
-    const hiddenName = polymorphHiddenName(parentKind, variantMintName(p.v));
+    const name = polymorphVisibleName(parentKind, variantMintName(p.v));
     const lift = enrichLiftArmOf(altMember);
-    if (lift !== null) wireRegisterSymbolRename(lift.liftName, hiddenName);
-    const altContent = lift === null ? altMember : lift.body;
-    const hoistedMembers = seqMembers.map((m, i) => i === resolvedPos ? altContent : m);
-    const hoistedSeq = reconstructContainer(core, hoistedMembers);
-    const hoistedBody = wrapVariantBodyInParentPrec(withHoistedAnnotation(hoistedSeq), precStack);
-    if (!wireRegisterSyntheticRule(hiddenName, hoistedBody)) {
-      throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
+    if (lift !== null) wireRegisterSymbolRename(lift.liftName, name);
+    if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
+      throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
     }
-    refs.push(withVariantAnnotation(makePolymorphAliasNode(hiddenName, visibleName), p.v.name, parentKind));
+    refs.push({ altIdx: resolvedAlt, ref: withVariantAnnotation(symbolRef(name), p.v.name, parentKind, altMember), name });
   }
-  registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, variantMintName(p.v))));
-  const newChoice = reconstructContainer(choice2, refs);
+  for (const { altIdx, lift } of lifted) {
+    setGroupLiftRuleBody(lift.liftName, hoist(lift.body));
+    refs.push({ altIdx, ref: choiceMembers[altIdx], name: lift.liftName });
+  }
+  refs.sort((a, b) => a.altIdx - b.altIdx);
+  registerHoistedVariantConflicts(refs.map((r) => r.name));
+  const newChoice = reconstructContainer(
+    choice2,
+    refs.map((r) => r.ref)
+  );
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -4564,21 +4765,24 @@ function countBodyAnchors(rule) {
   return { tokens: 0, named: 0 };
 }
 function enrichLiftArmOf(member) {
-  if (member.type !== "ALIAS") return null;
-  const symbol = member.content;
+  const t = member.type;
+  if (t !== "ALIAS" && t !== "SYMBOL") return null;
+  const symbol = t === "SYMBOL" ? member : member.content;
   if (symbol?.type !== "SYMBOL" || typeof symbol.name !== "string" || !isEnrichGroupLiftSymbol(symbol)) {
     return null;
   }
   const body = getGroupLiftRuleBody(symbol.name);
   return body === void 0 ? null : { body, liftName: symbol.name, symbol };
 }
-function renameEnrichLift(aliasMember, lift, hiddenName, visibleName) {
-  if (!wireHasAuthoredRule(hiddenName)) wireRegisterSyntheticRule(hiddenName, withHoistedAnnotation(lift.body));
-  wireRegisterSymbolRename(lift.liftName, hiddenName);
+function renameEnrichLift(member, lift, ruleName, nodeName) {
+  if (!wireHasAuthoredRule(ruleName)) wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(lift.body));
+  wireRegisterSymbolRename(lift.liftName, ruleName);
+  if (ruleName === nodeName) return { ...lift.symbol, name: nodeName };
+  if (member.type !== "ALIAS") return ruleRef(ruleName, nodeName);
   return {
-    ...aliasMember,
-    content: { ...lift.symbol, name: hiddenName },
-    value: visibleName
+    ...member,
+    content: { ...lift.symbol, name: ruleName },
+    value: nodeName
   };
 }
 function variantBranchIsUnmaterializable(rule) {
@@ -4675,16 +4879,19 @@ function resolvePatch(patch, originalMember, precStack) {
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
-    const visibleName = polymorphVisibleName(parentKind, variantMintName(patch));
+    const name = polymorphVisibleName(parentKind, variantMintName(patch));
     const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
+    const lift = enrichLiftArmOf(originalMember);
+    if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
     if (originalMember.type === "ALIAS") {
-      const lift = enrichLiftArmOf(originalMember);
-      if (lift !== null) {
-        return annotated(
-          renameEnrichLift(originalMember, lift, polymorphHiddenName(parentKind, variantMintName(patch)), visibleName)
-        );
+      const content = originalMember.content;
+      if (content?.type === "SYMBOL" && content.name?.startsWith("_")) {
+        if (!wireRegisterSyntheticRule(name, withHoistedAnnotation(content))) {
+          throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
+        }
+        return annotated(symbolRef(name));
       }
-      return annotated({ ...originalMember, value: visibleName });
+      return annotated({ ...originalMember, value: name });
     }
     if (variantBranchIsUnmaterializable(originalMember)) {
       return annotated({
@@ -4692,10 +4899,7 @@ function resolvePatch(patch, originalMember, precStack) {
         metadata: makeRuleMetadata({ fieldSource: "override" })
       });
     }
-    const hiddenName = polymorphHiddenName(parentKind, variantMintName(patch));
-    return annotated(
-      registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack))
-    );
+    return annotated(registerAliasedVariant(name, name, originalMember, (body) => wrapInPrec(body, precStack)));
   }
   if (isAliasPlaceholder(patch)) {
     return resolveAliasPlaceholder(patch, originalMember, precStack);
@@ -4808,7 +5012,7 @@ function relabelUniformFieldSet(content, newName) {
       if (inRepeat) anyRepeatedOccurrence = true;
       return;
     }
-    if (isEnrichGroupLiftSymbol(n)) {
+    if (isEnrichGroupLiftSymbol(n) && isHiddenKind(n.name ?? "")) {
       const liftName = n.name;
       const body = liftName === void 0 ? void 0 : getGroupLiftRuleBody(liftName);
       if (liftName !== void 0 && body !== void 0 && !liftBodies.has(liftName)) {
@@ -4899,33 +5103,38 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
   return { ...result, metadata: makeRuleMetadata({ fieldSource: "override" }) };
 }
 function resolveAliasPlaceholder(patch, originalMember, precStack) {
-  const hiddenName = "_" + patch.name;
+  const ruleName = "_" + patch.name;
+  const lift = enrichLiftArmOf(originalMember);
+  if (lift !== null) return renameEnrichLift(originalMember, lift, ruleName, patch.name);
   if (originalMember.type === "ALIAS") {
-    const lift = enrichLiftArmOf(originalMember);
-    if (lift !== null) return renameEnrichLift(originalMember, lift, hiddenName, patch.name);
     return { ...originalMember, value: patch.name };
   }
-  return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
+  return registerAliasedVariant(ruleName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
 }
-function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrapper) {
+function registerAliasedVariant(ruleName, nodeName, originalMember, bodyWrapper) {
   const single = originalMember;
   if (single.type === "SYMBOL" && typeof single.name === "string") {
+    if (ruleName === nodeName && single.name.startsWith("_")) {
+      if (!wireRegisterSyntheticRule(ruleName, withHoistedAnnotation(originalMember))) {
+        throw new Error(`registerSyntheticRule('${ruleName}'): no active wire() context`);
+      }
+      return symbolRef(nodeName);
+    }
     const alias2 = nativeRuleFn("alias");
-    const sym = nativeRuleFn("sym", "symbol");
-    return alias2(originalMember, sym(aliasValue));
+    return alias2(originalMember, symbolRef(nodeName));
   }
   const wasEmpty = matchesEmpty(originalMember);
   const factored = factorOutEmptiness(originalMember);
   if (wasEmpty && !factored) {
     throw new Error(
-      `variant()/alias(): can't extract '${hiddenName}' \u2014 its content matches the empty string and no non-empty core could be factored out. Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
+      `variant()/alias(): can't extract '${ruleName}' \u2014 its content matches the empty string and no non-empty core could be factored out. Tree-sitter rejects syntactic rules that match empty. Restructure the parent rule (e.g. lift the empty case outside the choice) before splitting.`
     );
   }
   const body = factored ? factored.nonEmpty : originalMember;
-  if (!wireRegisterSyntheticRule(hiddenName, bodyWrapper(withHoistedAnnotation(body)))) {
-    throw new Error(`registerSyntheticRule('${hiddenName}'): no active wire() context`);
+  if (!wireRegisterSyntheticRule(ruleName, bodyWrapper(withHoistedAnnotation(body)))) {
+    throw new Error(`registerSyntheticRule('${ruleName}'): no active wire() context`);
   }
-  const aliasNode = makePolymorphAliasNode(hiddenName, aliasValue);
+  const aliasNode = ruleRef(ruleName, nodeName);
   if (factored) {
     const optional2 = globalThis.optional;
     if (typeof optional2 !== "function") {
@@ -5015,9 +5224,9 @@ var grammar_sittir_default = grammar(
       },
       conflicts: ($, previous) => [
         ...previous ?? [],
-        [$.expression_statement, $._expression_statement_tuple],
-        [$._except_clause_exception_as, $._except_clause_exception_list],
-        [$.as_pattern, $._except_clause_exception_as],
+        [$.expression_statement, $.expression_statement_tuple],
+        [$.except_clause_exception_as, $.except_clause_exception_list],
+        [$.as_pattern, $.except_clause_exception_as],
         [$._expressions, $.expression_list]
       ],
       inline: ($, previous) => [...previous ?? [], $._except_clause_exception_as_optional1],
@@ -5225,7 +5434,7 @@ var grammar_sittir_default = grammar(
           let base2 = original.members;
           return choice(...base2.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
         },
-        _except_clause_exception_as: ($) => seq(field("value", $.expression), optional($._except_clause_exception_as_optional1)),
+        except_clause_exception_as: ($) => seq(field("value", $.expression), optional($._except_clause_exception_as_optional1)),
         _except_clause_exception_as_optional1: ($) => seq("as", field("alias", $.expression)),
         // See docs/python-grammar-sittir-glossary.md::string_content
         string_content: ($) => prec.right(
@@ -5248,8 +5457,8 @@ var grammar_sittir_default = grammar(
         set: ($) => seq("{", alias($._collection_elements, $.collection_elements), "}"),
         tuple: ($) => seq("(", optional(alias($._collection_elements, $.collection_elements)), ")"),
         // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
-        case_tuple_pattern: ($) => seq("(", optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ")"),
-        case_list_pattern: ($) => seq("[", optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), "]"),
+        case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
+        case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),
         // See docs/python-grammar-sittir-glossary.md::case_as_pattern
         case_as_pattern: ($) => seq($.case_pattern, "as", $.identifier),
         case_pattern: ($) => prec(1, choice($.case_as_pattern, $.keyword_pattern, $._simple_pattern)),

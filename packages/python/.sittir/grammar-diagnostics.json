@@ -56,12 +56,13 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
         "_simple_statement",
+        "_suite",
         "_unary_operator_operator"
       ]
     },
@@ -88,13 +89,14 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
         "_compound_statement",
-        "_simple_statement"
+        "_simple_statement",
+        "_suite"
       ]
     },
     "scope": "grammar",

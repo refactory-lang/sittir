@@ -3,7 +3,10 @@ import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
+	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
+	isNodeRef,
+	storageKindOfRef,
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
 import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kind-discriminant.ts';
@@ -74,6 +77,80 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 	return out;
 }
 
+export interface FlattenedVariantRoute {
+	readonly name: string;
+	readonly child: AssembledNode;
+	readonly nestedParentKey?: string;
+	readonly default?: true;
+}
+
+export interface FlattenedVariantParent {
+	readonly key: string;
+	readonly node: AssembledSupertype;
+	readonly variants: readonly FlattenedVariantRoute[];
+}
+
+export function variantRoutePaths(parents: readonly FlattenedVariantParent[]): ReadonlyMap<string, string> {
+	const paths = new Map<string, string>();
+	for (const parent of [...parents].reverse()) {
+		const base = paths.get(parent.node.kind) ?? parent.key;
+		for (const route of parent.variants) {
+			if (!paths.has(route.child.kind)) paths.set(route.child.kind, `${base}.${route.name}`);
+		}
+	}
+	return paths;
+}
+
+export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): FlattenedVariantParent[] {
+	const taken = new Set(bundleEntries(nodeMap, generatedIdTables).map((entry) => entry.key));
+	const out: FlattenedVariantParent[] = [];
+	const keyByParent = new Map<string, string>();
+	const pending = [...nodeMap.nodes].filter(
+		(entry): entry is [string, AssembledSupertype] => entry[1] instanceof AssembledSupertype && entry[1].subtypes.filter(isNodeRef).length >= 2
+	);
+	const routesOf = (kind: string, node: AssembledSupertype): FlattenedVariantRoute[] | 'wait' | null => {
+		const routes: FlattenedVariantRoute[] = [];
+		let waiting = false;
+		for (const ref of node.subtypes.filter(isNodeRef)) {
+			const childKind = storageKindOfRef(ref.node);
+			const child = nodeMap.nodes.get(childKind);
+			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
+			const nestedParentKey = keyByParent.get(childKind);
+			if (nestedParentKey !== undefined) {
+				routes.push({ name: camelCase(ref.variant), child, nestedParentKey, ...(ref.default ? { default: true as const } : {}) });
+			} else if (child.rawFactoryName !== undefined) {
+				routes.push({ name: camelCase(ref.variant), child, ...(ref.default ? { default: true as const } : {}) });
+			} else if (child instanceof AssembledSupertype && pending.some(([k]) => k === childKind)) {
+				waiting = true;
+			} else {
+				return null;
+			}
+		}
+		const defaults = routes.filter((route) => route.default);
+		if (defaults.length > 1) {
+			throw new Error(`arm.default: ${defaults.length} variants of '${kind}' are declared the default (${defaults.map((d) => d.name).join(', ')}); pick one`);
+		}
+		return waiting ? 'wait' : routes;
+	};
+	for (let progressed = true; progressed; ) {
+		progressed = false;
+		for (let i = 0; i < pending.length; i++) {
+			const [kind, node] = pending[i]!;
+			const routes = routesOf(kind, node);
+			if (routes === 'wait') continue;
+			pending.splice(i--, 1);
+			progressed = true;
+			if (routes === null) continue;
+			const key = node.irKey ?? camelCase(kind.replace(/^_+/, ''));
+			if (!isValidIdent(key) || taken.has(key)) continue;
+			taken.add(key);
+			keyByParent.set(kind, key);
+			out.push({ key, node, variants: routes });
+		}
+	}
+	return out;
+}
+
 export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?: GeneratedIdTables }): string {
 	const lines: string[] = [
 		HEADER,
@@ -99,12 +176,15 @@ export function emitFactoriesIndex(
 	const lines: string[] = [
 		HEADER,
 		`import * as O from '${source}';`,
-		"import { hoist, type Hoisted } from '../utils.js';",
+		"import { hoist, hoistRoutes, type Hoisted } from '../utils.js';",
 		`export * from '${source}';`,
 		''
 	];
 	for (const { exportName } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoist(O.${exportName});`);
+	}
+	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
+		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
 	}
 	lines.push('');
 	return lines.join('\n');

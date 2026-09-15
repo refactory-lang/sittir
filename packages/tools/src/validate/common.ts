@@ -1072,6 +1072,7 @@ export interface LoadedNodeModel {
 	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
+	readonly variantRoutes: Readonly<Record<string, string>>;
 }
 
 /** Minimal shape of the parsed node-model.json5 — only the fields the
@@ -1097,6 +1098,7 @@ interface ParsedNodeModel {
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
 	polymorphVariants?: PolymorphVariantMap;
+	variantRoutes?: Record<string, string>;
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
@@ -1110,7 +1112,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factoryFields: {},
 	factorySlots: {},
 	fieldAliasMap: {},
-	polymorphVariants: {}
+	polymorphVariants: {},
+	variantRoutes: {}
 };
 
 /**
@@ -1175,7 +1178,8 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		factoryFields,
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
-		polymorphVariants: model.polymorphVariants ?? {}
+		polymorphVariants: model.polymorphVariants ?? {},
+		variantRoutes: model.variantRoutes ?? {}
 	};
 }
 

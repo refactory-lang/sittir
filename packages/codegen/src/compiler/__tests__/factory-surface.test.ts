@@ -61,14 +61,14 @@ function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
 
 describe('child factory surface classification', () => {
 	it('detects spread child factories from inferred-only branches', () => {
-		// array_expression is a committed direct container (single unnamed
-		// child, the _array_expression_* group). _token_tree_paren is a hoisted
+		// reference_expression_raw_const is a direct container: a flattened
+		// variant whose only slot is its `value` field. token_tree_paren is a hoisted
 		// arm whose sole slot is the fielded token repeat: a sole slot's arity
 		// decides the surface regardless of field-name presence and of
 		// hoisting, so it is a spread child surface like declaration_list,
 		// whose sole slot is a NAMED list (declaration_statements).
-		expectDirect(nodeMap.nodes.get('array_expression')!, nodeMap);
-		expect(factoryTakesSpreadChildren(nodeMap.nodes.get('_token_tree_paren')!, nodeMap)).toBe(true);
+		expectDirect(nodeMap.nodes.get('reference_expression_raw_const')!, nodeMap);
+		expect(factoryTakesSpreadChildren(nodeMap.nodes.get('token_tree_paren')!, nodeMap)).toBe(true);
 		expect(factoryTakesSpreadChildren(nodeMap.nodes.get('declaration_list')!, nodeMap)).toBe(true);
 	});
 
@@ -83,7 +83,7 @@ describe('child factory surface classification', () => {
 	});
 
 	it('excludes field-backed direct factories from the child surface', () => {
-		expect(wrapExposesChildren(nodeMap.nodes.get('reference_expression')!, nodeMap)).toBe(false);
+		expect(wrapExposesChildren(nodeMap.nodes.get('binary_expression')!, nodeMap)).toBe(false);
 	});
 
 	it('keeps the config surface when markers accompany a sole named user slot', () => {
@@ -106,10 +106,10 @@ describe('child factory surface classification', () => {
 	});
 
 	it('has no sole slot when markers sit beside the payload', () => {
-		// field_pattern's slots are [ref_marker, mutable_specifier, content]:
-		// three slots, so the kind is a branch with a config surface, never a
-		// container that positions one child.
-		expect(soleSlotFacts(nodeMap.nodes.get('field_pattern')!, nodeMap)).toBeNull();
+		// A field pattern's named variant carries the whole arm: ref_marker,
+		// mutable_specifier, name and pattern, so the kind is a branch with a
+		// config surface, never a container that positions one child.
+		expect(soleSlotFacts(nodeMap.nodes.get('_field_pattern_named')!, nodeMap)).toBeNull();
 	});
 
 	it('classifies multi-user-slot branches as config', () => {
@@ -129,13 +129,10 @@ describe('child factory surface classification', () => {
 
 describe('factory field metadata', () => {
 	it('includes field-backed direct factories even when auto-stamp children are present', () => {
-		// 'content' joined 'value' when reference_expression's unnamed
-		// optional choice(const, mutable_specifier) prefix became a real
-		// user-facing slot under the kind-named-slots unification (two
-		// distinct kinds — not a single keyword-presence toggle, so no
-		// filter removes it). Matches the committed node-model.json5
-		// factoryFields and the generated buildReferenceExpression config.
-		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression')!)).toEqual(['content', 'value']);
+		// reference_expression_raw_mut carries the auto-stamped
+		// mutable_specifier child beside its `value` field; the presence
+		// toggle is filtered and the field remains.
+		expect(resolveFactoryFieldNames(nodeMap.nodes.get('reference_expression_raw_mut')!)).toEqual(['value']);
 	});
 
 	it('keeps enum-valued operator fields in validator field metadata', () => {
@@ -154,7 +151,7 @@ describe('factory field metadata', () => {
 		// cases above); attribute gained real named fields under the
 		// kind-named-slots unification. All three match the committed
 		// node-model.json5 factoryFields.
-		expect(map.factoryFields.reference_expression).toEqual(['content', 'value']);
+		expect(map.factoryFields.reference_expression_raw_mut).toEqual(['value']);
 		expect(map.factoryFields.binary_expression).toEqual(['left', 'operator', 'right']);
 		expect(map.factoryFields.attribute).toEqual(['path', 'input']);
 	});

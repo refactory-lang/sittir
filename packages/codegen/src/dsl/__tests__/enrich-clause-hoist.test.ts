@@ -430,12 +430,12 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// This absorbed body is now a genuinely separator-variable repeat body
 		// (a top-level repeat with an adjacent stranded optional(',') flank), so
 		// per rule-patterns.ts's `isInlineSafe` qualification it takes the
-		// VISIBLE promotion path (named after its element field — `_items` —
-		// not the old hidden `_parent_optional1` inline-hoist) — same path a
+		// VISIBLE promotion path (named after its element field — `items` —
+		// not the hidden `_parent_optional1` inline-hoist) — same path a
 		// multi-slot/bare-choice body already uses. Absorption itself (this
 		// test's actual subject) is unaffected: the fold still happens before
 		// the isInlineSafe branch runs.
-		const hoisted = rules['_items'] as {
+		const hoisted = rules['items'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);
@@ -488,8 +488,8 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 
 		// A CHOICE-shaped separator (',' or ';') is itself a genuinely
 		// per-instance-variable separator, so this body also takes the VISIBLE
-		// promotion path (`_items`) — see the plain-STRING case above.
-		const hoisted = rules['_items'] as {
+		// promotion path (`items`) — see the plain-STRING case above.
+		const hoisted = rules['items'] as {
 			members: Array<{ type: string; content?: { type: string; value?: string } }>;
 		};
 		expect(hoisted.members.length).toBe(3);
@@ -609,17 +609,18 @@ describe('enrich clause-hoist pass — cross-parent group dedupe ignores runtime
 		const result = runEnrich(input);
 		const rules = result.grammar.rules;
 
-		const aliasA = (rules.parent_a as { content: { value?: string } }).content;
-		const aliasB = (rules.parent_b as { content: { value?: string } }).content;
-		expect(aliasA.value).toBeDefined();
+		const refA = (rules.parent_a as { content: { type?: string; name?: string } }).content;
+		const refB = (rules.parent_b as { content: { type?: string; name?: string } }).content;
+		expect(refA.type).toBe('SYMBOL');
+		expect(refA.name).toBeDefined();
 		// Both parents must resolve to the SAME shared visible-group name —
 		// the dedupe key must not diverge just because each body's members
 		// carry different id/_ref provenance stamps.
-		expect(aliasB.value).toBe(aliasA.value);
+		expect(refB.name).toBe(refA.name);
 
-		// Exactly ONE hidden backing rule was minted (shared), not one per parent —
+		// Exactly ONE group rule was minted (shared), not one per parent —
 		// and as the sole group mint under its parent it carries no ordinal.
-		const hiddenKeys = Object.keys(rules).filter((k) => k.startsWith('_') && /_group\d*$/.test(k));
-		expect(hiddenKeys).toEqual(['_parent_a_group']);
+		const groupKeys = Object.keys(rules).filter((k) => /_group\d*$/.test(k));
+		expect(groupKeys).toEqual(['parent_a_group']);
 	});
 });

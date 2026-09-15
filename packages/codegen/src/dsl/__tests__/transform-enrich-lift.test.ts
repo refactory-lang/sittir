@@ -16,7 +16,7 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 	beforeAll(() => installFakeDsl());
 	afterAll(() => restoreFakeDsl());
 
-	it('re-homes a hoisted enrich alias to the variant\'s hidden name and renames the lift symbol', () => {
+	it('re-homes a hoisted enrich alias to the variant\'s rule name and renames the lift symbol', () => {
 		const liftBody = { type: 'SEQ', members: [{ type: 'STRING', value: 'x' }, { type: 'SYMBOL', name: 'Y' }] } as any;
 		setGroupLiftRuleMap({ get: (n: string) => (n === '_lift1' ? liftBody : undefined), set: () => {} });
 		try {
@@ -32,11 +32,11 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 				return transform(original, { '0/0': variant('picked') }) as any;
 			});
 
-			expect(ctx.deposits.get('_hoisted_alias_picked')).toEqual({ ...liftBody, annotations: { hoisted: true } });
-			expect(ctx.symbolRenames.get('_lift1')).toBe('_hoisted_alias_picked');
+			expect(ctx.deposits.get('hoisted_alias_picked')).toEqual({ ...liftBody, annotations: { hoisted: true } });
+			expect(ctx.symbolRenames.get('_lift1')).toBe('hoisted_alias_picked');
 			const pickedArm = patched.members[0].members[0];
-			expect(pickedArm.value).toBe('hoisted_alias_picked');
-			expect(pickedArm.content.name).toBe('_hoisted_alias_picked');
+			expect(pickedArm.type).toBe('SYMBOL');
+			expect(pickedArm.name).toBe('hoisted_alias_picked');
 		} finally {
 			setGroupLiftRuleMap(undefined);
 		}

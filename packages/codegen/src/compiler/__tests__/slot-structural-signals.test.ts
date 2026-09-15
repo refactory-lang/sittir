@@ -26,6 +26,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: []
 	};

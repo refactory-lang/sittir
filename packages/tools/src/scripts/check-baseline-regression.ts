@@ -10,11 +10,27 @@
  * metric; exits 1 otherwise. On failure, prints a JSON object naming
  * the offending field path so the CI log points reviewers at the regression.
  *
- * The five fail conditions:
+ * The six fail conditions:
  *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
  *      factoryRoundtrip}.pass`, `validators.{roundtrip,factoryRoundtrip}.
- *      astMatchPass`, `parityFixtures.pass`, `totals.pass`.
- *   2. Total drop — `totals.total` decreased (fixture deletion).
+ *      astMatchPass`, `parityFixtures.pass`, per grammar. This is what
+ *      actually guards regressions; rule 2 below is a coarser tripwire on
+ *      top of it. `coverage`/`factoryRoundtrip` specifically are exempt
+ *      from this floor when the drop is explained by `supertypeKindCount`
+ *      rising for that grammar (a kind losing its own direct render/
+ *      factory path by becoming a supertype) AND that validator's own
+ *      fail count did not rise — see `supertypeExplainsDrop`. The
+ *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
+ *      is rule 2/3's job, not re-checked here.
+ *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
+ *      (either direction). A kind rename or split moves fixtures between
+ *      validators (a flattened parent's own factory-level case disappears
+ *      while its variants each gain a `from` case) and can shrink `total`
+ *      net with `fail` UNCHANGED; rule 1 already catches any actual loss
+ *      in that case, so this rule only exempts the exact-unchanged-fail
+ *      shape. A `fail` DECREASE alongside the total drop (a failing
+ *      fixture quietly deleted) still trips this rule — that is not the
+ *      same shape as a rename and deserves a look, not an automatic pass.
  *   3. Total-fail rise — `totals.fail` increased.
  *   4. Schema violation — missing keys, unsorted arrays, missing
  *      `formatDeferredKinds` / `formatDeferredByKind`.
@@ -23,11 +39,12 @@
  *      may not exceed the corresponding sum on the base. Items may MOVE
  *      from `failingKinds` into `formatDeferredKinds` during a cluster
  *      commit; only the SUM is checked.
- *   6. Left-out rise — `parityFixtures.leftOutByKind[kind]` may not grow
- *      for any kind, and no kind may appear that the base did not have:
- *      a render fixture the regen leaves out is a kind whose template no
- *      longer reproduces its source, and it must fail here rather than
- *      vanish from the fixture set.
+ *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
+ *      leftOutByKind` may not grow: a render fixture the regen leaves out
+ *      is a kind whose template no longer reproduces its source, and it
+ *      must fail here rather than vanish from the fixture set. The sum,
+ *      not each kind individually, is tracked — a kind rename moves
+ *      fixtures between keys without changing how many don't reproduce.
  *
  * Importable surface: `checkRegression(base, head): RegressionVerdict`.
  * The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
@@ -390,48 +407,82 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // Pass-count drop — enumerate every monitored path and compare.
 // ---------------------------------------------------------------------------
 
-interface PassCountSample {
-	readonly path: string;
-	readonly value: number;
+/**
+ * `coverage` and `factoryRoundtrip` are the two validators whose
+ * denominator is tied to how many kinds have their own direct render
+ * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
+ * skips a supertype (no template of its own to check), and a supertype
+ * likewise has no raw builder for `factoryRoundtrip` to exercise. A kind
+ * crossing into that guard shrinks the denominator without touching the
+ * pass RATE — it isn't a new failure.
+ */
+const SUPERTYPE_EXPLAINED_VALIDATORS: readonly ValidatorName[] = ['coverage', 'factoryRoundtrip'];
+
+/**
+ * Whether a drop in one metric (`pass` or, for a roundtrip validator,
+ * `astMatchPass`) of `vName` for this grammar is explained by kinds
+ * becoming supertypes rather than a new failure: the grammar's
+ * `supertypeKindCount` rose, AND the validator's own fail count
+ * (`total - metric`) did not — the drop is fully accounted for by fewer
+ * cases needing that path, not by any of them going red. A base file
+ * committed before this fact existed reads as 0 — only how much the
+ * count rose matters here, not the true pre-existing count.
+ */
+function supertypeExplainsDrop(
+	baseGrammar: GrammarEntry,
+	headGrammar: GrammarEntry,
+	vName: ValidatorName,
+	metric: 'pass' | 'astMatchPass'
+): boolean {
+	if (!SUPERTYPE_EXPLAINED_VALIDATORS.includes(vName)) return false;
+	if ((headGrammar.supertypeKindCount ?? 0) <= (baseGrammar.supertypeKindCount ?? 0)) return false;
+	const b = baseGrammar.validators[vName] as RoundtripResult;
+	const h = headGrammar.validators[vName] as RoundtripResult;
+	return h.total - h[metric] <= b.total - b[metric];
 }
 
-function collectPassCounts(b: BackendBaseline): PassCountSample[] {
-	const out: PassCountSample[] = [];
+function passCountFail(path: string, before: number, after: number): RegressionVerdict {
+	return {
+		ok: false,
+		reason: 'pass-count-drop',
+		summary: `pass-count drop at ${path}: ${before} → ${after}`,
+		details: { path, before, after }
+	};
+}
+
+/**
+ * `totals.pass`/`totals.fail`/`totals.total`'s aggregate relationship is
+ * `checkTotalDrop`/`checkTotalFailRise`'s job (they run first, and reason
+ * about the aggregate directly) — not duplicated here as a third,
+ * conflicting floor on the same numbers. This function owns only the
+ * per-grammar, per-validator, and per-grammar parity-fixture floors.
+ */
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
-		const ge = b.grammars[g];
+		const baseGrammar = base.grammars[g];
+		const headGrammar = head.grammars[g];
 		for (const vName of VALIDATORS) {
-			const v = ge.validators[vName] as ValidatorResult;
-			out.push({
-				path: `grammars.${g}.validators.${vName}.pass`,
-				value: v.pass
-			});
+			const b = baseGrammar.validators[vName] as ValidatorResult;
+			const h = headGrammar.validators[vName] as ValidatorResult;
+			const path = `grammars.${g}.validators.${vName}.pass`;
+			if (h.pass < b.pass && !supertypeExplainsDrop(baseGrammar, headGrammar, vName, 'pass')) {
+				return passCountFail(path, b.pass, h.pass);
+			}
 			if (ROUNDTRIP_VALIDATORS.includes(vName)) {
-				out.push({
-					path: `grammars.${g}.validators.${vName}.astMatchPass`,
-					value: (v as RoundtripResult).astMatchPass
-				});
+				const br = b as RoundtripResult;
+				const hr = h as RoundtripResult;
+				const astPath = `grammars.${g}.validators.${vName}.astMatchPass`;
+				if (hr.astMatchPass < br.astMatchPass && !supertypeExplainsDrop(baseGrammar, headGrammar, vName, 'astMatchPass')) {
+					return passCountFail(astPath, br.astMatchPass, hr.astMatchPass);
+				}
 			}
 		}
-		out.push({
-			path: `grammars.${g}.parityFixtures.pass`,
-			value: ge.parityFixtures.pass
-		});
-	}
-	out.push({ path: 'totals.pass', value: b.totals.pass });
-	return out;
-}
-
-function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	const baseSamples = new Map(collectPassCounts(base).map((s) => [s.path, s.value]));
-	for (const s of collectPassCounts(head)) {
-		const before = baseSamples.get(s.path) ?? 0;
-		if (s.value < before) {
-			return {
-				ok: false,
-				reason: 'pass-count-drop',
-				summary: `pass-count drop at ${s.path}: ${before} → ${s.value}`,
-				details: { path: s.path, before, after: s.value }
-			};
+		if (headGrammar.parityFixtures.pass < baseGrammar.parityFixtures.pass) {
+			return passCountFail(
+				`grammars.${g}.parityFixtures.pass`,
+				baseGrammar.parityFixtures.pass,
+				headGrammar.parityFixtures.pass
+			);
 		}
 	}
 	return null;
@@ -441,31 +492,36 @@ function checkPassCounts(base: BackendBaseline, head: BackendBaseline): Regressi
 // Total-drop / total-fail-rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
+function sumByKind(byKind: Readonly<Record<string, number>>): number {
+	return Object.values(byKind).reduce((a, b) => a + b, 0);
+}
+
 function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
 		const before = base.grammars[g].parityFixtures.leftOutByKind ?? {};
 		const after = head.grammars[g].parityFixtures.leftOutByKind ?? {};
-		for (const kind of Object.keys(after)) {
-			const was = before[kind] ?? 0;
-			const now = after[kind]!;
-			if (now <= was) continue;
-			return {
-				ok: false,
-				reason: 'left-out-rise',
-				summary: `render fixtures left out grew at grammars.${g}.parityFixtures.leftOutByKind.${kind}: ${was} → ${now} (the ${kind} template no longer reproduces its source)`,
-				details: { path: `grammars.${g}.parityFixtures.leftOutByKind.${kind}`, before: was, after: now }
-			};
-		}
+		const beforeSum = sumByKind(before);
+		const afterSum = sumByKind(after);
+		if (afterSum <= beforeSum) continue;
+		const [grownKind] = Object.keys(after)
+			.map((kind) => [kind, (after[kind] ?? 0) - (before[kind] ?? 0)] as const)
+			.sort(([, a], [, b]) => b - a)[0]!;
+		return {
+			ok: false,
+			reason: 'left-out-rise',
+			summary: `render fixtures left out grew at grammars.${g}.parityFixtures.leftOutByKind: ${beforeSum} → ${afterSum} total (largest mover: ${grownKind})`,
+			details: { path: `grammars.${g}.parityFixtures.leftOutByKind`, before: beforeSum, after: afterSum }
+		};
 	}
 	return null;
 }
 
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
-	if (head.totals.total < base.totals.total) {
+	if (head.totals.total < base.totals.total && head.totals.fail !== base.totals.fail) {
 		return {
 			ok: false,
 			reason: 'total-drop',
-			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (likely fixture deletion)`,
+			summary: `totals.total decreased: ${base.totals.total} → ${head.totals.total} (fixture deletion, with totals.fail: ${base.totals.fail} → ${head.totals.fail})`,
 			details: {
 				path: 'totals.total',
 				before: base.totals.total,

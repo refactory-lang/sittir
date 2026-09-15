@@ -87,7 +87,7 @@ describe('NodeMap structure', () => {
 		for (const [kind, node] of result.nodeMap.nodes) {
 			if (node instanceof AbstractAssembledCompound && node.annotations?.hoisted === true) {
 				groupCount++;
-				if (kind.startsWith('_assignment_')) assignmentVariantKinds.add(kind);
+				if (kind.startsWith('assignment_')) assignmentVariantKinds.add(kind);
 			}
 		}
 		expect(groupCount).toBeGreaterThan(0);

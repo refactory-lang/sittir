@@ -92,13 +92,21 @@ function emitAttachProps(): string[] {
 		'  const callable = (...args: never[]) => target(...args);',
 		'  for (const [key, value] of Object.entries(b)) {',
 		'    Object.defineProperty(callable, key, {',
-		'      value: isFlavorPair(value) ? hoist(value) : value,',
+		'      value: hoistRoutes(value),',
 		'      writable: true,',
 		'      configurable: true,',
 		'      enumerable: true',
 		'    });',
 		'  }',
 		'  return callable as Hoisted<B>;',
+		'}',
+		'',
+		'export function hoistRoutes<B>(b: B): Hoisted<B> {',
+		'  if (isFlavorPair(b)) return hoist(b) as Hoisted<B>;',
+		'  if (typeof b !== "object" || b === null || Array.isArray(b)) return b as Hoisted<B>;',
+		'  const out: Record<string, unknown> = {};',
+		'  for (const [key, value] of Object.entries(b)) out[key] = hoistRoutes(value);',
+		'  return out as Hoisted<B>;',
 		'}'
 	];
 }

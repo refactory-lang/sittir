@@ -84,7 +84,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const clauseGroupRules: Record<string, Rule> = {};
 	const clauseDedupeMap: Record<string, string> = {};
 	const groupDedupeMap: Record<string, string> = {};
-	const visibleGroupHiddenNames = new Set<string>();
+	const visibleGroupSources = new Set<string>();
 	const clauseGroupOwners = new Map<string, string>();
 	const unaliasSink: UnaliasDiagnosticSink = { diagnostics: [], seen: new Set() };
 	const enrichedRules: Record<string, Rule> = {};
@@ -127,7 +127,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 				clauseGroupRules,
 				clauseDedupeMap,
 				groupDedupeMap,
-				visibleGroupHiddenNames,
+				visibleGroupSources,
 				clauseGroupOwners,
 				unaliasSink
 			);
@@ -155,7 +155,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		}
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupHiddenNames, clauseGroupOwners);
+	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
 	for (const name of Object.keys(mergedRules)) {
 		const rule = mergedRules[name];
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -167,7 +167,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			mergedRules[n] = b as unknown as Rule;
 		}
 	});
-	const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupHiddenNames.has(n)));
+	const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
@@ -195,9 +195,9 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
-	if (visibleGroupHiddenNames.size > 0) {
+	if (visibleGroupSources.size > 0) {
 		Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
-			value: visibleGroupHiddenNames,
+			value: visibleGroupSources,
 			enumerable: false,
 			writable: false,
 			configurable: true
@@ -270,7 +270,7 @@ function applyHoistAndUnalias(
 	clauseGroupRules: Record<string, Rule>,
 	clauseDedupeMap: Record<string, string>,
 	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>,
+	visibleGroupSources: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	unaliasSink: UnaliasDiagnosticSink
 ): Rule {
@@ -284,7 +284,7 @@ function applyHoistAndUnalias(
 		clauseDedupeMap,
 		clauseHoistCounter,
 		groupDedupeMap,
-		visibleGroupHiddenNames,
+		visibleGroupSources,
 		clauseGroupOwners
 	);
 	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules, supertypeNames);
@@ -1551,7 +1551,7 @@ function applyClauseHoist(
 	dedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
 	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>,
+	visibleGroupSources: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	ambientPrec?: Rule,
 	enclosingFieldName?: string
@@ -1566,7 +1566,7 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames,
+			visibleGroupSources,
 			clauseGroupOwners,
 			ambientPrec,
 			enclosingFieldName
@@ -1600,7 +1600,7 @@ function applyClauseHoist(
 			return rule;
 		} else {
 			counter.opt += 1;
-			const names = visibleGroupSynthName(
+			const name = visibleGroupSynthName(
 				recursedSeqBody,
 				parentKind,
 				groupDedupeMap,
@@ -1610,17 +1610,16 @@ function applyClauseHoist(
 				ambientPrec,
 				enclosingFieldName
 			);
-			if (names !== null) {
-				visibleGroupHiddenNames.add(names.hiddenName);
-				if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-				const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
-				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
+			if (name !== null) {
+				visibleGroupSources.add(name);
+				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+				const groupRef = makeGroupLiftSymbol(rule, name);
 				if (peeled.form === 'optional') {
-					return rebuildOptional(rule, aliasRule);
+					return rebuildOptional(rule, groupRef);
 				} else {
 					const members = (rule as unknown as { members: Rule[] }).members;
 					const newMembers = members.slice() as Rule[];
-					newMembers[peeled.seqIdx] = aliasRule;
+					newMembers[peeled.seqIdx] = groupRef;
 					return { ...rule, members: newMembers } as Rule;
 				}
 			}
@@ -1647,7 +1646,7 @@ function applyClauseHoist(
 				dedupeMap,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames,
+				visibleGroupSources,
 				clauseGroupOwners,
 				ambientPrec,
 				enclosingFieldName
@@ -1659,7 +1658,7 @@ function applyClauseHoist(
 				clauseGroupRules,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames,
+				visibleGroupSources,
 				clauseGroupOwners,
 				new Set(),
 				ambientPrec,
@@ -1693,7 +1692,7 @@ function applyClauseHoist(
 				dedupeMap,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames,
+				visibleGroupSources,
 				clauseGroupOwners,
 				ambientPrec
 			);
@@ -1716,7 +1715,7 @@ function applyClauseHoist(
 							optionalFn(run.info.separatorRule)
 						)
 					: seqFn(...run.info.flatMembers);
-				const names = visibleGroupSynthName(
+				const name = visibleGroupSynthName(
 					body,
 					parentKind,
 					groupDedupeMap,
@@ -1725,12 +1724,11 @@ function applyClauseHoist(
 					clauseGroupRules,
 					ambientPrec
 				);
-				if (names === null) continue;
-				visibleGroupHiddenNames.add(names.hiddenName);
-				if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-				const symbolRef = makeGroupLiftSymbol(body, names.hiddenName);
-				const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
-				const replacement = isTail ? optionalFn(aliasRule) : aliasRule;
+				if (name === null) continue;
+				visibleGroupSources.add(name);
+				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+				const groupRef = makeGroupLiftSymbol(body, name);
+				const replacement = isTail ? optionalFn(groupRef) : groupRef;
 				newMembers.splice(run.start, run.size, replacement);
 				changed = true;
 			}
@@ -1765,7 +1763,7 @@ function applyClauseHoist(
 				dedupeMap,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames,
+				visibleGroupSources,
 				clauseGroupOwners,
 				ambientPrec
 			);
@@ -1780,7 +1778,7 @@ function applyClauseHoist(
 							clauseGroupRules,
 							counter,
 							groupDedupeMap,
-							visibleGroupHiddenNames,
+							visibleGroupSources,
 							clauseGroupOwners,
 							collidingLeadingNames,
 							ambientPrec
@@ -1804,7 +1802,7 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames,
+			visibleGroupSources,
 			clauseGroupOwners,
 			innerAmbientPrec,
 			enclosingFieldName
@@ -1824,7 +1822,7 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames,
+			visibleGroupSources,
 			clauseGroupOwners,
 			ambientPrec,
 			(rule as unknown as { name: string }).name
@@ -2101,12 +2099,12 @@ function clauseHoistSynthName(
 function collapseSingletonMintOrdinals(
 	mergedRules: Record<string, Rule>,
 	mintedRules: Record<string, Rule>,
-	visibleGroupHiddenNames: Set<string>,
+	visibleGroupSources: Set<string>,
 	clauseGroupOwners: Map<string, string>
 ): void {
 	const byParentFlavor = new Map<string, string[]>();
 	for (const hidden of Object.keys(mintedRules)) {
-		const m = /^_(.+)_(arm|group)(\d+)$/.exec(hidden);
+		const m = /^_?(.+)_(arm|group)(\d+)$/.exec(hidden);
 		if (!m) continue;
 		const key = `${m[1]}_${m[2]}`;
 		const bucket = byParentFlavor.get(key);
@@ -2117,22 +2115,23 @@ function collapseSingletonMintOrdinals(
 	for (const [bare, hiddens] of byParentFlavor) {
 		if (hiddens.length !== 1) continue;
 		const oldHidden = hiddens[0]!;
-		const newHidden = `_${bare}`;
-		if (newHidden in mergedRules || bare in mergedRules) continue;
+		const visible = !oldHidden.startsWith('_');
+		const newHidden = visible ? bare : `_${bare}`;
+		if (`_${bare}` in mergedRules || bare in mergedRules) continue;
 		renames.set(oldHidden, newHidden);
-		renames.set(oldHidden.replace(/^_/, ''), bare);
+		if (!visible) renames.set(oldHidden.replace(/^_/, ''), bare);
 	}
 	if (renames.size === 0) return;
 	for (const [oldName, newName] of renames) {
-		if (oldName.startsWith('_') && oldName in mergedRules) {
+		if (oldName in mergedRules && (oldName.startsWith('_') || oldName in mintedRules)) {
 			mergedRules[newName] = mergedRules[oldName]!;
 			delete mergedRules[oldName];
 		}
-		if (oldName.startsWith('_') && oldName in mintedRules) {
+		if (oldName in mintedRules) {
 			mintedRules[newName] = mintedRules[oldName]!;
 			delete mintedRules[oldName];
 		}
-		if (visibleGroupHiddenNames.delete(oldName)) visibleGroupHiddenNames.add(newName);
+		if (visibleGroupSources.delete(oldName)) visibleGroupSources.add(newName);
 		const owner = clauseGroupOwners.get(oldName);
 		if (owner !== undefined) {
 			clauseGroupOwners.delete(oldName);
@@ -2162,7 +2161,7 @@ function visibleGroupSynthName(
 	ambientPrec?: Rule,
 	enclosingFieldName?: string,
 	flavor: 'group' | 'arm' = 'group'
-): { visibleName: string; hiddenName: string } | null {
+): string | null {
 	if (process.env.SITTIR_DEBUG_LISTNAME) {
 		const info = separatedListBodyInfo(content);
 		process.stderr.write(
@@ -2175,16 +2174,14 @@ function visibleGroupSynthName(
 	const key = ruleKey(registeredBody as RuntimeRule);
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
-		const hiddenName = `_${existing}`;
-		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = registeredBody;
-		return { visibleName: existing, hiddenName };
+		if (!(existing in clauseGroupRules)) clauseGroupRules[existing] = registeredBody;
+		return existing;
 	}
 	const base = parentKind.replace(/^_+/, '');
-	const register = (visibleName: string, body: Rule = registeredBody): { visibleName: string; hiddenName: string } => {
-		const hiddenName = `_${visibleName}`;
-		groupDedupeMap[key] = visibleName;
-		clauseGroupRules[hiddenName] = body;
-		return { visibleName, hiddenName };
+	const register = (name: string, body: Rule = registeredBody): string => {
+		groupDedupeMap[key] = name;
+		clauseGroupRules[name] = body;
+		return name;
 	};
 	const listInfo = separatedListNameCounts !== null ? separatedListBodyInfo(content) : null;
 	if (listInfo?.flankCarrying) {
@@ -2204,14 +2201,14 @@ function visibleGroupSynthName(
 	}
 	if (enclosingFieldName !== undefined) {
 		const visibleName = `${base}_${enclosingFieldName}`;
-		if (!(visibleName in rulesBag) && !(`_${visibleName}` in rulesBag) && !(`_${visibleName}` in clauseGroupRules)) {
+		if (!(visibleName in rulesBag) && !(`_${visibleName}` in rulesBag) && !(visibleName in clauseGroupRules)) {
 			return register(visibleName);
 		}
 	}
 	const ordinal = flavor === 'arm' ? ++counter.arm : ++counter.grp;
 	const visibleName = `${base}_${flavor}${ordinal}`;
 	const hiddenName = `_${visibleName}`;
-	if (visibleName in rulesBag || hiddenName in rulesBag) {
+	if (visibleName in rulesBag || hiddenName in rulesBag || visibleName in clauseGroupRules) {
 		process.stderr.write(
 			`enrich: visible-group skipped for '${parentKind}' — rule '${visibleName}'/'${hiddenName}' already exists in base.grammar.rules\n`
 		);
@@ -2283,7 +2280,7 @@ function mintStructuredChoiceArm(
 	clauseGroupRules: Record<string, Rule>,
 	counter: ClauseHoistCounter,
 	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>,
+	visibleGroupSources: Set<string>,
 	clauseGroupOwners: Map<string, string>,
 	collidingLeadingNames: ReadonlySet<string>,
 	ambientPrec?: Rule,
@@ -2303,7 +2300,7 @@ function mintStructuredChoiceArm(
 			clauseGroupRules,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames,
+			visibleGroupSources,
 			clauseGroupOwners,
 			collidingLeadingNames,
 			arm,
@@ -2324,7 +2321,7 @@ function mintStructuredChoiceArm(
 		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag, 'arm');
 		if (!promoted) return null;
 		rulesBag[name] = withHoistedAnnotation(body);
-		visibleGroupHiddenNames.add(name);
+		visibleGroupSources.add(name);
 		if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 		return makeVisibleGroupAlias(arm, promoted.visibleName);
 	}
@@ -2333,7 +2330,7 @@ function mintStructuredChoiceArm(
 		if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
 		if (isSupertypeLike(arm)) return null;
 		if (isPermutationChoice(arm, rulesBag, hoistKwRules ?? undefined, hoistWordMatcher)) return null;
-		const names = visibleGroupSynthName(
+		const minted = visibleGroupSynthName(
 			arm,
 			parentKind,
 			groupDedupeMap,
@@ -2344,11 +2341,10 @@ function mintStructuredChoiceArm(
 			enclosingFieldName,
 			'arm'
 		);
-		if (!names) return null;
-		visibleGroupHiddenNames.add(names.hiddenName);
-		if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
-		const symbolRef = makeGroupLiftSymbol(arm, names.hiddenName);
-		return makeVisibleGroupAlias(symbolRef, names.visibleName);
+		if (minted === null) return null;
+		visibleGroupSources.add(minted);
+		if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+		return makeGroupLiftSymbol(arm, minted);
 	}
 
 	return null;

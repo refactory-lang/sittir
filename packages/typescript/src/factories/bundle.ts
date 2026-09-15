@@ -6,7 +6,6 @@ export * from './raw.js';
 export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram);
-export const exportStatement = bundle(F.buildExportStatement, C.coerceToExportStatement);
 export const namespaceExport = bundle(F.buildNamespaceExport, C.coerceToNamespaceExport);
 export const exportClause = bundle(F.buildExportClause, C.coerceToExportClause);
 export const exportSpecifier = bundle(F.buildExportSpecifier, C.coerceToExportSpecifier);
@@ -14,12 +13,10 @@ export const importStatement = bundle(F.buildImportStatement, C.coerceToImportSt
 export const importClause = bundle(F.buildImportClause, C.coerceToImportClause);
 export const namespaceImport = bundle(F.buildNamespaceImport, C.coerceToNamespaceImport);
 export const namedImports = bundle(F.buildNamedImports, C.coerceToNamedImports);
-export const importSpecifier = bundle(F.buildImportSpecifier, C.coerceToImportSpecifier);
 export const importAttribute = bundle(F.buildImportAttribute, C.coerceToImportAttribute);
 export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceToExpressionStatement);
 export const variableDeclaration = bundle(F.buildVariableDeclaration, C.coerceToVariableDeclaration);
 export const lexicalDeclaration = bundle(F.buildLexicalDeclaration, C.coerceToLexicalDeclaration);
-export const variableDeclarator = bundle(F.buildVariableDeclarator, C.coerceToVariableDeclarator);
 export const statementBlock = bundle(F.buildStatementBlock, C.coerceToStatementBlock);
 export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause);
 export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement);
@@ -75,13 +72,11 @@ export const spreadElement = bundle(F.buildSpreadElement, C.coerceToSpreadElemen
 export const ternaryExpression = bundle(F.buildTernaryExpression, C.coerceToTernaryExpression);
 export const binaryExpression = bundle(F.buildBinaryExpression, C.coerceToBinaryExpression);
 export const unaryExpression = bundle(F.buildUnaryExpression, C.coerceToUnaryExpression);
-export const updateExpression = bundle(F.buildUpdateExpression, C.coerceToUpdateExpression);
 export const sequenceExpression = bundle(F.buildSequenceExpression, C.coerceToSequenceExpression);
 export const string = bundle(F.buildString, C.coerceToString);
 export const templateString = bundle(F.buildTemplateString, C.coerceToTemplateString);
 export const templateSubstitution = bundle(F.buildTemplateSubstitution, C.coerceToTemplateSubstitution);
 export const regex = bundle(F.buildRegex, C.coerceToRegex);
-export const metaProperty = bundle(F.buildMetaProperty, C.coerceToMetaProperty);
 export const arguments_ = bundle(F.buildArguments, C.coerceToArguments);
 export const decorator = bundle(F.buildDecorator, C.coerceToDecorator);
 export const decoratorMemberExpression = bundle(F.buildDecoratorMemberExpression, C.coerceToDecoratorMemberExpression);
@@ -178,7 +173,6 @@ export const typeParameter = bundle(F.buildTypeParameter, C.coerceToTypeParamete
 export const defaultType = bundle(F.buildDefaultType, C.coerceToDefaultType);
 export const constraint = bundle(F.buildConstraint, C.coerceToConstraint);
 export const constructSignature = bundle(F.buildConstructSignature, C.coerceToConstructSignature);
-export const indexSignature = bundle(F.buildIndexSignature, C.coerceToIndexSignature);
 export const arrayType = bundle(F.buildArrayType, C.coerceToArrayType);
 export const tupleType = bundle(F.buildTupleType, C.coerceToTupleType);
 export const readonlyType = bundle(F.buildReadonlyType, C.coerceToReadonlyType);
@@ -195,7 +189,6 @@ export const tupleTypeMembers = bundle(F.buildTupleTypeMembers, C.coerceToTupleT
 export const ambientDeclarationGlobal = bundle(F.buildAmbientDeclarationGlobal, C.coerceToAmbientDeclarationGlobal);
 export const ambientDeclarationModule = bundle(F.buildAmbientDeclarationModule, C.coerceToAmbientDeclarationModule);
 export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObjectTypeContent);
-export const exportStatementDefault = bundle(F.buildExportStatementDefault, C.coerceToExportStatementDefault);
 export const exportStatementNamespaceExport = bundle(
 	F.buildExportStatementNamespaceExport,
 	C.coerceToExportStatementNamespaceExport

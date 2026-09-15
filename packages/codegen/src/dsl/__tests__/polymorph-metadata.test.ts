@@ -22,10 +22,10 @@ describe('polymorph metadata registration', () => {
 	// (`deriveStructuralVariantChildren`, compiler/variant-structural.ts)
 	// from the alias-mint shape `transform()` still resolves here. This
 	// suite now asserts the SURVIVING resolution behavior directly:
-	// each variant() placeholder deposits its hidden-rule body and the
-	// choice arm resolves to a named `alias($._hidden, $.visible)` —
-	// exactly the structural fact the downstream derivation keys on.
-	it('resolves variant placeholders into deposited hidden rules + named alias arms', () => {
+	// each variant() placeholder deposits its variant-rule body and the
+	// choice arm resolves to a symbol naming that rule, annotated with
+	// the variant — the structural fact the downstream derivation keys on.
+	it('resolves variant placeholders into deposited variant rules + annotated symbol arms', () => {
 		const original = {
 			type: 'SEQ',
 			members: [
@@ -47,42 +47,18 @@ describe('polymorph metadata registration', () => {
 			});
 		});
 
-		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
-		const choice = (result as unknown as { members: unknown[] }).members[1] as { members: unknown[] };
-		// `hidden`/`inline: true` on each inner SYMBOL come from the canonical
-		// `sym()` builder (transform.ts's `makePolymorphAliasNode` routes
-		// through it, per project convention — "always use the rule builder
-		// functions"), which stamps both from the `_`-prefixed hidden name.
-		// Provably inert downstream: `compiler/link.ts`'s
-		// `resolveNamedAliasWithProvenance` (the ALIAS resolver that fires
-		// for this shape) discards the whole `content` node and reconstructs
-		// a fresh SYMBOL from just `content.name`, never reading
-		// `.hidden`/`.inline`.
-		expect(choice.members).toEqual([
-			{
-				type: 'ALIAS',
-				content: {
-					type: 'SYMBOL',
-					name: '_assignment_eq',
-					hidden: true,
-					inline: true,
-					annotations: { variant: 'eq', variantOf: 'assignment' }
-				},
-				named: true,
-				value: 'assignment_eq'
-			},
-			{
-				type: 'ALIAS',
-				content: {
-					type: 'SYMBOL',
-					name: '_assignment_type',
-					hidden: true,
-					inline: true,
-					annotations: { variant: 'type', variantOf: 'assignment' }
-				},
-				named: true,
-				value: 'assignment_type'
-			}
+		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
+		// Sibling variants hoist whole-arm: each deposited body carries the
+		// parent's `left` before its own arm, and the parent collapses to the
+		// pure choice of the two variant symbols.
+		const eq = ctx.deposits.get('assignment_eq') as unknown as { type: string; members: { name?: string; type: string }[] };
+		expect(eq.type).toBe('SEQ');
+		expect(eq.members[0]).toMatchObject({ type: 'SYMBOL', name: 'left' });
+		const choice = result as unknown as { type: string; members: unknown[] };
+		expect(choice.type).toBe('CHOICE');
+		expect(choice.members).toMatchObject([
+			{ type: 'SYMBOL', name: 'assignment_eq', annotations: { variant: 'eq', variantOf: 'assignment' } },
+			{ type: 'SYMBOL', name: 'assignment_type', annotations: { variant: 'type', variantOf: 'assignment' } }
 		]);
 	});
 
@@ -101,7 +77,7 @@ describe('polymorph metadata registration', () => {
 		}).toThrow(/no current rule kind/);
 	});
 
-	it('accumulates deposited hidden rules independently across separate wire contexts', () => {
+	it('accumulates deposited variant rules independently across separate wire contexts', () => {
 		// A bare `sym()` arm (no anonymous token) is unmaterializable
 		// (`variantBranchIsUnmaterializable`) and deposits nothing; use a
 		// SEQ-with-literal arm shape so the mint actually fires.
@@ -126,7 +102,7 @@ describe('polymorph metadata registration', () => {
 			transform(makeChoice('+', '-'), { '0/0': variant('x') });
 		});
 
-		expect([...ctx1.deposits.keys()].sort()).toEqual(['_rule_one_a', '_rule_one_b']);
-		expect([...ctx2.deposits.keys()].sort()).toEqual(['_rule_two_x']);
+		expect([...ctx1.deposits.keys()].sort()).toEqual(['rule_one_a', 'rule_one_b']);
+		expect([...ctx2.deposits.keys()].sort()).toEqual(['rule_two_x']);
 	});
 });

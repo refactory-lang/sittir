@@ -128,6 +128,7 @@ describe('post-evaluate invariant', () => {
 				'factoryInline',
 				'inline',
 				'conflicts',
+				'precedences',
 				'word',
 				'references',
 				'ruleCatalog',

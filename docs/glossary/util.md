@@ -195,15 +195,13 @@ matcher the class is `\w+`.
 /** Every `{type:'SYMBOL', name}` reference inside `node`, added to `into`. */
 ```
 
-### `packages/codegen/src/util/reachable-rules.ts::collectUnreachableHiddenRules`
+### `packages/codegen/src/util/reachable-rules.ts::collectOrphanedRules`
 
-```text
-/**
- * Hidden (`_`-prefixed) rules unreachable from the grammar's roots: every
- * VISIBLE rule plus `protectedNames` (externals/extras/inline/conflicts/
- * supertypes/word — names the grammar machinery references outside rule
- * bodies). Reachability — not per-rule reference counting — so a hidden rule
- * kept alive only by other dead hidden rules (or by itself) is still
- * reported. Callers delete the returned names.
- */
-```
+Rules nothing reaches from the grammar's roots. The roots are every visible
+rule with a body plus `protectedNames` (the names the grammar machinery
+references outside rule bodies). A visible rule whose body is empty
+(`isEmptyBody`: a pre-registered placeholder nothing deposited into) is not
+a root, so it survives only while something references or protects it.
+Reachability rather than reference counting, so a rule kept alive only by
+other dead rules (or by itself) is still reported. Callers delete the
+returned names.

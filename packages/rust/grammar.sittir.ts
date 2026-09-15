@@ -22,14 +22,14 @@ export default grammar(
 			name: 'rust',
 			conflicts: ($, previous) => [
 				...(previous ?? []),
-				[$._expression_except_range, $._match_arm_block_ending],
+				[$._expression_except_range, $.match_arm_block_ending],
 				[$.generic_type_with_turbofish, $.generic_pattern, $._path],
 				[$.generic_type_with_turbofish, $._path],
 				[$.visibility_modifier, $._path],
-				[$._expression_except_range, $._closure_expression_arm],
+				[$._expression_except_range, $.closure_expression_arm],
 				[$.async_block, $._kw_async_marker],
-				[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
-				[$._visibility_modifier_pub],
+				[$.scoped_identifier, $.scoped_type_identifier, $.visibility_modifier_crate],
+				[$.visibility_modifier_pub],
 				[$._attributed_type_parameter, $._type],
 				[$._attributed_argument]
 			],
@@ -45,10 +45,6 @@ export default grammar(
 			}),
 
 			groups: {
-				_visibility_modifier_pub: {
-					'1': 'parens'
-				},
-
 				visibility_modifier_in_path: ($) => seq('in', $._path),
 
 				attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
@@ -219,6 +215,7 @@ export default grammar(
 
 				array_expression: [
 					{ 1: field('attributes'), '2/0/0': field('element') },
+					{ '2/1': arm.default },
 					{ '2/0': variant('semi'), '2/1': variant('list') }
 				],
 
@@ -234,6 +231,19 @@ export default grammar(
 				},
 
 				closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
+
+				reference_expression: { '1/0/0': variant('raw_const'), '1/0/1': variant('raw_mut'), '1/0/2': variant('mut') },
+
+				// Both trait-clause arms wrap the same `field('trait', <type>)`,
+				// the negative one behind a leading `!`, so a bare type name fits
+				// either. The positive clause is what a bare value means; the
+				// negative arm stays reachable by tag or through its own
+				// sub-factory.
+				impl_item: [
+					{ '3/0/0/0': variant('positive_clause'), '3/0/0/1': variant('negative_clause') },
+					{ '3/0/0/0': arm.default },
+					{ '6/0': variant('body'), '6/1': variant('semi') }
+				],
 
 				function_modifiers: {
 					_: field('modifier')
@@ -438,13 +448,6 @@ export default grammar(
 				// gives it a real node, so every `_pattern` list position round-trips
 				// without render-side heuristics.
 				_pattern: { '-1': alias('wildcard_pattern') },
-
-				// Both trait-clause arms wrap the same `field('trait', <type>)`,
-				// the negative one behind a leading `!`, so a bare type name fits
-				// either. The positive clause is what a bare value means; the
-				// negative arm stays reachable by tag or through its own
-				// sub-factory.
-				impl_item: { '3/0/0/0': arm.default }
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
@@ -596,7 +599,7 @@ export default grammar(
 				use_wildcard: ($) => seq(optional($._use_wildcard_clause), '*'),
 				_use_wildcard_clause: ($) => seq(field('path', $._path), '::'),
 
-				_where_predicates: ($, previous) => prec.right(0, previous),
+				where_predicates: ($, previous) => prec.right(0, previous),
 
 				_wildcard_pattern: ($) => '_',
 
@@ -613,31 +616,17 @@ export default grammar(
 
 				_string_literal_open: ($) => /[bc]?"/,
 
-				_reference_expression_raw_const: ($) => seq('raw', 'const'),
-				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),
 				reference_expression: ($) =>
 					prec(
 						12,
 						seq(
 							'&',
-							optional(
-								choice(
-									alias($._reference_expression_raw_const, $.reference_expression_raw_const),
-									alias($._reference_expression_raw_mut, $.reference_expression_raw_mut),
-									$.mutable_specifier
-								)
-							),
+							optional(choice(seq('raw', 'const'), seq('raw', $.mutable_specifier), $.mutable_specifier)),
 							field('value', $._expression)
 						)
 					),
 
 				_impl_item_unsafe_marker: ($) => 'unsafe',
-				_impl_item_body: ($) => $.declaration_list,
-				_impl_item_semi: ($) => ';',
-				_impl_item_positive_clause: ($) =>
-					seq(field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)), 'for'),
-				_impl_item_negative_clause: ($) =>
-					seq('!', field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)), 'for'),
 				impl_item: ($) =>
 					seq(
 						optional(field('unsafe_marker', $._impl_item_unsafe_marker)),
@@ -647,14 +636,14 @@ export default grammar(
 							field(
 								'trait_clause',
 								choice(
-									alias($._impl_item_positive_clause, $.impl_item_positive_clause),
-									alias($._impl_item_negative_clause, $.impl_item_negative_clause)
+									seq(field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)), 'for'),
+									seq('!', field('trait', choice($._type_identifier, $.scoped_type_identifier, $.generic_type)), 'for')
 								)
 							)
 						),
 						field('type', $._type),
 						optional(field('where_clause', $.where_clause)),
-						choice(alias($._impl_item_body, $.impl_item_body), alias($._impl_item_semi, $.impl_item_semi))
+						choice($.declaration_list, ';')
 					),
 
 				_let_chain: ($) =>

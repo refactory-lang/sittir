@@ -23,7 +23,6 @@ export type AddressRoot =
 	| 'argument_list_elements'
 	| 'as_pattern'
 	| 'assert_statement'
-	| 'assignment'
 	| 'assignment_eq'
 	| 'assignment_type'
 	| 'assignment_typed'
@@ -138,6 +137,7 @@ export type AddressRoot =
 	| 'subscript'
 	| 'subscripts'
 	| 'suite_block'
+	| 'suite_inline'
 	| 'try_statement'
 	| 'tuple'
 	| 'tuple_pattern'
@@ -287,7 +287,6 @@ export interface AddressBranch {
 	readonly 'assert_statement/expression/subscript': 'after';
 	readonly 'assert_statement/expression/tuple': 'after';
 	readonly 'assert_statement/expression/unary_operator': 'after';
-	readonly assignment: 'after' | 'before';
 	readonly assignment_eq: 'after' | 'before' | 'eq';
 	readonly 'assignment_eq/eq': 'after' | 'before';
 	readonly assignment_type: 'after' | 'before' | 'colon';
@@ -1169,7 +1168,9 @@ export interface AddressBranch {
 	readonly 'simple_statements_elements/simple_statement':
 		| 'as_pattern'
 		| 'assert_statement'
-		| 'assignment'
+		| 'assignment_eq'
+		| 'assignment_type'
+		| 'assignment_typed'
 		| 'attribute'
 		| 'augmented_assignment'
 		| 'await'
@@ -1212,7 +1213,9 @@ export interface AddressBranch {
 		| 'yield';
 	readonly 'simple_statements_elements/simple_statement/as_pattern': 'after';
 	readonly 'simple_statements_elements/simple_statement/assert_statement': 'after';
-	readonly 'simple_statements_elements/simple_statement/assignment': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_eq': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_type': 'after';
+	readonly 'simple_statements_elements/simple_statement/assignment_typed': 'after';
 	readonly 'simple_statements_elements/simple_statement/attribute': 'after';
 	readonly 'simple_statements_elements/simple_statement/augmented_assignment': 'after';
 	readonly 'simple_statements_elements/simple_statement/await': 'after';
@@ -1381,6 +1384,7 @@ export interface AddressBranch {
 	readonly 'subscripts/subscript/tuple': 'after';
 	readonly 'subscripts/subscript/unary_operator': 'after';
 	readonly suite_block: 'after' | 'before';
+	readonly suite_inline: 'after' | 'before';
 	readonly try_statement: 'after' | 'before' | 'colon' | 'except_clauses' | 'try_keyword';
 	readonly 'try_statement/colon': 'after' | 'before';
 	readonly 'try_statement/except_clauses': 'except_clause' | 'separator';
@@ -1601,8 +1605,6 @@ export interface AddressLeaf {
 	readonly 'assert_statement/expression/subscript/after': SpacingArm;
 	readonly 'assert_statement/expression/tuple/after': SpacingArm;
 	readonly 'assert_statement/expression/unary_operator/after': SpacingArm;
-	readonly 'assignment/after': SpacingArm;
-	readonly 'assignment/before': SpacingArm;
 	readonly 'assignment_eq/after': SpacingArm;
 	readonly 'assignment_eq/before': SpacingArm;
 	readonly 'assignment_eq/eq/after': SpacingArm;
@@ -2366,7 +2368,9 @@ export interface AddressLeaf {
 	readonly 'simple_statements/before': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/as_pattern/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/assert_statement/after': SpacingArm;
-	readonly 'simple_statements_elements/simple_statement/assignment/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_eq/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_type/after': SpacingArm;
+	readonly 'simple_statements_elements/simple_statement/assignment_typed/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/attribute/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/augmented_assignment/after': SpacingArm;
 	readonly 'simple_statements_elements/simple_statement/await/after': SpacingArm;
@@ -2492,6 +2496,8 @@ export interface AddressLeaf {
 	readonly 'subscripts/subscript/unary_operator/after': SpacingArm;
 	readonly 'suite_block/after': SpacingArm;
 	readonly 'suite_block/before': SpacingArm;
+	readonly 'suite_inline/after': SpacingArm;
+	readonly 'suite_inline/before': SpacingArm;
 	readonly 'try_statement/after': SpacingArm;
 	readonly 'try_statement/before': SpacingArm;
 	readonly 'try_statement/colon/after': SpacingArm;

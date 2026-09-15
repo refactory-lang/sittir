@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "8d5fc2f",
+    "commit": "7078b7b",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -10,7 +10,7 @@
                     "_parameters": 1,
                     "argument_list": 2,
                     "as_pattern": 6,
-                    "assignment": 3,
+                    "assignment_eq": 3,
                     "call": 2,
                     "conditional_expression": 1,
                     "expression_statement": 8,
@@ -27,6 +27,7 @@
                 "pass": 1313,
                 "total": 1313
             },
+            "supertypeKindCount": 9,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -35,17 +36,17 @@
                     "total": 142
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1390,
+                    "astMatchPass": 1368,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1390,
-                    "total": 1390
+                    "pass": 1368,
+                    "total": 1368
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 126,
-                    "total": 126
+                    "pass": 151,
+                    "total": 151
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -65,43 +66,44 @@
                     "attribute_item": 6,
                     "block": 3,
                     "call_expression": 3,
-                    "delim_token_tree": 15,
+                    "delim_token_tree_paren": 15,
                     "enum_item": 1,
                     "function_item": 3,
                     "if_expression": 1,
-                    "impl_item": 1,
+                    "impl_item_body": 1,
                     "inner_attribute_item": 1,
-                    "macro_definition": 3,
+                    "macro_definition_brace": 3,
                     "macro_invocation": 7,
                     "match_expression": 1,
                     "source_file": 13,
                     "struct_expression": 1,
-                    "struct_item": 6,
+                    "struct_item_brace": 6,
                     "token_tree": 6,
                     "use_declaration": 1
                 },
                 "pass": 1412,
                 "total": 1412
             },
+            "supertypeKindCount": 21,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 207,
-                    "total": 207
+                    "pass": 206,
+                    "total": 206
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1517,
+                    "astMatchPass": 1464,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1517,
-                    "total": 1517
+                    "pass": 1464,
+                    "total": 1464
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 147,
-                    "total": 147
+                    "pass": 198,
+                    "total": 198
                 },
                 "roundtrip": {
                     "astMatchPass": 134,
@@ -120,37 +122,38 @@
                     "ambient_declaration": 1,
                     "class_declaration": 3,
                     "enum_declaration": 2,
-                    "export_statement": 1,
+                    "export_statement_default_declaration": 1,
                     "function_declaration": 1,
                     "internal_module": 1,
                     "lexical_declaration": 2,
                     "program": 6,
                     "statement_block": 1,
                     "string": 2,
-                    "variable_declarator": 2
+                    "variable_declarator_plain": 2
                 },
-                "pass": 1478,
-                "total": 1478
+                "pass": 1484,
+                "total": 1484
             },
+            "supertypeKindCount": 15,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 193,
-                    "total": 193
+                    "pass": 189,
+                    "total": 189
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1202,
+                    "astMatchPass": 1139,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1202,
-                    "total": 1202
+                    "pass": 1139,
+                    "total": 1139
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 143,
-                    "total": 143
+                    "pass": 173,
+                    "total": 173
                 },
                 "roundtrip": {
                     "astMatchPass": 112,
@@ -164,7 +167,7 @@
     },
     "totals": {
         "fail": 6,
-        "pass": 9631,
-        "total": 9637
+        "pass": 9600,
+        "total": 9606
     }
 }

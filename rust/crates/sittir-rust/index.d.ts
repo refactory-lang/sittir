@@ -152,11 +152,6 @@ export interface ArrayExpressionSemiTransport {
   _array_expression_semi_after?: number
 }
 
-export interface ArrayExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<ArrayExpressionContentTransportSlot>>
-}
-
 export interface ArrayTypeTransport {
   '$_trivia'?: TransportTrivia
   _element: SlotValue<Box<TypeTransport>>
@@ -423,6 +418,10 @@ export interface CapturedPatternTransport {
 
 export interface ClosureExpressionBlockTransport {
   '$_trivia'?: TransportTrivia
+  _static_marker?: SlotValue<KwStaticMarkerTransport>
+  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _move_marker?: SlotValue<KwMoveMarkerTransport>
+  _parameters: SlotValue<ClosureParametersTransport>
   _return_type?: SlotValue<Box<TypeTransport>>
   _body: SlotValue<Box<BlockTransport>>
   _dash_gt_before?: number
@@ -433,18 +432,14 @@ export interface ClosureExpressionBlockTransport {
 
 export interface ClosureExpressionExprTransport {
   '$_trivia'?: TransportTrivia
-  _body: SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>
-}
-
-export interface ClosureExpressionTransport {
-  '$_trivia'?: TransportTrivia
   _static_marker?: SlotValue<KwStaticMarkerTransport>
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _parameters: SlotValue<ClosureParametersTransport>
-  _content: SlotValue<Box<ClosureExpressionContentTransportSlot>>
-  _closure_expression_before?: number
-  _closure_expression_after?: number
+  _body: SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>
+  _underscore_before?: number
+  _closure_expression_expr_before?: number
+  _closure_expression_expr_after?: number
 }
 
 export interface ClosureParametersTransport {
@@ -574,11 +569,6 @@ export interface DelimTokenTreeParenTransport {
   _rparen_after?: number
   _delim_token_tree_paren_before?: number
   _delim_token_tree_paren_after?: number
-}
-
-export interface DelimTokenTreeTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<DelimTokenTreeContentTransportSlot>
 }
 
 export interface DynamicTypeTransport {
@@ -779,6 +769,8 @@ export interface FieldInitializerTransport {
 
 export interface FieldPatternNamedTransport {
   '$_trivia'?: TransportTrivia
+  _ref_marker?: SlotValue<KwRefMarkerTransport>
+  _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
   _pattern: SlotValue<PatternTransport>
   _colon_before?: number
@@ -787,22 +779,32 @@ export interface FieldPatternNamedTransport {
   _field_pattern_named_after?: number
 }
 
-export interface FieldPatternTransport {
+export interface FieldPatternShorthandTransport {
   '$_trivia'?: TransportTrivia
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
-  _content: SlotValue<FieldPatternContentTransportSlot>
-  _field_pattern_before?: number
-  _field_pattern_after?: number
+  _name: SlotValue<IdentifierTransport>
+  _field_pattern_shorthand_before?: number
+  _field_pattern_shorthand_after?: number
 }
 
-export interface ForeignModItemTransport {
+export interface ForeignModItemBodyTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _extern_modifier: SlotValue<ExternModifierTransport>
-  _content: SlotValue<ForeignModItemContentTransportSlot>
-  _foreign_mod_item_before?: number
-  _foreign_mod_item_after?: number
+  _body: SlotValue<DeclarationListTransport>
+  _foreign_mod_item_body_before?: number
+  _foreign_mod_item_body_after?: number
+}
+
+export interface ForeignModItemSemiTransport {
+  '$_trivia'?: TransportTrivia
+  _visibility_modifier?: SlotValue<VisibilityModifierTransport>
+  _extern_modifier: SlotValue<ExternModifierTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _foreign_mod_item_semi_before?: number
+  _foreign_mod_item_semi_after?: number
 }
 
 export interface ForExpressionTransport {
@@ -978,7 +980,16 @@ export interface IfExpressionTransport {
 
 export interface ImplItemBodyTransport {
   '$_trivia'?: TransportTrivia
+  _unsafe_marker?: SlotValue<ImplItemUnsafeMarkerTransport>
+  _type_parameters?: SlotValue<TypeParametersTransport>
+  _trait_clause?: SlotValue<ImplItemBodyTraitClauseTransportSlot>
+  _type: SlotValue<TypeTransport>
+  _where_clause?: SlotValue<WhereClauseTransport>
   _declaration_list: SlotValue<DeclarationListTransport>
+  _impl_keyword_before?: number
+  _impl_keyword_after?: number
+  _impl_item_body_before?: number
+  _impl_item_body_after?: number
 }
 
 export interface ImplItemNegativeClauseTransport {
@@ -1001,18 +1012,19 @@ export interface ImplItemPositiveClauseTransport {
   _impl_item_positive_clause_after?: number
 }
 
-export interface ImplItemTransport {
+export interface ImplItemSemiTransport {
   '$_trivia'?: TransportTrivia
   _unsafe_marker?: SlotValue<ImplItemUnsafeMarkerTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
-  _trait_clause?: SlotValue<ImplItemTraitClauseTransportSlot>
+  _trait_clause?: SlotValue<ImplItemSemiTraitClauseTransportSlot>
   _type: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
-  _content: SlotValue<ImplItemContentTransportSlot>
+  _semi_before?: number
+  _semi_after?: number
   _impl_keyword_before?: number
   _impl_keyword_after?: number
-  _impl_item_before?: number
-  _impl_item_after?: number
+  _impl_item_semi_before?: number
+  _impl_item_semi_after?: number
 }
 
 export interface IndexExpressionTransport {
@@ -1177,7 +1189,10 @@ export interface LoopExpressionTransport {
 
 export interface MacroDefinitionBraceTransport {
   '$_trivia'?: TransportTrivia
+  _name: SlotValue<IdentifierTransport>
   _macro_rules?: SlotValue<MacroRulesTransport>
+  _macro_rules_bang_before?: number
+  _macro_rules_bang_after?: number
   _lbrace_before?: number
   _lbrace_after?: number
   _rbrace_before?: number
@@ -1188,6 +1203,7 @@ export interface MacroDefinitionBraceTransport {
 
 export interface MacroDefinitionBracketTransport {
   '$_trivia'?: TransportTrivia
+  _name: SlotValue<IdentifierTransport>
   _macro_rules?: SlotValue<MacroRulesTransport>
   _semi_before?: number
   _semi_after?: number
@@ -1195,12 +1211,15 @@ export interface MacroDefinitionBracketTransport {
   _lbrack_after?: number
   _rbrack_before?: number
   _rbrack_after?: number
+  _macro_rules_bang_before?: number
+  _macro_rules_bang_after?: number
   _macro_definition_bracket_before?: number
   _macro_definition_bracket_after?: number
 }
 
 export interface MacroDefinitionParenTransport {
   '$_trivia'?: TransportTrivia
+  _name: SlotValue<IdentifierTransport>
   _macro_rules?: SlotValue<MacroRulesTransport>
   _lparen_before?: number
   _lparen_after?: number
@@ -1208,18 +1227,10 @@ export interface MacroDefinitionParenTransport {
   _rparen_after?: number
   _semi_before?: number
   _semi_after?: number
-  _macro_definition_paren_before?: number
-  _macro_definition_paren_after?: number
-}
-
-export interface MacroDefinitionTransport {
-  '$_trivia'?: TransportTrivia
-  _name: SlotValue<IdentifierTransport>
-  _content: SlotValue<MacroDefinitionContentTransportSlot>
   _macro_rules_bang_before?: number
   _macro_rules_bang_after?: number
-  _macro_definition_before?: number
-  _macro_definition_after?: number
+  _macro_definition_paren_before?: number
+  _macro_definition_paren_after?: number
 }
 
 export interface MacroInvocationTransport {
@@ -1254,25 +1265,32 @@ export interface MacroRuleTransport {
   _macro_rule_after?: number
 }
 
-export interface MatchArmTransport {
+export interface MatchArmBlockEndingTransport {
   '$_trivia'?: TransportTrivia
-  _attributes?: Array<SlotValue<MatchArmAttributesTransportSlot>>
+  _attributes?: Array<SlotValue<MatchArmBlockEndingAttributesTransportSlot>>
   _pattern: SlotValue<MatchPatternTransport>
-  _content: SlotValue<MatchArmContentTransportSlot>
+  _value: SlotValue<MatchArmBlockEndingValueTransportSlot>
   _attributes_end?: number
   _attributes_start?: number
   _attributes_separator_space?: number
   _eq_gt_before?: number
   _eq_gt_after?: number
-  _match_arm_before?: number
-  _match_arm_after?: number
+  _match_arm_block_ending_before?: number
+  _match_arm_block_ending_after?: number
 }
 
 export interface MatchArmWithCommaTransport {
   '$_trivia'?: TransportTrivia
+  _attributes?: Array<SlotValue<MatchArmWithCommaAttributesTransportSlot>>
+  _pattern: SlotValue<MatchPatternTransport>
   _value: SlotValue<ExpressionTransport>
+  _attributes_end?: number
+  _attributes_start?: number
+  _attributes_separator_space?: number
   _comma_before?: number
   _comma_after?: number
+  _eq_gt_before?: number
+  _eq_gt_after?: number
   _match_arm_with_comma_before?: number
   _match_arm_with_comma_after?: number
 }
@@ -1319,15 +1337,27 @@ export interface MatchPatternTransport {
   _match_pattern_after?: number
 }
 
-export interface ModItemTransport {
+export interface ModItemExternalTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
-  _content: SlotValue<ModItemContentTransportSlot>
+  _semi_before?: number
+  _semi_after?: number
   _mod_keyword_before?: number
   _mod_keyword_after?: number
-  _mod_item_before?: number
-  _mod_item_after?: number
+  _mod_item_external_before?: number
+  _mod_item_external_after?: number
+}
+
+export interface ModItemInlineTransport {
+  '$_trivia'?: TransportTrivia
+  _visibility_modifier?: SlotValue<VisibilityModifierTransport>
+  _name: SlotValue<IdentifierTransport>
+  _body: SlotValue<DeclarationListTransport>
+  _mod_keyword_before?: number
+  _mod_keyword_after?: number
+  _mod_item_inline_before?: number
+  _mod_item_inline_after?: number
 }
 
 export interface MutPatternTransport {
@@ -1388,11 +1418,6 @@ export interface OrPatternPrefixTransport {
   _or_pattern_prefix_after?: number
 }
 
-export interface OrPatternTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<OrPatternContentTransportSlot>>
-}
-
 export interface ParametersElementsTransport {
   '$_trivia'?: TransportTrivia
   _element: Array<SlotValue<AttributedParameterTransport>>
@@ -1450,14 +1475,24 @@ export interface PatternsTransport {
   _patterns_after?: number
 }
 
-export interface PointerTypeTransport {
+export interface PointerTypeConstTransport {
   '$_trivia'?: TransportTrivia
   _type: SlotValue<Box<TypeTransport>>
-  _content: SlotValue<PointerTypeContentTransportSlot>
   _star_before?: number
   _star_after?: number
-  _pointer_type_before?: number
-  _pointer_type_after?: number
+  _const_keyword_before?: number
+  _const_keyword_after?: number
+  _pointer_type_const_before?: number
+  _pointer_type_const_after?: number
+}
+
+export interface PointerTypeMutTransport {
+  '$_trivia'?: TransportTrivia
+  _type: SlotValue<Box<TypeTransport>>
+  _star_before?: number
+  _star_after?: number
+  _pointer_type_mut_before?: number
+  _pointer_type_mut_after?: number
 }
 
 export interface QualifiedTypeTransport {
@@ -1514,11 +1549,6 @@ export interface RangePatternPrefixTransport {
   _range_pattern_prefix_after?: number
 }
 
-export interface RangePatternTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<Box<RangePatternContentTransportSlot>>
-}
-
 export interface RangePatternWithLeftTransport {
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>
@@ -1547,22 +1577,46 @@ export interface RawStringLiteralTransport {
   _raw_string_literal_after?: number
 }
 
+export interface ReferenceExpressionBareTransport {
+  '$_trivia'?: TransportTrivia
+  _value: SlotValue<Box<ExpressionTransport>>
+  _amp_before?: number
+  _amp_after?: number
+  _reference_expression_bare_before?: number
+  _reference_expression_bare_after?: number
+}
+
+export interface ReferenceExpressionMutTransport {
+  '$_trivia'?: TransportTrivia
+  _value: SlotValue<Box<ExpressionTransport>>
+  _amp_before?: number
+  _amp_after?: number
+  _reference_expression_mut_before?: number
+  _reference_expression_mut_after?: number
+}
+
+export interface ReferenceExpressionRawConstTransport {
+  '$_trivia'?: TransportTrivia
+  _value: SlotValue<Box<ExpressionTransport>>
+  _amp_before?: number
+  _amp_after?: number
+  _const_keyword_before?: number
+  _const_keyword_after?: number
+  _raw_keyword_before?: number
+  _raw_keyword_after?: number
+  _reference_expression_raw_const_before?: number
+  _reference_expression_raw_const_after?: number
+}
+
 export interface ReferenceExpressionRawMutTransport {
   '$_trivia'?: TransportTrivia
+  _value: SlotValue<Box<ExpressionTransport>>
+  _amp_before?: number
+  _amp_after?: number
   _raw_keyword_before?: number
   _raw_keyword_after?: number
   _reference_expression_raw_mut_before?: number
   _reference_expression_raw_mut_after?: number
-}
-
-export interface ReferenceExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  _value: SlotValue<Box<ExpressionTransport>>
-  _content?: SlotValue<ReferenceExpressionContentTransportSlot>
-  _amp_before?: number
-  _amp_after?: number
-  _reference_expression_before?: number
-  _reference_expression_after?: number
 }
 
 export interface ReferencePatternTransport {
@@ -1737,32 +1791,43 @@ export interface StructExpressionTransport {
 
 export interface StructItemBraceTransport {
   '$_trivia'?: TransportTrivia
+  _visibility_modifier?: SlotValue<VisibilityModifierTransport>
+  _name: SlotValue<IdentifierTransport>
+  _type_parameters?: SlotValue<TypeParametersTransport>
   _body: SlotValue<FieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _struct_keyword_before?: number
+  _struct_keyword_after?: number
   _struct_item_brace_before?: number
   _struct_item_brace_after?: number
 }
 
-export interface StructItemTransport {
+export interface StructItemTupleTransport {
   '$_trivia'?: TransportTrivia
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
-  _content: SlotValue<StructItemContentTransportSlot>
-  _struct_keyword_before?: number
-  _struct_keyword_after?: number
-  _struct_item_before?: number
-  _struct_item_after?: number
-}
-
-export interface StructItemTupleTransport {
-  '$_trivia'?: TransportTrivia
   _body: SlotValue<OrderedFieldDeclarationListTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _semi_before?: number
   _semi_after?: number
+  _struct_keyword_before?: number
+  _struct_keyword_after?: number
   _struct_item_tuple_before?: number
   _struct_item_tuple_after?: number
+}
+
+export interface StructItemUnitTransport {
+  '$_trivia'?: TransportTrivia
+  _visibility_modifier?: SlotValue<VisibilityModifierTransport>
+  _name: SlotValue<IdentifierTransport>
+  _type_parameters?: SlotValue<TypeParametersTransport>
+  _semi_before?: number
+  _semi_after?: number
+  _struct_keyword_before?: number
+  _struct_keyword_after?: number
+  _struct_item_unit_before?: number
+  _struct_item_unit_after?: number
 }
 
 export interface StructPatternElementsTransport {
@@ -1923,11 +1988,6 @@ export interface TokenTreePatternParenTransport {
   _rparen_after?: number
   _token_tree_pattern_paren_before?: number
   _token_tree_pattern_paren_after?: number
-}
-
-export interface TokenTreePatternTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<TokenTreePatternContentTransportSlot>
 }
 
 export interface TokenTreeTransport {

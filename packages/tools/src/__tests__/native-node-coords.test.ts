@@ -68,7 +68,7 @@ describe('native node coords', () => {
 		const kindNameFromId = await loadKindNameFromId(grammar);
 		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
 
-		for (const kind of ['expression_statement', 'assignment', 'call', 'argument_list'] as const) {
+		for (const kind of ['expression_statement', 'assignment_eq', 'call', 'argument_list'] as const) {
 			const coords = findNativeNodeId(handle, kind, kindNameFromId);
 			expect(coords).not.toBeNull();
 

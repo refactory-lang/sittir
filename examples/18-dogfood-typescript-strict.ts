@@ -42,8 +42,8 @@ export function importTypesStrict() {
 		fromClause: {
 			importClause: ir.importClause.namedImports(
 				ir.namedImports.strict(
-					ir.importSpecifier({ content: 'FormatRecord' }),
-					ir.importSpecifier({ content: 'FormatTrivia' })
+					ir.importSpecifier.name({ name: 'FormatRecord' }),
+					ir.importSpecifier.name({ name: 'FormatTrivia' })
 				)
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),

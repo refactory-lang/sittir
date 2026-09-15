@@ -191,7 +191,7 @@
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true,
     "location": "binary_expression",
     "sClass": "S4"
@@ -220,8 +220,8 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "ownerKind": "enum_body_elements",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -233,7 +233,7 @@
         "name"
       ]
     },
-    "location": "_enum_body_elements"
+    "location": "enum_body_elements"
   },
   {
     "source": "grammar",
@@ -242,8 +242,8 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "_export_statement_default_declaration",
-    "message": "[collect-slots] kind '_export_statement_default_declaration': choice rule:_export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "export_statement_default_declaration",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -251,7 +251,7 @@
         "declaration"
       ]
     },
-    "location": "_export_statement_default_declaration"
+    "location": "export_statement_default_declaration"
   },
   {
     "source": "grammar",
@@ -260,8 +260,8 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "_export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_declaration_default_kw': choice rule:_export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "export_statement_default_declaration_default_kw",
+    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -269,7 +269,7 @@
         "declaration"
       ]
     },
-    "location": "_export_statement_default_declaration_default_kw"
+    "location": "export_statement_default_declaration_default_kw"
   },
   {
     "source": "grammar",
@@ -541,12 +541,13 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "3 referenced kind(s) resolved no parser kindId",
+    "message": "4 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_compound_statement",
         "_simple_statement",
+        "_suite",
         "_unary_operator_operator"
       ]
     },
@@ -577,13 +578,14 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-inline-excluded-symbols",
-    "message": "2 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
       "kinds": [
         "_compound_statement",
-        "_simple_statement"
+        "_simple_statement",
+        "_suite"
       ]
     },
     "scope": "grammar"

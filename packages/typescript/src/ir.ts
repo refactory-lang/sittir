@@ -33,23 +33,23 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_signature
-	get function() {
+	get function(): (typeof ir)['functionSignature'] {
 		return ir.functionSignature;
 	},
 	// definition.class → abstract_class_declaration
-	get class() {
+	get class(): (typeof ir)['abstractClassDeclaration'] {
 		return ir.abstractClassDeclaration;
 	},
 	// definition.method → method_signature
-	get method() {
+	get method(): (typeof ir)['methodSignature'] {
 		return ir.methodSignature;
 	},
 	// definition.module → module
-	get module() {
+	get module(): (typeof ir)['module'] {
 		return ir.module;
 	},
 	// definition.interface → interface_declaration
-	get interface() {
+	get interface(): (typeof ir)['interfaceDeclaration'] {
 		return ir.interfaceDeclaration;
 	}
 } as const;
@@ -396,7 +396,6 @@ export const primaryType: {
 
 export const ir: {
 	readonly program: typeof F.program;
-	readonly exportStatement: typeof F.exportStatement;
 	readonly namespaceExport: typeof F.namespaceExport;
 	readonly exportClause: typeof F.exportClause;
 	readonly exportSpecifier: typeof F.exportSpecifier;
@@ -404,12 +403,10 @@ export const ir: {
 	readonly importClause: typeof F.importClause;
 	readonly namespaceImport: typeof F.namespaceImport;
 	readonly namedImports: typeof F.namedImports;
-	readonly importSpecifier: typeof F.importSpecifier;
 	readonly importAttribute: typeof F.importAttribute;
 	readonly expressionStatement: typeof F.expressionStatement;
 	readonly variableDeclaration: typeof F.variableDeclaration;
 	readonly lexicalDeclaration: typeof F.lexicalDeclaration;
-	readonly variableDeclarator: typeof F.variableDeclarator;
 	readonly statementBlock: typeof F.statementBlock;
 	readonly elseClause: typeof F.elseClause;
 	readonly ifStatement: typeof F.ifStatement;
@@ -459,13 +456,11 @@ export const ir: {
 	readonly ternaryExpression: typeof F.ternaryExpression;
 	readonly binaryExpression: typeof F.binaryExpression;
 	readonly unaryExpression: typeof F.unaryExpression;
-	readonly updateExpression: typeof F.updateExpression;
 	readonly sequenceExpression: typeof F.sequenceExpression;
 	readonly string: typeof F.string;
 	readonly templateString: typeof F.templateString;
 	readonly templateSubstitution: typeof F.templateSubstitution;
 	readonly regex: typeof F.regex;
-	readonly metaProperty: typeof F.metaProperty;
 	readonly arguments: typeof F.arguments_;
 	readonly decorator: typeof F.decorator;
 	readonly decoratorMemberExpression: typeof F.decoratorMemberExpression;
@@ -547,7 +542,6 @@ export const ir: {
 	readonly defaultType: typeof F.defaultType;
 	readonly constraint: typeof F.constraint;
 	readonly constructSignature: typeof F.constructSignature;
-	readonly indexSignature: typeof F.indexSignature;
 	readonly arrayType: typeof F.arrayType;
 	readonly tupleType: typeof F.tupleType;
 	readonly readonlyType: typeof F.readonlyType;
@@ -564,10 +558,17 @@ export const ir: {
 	readonly ambientDeclarationGlobal: typeof F.ambientDeclarationGlobal;
 	readonly ambientDeclarationModule: typeof F.ambientDeclarationModule;
 	readonly objectTypeContent: typeof F.objectTypeContent;
-	readonly exportStatementDefault: typeof F.exportStatementDefault;
 	readonly exportStatementNamespaceExport: typeof F.exportStatementNamespaceExport;
 	readonly exportStatementTypeExport: typeof F.exportStatementTypeExport;
 	readonly exportStatementEqualsExport: typeof F.exportStatementEqualsExport;
+	readonly importSpecifier: typeof F.importSpecifier;
+	readonly variableDeclarator: typeof F.variableDeclarator;
+	readonly forHeader: typeof F.forHeader;
+	readonly updateExpression: typeof F.updateExpression;
+	readonly metaProperty: typeof F.metaProperty;
+	readonly indexSignature: typeof F.indexSignature;
+	readonly exportStatementDefault: typeof F.exportStatementDefault;
+	readonly exportStatement: typeof F.exportStatement;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly optionalChain: typeof F.buildOptionalChain;
@@ -579,6 +580,8 @@ export const ir: {
 	readonly undefined: typeof F.buildUndefined;
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
+	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
+	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly hashBangLine: typeof F.buildHashBangLine;
 	readonly unescapedDoubleStringFragment: typeof F.buildUnescapedDoubleStringFragment;
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
@@ -609,8 +612,8 @@ export const ir: {
 	readonly do: typeof F.doStatement;
 	readonly empty: typeof F.buildEmptyStatement;
 	readonly enum: typeof F.enumDeclaration;
+	readonly equals: typeof F.exportStatementEqualsExport;
 	readonly existential: typeof F.buildExistentialType;
-	readonly export: typeof F.exportStatement;
 	readonly flowMaybe: typeof F.flowMaybeType;
 	readonly for: typeof F.forStatement;
 	readonly forIn: typeof F.forInStatement;
@@ -627,7 +630,9 @@ export const ir: {
 	readonly literal: typeof F.literalType;
 	readonly lookup: typeof F.lookupType;
 	readonly member: typeof F.memberExpression;
+	readonly namespace: typeof F.exportStatementNamespaceExport;
 	readonly new: typeof F.newExpression;
+	readonly newTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly nonNull: typeof F.nonNullExpression;
 	readonly optional: typeof F.optionalParameter;
 	readonly parameter: typeof F.tupleParameter;
@@ -650,7 +655,6 @@ export const ir: {
 	readonly typeAlias: typeof F.typeAliasDeclaration;
 	readonly unary: typeof F.unaryExpression;
 	readonly union: typeof F.unionType;
-	readonly update: typeof F.updateExpression;
 	readonly variable: typeof F.variableDeclaration;
 	readonly while: typeof F.whileStatement;
 	readonly with: typeof F.withStatement;
@@ -680,7 +684,6 @@ export const ir: {
 } = {
 	// Node factories
 	program: F.program,
-	exportStatement: F.exportStatement,
 	namespaceExport: F.namespaceExport,
 	exportClause: F.exportClause,
 	exportSpecifier: F.exportSpecifier,
@@ -688,12 +691,10 @@ export const ir: {
 	importClause: F.importClause,
 	namespaceImport: F.namespaceImport,
 	namedImports: F.namedImports,
-	importSpecifier: F.importSpecifier,
 	importAttribute: F.importAttribute,
 	expressionStatement: F.expressionStatement,
 	variableDeclaration: F.variableDeclaration,
 	lexicalDeclaration: F.lexicalDeclaration,
-	variableDeclarator: F.variableDeclarator,
 	statementBlock: F.statementBlock,
 	elseClause: F.elseClause,
 	ifStatement: F.ifStatement,
@@ -743,13 +744,11 @@ export const ir: {
 	ternaryExpression: F.ternaryExpression,
 	binaryExpression: F.binaryExpression,
 	unaryExpression: F.unaryExpression,
-	updateExpression: F.updateExpression,
 	sequenceExpression: F.sequenceExpression,
 	string: F.string,
 	templateString: F.templateString,
 	templateSubstitution: F.templateSubstitution,
 	regex: F.regex,
-	metaProperty: F.metaProperty,
 	arguments: F.arguments_,
 	decorator: F.decorator,
 	decoratorMemberExpression: F.decoratorMemberExpression,
@@ -831,7 +830,6 @@ export const ir: {
 	defaultType: F.defaultType,
 	constraint: F.constraint,
 	constructSignature: F.constructSignature,
-	indexSignature: F.indexSignature,
 	arrayType: F.arrayType,
 	tupleType: F.tupleType,
 	readonlyType: F.readonlyType,
@@ -848,10 +846,17 @@ export const ir: {
 	ambientDeclarationGlobal: F.ambientDeclarationGlobal,
 	ambientDeclarationModule: F.ambientDeclarationModule,
 	objectTypeContent: F.objectTypeContent,
-	exportStatementDefault: F.exportStatementDefault,
 	exportStatementNamespaceExport: F.exportStatementNamespaceExport,
 	exportStatementTypeExport: F.exportStatementTypeExport,
 	exportStatementEqualsExport: F.exportStatementEqualsExport,
+	importSpecifier: F.importSpecifier,
+	variableDeclarator: F.variableDeclarator,
+	forHeader: F.forHeader,
+	updateExpression: F.updateExpression,
+	metaProperty: F.metaProperty,
+	indexSignature: F.indexSignature,
+	exportStatementDefault: F.exportStatementDefault,
+	exportStatement: F.exportStatement,
 
 	// Keyword factories
 	import: F.buildImport,
@@ -865,6 +870,8 @@ export const ir: {
 	undefined: F.buildUndefined,
 	overrideModifier: F.buildOverrideModifier,
 	existentialType: F.buildExistentialType,
+	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
+	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 
 	// Leaf node factories
 	hashBangLine: F.buildHashBangLine,
@@ -899,8 +906,8 @@ export const ir: {
 	do: F.doStatement,
 	empty: F.buildEmptyStatement,
 	enum: F.enumDeclaration,
+	equals: F.exportStatementEqualsExport,
 	existential: F.buildExistentialType,
-	export: F.exportStatement,
 	flowMaybe: F.flowMaybeType,
 	for: F.forStatement,
 	forIn: F.forInStatement,
@@ -917,7 +924,9 @@ export const ir: {
 	literal: F.literalType,
 	lookup: F.lookupType,
 	member: F.memberExpression,
+	namespace: F.exportStatementNamespaceExport,
 	new: F.newExpression,
+	newTarget: F.buildMetaPropertyNewTarget,
 	nonNull: F.nonNullExpression,
 	optional: F.optionalParameter,
 	parameter: F.tupleParameter,
@@ -940,7 +949,6 @@ export const ir: {
 	typeAlias: F.typeAliasDeclaration,
 	unary: F.unaryExpression,
 	union: F.unionType,
-	update: F.updateExpression,
 	variable: F.variableDeclaration,
 	while: F.whileStatement,
 	with: F.withStatement,

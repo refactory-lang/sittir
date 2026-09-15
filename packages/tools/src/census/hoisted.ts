@@ -24,8 +24,15 @@ interface CensusNode {
 
 export interface CensusModel {
 	readonly nodes: readonly CensusNode[] | Record<string, CensusNode>;
+	readonly variantRoutes?: Readonly<Record<string, string>>;
 }
 
+/**
+ * Split hoisted kinds by whether they have a public spelling: a parent slot
+ * seat, a list element seat, or — for a variant of a flattened parent — the
+ * route codegen publishes in `variantRoutes`. An unseated kind is reachable
+ * only through the raw builders.
+ */
 export function hoistedCensus(model: CensusModel): HoistedCensus {
 	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
 	const hoisted = nodes
@@ -39,6 +46,7 @@ export function hoistedCensus(model: CensusModel): HoistedCensus {
 		}
 		for (const seat of n.elementSeats ?? []) seatedSet.add(seat.kind);
 	}
+	for (const kind of Object.keys(model.variantRoutes ?? {})) seatedSet.add(kind);
 	return {
 		hoisted,
 		seated: hoisted.filter((k) => seatedSet.has(k)),

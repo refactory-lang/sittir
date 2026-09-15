@@ -24,6 +24,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = []):
 		factoryInline: [],
 		inline,
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: []
 	};

@@ -91,6 +91,7 @@ export interface RawGrammar {
 	readonly factoryInline: string[];
 	readonly inline: string[];
 	readonly conflicts: string[][];
+	readonly precedences: string[][];
 	readonly word: string | null;
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;

@@ -9,7 +9,6 @@
 
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
-import * as F from '../src/factories/index.js';
 import { TSKindId } from '../src/types.js';
 
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {
@@ -38,22 +37,14 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 
 describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 	it('object with `kind` field routes through _resolveByKind', () => {
-		// assignment's `content` field resolves across 3 hidden branch
-		// kinds (_assignment_eq/_assignment_type/_assignment_typed) —
-		// hidden kinds have no entry in _fromMap, so bare `{ kind: ... }`
-		// tagging can't reach them (see _resolveOne/_isFromKind in
-		// from.ts); the loose resolver's other path — a pre-built
-		// NodeData passed straight through (isNodeData check) — is how
-		// a caller supplies one. `ir.assignment.eq(...)` (a synthesized
-		// per-form factory) no longer exists; F.buildAssignmentEq is the
-		// current way to construct that branch's NodeData directly.
-		const result = ir.assignment({
+		// assignment is flattened into its variants; the eq variant's
+		// `right` expression slot resolves a kind-tagged object through
+		// _resolveByKind.
+		const result = ir.assignment.eq({
 			left: 'x' as any,
-			// `_assignment_eq`'s sole slot is `right`, so its factory takes that
-			// value positionally, like every other one-slot kind.
-			content: F.buildAssignmentEq({ kind: 'integer', text: '42' } as any)
+			right: { kind: 'integer', text: '42' } as any
 		}) as any;
-		expect(result.$type).toBe(TSKindId.Assignment);
+		expect(result.$type).toBe(TSKindId.AssignmentEq);
 	});
 });
 
@@ -73,14 +64,11 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 describe('loose from() — NodeData passthrough still works', () => {
 	it('pre-built NodeData is passed through unchanged', () => {
 		const nodeData = ir.integer('42') as any;
-		// See the T052d-ii test above for why F.buildAssignmentEq (not
-		// ir.assignment.eq, which no longer exists) is how a caller
-		// supplies assignment's hidden-branch-kind `content` field.
-		const child = F.buildAssignmentEq(nodeData);
-		const result = ir.assignment({
+		const result = ir.assignment.eq({
 			left: 'x' as any,
-			content: child
+			right: nodeData
 		}) as any;
-		expect(result.$type).toBe(TSKindId.Assignment);
+		expect(result.$type).toBe(TSKindId.AssignmentEq);
+		expect(result.right()).toBe(nodeData);
 	});
 });

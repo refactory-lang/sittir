@@ -70,6 +70,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: [],
 		refineForms: new Map([['iface_body', forms]])
@@ -147,6 +148,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: [],
 		refineForms: new Map([['string', forms]])
@@ -196,6 +198,7 @@ function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGram
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: [],
 		refineForms: new Map([['iface_body', forms]])

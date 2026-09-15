@@ -42,11 +42,11 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_definition
-	get function() {
+	get function(): (typeof ir)['functionDefinition'] {
 		return ir.functionDefinition;
 	},
 	// definition.class → class_definition
-	get class() {
+	get class(): (typeof ir)['classDefinition'] {
 		return ir.classDefinition;
 	}
 } as const;
@@ -356,7 +356,6 @@ export const ir: {
 	readonly exceptClause: typeof F.exceptClause;
 	readonly finallyClause: typeof F.finallyClause;
 	readonly withStatement: typeof F.withStatement;
-	readonly withClause: typeof F.withClause;
 	readonly withItem: typeof F.withItem;
 	readonly functionDefinition: typeof F.functionDefinition;
 	readonly parameters: typeof F.parameters;
@@ -400,7 +399,6 @@ export const ir: {
 	readonly comparisonOperator: typeof F.comparisonOperator;
 	readonly lambda: typeof F.lambda;
 	readonly lambdaWithinForInClause: typeof F.lambdaWithinForInClause;
-	readonly assignment: typeof F.assignment;
 	readonly augmentedAssignment: typeof F.augmentedAssignment;
 	readonly patternList: typeof F.patternList;
 	readonly yield: typeof F.yield_;
@@ -460,6 +458,9 @@ export const ir: {
 	readonly printStatementPlain: typeof F.printStatementPlain;
 	readonly expressionStatementTuple: typeof F.expressionStatementTuple;
 	readonly withClauseBare: typeof F.withClauseBare;
+	readonly withClause: typeof F.withClause;
+	readonly suite: typeof F.suite;
+	readonly assignment: typeof F.assignment;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -483,6 +484,7 @@ export const ir: {
 	readonly stringEnd: typeof F.buildStringEnd;
 	readonly as: typeof F.asPattern;
 	readonly assert: typeof F.assertStatement;
+	readonly bare: typeof F.withClauseBare;
 	readonly binary: typeof F.binaryOperator;
 	readonly boolean: typeof F.booleanOperator;
 	readonly break: typeof F.buildBreakStatement;
@@ -570,7 +572,6 @@ export const ir: {
 	exceptClause: F.exceptClause,
 	finallyClause: F.finallyClause,
 	withStatement: F.withStatement,
-	withClause: F.withClause,
 	withItem: F.withItem,
 	functionDefinition: F.functionDefinition,
 	parameters: F.parameters,
@@ -614,7 +615,6 @@ export const ir: {
 	comparisonOperator: F.comparisonOperator,
 	lambda: F.lambda,
 	lambdaWithinForInClause: F.lambdaWithinForInClause,
-	assignment: F.assignment,
 	augmentedAssignment: F.augmentedAssignment,
 	patternList: F.patternList,
 	yield: F.yield_,
@@ -674,6 +674,9 @@ export const ir: {
 	printStatementPlain: F.printStatementPlain,
 	expressionStatementTuple: F.expressionStatementTuple,
 	withClauseBare: F.withClauseBare,
+	withClause: F.withClause,
+	suite: F.suite,
+	assignment: F.assignment,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -703,6 +706,7 @@ export const ir: {
 	// Supertype-stripped short aliases
 	as: F.asPattern,
 	assert: F.assertStatement,
+	bare: F.withClauseBare,
 	binary: F.binaryOperator,
 	boolean: F.booleanOperator,
 	break: F.buildBreakStatement,

@@ -24,6 +24,7 @@ import {
 	AssembledList
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
+import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
 import { resolveFieldStorageInfo } from './shared.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -126,6 +127,7 @@ interface SerializedNodeModel {
 	supertypes: string[];
 	externals: string[];
 	polymorphVariants: PolymorphVariantMap;
+	variantRoutes: Readonly<Record<string, string>>;
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	nodes: SerializedNode[];
@@ -169,6 +171,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
 		polymorphVariants: factoryData.polymorphVariants,
+		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => a.localeCompare(b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		nodes

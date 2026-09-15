@@ -6,6 +6,7 @@ import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
+	Assignment,
 	CompoundStatement,
 	Expression,
 	ExpressionWithinForInClause,
@@ -21,7 +22,9 @@ import type {
 	SimplePattern,
 	SimpleStatement,
 	Statement,
-	Whitespace
+	Suite,
+	Whitespace,
+	WithClause
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -110,9 +113,6 @@ export interface IsGuards {
 	withStatement<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithStatement };
-	withClause<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClause };
 	withItem<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithItem };
@@ -242,9 +242,6 @@ export interface IsGuards {
 	lambdaWithinForInClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LambdaWithinForInClause };
-	assignment<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Assignment };
 	augmentedAssignment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AugmentedAssignment };
@@ -350,43 +347,43 @@ export interface IsGuards {
 	await<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Await };
-	SimpleStatementsElements<T extends { readonly $type: number } | number>(
+	simpleStatementsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimpleStatementsElements };
-	Subjects<T extends { readonly $type: number } | number>(
+	subjects<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Subjects };
-	CasePatterns<T extends { readonly $type: number } | number>(
+	casePatterns<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePatterns };
-	WithClauseWithItems<T extends { readonly $type: number } | number>(
+	withClauseWithItems<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseWithItems };
-	Types<T extends { readonly $type: number } | number>(
+	types<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Types };
-	ArgumentListElements<T extends { readonly $type: number } | number>(
+	argumentListElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ArgumentListElements };
-	ExpressionListExpressions<T extends { readonly $type: number } | number>(
+	expressionListExpressions<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionListExpressions };
-	ListPatternCasePatterns<T extends { readonly $type: number } | number>(
+	listPatternCasePatterns<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListPatternCasePatterns };
-	DictPatternElements<T extends { readonly $type: number } | number>(
+	dictPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictPatternElements };
-	PatternListPatterns<T extends { readonly $type: number } | number>(
+	patternListPatterns<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PatternListPatterns };
-	Subscripts<T extends { readonly $type: number } | number>(
+	subscripts<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Subscripts };
-	DictionaryElements<T extends { readonly $type: number } | number>(
+	dictionaryElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DictionaryElements };
-	ExceptClauseExceptionAs<T extends { readonly $type: number } | number>(
+	exceptClauseExceptionAs<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseExceptionAs };
 	caseTuplePattern<T extends { readonly $type: number } | number>(
@@ -416,10 +413,10 @@ export interface IsGuards {
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
-	ExpressionStatementTuple<T extends { readonly $type: number } | number>(
+	expressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
-	WithClauseBare<T extends { readonly $type: number } | number>(
+	withClauseBare<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
@@ -428,12 +425,15 @@ export interface IsGuards {
 	namedExpressionLhs(v: { readonly $type: string | number } | number): v is NamedExpressionLhs;
 	expressions(v: { readonly $type: string | number } | number): v is Expressions;
 	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
+	withClause(v: { readonly $type: string | number } | number): v is WithClause;
+	suite(v: { readonly $type: string | number } | number): v is Suite;
 	simplePattern(v: { readonly $type: string | number } | number): v is SimplePattern;
 	parameter(v: { readonly $type: string | number } | number): v is Parameter;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
 	expressionWithinForInClause(v: { readonly $type: string | number } | number): v is ExpressionWithinForInClause;
 	expression(v: { readonly $type: string | number } | number): v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
+	assignment(v: { readonly $type: string | number } | number): v is Assignment;
 	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): v is FExpression;
@@ -477,7 +477,6 @@ export interface AssertGuards {
 	exceptClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExceptClause };
 	finallyClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FinallyClause };
 	withStatement(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithStatement };
-	withClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClause };
 	withItem(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithItem };
 	functionDefinition(
 		v: { readonly $type: number } | number
@@ -539,7 +538,6 @@ export interface AssertGuards {
 	lambdaWithinForInClause(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.LambdaWithinForInClause };
-	assignment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Assignment };
 	augmentedAssignment(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AugmentedAssignment };
@@ -591,35 +589,35 @@ export interface AssertGuards {
 	interpolation(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Interpolation };
 	formatSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FormatSpecifier };
 	await(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Await };
-	SimpleStatementsElements(
+	simpleStatementsElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SimpleStatementsElements };
-	Subjects(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Subjects };
-	CasePatterns(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CasePatterns };
-	WithClauseWithItems(
+	subjects(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Subjects };
+	casePatterns(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CasePatterns };
+	withClauseWithItems(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.WithClauseWithItems };
-	Types(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Types };
-	ArgumentListElements(
+	types(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Types };
+	argumentListElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ArgumentListElements };
-	ExpressionListExpressions(
+	expressionListExpressions(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionListExpressions };
-	ListPatternCasePatterns(
+	listPatternCasePatterns(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ListPatternCasePatterns };
-	DictPatternElements(
+	dictPatternElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.DictPatternElements };
-	PatternListPatterns(
+	patternListPatterns(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.PatternListPatterns };
-	Subscripts(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Subscripts };
-	DictionaryElements(
+	subscripts(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Subscripts };
+	dictionaryElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.DictionaryElements };
-	ExceptClauseExceptionAs(
+	exceptClauseExceptionAs(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExceptClauseExceptionAs };
 	caseTuplePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CaseTuplePattern };
@@ -641,16 +639,18 @@ export interface AssertGuards {
 	printStatementPlain(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.PrintStatementPlain };
-	ExpressionStatementTuple(
+	expressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
-	WithClauseBare(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseBare };
+	withClauseBare(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	simpleStatement(v: { readonly $type: string | number } | number): asserts v is SimpleStatement;
 	namedExpressionLhs(v: { readonly $type: string | number } | number): asserts v is NamedExpressionLhs;
 	expressions(v: { readonly $type: string | number } | number): asserts v is Expressions;
 	compoundStatement(v: { readonly $type: string | number } | number): asserts v is CompoundStatement;
+	withClause(v: { readonly $type: string | number } | number): asserts v is WithClause;
+	suite(v: { readonly $type: string | number } | number): asserts v is Suite;
 	simplePattern(v: { readonly $type: string | number } | number): asserts v is SimplePattern;
 	parameter(v: { readonly $type: string | number } | number): asserts v is Parameter;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
@@ -659,6 +659,7 @@ export interface AssertGuards {
 	): asserts v is ExpressionWithinForInClause;
 	expression(v: { readonly $type: string | number } | number): asserts v is Expression;
 	primaryExpression(v: { readonly $type: string | number } | number): asserts v is PrimaryExpression;
+	assignment(v: { readonly $type: string | number } | number): asserts v is Assignment;
 	leftHandSide(v: { readonly $type: string | number } | number): asserts v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number } | number): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number } | number): asserts v is FExpression;
@@ -681,6 +682,8 @@ const _supertype_simpleStatement_ids = new Set<number>([
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([165]);
 const _supertype_compoundStatement_ids = new Set<number>([135, 141, 142, 143, 146, 149, 158, 162, 138]);
+const _supertype_withClause_ids = new Set<number>([273, 274]);
+const _supertype_suite_ids = new Set<number>([276, 277, 278]);
 const _supertype_simplePattern_ids = new Set<number>([
 	174, 173, 169, 257, 256, 170, 231, 230, 74, 75, 76, 266, 175, 166, 265
 ]);
@@ -691,8 +694,9 @@ const _supertype_expression_ids = new Set<number>([196, 190, 191, 197, 229, 127,
 const _supertype_primaryExpression_ids = new Set<number>([
 	237, 192, 1, 231, 230, 69, 70, 74, 75, 76, 193, 204, 205, 207, 216, 221, 219, 222, 217, 223, 218, 225, 224, 64, 184
 ]);
+const _supertype_assignment_ids = new Set<number>([269, 270, 271]);
 const _supertype_leftHandSide_ids = new Set<number>([201]);
-const _supertype_rightHandSide_ids = new Set<number>([165, 199, 200, 201, 203]);
+const _supertype_rightHandSide_ids = new Set<number>([165, 200, 201, 203]);
 const _supertype_fExpression_ids = new Set<number>([165, 201, 203]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 
@@ -725,7 +729,6 @@ export const is = {
 	exceptClause: _g(TSKindId.ExceptClause),
 	finallyClause: _g(TSKindId.FinallyClause),
 	withStatement: _g(TSKindId.WithStatement),
-	withClause: _g(TSKindId.WithClause),
 	withItem: _g(TSKindId.WithItem),
 	functionDefinition: _g(TSKindId.FunctionDefinition),
 	parameters: _g(TSKindId.Parameters),
@@ -769,7 +772,6 @@ export const is = {
 	comparisonOperator: _g(TSKindId.ComparisonOperator),
 	lambda: _g(TSKindId.Lambda),
 	lambdaWithinForInClause: _g(TSKindId.LambdaWithinForInClause),
-	assignment: _g(TSKindId.Assignment),
 	augmentedAssignment: _g(TSKindId.AugmentedAssignment),
 	patternList: _g(TSKindId.PatternList),
 	yield_: _g(TSKindId.Yield),
@@ -805,19 +807,19 @@ export const is = {
 	interpolation: _g(TSKindId.Interpolation),
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
-	SimpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
-	Subjects: _g(TSKindId.Subjects),
-	CasePatterns: _g(TSKindId.CasePatterns),
-	WithClauseWithItems: _g(TSKindId.WithClauseWithItems),
-	Types: _g(TSKindId.Types),
-	ArgumentListElements: _g(TSKindId.ArgumentListElements),
-	ExpressionListExpressions: _g(TSKindId.ExpressionListExpressions),
-	ListPatternCasePatterns: _g(TSKindId.ListPatternCasePatterns),
-	DictPatternElements: _g(TSKindId.DictPatternElements),
-	PatternListPatterns: _g(TSKindId.PatternListPatterns),
-	Subscripts: _g(TSKindId.Subscripts),
-	DictionaryElements: _g(TSKindId.DictionaryElements),
-	ExceptClauseExceptionAs: _g(TSKindId.ExceptClauseExceptionAs),
+	simpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
+	subjects: _g(TSKindId.Subjects),
+	casePatterns: _g(TSKindId.CasePatterns),
+	withClauseWithItems: _g(TSKindId.WithClauseWithItems),
+	types: _g(TSKindId.Types),
+	argumentListElements: _g(TSKindId.ArgumentListElements),
+	expressionListExpressions: _g(TSKindId.ExpressionListExpressions),
+	listPatternCasePatterns: _g(TSKindId.ListPatternCasePatterns),
+	dictPatternElements: _g(TSKindId.DictPatternElements),
+	patternListPatterns: _g(TSKindId.PatternListPatterns),
+	subscripts: _g(TSKindId.Subscripts),
+	dictionaryElements: _g(TSKindId.DictionaryElements),
+	exceptClauseExceptionAs: _g(TSKindId.ExceptClauseExceptionAs),
 	caseTuplePattern: _g(TSKindId.CaseTuplePattern),
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
@@ -827,20 +829,23 @@ export const is = {
 	PrintChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
-	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
-	WithClauseBare: _g(TSKindId.WithClauseBare),
+	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
+	withClauseBare: _g(TSKindId.WithClauseBare),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	simpleStatement: _sg(_supertype_simpleStatement_ids),
 	namedExpressionLhs: _sg(_supertype_namedExpressionLhs_ids),
 	expressions: _sg(_supertype_expressions_ids),
 	compoundStatement: _sg(_supertype_compoundStatement_ids),
+	withClause: _sg(_supertype_withClause_ids),
+	suite: _sg(_supertype_suite_ids),
 	simplePattern: _sg(_supertype_simplePattern_ids),
 	parameter: _sg(_supertype_parameter_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
+	assignment: _sg(_supertype_assignment_ids),
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
@@ -899,7 +904,6 @@ export const assert = {
 	exceptClause: _makeAssert('exceptClause', is.exceptClause as _AnyGuard),
 	finallyClause: _makeAssert('finallyClause', is.finallyClause as _AnyGuard),
 	withStatement: _makeAssert('withStatement', is.withStatement as _AnyGuard),
-	withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
 	withItem: _makeAssert('withItem', is.withItem as _AnyGuard),
 	functionDefinition: _makeAssert('functionDefinition', is.functionDefinition as _AnyGuard),
 	parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
@@ -943,7 +947,6 @@ export const assert = {
 	comparisonOperator: _makeAssert('comparisonOperator', is.comparisonOperator as _AnyGuard),
 	lambda: _makeAssert('lambda', is.lambda as _AnyGuard),
 	lambdaWithinForInClause: _makeAssert('lambdaWithinForInClause', is.lambdaWithinForInClause as _AnyGuard),
-	assignment: _makeAssert('assignment', is.assignment as _AnyGuard),
 	augmentedAssignment: _makeAssert('augmentedAssignment', is.augmentedAssignment as _AnyGuard),
 	patternList: _makeAssert('patternList', is.patternList as _AnyGuard),
 	yield_: _makeAssert('yield_', is.yield_ as _AnyGuard),
@@ -979,19 +982,19 @@ export const assert = {
 	interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
-	SimpleStatementsElements: _makeAssert('SimpleStatementsElements', is.SimpleStatementsElements as _AnyGuard),
-	Subjects: _makeAssert('Subjects', is.Subjects as _AnyGuard),
-	CasePatterns: _makeAssert('CasePatterns', is.CasePatterns as _AnyGuard),
-	WithClauseWithItems: _makeAssert('WithClauseWithItems', is.WithClauseWithItems as _AnyGuard),
-	Types: _makeAssert('Types', is.Types as _AnyGuard),
-	ArgumentListElements: _makeAssert('ArgumentListElements', is.ArgumentListElements as _AnyGuard),
-	ExpressionListExpressions: _makeAssert('ExpressionListExpressions', is.ExpressionListExpressions as _AnyGuard),
-	ListPatternCasePatterns: _makeAssert('ListPatternCasePatterns', is.ListPatternCasePatterns as _AnyGuard),
-	DictPatternElements: _makeAssert('DictPatternElements', is.DictPatternElements as _AnyGuard),
-	PatternListPatterns: _makeAssert('PatternListPatterns', is.PatternListPatterns as _AnyGuard),
-	Subscripts: _makeAssert('Subscripts', is.Subscripts as _AnyGuard),
-	DictionaryElements: _makeAssert('DictionaryElements', is.DictionaryElements as _AnyGuard),
-	ExceptClauseExceptionAs: _makeAssert('ExceptClauseExceptionAs', is.ExceptClauseExceptionAs as _AnyGuard),
+	simpleStatementsElements: _makeAssert('simpleStatementsElements', is.simpleStatementsElements as _AnyGuard),
+	subjects: _makeAssert('subjects', is.subjects as _AnyGuard),
+	casePatterns: _makeAssert('casePatterns', is.casePatterns as _AnyGuard),
+	withClauseWithItems: _makeAssert('withClauseWithItems', is.withClauseWithItems as _AnyGuard),
+	types: _makeAssert('types', is.types as _AnyGuard),
+	argumentListElements: _makeAssert('argumentListElements', is.argumentListElements as _AnyGuard),
+	expressionListExpressions: _makeAssert('expressionListExpressions', is.expressionListExpressions as _AnyGuard),
+	listPatternCasePatterns: _makeAssert('listPatternCasePatterns', is.listPatternCasePatterns as _AnyGuard),
+	dictPatternElements: _makeAssert('dictPatternElements', is.dictPatternElements as _AnyGuard),
+	patternListPatterns: _makeAssert('patternListPatterns', is.patternListPatterns as _AnyGuard),
+	subscripts: _makeAssert('subscripts', is.subscripts as _AnyGuard),
+	dictionaryElements: _makeAssert('dictionaryElements', is.dictionaryElements as _AnyGuard),
+	exceptClauseExceptionAs: _makeAssert('exceptClauseExceptionAs', is.exceptClauseExceptionAs as _AnyGuard),
 	caseTuplePattern: _makeAssert('caseTuplePattern', is.caseTuplePattern as _AnyGuard),
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),
@@ -1001,20 +1004,23 @@ export const assert = {
 	PrintChevronArguments: _makeAssert('PrintChevronArguments', is.PrintChevronArguments as _AnyGuard),
 	printStatementChevron: _makeAssert('printStatementChevron', is.printStatementChevron as _AnyGuard),
 	printStatementPlain: _makeAssert('printStatementPlain', is.printStatementPlain as _AnyGuard),
-	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
-	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
+	expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
+	withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),
 	namedExpressionLhs: _makeAssert('namedExpressionLhs', is.namedExpressionLhs as _AnyGuard),
 	expressions: _makeAssert('expressions', is.expressions as _AnyGuard),
 	compoundStatement: _makeAssert('compoundStatement', is.compoundStatement as _AnyGuard),
+	withClause: _makeAssert('withClause', is.withClause as _AnyGuard),
+	suite: _makeAssert('suite', is.suite as _AnyGuard),
 	simplePattern: _makeAssert('simplePattern', is.simplePattern as _AnyGuard),
 	parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	expressionWithinForInClause: _makeAssert('expressionWithinForInClause', is.expressionWithinForInClause as _AnyGuard),
 	expression: _makeAssert('expression', is.expression as _AnyGuard),
 	primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),
+	assignment: _makeAssert('assignment', is.assignment as _AnyGuard),
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),

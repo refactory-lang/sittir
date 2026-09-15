@@ -54,7 +54,8 @@ describe('utils engine facade emission', () => {
 		expect(contents).toContain(
 			'export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Hoisted<B> {'
 		);
-		expect(contents).toContain('isFlavorPair(value) ? hoist(value) : value');
+		expect(contents).toContain('value: hoistRoutes(value),');
+		expect(contents).toContain('export function hoistRoutes<B>(b: B): Hoisted<B> {');
 		expect(contents).toContain('B extends { strict: infer S }');
 	});
 });

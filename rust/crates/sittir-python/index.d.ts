@@ -136,6 +136,7 @@ export interface AssertStatementTransport {
 
 export interface AssignmentEqTransport {
   '$_trivia'?: TransportTrivia
+  _left: SlotValue<AssignmentEqLeftTransportSlot>
   _right: SlotValue<Box<AssignmentEqRightTransportSlot>>
   _eq_before?: number
   _eq_after?: number
@@ -143,16 +144,9 @@ export interface AssignmentEqTransport {
   _assignment_eq_after?: number
 }
 
-export interface AssignmentTransport {
-  '$_trivia'?: TransportTrivia
-  _left: SlotValue<AssignmentLeftTransportSlot>
-  _content: SlotValue<Box<AssignmentContentTransportSlot>>
-  _assignment_before?: number
-  _assignment_after?: number
-}
-
 export interface AssignmentTypedTransport {
   '$_trivia'?: TransportTrivia
+  _left: SlotValue<AssignmentTypedLeftTransportSlot>
   _type: SlotValue<TypeTransport>
   _right: SlotValue<Box<AssignmentTypedRightTransportSlot>>
   _colon_before?: number
@@ -165,6 +159,7 @@ export interface AssignmentTypedTransport {
 
 export interface AssignmentTypeTransport {
   '$_trivia'?: TransportTrivia
+  _left: SlotValue<AssignmentTypeLeftTransportSlot>
   _type: SlotValue<TypeTransport>
   _colon_before?: number
   _colon_after?: number
@@ -249,7 +244,7 @@ export interface CaseAsPatternTransport {
 export interface CaseClauseTransport {
   '$_trivia'?: TransportTrivia
   _guard?: SlotValue<IfClauseTransport>
-  _consequence: SlotValue<CaseClauseConsequenceTransportSlot>
+  _consequence: SlotValue<SuiteTransport>
   _case_patterns: SlotValue<CasePatternsTransport>
   _colon_before?: number
   _colon_after?: number
@@ -308,7 +303,7 @@ export interface ClassDefinitionTransport {
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParameterTransport>
   _superclasses?: SlotValue<ArgumentListTransport>
-  _body: SlotValue<ClassDefinitionBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _colon_before?: number
   _colon_after?: number
   _class_keyword_before?: number
@@ -522,7 +517,7 @@ export interface DottedNameTransport {
 export interface ElifClauseTransport {
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
-  _consequence: SlotValue<ElifClauseConsequenceTransportSlot>
+  _consequence: SlotValue<SuiteTransport>
   _colon_before?: number
   _colon_after?: number
   _elif_keyword_before?: number
@@ -533,7 +528,7 @@ export interface ElifClauseTransport {
 
 export interface ElseClauseTransport {
   '$_trivia'?: TransportTrivia
-  _body: SlotValue<ElseClauseBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _colon_before?: number
   _colon_after?: number
   _else_keyword_before?: number
@@ -579,7 +574,7 @@ export interface ExceptClauseTransport {
   '$_trivia'?: TransportTrivia
   _star_marker?: boolean
   _exception?: SlotValue<ExceptClauseExceptionTransport>
-  _suite: SlotValue<ExceptClauseSuiteTransportSlot>
+  _suite: SlotValue<SuiteTransport>
   _star_marker_before?: number
   _star_marker_after?: number
   _colon_before?: number
@@ -636,7 +631,7 @@ export interface ExpressionStatementTupleTransport {
 
 export interface FinallyClauseTransport {
   '$_trivia'?: TransportTrivia
-  _block: SlotValue<FinallyClauseBlockTransportSlot>
+  _block: SlotValue<SuiteTransport>
   _colon_before?: number
   _colon_after?: number
   _finally_keyword_before?: number
@@ -677,7 +672,7 @@ export interface ForStatementTransport {
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _left: SlotValue<ForStatementLeftTransportSlot>
   _right: SlotValue<ForStatementRightTransportSlot>
-  _body: SlotValue<ForStatementBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _alternative?: SlotValue<ElseClauseTransport>
   _colon_before?: number
   _colon_after?: number
@@ -696,7 +691,7 @@ export interface FunctionDefinitionTransport {
   _type_parameters?: SlotValue<TypeParameterTransport>
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<TypeTransport>
-  _body: SlotValue<FunctionDefinitionBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _dash_gt_before?: number
   _dash_gt_after?: number
   _colon_before?: number
@@ -764,7 +759,7 @@ export interface IfClauseTransport {
 export interface IfStatementTransport {
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
-  _consequence: SlotValue<IfStatementConsequenceTransportSlot>
+  _consequence: SlotValue<SuiteTransport>
   _alternative?: Array<SlotValue<IfStatementAlternativeTransportSlot>>
   _alternative_separator_space?: number
   _colon_before?: number
@@ -1313,14 +1308,21 @@ export interface SuiteBlockTransport {
   _suite_block_after?: number
 }
 
-export interface SuiteTransport {
+export interface SuiteEmptyTransport {
   '$_trivia'?: TransportTrivia
-  _content: SlotValue<SuiteContentTransportSlot>
+  _newline: SlotValue<NewlineTransport>
+}
+
+export interface SuiteInlineTransport {
+  '$_trivia'?: TransportTrivia
+  _simple_statements_elements: SlotValue<SimpleStatementsElementsTransport>
+  _suite_inline_before?: number
+  _suite_inline_after?: number
 }
 
 export interface TryStatementTransport {
   '$_trivia'?: TransportTrivia
-  _body: SlotValue<TryStatementBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _except_clauses?: Array<SlotValue<ExceptClauseTransport>>
   _else_clause?: SlotValue<ElseClauseTransport>
   _finally_clause?: SlotValue<FinallyClauseTransport>
@@ -1442,7 +1444,7 @@ export interface UnionTypeTransport {
 export interface WhileStatementTransport {
   '$_trivia'?: TransportTrivia
   _condition: SlotValue<ExpressionTransport>
-  _body: SlotValue<WhileStatementBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _alternative?: SlotValue<ElseClauseTransport>
   _colon_before?: number
   _colon_after?: number
@@ -1471,11 +1473,6 @@ export interface WithClauseParenTransport {
   _with_clause_paren_after?: number
 }
 
-export interface WithClauseTransport {
-  '$_trivia'?: TransportTrivia
-  _content: SlotValue<WithClauseContentTransportSlot>
-}
-
 export interface WithClauseWithItemsTransport {
   '$_trivia'?: TransportTrivia
   _with_item: Array<SlotValue<WithItemTransport>>
@@ -1493,7 +1490,7 @@ export interface WithStatementTransport {
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _with_clause: SlotValue<WithClauseTransport>
-  _body: SlotValue<WithStatementBodyTransportSlot>
+  _body: SlotValue<SuiteTransport>
   _colon_before?: number
   _colon_after?: number
   _with_keyword_before?: number

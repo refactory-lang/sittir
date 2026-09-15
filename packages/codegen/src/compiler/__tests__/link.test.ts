@@ -46,6 +46,7 @@ function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<Ra
 		factoryInline: [],
 		inline: [],
 		conflicts: [],
+		precedences: [],
 		word: null,
 		references: [],
 		...overrides
@@ -600,12 +601,12 @@ describe('Link — variant tagging + polymorph promotion', () => {
 	});
 
 	it('applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule', () => {
-		// visibility_modifier-shaped case: variant aliases buried in
+		// visibility_modifier-shaped case: variant arms buried in
 		// `optional(seq('(', inner_choice, ')'))`. `findVariantChoice`
 		// only sees the outermost (tagVariants-wrapped) choice whose
 		// members do NOT reference the registered `${parent}_${child}`
-		// symbols → push-down path runs. Each `_${parent}_${child}`
-		// hidden rule gets flanking `(` / `)` wrapped around its body;
+		// symbols → push-down path runs. Each `${parent}_${child}`
+		// variant rule gets flanking `(` / `)` wrapped around its body;
 		// the parent rule's enclosing seq drops those literals so the
 		// walker emits `$PUB$$$CHILDREN`. Parent stays as a choice
 		// (assemble suppresses T065 polymorph promotion via
@@ -638,22 +639,14 @@ describe('Link — variant tagging + polymorph promotion', () => {
 												type: CHOICE,
 												members: [
 													{
-														type: ALIAS,
-														named: true,
-														value: 'visibility_modifier_pub_self',
-														content: {
-															type: SYMBOL,
-															name: '_visibility_modifier_pub_self'
-														}
+														type: SYMBOL,
+														name: 'visibility_modifier_pub_self',
+														annotations: { variant: 'pub_self', variantOf: 'visibility_modifier' }
 													},
 													{
-														type: ALIAS,
-														named: true,
-														value: 'visibility_modifier_pub_super',
-														content: {
-															type: SYMBOL,
-															name: '_visibility_modifier_pub_super'
-														}
+														type: SYMBOL,
+														name: 'visibility_modifier_pub_super',
+														annotations: { variant: 'pub_super', variantOf: 'visibility_modifier' }
 													}
 												]
 											},
@@ -665,30 +658,27 @@ describe('Link — variant tagging + polymorph promotion', () => {
 					}
 				]
 			},
-			_visibility_modifier_pub_self: { type: SYMBOL, name: 'self' },
-			_visibility_modifier_pub_super: { type: SYMBOL, name: 'super' }
+			visibility_modifier_pub_self: { type: SYMBOL, name: 'self' },
+			visibility_modifier_pub_super: { type: SYMBOL, name: 'super' }
 		};
 		const derivations: DerivationLog = {
 			inferredFields: [],
 			promotedRules: [],
 			repeatedShapes: []
 		};
-		// R12/decision-7 V2 Task 2: pairs are discovered STRUCTURALLY from
-		// `rules` (`deriveStructuralVariantChildren`) — the fixture's inner
-		// choice (2 named ALIAS members targeting
-		// `visibility_modifier_pub_self`/`_super`) is alias-minted and
-		// prefix-named against `visibility_modifier`, so it's found without
-		// an explicit pairs argument.
+		// The variant children come from the arms' variant annotations
+		// (`deriveVariantChildren`), so the inner choice's two annotated
+		// symbols are found without an explicit pairs argument.
 		applyOverridePolymorphs(rules, derivations);
 		// Parent rule stays as a choice (not replaced by flat polymorph).
 		expect(rules['visibility_modifier']!.type).toBe('CHOICE');
 		// Each variant-child hidden rule now has its body wrapped in the
 		// ambient `(` / `)` literals that used to flank the inner choice.
-		const selfBody = rules['_visibility_modifier_pub_self']!;
+		const selfBody = rules['visibility_modifier_pub_self']!;
 		expect(selfBody.type).toBe('SEQ');
 		if (selfBody.type !== SEQ) throw new Error('unreachable');
 		expect(selfBody.members.map((m) => (m.type === 'STRING' ? m.value : m.type))).toEqual(['(', 'SYMBOL', ')']);
-		const superBody = rules['_visibility_modifier_pub_super']!;
+		const superBody = rules['visibility_modifier_pub_super']!;
 		expect(superBody.type).toBe('SEQ');
 		// Variant-child derivations emitted for downstream use.
 		const derivedKinds = derivations.promotedRules
@@ -825,7 +815,7 @@ describe('liftSeparators lifts a choice-of-literals separator without a diagnost
 			externalRoles: new Map(),
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			applyPromotedRules: true,
-			hiddenChoicesWithNamedAliasMembers: new Set()
+			hiddenNamedArmChoices: new Set()
 		});
 	}
 
@@ -875,7 +865,7 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 			externalRoles: new Map(),
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			applyPromotedRules: true,
-			hiddenChoicesWithNamedAliasMembers: new Set()
+			hiddenNamedArmChoices: new Set()
 		});
 	}
 
@@ -1268,13 +1258,14 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 });
 
 describe('link — variantChildren is stamped on the linked grammar', () => {
-	it('structural alias-minted arms surface as variantChildren (the stamp normalize/assemble consume)', () => {
-		const arm = (visible: string, hidden: string): Rule<'evaluate'> =>
+	it('variant-annotated arms surface as variantChildren (the stamp normalize/assemble consume)', () => {
+		const arm = (visible: string, hidden: string, variant: string): Rule<'evaluate'> =>
 			({
 				type: ALIAS,
 				named: true,
 				value: visible,
-				content: { type: SYMBOL, name: hidden }
+				content: { type: SYMBOL, name: hidden },
+				annotations: { variant, variantOf: 'array_expression' }
 			}) as unknown as Rule<'evaluate'>;
 		const raw = makeRaw({
 			array_expression: {
@@ -1283,7 +1274,7 @@ describe('link — variantChildren is stamped on the linked grammar', () => {
 					{ type: STRING, value: '[' },
 					{
 						type: CHOICE,
-						members: [arm('array_expression_semi', '_semi_body'), arm('array_expression_list', '_list_body')]
+						members: [arm('array_expression_semi', '_semi_body', 'semi'), arm('array_expression_list', '_list_body', 'list')]
 					},
 					{ type: STRING, value: ']' }
 				]

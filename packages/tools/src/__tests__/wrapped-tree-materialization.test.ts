@@ -316,24 +316,13 @@ describe('wrapped tree materialization', () => {
 				readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
 			};
 			const root = readTreeNode(handle) as {
-				statements: () => Array<{
-					content: () => {
-						content: () => {
-							content: () => unknown;
-						};
-					};
-				}>;
+				statements: () => Array<{ content: () => unknown }>;
 			};
-			const exportStatement = root.statements()[0]!;
-			// export_statement → export_statement_default → export_statement_default_decl_arm
-			// `declaration` (a real tree-sitter field) and the unnamed
-			// `default`-branch arm are two DIFFERENT storage kinds routed into
-			// ONE sanctioned union slot — storageName (and the accessor built
-			// from it) is `content`, not `declaration`: the union-slot-choice
-			// design (docs/superpowers/specs/2026-07-21-union-slot-choice-design.md)
-			// deliberately minimizes what crosses the native wire boundary by
-			// keeping storage names generic rather than per-arm-labeled.
-			const declarationArm = exportStatement.content().content();
+			// export_statement and export_statement_default are flattened into
+			// their variants, so the statement read is the
+			// export_statement_default_declaration node, whose `content` slot
+			// holds the declaration.
+			const declarationArm = root.statements()[0]!;
 
 			// The core claim: reading a function signature whose trailing
 			// semicolon is ASI-derived (no real `;` byte in the source) must

@@ -2,6 +2,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
+	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
 	isMultiple,
@@ -90,6 +91,15 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 	return storage !== undefined && isTextStorage(storage) ? storage : undefined;
 }
 
+function slotValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly NodeOrTerminal[] {
+	return slot.values.flatMap((value) => {
+		if (!isNodeRef(value)) return [value];
+		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
+		const variants = child instanceof AssembledSupertype ? child.variantSubtypes : undefined;
+		return variants === undefined ? [value] : variants.map((ref) => ({ ...ref, multiplicity: value.multiplicity }));
+	});
+}
+
 function kindArmName(parentKind: string, child: AssembledNode): string {
 	return camelCase(prefixNamedSuffix(parentKind, child.kind) ?? child.kind.replace(/^_+/, ''));
 }
@@ -136,6 +146,24 @@ function claimantOf(entry: SubFactory): string {
 	return [entry.arm.child.kind, ...entry.arm.path].join('.');
 }
 
+function grandArmCandidates(
+	node: AssembledNode,
+	child: AssembledNode,
+	slot: AssembledNonterminal,
+	residual: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	isEmitted: IsEmittedPredicate,
+	visiting: ReadonlySet<string>
+): Candidate[] {
+	return subFactoriesInternal(child, nodeMap, isEmitted, visiting).entries.map((inner) => {
+		const leaf = inner.arm.via === 'node' ? (inner.arm.leaf ?? inner.arm.child) : undefined;
+		const name = leaf === undefined ? inner.name : kindArmName(node.kind, leaf);
+		const arm: NodeArm = { via: 'node', child, path: [inner.name], leaf };
+		const entry: SubFactory = { name, slot, residual, arm, depth: flattened(inner), merges: false };
+		return { name, entry, claimant: claimantOf(entry) };
+	});
+}
+
 function hoistedCandidatesOf(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -147,9 +175,10 @@ function hoistedCandidatesOf(
 	const out: Candidate[] = [];
 	for (const s of node.slots) {
 		if (s === exclude || isMultiple(s)) continue;
-		if (s.values.length < 2 && !s.values.some((v) => isChoiceGroup(node, v, nodeMap, isEmitted, visiting))) continue;
+		const values = slotValuesOf(s, nodeMap);
+		if (values.length < 2 && !values.some((v) => isChoiceGroup(node, v, nodeMap, isEmitted, visiting))) continue;
 		const residual = node.slots.filter((f) => f !== s);
-		for (const value of s.values) {
+		for (const value of values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
 			if (child === undefined || child.annotations?.hoisted !== true) continue;
@@ -169,13 +198,7 @@ function hoistedCandidatesOf(
 			const entry: SubFactory = { name: naming.name, slot: s, residual, arm, depth: DIRECT, merges: false };
 			out.push({ ...naming, entry, claimant: claimantOf(entry) });
 			if (visiting.has(child.kind)) continue;
-			for (const inner of subFactoriesInternal(child, nodeMap, isEmitted, new Set([...visiting, node.kind])).entries) {
-				if (inner.arm.via !== 'node') continue;
-				const nested: NodeArm = { via: 'node', child, path: [inner.name], leaf: inner.arm.leaf ?? inner.arm.child };
-				const leafName = kindArmName(node.kind, nested.leaf!);
-				const flat: SubFactory = { name: leafName, slot: s, residual, arm: nested, depth: flattened(inner), merges: false };
-				out.push({ name: leafName, entry: flat, claimant: claimantOf(flat) });
-			}
+			out.push(...grandArmCandidates(node, child, s, residual, nodeMap, isEmitted, new Set([...visiting, node.kind])));
 		}
 	}
 	return out;
@@ -225,21 +248,14 @@ function derive(
 		} else {
 			slot = node.soleSlot!;
 			const residual = node.slots.filter((f) => f !== slot);
-			const inner = subFactoriesInternal(forwardChild, nodeMap, isEmitted, nextVisiting);
-			for (const s of inner.entries) {
-				const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
-				const name = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
-				const arm: NodeArm = { via: 'node', child: forwardChild, path: [s.name], leaf };
-				const entry: SubFactory = { name, slot, residual, arm, depth: flattened(s), merges: false };
-				candidates.push({ name, entry, claimant: claimantOf(entry) });
-			}
+			candidates.push(...grandArmCandidates(node, forwardChild, slot, residual, nodeMap, isEmitted, nextVisiting));
 			return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 		}
 	}
 
 	const residual = node.slots.filter((f) => f !== slot);
 
-	for (const value of slot.values) {
+	for (const value of slotValuesOf(slot, nodeMap)) {
 		if (isTerminalValue(value)) {
 			const name = armName(node, value, nodeMap);
 			const storage = textStorageOf(value, nodeMap);
@@ -272,14 +288,7 @@ function derive(
 		}
 
 		if (nextVisiting.has(child.kind)) continue;
-		const childSet = subFactoriesInternal(child, nodeMap, isEmitted, nextVisiting);
-		for (const s of childSet.entries) {
-			const leaf = s.arm.via === 'node' ? (s.arm.leaf ?? s.arm.child) : undefined;
-			const flatName = leaf === undefined ? s.name : kindArmName(node.kind, leaf);
-			const arm: NodeArm = { via: 'node', child, path: [s.name], leaf };
-			const entry: SubFactory = { name: flatName, slot, residual, arm, depth: flattened(s), merges: false };
-			candidates.push({ name: flatName, entry, claimant: claimantOf(entry) });
-		}
+		candidates.push(...grandArmCandidates(node, child, slot, residual, nodeMap, isEmitted, nextVisiting));
 	}
 	candidates.push(...hoistedCandidatesOf(node, nodeMap, isEmitted, slot, nextVisiting));
 

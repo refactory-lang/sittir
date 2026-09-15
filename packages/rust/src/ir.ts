@@ -36,23 +36,15 @@ export const synonym = {
 		return F.buildIdentifier(name);
 	},
 	// definition.function → function_item
-	get function() {
+	get function(): (typeof ir)['functionItem'] {
 		return ir.functionItem;
-	},
-	// definition.class → struct_item
-	get class() {
-		return ir.structItem;
 	},
 	// definition.method → function_item
-	get method() {
+	get method(): (typeof ir)['functionItem'] {
 		return ir.functionItem;
 	},
-	// definition.module → mod_item
-	get module() {
-		return ir.modItem;
-	},
 	// definition.interface → trait_item
-	get interface() {
+	get interface(): (typeof ir)['traitItem'] {
 		return ir.traitItem;
 	}
 } as const;
@@ -664,9 +656,7 @@ export const path: {
 export const ir: {
 	readonly sourceFile: typeof F.sourceFile;
 	readonly expressionStatement: typeof F.expressionStatement;
-	readonly macroDefinition: typeof F.macroDefinition;
 	readonly macroRule: typeof F.macroRule;
-	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenBindingPattern: typeof F.tokenBindingPattern;
 	readonly tokenRepetitionPattern: typeof F.tokenRepetitionPattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -674,10 +664,7 @@ export const ir: {
 	readonly attributeItem: typeof F.attributeItem;
 	readonly innerAttributeItem: typeof F.innerAttributeItem;
 	readonly attribute: typeof F.attribute;
-	readonly modItem: typeof F.modItem;
-	readonly foreignModItem: typeof F.foreignModItem;
 	readonly declarationList: typeof F.declarationList;
-	readonly structItem: typeof F.structItem;
 	readonly unionItem: typeof F.unionItem;
 	readonly enumItem: typeof F.enumItem;
 	readonly enumVariantList: typeof F.enumVariantList;
@@ -694,7 +681,6 @@ export const ir: {
 	readonly functionModifiers: typeof F.functionModifiers;
 	readonly whereClause: typeof F.whereClause;
 	readonly wherePredicate: typeof F.wherePredicate;
-	readonly implItem: typeof F.implItem;
 	readonly traitItem: typeof F.traitItem;
 	readonly associatedType: typeof F.associatedType;
 	readonly traitBounds: typeof F.traitBounds;
@@ -731,18 +717,15 @@ export const ir: {
 	readonly typeArguments: typeof F.typeArguments;
 	readonly typeBinding: typeof F.typeBinding;
 	readonly referenceType: typeof F.referenceType;
-	readonly pointerType: typeof F.pointerType;
 	readonly abstractType: typeof F.abstractType;
 	readonly dynamicType: typeof F.dynamicType;
 	readonly macroInvocation: typeof F.macroInvocation;
-	readonly delimTokenTree: typeof F.delimTokenTree;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 	readonly scopedTypeIdentifierInExpressionPosition: typeof F.scopedTypeIdentifierInExpressionPosition;
 	readonly scopedTypeIdentifier: typeof F.scopedTypeIdentifier;
 	readonly rangeExpression: typeof F.rangeExpression;
 	readonly unaryExpression: typeof F.unaryExpression;
 	readonly tryExpression: typeof F.tryExpression;
-	readonly referenceExpression: typeof F.referenceExpression;
 	readonly binaryExpression: typeof F.binaryExpression;
 	readonly assignmentExpression: typeof F.assignmentExpression;
 	readonly compoundAssignmentExpr: typeof F.compoundAssignmentExpr;
@@ -751,7 +734,6 @@ export const ir: {
 	readonly yieldExpression: typeof F.yieldExpression;
 	readonly callExpression: typeof F.callExpression;
 	readonly arguments: typeof F.arguments_;
-	readonly arrayExpression: typeof F.arrayExpression;
 	readonly parenthesizedExpression: typeof F.parenthesizedExpression;
 	readonly tupleExpression: typeof F.tupleExpression;
 	readonly structExpression: typeof F.structExpression;
@@ -765,14 +747,12 @@ export const ir: {
 	readonly elseClause: typeof F.elseClause;
 	readonly matchExpression: typeof F.matchExpression;
 	readonly matchBlock: typeof F.matchBlock;
-	readonly matchArm: typeof F.matchArm;
 	readonly lastMatchArm: typeof F.lastMatchArm;
 	readonly matchPattern: typeof F.matchPattern;
 	readonly whileExpression: typeof F.whileExpression;
 	readonly loopExpression: typeof F.loopExpression;
 	readonly forExpression: typeof F.forExpression;
 	readonly constBlock: typeof F.constBlock;
-	readonly closureExpression: typeof F.closureExpression;
 	readonly closureParameters: typeof F.closureParameters;
 	readonly label: typeof F.label;
 	readonly breakExpression: typeof F.breakExpression;
@@ -790,13 +770,10 @@ export const ir: {
 	readonly slicePattern: typeof F.slicePattern;
 	readonly tupleStructPattern: typeof F.tupleStructPattern;
 	readonly structPattern: typeof F.structPattern;
-	readonly fieldPattern: typeof F.fieldPattern;
 	readonly mutPattern: typeof F.mutPattern;
-	readonly rangePattern: typeof F.rangePattern;
 	readonly refPattern: typeof F.refPattern;
 	readonly capturedPattern: typeof F.capturedPattern;
 	readonly referencePattern: typeof F.referencePattern;
-	readonly orPattern: typeof F.orPattern;
 	readonly negativeLiteral: typeof F.negativeLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
@@ -821,10 +798,21 @@ export const ir: {
 	readonly visibilityModifierGroup: typeof F.visibilityModifierGroup;
 	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
-	readonly referenceExpressionRawMut: typeof F.referenceExpressionRawMut;
-	readonly implItemBody: typeof F.implItemBody;
-	readonly implItemPositiveClause: typeof F.implItemPositiveClause;
-	readonly implItemNegativeClause: typeof F.implItemNegativeClause;
+	readonly macroDefinition: typeof F.macroDefinition;
+	readonly tokenTreePattern: typeof F.tokenTreePattern;
+	readonly modItem: typeof F.modItem;
+	readonly foreignModItem: typeof F.foreignModItem;
+	readonly structItem: typeof F.structItem;
+	readonly implItem: typeof F.implItem;
+	readonly pointerType: typeof F.pointerType;
+	readonly delimTokenTree: typeof F.delimTokenTree;
+	readonly referenceExpression: typeof F.referenceExpression;
+	readonly arrayExpression: typeof F.arrayExpression;
+	readonly matchArm: typeof F.matchArm;
+	readonly closureExpression: typeof F.closureExpression;
+	readonly fieldPattern: typeof F.fieldPattern;
+	readonly rangePattern: typeof F.rangePattern;
+	readonly orPattern: typeof F.orPattern;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -834,6 +822,7 @@ export const ir: {
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
+	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly integerLiteral: typeof F.buildIntegerLiteral;
 	readonly charLiteral: typeof F.buildCharLiteral;
 	readonly escapeSequence: typeof F.buildEscapeSequence;
@@ -864,7 +853,6 @@ export const ir: {
 	readonly call: typeof F.callExpression;
 	readonly captured: typeof F.capturedPattern;
 	readonly char: typeof F.buildCharLiteral;
-	readonly closure: typeof F.closureExpression;
 	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
 	readonly const: typeof F.constItem;
 	readonly continue: typeof F.continueExpression;
@@ -875,28 +863,22 @@ export const ir: {
 	readonly field: typeof F.fieldExpression;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly for: typeof F.forExpression;
-	readonly foreignMod: typeof F.foreignModItem;
 	readonly function: typeof F.functionItem;
 	readonly functionSignature: typeof F.functionSignatureItem;
 	readonly gen: typeof F.genBlock;
 	readonly generic: typeof F.genericType;
 	readonly if: typeof F.ifExpression;
-	readonly impl: typeof F.implItem;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
 	readonly integer: typeof F.buildIntegerLiteral;
 	readonly let: typeof F.letDeclaration;
 	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
-	readonly macro: typeof F.macroDefinition;
 	readonly match: typeof F.matchExpression;
-	readonly mod: typeof F.modItem;
 	readonly mut: typeof F.mutPattern;
 	readonly negative: typeof F.negativeLiteral;
 	readonly never: typeof F.buildNeverType;
-	readonly or: typeof F.orPattern;
 	readonly parenthesized: typeof F.parenthesizedExpression;
-	readonly pointer: typeof F.pointerType;
 	readonly range: typeof F.rangeExpression;
 	readonly rawString: typeof F.rawStringLiteral;
 	readonly ref: typeof F.refPattern;
@@ -908,9 +890,8 @@ export const ir: {
 	readonly slice: typeof F.slicePattern;
 	readonly static: typeof F.staticItem;
 	readonly string: typeof F.stringLiteral;
-	readonly struct: typeof F.structItem;
+	readonly struct: typeof F.structExpression;
 	readonly trait: typeof F.traitItem;
-	readonly tree: typeof F.tokenTreePattern;
 	readonly try: typeof F.tryExpression;
 	readonly tuple: typeof F.tupleType;
 	readonly tupleStruct: typeof F.tupleStructPattern;
@@ -944,9 +925,7 @@ export const ir: {
 	// Node factories
 	sourceFile: F.sourceFile,
 	expressionStatement: F.expressionStatement,
-	macroDefinition: F.macroDefinition,
 	macroRule: F.macroRule,
-	tokenTreePattern: F.tokenTreePattern,
 	tokenBindingPattern: F.tokenBindingPattern,
 	tokenRepetitionPattern: F.tokenRepetitionPattern,
 	tokenTree: F.tokenTree,
@@ -954,10 +933,7 @@ export const ir: {
 	attributeItem: F.attributeItem,
 	innerAttributeItem: F.innerAttributeItem,
 	attribute: F.attribute,
-	modItem: F.modItem,
-	foreignModItem: F.foreignModItem,
 	declarationList: F.declarationList,
-	structItem: F.structItem,
 	unionItem: F.unionItem,
 	enumItem: F.enumItem,
 	enumVariantList: F.enumVariantList,
@@ -974,7 +950,6 @@ export const ir: {
 	functionModifiers: F.functionModifiers,
 	whereClause: F.whereClause,
 	wherePredicate: F.wherePredicate,
-	implItem: F.implItem,
 	traitItem: F.traitItem,
 	associatedType: F.associatedType,
 	traitBounds: F.traitBounds,
@@ -1011,18 +986,15 @@ export const ir: {
 	typeArguments: F.typeArguments,
 	typeBinding: F.typeBinding,
 	referenceType: F.referenceType,
-	pointerType: F.pointerType,
 	abstractType: F.abstractType,
 	dynamicType: F.dynamicType,
 	macroInvocation: F.macroInvocation,
-	delimTokenTree: F.delimTokenTree,
 	scopedIdentifier: F.scopedIdentifier,
 	scopedTypeIdentifierInExpressionPosition: F.scopedTypeIdentifierInExpressionPosition,
 	scopedTypeIdentifier: F.scopedTypeIdentifier,
 	rangeExpression: F.rangeExpression,
 	unaryExpression: F.unaryExpression,
 	tryExpression: F.tryExpression,
-	referenceExpression: F.referenceExpression,
 	binaryExpression: F.binaryExpression,
 	assignmentExpression: F.assignmentExpression,
 	compoundAssignmentExpr: F.compoundAssignmentExpr,
@@ -1031,7 +1003,6 @@ export const ir: {
 	yieldExpression: F.yieldExpression,
 	callExpression: F.callExpression,
 	arguments: F.arguments_,
-	arrayExpression: F.arrayExpression,
 	parenthesizedExpression: F.parenthesizedExpression,
 	tupleExpression: F.tupleExpression,
 	structExpression: F.structExpression,
@@ -1045,14 +1016,12 @@ export const ir: {
 	elseClause: F.elseClause,
 	matchExpression: F.matchExpression,
 	matchBlock: F.matchBlock,
-	matchArm: F.matchArm,
 	lastMatchArm: F.lastMatchArm,
 	matchPattern: F.matchPattern,
 	whileExpression: F.whileExpression,
 	loopExpression: F.loopExpression,
 	forExpression: F.forExpression,
 	constBlock: F.constBlock,
-	closureExpression: F.closureExpression,
 	closureParameters: F.closureParameters,
 	label: F.label,
 	breakExpression: F.breakExpression,
@@ -1070,13 +1039,10 @@ export const ir: {
 	slicePattern: F.slicePattern,
 	tupleStructPattern: F.tupleStructPattern,
 	structPattern: F.structPattern,
-	fieldPattern: F.fieldPattern,
 	mutPattern: F.mutPattern,
-	rangePattern: F.rangePattern,
 	refPattern: F.refPattern,
 	capturedPattern: F.capturedPattern,
 	referencePattern: F.referencePattern,
-	orPattern: F.orPattern,
 	negativeLiteral: F.negativeLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
@@ -1101,10 +1067,21 @@ export const ir: {
 	visibilityModifierGroup: F.visibilityModifierGroup,
 	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,
-	referenceExpressionRawMut: F.referenceExpressionRawMut,
-	implItemBody: F.implItemBody,
-	implItemPositiveClause: F.implItemPositiveClause,
-	implItemNegativeClause: F.implItemNegativeClause,
+	macroDefinition: F.macroDefinition,
+	tokenTreePattern: F.tokenTreePattern,
+	modItem: F.modItem,
+	foreignModItem: F.foreignModItem,
+	structItem: F.structItem,
+	implItem: F.implItem,
+	pointerType: F.pointerType,
+	delimTokenTree: F.delimTokenTree,
+	referenceExpression: F.referenceExpression,
+	arrayExpression: F.arrayExpression,
+	matchArm: F.matchArm,
+	closureExpression: F.closureExpression,
+	fieldPattern: F.fieldPattern,
+	rangePattern: F.rangePattern,
+	orPattern: F.orPattern,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1116,6 +1093,7 @@ export const ir: {
 	self: F.buildSelf,
 	super: F.buildSuper,
 	crate: F.buildCrate,
+	rangePatternWithLeftBare: F.buildRangePatternWithLeftBare,
 
 	// Leaf node factories
 	integerLiteral: F.buildIntegerLiteral,
@@ -1150,7 +1128,6 @@ export const ir: {
 	call: F.callExpression,
 	captured: F.capturedPattern,
 	char: F.buildCharLiteral,
-	closure: F.closureExpression,
 	compoundAssignment: F.compoundAssignmentExpr,
 	const: F.constItem,
 	continue: F.continueExpression,
@@ -1161,28 +1138,22 @@ export const ir: {
 	field: F.fieldExpression,
 	float: F.buildFloatLiteral,
 	for: F.forExpression,
-	foreignMod: F.foreignModItem,
 	function: F.functionItem,
 	functionSignature: F.functionSignatureItem,
 	gen: F.genBlock,
 	generic: F.genericType,
 	if: F.ifExpression,
-	impl: F.implItem,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
 	integer: F.buildIntegerLiteral,
 	let: F.letDeclaration,
 	list: F.useList,
 	loop: F.loopExpression,
-	macro: F.macroDefinition,
 	match: F.matchExpression,
-	mod: F.modItem,
 	mut: F.mutPattern,
 	negative: F.negativeLiteral,
 	never: F.buildNeverType,
-	or: F.orPattern,
 	parenthesized: F.parenthesizedExpression,
-	pointer: F.pointerType,
 	range: F.rangeExpression,
 	rawString: F.rawStringLiteral,
 	ref: F.refPattern,
@@ -1194,9 +1165,8 @@ export const ir: {
 	slice: F.slicePattern,
 	static: F.staticItem,
 	string: F.stringLiteral,
-	struct: F.structItem,
+	struct: F.structExpression,
 	trait: F.traitItem,
-	tree: F.tokenTreePattern,
 	try: F.tryExpression,
 	tuple: F.tupleType,
 	tupleStruct: F.tupleStructPattern,
