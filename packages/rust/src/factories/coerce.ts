@@ -13,9 +13,7 @@ export const _fromMap = {
 	source_file: coerceToSourceFile,
 	empty_statement: coerceToEmptyStatement,
 	expression_statement: coerceToExpressionStatement,
-	macro_definition: coerceToMacroDefinition,
 	macro_rule: coerceToMacroRule,
-	token_tree_pattern: coerceToTokenTreePattern,
 	token_binding_pattern: coerceToTokenBindingPattern,
 	token_repetition_pattern: coerceToTokenRepetitionPattern,
 	token_tree: coerceToTokenTree,
@@ -23,10 +21,7 @@ export const _fromMap = {
 	attribute_item: coerceToAttributeItem,
 	inner_attribute_item: coerceToInnerAttributeItem,
 	attribute: coerceToAttribute,
-	mod_item: coerceToModItem,
-	foreign_mod_item: coerceToForeignModItem,
 	declaration_list: coerceToDeclarationList,
-	struct_item: coerceToStructItem,
 	union_item: coerceToUnionItem,
 	enum_item: coerceToEnumItem,
 	enum_variant_list: coerceToEnumVariantList,
@@ -43,7 +38,6 @@ export const _fromMap = {
 	function_modifiers: coerceToFunctionModifiers,
 	where_clause: coerceToWhereClause,
 	where_predicate: coerceToWherePredicate,
-	impl_item: coerceToImplItem,
 	trait_item: coerceToTraitItem,
 	associated_type: coerceToAssociatedType,
 	trait_bounds: coerceToTraitBounds,
@@ -81,20 +75,17 @@ export const _fromMap = {
 	type_arguments: coerceToTypeArguments,
 	type_binding: coerceToTypeBinding,
 	reference_type: coerceToReferenceType,
-	pointer_type: coerceToPointerType,
 	never_type: coerceToNeverType,
 	abstract_type: coerceToAbstractType,
 	dynamic_type: coerceToDynamicType,
 	mutable_specifier: coerceToMutableSpecifier,
 	macro_invocation: coerceToMacroInvocation,
-	delim_token_tree: coerceToDelimTokenTree,
 	scoped_identifier: coerceToScopedIdentifier,
 	scoped_type_identifier_in_expression_position: coerceToScopedTypeIdentifierInExpressionPosition,
 	scoped_type_identifier: coerceToScopedTypeIdentifier,
 	range_expression: coerceToRangeExpression,
 	unary_expression: coerceToUnaryExpression,
 	try_expression: coerceToTryExpression,
-	reference_expression: coerceToReferenceExpression,
 	binary_expression: coerceToBinaryExpression,
 	assignment_expression: coerceToAssignmentExpression,
 	compound_assignment_expr: coerceToCompoundAssignmentExpr,
@@ -103,7 +94,6 @@ export const _fromMap = {
 	yield_expression: coerceToYieldExpression,
 	call_expression: coerceToCallExpression,
 	arguments: coerceToArguments,
-	array_expression: coerceToArrayExpression,
 	parenthesized_expression: coerceToParenthesizedExpression,
 	tuple_expression: coerceToTupleExpression,
 	unit_expression: coerceToUnitExpression,
@@ -118,14 +108,12 @@ export const _fromMap = {
 	else_clause: coerceToElseClause,
 	match_expression: coerceToMatchExpression,
 	match_block: coerceToMatchBlock,
-	match_arm: coerceToMatchArm,
 	last_match_arm: coerceToLastMatchArm,
 	match_pattern: coerceToMatchPattern,
 	while_expression: coerceToWhileExpression,
 	loop_expression: coerceToLoopExpression,
 	for_expression: coerceToForExpression,
 	const_block: coerceToConstBlock,
-	closure_expression: coerceToClosureExpression,
 	closure_parameters: coerceToClosureParameters,
 	label: coerceToLabel,
 	break_expression: coerceToBreakExpression,
@@ -143,14 +131,11 @@ export const _fromMap = {
 	slice_pattern: coerceToSlicePattern,
 	tuple_struct_pattern: coerceToTupleStructPattern,
 	struct_pattern: coerceToStructPattern,
-	field_pattern: coerceToFieldPattern,
 	remaining_field_pattern: coerceToRemainingFieldPattern,
 	mut_pattern: coerceToMutPattern,
-	range_pattern: coerceToRangePattern,
 	ref_pattern: coerceToRefPattern,
 	captured_pattern: coerceToCapturedPattern,
 	reference_pattern: coerceToReferencePattern,
-	or_pattern: coerceToOrPattern,
 	negative_literal: coerceToNegativeLiteral,
 	integer_literal: coerceToIntegerLiteral,
 	string_literal: coerceToStringLiteral,
@@ -165,79 +150,84 @@ export const _fromMap = {
 	super: coerceToSuper,
 	crate: coerceToCrate,
 	metavariable: coerceToMetavariable,
-	_macro_rules: coerceToMacroRules,
-	_enum_variant_list_elements: coerceToEnumVariantListElements,
-	_field_declaration_list_elements: coerceToFieldDeclarationListElements,
-	_ordered_field_declaration_list_elements: coerceToOrderedFieldDeclarationListElements,
-	_where_predicates: coerceToWherePredicates,
-	_type_parameters_elements: coerceToTypeParametersElements,
-	_use_clauses: coerceToUseClauses,
-	_parameters_elements: coerceToParametersElements,
-	_lifetimes: coerceToLifetimes,
-	_use_bounds_elements: coerceToUseBoundsElements,
-	_type_arguments_elements: coerceToTypeArgumentsElements,
-	_arguments_elements: coerceToArgumentsElements,
-	_field_initializer_list_elements: coerceToFieldInitializerListElements,
-	_tuple_pattern_elements: coerceToTuplePatternElements,
-	_patterns: coerceToPatterns,
-	_struct_pattern_elements: coerceToStructPatternElements,
-	_visibility_modifier_group: coerceToVisibilityModifierGroup,
+	macro_rules: coerceToMacroRules,
+	enum_variant_list_elements: coerceToEnumVariantListElements,
+	field_declaration_list_elements: coerceToFieldDeclarationListElements,
+	ordered_field_declaration_list_elements: coerceToOrderedFieldDeclarationListElements,
+	where_predicates: coerceToWherePredicates,
+	type_parameters_elements: coerceToTypeParametersElements,
+	use_clauses: coerceToUseClauses,
+	parameters_elements: coerceToParametersElements,
+	lifetimes: coerceToLifetimes,
+	use_bounds_elements: coerceToUseBoundsElements,
+	type_arguments_elements: coerceToTypeArgumentsElements,
+	arguments_elements: coerceToArgumentsElements,
+	field_initializer_list_elements: coerceToFieldInitializerListElements,
+	tuple_pattern_elements: coerceToTuplePatternElements,
+	patterns: coerceToPatterns,
+	struct_pattern_elements: coerceToStructPatternElements,
+	visibility_modifier_group: coerceToVisibilityModifierGroup,
 	_tuple_type_elements: coerceToTupleTypeElements,
 	_tuple_expression_elements: coerceToTupleExpressionElements,
 	_string_literal_open: coerceToStringLiteralOpen,
-	_reference_expression_raw_mut: coerceToReferenceExpressionRawMut,
-	_impl_item_body: coerceToImplItemBody,
-	_impl_item_positive_clause: coerceToImplItemPositiveClause,
-	_impl_item_negative_clause: coerceToImplItemNegativeClause,
-	_array_expression_semi: coerceToArrayExpressionSemi,
-	_array_expression_list: coerceToArrayExpressionList,
-	_attribute_input: coerceToAttributeInput,
-	_closure_expression_block: coerceToClosureExpressionBlock,
-	_closure_expression_expr: coerceToClosureExpressionExpr,
-	_visibility_modifier_pub: coerceToVisibilityModifierPub,
-	_visibility_modifier_pub_in_path: coerceToVisibilityModifierPubInPath,
-	_function_type_trait_form: coerceToFunctionTypeTraitForm,
-	_function_type_fn_form: coerceToFunctionTypeFnForm,
-	_mod_item_external: coerceToModItemExternal,
-	_mod_item_inline: coerceToModItemInline,
-	_or_pattern_binary: coerceToOrPatternBinary,
-	_or_pattern_prefix: coerceToOrPatternPrefix,
-	_pointer_type_const: coerceToPointerTypeConst,
-	_pointer_type_mut: coerceToPointerTypeMut,
-	_range_expression_binary: coerceToRangeExpressionBinary,
-	_range_expression_postfix: coerceToRangeExpressionPostfix,
-	_range_expression_prefix: coerceToRangeExpressionPrefix,
-	_expression_statement_with_semi: coerceToExpressionStatementWithSemi,
-	_foreign_mod_item_semi: coerceToForeignModItemSemi,
-	_foreign_mod_item_body: coerceToForeignModItemBody,
-	_match_arm_with_comma: coerceToMatchArmWithComma,
-	_match_arm_block_ending: coerceToMatchArmBlockEnding,
-	_line_comment_regular_dslash: coerceToLineCommentRegularDslash,
-	_line_comment_doc_outer: coerceToLineCommentDocOuter,
-	_line_comment_doc_inner: coerceToLineCommentDocInner,
-	_line_comment_content: coerceToLineCommentContent,
-	_block_comment_doc_outer: coerceToBlockCommentDocOuter,
-	_block_comment_doc_inner: coerceToBlockCommentDocInner,
-	_token_tree_pattern_paren: coerceToTokenTreePatternParen,
-	_token_tree_pattern_bracket: coerceToTokenTreePatternBracket,
-	_token_tree_pattern_brace: coerceToTokenTreePatternBrace,
-	_token_tree_paren: coerceToTokenTreeParen,
-	_token_tree_bracket: coerceToTokenTreeBracket,
-	_token_tree_brace: coerceToTokenTreeBrace,
-	_delim_token_tree_paren: coerceToDelimTokenTreeParen,
-	_delim_token_tree_bracket: coerceToDelimTokenTreeBracket,
-	_delim_token_tree_brace: coerceToDelimTokenTreeBrace,
-	_field_pattern_shorthand: coerceToFieldPatternShorthand,
-	_field_pattern_named: coerceToFieldPatternNamed,
-	_macro_definition_paren: coerceToMacroDefinitionParen,
-	_macro_definition_bracket: coerceToMacroDefinitionBracket,
-	_macro_definition_brace: coerceToMacroDefinitionBrace,
-	_range_pattern_prefix: coerceToRangePatternPrefix,
-	_range_pattern_with_left_with_right: coerceToRangePatternWithLeftWithRight,
-	_range_pattern_with_left: coerceToRangePatternWithLeft,
-	_struct_item_brace: coerceToStructItemBrace,
-	_struct_item_tuple: coerceToStructItemTuple,
-	_struct_item_unit: coerceToStructItemUnit,
+	array_expression_semi: coerceToArrayExpressionSemi,
+	array_expression_list: coerceToArrayExpressionList,
+	attribute_input: coerceToAttributeInput,
+	closure_expression_block: coerceToClosureExpressionBlock,
+	closure_expression_expr: coerceToClosureExpressionExpr,
+	reference_expression_raw_const: coerceToReferenceExpressionRawConst,
+	reference_expression_raw_mut: coerceToReferenceExpressionRawMut,
+	reference_expression_mut: coerceToReferenceExpressionMut,
+	reference_expression_bare: coerceToReferenceExpressionBare,
+	impl_item_positive_clause: coerceToImplItemPositiveClause,
+	impl_item_negative_clause: coerceToImplItemNegativeClause,
+	impl_item_body: coerceToImplItemBody,
+	impl_item_semi: coerceToImplItemSemi,
+	visibility_modifier_pub: coerceToVisibilityModifierPub,
+	visibility_modifier_pub_in_path: coerceToVisibilityModifierPubInPath,
+	function_type_trait_form: coerceToFunctionTypeTraitForm,
+	function_type_fn_form: coerceToFunctionTypeFnForm,
+	mod_item_external: coerceToModItemExternal,
+	mod_item_inline: coerceToModItemInline,
+	or_pattern_binary: coerceToOrPatternBinary,
+	or_pattern_prefix: coerceToOrPatternPrefix,
+	pointer_type_const: coerceToPointerTypeConst,
+	pointer_type_mut: coerceToPointerTypeMut,
+	range_expression_binary: coerceToRangeExpressionBinary,
+	range_expression_postfix: coerceToRangeExpressionPostfix,
+	range_expression_prefix: coerceToRangeExpressionPrefix,
+	expression_statement_with_semi: coerceToExpressionStatementWithSemi,
+	foreign_mod_item_semi: coerceToForeignModItemSemi,
+	foreign_mod_item_body: coerceToForeignModItemBody,
+	match_arm_with_comma: coerceToMatchArmWithComma,
+	match_arm_block_ending: coerceToMatchArmBlockEnding,
+	line_comment_regular_dslash: coerceToLineCommentRegularDslash,
+	line_comment_doc_outer: coerceToLineCommentDocOuter,
+	line_comment_doc_inner: coerceToLineCommentDocInner,
+	line_comment_content: coerceToLineCommentContent,
+	block_comment_doc_outer: coerceToBlockCommentDocOuter,
+	block_comment_doc_inner: coerceToBlockCommentDocInner,
+	token_tree_pattern_paren: coerceToTokenTreePatternParen,
+	token_tree_pattern_bracket: coerceToTokenTreePatternBracket,
+	token_tree_pattern_brace: coerceToTokenTreePatternBrace,
+	token_tree_paren: coerceToTokenTreeParen,
+	token_tree_bracket: coerceToTokenTreeBracket,
+	token_tree_brace: coerceToTokenTreeBrace,
+	delim_token_tree_paren: coerceToDelimTokenTreeParen,
+	delim_token_tree_bracket: coerceToDelimTokenTreeBracket,
+	delim_token_tree_brace: coerceToDelimTokenTreeBrace,
+	field_pattern_shorthand: coerceToFieldPatternShorthand,
+	field_pattern_named: coerceToFieldPatternNamed,
+	macro_definition_paren: coerceToMacroDefinitionParen,
+	macro_definition_bracket: coerceToMacroDefinitionBracket,
+	macro_definition_brace: coerceToMacroDefinitionBrace,
+	range_pattern_prefix: coerceToRangePatternPrefix,
+	range_pattern_with_left_with_right: coerceToRangePatternWithLeftWithRight,
+	range_pattern_with_left_bare: coerceToRangePatternWithLeftBare,
+	range_pattern_with_left: coerceToRangePatternWithLeft,
+	struct_item_brace: coerceToStructItemBrace,
+	struct_item_tuple: coerceToStructItemTuple,
+	struct_item_unit: coerceToStructItemUnit,
 	_attributed_field_declaration: coerceToAttributedFieldDeclaration,
 	_attributed_enum_variant: coerceToAttributedEnumVariant,
 	_attributed_parameter: coerceToAttributedParameter,
@@ -278,6 +268,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	super: { values: ['super'], factory: () => F.buildSuper() },
 	crate: { values: ['crate'], factory: () => F.buildCrate() },
 	metavariable: { factory: F.buildMetavariable },
+	line_comment_regular_dslash: { factory: F.buildLineCommentRegularDslash },
+	line_comment_content: { factory: F.buildLineCommentContent },
+	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
 	string_content: { factory: F.buildStringContent },
 	raw_string_literal_content: { factory: F.buildRawStringLiteralContent },
 	float_literal: { factory: F.buildFloatLiteral }
@@ -340,8 +333,7 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
 	yield: 'yield_expression',
 	break: 'break_expression',
 	continue: 'continue_expression',
-	raw: '_reference_expression_raw_mut',
-	pub: '_visibility_modifier_pub'
+	pub: 'visibility_modifier_pub'
 };
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {
 	where_clause: () => F.buildWhereClause(),
@@ -351,14 +343,13 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 	yield_expression: () => F.buildYieldExpression(),
 	break_expression: () => F.buildBreakExpression(),
 	continue_expression: () => F.buildContinueExpression(),
-	_reference_expression_raw_mut: () => F.buildReferenceExpressionRawMut(),
-	_visibility_modifier_pub: () => F.buildVisibilityModifierPub()
+	visibility_modifier_pub: () => F.buildVisibilityModifierPub()
 };
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'use_wildcard',
 	'visibility_modifier',
-	'_visibility_modifier_group',
-	'_visibility_modifier_pub_in_path',
+	'visibility_modifier_group',
+	'visibility_modifier_pub_in_path',
 	'expression_statement',
 	'removed_trait_bound',
 	'use_list',
@@ -367,7 +358,6 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'for_lifetimes',
 	'tuple_type',
 	'use_bounds',
-	'pointer_type',
 	'dynamic_type',
 	'range_expression',
 	'try_expression',
@@ -383,228 +373,229 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'slice_pattern',
 	'mut_pattern',
 	'ref_pattern',
-	'or_pattern',
 	'negative_literal',
-	'_use_clauses',
-	'_lifetimes',
-	'_use_bounds_elements',
-	'_field_initializer_list_elements',
-	'_tuple_pattern_elements',
-	'_patterns',
-	'_struct_pattern_elements',
+	'line_comment',
+	'use_clauses',
+	'lifetimes',
+	'use_bounds_elements',
+	'field_initializer_list_elements',
+	'tuple_pattern_elements',
+	'patterns',
+	'struct_pattern_elements',
 	'_tuple_type_elements',
 	'_tuple_expression_elements',
-	'_impl_item_positive_clause',
-	'_impl_item_negative_clause',
-	'_visibility_modifier_pub',
-	'_function_type_trait_form',
-	'_or_pattern_prefix',
-	'_pointer_type_const',
-	'_pointer_type_mut',
-	'_range_expression_postfix',
-	'_range_expression_prefix',
-	'_expression_statement_with_semi'
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
+	'impl_item_positive_clause',
+	'impl_item_negative_clause',
+	'visibility_modifier_pub',
+	'function_type_trait_form',
+	'or_pattern_prefix',
+	'pointer_type_const',
+	'pointer_type_mut',
+	'range_expression_postfix',
+	'range_expression_prefix',
+	'expression_statement_with_semi'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
 	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
-	63, 64, 65, 66, 67, 68, 69, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
+	63, 64, 65, 66, 67, 68, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
 	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 117, 120,
 	121, 122, 125, 126, 128, 129, 130, 131, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 153, 157, 158, 159,
 	160, 161, 162, 165, 173, 231, 241, 268, 308, 320, 322, 323, 325, 326, 327, 328, 329, 347, 348, 349, 350, 353, 354,
-	356, 357, 358, 360, 362, 409
+	356, 357, 358, 411
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382, 383
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384, 385
 	]),
-	macro_definition: new Set([404, 405, 406]),
-	token_tree_pattern: new Set([393, 394, 395]),
-	token_tree: new Set([396, 397, 398, 399, 400, 401]),
+	token_tree: new Set([398, 399, 400]),
 	attribute_item: new Set([179]),
 	inner_attribute_item: new Set([179]),
-	mod_item: new Set([374, 375]),
-	foreign_mod_item: new Set([384, 385]),
-	struct_item: new Set([411, 412, 413]),
-	enum_variant_list: new Set([331, 415]),
-	field_declaration_list: new Set([332, 414]),
-	ordered_field_declaration_list: new Set([333, 419]),
+	enum_variant_list: new Set([331, 417]),
+	field_declaration_list: new Set([332, 416]),
+	ordered_field_declaration_list: new Set([333, 421]),
 	where_clause: new Set([199, 334]),
 	removed_trait_bound: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
 	]),
-	type_parameters: new Set([335, 417]),
+	type_parameters: new Set([335, 419]),
 	use_list: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336]),
 	use_wildcard: new Set([1, 129, 130, 131, 132, 250]),
-	parameters: new Set([337, 416]),
+	parameters: new Set([337, 418]),
 	extern_modifier: new Set([318]),
-	visibility_modifier: new Set([1, 129, 130, 131, 132, 250, 346, 370, 371]),
+	visibility_modifier: new Set([1, 129, 130, 131, 132, 250, 346, 372, 373]),
 	bracketed_type: new Set([
-		1, 132, 204, 205, 225, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
+		1, 132, 204, 205, 225, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 226, 338]),
-	tuple_type: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
-	]),
+	tuple_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381]),
 	use_bounds: new Set([1, 226, 339]),
-	type_arguments: new Set([340, 420]),
-	pointer_type: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
-	]),
-	dynamic_type: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
-	]),
-	delim_token_tree: new Set([399, 400, 401]),
+	type_arguments: new Set([340, 422]),
+	dynamic_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381]),
 	range_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	try_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	return_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	yield_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	arguments: new Set([341, 418]),
-	array_expression: new Set([365, 366]),
+	arguments: new Set([341, 420]),
 	parenthesized_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	field_initializer_list: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 271, 272, 273, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300,
-		318, 319, 320, 342, 357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		271, 272, 273, 274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
+		342, 357, 359, 360, 362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	base_field_initializer: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	else_clause: new Set([274, 300]),
-	match_block: new Set([421]),
-	match_arm: new Set([386, 387]),
+	match_block: new Set([423]),
 	const_block: new Set([300]),
-	closure_expression: new Set([368, 369]),
 	label: new Set([1]),
 	continue_expression: new Set([1, 290]),
 	await_expression: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
 	unsafe_block: new Set([300]),
 	try_block: new Set([300]),
 	tuple_pattern: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
 	slice_pattern: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
-	field_pattern: new Set([402, 403]),
 	mut_pattern: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
-	range_pattern: new Set([407, 410]),
 	ref_pattern: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
-	]),
-	or_pattern: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
 	negative_literal: new Set([116, 151]),
-	line_comment: new Set([145, 155, 388, 389, 390]),
-	block_comment: new Set([154, 391, 392]),
-	_macro_rules: new Set([168]),
-	_enum_variant_list_elements: new Set([415]),
-	_field_declaration_list_elements: new Set([414]),
-	_ordered_field_declaration_list_elements: new Set([419]),
-	_where_predicates: new Set([199]),
-	_type_parameters_elements: new Set([417]),
-	_use_clauses: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336]),
-	_parameters_elements: new Set([416]),
-	_lifetimes: new Set([1, 226]),
-	_use_bounds_elements: new Set([1, 226]),
-	_type_arguments_elements: new Set([420]),
-	_arguments_elements: new Set([418]),
-	_field_initializer_list_elements: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 271, 272, 273, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300,
-		318, 319, 320, 357, 365, 366, 368, 369, 380, 381, 382
+	line_comment: new Set([145, 155, 390, 391, 392]),
+	block_comment: new Set([154, 393, 394]),
+	macro_rules: new Set([168]),
+	enum_variant_list_elements: new Set([417]),
+	field_declaration_list_elements: new Set([416]),
+	ordered_field_declaration_list_elements: new Set([421]),
+	where_predicates: new Set([199]),
+	type_parameters_elements: new Set([419]),
+	use_clauses: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336]),
+	parameters_elements: new Set([418]),
+	lifetimes: new Set([1, 226]),
+	use_bounds_elements: new Set([1, 226]),
+	type_arguments_elements: new Set([422]),
+	arguments_elements: new Set([420]),
+	field_initializer_list_elements: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		271, 272, 273, 274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
+		357, 359, 360, 362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_tuple_pattern_elements: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+	tuple_pattern_elements: new Set([
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
-	_patterns: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+	patterns: new Set([
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
-	_struct_pattern_elements: new Set([307, 308, 402, 403]),
-	_visibility_modifier_group: new Set([1, 129, 130, 131, 132, 250, 371]),
+	struct_pattern_elements: new Set([308, 404, 405]),
+	visibility_modifier_group: new Set([1, 129, 130, 131, 132, 250, 373]),
 	_tuple_type_elements: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
 	]),
 	_tuple_expression_elements: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_impl_item_body: new Set([182]),
-	_impl_item_positive_clause: new Set([1, 233, 252]),
-	_impl_item_negative_clause: new Set([1, 233, 252]),
-	_visibility_modifier_pub: new Set([1, 129, 130, 131, 132, 250, 346, 371]),
-	_visibility_modifier_pub_in_path: new Set([1, 129, 130, 131, 132, 250]),
-	_function_type_trait_form: new Set([1, 252]),
-	_function_type_fn_form: new Set([197]),
-	_or_pattern_prefix: new Set([
-		1, 116, 118, 151, 246, 250, 287, 288, 300, 302, 303, 304, 305, 306, 308, 309, 310, 311, 312, 313, 314, 317, 318,
-		319, 320, 343, 344, 356, 368, 369, 376, 377, 407, 410
+	reference_expression_raw_const: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_pointer_type_const: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
+	reference_expression_raw_mut: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_pointer_type_mut: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 240, 241, 242, 243, 246, 252, 351, 378, 379
+	reference_expression_mut: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_range_expression_postfix: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+	reference_expression_bare: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
 	]),
-	_range_expression_prefix: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+	impl_item_positive_clause: new Set([1, 233, 252]),
+	impl_item_negative_clause: new Set([1, 233, 252]),
+	visibility_modifier_pub: new Set([1, 129, 130, 131, 132, 250, 346, 373]),
+	visibility_modifier_pub_in_path: new Set([1, 129, 130, 131, 132, 250]),
+	function_type_trait_form: new Set([1, 252]),
+	function_type_fn_form: new Set([197]),
+	or_pattern_prefix: new Set([
+		1, 116, 118, 151, 246, 250, 287, 300, 302, 303, 304, 305, 306, 308, 309, 311, 312, 313, 317, 318, 319, 320, 343,
+		344, 356, 362, 363, 378, 379, 409, 412
 	]),
-	_expression_statement_with_semi: new Set([
-		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267,
-		268, 269, 274, 279, 284, 285, 286, 287, 288, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320,
-		357, 365, 366, 368, 369, 380, 381, 382
+	pointer_type_const: new Set([
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
 	]),
-	_line_comment_doc_outer: new Set([155]),
-	_line_comment_doc_inner: new Set([155]),
-	_block_comment_doc_outer: new Set([154]),
-	_block_comment_doc_inner: new Set([154])
+	pointer_type_mut: new Set([
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+	]),
+	range_expression_postfix: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
+	]),
+	range_expression_prefix: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
+	]),
+	expression_statement_with_semi: new Set([
+		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
+		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
+		362, 363, 364, 365, 366, 367, 382, 383, 384
+	]),
+	line_comment_doc_outer: new Set([155]),
+	line_comment_doc_inner: new Set([155]),
+	block_comment_doc_outer: new Set([154]),
+	block_comment_doc_inner: new Set([154])
 };
 
 function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {
@@ -699,15 +690,10 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
 	expression_statement: TSKindId.ExpressionStatement,
-	macro_definition: TSKindId.MacroDefinition,
-	token_tree_pattern: TSKindId.TokenTreePattern,
 	token_tree: TSKindId.TokenTree,
 	attribute_item: TSKindId.AttributeItem,
 	inner_attribute_item: TSKindId.InnerAttributeItem,
-	mod_item: TSKindId.ModItem,
-	foreign_mod_item: TSKindId.ForeignModItem,
 	declaration_list: TSKindId.DeclarationList,
-	struct_item: TSKindId.StructItem,
 	enum_variant_list: TSKindId.EnumVariantList,
 	field_declaration_list: TSKindId.FieldDeclarationList,
 	ordered_field_declaration_list: TSKindId.OrderedFieldDeclarationList,
@@ -727,23 +713,18 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	tuple_type: TSKindId.TupleType,
 	use_bounds: TSKindId.UseBounds,
 	type_arguments: TSKindId.TypeArguments,
-	pointer_type: TSKindId.PointerType,
 	dynamic_type: TSKindId.DynamicType,
-	delim_token_tree: TSKindId.DelimTokenTree,
 	range_expression: TSKindId.RangeExpression,
 	try_expression: TSKindId.TryExpression,
 	return_expression: TSKindId.ReturnExpression,
 	yield_expression: TSKindId.YieldExpression,
 	arguments: TSKindId.Arguments,
-	array_expression: TSKindId.ArrayExpression,
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
 	field_initializer_list: TSKindId.FieldInitializerList,
 	base_field_initializer: TSKindId.BaseFieldInitializer,
 	else_clause: TSKindId.ElseClause,
 	match_block: TSKindId.MatchBlock,
-	match_arm: TSKindId.MatchArm,
 	const_block: TSKindId.ConstBlock,
-	closure_expression: TSKindId.ClosureExpression,
 	closure_parameters: TSKindId.ClosureParameters,
 	label: TSKindId.Label,
 	continue_expression: TSKindId.ContinueExpression,
@@ -752,87 +733,87 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	try_block: TSKindId.TryBlock,
 	tuple_pattern: TSKindId.TuplePattern,
 	slice_pattern: TSKindId.SlicePattern,
-	field_pattern: TSKindId.FieldPattern,
 	mut_pattern: TSKindId.MutPattern,
-	range_pattern: TSKindId.RangePattern,
 	ref_pattern: TSKindId.RefPattern,
-	or_pattern: TSKindId.OrPattern,
 	negative_literal: TSKindId.NegativeLiteral,
 	line_comment: TSKindId.LineComment,
 	block_comment: TSKindId.BlockComment,
-	_macro_rules: TSKindId.MacroRules,
-	_enum_variant_list_elements: TSKindId.EnumVariantListElements,
-	_field_declaration_list_elements: TSKindId.FieldDeclarationListElements,
-	_ordered_field_declaration_list_elements: TSKindId.OrderedFieldDeclarationListElements,
-	_where_predicates: TSKindId.WherePredicates,
-	_type_parameters_elements: TSKindId.TypeParametersElements,
-	_use_clauses: TSKindId.UseClauses,
-	_parameters_elements: TSKindId.ParametersElements,
-	_lifetimes: TSKindId.Lifetimes,
-	_use_bounds_elements: TSKindId.UseBoundsElements,
-	_type_arguments_elements: TSKindId.TypeArgumentsElements,
-	_arguments_elements: TSKindId.ArgumentsElements,
-	_field_initializer_list_elements: TSKindId.FieldInitializerListElements,
-	_tuple_pattern_elements: TSKindId.TuplePatternElements,
-	_patterns: TSKindId.Patterns,
-	_struct_pattern_elements: TSKindId.StructPatternElements,
-	_visibility_modifier_group: TSKindId.VisibilityModifierGroup,
+	macro_rules: TSKindId.MacroRules,
+	enum_variant_list_elements: TSKindId.EnumVariantListElements,
+	field_declaration_list_elements: TSKindId.FieldDeclarationListElements,
+	ordered_field_declaration_list_elements: TSKindId.OrderedFieldDeclarationListElements,
+	where_predicates: TSKindId.WherePredicates,
+	type_parameters_elements: TSKindId.TypeParametersElements,
+	use_clauses: TSKindId.UseClauses,
+	parameters_elements: TSKindId.ParametersElements,
+	lifetimes: TSKindId.Lifetimes,
+	use_bounds_elements: TSKindId.UseBoundsElements,
+	type_arguments_elements: TSKindId.TypeArgumentsElements,
+	arguments_elements: TSKindId.ArgumentsElements,
+	field_initializer_list_elements: TSKindId.FieldInitializerListElements,
+	tuple_pattern_elements: TSKindId.TuplePatternElements,
+	patterns: TSKindId.Patterns,
+	struct_pattern_elements: TSKindId.StructPatternElements,
+	visibility_modifier_group: TSKindId.VisibilityModifierGroup,
 	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
-	_impl_item_body: TSKindId.ImplItemBody,
-	_impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
-	_impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
-	_visibility_modifier_pub: TSKindId.VisibilityModifierPub,
-	_visibility_modifier_pub_in_path: TSKindId.VisibilityModifierPubInPath,
-	_function_type_trait_form: TSKindId.FunctionTypeTraitForm,
-	_function_type_fn_form: TSKindId.FunctionTypeFnForm,
-	_or_pattern_prefix: TSKindId.OrPatternPrefix,
-	_pointer_type_const: TSKindId.PointerTypeConst,
-	_pointer_type_mut: TSKindId.PointerTypeMut,
-	_range_expression_postfix: TSKindId.RangeExpressionPostfix,
-	_range_expression_prefix: TSKindId.RangeExpressionPrefix,
-	_expression_statement_with_semi: TSKindId.ExpressionStatementWithSemi,
-	_line_comment_doc_outer: TSKindId.LineCommentDocOuter,
-	_line_comment_doc_inner: TSKindId.LineCommentDocInner,
-	_block_comment_doc_outer: TSKindId.BlockCommentDocOuter,
-	_block_comment_doc_inner: TSKindId.BlockCommentDocInner,
-	_token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
-	_token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
-	_token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
-	_token_tree_paren: TSKindId.TokenTreeParen,
-	_token_tree_bracket: TSKindId.TokenTreeBracket,
-	_token_tree_brace: TSKindId.TokenTreeBrace,
-	_delim_token_tree_paren: TSKindId.DelimTokenTreeParen,
-	_delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
-	_delim_token_tree_brace: TSKindId.DelimTokenTreeBrace
+	reference_expression_raw_const: TSKindId.ReferenceExpressionRawConst,
+	reference_expression_raw_mut: TSKindId.ReferenceExpressionRawMut,
+	reference_expression_mut: TSKindId.ReferenceExpressionMut,
+	reference_expression_bare: TSKindId.ReferenceExpressionBare,
+	impl_item_positive_clause: TSKindId.ImplItemPositiveClause,
+	impl_item_negative_clause: TSKindId.ImplItemNegativeClause,
+	visibility_modifier_pub: TSKindId.VisibilityModifierPub,
+	visibility_modifier_pub_in_path: TSKindId.VisibilityModifierPubInPath,
+	function_type_trait_form: TSKindId.FunctionTypeTraitForm,
+	function_type_fn_form: TSKindId.FunctionTypeFnForm,
+	or_pattern_prefix: TSKindId.OrPatternPrefix,
+	pointer_type_const: TSKindId.PointerTypeConst,
+	pointer_type_mut: TSKindId.PointerTypeMut,
+	range_expression_postfix: TSKindId.RangeExpressionPostfix,
+	range_expression_prefix: TSKindId.RangeExpressionPrefix,
+	expression_statement_with_semi: TSKindId.ExpressionStatementWithSemi,
+	line_comment_doc_outer: TSKindId.LineCommentDocOuter,
+	line_comment_doc_inner: TSKindId.LineCommentDocInner,
+	block_comment_doc_outer: TSKindId.BlockCommentDocOuter,
+	block_comment_doc_inner: TSKindId.BlockCommentDocInner,
+	token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
+	token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
+	token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
+	token_tree_paren: TSKindId.TokenTreeParen,
+	token_tree_bracket: TSKindId.TokenTreeBracket,
+	token_tree_brace: TSKindId.TokenTreeBrace,
+	delim_token_tree_paren: TSKindId.DelimTokenTreeParen,
+	delim_token_tree_bracket: TSKindId.DelimTokenTreeBracket,
+	delim_token_tree_brace: TSKindId.DelimTokenTreeBrace
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
 	attribute_item: 'attribute',
 	inner_attribute_item: 'attribute',
 	declaration_list: '_declaration_statement',
-	enum_variant_list: '_enum_variant_list_elements',
-	field_declaration_list: '_field_declaration_list_elements',
-	ordered_field_declaration_list: '_ordered_field_declaration_list_elements',
+	enum_variant_list: 'enum_variant_list_elements',
+	field_declaration_list: 'field_declaration_list_elements',
+	ordered_field_declaration_list: 'ordered_field_declaration_list_elements',
 	function_modifiers: 'extern_modifier',
-	where_clause: '_where_predicates',
+	where_clause: 'where_predicates',
 	removed_trait_bound: '_type',
-	type_parameters: '_type_parameters_elements',
-	use_list: '_use_clauses',
-	parameters: '_parameters_elements',
+	type_parameters: 'type_parameters_elements',
+	use_list: 'use_clauses',
+	parameters: 'parameters_elements',
 	extern_modifier: 'string_literal',
-	visibility_modifier: '_visibility_modifier_pub',
+	visibility_modifier: 'visibility_modifier_pub',
 	lifetime: 'identifier',
-	for_lifetimes: '_lifetimes',
+	for_lifetimes: 'lifetimes',
 	tuple_type: '_tuple_type_elements',
-	use_bounds: '_use_bounds_elements',
-	type_arguments: '_type_arguments_elements',
+	use_bounds: 'use_bounds_elements',
+	type_arguments: 'type_arguments_elements',
 	try_expression: '_expression',
 	return_expression: '_expression',
 	yield_expression: '_expression',
-	arguments: '_arguments_elements',
+	arguments: 'arguments_elements',
 	parenthesized_expression: '_expression',
-	field_initializer_list: '_field_initializer_list_elements',
+	field_initializer_list: 'field_initializer_list_elements',
 	base_field_initializer: '_expression',
 	match_block: '_match_block_arms',
 	const_block: 'block',
@@ -841,62 +822,55 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	await_expression: '_expression',
 	unsafe_block: 'block',
 	try_block: 'block',
-	tuple_pattern: '_tuple_pattern_elements',
-	slice_pattern: '_patterns',
+	tuple_pattern: 'tuple_pattern_elements',
+	slice_pattern: 'patterns',
 	mut_pattern: '_pattern',
 	ref_pattern: '_pattern',
-	_macro_rules: 'macro_rule',
-	_enum_variant_list_elements: '_attributed_enum_variant',
-	_field_declaration_list_elements: '_attributed_field_declaration',
-	_ordered_field_declaration_list_elements: '_attributed_ordered_field',
-	_where_predicates: 'where_predicate',
-	_type_parameters_elements: '_attributed_type_parameter',
-	_parameters_elements: '_attributed_parameter',
-	_lifetimes: 'lifetime',
-	_type_arguments_elements: '_type_argument',
-	_arguments_elements: '_attributed_argument',
-	_patterns: '_pattern',
-	_struct_pattern_elements: 'field_pattern',
-	_visibility_modifier_group: '_visibility_modifier_pub_in_path',
+	macro_rules: 'macro_rule',
+	enum_variant_list_elements: '_attributed_enum_variant',
+	field_declaration_list_elements: '_attributed_field_declaration',
+	ordered_field_declaration_list_elements: '_attributed_ordered_field',
+	where_predicates: 'where_predicate',
+	type_parameters_elements: '_attributed_type_parameter',
+	parameters_elements: '_attributed_parameter',
+	lifetimes: 'lifetime',
+	type_arguments_elements: '_type_argument',
+	arguments_elements: '_attributed_argument',
+	patterns: '_pattern',
+	struct_pattern_elements: 'field_pattern',
+	visibility_modifier_group: 'visibility_modifier_pub_in_path',
 	_tuple_type_elements: '_type',
 	_tuple_expression_elements: '_expression',
-	_impl_item_body: 'declaration_list',
-	_visibility_modifier_pub: '_visibility_modifier_group',
-	_function_type_fn_form: 'function_modifiers',
-	_or_pattern_prefix: '_pattern',
-	_pointer_type_const: '_type',
-	_pointer_type_mut: '_type',
-	_range_expression_postfix: '_expression',
-	_range_expression_prefix: '_expression',
-	_expression_statement_with_semi: '_expression',
-	_line_comment_doc_outer: '_line_doc_content',
-	_line_comment_doc_inner: '_line_doc_content',
-	_block_comment_doc_outer: '_block_comment_content',
-	_block_comment_doc_inner: '_block_comment_content'
+	reference_expression_raw_const: '_expression',
+	reference_expression_raw_mut: '_expression',
+	reference_expression_mut: '_expression',
+	reference_expression_bare: '_expression',
+	visibility_modifier_pub: 'visibility_modifier_group',
+	function_type_fn_form: 'function_modifiers',
+	or_pattern_prefix: '_pattern',
+	pointer_type_const: '_type',
+	pointer_type_mut: '_type',
+	range_expression_postfix: '_expression',
+	range_expression_prefix: '_expression',
+	expression_statement_with_semi: '_expression',
+	line_comment_doc_outer: '_line_doc_content',
+	line_comment_doc_inner: '_line_doc_content',
+	block_comment_doc_outer: '_block_comment_content',
+	block_comment_doc_inner: '_block_comment_content'
 };
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case 'expression_statement':
 			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
-		case 'macro_definition':
-			return F.buildMacroDefinition(children[0] as Parameters<typeof F.buildMacroDefinition>[0]);
-		case 'token_tree_pattern':
-			return F.buildTokenTreePattern(children[0] as Parameters<typeof F.buildTokenTreePattern>[0]);
 		case 'token_tree':
 			return F.buildTokenTree(children[0] as Parameters<typeof F.buildTokenTree>[0]);
 		case 'attribute_item':
 			return F.buildAttributeItem(children[0] as Parameters<typeof F.buildAttributeItem>[0]);
 		case 'inner_attribute_item':
 			return F.buildInnerAttributeItem(children[0] as Parameters<typeof F.buildInnerAttributeItem>[0]);
-		case 'mod_item':
-			return F.buildModItem(children[0] as Parameters<typeof F.buildModItem>[0]);
-		case 'foreign_mod_item':
-			return F.buildForeignModItem(children[0] as Parameters<typeof F.buildForeignModItem>[0]);
 		case 'declaration_list':
 			return F.buildDeclarationList(...(children as Parameters<typeof F.buildDeclarationList>));
-		case 'struct_item':
-			return F.buildStructItem(children[0] as Parameters<typeof F.buildStructItem>[0]);
 		case 'enum_variant_list':
 			return F.buildEnumVariantList(children[0] as Parameters<typeof F.buildEnumVariantList>[0]);
 		case 'field_declaration_list':
@@ -937,12 +911,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildUseBounds(children[0] as Parameters<typeof F.buildUseBounds>[0]);
 		case 'type_arguments':
 			return F.buildTypeArguments(children[0] as Parameters<typeof F.buildTypeArguments>[0]);
-		case 'pointer_type':
-			return F.buildPointerType(children[0] as Parameters<typeof F.buildPointerType>[0]);
 		case 'dynamic_type':
 			return F.buildDynamicType(children[0] as Parameters<typeof F.buildDynamicType>[0]);
-		case 'delim_token_tree':
-			return F.buildDelimTokenTree(children[0] as Parameters<typeof F.buildDelimTokenTree>[0]);
 		case 'range_expression':
 			return F.buildRangeExpression(children[0] as Parameters<typeof F.buildRangeExpression>[0]);
 		case 'try_expression':
@@ -953,8 +923,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildYieldExpression(children[0] as Parameters<typeof F.buildYieldExpression>[0]);
 		case 'arguments':
 			return F.buildArguments(children[0] as Parameters<typeof F.buildArguments>[0]);
-		case 'array_expression':
-			return F.buildArrayExpression(children[0] as Parameters<typeof F.buildArrayExpression>[0]);
 		case 'parenthesized_expression':
 			return F.buildParenthesizedExpression(children[0] as Parameters<typeof F.buildParenthesizedExpression>[0]);
 		case 'field_initializer_list':
@@ -965,12 +933,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
 		case 'match_block':
 			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
-		case 'match_arm':
-			return F.buildMatchArm(children[0] as Parameters<typeof F.buildMatchArm>[0]);
 		case 'const_block':
 			return F.buildConstBlock(children[0] as Parameters<typeof F.buildConstBlock>[0]);
-		case 'closure_expression':
-			return F.buildClosureExpression(children[0] as Parameters<typeof F.buildClosureExpression>[0]);
 		case 'closure_parameters':
 			return F.buildClosureParameters(...(children as Parameters<typeof F.buildClosureParameters>));
 		case 'label':
@@ -987,115 +951,117 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTuplePattern(children[0] as Parameters<typeof F.buildTuplePattern>[0]);
 		case 'slice_pattern':
 			return F.buildSlicePattern(children[0] as Parameters<typeof F.buildSlicePattern>[0]);
-		case 'field_pattern':
-			return F.buildFieldPattern(children[0] as Parameters<typeof F.buildFieldPattern>[0]);
 		case 'mut_pattern':
 			return F.buildMutPattern(children[0] as Parameters<typeof F.buildMutPattern>[0]);
-		case 'range_pattern':
-			return F.buildRangePattern(children[0] as Parameters<typeof F.buildRangePattern>[0]);
 		case 'ref_pattern':
 			return F.buildRefPattern(children[0] as Parameters<typeof F.buildRefPattern>[0]);
-		case 'or_pattern':
-			return F.buildOrPattern(children[0] as Parameters<typeof F.buildOrPattern>[0]);
 		case 'negative_literal':
 			return F.buildNegativeLiteral(children[0] as Parameters<typeof F.buildNegativeLiteral>[0]);
 		case 'line_comment':
 			return F.buildLineComment(children[0] as Parameters<typeof F.buildLineComment>[0]);
 		case 'block_comment':
 			return F.buildBlockComment(children[0] as Parameters<typeof F.buildBlockComment>[0]);
-		case '_macro_rules':
+		case 'macro_rules':
 			return (F.buildMacroRules as (...args: unknown[]) => unknown)(...children);
-		case '_enum_variant_list_elements':
+		case 'enum_variant_list_elements':
 			return (F.buildEnumVariantListElements as (...args: unknown[]) => unknown)(...children);
-		case '_field_declaration_list_elements':
+		case 'field_declaration_list_elements':
 			return (F.buildFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
-		case '_ordered_field_declaration_list_elements':
+		case 'ordered_field_declaration_list_elements':
 			return (F.buildOrderedFieldDeclarationListElements as (...args: unknown[]) => unknown)(...children);
-		case '_where_predicates':
+		case 'where_predicates':
 			return (F.buildWherePredicates as (...args: unknown[]) => unknown)(...children);
-		case '_type_parameters_elements':
+		case 'type_parameters_elements':
 			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
-		case '_use_clauses':
+		case 'use_clauses':
 			return (F.buildUseClauses as (...args: unknown[]) => unknown)(...children);
-		case '_parameters_elements':
+		case 'parameters_elements':
 			return (F.buildParametersElements as (...args: unknown[]) => unknown)(...children);
-		case '_lifetimes':
+		case 'lifetimes':
 			return (F.buildLifetimes as (...args: unknown[]) => unknown)(...children);
-		case '_use_bounds_elements':
+		case 'use_bounds_elements':
 			return (F.buildUseBoundsElements as (...args: unknown[]) => unknown)(...children);
-		case '_type_arguments_elements':
+		case 'type_arguments_elements':
 			return (F.buildTypeArgumentsElements as (...args: unknown[]) => unknown)(...children);
-		case '_arguments_elements':
+		case 'arguments_elements':
 			return (F.buildArgumentsElements as (...args: unknown[]) => unknown)(...children);
-		case '_field_initializer_list_elements':
+		case 'field_initializer_list_elements':
 			return (F.buildFieldInitializerListElements as (...args: unknown[]) => unknown)(...children);
-		case '_tuple_pattern_elements':
+		case 'tuple_pattern_elements':
 			return (F.buildTuplePatternElements as (...args: unknown[]) => unknown)(...children);
-		case '_patterns':
+		case 'patterns':
 			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
-		case '_struct_pattern_elements':
+		case 'struct_pattern_elements':
 			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
-		case '_visibility_modifier_group':
+		case 'visibility_modifier_group':
 			return F.buildVisibilityModifierGroup(children[0] as Parameters<typeof F.buildVisibilityModifierGroup>[0]);
 		case '_tuple_type_elements':
 			return (F.buildTupleTypeElements as (...args: unknown[]) => unknown)(...children);
 		case '_tuple_expression_elements':
 			return (F.buildTupleExpressionElements as (...args: unknown[]) => unknown)(...children);
-		case '_impl_item_body':
-			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
-		case '_impl_item_positive_clause':
+		case 'reference_expression_raw_const':
+			return F.buildReferenceExpressionRawConst(
+				children[0] as Parameters<typeof F.buildReferenceExpressionRawConst>[0]
+			);
+		case 'reference_expression_raw_mut':
+			return F.buildReferenceExpressionRawMut(children[0] as Parameters<typeof F.buildReferenceExpressionRawMut>[0]);
+		case 'reference_expression_mut':
+			return F.buildReferenceExpressionMut(children[0] as Parameters<typeof F.buildReferenceExpressionMut>[0]);
+		case 'reference_expression_bare':
+			return F.buildReferenceExpressionBare(children[0] as Parameters<typeof F.buildReferenceExpressionBare>[0]);
+		case 'impl_item_positive_clause':
 			return F.buildImplItemPositiveClause(children[0] as Parameters<typeof F.buildImplItemPositiveClause>[0]);
-		case '_impl_item_negative_clause':
+		case 'impl_item_negative_clause':
 			return F.buildImplItemNegativeClause(children[0] as Parameters<typeof F.buildImplItemNegativeClause>[0]);
-		case '_visibility_modifier_pub':
+		case 'visibility_modifier_pub':
 			return F.buildVisibilityModifierPub(children[0] as Parameters<typeof F.buildVisibilityModifierPub>[0]);
-		case '_visibility_modifier_pub_in_path':
+		case 'visibility_modifier_pub_in_path':
 			return F.buildVisibilityModifierPubInPath(
 				children[0] as Parameters<typeof F.buildVisibilityModifierPubInPath>[0]
 			);
-		case '_function_type_trait_form':
+		case 'function_type_trait_form':
 			return F.buildFunctionTypeTraitForm(children[0] as Parameters<typeof F.buildFunctionTypeTraitForm>[0]);
-		case '_function_type_fn_form':
+		case 'function_type_fn_form':
 			return F.buildFunctionTypeFnForm(children[0] as Parameters<typeof F.buildFunctionTypeFnForm>[0]);
-		case '_or_pattern_prefix':
+		case 'or_pattern_prefix':
 			return F.buildOrPatternPrefix(children[0] as Parameters<typeof F.buildOrPatternPrefix>[0]);
-		case '_pointer_type_const':
+		case 'pointer_type_const':
 			return F.buildPointerTypeConst(children[0] as Parameters<typeof F.buildPointerTypeConst>[0]);
-		case '_pointer_type_mut':
+		case 'pointer_type_mut':
 			return F.buildPointerTypeMut(children[0] as Parameters<typeof F.buildPointerTypeMut>[0]);
-		case '_range_expression_postfix':
+		case 'range_expression_postfix':
 			return F.buildRangeExpressionPostfix(children[0] as Parameters<typeof F.buildRangeExpressionPostfix>[0]);
-		case '_range_expression_prefix':
+		case 'range_expression_prefix':
 			return F.buildRangeExpressionPrefix(children[0] as Parameters<typeof F.buildRangeExpressionPrefix>[0]);
-		case '_expression_statement_with_semi':
+		case 'expression_statement_with_semi':
 			return F.buildExpressionStatementWithSemi(
 				children[0] as Parameters<typeof F.buildExpressionStatementWithSemi>[0]
 			);
-		case '_line_comment_doc_outer':
+		case 'line_comment_doc_outer':
 			return F.buildLineCommentDocOuter(children[0] as Parameters<typeof F.buildLineCommentDocOuter>[0]);
-		case '_line_comment_doc_inner':
+		case 'line_comment_doc_inner':
 			return F.buildLineCommentDocInner(children[0] as Parameters<typeof F.buildLineCommentDocInner>[0]);
-		case '_block_comment_doc_outer':
+		case 'block_comment_doc_outer':
 			return F.buildBlockCommentDocOuter(children[0] as Parameters<typeof F.buildBlockCommentDocOuter>[0]);
-		case '_block_comment_doc_inner':
+		case 'block_comment_doc_inner':
 			return F.buildBlockCommentDocInner(children[0] as Parameters<typeof F.buildBlockCommentDocInner>[0]);
-		case '_token_tree_pattern_paren':
+		case 'token_tree_pattern_paren':
 			return F.buildTokenTreePatternParen(...(children as Parameters<typeof F.buildTokenTreePatternParen>));
-		case '_token_tree_pattern_bracket':
+		case 'token_tree_pattern_bracket':
 			return F.buildTokenTreePatternBracket(...(children as Parameters<typeof F.buildTokenTreePatternBracket>));
-		case '_token_tree_pattern_brace':
+		case 'token_tree_pattern_brace':
 			return F.buildTokenTreePatternBrace(...(children as Parameters<typeof F.buildTokenTreePatternBrace>));
-		case '_token_tree_paren':
+		case 'token_tree_paren':
 			return F.buildTokenTreeParen(...(children as Parameters<typeof F.buildTokenTreeParen>));
-		case '_token_tree_bracket':
+		case 'token_tree_bracket':
 			return F.buildTokenTreeBracket(...(children as Parameters<typeof F.buildTokenTreeBracket>));
-		case '_token_tree_brace':
+		case 'token_tree_brace':
 			return F.buildTokenTreeBrace(...(children as Parameters<typeof F.buildTokenTreeBrace>));
-		case '_delim_token_tree_paren':
+		case 'delim_token_tree_paren':
 			return F.buildDelimTokenTreeParen(...(children as Parameters<typeof F.buildDelimTokenTreeParen>));
-		case '_delim_token_tree_bracket':
+		case 'delim_token_tree_bracket':
 			return F.buildDelimTokenTreeBracket(...(children as Parameters<typeof F.buildDelimTokenTreeBracket>));
-		case '_delim_token_tree_brace':
+		case 'delim_token_tree_brace':
 			return F.buildDelimTokenTreeBrace(...(children as Parameters<typeof F.buildDelimTokenTreeBrace>));
 		default:
 			return undefined;
@@ -1197,6 +1163,16 @@ function _requireField<T>(kind: string, slot: string, v: T | undefined | null): 
 }
 
 // Interned resolver kind lists (dedup)
+const _super_token_tree_pattern: readonly string[] = [
+	'token_tree_pattern_paren',
+	'token_tree_pattern_bracket',
+	'token_tree_pattern_brace'
+];
+const _super_delim_token_tree: readonly string[] = [
+	'delim_token_tree_paren',
+	'delim_token_tree_bracket',
+	'delim_token_tree_brace'
+];
 const _super_expression_ending_with_block: readonly string[] = [
 	'unsafe_block',
 	'async_block',
@@ -1210,23 +1186,31 @@ const _super_expression_ending_with_block: readonly string[] = [
 	'for_expression',
 	'const_block'
 ];
+const _super_match_arm: readonly string[] = ['match_arm_with_comma', 'match_arm_block_ending'];
 const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'expression_statement',
 	'const_item',
 	'macro_invocation',
-	'macro_definition',
+	'macro_definition_paren',
+	'macro_definition_bracket',
+	'macro_definition_brace',
 	'attribute_item',
 	'inner_attribute_item',
-	'mod_item',
-	'foreign_mod_item',
-	'struct_item',
+	'mod_item_external',
+	'mod_item_inline',
+	'foreign_mod_item_semi',
+	'foreign_mod_item_body',
+	'struct_item_brace',
+	'struct_item_tuple',
+	'struct_item_unit',
 	'union_item',
 	'enum_item',
 	'type_item',
 	'function_item',
 	'function_signature_item',
-	'impl_item',
+	'impl_item_body',
+	'impl_item_semi',
 	'trait_item',
 	'associated_type',
 	'let_declaration',
@@ -1236,7 +1220,7 @@ const _K1: readonly string[] = [
 ];
 const _K2: readonly string[] = [];
 const _K3: readonly string[] = [
-	'_expression_statement_with_semi',
+	'expression_statement_with_semi',
 	'unsafe_block',
 	'async_block',
 	'gen_block',
@@ -1249,13 +1233,7 @@ const _K3: readonly string[] = [
 	'for_expression',
 	'const_block'
 ];
-const _K4: readonly string[] = ['_macro_definition_paren', '_macro_definition_bracket', '_macro_definition_brace'];
-const _K5: readonly string[] = [
-	'_token_tree_pattern_paren',
-	'_token_tree_pattern_bracket',
-	'_token_tree_pattern_brace'
-];
-const _K6: readonly string[] = [
+const _K4: readonly string[] = [
 	'metavariable',
 	'char_literal',
 	'boolean_literal',
@@ -1270,41 +1248,41 @@ const _K6: readonly string[] = [
 	'_token_tree_punctuation',
 	'_token_keywords'
 ];
-const _K7: readonly string[] = [
-	'token_tree_pattern',
+const _K5: readonly string[] = [
+	'token_tree_pattern_paren',
+	'token_tree_pattern_bracket',
+	'token_tree_pattern_brace',
 	'token_repetition_pattern',
 	'token_binding_pattern',
 	'string_literal',
 	'raw_string_literal'
 ];
-const _K8: readonly string[] = [
-	'_token_tree_paren',
-	'_token_tree_bracket',
-	'_token_tree_brace',
-	'_delim_token_tree_paren',
-	'_delim_token_tree_bracket',
-	'_delim_token_tree_brace'
-];
-const _K9: readonly string[] = ['token_tree', 'token_repetition', 'string_literal', 'raw_string_literal'];
-const _K10: readonly string[] = ['self', 'identifier', 'metavariable', 'super', 'crate'];
-const _K11: readonly string[] = ['scoped_identifier'];
-const _K12: readonly string[] = ['_mod_item_external', '_mod_item_inline'];
-const _K13: readonly string[] = ['_foreign_mod_item_semi', '_foreign_mod_item_body'];
-const _K14: readonly string[] = [
+const _K6: readonly string[] = ['token_tree_paren', 'token_tree_bracket', 'token_tree_brace'];
+const _K7: readonly string[] = ['token_tree', 'token_repetition', 'string_literal', 'raw_string_literal'];
+const _K8: readonly string[] = ['self', 'identifier', 'metavariable', 'super', 'crate'];
+const _K9: readonly string[] = ['scoped_identifier'];
+const _K10: readonly string[] = [
 	'const_item',
 	'macro_invocation',
-	'macro_definition',
+	'macro_definition_paren',
+	'macro_definition_bracket',
+	'macro_definition_brace',
 	'attribute_item',
 	'inner_attribute_item',
-	'mod_item',
-	'foreign_mod_item',
-	'struct_item',
+	'mod_item_external',
+	'mod_item_inline',
+	'foreign_mod_item_semi',
+	'foreign_mod_item_body',
+	'struct_item_brace',
+	'struct_item_tuple',
+	'struct_item_unit',
 	'union_item',
 	'enum_item',
 	'type_item',
 	'function_item',
 	'function_signature_item',
-	'impl_item',
+	'impl_item_body',
+	'impl_item_semi',
 	'trait_item',
 	'associated_type',
 	'let_declaration',
@@ -1312,9 +1290,8 @@ const _K14: readonly string[] = [
 	'extern_crate_declaration',
 	'static_item'
 ];
-const _K15: readonly string[] = ['_struct_item_brace', '_struct_item_tuple', '_struct_item_unit'];
-const _K16: readonly string[] = ['field_declaration_list', 'ordered_field_declaration_list'];
-const _K17: readonly string[] = [
+const _K11: readonly string[] = ['field_declaration_list', 'ordered_field_declaration_list'];
+const _K12: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1324,9 +1301,12 @@ const _K17: readonly string[] = [
 	'unit_expression',
 	'metavariable'
 ];
-const _K18: readonly string[] = [
+const _K13: readonly string[] = [
 	'unary_expression',
-	'reference_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
 	'try_expression',
 	'binary_expression',
 	'assignment_expression',
@@ -1341,13 +1321,15 @@ const _K18: readonly string[] = [
 	'generic_function',
 	'await_expression',
 	'field_expression',
-	'array_expression',
+	'array_expression_semi',
+	'array_expression_list',
 	'tuple_expression',
 	'macro_invocation',
 	'break_expression',
 	'continue_expression',
 	'index_expression',
-	'closure_expression',
+	'closure_expression_block',
+	'closure_expression_expr',
 	'parenthesized_expression',
 	'struct_expression',
 	'unsafe_block',
@@ -1363,11 +1345,12 @@ const _K18: readonly string[] = [
 	'const_block',
 	'range_expression'
 ];
-const _K19: readonly string[] = ['metavariable', 'unit_type', 'identifier', 'never_type', '_primitive_type'];
-const _K20: readonly string[] = [
+const _K14: readonly string[] = ['metavariable', 'unit_type', 'identifier', 'never_type', '_primitive_type'];
+const _K15: readonly string[] = [
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1378,25 +1361,26 @@ const _K20: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K21: readonly string[] = ['identifier', 'metavariable'];
-const _K22: readonly string[] = ['_kw_async', '_kw_default', '_kw_const', '_kw_unsafe'];
-const _K23: readonly string[] = ['extern_modifier'];
-const _K24: readonly string[] = ['identifier', '_primitive_type'];
-const _K25: readonly string[] = [
+const _K16: readonly string[] = ['identifier', 'metavariable'];
+const _K17: readonly string[] = ['_kw_async', '_kw_default', '_kw_const', '_kw_unsafe'];
+const _K18: readonly string[] = ['extern_modifier'];
+const _K19: readonly string[] = ['identifier', '_primitive_type'];
+const _K20: readonly string[] = [
 	'lifetime',
 	'scoped_type_identifier',
 	'generic_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'tuple_type',
 	'array_type',
 	'higher_ranked_trait_bound'
 ];
-const _K26: readonly string[] = ['_impl_item_positive_clause', '_impl_item_negative_clause'];
-const _K27: readonly string[] = [
+const _K21: readonly string[] = [
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1409,9 +1393,9 @@ const _K27: readonly string[] = [
 	'lifetime',
 	'higher_ranked_trait_bound'
 ];
-const _K28: readonly string[] = ['identifier', 'char_literal', 'boolean_literal', 'integer_literal', 'float_literal'];
-const _K29: readonly string[] = ['block', 'string_literal', 'raw_string_literal', 'negative_literal'];
-const _K30: readonly string[] = [
+const _K22: readonly string[] = ['identifier', 'char_literal', 'boolean_literal', 'integer_literal', 'float_literal'];
+const _K23: readonly string[] = ['block', 'string_literal', 'raw_string_literal', 'negative_literal'];
+const _K24: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1420,7 +1404,7 @@ const _K30: readonly string[] = [
 	'remaining_field_pattern',
 	'_wildcard_pattern'
 ];
-const _K31: readonly string[] = [
+const _K25: readonly string[] = [
 	'string_literal',
 	'raw_string_literal',
 	'negative_literal',
@@ -1434,13 +1418,15 @@ const _K31: readonly string[] = [
 	'captured_pattern',
 	'reference_pattern',
 	'mut_pattern',
-	'range_pattern',
-	'or_pattern',
+	'range_pattern_with_left',
+	'range_pattern_prefix',
+	'or_pattern_binary',
+	'or_pattern_prefix',
 	'const_block',
 	'macro_invocation'
 ];
-const _K32: readonly string[] = ['scoped_identifier', 'use_as_clause', 'use_list', 'scoped_use_list', 'use_wildcard'];
-const _K33: readonly string[] = [
+const _K26: readonly string[] = ['scoped_identifier', 'use_as_clause', 'use_list', 'scoped_use_list', 'use_wildcard'];
+const _K27: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1450,12 +1436,13 @@ const _K33: readonly string[] = [
 	'_wildcard_pattern',
 	'self'
 ];
-const _K34: readonly string[] = ['crate'];
-const _K35: readonly string[] = ['_visibility_modifier_pub'];
-const _K36: readonly string[] = [
+const _K28: readonly string[] = ['crate'];
+const _K29: readonly string[] = ['visibility_modifier_pub'];
+const _K30: readonly string[] = [
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1467,15 +1454,16 @@ const _K36: readonly string[] = [
 	'removed_trait_bound',
 	'qualified_type'
 ];
-const _K37: readonly string[] = ['_function_type_trait_form', '_function_type_fn_form'];
-const _K38: readonly string[] = ['identifier'];
-const _K39: readonly string[] = ['scoped_identifier', 'field_expression'];
-const _K40: readonly string[] = ['scoped_type_identifier'];
-const _K41: readonly string[] = [
+const _K31: readonly string[] = ['function_type_trait_form', 'function_type_fn_form'];
+const _K32: readonly string[] = ['identifier'];
+const _K33: readonly string[] = ['scoped_identifier', 'field_expression'];
+const _K34: readonly string[] = ['scoped_type_identifier'];
+const _K35: readonly string[] = [
 	'lifetime',
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1487,8 +1475,7 @@ const _K41: readonly string[] = [
 	'removed_trait_bound',
 	'use_bounds'
 ];
-const _K42: readonly string[] = ['_pointer_type_const', '_pointer_type_mut'];
-const _K43: readonly string[] = [
+const _K36: readonly string[] = [
 	'scoped_type_identifier',
 	'removed_trait_bound',
 	'generic_type',
@@ -1496,24 +1483,24 @@ const _K43: readonly string[] = [
 	'tuple_type',
 	'bounded_type'
 ];
-const _K44: readonly string[] = [
+const _K37: readonly string[] = [
 	'higher_ranked_trait_bound',
 	'scoped_type_identifier',
 	'generic_type',
 	'function_type',
 	'tuple_type'
 ];
-const _K45: readonly string[] = ['_delim_token_tree_paren', '_delim_token_tree_bracket', '_delim_token_tree_brace'];
-const _K46: readonly string[] = ['scoped_identifier', 'bracketed_type', 'generic_type_with_turbofish'];
-const _K47: readonly string[] = ['identifier', 'super'];
-const _K48: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish'];
-const _K49: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish', 'bracketed_type', 'generic_type'];
-const _K50: readonly string[] = ['_range_expression_binary', '_range_expression_postfix', '_range_expression_prefix'];
-const _K51: readonly string[] = ['mutable_specifier'];
-const _K52: readonly string[] = ['_reference_expression_raw_mut'];
-const _K53: readonly string[] = [
+const _K38: readonly string[] = ['scoped_identifier', 'bracketed_type', 'generic_type_with_turbofish'];
+const _K39: readonly string[] = ['identifier', 'super'];
+const _K40: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish'];
+const _K41: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish', 'bracketed_type', 'generic_type'];
+const _K42: readonly string[] = ['range_expression_binary', 'range_expression_postfix', 'range_expression_prefix'];
+const _K43: readonly string[] = [
 	'unary_expression',
-	'reference_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
 	'try_expression',
 	'binary_expression',
 	'assignment_expression',
@@ -1528,13 +1515,15 @@ const _K53: readonly string[] = [
 	'generic_function',
 	'await_expression',
 	'field_expression',
-	'array_expression',
+	'array_expression_semi',
+	'array_expression_list',
 	'tuple_expression',
 	'macro_invocation',
 	'break_expression',
 	'continue_expression',
 	'index_expression',
-	'closure_expression',
+	'closure_expression_block',
+	'closure_expression_expr',
 	'parenthesized_expression',
 	'struct_expression',
 	'unsafe_block',
@@ -1549,12 +1538,14 @@ const _K53: readonly string[] = [
 	'for_expression',
 	'const_block'
 ];
-const _K54: readonly string[] = ['_array_expression_semi', '_array_expression_list'];
-const _K55: readonly string[] = ['scoped_type_identifier_in_expression_position', 'generic_type_with_turbofish'];
-const _K56: readonly string[] = ['identifier', 'integer_literal'];
-const _K57: readonly string[] = [
+const _K44: readonly string[] = ['scoped_type_identifier_in_expression_position', 'generic_type_with_turbofish'];
+const _K45: readonly string[] = ['identifier', 'integer_literal'];
+const _K46: readonly string[] = [
 	'unary_expression',
-	'reference_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
 	'try_expression',
 	'binary_expression',
 	'assignment_expression',
@@ -1569,13 +1560,15 @@ const _K57: readonly string[] = [
 	'generic_function',
 	'await_expression',
 	'field_expression',
-	'array_expression',
+	'array_expression_semi',
+	'array_expression_list',
 	'tuple_expression',
 	'macro_invocation',
 	'break_expression',
 	'continue_expression',
 	'index_expression',
-	'closure_expression',
+	'closure_expression_block',
+	'closure_expression_expr',
 	'parenthesized_expression',
 	'struct_expression',
 	'unsafe_block',
@@ -1593,11 +1586,14 @@ const _K57: readonly string[] = [
 	'let_condition',
 	'_let_chain'
 ];
-const _K58: readonly string[] = [
+const _K47: readonly string[] = [
 	'_let_chain',
 	'let_condition',
 	'unary_expression',
-	'reference_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
 	'try_expression',
 	'binary_expression',
 	'assignment_expression',
@@ -1612,13 +1608,15 @@ const _K58: readonly string[] = [
 	'generic_function',
 	'await_expression',
 	'field_expression',
-	'array_expression',
+	'array_expression_semi',
+	'array_expression_list',
 	'tuple_expression',
 	'macro_invocation',
 	'break_expression',
 	'continue_expression',
 	'index_expression',
-	'closure_expression',
+	'closure_expression_block',
+	'closure_expression_expr',
 	'parenthesized_expression',
 	'struct_expression',
 	'unsafe_block',
@@ -1634,10 +1632,13 @@ const _K58: readonly string[] = [
 	'const_block',
 	'range_expression'
 ];
-const _K59: readonly string[] = [
+const _K48: readonly string[] = [
 	'let_condition',
 	'unary_expression',
-	'reference_expression',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
 	'try_expression',
 	'binary_expression',
 	'assignment_expression',
@@ -1652,13 +1653,15 @@ const _K59: readonly string[] = [
 	'generic_function',
 	'await_expression',
 	'field_expression',
-	'array_expression',
+	'array_expression_semi',
+	'array_expression_list',
 	'tuple_expression',
 	'macro_invocation',
 	'break_expression',
 	'continue_expression',
 	'index_expression',
-	'closure_expression',
+	'closure_expression_block',
+	'closure_expression_expr',
 	'parenthesized_expression',
 	'struct_expression',
 	'unsafe_block',
@@ -1674,11 +1677,9 @@ const _K59: readonly string[] = [
 	'const_block',
 	'range_expression'
 ];
-const _K60: readonly string[] = ['block', 'if_expression'];
-const _K61: readonly string[] = ['_match_arm_with_comma', '_match_arm_block_ending'];
-const _K62: readonly string[] = ['attribute_item', 'inner_attribute_item'];
-const _K63: readonly string[] = ['_closure_expression_block', '_closure_expression_expr'];
-const _K64: readonly string[] = [
+const _K49: readonly string[] = ['block', 'if_expression'];
+const _K50: readonly string[] = ['attribute_item', 'inner_attribute_item'];
+const _K51: readonly string[] = [
 	'string_literal',
 	'raw_string_literal',
 	'negative_literal',
@@ -1692,25 +1693,25 @@ const _K64: readonly string[] = [
 	'captured_pattern',
 	'reference_pattern',
 	'mut_pattern',
-	'range_pattern',
-	'or_pattern',
+	'range_pattern_with_left',
+	'range_pattern_prefix',
+	'or_pattern_binary',
+	'or_pattern_prefix',
 	'const_block',
 	'macro_invocation',
 	'parameter'
 ];
-const _K65: readonly string[] = ['_field_pattern_shorthand', '_field_pattern_named'];
-const _K66: readonly string[] = ['_range_pattern_with_left', '_range_pattern_prefix'];
-const _K67: readonly string[] = ['_or_pattern_binary', '_or_pattern_prefix'];
-const _K68: readonly string[] = ['integer_literal', 'float_literal'];
-const _K69: readonly string[] = ['escape_sequence', 'string_content'];
-const _K70: readonly string[] = ['_line_comment_regular_dslash', '_line_comment_content'];
-const _K71: readonly string[] = ['_line_comment_doc_outer', '_line_comment_doc_inner'];
-const _K72: readonly string[] = ['_block_comment_content'];
-const _K73: readonly string[] = ['_block_comment_doc_outer', '_block_comment_doc_inner'];
-const _K74: readonly string[] = ['self', 'super', 'crate'];
-const _K75: readonly string[] = ['_visibility_modifier_pub_in_path'];
-const _K76: readonly string[] = ['scoped_type_identifier', 'generic_type'];
-const _K77: readonly string[] = [
+const _K52: readonly string[] = ['integer_literal', 'float_literal'];
+const _K53: readonly string[] = ['escape_sequence', 'string_content'];
+const _K54: readonly string[] = ['line_comment_regular_dslash', 'line_comment_content'];
+const _K55: readonly string[] = ['line_comment_doc_outer', 'line_comment_doc_inner'];
+const _K56: readonly string[] = ['_block_comment_content'];
+const _K57: readonly string[] = ['block_comment_doc_outer', 'block_comment_doc_inner'];
+const _K58: readonly string[] = ['self', 'super', 'crate'];
+const _K59: readonly string[] = ['visibility_modifier_pub_in_path'];
+const _K60: readonly string[] = ['scoped_type_identifier', 'generic_type'];
+const _K61: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
+const _K62: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1721,14 +1722,17 @@ const _K77: readonly string[] = [
 	'super',
 	'crate'
 ];
-const _K78: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
-const _K79: readonly string[] = [
+const _K63: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
+const _K64: readonly string[] = ['range_pattern_with_left_bare'];
+const _K65: readonly string[] = ['range_pattern_with_left_with_right'];
+const _K66: readonly string[] = [
 	'parameter',
 	'self_parameter',
 	'variadic_parameter',
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1739,9 +1743,9 @@ const _K79: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K80: readonly string[] = ['metavariable'];
-const _K81: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
-const _K82: readonly string[] = [
+const _K67: readonly string[] = ['metavariable'];
+const _K68: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
+const _K69: readonly string[] = [
 	'metavariable',
 	'unit_type',
 	'identifier',
@@ -1752,10 +1756,11 @@ const _K82: readonly string[] = [
 	'integer_literal',
 	'float_literal'
 ];
-const _K83: readonly string[] = [
+const _K70: readonly string[] = [
 	'abstract_type',
 	'reference_type',
-	'pointer_type',
+	'pointer_type_const',
+	'pointer_type_mut',
 	'generic_type',
 	'scoped_type_identifier',
 	'tuple_type',
@@ -1848,30 +1853,8 @@ export function coerceToExpressionStatement(
 	);
 }
 
-export function resolveMacroDefinition_content(
-	value: T.MacroDefinition.LooseConfig['content']
-): T.MacroDefinition['_content'] {
-	return _resolveOne<T.MacroDefinitionParen | T.MacroDefinitionBracket | T.MacroDefinitionBrace>(value, _K2, _K4);
-}
-
-export function coerceToMacroDefinition(input: T.MacroDefinition.Loose): ReturnType<typeof F.buildMacroDefinition> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MacroDefinition)
-		return input as unknown as ReturnType<typeof F.buildMacroDefinition>;
-	return F.buildMacroDefinition(
-		_requireField(
-			'macro_definition',
-			'content',
-			_resolveOne<T.MacroDefinitionParen | T.MacroDefinitionBracket | T.MacroDefinitionBrace>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K4
-			)
-		)
-	);
-}
-
 export function resolveMacroRule_left(value: T.MacroRule.LooseConfig['left']): T.MacroRule['_left'] {
-	return _resolveOneBranch<T.TokenTreePattern>(value, 'token_tree_pattern');
+	return _resolveOne<T.TokenTreePattern>(value, _K2, _super_token_tree_pattern);
 }
 
 export function resolveMacroRule_right(value: T.MacroRule.LooseConfig['right']): T.MacroRule['_right'] {
@@ -1884,28 +1867,6 @@ export function coerceToMacroRule(input: T.MacroRule.Loose): ReturnType<typeof F
 		left: _requireField('macro_rule', 'left', resolveMacroRule_left(input.left)),
 		right: _requireField('macro_rule', 'right', resolveMacroRule_right(input.right))
 	});
-}
-
-export function resolveTokenTreePattern_content(
-	value: T.TokenTreePattern.LooseConfig['content']
-): T.TokenTreePattern['_content'] {
-	return _resolveOne<T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace>(value, _K2, _K5);
-}
-
-export function coerceToTokenTreePattern(input: T.TokenTreePattern.Loose): ReturnType<typeof F.buildTokenTreePattern> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TokenTreePattern)
-		return input as unknown as ReturnType<typeof F.buildTokenTreePattern>;
-	return F.buildTokenTreePattern(
-		_requireField(
-			'token_tree_pattern',
-			'content',
-			_resolveOne<T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K5
-			)
-		)
-	);
 }
 
 export function resolveTokenBindingPattern_name(
@@ -1975,7 +1936,7 @@ export function resolveTokenRepetitionPattern_tokenPatterns(
 		_resolveKindEnum(value, () =>
 			_resolveMany<
 				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-			>(value, _K6, _K7)
+			>(value, _K4, _K5)
 		),
 		[]
 	);
@@ -2013,14 +1974,7 @@ export function coerceToTokenRepetitionPattern(
 }
 
 export function resolveTokenTree_content(value: T.TokenTree.LooseConfig['content']): T.TokenTree['_content'] {
-	return _resolveOne<
-		| T.TokenTreeParen
-		| T.TokenTreeBracket
-		| T.TokenTreeBrace
-		| T.DelimTokenTreeParen
-		| T.DelimTokenTreeBracket
-		| T.DelimTokenTreeBrace
-	>(value, _K2, _K8);
+	return _resolveOne<T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace>(value, _K2, _K6);
 }
 
 export function coerceToTokenTree(input: T.TokenTree.Loose): ReturnType<typeof F.buildTokenTree> {
@@ -2030,17 +1984,10 @@ export function coerceToTokenTree(input: T.TokenTree.Loose): ReturnType<typeof F
 		_requireField(
 			'token_tree',
 			'content',
-			_resolveOne<
-				| T.TokenTreeParen
-				| T.TokenTreeBracket
-				| T.TokenTreeBrace
-				| T.DelimTokenTreeParen
-				| T.DelimTokenTreeBracket
-				| T.DelimTokenTreeBrace
-			>(
+			_resolveOne<T.TokenTreeParen | T.TokenTreeBracket | T.TokenTreeBrace>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
-				_K8
+				_K6
 			)
 		)
 	);
@@ -2051,7 +1998,7 @@ export function resolveTokenRepetition_tokens(
 ): T.TokenRepetition['_tokens'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K6, _K9)
+			_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(value, _K4, _K7)
 		),
 		[]
 	);
@@ -2133,14 +2080,14 @@ export function coerceToInnerAttributeItem(
 export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): T.Attribute['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
 }
 
 export function resolveAttribute_input(value: T.Attribute.LooseConfig['input']): T.Attribute['_input'] {
-	return _resolveOneBranch<T.AttributeInput>(value, '_attribute_input');
+	return _resolveOneBranch<T.AttributeInput>(value, 'attribute_input');
 }
 
 export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
@@ -2149,48 +2096,6 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 		path: _requireField('attribute', 'path', resolveAttribute_path(input.path)),
 		input: resolveAttribute_input(input.input)
 	});
-}
-
-export function resolveModItem_content(value: T.ModItem.LooseConfig['content']): T.ModItem['_content'] {
-	return _resolveOne<T.ModItemExternal | T.ModItemInline>(value, _K2, _K12);
-}
-
-export function coerceToModItem(input: T.ModItem.Loose): ReturnType<typeof F.buildModItem> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ModItem)
-		return input as unknown as ReturnType<typeof F.buildModItem>;
-	return F.buildModItem(
-		_requireField(
-			'mod_item',
-			'content',
-			_resolveOne<T.ModItemExternal | T.ModItemInline>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K12
-			)
-		)
-	);
-}
-
-export function resolveForeignModItem_content(
-	value: T.ForeignModItem.LooseConfig['content']
-): T.ForeignModItem['_content'] {
-	return _resolveOne<T.ForeignModItemSemi | T.ForeignModItemBody>(value, _K2, _K13);
-}
-
-export function coerceToForeignModItem(input: T.ForeignModItem.Loose): ReturnType<typeof F.buildForeignModItem> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ForeignModItem)
-		return input as unknown as ReturnType<typeof F.buildForeignModItem>;
-	return F.buildForeignModItem(
-		_requireField(
-			'foreign_mod_item',
-			'content',
-			_resolveOne<T.ForeignModItemSemi | T.ForeignModItemBody>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K13
-			)
-		)
-	);
 }
 
 export function coerceToDeclarationList(
@@ -2205,7 +2110,7 @@ export function coerceToDeclarationList(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildDeclarationList(
 			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.DeclarationStatement>(children, _K0, _K14)),
+				_resolveKindEnum(children, () => _resolveMany<T.DeclarationStatement>(children, _K0, _K10)),
 				[]
 			) as unknown as Parameters<typeof F.buildDeclarationList>)
 		);
@@ -2219,29 +2124,9 @@ export function coerceToDeclarationList(
 	})();
 	return F.buildDeclarationList(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.DeclarationStatement>(_elems, _K0, _K14)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.DeclarationStatement>(_elems, _K0, _K10)),
 			[]
 		) as unknown as Parameters<typeof F.buildDeclarationList>)
-	);
-}
-
-export function resolveStructItem_content(value: T.StructItem.LooseConfig['content']): T.StructItem['_content'] {
-	return _resolveOne<T.StructItemBrace | T.StructItemTuple | T.StructItemUnit>(value, _K2, _K15);
-}
-
-export function coerceToStructItem(input: T.StructItem.Loose): ReturnType<typeof F.buildStructItem> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.StructItem)
-		return input as unknown as ReturnType<typeof F.buildStructItem>;
-	return F.buildStructItem(
-		_requireField(
-			'struct_item',
-			'content',
-			_resolveOne<T.StructItemBrace | T.StructItemTuple | T.StructItemUnit>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K15
-			)
-		)
 	);
 }
 
@@ -2320,7 +2205,7 @@ export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.b
 export function resolveEnumVariantList_enumVariantListElements(
 	value: T.EnumVariantList.LooseConfig['enumVariantListElements']
 ): T.EnumVariantList['_enum_variant_list_elements'] {
-	return _resolveOneBranch<T.EnumVariantListElements>(value, '_enum_variant_list_elements');
+	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements');
 }
 
 export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList> {
@@ -2331,7 +2216,7 @@ export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): Return
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'enumVariantListElements' in input
 				? input.enumVariantListElements
 				: input,
-			'_enum_variant_list_elements'
+			'enum_variant_list_elements'
 		)
 	);
 }
@@ -2347,12 +2232,12 @@ export function resolveEnumVariant_name(value: T.EnumVariant.LooseConfig['name']
 }
 
 export function resolveEnumVariant_body(value: T.EnumVariant.LooseConfig['body']): T.EnumVariant['_body'] {
-	return _resolveOne<T.FieldDeclarationList | T.OrderedFieldDeclarationList>(value, _K2, _K16);
+	return _resolveOne<T.FieldDeclarationList | T.OrderedFieldDeclarationList>(value, _K2, _K11);
 }
 
 export function resolveEnumVariant_value(value: T.EnumVariant.LooseConfig['value']): T.EnumVariant['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -2371,7 +2256,7 @@ export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<type
 export function resolveFieldDeclarationList_fieldDeclarationListElements(
 	value: T.FieldDeclarationList.LooseConfig['fieldDeclarationListElements']
 ): T.FieldDeclarationList['_field_declaration_list_elements'] {
-	return _resolveOneBranch<T.FieldDeclarationListElements>(value, '_field_declaration_list_elements');
+	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements');
 }
 
 export function coerceToFieldDeclarationList(
@@ -2384,7 +2269,7 @@ export function coerceToFieldDeclarationList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'fieldDeclarationListElements' in input
 				? input.fieldDeclarationListElements
 				: input,
-			'_field_declaration_list_elements'
+			'field_declaration_list_elements'
 		)
 	);
 }
@@ -2405,7 +2290,7 @@ export function resolveFieldDeclaration_type(
 	value: T.FieldDeclaration.LooseConfig['type']
 ): T.FieldDeclaration['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -2423,7 +2308,7 @@ export function coerceToFieldDeclaration(input: T.FieldDeclaration.Loose): Retur
 export function resolveOrderedFieldDeclarationList_attributes(
 	value: T.OrderedFieldDeclarationList.LooseConfig['attributes']
 ): T.OrderedFieldDeclarationList['_attributes'] {
-	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(value, '_ordered_field_declaration_list_elements');
+	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(value, 'ordered_field_declaration_list_elements');
 }
 
 export function coerceToOrderedFieldDeclarationList(
@@ -2440,7 +2325,7 @@ export function coerceToOrderedFieldDeclarationList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'attributes' in input
 				? input.attributes
 				: input,
-			'_ordered_field_declaration_list_elements'
+			'ordered_field_declaration_list_elements'
 		)
 	);
 }
@@ -2487,14 +2372,14 @@ export function resolveConstItem_name(value: T.ConstItem.LooseConfig['name']): T
 
 export function resolveConstItem_type(value: T.ConstItem.LooseConfig['type']): T.ConstItem['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
 
 export function resolveConstItem_value(value: T.ConstItem.LooseConfig['value']): T.ConstItem['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -2531,14 +2416,14 @@ export function resolveStaticItem_name(value: T.StaticItem.LooseConfig['name']):
 
 export function resolveStaticItem_type(value: T.StaticItem.LooseConfig['type']): T.StaticItem['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
 
 export function resolveStaticItem_value(value: T.StaticItem.LooseConfig['value']): T.StaticItem['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -2577,7 +2462,7 @@ export function resolveTypeItem_whereClause(value: T.TypeItem.LooseConfig['where
 
 export function resolveTypeItem_type(value: T.TypeItem.LooseConfig['type']): T.TypeItem['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -2613,7 +2498,7 @@ export function resolveFunctionItem_functionModifiers(
 }
 
 export function resolveFunctionItem_name(value: T.FunctionItem.LooseConfig['name']): T.FunctionItem['_name'] {
-	return _resolveOne<T.Identifier | T.Metavariable>(value, _K21, _K2);
+	return _resolveOne<T.Identifier | T.Metavariable>(value, _K16, _K2);
 }
 
 export function resolveFunctionItem_typeParameters(
@@ -2632,7 +2517,7 @@ export function resolveFunctionItem_returnType(
 	value: T.FunctionItem.LooseConfig['returnType']
 ): T.FunctionItem['_return_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -2677,7 +2562,7 @@ export function resolveFunctionSignatureItem_functionModifiers(
 export function resolveFunctionSignatureItem_name(
 	value: T.FunctionSignatureItem.LooseConfig['name']
 ): T.FunctionSignatureItem['_name'] {
-	return _resolveOne<T.Identifier | T.Metavariable>(value, _K21, _K2);
+	return _resolveOne<T.Identifier | T.Metavariable>(value, _K16, _K2);
 }
 
 export function resolveFunctionSignatureItem_typeParameters(
@@ -2696,7 +2581,7 @@ export function resolveFunctionSignatureItem_returnType(
 	value: T.FunctionSignatureItem.LooseConfig['returnType']
 ): T.FunctionSignatureItem['_return_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -2741,7 +2626,7 @@ export function coerceToFunctionModifiers(
 		return F.buildFunctionModifiers(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(children, _K22, _K23)
+					_resolveMany<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(children, _K17, _K18)
 				),
 				[
 					['async', TSKindId.AsyncKeyword] as const,
@@ -2762,7 +2647,7 @@ export function coerceToFunctionModifiers(
 	return F.buildFunctionModifiers(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(_elems, _K22, _K23)
+				_resolveMany<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>(_elems, _K17, _K18)
 			),
 			[
 				['async', TSKindId.AsyncKeyword] as const,
@@ -2777,7 +2662,7 @@ export function coerceToFunctionModifiers(
 export function resolveWhereClause_wherePredicates(
 	value: T.WhereClause.LooseConfig['wherePredicates']
 ): T.WhereClause['_where_predicates'] {
-	return _resolveOneBranch<T.WherePredicates>(value, '_where_predicates');
+	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates');
 }
 
 export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typeof F.buildWhereClause> {
@@ -2788,7 +2673,7 @@ export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typ
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'wherePredicates' in input
 				? input.wherePredicates
 				: input,
-			'_where_predicates'
+			'where_predicates'
 		)
 	);
 }
@@ -2823,7 +2708,7 @@ export function resolveWherePredicate_left(value: T.WherePredicate.LooseConfig['
 				| 'bool'
 				| 'str'
 				| 'char'
-			>(value, _K24, _K25)
+			>(value, _K19, _K20)
 		),
 		[
 			['u8', TSKindId.U8Keyword] as const,
@@ -2859,59 +2744,6 @@ export function coerceToWherePredicate(input: T.WherePredicate.Loose): ReturnTyp
 	return F.buildWherePredicate({
 		left: _requireField('where_predicate', 'left', resolveWherePredicate_left(input.left)),
 		bounds: resolveWherePredicate_bounds(input.bounds) ?? F.buildTraitBounds()
-	});
-}
-
-export function resolveImplItem_unsafeMarker(
-	value: T.ImplItem.LooseConfig['unsafeMarker']
-): T.ImplItem['_unsafe_marker'] {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveImplItem_typeParameters(
-	value: T.ImplItem.LooseConfig['typeParameters']
-): T.ImplItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
-}
-
-export function resolveImplItem_traitClause(value: T.ImplItem.LooseConfig['traitClause']): T.ImplItem['_trait_clause'] {
-	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
-		value,
-		_K2,
-		_K26,
-		'_impl_item_positive_clause'
-	);
-}
-
-export function resolveImplItem_type(value: T.ImplItem.LooseConfig['type']): T.ImplItem['_type'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
-		[]
-	);
-}
-
-export function resolveImplItem_whereClause(value: T.ImplItem.LooseConfig['whereClause']): T.ImplItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
-}
-
-export function resolveImplItem_content(value: T.ImplItem.LooseConfig['content']): T.ImplItem['_content'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOneBranch<T.ImplItemBody | ';'>(value, '_impl_item_body', [TSKindId.ImplItemSemi])
-		),
-		[[';', TSKindId.ImplItemSemi] as const]
-	);
-}
-
-export function coerceToImplItem(input: T.ImplItem.Loose): ReturnType<typeof F.buildImplItem> {
-	if (!_isLooseConfig<T.ImplItem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildImplItem>;
-	return F.buildImplItem({
-		unsafeMarker: resolveImplItem_unsafeMarker(input.unsafeMarker),
-		typeParameters: resolveImplItem_typeParameters(input.typeParameters),
-		traitClause: resolveImplItem_traitClause(input.traitClause),
-		type: _requireField('impl_item', 'type', resolveImplItem_type(input.type)),
-		whereClause: resolveImplItem_whereClause(input.whereClause),
-		content: _requireField('impl_item', 'content', resolveImplItem_content(input.content))
 	});
 }
 
@@ -3010,7 +2842,7 @@ export function coerceToTraitBounds(
 		return F.buildTraitBounds(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(children, _K19, _K27)
+					_resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(children, _K14, _K21)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTraitBounds>)
@@ -3025,7 +2857,7 @@ export function coerceToTraitBounds(
 	})();
 	return F.buildTraitBounds(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(_elems, _K19, _K27)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.Type | T.Lifetime | T.HigherRankedTraitBound>(_elems, _K14, _K21)),
 			[]
 		) as unknown as Parameters<typeof F.buildTraitBounds>)
 	);
@@ -3041,7 +2873,7 @@ export function resolveHigherRankedTraitBound_type(
 	value: T.HigherRankedTraitBound.LooseConfig['type']
 ): T.HigherRankedTraitBound['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3065,7 +2897,7 @@ export function resolveRemovedTraitBound_type(
 	value: T.RemovedTraitBound.LooseConfig['type']
 ): T.RemovedTraitBound['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3085,8 +2917,8 @@ export function coerceToRemovedTraitBound(
 					() =>
 						_resolveOne<T.Type>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-							_K19,
-							_K20
+							_K14,
+							_K15
 						)
 				),
 				[]
@@ -3098,7 +2930,7 @@ export function coerceToRemovedTraitBound(
 export function resolveTypeParameters_typeParametersElements(
 	value: T.TypeParameters.LooseConfig['typeParametersElements']
 ): T.TypeParameters['_type_parameters_elements'] {
-	return _resolveOneBranch<T.TypeParametersElements>(value, '_type_parameters_elements');
+	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
 export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
@@ -3112,7 +2944,7 @@ export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnTyp
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'typeParametersElements' in input
 					? input.typeParametersElements
 					: input,
-				'_type_parameters_elements'
+				'type_parameters_elements'
 			)
 		)
 	);
@@ -3124,7 +2956,7 @@ export function resolveConstParameter_name(value: T.ConstParameter.LooseConfig['
 
 export function resolveConstParameter_type(value: T.ConstParameter.LooseConfig['type']): T.ConstParameter['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3132,7 +2964,7 @@ export function resolveConstParameter_type(value: T.ConstParameter.LooseConfig['
 export function resolveConstParameter_value(value: T.ConstParameter.LooseConfig['value']): T.ConstParameter['_value'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Block | T.Identifier | T.Literal | T.NegativeLiteral>(value, _K28, _K29)
+			_resolveOne<T.Block | T.Identifier | T.Literal | T.NegativeLiteral>(value, _K22, _K23)
 		),
 		[]
 	);
@@ -3160,7 +2992,7 @@ export function resolveTypeParameter_defaultType(
 	value: T.TypeParameter.LooseConfig['defaultType']
 ): T.TypeParameter['_default_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3208,21 +3040,21 @@ export function resolveLetDeclaration_pattern(
 	value: T.LetDeclaration.LooseConfig['pattern']
 ): T.LetDeclaration['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
 
 export function resolveLetDeclaration_type(value: T.LetDeclaration.LooseConfig['type']): T.LetDeclaration['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
 
 export function resolveLetDeclaration_value(value: T.LetDeclaration.LooseConfig['value']): T.LetDeclaration['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -3267,7 +3099,7 @@ export function resolveUseDeclaration_argument(
 				| T.UseList
 				| T.ScopedUseList
 				| T.UseWildcard
-			>(value, _K10, _K32)
+			>(value, _K8, _K26)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -3285,7 +3117,7 @@ export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnTyp
 export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['path']): T.ScopedUseList['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -3305,7 +3137,7 @@ export function coerceToScopedUseList(input: T.ScopedUseList.Loose): ReturnType<
 }
 
 export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClauses']): T.UseList['_use_clauses'] {
-	return _resolveOneBranch<T.UseClauses>(value, '_use_clauses');
+	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses');
 }
 
 export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList> {
@@ -3316,7 +3148,7 @@ export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.bu
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'useClauses' in input
 				? input.useClauses
 				: input,
-			'_use_clauses'
+			'use_clauses'
 		)
 	);
 }
@@ -3324,7 +3156,7 @@ export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.bu
 export function resolveUseAsClause_path(value: T.UseAsClause.LooseConfig['path']): T.UseAsClause['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -3346,7 +3178,7 @@ export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<type
 export function resolveUseWildcard_path(value: T.UseWildcard.LooseConfig['path']): T.UseWildcard['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -3362,8 +3194,8 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 				() =>
 					_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 						input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
-						_K10,
-						_K11
+						_K8,
+						_K9
 					)
 			),
 			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -3374,7 +3206,7 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 export function resolveParameters_parametersElements(
 	value: T.Parameters.LooseConfig['parametersElements']
 ): T.Parameters['_parameters_elements'] {
-	return _resolveOneBranch<T.ParametersElements>(value, '_parameters_elements');
+	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements');
 }
 
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
@@ -3385,7 +3217,7 @@ export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeo
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'parametersElements' in input
 				? input.parametersElements
 				: input,
-			'_parameters_elements'
+			'parameters_elements'
 		)
 	);
 }
@@ -3428,7 +3260,7 @@ export function resolveVariadicParameter_pattern(
 	value: T.VariadicParameter.LooseConfig['pattern']
 ): T.VariadicParameter['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -3452,14 +3284,14 @@ export function resolveParameter_mutableSpecifier(
 
 export function resolveParameter_name(value: T.Parameter.LooseConfig['name']): T.Parameter['_name'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern | 'self'>(value, _K33, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern | 'self'>(value, _K27, _K25)),
 		[['self', TSKindId.Self] as const]
 	);
 }
 
 export function resolveParameter_type(value: T.Parameter.LooseConfig['type']): T.Parameter['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3492,7 +3324,7 @@ export function resolveVisibilityModifier_content(
 	value: T.VisibilityModifier.LooseConfig['content']
 ): T.VisibilityModifier['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'crate' | T.VisibilityModifierPub>(value, _K34, _K35)),
+		_resolveKindEnum(value, () => _resolveOne<'crate' | T.VisibilityModifierPub>(value, _K28, _K29)),
 		[['crate', TSKindId.Crate] as const]
 	);
 }
@@ -3516,8 +3348,8 @@ export function coerceToVisibilityModifier(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
-							_K34,
-							_K35
+							_K28,
+							_K29
 						)
 				),
 				[['crate', TSKindId.Crate] as const]
@@ -3530,7 +3362,7 @@ export function resolveBracketedType_content(
 	value: T.BracketedType.LooseConfig['content']
 ): T.BracketedType['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type | T.QualifiedType>(value, _K19, _K36)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type | T.QualifiedType>(value, _K14, _K30)),
 		[]
 	);
 }
@@ -3552,8 +3384,8 @@ export function coerceToBracketedType(input: T.BracketedType.Loose): ReturnType<
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
-							_K19,
-							_K36
+							_K14,
+							_K30
 						)
 				),
 				[]
@@ -3564,14 +3396,14 @@ export function coerceToBracketedType(input: T.BracketedType.Loose): ReturnType<
 
 export function resolveQualifiedType_type(value: T.QualifiedType.LooseConfig['type']): T.QualifiedType['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
 
 export function resolveQualifiedType_alias(value: T.QualifiedType.LooseConfig['alias']): T.QualifiedType['_alias'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3606,14 +3438,14 @@ export function coerceToLifetime(input: T.Lifetime.Loose): ReturnType<typeof F.b
 
 export function resolveArrayType_element(value: T.ArrayType.LooseConfig['element']): T.ArrayType['_element'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
 
 export function resolveArrayType_length(value: T.ArrayType.LooseConfig['length']): T.ArrayType['_length'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -3629,7 +3461,7 @@ export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F
 export function resolveForLifetimes_lifetimes(
 	value: T.ForLifetimes.LooseConfig['lifetimes']
 ): T.ForLifetimes['_lifetimes'] {
-	return _resolveOneBranch<T.Lifetimes>(value, '_lifetimes');
+	return _resolveOneBranch<T.Lifetimes>(value, 'lifetimes');
 }
 
 export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<typeof F.buildForLifetimes> {
@@ -3643,7 +3475,7 @@ export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<ty
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'lifetimes' in input
 					? input.lifetimes
 					: input,
-				'_lifetimes'
+				'lifetimes'
 			)
 		)
 	);
@@ -3656,7 +3488,7 @@ export function resolveFunctionType_forLifetimes(
 }
 
 export function resolveFunctionType_content(value: T.FunctionType.LooseConfig['content']): T.FunctionType['_content'] {
-	return _resolveOne<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>(value, _K2, _K37);
+	return _resolveOne<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>(value, _K2, _K31);
 }
 
 export function resolveFunctionType_parameters(
@@ -3669,7 +3501,7 @@ export function resolveFunctionType_returnType(
 	value: T.FunctionType.LooseConfig['returnType']
 ): T.FunctionType['_return_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3715,7 +3547,7 @@ export function coerceToUnitType(_input?: T.UnitType.Loose): ReturnType<typeof F
 export function resolveGenericFunction_function(
 	value: T.GenericFunction.LooseConfig['function']
 ): T.GenericFunction['_function'] {
-	return _resolveOne<T.Identifier | T.ScopedIdentifier | T.FieldExpression>(value, _K38, _K39);
+	return _resolveOne<T.Identifier | T.ScopedIdentifier | T.FieldExpression>(value, _K32, _K33);
 }
 
 export function resolveGenericFunction_typeArguments(
@@ -3738,7 +3570,7 @@ export function coerceToGenericFunction(input: T.GenericFunction.Loose): ReturnT
 }
 
 export function resolveGenericType_type(value: T.GenericType.LooseConfig['type']): T.GenericType['_type'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K38, _K40);
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K32, _K34);
 }
 
 export function resolveGenericType_typeArguments(
@@ -3759,7 +3591,7 @@ export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<type
 export function resolveGenericTypeWithTurbofish_type(
 	value: T.GenericTypeWithTurbofish.LooseConfig['type']
 ): T.GenericTypeWithTurbofish['_type'] {
-	return _resolveOne<T.Identifier | T.ScopedIdentifier>(value, _K38, _K11);
+	return _resolveOne<T.Identifier | T.ScopedIdentifier>(value, _K32, _K9);
 }
 
 export function resolveGenericTypeWithTurbofish_typeArguments(
@@ -3785,14 +3617,14 @@ export function coerceToGenericTypeWithTurbofish(
 
 export function resolveBoundedType_left(value: T.BoundedType.LooseConfig['left']): T.BoundedType['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K19, _K41)),
+		_resolveKindEnum(value, () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K35)),
 		[]
 	);
 }
 
 export function resolveBoundedType_right(value: T.BoundedType.LooseConfig['right']): T.BoundedType['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K19, _K41)),
+		_resolveKindEnum(value, () => _resolveOne<T.Lifetime | T.Type | T.UseBounds>(value, _K14, _K35)),
 		[]
 	);
 }
@@ -3807,7 +3639,7 @@ export function coerceToBoundedType(input: T.BoundedType.Loose): ReturnType<type
 }
 
 export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']): T.UseBounds['_bounds'] {
-	return _resolveOneBranch<T.UseBoundsElements>(value, '_use_bounds_elements');
+	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements');
 }
 
 export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds> {
@@ -3816,7 +3648,7 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 	return F.buildUseBounds(
 		_resolveOneBranch<T.UseBoundsElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'bounds' in input ? input.bounds : input,
-			'_use_bounds_elements'
+			'use_bounds_elements'
 		)
 	);
 }
@@ -3824,7 +3656,7 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 export function resolveTypeArguments_typeArgumentsElements(
 	value: T.TypeArguments.LooseConfig['typeArgumentsElements']
 ): T.TypeArguments['_type_arguments_elements'] {
-	return _resolveOneBranch<T.TypeArgumentsElements>(value, '_type_arguments_elements');
+	return _resolveOneBranch<T.TypeArgumentsElements>(value, 'type_arguments_elements');
 }
 
 export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
@@ -3838,7 +3670,7 @@ export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'typeArgumentsElements' in input
 					? input.typeArgumentsElements
 					: input,
-				'_type_arguments_elements'
+				'type_arguments_elements'
 			)
 		)
 	);
@@ -3856,7 +3688,7 @@ export function resolveTypeBinding_typeArguments(
 
 export function resolveTypeBinding_type(value: T.TypeBinding.LooseConfig['type']): T.TypeBinding['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3885,7 +3717,7 @@ export function resolveReferenceType_mutableSpecifier(
 
 export function resolveReferenceType_type(value: T.ReferenceType.LooseConfig['type']): T.ReferenceType['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -3898,26 +3730,6 @@ export function coerceToReferenceType(input: T.ReferenceType.Loose): ReturnType<
 		mutableSpecifier: resolveReferenceType_mutableSpecifier(input.mutableSpecifier),
 		type: _requireField('reference_type', 'type', resolveReferenceType_type(input.type))
 	});
-}
-
-export function resolvePointerType_content(value: T.PointerType.LooseConfig['content']): T.PointerType['_content'] {
-	return _resolveOne<T.PointerTypeConst | T.PointerTypeMut>(value, _K2, _K42);
-}
-
-export function coerceToPointerType(input: T.PointerType.Loose): ReturnType<typeof F.buildPointerType> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.PointerType)
-		return input as unknown as ReturnType<typeof F.buildPointerType>;
-	return F.buildPointerType(
-		_requireField(
-			'pointer_type',
-			'content',
-			_resolveOne<T.PointerTypeConst | T.PointerTypeMut>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K42
-			)
-		)
-	);
 }
 
 export function coerceToNeverType(_input?: T.NeverType.Loose): ReturnType<typeof F.buildNeverType> {
@@ -3939,7 +3751,7 @@ export function resolveAbstractType_trait(value: T.AbstractType.LooseConfig['tra
 		| T.FunctionType
 		| T.TupleType
 		| T.BoundedType
-	>(value, _K38, _K43);
+	>(value, _K32, _K36);
 }
 
 export function coerceToAbstractType(input: T.AbstractType.Loose): ReturnType<typeof F.buildAbstractType> {
@@ -3954,7 +3766,7 @@ export function coerceToAbstractType(input: T.AbstractType.Loose): ReturnType<ty
 export function resolveDynamicType_trait(value: T.DynamicType.LooseConfig['trait']): T.DynamicType['_trait'] {
 	return _resolveOne<
 		T.HigherRankedTraitBound | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType
-	>(value, _K38, _K44);
+	>(value, _K32, _K37);
 }
 
 export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<typeof F.buildDynamicType> {
@@ -3968,8 +3780,8 @@ export function coerceToDynamicType(input: T.DynamicType.Loose): ReturnType<type
 				T.HigherRankedTraitBound | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType
 			>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
-				_K38,
-				_K44
+				_K32,
+				_K37
 			)
 		)
 	);
@@ -3984,13 +3796,13 @@ export function coerceToMutableSpecifier(
 export function resolveMacroInvocation_macro(
 	value: T.MacroInvocation.LooseConfig['macro']
 ): T.MacroInvocation['_macro'] {
-	return _resolveOne<T.ScopedIdentifier | T.Identifier>(value, _K38, _K11);
+	return _resolveOne<T.ScopedIdentifier | T.Identifier>(value, _K32, _K9);
 }
 
 export function resolveMacroInvocation_arguments(
 	value: T.MacroInvocation.LooseConfig['arguments']
 ): T.MacroInvocation['_arguments'] {
-	return _resolveOneBranch<T.DelimTokenTree>(value, 'delim_token_tree');
+	return _resolveOne<T.DelimTokenTree>(value, _K2, _super_delim_token_tree);
 }
 
 export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnType<typeof F.buildMacroInvocation> {
@@ -4000,28 +3812,6 @@ export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnT
 		macro: _requireField('macro_invocation', 'macro', resolveMacroInvocation_macro(input.macro)),
 		arguments: _requireField('macro_invocation', 'arguments', resolveMacroInvocation_arguments(input.arguments))
 	});
-}
-
-export function resolveDelimTokenTree_content(
-	value: T.DelimTokenTree.LooseConfig['content']
-): T.DelimTokenTree['_content'] {
-	return _resolveOne<T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace>(value, _K2, _K45);
-}
-
-export function coerceToDelimTokenTree(input: T.DelimTokenTree.Loose): ReturnType<typeof F.buildDelimTokenTree> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DelimTokenTree)
-		return input as unknown as ReturnType<typeof F.buildDelimTokenTree>;
-	return F.buildDelimTokenTree(
-		_requireField(
-			'delim_token_tree',
-			'content',
-			_resolveOne<T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K45
-			)
-		)
-	);
 }
 
 export function resolveScopedIdentifier_path(
@@ -4038,7 +3828,7 @@ export function resolveScopedIdentifier_path(
 				| T.ScopedIdentifier
 				| T.BracketedType
 				| T.GenericTypeWithTurbofish
-			>(value, _K10, _K46)
+			>(value, _K8, _K38)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -4048,7 +3838,7 @@ export function resolveScopedIdentifier_name(
 	value: T.ScopedIdentifier.LooseConfig['name']
 ): T.ScopedIdentifier['_name'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Identifier | 'super'>(value, _K47, _K2)),
+		_resolveKindEnum(value, () => _resolveOne<T.Identifier | 'super'>(value, _K39, _K2)),
 		[['super', TSKindId.Super] as const]
 	);
 }
@@ -4069,7 +3859,7 @@ export function resolveScopedTypeIdentifierInExpressionPosition_path(
 		_resolveKindEnum(value, () =>
 			_resolveOne<
 				'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier | T.GenericTypeWithTurbofish
-			>(value, _K10, _K48)
+			>(value, _K8, _K40)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -4111,7 +3901,7 @@ export function resolveScopedTypeIdentifier_path(
 				| T.GenericTypeWithTurbofish
 				| T.BracketedType
 				| T.GenericType
-			>(value, _K10, _K49)
+			>(value, _K8, _K41)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -4139,7 +3929,7 @@ export function resolveRangeExpression_content(
 ): T.RangeExpression['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(value, _K2, _K50)
+			_resolveOne<T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'>(value, _K2, _K42)
 		),
 		[['..', TSKindId.RangeExpressionBare] as const]
 	);
@@ -4163,7 +3953,7 @@ export function coerceToRangeExpression(input: T.RangeExpression.Loose): ReturnT
 								? input.content
 								: input,
 							_K2,
-							_K50
+							_K42
 						)
 				),
 				[['..', TSKindId.RangeExpressionBare] as const]
@@ -4185,7 +3975,7 @@ export function resolveUnaryExpression_operand(
 	value: T.UnaryExpression.LooseConfig['operand']
 ): T.UnaryExpression['_operand'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4201,7 +3991,7 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 
 export function resolveTryExpression_value(value: T.TryExpression.LooseConfig['value']): T.TryExpression['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4221,8 +4011,8 @@ export function coerceToTryExpression(input: T.TryExpression.Loose): ReturnType<
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
 								? input.value
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -4231,40 +4021,11 @@ export function coerceToTryExpression(input: T.TryExpression.Loose): ReturnType<
 	);
 }
 
-export function resolveReferenceExpression_content(
-	value: T.ReferenceExpression.LooseConfig['content']
-): T.ReferenceExpression['_content'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<'raw const' | T.ReferenceExpressionRawMut | 'mut'>(value, _K51, _K52)),
-		[['raw const', TSKindId.ReferenceExpressionRawConst] as const, ['mut', TSKindId.MutableSpecifier] as const]
-	);
-}
-
-export function resolveReferenceExpression_value(
-	value: T.ReferenceExpression.LooseConfig['value']
-): T.ReferenceExpression['_value'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
-		[]
-	);
-}
-
-export function coerceToReferenceExpression(
-	input: T.ReferenceExpression.Loose
-): ReturnType<typeof F.buildReferenceExpression> {
-	if (!_isLooseConfig<T.ReferenceExpression.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpression>;
-	return F.buildReferenceExpression({
-		content: resolveReferenceExpression_content(input.content),
-		value: _requireField('reference_expression', 'value', resolveReferenceExpression_value(input.value))
-	});
-}
-
 export function resolveBinaryExpression_left(
 	value: T.BinaryExpression.LooseConfig['left']
 ): T.BinaryExpression['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4322,7 +4083,7 @@ export function resolveBinaryExpression_right(
 	value: T.BinaryExpression.LooseConfig['right']
 ): T.BinaryExpression['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4341,7 +4102,7 @@ export function resolveAssignmentExpression_left(
 	value: T.AssignmentExpression.LooseConfig['left']
 ): T.AssignmentExpression['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4350,7 +4111,7 @@ export function resolveAssignmentExpression_right(
 	value: T.AssignmentExpression.LooseConfig['right']
 ): T.AssignmentExpression['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4370,7 +4131,7 @@ export function resolveCompoundAssignmentExpr_left(
 	value: T.CompoundAssignmentExpr.LooseConfig['left']
 ): T.CompoundAssignmentExpr['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4404,7 +4165,7 @@ export function resolveCompoundAssignmentExpr_right(
 	value: T.CompoundAssignmentExpr.LooseConfig['right']
 ): T.CompoundAssignmentExpr['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4429,7 +4190,7 @@ export function resolveTypeCastExpression_value(
 	value: T.TypeCastExpression.LooseConfig['value']
 ): T.TypeCastExpression['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4438,7 +4199,7 @@ export function resolveTypeCastExpression_type(
 	value: T.TypeCastExpression.LooseConfig['type']
 ): T.TypeCastExpression['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -4458,7 +4219,7 @@ export function resolveReturnExpression_expression(
 	value: T.ReturnExpression.LooseConfig['expression']
 ): T.ReturnExpression['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4477,8 +4238,8 @@ export function coerceToReturnExpression(input?: T.ReturnExpression.Loose): Retu
 						input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 							? input.expression
 							: input,
-						_K17,
-						_K18
+						_K12,
+						_K13
 					)
 			),
 			[]
@@ -4490,7 +4251,7 @@ export function resolveYieldExpression_expression(
 	value: T.YieldExpression.LooseConfig['expression']
 ): T.YieldExpression['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4509,8 +4270,8 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 						input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 							? input.expression
 							: input,
-						_K17,
-						_K18
+						_K12,
+						_K13
 					)
 			),
 			[]
@@ -4563,7 +4324,7 @@ export function resolveCallExpression_function(
 				| T.LoopExpression
 				| T.ForExpression
 				| T.ConstBlock
-			>(value, _K17, _K53)
+			>(value, _K12, _K43)
 		),
 		[['self', TSKindId.Self] as const, ['()', TSKindId.UnitExpression] as const]
 	);
@@ -4587,7 +4348,7 @@ export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnTyp
 export function resolveArguments_argumentsElements(
 	value: T.Arguments.LooseConfig['argumentsElements']
 ): T.Arguments['_arguments_elements'] {
-	return _resolveOneBranch<T.ArgumentsElements>(value, '_arguments_elements');
+	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements');
 }
 
 export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments> {
@@ -4598,29 +4359,7 @@ export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof 
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'argumentsElements' in input
 				? input.argumentsElements
 				: input,
-			'_arguments_elements'
-		)
-	);
-}
-
-export function resolveArrayExpression_content(
-	value: T.ArrayExpression.LooseConfig['content']
-): T.ArrayExpression['_content'] {
-	return _resolveOne<T.ArrayExpressionSemi | T.ArrayExpressionList>(value, _K2, _K54);
-}
-
-export function coerceToArrayExpression(input: T.ArrayExpression.Loose): ReturnType<typeof F.buildArrayExpression> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ArrayExpression)
-		return input as unknown as ReturnType<typeof F.buildArrayExpression>;
-	return F.buildArrayExpression(
-		_requireField(
-			'array_expression',
-			'content',
-			_resolveOne<T.ArrayExpressionSemi | T.ArrayExpressionList>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K54
-			)
+			'arguments_elements'
 		)
 	);
 }
@@ -4629,7 +4368,7 @@ export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
 ): T.ParenthesizedExpression['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4653,8 +4392,8 @@ export function coerceToParenthesizedExpression(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 								? input.expression
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -4697,8 +4436,8 @@ export function resolveStructExpression_name(
 ): T.StructExpression['_name'] {
 	return _resolveOne<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(
 		value,
-		_K38,
-		_K55
+		_K32,
+		_K44
 	);
 }
 
@@ -4720,7 +4459,7 @@ export function coerceToStructExpression(input: T.StructExpression.Loose): Retur
 export function resolveFieldInitializerList_initializers(
 	value: T.FieldInitializerList.LooseConfig['initializers']
 ): T.FieldInitializerList['_initializers'] {
-	return _resolveOneBranch<T.FieldInitializerListElements>(value, '_field_initializer_list_elements');
+	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements');
 }
 
 export function coerceToFieldInitializerList(
@@ -4733,7 +4472,7 @@ export function coerceToFieldInitializerList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'initializers' in input
 				? input.initializers
 				: input,
-			'_field_initializer_list_elements'
+			'field_initializer_list_elements'
 		)
 	);
 }
@@ -4770,14 +4509,14 @@ export function resolveFieldInitializer_attributeItems(
 export function resolveFieldInitializer_field(
 	value: T.FieldInitializer.LooseConfig['field']
 ): T.FieldInitializer['_field'] {
-	return _resolveOne<T.Identifier | T.IntegerLiteral>(value, _K56, _K2);
+	return _resolveOne<T.Identifier | T.IntegerLiteral>(value, _K45, _K2);
 }
 
 export function resolveFieldInitializer_value(
 	value: T.FieldInitializer.LooseConfig['value']
 ): T.FieldInitializer['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4796,7 +4535,7 @@ export function resolveBaseFieldInitializer_value(
 	value: T.BaseFieldInitializer.LooseConfig['value']
 ): T.BaseFieldInitializer['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4818,8 +4557,8 @@ export function coerceToBaseFieldInitializer(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
 								? input.value
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -4832,7 +4571,7 @@ export function resolveIfExpression_condition(
 	value: T.IfExpression.LooseConfig['condition']
 ): T.IfExpression['_condition'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K17, _K57)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K12, _K46)),
 		[]
 	);
 }
@@ -4861,14 +4600,14 @@ export function coerceToIfExpression(input: T.IfExpression.Loose): ReturnType<ty
 
 export function resolveLetCondition_pattern(value: T.LetCondition.LooseConfig['pattern']): T.LetCondition['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
 
 export function resolveLetCondition_value(value: T.LetCondition.LooseConfig['value']): T.LetCondition['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4884,14 +4623,14 @@ export function coerceToLetCondition(input: T.LetCondition.Loose): ReturnType<ty
 
 export function resolveLetChain_left(value: T.LetChain.LooseConfig['left']): T.LetChain['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.LetChain | T.LetCondition | T.Expression>(value, _K17, _K58)),
+		_resolveKindEnum(value, () => _resolveOne<T.LetChain | T.LetCondition | T.Expression>(value, _K12, _K47)),
 		[]
 	);
 }
 
 export function resolveLetChain_rights(value: T.LetChain.LooseConfig['right']): T.LetChain['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.LetCondition | T.Expression>(value, _K17, _K59)),
+		_resolveKindEnum(value, () => _resolveMany<T.LetCondition | T.Expression>(value, _K12, _K48)),
 		[]
 	);
 }
@@ -4906,7 +4645,7 @@ export function coerceToLetChain(input?: T.LetChain.Loose): ReturnType<typeof F.
 }
 
 export function resolveElseClause_content(value: T.ElseClause.LooseConfig['content']): T.ElseClause['_content'] {
-	return _resolveOne<T.Block | T.IfExpression>(value, _K2, _K60);
+	return _resolveOne<T.Block | T.IfExpression>(value, _K2, _K49);
 }
 
 export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
@@ -4919,7 +4658,7 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 			_resolveOne<T.Block | T.IfExpression>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
-				_K60
+				_K49
 			)
 		)
 	);
@@ -4929,7 +4668,7 @@ export function resolveMatchExpression_value(
 	value: T.MatchExpression.LooseConfig['value']
 ): T.MatchExpression['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -4966,30 +4705,10 @@ export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeo
 	);
 }
 
-export function resolveMatchArm_content(value: T.MatchArm.LooseConfig['content']): T.MatchArm['_content'] {
-	return _resolveOne<T.MatchArmWithComma | T.MatchArmBlockEnding>(value, _K2, _K61);
-}
-
-export function coerceToMatchArm(input: T.MatchArm.Loose): ReturnType<typeof F.buildMatchArm> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.MatchArm)
-		return input as unknown as ReturnType<typeof F.buildMatchArm>;
-	return F.buildMatchArm(
-		_requireField(
-			'match_arm',
-			'content',
-			_resolveOne<T.MatchArmWithComma | T.MatchArmBlockEnding>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K61
-			)
-		)
-	);
-}
-
 export function resolveLastMatchArm_attributes(
 	value: T.LastMatchArm.LooseConfig['attributes']
 ): T.LastMatchArm['_attributes'] {
-	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K62);
+	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K50);
 }
 
 export function resolveLastMatchArm_pattern(value: T.LastMatchArm.LooseConfig['pattern']): T.LastMatchArm['_pattern'] {
@@ -4998,7 +4717,7 @@ export function resolveLastMatchArm_pattern(value: T.LastMatchArm.LooseConfig['p
 
 export function resolveLastMatchArm_value(value: T.LastMatchArm.LooseConfig['value']): T.LastMatchArm['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5020,7 +4739,7 @@ export function coerceToLastMatchArm(input: T.LastMatchArm.Loose): ReturnType<ty
 
 export function resolveMatchPattern_pattern(value: T.MatchPattern.LooseConfig['pattern']): T.MatchPattern['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -5029,7 +4748,7 @@ export function resolveMatchPattern_condition(
 	value: T.MatchPattern.LooseConfig['condition']
 ): T.MatchPattern['_condition'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K17, _K57)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K12, _K46)),
 		[]
 	);
 }
@@ -5053,7 +4772,7 @@ export function resolveWhileExpression_condition(
 	value: T.WhileExpression.LooseConfig['condition']
 ): T.WhileExpression['_condition'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K17, _K57)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.LetCondition | T.LetChain>(value, _K12, _K46)),
 		[]
 	);
 }
@@ -5097,14 +4816,14 @@ export function resolveForExpression_pattern(
 	value: T.ForExpression.LooseConfig['pattern']
 ): T.ForExpression['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
 
 export function resolveForExpression_value(value: T.ForExpression.LooseConfig['value']): T.ForExpression['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5143,30 +4862,6 @@ export function coerceToConstBlock(input: T.ConstBlock.Loose): ReturnType<typeof
 	);
 }
 
-export function resolveClosureExpression_content(
-	value: T.ClosureExpression.LooseConfig['content']
-): T.ClosureExpression['_content'] {
-	return _resolveOne<T.ClosureExpressionBlock | T.ClosureExpressionExpr>(value, _K2, _K63);
-}
-
-export function coerceToClosureExpression(
-	input: T.ClosureExpression.Loose
-): ReturnType<typeof F.buildClosureExpression> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ClosureExpression)
-		return input as unknown as ReturnType<typeof F.buildClosureExpression>;
-	return F.buildClosureExpression(
-		_requireField(
-			'closure_expression',
-			'content',
-			_resolveOne<T.ClosureExpressionBlock | T.ClosureExpressionExpr>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K63
-			)
-		)
-	);
-}
-
 export function coerceToClosureParameters(
 	...input: readonly (
 		| T.ClosureParameters.Loose
@@ -5179,7 +4874,7 @@ export function coerceToClosureParameters(
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildClosureParameters(
 			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () => _resolveMany<T.Pattern | T.Parameter>(children, _K30, _K64)),
+				_resolveKindEnum(children, () => _resolveMany<T.Pattern | T.Parameter>(children, _K24, _K51)),
 				[]
 			) as unknown as Parameters<typeof F.buildClosureParameters>)
 		);
@@ -5193,7 +4888,7 @@ export function coerceToClosureParameters(
 	})();
 	return F.buildClosureParameters(
 		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () => _resolveMany<T.Pattern | T.Parameter>(_elems, _K30, _K64)),
+			_resolveKindEnum(_elems, () => _resolveMany<T.Pattern | T.Parameter>(_elems, _K24, _K51)),
 			[]
 		) as unknown as Parameters<typeof F.buildClosureParameters>)
 	);
@@ -5228,7 +4923,7 @@ export function resolveBreakExpression_expression(
 	value: T.BreakExpression.LooseConfig['expression']
 ): T.BreakExpression['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5265,7 +4960,7 @@ export function resolveIndexExpression_object(
 	value: T.IndexExpression.LooseConfig['object']
 ): T.IndexExpression['_object'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5274,7 +4969,7 @@ export function resolveIndexExpression_index(
 	value: T.IndexExpression.LooseConfig['index']
 ): T.IndexExpression['_index'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5292,7 +4987,7 @@ export function resolveAwaitExpression_expression(
 	value: T.AwaitExpression.LooseConfig['expression']
 ): T.AwaitExpression['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5314,8 +5009,8 @@ export function coerceToAwaitExpression(input: T.AwaitExpression.Loose): ReturnT
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 								? input.expression
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -5328,7 +5023,7 @@ export function resolveFieldExpression_value(
 	value: T.FieldExpression.LooseConfig['value']
 ): T.FieldExpression['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5336,7 +5031,7 @@ export function resolveFieldExpression_value(
 export function resolveFieldExpression_field(
 	value: T.FieldExpression.LooseConfig['field']
 ): T.FieldExpression['_field'] {
-	return _resolveOne<T.Identifier | T.IntegerLiteral>(value, _K56, _K2);
+	return _resolveOne<T.Identifier | T.IntegerLiteral>(value, _K45, _K2);
 }
 
 export function coerceToFieldExpression(input: T.FieldExpression.Loose): ReturnType<typeof F.buildFieldExpression> {
@@ -5435,7 +5130,7 @@ export function resolveBlock_trailingExpression(
 	value: T.Block.LooseConfig['trailingExpression']
 ): T.Block['_trailing_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -5453,7 +5148,7 @@ export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildB
 export function resolveGenericPattern_content(
 	value: T.GenericPattern.LooseConfig['content']
 ): T.GenericPattern['_content'] {
-	return _resolveOne<T.Identifier | T.ScopedIdentifier>(value, _K38, _K11);
+	return _resolveOne<T.Identifier | T.ScopedIdentifier>(value, _K32, _K9);
 }
 
 export function resolveGenericPattern_typeArguments(
@@ -5478,7 +5173,7 @@ export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnTyp
 export function resolveTuplePattern_elements(
 	value: T.TuplePattern.LooseConfig['elements']
 ): T.TuplePattern['_elements'] {
-	return _resolveOneBranch<T.TuplePatternElements>(value, '_tuple_pattern_elements');
+	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements');
 }
 
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
@@ -5487,7 +5182,7 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.TuplePatternElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'elements' in input ? input.elements : input,
-			'_tuple_pattern_elements'
+			'tuple_pattern_elements'
 		)
 	);
 }
@@ -5495,7 +5190,7 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 export function resolveSlicePattern_patterns(
 	value: T.SlicePattern.LooseConfig['patterns']
 ): T.SlicePattern['_patterns'] {
-	return _resolveOneBranch<T.Patterns>(value, '_patterns');
+	return _resolveOneBranch<T.Patterns>(value, 'patterns');
 }
 
 export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern> {
@@ -5504,7 +5199,7 @@ export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<t
 	return F.buildSlicePattern(
 		_resolveOneBranch<T.Patterns>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'patterns' in input ? input.patterns : input,
-			'_patterns'
+			'patterns'
 		)
 	);
 }
@@ -5512,13 +5207,13 @@ export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<t
 export function resolveTupleStructPattern_type(
 	value: T.TupleStructPattern.LooseConfig['type']
 ): T.TupleStructPattern['_type'] {
-	return _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(value, _K38, _K48);
+	return _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(value, _K32, _K40);
 }
 
 export function resolveTupleStructPattern_patterns(
 	value: T.TupleStructPattern.LooseConfig['patterns']
 ): T.TupleStructPattern['_patterns'] {
-	return _resolveOneBranch<T.Patterns>(value, '_patterns');
+	return _resolveOneBranch<T.Patterns>(value, 'patterns');
 }
 
 export function coerceToTupleStructPattern(
@@ -5533,11 +5228,11 @@ export function coerceToTupleStructPattern(
 }
 
 export function resolveStructPattern_type(value: T.StructPattern.LooseConfig['type']): T.StructPattern['_type'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K38, _K40);
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K32, _K34);
 }
 
 export function resolveStructPattern_fields(value: T.StructPattern.LooseConfig['fields']): T.StructPattern['_fields'] {
-	return _resolveOneBranch<T.StructPatternElements>(value, '_struct_pattern_elements');
+	return _resolveOneBranch<T.StructPatternElements>(value, 'struct_pattern_elements');
 }
 
 export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<typeof F.buildStructPattern> {
@@ -5549,26 +5244,6 @@ export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<
 	});
 }
 
-export function resolveFieldPattern_content(value: T.FieldPattern.LooseConfig['content']): T.FieldPattern['_content'] {
-	return _resolveOne<T.FieldPatternShorthand | T.FieldPatternNamed>(value, _K2, _K65);
-}
-
-export function coerceToFieldPattern(input: T.FieldPattern.Loose): ReturnType<typeof F.buildFieldPattern> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FieldPattern)
-		return input as unknown as ReturnType<typeof F.buildFieldPattern>;
-	return F.buildFieldPattern(
-		_requireField(
-			'field_pattern',
-			'content',
-			_resolveOne<T.FieldPatternShorthand | T.FieldPatternNamed>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K65
-			)
-		)
-	);
-}
-
 export function coerceToRemainingFieldPattern(
 	_input?: T.RemainingFieldPattern.Loose
 ): ReturnType<typeof F.buildRemainingFieldPattern> {
@@ -5577,7 +5252,7 @@ export function coerceToRemainingFieldPattern(
 
 export function resolveMutPattern_pattern(value: T.MutPattern.LooseConfig['pattern']): T.MutPattern['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -5599,8 +5274,8 @@ export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'pattern' in input
 								? input.pattern
 								: input,
-							_K30,
-							_K31
+							_K24,
+							_K25
 						)
 				),
 				[]
@@ -5609,29 +5284,9 @@ export function coerceToMutPattern(input: T.MutPattern.Loose): ReturnType<typeof
 	);
 }
 
-export function resolveRangePattern_content(value: T.RangePattern.LooseConfig['content']): T.RangePattern['_content'] {
-	return _resolveOne<T.RangePatternWithLeft | T.RangePatternPrefix>(value, _K2, _K66);
-}
-
-export function coerceToRangePattern(input: T.RangePattern.Loose): ReturnType<typeof F.buildRangePattern> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.RangePattern)
-		return input as unknown as ReturnType<typeof F.buildRangePattern>;
-	return F.buildRangePattern(
-		_requireField(
-			'range_pattern',
-			'content',
-			_resolveOne<T.RangePatternWithLeft | T.RangePatternPrefix>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K66
-			)
-		)
-	);
-}
-
 export function resolveRefPattern_pattern(value: T.RefPattern.LooseConfig['pattern']): T.RefPattern['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -5653,8 +5308,8 @@ export function coerceToRefPattern(input: T.RefPattern.Loose): ReturnType<typeof
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'pattern' in input
 								? input.pattern
 								: input,
-							_K30,
-							_K31
+							_K24,
+							_K25
 						)
 				),
 				[]
@@ -5671,7 +5326,7 @@ export function resolveCapturedPattern_pattern(
 	value: T.CapturedPattern.LooseConfig['pattern']
 ): T.CapturedPattern['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -5695,7 +5350,7 @@ export function resolveReferencePattern_pattern(
 	value: T.ReferencePattern.LooseConfig['pattern']
 ): T.ReferencePattern['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -5709,30 +5364,10 @@ export function coerceToReferencePattern(input: T.ReferencePattern.Loose): Retur
 	});
 }
 
-export function resolveOrPattern_content(value: T.OrPattern.LooseConfig['content']): T.OrPattern['_content'] {
-	return _resolveOne<T.OrPatternBinary | T.OrPatternPrefix>(value, _K2, _K67);
-}
-
-export function coerceToOrPattern(input: T.OrPattern.Loose): ReturnType<typeof F.buildOrPattern> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.OrPattern)
-		return input as unknown as ReturnType<typeof F.buildOrPattern>;
-	return F.buildOrPattern(
-		_requireField(
-			'or_pattern',
-			'content',
-			_resolveOne<T.OrPatternBinary | T.OrPatternPrefix>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K67
-			)
-		)
-	);
-}
-
 export function resolveNegativeLiteral_value(
 	value: T.NegativeLiteral.LooseConfig['value']
 ): T.NegativeLiteral['_value'] {
-	return _resolveOne<T.IntegerLiteral | T.FloatLiteral>(value, _K68, _K2);
+	return _resolveOne<T.IntegerLiteral | T.FloatLiteral>(value, _K52, _K2);
 }
 
 export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnType<typeof F.buildNegativeLiteral> {
@@ -5744,7 +5379,7 @@ export function coerceToNegativeLiteral(input: T.NegativeLiteral.Loose): ReturnT
 			'value',
 			_resolveOne<T.IntegerLiteral | T.FloatLiteral>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
-				_K68,
+				_K52,
 				_K2
 			)
 		)
@@ -5765,7 +5400,7 @@ export function resolveStringLiteral_stringOpen(
 export function resolveStringLiteral_elements(
 	value: T.StringLiteral.LooseConfig['elements']
 ): T.StringLiteral['_elements'] {
-	return _resolveMany<T.EscapeSequence | T.StringContent>(value, _K69, _K2);
+	return _resolveMany<T.EscapeSequence | T.StringContent>(value, _K53, _K2);
 }
 
 export function coerceToStringLiteral(input: T.StringLiteral.Loose): ReturnType<typeof F.buildStringLiteral> {
@@ -5830,8 +5465,8 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 export function resolveLineComment_content(value: T.LineComment.LooseConfig['content']): T.LineComment['_content'] {
 	return _resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
 		value,
-		_K70,
-		_K71
+		_K54,
+		_K55
 	);
 }
 
@@ -5844,15 +5479,15 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 			'content',
 			_resolveOne<T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K70,
-				_K71
+				_K54,
+				_K55
 			)
 		)
 	);
 }
 
 export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['content']): T.BlockComment['_content'] {
-	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(value, _K72, _K73);
+	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(value, _K56, _K57);
 }
 
 export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
@@ -5861,8 +5496,8 @@ export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<t
 	return F.buildBlockComment(
 		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-			_K72,
-			_K73
+			_K56,
+			_K57
 		)
 	);
 }
@@ -6344,7 +5979,7 @@ export function resolveVisibilityModifierGroup_content(
 ): T.VisibilityModifierGroup['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K74, _K75)
+			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K58, _K59)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -6357,7 +5992,7 @@ export function coerceToVisibilityModifierGroup(
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifierGroup>;
 	return F.buildVisibilityModifierGroup(
 		_requireField(
-			'_visibility_modifier_group',
+			'visibility_modifier_group',
 			'content',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -6369,8 +6004,8 @@ export function coerceToVisibilityModifierGroup(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
-							_K74,
-							_K75
+							_K58,
+							_K59
 						)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -6432,85 +6067,6 @@ export function coerceToStringLiteralOpen(
 	return F.buildStringLiteralOpen(input as Parameters<typeof F.buildStringLiteralOpen>[0]);
 }
 
-export function coerceToReferenceExpressionRawMut(
-	input?: T.ReferenceExpressionRawMut.Loose
-): ReturnType<typeof F.buildReferenceExpressionRawMut> {
-	if (!_isLooseConfig<T.ReferenceExpressionRawMut.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawMut>;
-	return F.buildReferenceExpressionRawMut(input as Parameters<typeof F.buildReferenceExpressionRawMut>[0]);
-}
-
-export function resolveImplItemBody_declarationList(
-	value: T.ImplItemBody.LooseConfig['declarationList']
-): T.ImplItemBody['_declaration_list'] {
-	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
-}
-
-export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<typeof F.buildImplItemBody> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImplItemBody)
-		return input as unknown as ReturnType<typeof F.buildImplItemBody>;
-	return F.buildImplItemBody(
-		_requireField(
-			'_impl_item_body',
-			'declarationList',
-			_resolveOneBranch<T.DeclarationList>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'declarationList' in input
-					? input.declarationList
-					: input,
-				'declaration_list'
-			)
-		)
-	);
-}
-
-export function resolveImplItemPositiveClause_trait(
-	value: T.ImplItemPositiveClause.LooseConfig['trait']
-): T.ImplItemPositiveClause['_trait'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K38, _K76);
-}
-
-export function coerceToImplItemPositiveClause(
-	input: T.ImplItemPositiveClause.Loose
-): ReturnType<typeof F.buildImplItemPositiveClause> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImplItemPositiveClause)
-		return input as unknown as ReturnType<typeof F.buildImplItemPositiveClause>;
-	return F.buildImplItemPositiveClause(
-		_requireField(
-			'_impl_item_positive_clause',
-			'trait',
-			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
-				_K38,
-				_K76
-			)
-		)
-	);
-}
-
-export function resolveImplItemNegativeClause_trait(
-	value: T.ImplItemNegativeClause.LooseConfig['trait']
-): T.ImplItemNegativeClause['_trait'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K38, _K76);
-}
-
-export function coerceToImplItemNegativeClause(
-	input: T.ImplItemNegativeClause.Loose
-): ReturnType<typeof F.buildImplItemNegativeClause> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImplItemNegativeClause)
-		return input as unknown as ReturnType<typeof F.buildImplItemNegativeClause>;
-	return F.buildImplItemNegativeClause(
-		_requireField(
-			'_impl_item_negative_clause',
-			'trait',
-			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
-				_K38,
-				_K76
-			)
-		)
-	);
-}
-
 export function resolveArrayExpressionSemi_attributes(
 	value: T.ArrayExpressionSemi.LooseConfig['attributes']
 ): T.ArrayExpressionSemi['_attributes'] {
@@ -6521,7 +6077,7 @@ export function resolveArrayExpressionSemi_element(
 	value: T.ArrayExpressionSemi.LooseConfig['element']
 ): T.ArrayExpressionSemi['_element'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -6530,7 +6086,7 @@ export function resolveArrayExpressionSemi_length(
 	value: T.ArrayExpressionSemi.LooseConfig['length']
 ): T.ArrayExpressionSemi['_length'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -6542,8 +6098,8 @@ export function coerceToArrayExpressionSemi(
 		return input as unknown as ReturnType<typeof F.buildArrayExpressionSemi>;
 	return F.buildArrayExpressionSemi({
 		attributes: resolveArrayExpressionSemi_attributes(input.attributes),
-		element: _requireField('_array_expression_semi', 'element', resolveArrayExpressionSemi_element(input.element)),
-		length: _requireField('_array_expression_semi', 'length', resolveArrayExpressionSemi_length(input.length))
+		element: _requireField('array_expression_semi', 'element', resolveArrayExpressionSemi_element(input.element)),
+		length: _requireField('array_expression_semi', 'length', resolveArrayExpressionSemi_length(input.length))
 	});
 }
 
@@ -6556,7 +6112,7 @@ export function resolveArrayExpressionList_attributes(
 export function resolveArrayExpressionList_argumentsElements(
 	value: T.ArrayExpressionList.LooseConfig['argumentsElements']
 ): T.ArrayExpressionList['_arguments_elements'] {
-	return _resolveOneBranch<T.ArgumentsElements>(value, '_arguments_elements');
+	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements');
 }
 
 export function coerceToArrayExpressionList(
@@ -6572,7 +6128,7 @@ export function coerceToArrayExpressionList(
 
 export function resolveAttributeInput_value(value: T.AttributeInput.LooseConfig['value']): T.AttributeInput['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -6580,7 +6136,7 @@ export function resolveAttributeInput_value(value: T.AttributeInput.LooseConfig[
 export function resolveAttributeInput_arguments(
 	value: T.AttributeInput.LooseConfig['arguments']
 ): T.AttributeInput['_arguments'] {
-	return _resolveOneBranch<T.DelimTokenTree>(value, 'delim_token_tree');
+	return _resolveOne<T.DelimTokenTree>(value, _K2, _super_delim_token_tree);
 }
 
 export function coerceToAttributeInput(input?: T.AttributeInput.Loose): ReturnType<typeof F.buildAttributeInput> {
@@ -6620,7 +6176,7 @@ export function resolveClosureExpressionBlock_returnType(
 	value: T.ClosureExpressionBlock.LooseConfig['returnType']
 ): T.ClosureExpressionBlock['_return_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -6674,7 +6230,7 @@ export function resolveClosureExpressionExpr_body(
 	value: T.ClosureExpressionExpr.LooseConfig['body']
 ): T.ClosureExpressionExpr['_body'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | '_'>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | '_'>(value, _K12, _K13)),
 		[['_', TSKindId.Underscore] as const]
 	);
 }
@@ -6689,14 +6245,309 @@ export function coerceToClosureExpressionExpr(
 		asyncMarker: resolveClosureExpressionExpr_asyncMarker(input.asyncMarker),
 		moveMarker: resolveClosureExpressionExpr_moveMarker(input.moveMarker),
 		parameters: resolveClosureExpressionExpr_parameters(input.parameters) ?? F.buildClosureParameters(),
-		body: _requireField('_closure_expression_expr', 'body', resolveClosureExpressionExpr_body(input.body))
+		body: _requireField('closure_expression_expr', 'body', resolveClosureExpressionExpr_body(input.body))
+	});
+}
+
+export function resolveReferenceExpressionRawConst_value(
+	value: T.ReferenceExpressionRawConst.LooseConfig['value']
+): T.ReferenceExpressionRawConst['_value'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export function coerceToReferenceExpressionRawConst(
+	input: T.ReferenceExpressionRawConst.Loose
+): ReturnType<typeof F.buildReferenceExpressionRawConst> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ReferenceExpressionRawConst)
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawConst>;
+	return F.buildReferenceExpressionRawConst(
+		_requireField(
+			'reference_expression_raw_const',
+			'value',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
+								: input,
+							_K12,
+							_K13
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveReferenceExpressionRawMut_value(
+	value: T.ReferenceExpressionRawMut.LooseConfig['value']
+): T.ReferenceExpressionRawMut['_value'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export function coerceToReferenceExpressionRawMut(
+	input: T.ReferenceExpressionRawMut.Loose
+): ReturnType<typeof F.buildReferenceExpressionRawMut> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ReferenceExpressionRawMut)
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionRawMut>;
+	return F.buildReferenceExpressionRawMut(
+		_requireField(
+			'reference_expression_raw_mut',
+			'value',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
+								: input,
+							_K12,
+							_K13
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveReferenceExpressionMut_value(
+	value: T.ReferenceExpressionMut.LooseConfig['value']
+): T.ReferenceExpressionMut['_value'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export function coerceToReferenceExpressionMut(
+	input: T.ReferenceExpressionMut.Loose
+): ReturnType<typeof F.buildReferenceExpressionMut> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ReferenceExpressionMut)
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionMut>;
+	return F.buildReferenceExpressionMut(
+		_requireField(
+			'reference_expression_mut',
+			'value',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
+								: input,
+							_K12,
+							_K13
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveReferenceExpressionBare_value(
+	value: T.ReferenceExpressionBare.LooseConfig['value']
+): T.ReferenceExpressionBare['_value'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
+		[]
+	);
+}
+
+export function coerceToReferenceExpressionBare(
+	input: T.ReferenceExpressionBare.Loose
+): ReturnType<typeof F.buildReferenceExpressionBare> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ReferenceExpressionBare)
+		return input as unknown as ReturnType<typeof F.buildReferenceExpressionBare>;
+	return F.buildReferenceExpressionBare(
+		_requireField(
+			'reference_expression_bare',
+			'value',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
+								: input,
+							_K12,
+							_K13
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveImplItemPositiveClause_trait(
+	value: T.ImplItemPositiveClause.LooseConfig['trait']
+): T.ImplItemPositiveClause['_trait'] {
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K60);
+}
+
+export function coerceToImplItemPositiveClause(
+	input: T.ImplItemPositiveClause.Loose
+): ReturnType<typeof F.buildImplItemPositiveClause> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImplItemPositiveClause)
+		return input as unknown as ReturnType<typeof F.buildImplItemPositiveClause>;
+	return F.buildImplItemPositiveClause(
+		_requireField(
+			'impl_item_positive_clause',
+			'trait',
+			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
+				_K32,
+				_K60
+			)
+		)
+	);
+}
+
+export function resolveImplItemNegativeClause_trait(
+	value: T.ImplItemNegativeClause.LooseConfig['trait']
+): T.ImplItemNegativeClause['_trait'] {
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K60);
+}
+
+export function coerceToImplItemNegativeClause(
+	input: T.ImplItemNegativeClause.Loose
+): ReturnType<typeof F.buildImplItemNegativeClause> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImplItemNegativeClause)
+		return input as unknown as ReturnType<typeof F.buildImplItemNegativeClause>;
+	return F.buildImplItemNegativeClause(
+		_requireField(
+			'impl_item_negative_clause',
+			'trait',
+			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
+				_K32,
+				_K60
+			)
+		)
+	);
+}
+
+export function resolveImplItemBody_unsafeMarker(
+	value: T.ImplItemBody.LooseConfig['unsafeMarker']
+): T.ImplItemBody['_unsafe_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveImplItemBody_typeParameters(
+	value: T.ImplItemBody.LooseConfig['typeParameters']
+): T.ImplItemBody['_type_parameters'] {
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+}
+
+export function resolveImplItemBody_traitClause(
+	value: T.ImplItemBody.LooseConfig['traitClause']
+): T.ImplItemBody['_trait_clause'] {
+	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
+		value,
+		_K2,
+		_K61,
+		'impl_item_positive_clause'
+	);
+}
+
+export function resolveImplItemBody_type(value: T.ImplItemBody.LooseConfig['type']): T.ImplItemBody['_type'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
+		[]
+	);
+}
+
+export function resolveImplItemBody_whereClause(
+	value: T.ImplItemBody.LooseConfig['whereClause']
+): T.ImplItemBody['_where_clause'] {
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+}
+
+export function resolveImplItemBody_declarationList(
+	value: T.ImplItemBody.LooseConfig['declarationList']
+): T.ImplItemBody['_declaration_list'] {
+	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
+}
+
+export function coerceToImplItemBody(input: T.ImplItemBody.Loose): ReturnType<typeof F.buildImplItemBody> {
+	if (!_isLooseConfig<T.ImplItemBody.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildImplItemBody>;
+	return F.buildImplItemBody({
+		unsafeMarker: resolveImplItemBody_unsafeMarker(input.unsafeMarker),
+		typeParameters: resolveImplItemBody_typeParameters(input.typeParameters),
+		traitClause: resolveImplItemBody_traitClause(input.traitClause),
+		type: _requireField('impl_item_body', 'type', resolveImplItemBody_type(input.type)),
+		whereClause: resolveImplItemBody_whereClause(input.whereClause),
+		declarationList: resolveImplItemBody_declarationList(input.declarationList) ?? F.buildDeclarationList()
+	});
+}
+
+export function resolveImplItemSemi_unsafeMarker(
+	value: T.ImplItemSemi.LooseConfig['unsafeMarker']
+): T.ImplItemSemi['_unsafe_marker'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveImplItemSemi_typeParameters(
+	value: T.ImplItemSemi.LooseConfig['typeParameters']
+): T.ImplItemSemi['_type_parameters'] {
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+}
+
+export function resolveImplItemSemi_traitClause(
+	value: T.ImplItemSemi.LooseConfig['traitClause']
+): T.ImplItemSemi['_trait_clause'] {
+	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
+		value,
+		_K2,
+		_K61,
+		'impl_item_positive_clause'
+	);
+}
+
+export function resolveImplItemSemi_type(value: T.ImplItemSemi.LooseConfig['type']): T.ImplItemSemi['_type'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
+		[]
+	);
+}
+
+export function resolveImplItemSemi_whereClause(
+	value: T.ImplItemSemi.LooseConfig['whereClause']
+): T.ImplItemSemi['_where_clause'] {
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+}
+
+export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<typeof F.buildImplItemSemi> {
+	if (!_isLooseConfig<T.ImplItemSemi.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildImplItemSemi>;
+	return F.buildImplItemSemi({
+		unsafeMarker: resolveImplItemSemi_unsafeMarker(input.unsafeMarker),
+		typeParameters: resolveImplItemSemi_typeParameters(input.typeParameters),
+		traitClause: resolveImplItemSemi_traitClause(input.traitClause),
+		type: _requireField('impl_item_semi', 'type', resolveImplItemSemi_type(input.type)),
+		whereClause: resolveImplItemSemi_whereClause(input.whereClause)
 	});
 }
 
 export function resolveVisibilityModifierPub_visibilityModifierGroup(
 	value: T.VisibilityModifierPub.LooseConfig['visibilityModifierGroup']
 ): T.VisibilityModifierPub['_visibility_modifier_group'] {
-	return _resolveOneBranch<T.VisibilityModifierGroup>(value, '_visibility_modifier_group');
+	return _resolveOneBranch<T.VisibilityModifierGroup>(value, 'visibility_modifier_group');
 }
 
 export function coerceToVisibilityModifierPub(
@@ -6709,7 +6560,7 @@ export function coerceToVisibilityModifierPub(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'visibilityModifierGroup' in input
 				? input.visibilityModifierGroup
 				: input,
-			'_visibility_modifier_group'
+			'visibility_modifier_group'
 		)
 	);
 }
@@ -6719,7 +6570,7 @@ export function resolveVisibilityModifierPubInPath_path(
 ): T.VisibilityModifierPubInPath['_path'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K10, _K11)
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -6732,7 +6583,7 @@ export function coerceToVisibilityModifierPubInPath(
 		return input as unknown as ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	return F.buildVisibilityModifierPubInPath(
 		_requireField(
-			'_visibility_modifier_pub_in_path',
+			'visibility_modifier_pub_in_path',
 			'path',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -6740,8 +6591,8 @@ export function coerceToVisibilityModifierPubInPath(
 					() =>
 						_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
-							_K10,
-							_K11
+							_K8,
+							_K9
 						)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -6753,7 +6604,7 @@ export function coerceToVisibilityModifierPubInPath(
 export function resolveFunctionTypeTraitForm_trait(
 	value: T.FunctionTypeTraitForm.LooseConfig['trait']
 ): T.FunctionTypeTraitForm['_trait'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K38, _K40);
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier>(value, _K32, _K34);
 }
 
 export function coerceToFunctionTypeTraitForm(
@@ -6763,12 +6614,12 @@ export function coerceToFunctionTypeTraitForm(
 		return input as unknown as ReturnType<typeof F.buildFunctionTypeTraitForm>;
 	return F.buildFunctionTypeTraitForm(
 		_requireField(
-			'_function_type_trait_form',
+			'function_type_trait_form',
 			'trait',
 			_resolveOne<T.Identifier | T.ScopedTypeIdentifier>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
-				_K38,
-				_K40
+				_K32,
+				_K34
 			)
 		)
 	);
@@ -6810,7 +6661,7 @@ export function coerceToModItemExternal(input: T.ModItemExternal.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildModItemExternal>;
 	return F.buildModItemExternal({
 		visibilityModifier: resolveModItemExternal_visibilityModifier(input.visibilityModifier),
-		name: _requireField('_mod_item_external', 'name', resolveModItemExternal_name(input.name))
+		name: _requireField('mod_item_external', 'name', resolveModItemExternal_name(input.name))
 	});
 }
 
@@ -6833,14 +6684,14 @@ export function coerceToModItemInline(input: T.ModItemInline.Loose): ReturnType<
 		return input as unknown as ReturnType<typeof F.buildModItemInline>;
 	return F.buildModItemInline({
 		visibilityModifier: resolveModItemInline_visibilityModifier(input.visibilityModifier),
-		name: _requireField('_mod_item_inline', 'name', resolveModItemInline_name(input.name)),
+		name: _requireField('mod_item_inline', 'name', resolveModItemInline_name(input.name)),
 		body: resolveModItemInline_body(input.body) ?? F.buildDeclarationList()
 	});
 }
 
 export function resolveOrPatternBinary_left(value: T.OrPatternBinary.LooseConfig['left']): T.OrPatternBinary['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -6849,7 +6700,7 @@ export function resolveOrPatternBinary_right(
 	value: T.OrPatternBinary.LooseConfig['right']
 ): T.OrPatternBinary['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -6858,8 +6709,8 @@ export function coerceToOrPatternBinary(input: T.OrPatternBinary.Loose): ReturnT
 	if (!_isLooseConfig<T.OrPatternBinary.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildOrPatternBinary>;
 	return F.buildOrPatternBinary({
-		left: _requireField('_or_pattern_binary', 'left', resolveOrPatternBinary_left(input.left)),
-		right: _requireField('_or_pattern_binary', 'right', resolveOrPatternBinary_right(input.right))
+		left: _requireField('or_pattern_binary', 'left', resolveOrPatternBinary_left(input.left)),
+		right: _requireField('or_pattern_binary', 'right', resolveOrPatternBinary_right(input.right))
 	});
 }
 
@@ -6867,7 +6718,7 @@ export function resolveOrPatternPrefix_right(
 	value: T.OrPatternPrefix.LooseConfig['right']
 ): T.OrPatternPrefix['_right'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -6877,7 +6728,7 @@ export function coerceToOrPatternPrefix(input: T.OrPatternPrefix.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildOrPatternPrefix>;
 	return F.buildOrPatternPrefix(
 		_requireField(
-			'_or_pattern_prefix',
+			'or_pattern_prefix',
 			'right',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -6887,8 +6738,8 @@ export function coerceToOrPatternPrefix(input: T.OrPatternPrefix.Loose): ReturnT
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'right' in input
 								? input.right
 								: input,
-							_K30,
-							_K31
+							_K24,
+							_K25
 						)
 				),
 				[]
@@ -6901,7 +6752,7 @@ export function resolvePointerTypeConst_type(
 	value: T.PointerTypeConst.LooseConfig['type']
 ): T.PointerTypeConst['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -6911,7 +6762,7 @@ export function coerceToPointerTypeConst(input: T.PointerTypeConst.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildPointerTypeConst>;
 	return F.buildPointerTypeConst(
 		_requireField(
-			'_pointer_type_const',
+			'pointer_type_const',
 			'type',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -6919,8 +6770,8 @@ export function coerceToPointerTypeConst(input: T.PointerTypeConst.Loose): Retur
 					() =>
 						_resolveOne<T.Type>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-							_K19,
-							_K20
+							_K14,
+							_K15
 						)
 				),
 				[]
@@ -6931,7 +6782,7 @@ export function coerceToPointerTypeConst(input: T.PointerTypeConst.Loose): Retur
 
 export function resolvePointerTypeMut_type(value: T.PointerTypeMut.LooseConfig['type']): T.PointerTypeMut['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -6941,7 +6792,7 @@ export function coerceToPointerTypeMut(input: T.PointerTypeMut.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildPointerTypeMut>;
 	return F.buildPointerTypeMut(
 		_requireField(
-			'_pointer_type_mut',
+			'pointer_type_mut',
 			'type',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -6949,8 +6800,8 @@ export function coerceToPointerTypeMut(input: T.PointerTypeMut.Loose): ReturnTyp
 					() =>
 						_resolveOne<T.Type>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'type' in input ? input.type : input,
-							_K19,
-							_K20
+							_K14,
+							_K15
 						)
 				),
 				[]
@@ -6963,7 +6814,7 @@ export function resolveRangeExpressionBinary_start(
 	value: T.RangeExpressionBinary.LooseConfig['start']
 ): T.RangeExpressionBinary['_start'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -6981,7 +6832,7 @@ export function resolveRangeExpressionBinary_end(
 	value: T.RangeExpressionBinary.LooseConfig['end']
 ): T.RangeExpressionBinary['_end'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -6992,13 +6843,13 @@ export function coerceToRangeExpressionBinary(
 	if (!_isLooseConfig<T.RangeExpressionBinary.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangeExpressionBinary>;
 	return F.buildRangeExpressionBinary({
-		start: _requireField('_range_expression_binary', 'start', resolveRangeExpressionBinary_start(input.start)),
+		start: _requireField('range_expression_binary', 'start', resolveRangeExpressionBinary_start(input.start)),
 		operator: _requireField(
-			'_range_expression_binary',
+			'range_expression_binary',
 			'operator',
 			resolveRangeExpressionBinary_operator(input.operator)
 		),
-		end: _requireField('_range_expression_binary', 'end', resolveRangeExpressionBinary_end(input.end))
+		end: _requireField('range_expression_binary', 'end', resolveRangeExpressionBinary_end(input.end))
 	});
 }
 
@@ -7006,7 +6857,7 @@ export function resolveRangeExpressionPostfix_start(
 	value: T.RangeExpressionPostfix.LooseConfig['start']
 ): T.RangeExpressionPostfix['_start'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -7018,7 +6869,7 @@ export function coerceToRangeExpressionPostfix(
 		return input as unknown as ReturnType<typeof F.buildRangeExpressionPostfix>;
 	return F.buildRangeExpressionPostfix(
 		_requireField(
-			'_range_expression_postfix',
+			'range_expression_postfix',
 			'start',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -7028,8 +6879,8 @@ export function coerceToRangeExpressionPostfix(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'start' in input
 								? input.start
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -7042,7 +6893,7 @@ export function resolveRangeExpressionPrefix_end(
 	value: T.RangeExpressionPrefix.LooseConfig['end']
 ): T.RangeExpressionPrefix['_end'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -7054,7 +6905,7 @@ export function coerceToRangeExpressionPrefix(
 		return input as unknown as ReturnType<typeof F.buildRangeExpressionPrefix>;
 	return F.buildRangeExpressionPrefix(
 		_requireField(
-			'_range_expression_prefix',
+			'range_expression_prefix',
 			'end',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -7062,8 +6913,8 @@ export function coerceToRangeExpressionPrefix(
 					() =>
 						_resolveOne<T.Expression>(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'end' in input ? input.end : input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -7076,7 +6927,7 @@ export function resolveExpressionStatementWithSemi_expression(
 	value: T.ExpressionStatementWithSemi.LooseConfig['expression']
 ): T.ExpressionStatementWithSemi['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -7088,7 +6939,7 @@ export function coerceToExpressionStatementWithSemi(
 		return input as unknown as ReturnType<typeof F.buildExpressionStatementWithSemi>;
 	return F.buildExpressionStatementWithSemi(
 		_requireField(
-			'_expression_statement_with_semi',
+			'expression_statement_with_semi',
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
@@ -7100,8 +6951,8 @@ export function coerceToExpressionStatementWithSemi(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
 								? input.expression
 								: input,
-							_K17,
-							_K18
+							_K12,
+							_K13
 						)
 				),
 				[]
@@ -7166,7 +7017,7 @@ export function coerceToForeignModItemBody(
 export function resolveMatchArmWithComma_attributes(
 	value: T.MatchArmWithComma.LooseConfig['attributes']
 ): T.MatchArmWithComma['_attributes'] {
-	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K62);
+	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K50);
 }
 
 export function resolveMatchArmWithComma_pattern(
@@ -7179,7 +7030,7 @@ export function resolveMatchArmWithComma_value(
 	value: T.MatchArmWithComma.LooseConfig['value']
 ): T.MatchArmWithComma['_value'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -7191,15 +7042,15 @@ export function coerceToMatchArmWithComma(
 		return input as unknown as ReturnType<typeof F.buildMatchArmWithComma>;
 	return F.buildMatchArmWithComma({
 		attributes: resolveMatchArmWithComma_attributes(input.attributes),
-		pattern: _requireField('_match_arm_with_comma', 'pattern', resolveMatchArmWithComma_pattern(input.pattern)),
-		value: _requireField('_match_arm_with_comma', 'value', resolveMatchArmWithComma_value(input.value))
+		pattern: _requireField('match_arm_with_comma', 'pattern', resolveMatchArmWithComma_pattern(input.pattern)),
+		value: _requireField('match_arm_with_comma', 'value', resolveMatchArmWithComma_value(input.value))
 	});
 }
 
 export function resolveMatchArmBlockEnding_attributes(
 	value: T.MatchArmBlockEnding.LooseConfig['attributes']
 ): T.MatchArmBlockEnding['_attributes'] {
-	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K62);
+	return _resolveMany<T.AttributeItem | T.InnerAttributeItem>(value, _K2, _K50);
 }
 
 export function resolveMatchArmBlockEnding_pattern(
@@ -7233,8 +7084,8 @@ export function coerceToMatchArmBlockEnding(
 		return input as unknown as ReturnType<typeof F.buildMatchArmBlockEnding>;
 	return F.buildMatchArmBlockEnding({
 		attributes: resolveMatchArmBlockEnding_attributes(input.attributes),
-		pattern: _requireField('_match_arm_block_ending', 'pattern', resolveMatchArmBlockEnding_pattern(input.pattern)),
-		value: _requireField('_match_arm_block_ending', 'value', resolveMatchArmBlockEnding_value(input.value))
+		pattern: _requireField('match_arm_block_ending', 'pattern', resolveMatchArmBlockEnding_pattern(input.pattern)),
+		value: _requireField('match_arm_block_ending', 'value', resolveMatchArmBlockEnding_value(input.value))
 	});
 }
 
@@ -7258,7 +7109,7 @@ export function coerceToLineCommentDocOuter(
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocOuter>;
 	return F.buildLineCommentDocOuter(
 		_requireField(
-			'_line_comment_doc_outer',
+			'line_comment_doc_outer',
 			'doc',
 			_resolveOneLeaf<T.LineDocContent>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
@@ -7281,7 +7132,7 @@ export function coerceToLineCommentDocInner(
 		return input as unknown as ReturnType<typeof F.buildLineCommentDocInner>;
 	return F.buildLineCommentDocInner(
 		_requireField(
-			'_line_comment_doc_inner',
+			'line_comment_doc_inner',
 			'doc',
 			_resolveOneLeaf<T.LineDocContent>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'doc' in input ? input.doc : input,
@@ -7356,7 +7207,7 @@ export function coerceToTokenTreePatternParen(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
 						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-					>(children, _K6, _K7)
+					>(children, _K4, _K5)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
@@ -7374,7 +7225,7 @@ export function coerceToTokenTreePatternParen(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
 					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-				>(_elems, _K6, _K7)
+				>(_elems, _K4, _K5)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
@@ -7401,7 +7252,7 @@ export function coerceToTokenTreePatternBracket(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
 						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-					>(children, _K6, _K7)
+					>(children, _K4, _K5)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
@@ -7419,7 +7270,7 @@ export function coerceToTokenTreePatternBracket(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
 					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-				>(_elems, _K6, _K7)
+				>(_elems, _K4, _K5)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
@@ -7446,7 +7297,7 @@ export function coerceToTokenTreePatternBrace(
 				_resolveKindEnum(children, () =>
 					_resolveMany<
 						T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-					>(children, _K6, _K7)
+					>(children, _K4, _K5)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
@@ -7464,7 +7315,7 @@ export function coerceToTokenTreePatternBrace(
 			_resolveKindEnum(_elems, () =>
 				_resolveMany<
 					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T._NonSpecialToken
-				>(_elems, _K6, _K7)
+				>(_elems, _K4, _K5)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
@@ -7489,7 +7340,7 @@ export function coerceToTokenTreeParen(
 		return F.buildTokenTreeParen(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K7)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeParen>)
@@ -7505,7 +7356,7 @@ export function coerceToTokenTreeParen(
 	return F.buildTokenTreeParen(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K7)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeParen>)
@@ -7530,7 +7381,7 @@ export function coerceToTokenTreeBracket(
 		return F.buildTokenTreeBracket(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K7)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
@@ -7546,7 +7397,7 @@ export function coerceToTokenTreeBracket(
 	return F.buildTokenTreeBracket(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K7)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
@@ -7571,7 +7422,7 @@ export function coerceToTokenTreeBrace(
 		return F.buildTokenTreeBrace(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K6, _K9)
+					_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(children, _K4, _K7)
 				),
 				[]
 			) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
@@ -7587,7 +7438,7 @@ export function coerceToTokenTreeBrace(
 	return F.buildTokenTreeBrace(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K6, _K9)
+				_resolveMany<T.TokenTree | T.TokenRepetition | T.Metavariable | T._NonSpecialToken>(_elems, _K4, _K7)
 			),
 			[]
 		) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
@@ -7686,7 +7537,7 @@ export function coerceToFieldPatternShorthand(
 	return F.buildFieldPatternShorthand({
 		refMarker: resolveFieldPatternShorthand_refMarker(input.refMarker),
 		mutableSpecifier: resolveFieldPatternShorthand_mutableSpecifier(input.mutableSpecifier),
-		name: _requireField('_field_pattern_shorthand', 'name', resolveFieldPatternShorthand_name(input.name))
+		name: _requireField('field_pattern_shorthand', 'name', resolveFieldPatternShorthand_name(input.name))
 	});
 }
 
@@ -7712,7 +7563,7 @@ export function resolveFieldPatternNamed_pattern(
 	value: T.FieldPatternNamed.LooseConfig['pattern']
 ): T.FieldPatternNamed['_pattern'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K30, _K31)),
+		_resolveKindEnum(value, () => _resolveOne<T.Pattern>(value, _K24, _K25)),
 		[]
 	);
 }
@@ -7725,8 +7576,8 @@ export function coerceToFieldPatternNamed(
 	return F.buildFieldPatternNamed({
 		refMarker: resolveFieldPatternNamed_refMarker(input.refMarker),
 		mutableSpecifier: resolveFieldPatternNamed_mutableSpecifier(input.mutableSpecifier),
-		name: _requireField('_field_pattern_named', 'name', resolveFieldPatternNamed_name(input.name)),
-		pattern: _requireField('_field_pattern_named', 'pattern', resolveFieldPatternNamed_pattern(input.pattern))
+		name: _requireField('field_pattern_named', 'name', resolveFieldPatternNamed_name(input.name)),
+		pattern: _requireField('field_pattern_named', 'pattern', resolveFieldPatternNamed_pattern(input.pattern))
 	});
 }
 
@@ -7739,7 +7590,7 @@ export function resolveMacroDefinitionParen_name(
 export function resolveMacroDefinitionParen_macroRules(
 	value: T.MacroDefinitionParen.LooseConfig['macroRules']
 ): T.MacroDefinitionParen['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, '_macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
 }
 
 export function coerceToMacroDefinitionParen(
@@ -7748,7 +7599,7 @@ export function coerceToMacroDefinitionParen(
 	if (!_isLooseConfig<T.MacroDefinitionParen.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionParen>;
 	return F.buildMacroDefinitionParen({
-		name: _requireField('_macro_definition_paren', 'name', resolveMacroDefinitionParen_name(input.name)),
+		name: _requireField('macro_definition_paren', 'name', resolveMacroDefinitionParen_name(input.name)),
 		macroRules: resolveMacroDefinitionParen_macroRules(input.macroRules)
 	});
 }
@@ -7762,7 +7613,7 @@ export function resolveMacroDefinitionBracket_name(
 export function resolveMacroDefinitionBracket_macroRules(
 	value: T.MacroDefinitionBracket.LooseConfig['macroRules']
 ): T.MacroDefinitionBracket['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, '_macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
 }
 
 export function coerceToMacroDefinitionBracket(
@@ -7771,7 +7622,7 @@ export function coerceToMacroDefinitionBracket(
 	if (!_isLooseConfig<T.MacroDefinitionBracket.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionBracket>;
 	return F.buildMacroDefinitionBracket({
-		name: _requireField('_macro_definition_bracket', 'name', resolveMacroDefinitionBracket_name(input.name)),
+		name: _requireField('macro_definition_bracket', 'name', resolveMacroDefinitionBracket_name(input.name)),
 		macroRules: resolveMacroDefinitionBracket_macroRules(input.macroRules)
 	});
 }
@@ -7785,7 +7636,7 @@ export function resolveMacroDefinitionBrace_name(
 export function resolveMacroDefinitionBrace_macroRules(
 	value: T.MacroDefinitionBrace.LooseConfig['macroRules']
 ): T.MacroDefinitionBrace['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, '_macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
 }
 
 export function coerceToMacroDefinitionBrace(
@@ -7794,7 +7645,7 @@ export function coerceToMacroDefinitionBrace(
 	if (!_isLooseConfig<T.MacroDefinitionBrace.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMacroDefinitionBrace>;
 	return F.buildMacroDefinitionBrace({
-		name: _requireField('_macro_definition_brace', 'name', resolveMacroDefinitionBrace_name(input.name)),
+		name: _requireField('macro_definition_brace', 'name', resolveMacroDefinitionBrace_name(input.name)),
 		macroRules: resolveMacroDefinitionBrace_macroRules(input.macroRules)
 	});
 }
@@ -7815,8 +7666,8 @@ export function resolveRangePatternPrefix_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K62,
+				_K63
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7829,8 +7680,8 @@ export function coerceToRangePatternPrefix(
 	if (!_isLooseConfig<T.RangePatternPrefix.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangePatternPrefix>;
 	return F.buildRangePatternPrefix({
-		content: _requireField('_range_pattern_prefix', 'content', resolveRangePatternPrefix_content(input.content)),
-		right: _requireField('_range_pattern_prefix', 'right', resolveRangePatternPrefix_right(input.right))
+		content: _requireField('range_pattern_prefix', 'content', resolveRangePatternPrefix_content(input.content)),
+		right: _requireField('range_pattern_prefix', 'right', resolveRangePatternPrefix_right(input.right))
 	});
 }
 
@@ -7850,8 +7701,8 @@ export function resolveRangePatternWithLeftWithRight_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K62,
+				_K63
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7865,16 +7716,22 @@ export function coerceToRangePatternWithLeftWithRight(
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeftWithRight>;
 	return F.buildRangePatternWithLeftWithRight({
 		content: _requireField(
-			'_range_pattern_with_left_with_right',
+			'range_pattern_with_left_with_right',
 			'content',
 			resolveRangePatternWithLeftWithRight_content(input.content)
 		),
 		right: _requireField(
-			'_range_pattern_with_left_with_right',
+			'range_pattern_with_left_with_right',
 			'right',
 			resolveRangePatternWithLeftWithRight_right(input.right)
 		)
 	});
+}
+
+export function coerceToRangePatternWithLeftBare(
+	_input?: T.RangePatternWithLeftBare.Loose
+): ReturnType<typeof F.buildRangePatternWithLeftBare> {
+	return F.buildRangePatternWithLeftBare();
 }
 
 export function resolveRangePatternWithLeft_left(
@@ -7884,8 +7741,8 @@ export function resolveRangePatternWithLeft_left(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K77,
-				_K78
+				_K62,
+				_K63
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7896,11 +7753,7 @@ export function resolveRangePatternWithLeft_content(
 	value: T.RangePatternWithLeft.LooseConfig['content']
 ): T.RangePatternWithLeft['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOneBranch<T.RangePatternWithLeftWithRight | '..'>(value, '_range_pattern_with_left_with_right', [
-				TSKindId.RangePatternWithLeftBare
-			])
-		),
+		_resolveKindEnum(value, () => _resolveOne<T.RangePatternWithLeftWithRight | '..'>(value, _K64, _K65)),
 		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
 }
@@ -7911,8 +7764,8 @@ export function coerceToRangePatternWithLeft(
 	if (!_isLooseConfig<T.RangePatternWithLeft.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeft>;
 	return F.buildRangePatternWithLeft({
-		left: _requireField('_range_pattern_with_left', 'left', resolveRangePatternWithLeft_left(input.left)),
-		content: _requireField('_range_pattern_with_left', 'content', resolveRangePatternWithLeft_content(input.content))
+		left: _requireField('range_pattern_with_left', 'left', resolveRangePatternWithLeft_left(input.left)),
+		content: _requireField('range_pattern_with_left', 'content', resolveRangePatternWithLeft_content(input.content))
 	});
 }
 
@@ -7947,7 +7800,7 @@ export function coerceToStructItemBrace(input: T.StructItemBrace.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildStructItemBrace>;
 	return F.buildStructItemBrace({
 		visibilityModifier: resolveStructItemBrace_visibilityModifier(input.visibilityModifier),
-		name: _requireField('_struct_item_brace', 'name', resolveStructItemBrace_name(input.name)),
+		name: _requireField('struct_item_brace', 'name', resolveStructItemBrace_name(input.name)),
 		typeParameters: resolveStructItemBrace_typeParameters(input.typeParameters),
 		whereClause: resolveStructItemBrace_whereClause(input.whereClause),
 		body: resolveStructItemBrace_body(input.body) ?? F.buildFieldDeclarationList()
@@ -7985,7 +7838,7 @@ export function coerceToStructItemTuple(input: T.StructItemTuple.Loose): ReturnT
 		return input as unknown as ReturnType<typeof F.buildStructItemTuple>;
 	return F.buildStructItemTuple({
 		visibilityModifier: resolveStructItemTuple_visibilityModifier(input.visibilityModifier),
-		name: _requireField('_struct_item_tuple', 'name', resolveStructItemTuple_name(input.name)),
+		name: _requireField('struct_item_tuple', 'name', resolveStructItemTuple_name(input.name)),
 		typeParameters: resolveStructItemTuple_typeParameters(input.typeParameters),
 		body: resolveStructItemTuple_body(input.body) ?? F.buildOrderedFieldDeclarationList(),
 		whereClause: resolveStructItemTuple_whereClause(input.whereClause)
@@ -8013,7 +7866,7 @@ export function coerceToStructItemUnit(input: T.StructItemUnit.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildStructItemUnit>;
 	return F.buildStructItemUnit({
 		visibilityModifier: resolveStructItemUnit_visibilityModifier(input.visibilityModifier),
-		name: _requireField('_struct_item_unit', 'name', resolveStructItemUnit_name(input.name)),
+		name: _requireField('struct_item_unit', 'name', resolveStructItemUnit_name(input.name)),
 		typeParameters: resolveStructItemUnit_typeParameters(input.typeParameters)
 	});
 }
@@ -8083,7 +7936,7 @@ export function resolveAttributedParameter_content(
 ): T.AttributedParameter['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T.Type>(value, _K19, _K79)
+			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T.Type>(value, _K14, _K66)
 		),
 		[['_', TSKindId.Underscore] as const]
 	);
@@ -8109,7 +7962,7 @@ export function resolveAttributedTypeParameter_attributeItems(
 export function resolveAttributedTypeParameter_content(
 	value: T.AttributedTypeParameter.LooseConfig['content']
 ): T.AttributedTypeParameter['_content'] {
-	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K80, _K81);
+	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K67, _K68);
 }
 
 export function coerceToAttributedTypeParameter(
@@ -8137,7 +7990,7 @@ export function resolveAttributedArgument_expression(
 	value: T.AttributedArgument.LooseConfig['expression']
 ): T.AttributedArgument['_expression'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K17, _K18)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
 	);
 }
@@ -8173,7 +8026,7 @@ export function resolveAttributedOrderedField_type(
 	value: T.AttributedOrderedField.LooseConfig['type']
 ): T.AttributedOrderedField['_type'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K19, _K20)),
+		_resolveKindEnum(value, () => _resolveOne<T.Type>(value, _K14, _K15)),
 		[]
 	);
 }
@@ -8193,7 +8046,7 @@ export function coerceToAttributedOrderedField(
 export function resolveTypeArgument_content(value: T.TypeArgument.LooseConfig['content']): T.TypeArgument['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(value, _K82, _K83)
+			_resolveOne<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(value, _K69, _K70)
 		),
 		[]
 	);
@@ -8217,7 +8070,7 @@ export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<ty
 export function resolveMatchBlockArms_matchArms(
 	value: T.MatchBlockArms.LooseConfig['matchArm']
 ): T.MatchBlockArms['_match_arm'] {
-	return _resolveManyBranch<T.MatchArm>(value, 'match_arm');
+	return _resolveMany<T.MatchArm>(value, _K2, _super_match_arm);
 }
 
 export function resolveMatchBlockArms_lastArm(

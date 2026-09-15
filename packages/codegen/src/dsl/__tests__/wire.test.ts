@@ -56,7 +56,7 @@ describe('wire()', () => {
 		expect(result.foo).toEqual({ type: 'SYMBOL', name: 'x' });
 	});
 
-	it('injects hidden-rule placeholders for each declared variant arm', () => {
+	it('injects variant-rule placeholders for each declared variant arm', () => {
 		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {
@@ -66,9 +66,9 @@ describe('wire()', () => {
 				assignment: { '0': variant('eq'), '1': variant('type') }
 			}
 		});
-		// Hidden rule names should be keys in opts.rules at wire-return time,
+		// Variant rule names should be keys in opts.rules at wire-return time,
 		// which is what tree-sitter will snapshot for its ruleMap.
-		expect(Object.keys(wired.rules).sort()).toEqual(['_assignment_eq', '_assignment_type', 'assignment']);
+		expect(Object.keys(wired.rules).sort()).toEqual(['assignment', 'assignment_eq', 'assignment_type']);
 	});
 
 	it('deposits captured content when the synthesized parent rule runs', () => {
@@ -105,18 +105,18 @@ describe('wire()', () => {
 		// Drive the synthesized `assignment` fn with `original = origSeq`.
 		const assignmentFn = wired.rules.assignment!;
 		const assignmentResult = assignmentFn.call({}, {}, origSeq);
-		// Result is a seq(alias, alias) — each alias points at the hidden rule.
+		// Result is a seq(symbol, symbol) — each symbol names the variant rule.
 		expect((assignmentResult as { type: string }).type).toBe('SEQ');
 		const members = (assignmentResult as { members: unknown[] }).members;
-		expect((members[0] as { type: string; value: string }).type).toBe('ALIAS');
-		expect((members[0] as { type: string; value: string }).value).toBe('assignment_eq');
-		expect((members[1] as { type: string; value: string }).value).toBe('assignment_type');
+		expect((members[0] as { type: string; name: string }).type).toBe('SYMBOL');
+		expect((members[0] as { type: string; name: string }).name).toBe('assignment_eq');
+		expect((members[1] as { type: string; name: string }).name).toBe('assignment_type');
 
-		// The hidden-rule fns should now return the captured content.
-		const eqFn = wired.rules._assignment_eq!;
+		// The variant-rule fns should now return the captured content.
+		const eqFn = wired.rules.assignment_eq!;
 		const eqBody = eqFn.call({}, {});
 		expect(eqBody).toEqual({ ...eqArm, annotations: { hoisted: true } });
-		const typeFn = wired.rules._assignment_type!;
+		const typeFn = wired.rules.assignment_type!;
 		const typeBody = typeFn.call({}, {});
 		expect(typeBody).toEqual({ ...typeArm, annotations: { hoisted: true } });
 	});
@@ -142,17 +142,17 @@ describe('wire()', () => {
 		expect(out.members[0]!.type).toBe('SYMBOL');
 		expect(out.members[0]!.name).toBe('a');
 		expect(out.members[1]!.type).toBe('SYMBOL');
-		// No deposit was made — hidden-rule fns fall back to blank().
-		expect(wired.rules._assignment_eq!.call({}, {})).toEqual({ type: 'BLANK' });
+		// No deposit was made — variant-rule fns fall back to blank().
+		expect(wired.rules.assignment_eq!.call({}, {})).toEqual({ type: 'BLANK' });
 	});
 
-	it('hidden-rule fn returns blank() when no deposit was made (e.g. parent never ran)', () => {
+	it('variant-rule fn returns blank() when no deposit was made (e.g. parent never ran)', () => {
 		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
 			patches: { assignment: { '0': variant('eq') } }
 		});
-		const eqFn = wired.rules._assignment_eq!;
+		const eqFn = wired.rules.assignment_eq!;
 		const result = eqFn.call({}, {});
 		// Fake dsl has no blank(); fn falls back to { type: 'BLANK' }
 		expect(result).toEqual({ type: 'BLANK' });
@@ -200,12 +200,12 @@ describe('wire()', () => {
 		const assignmentFn = wired.rules.assignment!;
 		const out = assignmentFn.call({}, {}, origSeq);
 		// After user's fn, tree is: seq( seq(a, b), extra ). After wire's
-		// transform with path '0/0' and '0/1': seq( seq(alias(first), alias(second)), extra ).
+		// transform with path '0/0' and '0/1': seq( seq(first, second), extra ).
 		const members = (out as { members: unknown[] }).members;
 		expect((members[0] as { type: string }).type).toBe('SEQ');
 		const inner = (members[0] as { members: unknown[] }).members;
-		expect((inner[0] as { value: string }).value).toBe('assignment_first');
-		expect((inner[1] as { value: string }).value).toBe('assignment_second');
+		expect((inner[0] as { name: string }).name).toBe('assignment_first');
+		expect((inner[1] as { name: string }).name).toBe('assignment_second');
 		expect((members[1] as { name: string }).name).toBe('extra');
 	});
 
@@ -296,8 +296,8 @@ describe('wire()', () => {
 		wiredA.rules.assignment!.call({}, {}, origSeq);
 		const depositsA = (ctxA as { deposits: Map<string, unknown> }).deposits;
 		const depositsB = (ctxB as { deposits: Map<string, unknown> }).deposits;
-		expect(depositsA.has('_assignment_eq')).toBe(true);
-		expect(depositsB.has('_assignment_ne')).toBe(false);
+		expect(depositsA.has('assignment_eq')).toBe(true);
+		expect(depositsB.has('assignment_ne')).toBe(false);
 	});
 
 	// R12/decision-7 V2 Task 2: `WireContext.polymorphVariants` (the wire
@@ -305,8 +305,8 @@ describe('wire()', () => {
 	// STRUCTURALLY downstream instead (`deriveStructuralVariantChildren`,
 	// compiler/variant-structural.ts). These two tests are rekeyed to
 	// assert the SURVIVING per-call registration this file's `patches:`
-	// variant() entries still drive: each arm deposits its hidden-rule body under
-	// `_<parent>_<child>` (idempotently — `Map.set` by key — across
+	// variant() entries still drive: each arm deposits its variant-rule body under
+	// `<parent>_<child>` (idempotently — `Map.set` by key — across
 	// repeated rule-fn invocation, matching the legacy dry-run/real-pass
 	// double-call behavior the original tests guarded against). A bare
 	// `SYMBOL` arm (no anonymous token) is unmaterializable and deposits
@@ -350,7 +350,7 @@ describe('wire()', () => {
 		assignmentFn.call({}, {}, origSeq);
 		assignmentFn.call({}, {}, origSeq);
 		const ctx = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
-		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
+		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
 	});
 
 	it('variant deposits accumulate on wire context', () => {
@@ -388,7 +388,7 @@ describe('wire()', () => {
 		};
 		wired.rules.assignment!.call({}, {}, origSeq);
 		const ctx = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
-		expect([...ctx.deposits.keys()].sort()).toEqual(['_assignment_eq', '_assignment_type']);
+		expect([...ctx.deposits.keys()].sort()).toEqual(['assignment_eq', 'assignment_type']);
 	});
 
 	it('wrapped conflicts callback appends variant-registered groups', () => {
@@ -640,7 +640,7 @@ describe('wire()', () => {
 		}
 	});
 
-	it('patches: pre-registers _<parent>_<suffix> for variant() placeholders', () => {
+	it('patches: pre-registers <parent>_<suffix> for variant() placeholders', () => {
 		const wired = wire<GrammarJson>({
 			name: 'test',
 			rules: {},
@@ -648,8 +648,8 @@ describe('wire()', () => {
 				r: { 0: variant('a'), 1: variant('b') }
 			}
 		});
-		expect('_r_a' in wired.rules).toBe(true);
-		expect('_r_b' in wired.rules).toBe(true);
+		expect('r_a' in wired.rules).toBe(true);
+		expect('r_b' in wired.rules).toBe(true);
 	});
 
 	it('author-declared _kw_* wins over wire auto-pre-registration', () => {

@@ -332,8 +332,8 @@ generated enum and the enum's own variants cannot disagree.
 
 The per-arm annotations a slot value carries: the declared `variant`/`variantOf`
 pair and `default`. One derivation spread into all four SYMBOL branches of
-`deriveValuesForRule`, so an arm fact added to the model reaches every value
-shape without four edits.
+`deriveValuesForRule` and into supertype subtype refs, so an arm fact added to
+the model reaches every value shape and every subtype without further edits.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
@@ -1914,6 +1914,11 @@ flatten and simplify joins use.
 // with no catalog entry (typed absence, not a bug).
 ```
 
+A subtype that is a variant arm also carries its arm facts (`armFactsOf` of
+the arm's rule), stamped where the ref is first built and copied onto the
+supertype's subtype `NodeRef`s, so consumers read `variant` / `variantOf`
+from the model instead of recovering them from the subtype's name.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::NodeBackedRef`
 
 ```text
@@ -2933,6 +2938,14 @@ the rule shape.
  * points, not user-constructable nodes.
  */
 ```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.variantSubtypes`
+
+The subtype refs when this supertype is a flattened polymorph parent — at
+least two subtypes, every one stamped as a variant of this kind — or
+`undefined` otherwise. The model attribute emitters read instead of
+re-checking the subtype facts (sub-factory mounting through a slot, route
+emission).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 

@@ -68,39 +68,6 @@ export function buildHashBangLine(text: string): T.HashBangLine.Built {
 	);
 }
 
-export function buildExportStatement(
-	value:
-		| T.ExportStatementDefault
-		| T.ExportStatementTypeExport
-		| T.ExportStatementEqualsExport
-		| T.ExportStatementNamespaceExport
-): T.ExportStatement.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatement as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value:
-							| T.ExportStatementDefault
-							| T.ExportStatementTypeExport
-							| T.ExportStatementEqualsExport
-							| T.ExportStatementNamespaceExport
-					) => buildExportStatement(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildNamespaceExport(value: T.Identifier | T.String): T.NamespaceExport.Built {
 	const _module_export_name = value;
 	return withMethods(
@@ -342,27 +309,6 @@ function _buildNamedImports(value?: T.ImportSpecifiers): T.NamedImports.Built {
 	);
 }
 
-export function buildImportSpecifier(value: T.ImportSpecifierName | T.ImportSpecifierAs): T.ImportSpecifier.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportSpecifier as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.ImportSpecifierName | T.ImportSpecifierAs) => buildImportSpecifier(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildImportAttribute(config: T.ImportAttribute.Config): T.ImportAttribute.Built {
 	const _attribute_kind = coerceKindEnumStorage<NonNullable<T.ImportAttribute['_attribute_kind']>>(
 		config.attributeKind,
@@ -484,29 +430,6 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.
 				kind: () => _kind,
 				declarators: () => _declarators,
 				terminator: () => _terminator
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildVariableDeclarator(
-	value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite
-): T.VariableDeclarator.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.VariableDeclarator as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.VariableDeclaratorPlain | T.VariableDeclaratorDefinite) => buildVariableDeclarator(value)
-				}
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -672,8 +595,7 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 				$with: {
 					awaitMarker: (value?: NonNullable<T.ForInStatement.Config>['awaitMarker']) =>
 						buildForInStatement({ ...config, awaitMarker: value }),
-					forHeader: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
-						buildForInStatement({ ...config, forHeader: value }),
+					forHeader: (value: T.ForHeader) => buildForInStatement({ ...config, forHeader: value }),
 					body: (value: NonNullable<T.ForInStatement.Config>['body']) => buildForInStatement({ ...config, body: value })
 				}
 			},
@@ -681,28 +603,6 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 				awaitMarker: () => _await_marker,
 				forHeader: () => _for_header,
 				body: () => _body
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildForHeader(config: T.ForHeader.Config): T.ForHeader.Built {
-	const _content = config.content;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForHeader as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) =>
-						buildForHeader({ ...config, content: value })
-				}
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -2065,29 +1965,6 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 	);
 }
 
-export function buildUpdateExpression(
-	value: T.UpdateExpressionPostfix | T.UpdateExpressionPrefix
-): T.UpdateExpression.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UpdateExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.UpdateExpressionPostfix | T.UpdateExpressionPrefix) => buildUpdateExpression(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildSequenceExpression(...children: T.Expression[]): T.SequenceExpression.Built {
 	_assertNonEmpty(children, 'sequence_expression.children');
 	const _expression = children;
@@ -2335,33 +2212,6 @@ export function buildPrivatePropertyIdentifier(text: string): T.PrivatePropertyI
 			$named: true as const,
 			$text: text
 		},
-		methodsEngine
-	);
-}
-
-export function buildMetaProperty(
-	value: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta
-): T.MetaProperty.Built {
-	const _content = coerceKindEnumStorage<NonNullable<T.MetaProperty['_content']>>(value, [
-		['new.target', TSKindId.MetaPropertyNewTarget] as const,
-		['import.meta', TSKindId.MetaPropertyImportMeta] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MetaProperty as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: NonNullable<TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta>) =>
-						buildMetaProperty(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
 		methodsEngine
 	);
 }
@@ -5194,29 +5044,6 @@ export function buildConstructSignature(config: T.ConstructSignature.Config): T.
 	);
 }
 
-export function buildIndexSignature(
-	value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause
-): T.IndexSignature.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IndexSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.IndexSignatureColon | T.IndexSignatureMappedTypeClause) => buildIndexSignature(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildArrayType(value: T.PrimaryType): T.ArrayType.Built {
 	const _type = coerceMixedEnumStorage<NonNullable<T.ArrayType['_type']>>(value, []);
 	return withMethods(
@@ -5423,14 +5250,14 @@ function _buildExportSpecifiers(
 	elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ExportSpecifiers.Built {
-	_assertNonEmpty(elements, '_export_specifiers.elements');
+	_assertNonEmpty(elements, 'export_specifiers.elements');
 	const _mapped = elements.map(
 		(e): T.ExportSpecifier =>
 			isNodeData(e) && e.$type === TSKindId.ExportSpecifier
 				? (e as T.ExportSpecifier)
 				: buildExportSpecifier({ name: e } as Parameters<typeof buildExportSpecifier>[0])
 	);
-	_assertNonEmpty(_mapped, '_export_specifiers.elements');
+	_assertNonEmpty(_mapped, 'export_specifiers.elements');
 	const _export_specifier = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -5480,7 +5307,7 @@ function _buildImportSpecifiers(
 	elements: NonEmptyArray<T.ImportSpecifier>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.ImportSpecifiers.Built {
-	_assertNonEmpty(elements, '_import_specifiers.elements');
+	_assertNonEmpty(elements, 'import_specifiers.elements');
 	const _import_specifier = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -5531,7 +5358,7 @@ function _buildFormalParametersElements(
 	elements: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.FormalParametersElements.Built {
-	_assertNonEmpty(elements, '_formal_parameters_elements.elements');
+	_assertNonEmpty(elements, 'formal_parameters_elements.elements');
 	const _formal_parameter = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -5619,7 +5446,7 @@ function _buildEnumBodyElements(
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Built {
-	_assertNonEmpty(elements, '_enum_body_elements.elements');
+	_assertNonEmpty(elements, 'enum_body_elements.elements');
 	const _content = elements;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
@@ -5673,7 +5500,7 @@ function _buildTypes(
 	elements: NonEmptyArray<T.Type>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.Types.Built {
-	_assertNonEmpty(elements, '_types.elements');
+	_assertNonEmpty(elements, 'types.elements');
 	const _type = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -5721,14 +5548,14 @@ function _buildTypeParametersElements(
 	elements: NonEmptyArray<T.TypeParameter | T.Identifier>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TypeParametersElements.Built {
-	_assertNonEmpty(elements, '_type_parameters_elements.elements');
+	_assertNonEmpty(elements, 'type_parameters_elements.elements');
 	const _mapped = elements.map(
 		(e): T.TypeParameter =>
 			isNodeData(e) && e.$type === TSKindId.TypeParameter
 				? (e as T.TypeParameter)
 				: buildTypeParameter({ name: e } as Parameters<typeof buildTypeParameter>[0])
 	);
-	_assertNonEmpty(_mapped, '_type_parameters_elements.elements');
+	_assertNonEmpty(_mapped, 'type_parameters_elements.elements');
 	const _type_parameter = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -5783,7 +5610,7 @@ function _buildTupleTypeMembers(
 	elements: NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.TupleTypeMembers.Built {
-	_assertNonEmpty(elements, '_tuple_type_members.elements');
+	_assertNonEmpty(elements, 'tuple_type_members.elements');
 	const _tuple_type_member = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
@@ -6044,30 +5871,6 @@ function _buildObjectTypeContent(
 			},
 			{
 				contents: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildExportStatementDefault(
-	value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration
-): T.ExportStatementDefault.Built {
-	const _content = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefault as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: T.ExportStatementDefaultFrom | T.ExportStatementDefaultDeclaration) =>
-						buildExportStatementDefault(value)
-				}
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -7210,6 +7013,14 @@ export function buildVariableDeclaratorDefinite(
 	);
 }
 
+export function buildMetaPropertyNewTarget(): TSKindId.MetaPropertyNewTarget {
+	return TSKindId.MetaPropertyNewTarget;
+}
+
+export function buildMetaPropertyImportMeta(): TSKindId.MetaPropertyImportMeta {
+	return TSKindId.MetaPropertyImportMeta;
+}
+
 export function buildForHeaderLhs(config: T.ForHeaderLhs.Config): T.ForHeaderLhs.Built {
 	const _left = coerceMixedEnumStorage<NonNullable<T.ForHeaderLhs['_left']>>(config.left, []);
 	const _operator = coerceKindEnumStorage<NonNullable<T.ForHeaderLhs['_operator']>>(config.operator, [
@@ -7404,7 +7215,6 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 export type FluentKindMap = {
 	program: T.Program.Built;
 	hash_bang_line: T.HashBangLine;
-	export_statement: T.ExportStatement.Built;
 	namespace_export: T.NamespaceExport.Built;
 	export_clause: T.ExportClause.Built;
 	export_specifier: T.ExportSpecifier.Built;
@@ -7413,19 +7223,16 @@ export type FluentKindMap = {
 	import_clause: T.ImportClause.Built;
 	namespace_import: T.NamespaceImport.Built;
 	named_imports: T.NamedImports.Built;
-	import_specifier: T.ImportSpecifier.Built;
 	import_attribute: T.ImportAttribute.Built;
 	expression_statement: T.ExpressionStatement.Built;
 	variable_declaration: T.VariableDeclaration.Built;
 	lexical_declaration: T.LexicalDeclaration.Built;
-	variable_declarator: T.VariableDeclarator.Built;
 	statement_block: T.StatementBlock.Built;
 	else_clause: T.ElseClause.Built;
 	if_statement: T.IfStatement.Built;
 	switch_statement: T.SwitchStatement.Built;
 	for_statement: T.ForStatement.Built;
 	for_in_statement: T.ForInStatement.Built;
-	_for_header: T.ForHeader.Built;
 	while_statement: T.WhileStatement.Built;
 	do_statement: T.DoStatement.Built;
 	try_statement: T.TryStatement.Built;
@@ -7471,7 +7278,6 @@ export type FluentKindMap = {
 	ternary_expression: T.TernaryExpression.Built;
 	binary_expression: T.BinaryExpression.Built;
 	unary_expression: T.UnaryExpression.Built;
-	update_expression: T.UpdateExpression.Built;
 	sequence_expression: T.SequenceExpression.Built;
 	string: T.String.Built;
 	unescaped_double_string_fragment: T.UnescapedDoubleStringFragment;
@@ -7486,7 +7292,6 @@ export type FluentKindMap = {
 	number: T.Number;
 	identifier: T.Identifier;
 	private_property_identifier: T.PrivatePropertyIdentifier;
-	meta_property: T.MetaProperty.Built;
 	this: T.This;
 	super: T.Super;
 	true: T.True;
@@ -7576,7 +7381,6 @@ export type FluentKindMap = {
 	default_type: T.DefaultType.Built;
 	constraint: T.Constraint.Built;
 	construct_signature: T.ConstructSignature.Built;
-	index_signature: T.IndexSignature.Built;
 	array_type: T.ArrayType.Built;
 	tuple_type: T.TupleType.Built;
 	readonly_type: T.ReadonlyType.Built;
@@ -7584,55 +7388,56 @@ export type FluentKindMap = {
 	intersection_type: T.IntersectionType.Built;
 	function_type: T.FunctionType.Built;
 	_type_identifier: T.TypeIdentifier;
-	_export_specifiers: T.ExportSpecifiers.Built;
-	_import_specifiers: T.ImportSpecifiers.Built;
-	_formal_parameters_elements: T.FormalParametersElements.Built;
-	_enum_body_elements: T.EnumBodyElements.Built;
-	_types: T.Types.Built;
-	_type_parameters_elements: T.TypeParametersElements.Built;
-	_tuple_type_members: T.TupleTypeMembers.Built;
-	_import_clause_group: T.ImportClauseGroup.Built;
-	_catch_clause_group: T.CatchClauseGroup.Built;
-	_ambient_declaration_global: T.AmbientDeclarationGlobal.Built;
-	_ambient_declaration_module: T.AmbientDeclarationModule.Built;
+	export_specifiers: T.ExportSpecifiers.Built;
+	import_specifiers: T.ImportSpecifiers.Built;
+	formal_parameters_elements: T.FormalParametersElements.Built;
+	enum_body_elements: T.EnumBodyElements.Built;
+	types: T.Types.Built;
+	type_parameters_elements: T.TypeParametersElements.Built;
+	tuple_type_members: T.TupleTypeMembers.Built;
+	import_clause_group: T.ImportClauseGroup.Built;
+	catch_clause_group: T.CatchClauseGroup.Built;
+	ambient_declaration_global: T.AmbientDeclarationGlobal.Built;
+	ambient_declaration_module: T.AmbientDeclarationModule.Built;
 	object_type_content: T.ObjectTypeContent.Built;
-	_export_statement_default: T.ExportStatementDefault.Built;
-	_export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
-	_export_statement_type_export: T.ExportStatementTypeExport.Built;
-	_export_statement_equals_export: T.ExportStatementEqualsExport.Built;
-	_binary_expression_in: T.BinaryExpressionIn.Built;
-	_class_body_method: T.ClassBodyMethod.Built;
-	_class_body_method_sig: T.ClassBodyMethodSig.Built;
-	_class_body_member: T.ClassBodyMember.Built;
-	_index_signature_colon: T.IndexSignatureColon.Built;
-	_index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Built;
-	_import_statement_clause_from: T.ImportStatementClauseFrom.Built;
-	_import_specifier_name: T.ImportSpecifierName.Built;
-	_import_specifier_as: T.ImportSpecifierAs.Built;
-	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
-	_parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Built;
-	_call_expression_call: T.CallExpressionCall.Built;
-	_call_expression_template_call: T.CallExpressionTemplateCall.Built;
-	_call_expression_member: T.CallExpressionMember.Built;
-	_string_double: T.StringDouble.Built;
-	_string_single: T.StringSingle.Built;
-	_update_expression_postfix: T.UpdateExpressionPostfix.Built;
-	_update_expression_prefix: T.UpdateExpressionPrefix.Built;
-	_arrow_function_parameter: T.ArrowFunctionParameter.Built;
-	_class_heritage_extends_clause: T.ClassHeritageExtendsClause.Built;
-	_import_clause_default_import: T.ImportClauseDefaultImport.Built;
-	_export_statement_default_from: T.ExportStatementDefaultFrom.Built;
-	_export_statement_default_declaration: T.ExportStatementDefaultDeclaration.Built;
-	_export_statement_default_from_star_from: T.ExportStatementDefaultFromStarFrom.Built;
-	_export_statement_default_from_ns_from: T.ExportStatementDefaultFromNsFrom.Built;
-	_export_statement_default_from_clause_from: T.ExportStatementDefaultFromClauseFrom.Built;
-	_export_statement_default_declaration_default_kw: T.ExportStatementDefaultDeclarationDefaultKw.Built;
-	_export_statement_default_declaration_default_kw_value: T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
-	_variable_declarator_plain: T.VariableDeclaratorPlain.Built;
-	_variable_declarator_definite: T.VariableDeclaratorDefinite.Built;
-	_for_header_lhs: T.ForHeaderLhs.Built;
-	_for_header_var_kind: T.ForHeaderVarKind.Built;
-	_for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
+	export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
+	export_statement_type_export: T.ExportStatementTypeExport.Built;
+	export_statement_equals_export: T.ExportStatementEqualsExport.Built;
+	binary_expression_in: T.BinaryExpressionIn.Built;
+	class_body_method: T.ClassBodyMethod.Built;
+	class_body_method_sig: T.ClassBodyMethodSig.Built;
+	class_body_member: T.ClassBodyMember.Built;
+	index_signature_colon: T.IndexSignatureColon.Built;
+	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Built;
+	import_statement_clause_from: T.ImportStatementClauseFrom.Built;
+	import_specifier_name: T.ImportSpecifierName.Built;
+	import_specifier_as: T.ImportSpecifierAs.Built;
+	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Built;
+	parenthesized_expression_sequence: T.ParenthesizedExpressionSequence.Built;
+	call_expression_call: T.CallExpressionCall.Built;
+	call_expression_template_call: T.CallExpressionTemplateCall.Built;
+	call_expression_member: T.CallExpressionMember.Built;
+	string_double: T.StringDouble.Built;
+	string_single: T.StringSingle.Built;
+	update_expression_postfix: T.UpdateExpressionPostfix.Built;
+	update_expression_prefix: T.UpdateExpressionPrefix.Built;
+	arrow_function_parameter: T.ArrowFunctionParameter.Built;
+	class_heritage_extends_clause: T.ClassHeritageExtendsClause.Built;
+	import_clause_default_import: T.ImportClauseDefaultImport.Built;
+	export_statement_default_from: T.ExportStatementDefaultFrom.Built;
+	export_statement_default_declaration: T.ExportStatementDefaultDeclaration.Built;
+	export_statement_default_from_star_from: T.ExportStatementDefaultFromStarFrom.Built;
+	export_statement_default_from_ns_from: T.ExportStatementDefaultFromNsFrom.Built;
+	export_statement_default_from_clause_from: T.ExportStatementDefaultFromClauseFrom.Built;
+	export_statement_default_declaration_default_kw: T.ExportStatementDefaultDeclarationDefaultKw.Built;
+	export_statement_default_declaration_default_kw_value: T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
+	variable_declarator_plain: T.VariableDeclaratorPlain.Built;
+	variable_declarator_definite: T.VariableDeclaratorDefinite.Built;
+	meta_property_new_target: T.MetaPropertyNewTarget;
+	meta_property_import_meta: T.MetaPropertyImportMeta;
+	for_header_lhs: T.ForHeaderLhs.Built;
+	for_header_var_kind: T.ForHeaderVarKind.Built;
+	for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
 	_template_chars: T.TemplateChars;
 	_ternary_qmark: T.TernaryQmark;
 	html_comment: T.HtmlComment;
@@ -7643,7 +7448,6 @@ export type FluentKindMap = {
 export const _factoryMap = {
 	program: buildProgram,
 	hash_bang_line: buildHashBangLine,
-	export_statement: buildExportStatement,
 	namespace_export: buildNamespaceExport,
 	export_clause: buildExportClause,
 	export_specifier: buildExportSpecifier,
@@ -7652,19 +7456,16 @@ export const _factoryMap = {
 	import_clause: buildImportClause,
 	namespace_import: buildNamespaceImport,
 	named_imports: buildNamedImports,
-	import_specifier: buildImportSpecifier,
 	import_attribute: buildImportAttribute,
 	expression_statement: buildExpressionStatement,
 	variable_declaration: buildVariableDeclaration,
 	lexical_declaration: buildLexicalDeclaration,
-	variable_declarator: buildVariableDeclarator,
 	statement_block: buildStatementBlock,
 	else_clause: buildElseClause,
 	if_statement: buildIfStatement,
 	switch_statement: buildSwitchStatement,
 	for_statement: buildForStatement,
 	for_in_statement: buildForInStatement,
-	_for_header: buildForHeader,
 	while_statement: buildWhileStatement,
 	do_statement: buildDoStatement,
 	try_statement: buildTryStatement,
@@ -7710,7 +7511,6 @@ export const _factoryMap = {
 	ternary_expression: buildTernaryExpression,
 	binary_expression: buildBinaryExpression,
 	unary_expression: buildUnaryExpression,
-	update_expression: buildUpdateExpression,
 	sequence_expression: buildSequenceExpression,
 	string: buildString,
 	unescaped_double_string_fragment: buildUnescapedDoubleStringFragment,
@@ -7725,7 +7525,6 @@ export const _factoryMap = {
 	number: buildNumber,
 	identifier: buildIdentifier,
 	private_property_identifier: buildPrivatePropertyIdentifier,
-	meta_property: buildMetaProperty,
 	this: buildThis,
 	super: buildSuper,
 	true: buildTrue,
@@ -7815,7 +7614,6 @@ export const _factoryMap = {
 	default_type: buildDefaultType,
 	constraint: buildConstraint,
 	construct_signature: buildConstructSignature,
-	index_signature: buildIndexSignature,
 	array_type: buildArrayType,
 	tuple_type: buildTupleType,
 	readonly_type: buildReadonlyType,
@@ -7823,55 +7621,56 @@ export const _factoryMap = {
 	intersection_type: buildIntersectionType,
 	function_type: buildFunctionType,
 	_type_identifier: buildTypeIdentifier,
-	_export_specifiers: buildExportSpecifiers,
-	_import_specifiers: buildImportSpecifiers,
-	_formal_parameters_elements: buildFormalParametersElements,
-	_enum_body_elements: buildEnumBodyElements,
-	_types: buildTypes,
-	_type_parameters_elements: buildTypeParametersElements,
-	_tuple_type_members: buildTupleTypeMembers,
-	_import_clause_group: buildImportClauseGroup,
-	_catch_clause_group: buildCatchClauseGroup,
-	_ambient_declaration_global: buildAmbientDeclarationGlobal,
-	_ambient_declaration_module: buildAmbientDeclarationModule,
+	export_specifiers: buildExportSpecifiers,
+	import_specifiers: buildImportSpecifiers,
+	formal_parameters_elements: buildFormalParametersElements,
+	enum_body_elements: buildEnumBodyElements,
+	types: buildTypes,
+	type_parameters_elements: buildTypeParametersElements,
+	tuple_type_members: buildTupleTypeMembers,
+	import_clause_group: buildImportClauseGroup,
+	catch_clause_group: buildCatchClauseGroup,
+	ambient_declaration_global: buildAmbientDeclarationGlobal,
+	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
-	_export_statement_default: buildExportStatementDefault,
-	_export_statement_namespace_export: buildExportStatementNamespaceExport,
-	_export_statement_type_export: buildExportStatementTypeExport,
-	_export_statement_equals_export: buildExportStatementEqualsExport,
-	_binary_expression_in: buildBinaryExpressionIn,
-	_class_body_method: buildClassBodyMethod,
-	_class_body_method_sig: buildClassBodyMethodSig,
-	_class_body_member: buildClassBodyMember,
-	_index_signature_colon: buildIndexSignatureColon,
-	_index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
-	_import_statement_clause_from: buildImportStatementClauseFrom,
-	_import_specifier_name: buildImportSpecifierName,
-	_import_specifier_as: buildImportSpecifierAs,
-	_parenthesized_expression_typed: buildParenthesizedExpressionTyped,
-	_parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
-	_call_expression_call: buildCallExpressionCall,
-	_call_expression_template_call: buildCallExpressionTemplateCall,
-	_call_expression_member: buildCallExpressionMember,
-	_string_double: buildStringDouble,
-	_string_single: buildStringSingle,
-	_update_expression_postfix: buildUpdateExpressionPostfix,
-	_update_expression_prefix: buildUpdateExpressionPrefix,
-	_arrow_function_parameter: buildArrowFunctionParameter,
-	_class_heritage_extends_clause: buildClassHeritageExtendsClause,
-	_import_clause_default_import: buildImportClauseDefaultImport,
-	_export_statement_default_from: buildExportStatementDefaultFrom,
-	_export_statement_default_declaration: buildExportStatementDefaultDeclaration,
-	_export_statement_default_from_star_from: buildExportStatementDefaultFromStarFrom,
-	_export_statement_default_from_ns_from: buildExportStatementDefaultFromNsFrom,
-	_export_statement_default_from_clause_from: buildExportStatementDefaultFromClauseFrom,
-	_export_statement_default_declaration_default_kw: buildExportStatementDefaultDeclarationDefaultKw,
-	_export_statement_default_declaration_default_kw_value: buildExportStatementDefaultDeclarationDefaultKwValue,
-	_variable_declarator_plain: buildVariableDeclaratorPlain,
-	_variable_declarator_definite: buildVariableDeclaratorDefinite,
-	_for_header_lhs: buildForHeaderLhs,
-	_for_header_var_kind: buildForHeaderVarKind,
-	_for_header_let_const_kind: buildForHeaderLetConstKind,
+	export_statement_namespace_export: buildExportStatementNamespaceExport,
+	export_statement_type_export: buildExportStatementTypeExport,
+	export_statement_equals_export: buildExportStatementEqualsExport,
+	binary_expression_in: buildBinaryExpressionIn,
+	class_body_method: buildClassBodyMethod,
+	class_body_method_sig: buildClassBodyMethodSig,
+	class_body_member: buildClassBodyMember,
+	index_signature_colon: buildIndexSignatureColon,
+	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
+	import_statement_clause_from: buildImportStatementClauseFrom,
+	import_specifier_name: buildImportSpecifierName,
+	import_specifier_as: buildImportSpecifierAs,
+	parenthesized_expression_typed: buildParenthesizedExpressionTyped,
+	parenthesized_expression_sequence: buildParenthesizedExpressionSequence,
+	call_expression_call: buildCallExpressionCall,
+	call_expression_template_call: buildCallExpressionTemplateCall,
+	call_expression_member: buildCallExpressionMember,
+	string_double: buildStringDouble,
+	string_single: buildStringSingle,
+	update_expression_postfix: buildUpdateExpressionPostfix,
+	update_expression_prefix: buildUpdateExpressionPrefix,
+	arrow_function_parameter: buildArrowFunctionParameter,
+	class_heritage_extends_clause: buildClassHeritageExtendsClause,
+	import_clause_default_import: buildImportClauseDefaultImport,
+	export_statement_default_from: buildExportStatementDefaultFrom,
+	export_statement_default_declaration: buildExportStatementDefaultDeclaration,
+	export_statement_default_from_star_from: buildExportStatementDefaultFromStarFrom,
+	export_statement_default_from_ns_from: buildExportStatementDefaultFromNsFrom,
+	export_statement_default_from_clause_from: buildExportStatementDefaultFromClauseFrom,
+	export_statement_default_declaration_default_kw: buildExportStatementDefaultDeclarationDefaultKw,
+	export_statement_default_declaration_default_kw_value: buildExportStatementDefaultDeclarationDefaultKwValue,
+	variable_declarator_plain: buildVariableDeclaratorPlain,
+	variable_declarator_definite: buildVariableDeclaratorDefinite,
+	meta_property_new_target: buildMetaPropertyNewTarget,
+	meta_property_import_meta: buildMetaPropertyImportMeta,
+	for_header_lhs: buildForHeaderLhs,
+	for_header_var_kind: buildForHeaderVarKind,
+	for_header_let_const_kind: buildForHeaderLetConstKind,
 	_template_chars: buildTemplateChars,
 	_ternary_qmark: buildTernaryQmark,
 	html_comment: buildHtmlComment,

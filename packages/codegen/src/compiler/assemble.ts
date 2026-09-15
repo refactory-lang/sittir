@@ -43,6 +43,7 @@ import type {
 	SubtypeRef,
 	UnresolvedRef
 } from './model/node-map.ts';
+import { armFactsOf } from './model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledPattern,
@@ -336,11 +337,12 @@ function resolveSupertypeSubtypes(
 		rule.type === SUPERTYPE
 			? rule.subtypes.map((s) => ({
 					name: s.name,
-					storageKindId: s.kindId
+					storageKindId: s.kindId,
+					...armFactsOf(s)
 				}))
 			: rule.members
 					.filter((m): m is SymbolRule => m.type === SYMBOL)
-					.map((m) => ({ name: m.name, storageKindId: m.kindId }));
+					.map((m) => ({ name: m.name, storageKindId: m.kindId, ...armFactsOf(m) }));
 	return resolveHiddenSubtypes(
 		subtypes,
 		ctx,

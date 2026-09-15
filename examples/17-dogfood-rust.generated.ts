@@ -11,7 +11,7 @@ export function rebuildSpliceGenerated() {
 				}),
 				name: ir.identifier("Edit"),
 			}),
-		}).$trivia({ leading: ["//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"] }), ir.attributeItem.strict(ir.attribute.strict({
+		}).$trivia({ leading: ["//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"] }), ir.attributeItem.strict(ir.attribute.input.strict({
 			path: ir.identifier("derive"),
 			arguments: ir.delimTokenTree.paren.strict(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
 		})).$trivia({ leading: ["/// Error returned from [`apply_edits`] when an edit is invalid.\n"] }), ir.enumItem.strict({
@@ -63,16 +63,16 @@ export function rebuildSpliceGenerated() {
 					})),
 				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
 			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] })),
-		}), ir.implItem.strict({
-			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({
+		}), ir.implItem.body.positiveClause.strict({
+			traitClause: [ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("fmt"),
 				}),
 				name: ir.identifier("Display"),
-			})),
+			})],
 			type: ir.identifier("SpliceError"),
-			content: ir.implItemBody.strict(ir.declarationList.strict(ir.functionItem.strict({
+			declarationList: ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),
 				parameters: ir.parameters.strict(ir.parametersElements.strict({ delimiter: Delimiter.None }, {
 					content: ir.selfParameter.strict({
@@ -109,6 +109,29 @@ export function rebuildSpliceGenerated() {
 					statements: [ir.expressionStatement.strict(ir.matchExpression.strict({
 						value: TSKindId.Self,
 						body: ir.matchBlock.strict({
+							lastArm: ir.lastMatchArm.strict({
+								pattern: ir.matchPattern.strict({
+									pattern: ir.structPattern.strict({
+										type: ir.scopedTypeIdentifier.strict({
+											path: ir.identifier("SpliceError"),
+											name: ir.identifier("NonCharBoundary"),
+										}),
+										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
+											name: ir.identifier("start"),
+										}), ir.fieldPattern.shorthand.strict({
+											name: ir.identifier("end"),
+										})],
+									}),
+								}),
+								value: ir.macroInvocation.strict({
+									macro: ir.identifier("write"),
+									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
+										stringOpen: ir.stringLiteralOpen("\""),
+										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+									})),
+								}),
+								comma: true,
+							}),
 							matchArm: [ir.matchArm.blockEnding.strict({
 								pattern: ir.matchPattern.strict({
 									pattern: ir.structPattern.strict({
@@ -154,43 +177,20 @@ export function rebuildSpliceGenerated() {
 									})),
 								}),
 							})],
-							lastArm: ir.lastMatchArm.strict({
-								pattern: ir.matchPattern.strict({
-									pattern: ir.structPattern.strict({
-										type: ir.scopedTypeIdentifier.strict({
-											path: ir.identifier("SpliceError"),
-											name: ir.identifier("NonCharBoundary"),
-										}),
-										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("start"),
-										}), ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("end"),
-										})],
-									}),
-								}),
-								value: ir.macroInvocation.strict({
-									macro: ir.identifier("write"),
-									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-										stringOpen: ir.stringLiteralOpen("\""),
-										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
-									})),
-								}),
-								comma: true,
-							}),
 						}),
 					}))],
 				}),
-			}))),
-		}), ir.implItem.strict({
-			traitClause: ir.implItemPositiveClause.strict(ir.scopedTypeIdentifier.strict({
+			})),
+		}), ir.implItem.body.positiveClause.strict({
+			traitClause: [ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("error"),
 				}),
 				name: ir.identifier("Error"),
-			})),
+			})],
 			type: ir.identifier("SpliceError"),
-			content: ir.implItemBody.strict(ir.declarationList.strict()),
+			declarationList: ir.declarationList.strict(),
 		}), ir.functionItem.strict({
 			visibilityModifier: ir.visibilityModifier.pub.strict(),
 			name: ir.identifier("apply_edits"),
@@ -233,9 +233,7 @@ export function rebuildSpliceGenerated() {
 					}),
 				}).$trivia({ leading: ["// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."] }), ir.expressionStatement.strict(ir.forExpression.strict({
 					pattern: ir.identifier("e"),
-					value: ir.referenceExpression.strict({
-						value: ir.identifier("edits"),
-					}),
+					value: ir.referenceExpression.bare.strict(ir.identifier("edits")),
 					body: ir.block.strict({
 						statements: [ir.expressionStatement.strict(ir.ifExpression.strict({
 							condition: ir.binaryExpression.strict({
@@ -397,12 +395,10 @@ export function rebuildSpliceGenerated() {
 												field: ir.identifier("cmp"),
 											}),
 											arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-												expression: ir.referenceExpression.strict({
-													value: ir.fieldExpression.strict({
-														value: ir.identifier("a"),
-														field: ir.identifier("start_pos"),
-													}),
-												}),
+												expression: ir.referenceExpression.bare.strict(ir.fieldExpression.strict({
+													value: ir.identifier("a"),
+													field: ir.identifier("start_pos"),
+												})),
 											})),
 										}),
 										field: ir.identifier("then_with"),
@@ -419,12 +415,10 @@ export function rebuildSpliceGenerated() {
 													field: ir.identifier("cmp"),
 												}),
 												arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-													expression: ir.referenceExpression.strict({
-														value: ir.fieldExpression.strict({
-															value: ir.identifier("a"),
-															field: ir.identifier("end_pos"),
-														}),
-													}),
+													expression: ir.referenceExpression.bare.strict(ir.fieldExpression.strict({
+														value: ir.identifier("a"),
+														field: ir.identifier("end_pos"),
+													})),
 												})),
 											}),
 										}),
@@ -479,12 +473,10 @@ export function rebuildSpliceGenerated() {
 									end: ir.identifier("end"),
 								}),
 							}, {
-								expression: ir.referenceExpression.strict({
-									value: ir.fieldExpression.strict({
-										value: ir.identifier("e"),
-										field: ir.identifier("inserted_text"),
-									}),
-								}),
+								expression: ir.referenceExpression.bare.strict(ir.fieldExpression.strict({
+									value: ir.identifier("e"),
+									field: ir.identifier("inserted_text"),
+								})),
 							})),
 						}))],
 					}),

@@ -7,6 +7,8 @@ import {
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
+	AssembledToken,
+	isNodeRef,
 	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
@@ -361,16 +363,20 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		...new Set(node.subtypeNames.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
 	];
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
+	const subtypeRefs = node.subtypes.filter(isNodeRef);
+	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledToken || ref.node instanceof AssembledKeyword)) {
+		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
+	}
 	return [
 		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
 		`  if (typeof data === 'number') return data;`,
-		`  data = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
-		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
-		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
-		`  if (filtered === undefined && (typeof (data as _NodeData).$text === 'string' || (data as _NodeData).$nodeHandle != null)) {`,
-		`    return drillInSelf<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
+		`  const node = _keepModelledSlots(data as unknown as _NodeData & { readonly $other?: T.${node.typeName} | readonly T.${node.typeName}[] }, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
+		`  const kindKeyed = _firstKindKeyedWrapChild(node, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
+		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ${JSON.stringify(allowedKinds)});`,
+		`  if (filtered === undefined && (typeof node.$text === 'string' || node.$nodeHandle != null)) {`,
+		`    return drillInSelf<T.${node.typeName}>(node as unknown as T.${node.typeName}, tree);`,
 		`  }`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: node.$span }), tree);`,
 		`}`
 	].join('\n');
 }

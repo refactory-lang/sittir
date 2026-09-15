@@ -145,11 +145,15 @@ no longer produced, so there is currently nothing here to dissolve — but the
 ambiguity cluster and the inlining remedy both remain live if a mint lands in
 that position again.
 
-### `impl_item` — no `variant()` split (`packages/rust/grammar.sittir.ts`)
+### `impl_item` (`packages/rust/grammar.sittir.ts`)
 
-`impl_item` is de-polymorphed: it is expressed as a full `rules:` replacement
-instead, because its co-optional trait clause has to render as a unit. See the
-`_impl_item_unsafe_marker` entry below.
+`impl_item` is a full `rules:` replacement that splits the base rule's
+`optional('!')` trait clause into two arms, so the co-optional trait clause
+renders as a unit. Its variants are declared with `variant()` in three patch
+sets: the trait-clause arms per arm (`3/0/0/0` `positive_clause`, `3/0/0/1`
+`negative_clause`), the positive clause as the default arm, then the body
+choice whole-arm (`6/0` `body`, `6/1` `semi`), which flattens `impl_item` into
+a supertype of `impl_item_body` and `impl_item_semi`.
 
 ### `range_pattern` (`packages/rust/grammar.sittir.ts:187`)
 
@@ -922,26 +926,23 @@ STRING — see `function_modifiers` / `visibility_modifier`.
 				// `wildcard_pattern` kind at parse time.
 ```
 
-### `_reference_expression_raw_const` (`packages/rust/grammar.sittir.ts:1101`)
+### `reference_expression` (`packages/rust/grammar.sittir.ts`)
 
 ```text
-				// reference_expression — reference-mode is a SINGLE optional choice slot.
-				// Each raw arm is a real alias kind that OWNS its `raw` prefix (the
-				// co-optional group `seq('raw', discriminator)`), so member-1 is a clean
-				// choice-over-kinds and the branch emitters render it faithfully — no
-				// forms / $variant / per-form transport. `&` is a bare mandatory literal
-				// (NOT a field — fielding it forced the `_kw_reference` LR routing we no
-				// longer need). `& mut x` → bare mutable_specifier arm; `& x` → optional
-				// absent. raw_const/raw_mut stay real kindId-bearing kinds → factory
-				// submethods derive from the choice arms as sugar.
+				// reference_expression — reference mode is one optional choice after `&`:
+				// `raw const`, `raw mut`, or `mut`. Each arm owns its tokens, and the
+				// three are declared with variant() through the optional (`1/0/0`,
+				// `1/0/1`, `1/0/2`), so they hoist whole-arm with the absent case
+				// (`& x`) as `reference_expression_bare`: the parent flattens into a
+				// supertype of raw_const / raw_mut / mut / bare. `&` is a bare literal,
+				// not a field (fielding it forced `_kw_reference` LR routing).
 ```
 
 ### `_impl_item_unsafe_marker` (`packages/rust/grammar.sittir.ts:1128`)
 
 ```text
-				// impl_item — full rule replacement (de-polymorph). The co-optional trait
-				// clause is owned by alias'd positive/negative clause kinds so it renders as a
-				// unit (no conditional-key-on-sub-optional bug); body/semi arms are alias kinds.
+				// _impl_item_unsafe_marker — the `unsafe` keyword of impl_item as a
+				// fielded marker rule (see `impl_item` above for the variant split).
 ```
 
 ### `_let_chain` (`packages/rust/grammar.sittir.ts:1157`)

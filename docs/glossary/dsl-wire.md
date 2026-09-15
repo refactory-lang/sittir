@@ -125,24 +125,17 @@ exist.
 
 ```text
 /**
- * Compute the visible-kind name for a polymorph variant.
+ * The rule name a polymorph variant mints — also its node kind, since a
+ * variant is a visible rule rather than a hidden rule behind an alias.
  *
  * When the parent is itself a hidden rule (name starts with `_`) —
- * e.g. `_visibility_modifier_pub`, produced as an arm of an outer
- * polymorph — the leading underscore is stripped so the generated
- * variant kind (`visibility_modifier_pub_in_path`) is visible in the
- * parse tree. Without stripping, the visible alias target would also
- * lead with `_` and tree-sitter would hide it, collapsing the variant.
+ * e.g. `_for_header` — the leading underscore is stripped so the
+ * variant kind (`for_header_lhs`) is visible in the parse tree.
+ * Without stripping, tree-sitter would hide it, collapsing the variant.
  *
  * Used by wire's placeholder registration AND transform.ts's
  * variant-resolution paths so both agree on the rule name.
  */
-```
-
-### `packages/codegen/src/dsl/wire/wire.ts::polymorphHiddenName`
-
-```text
-/** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 ```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::patchSetsOf`
@@ -170,12 +163,13 @@ array form `transform()` consumes as its rest parameter.
  *   1. User-supplied `userFn` (from config.rules) — runs first, so a
  *      full rule rewrite sees the base-shape rule tree and the patches
  *      apply on its output.
- *   2. For hidden-name kinds (leading `_`) that another kind's
- *      `variant()` mints, read the body from `context.deposits` — the
- *      outer rule fn iterates at its base-grammar position, ahead of
- *      the minted hidden name, and populates that deposit when its own
- *      variant patch resolves. This is how a minted arm can itself carry
- *      patches (rust's `_visibility_modifier_pub`).
+ *   2. For kinds that another kind's `variant()` mints, read the body
+ *      from `context.deposits` — the outer rule fn iterates at its
+ *      base-grammar position, ahead of the minted name, and populates
+ *      that deposit when its own variant patch resolves. This is how a
+ *      minted arm can itself carry patches (rust's `visibility_modifier_pub`).
+ *      Only minted names are ever deposited, so the lookup needs no
+ *      name-shape guard.
  *   3. Otherwise use `original` (the `previous` arg tree-sitter passes —
  *      the base grammar's body of this rule).
  *
@@ -190,17 +184,50 @@ array form `transform()` consumes as its rest parameter.
 
 ```text
 /**
- * The hidden rule a placeholder mints when it resolves inside
- * `transform()`, or `undefined` for a non-placeholder value (an
- * already-resolved native rule, a two-arg `field()` result):
+ * The rule a placeholder mints when it resolves inside `transform()`,
+ * or `undefined` for a non-placeholder value (an already-resolved
+ * native rule, a two-arg `field()` result):
  *
  * - `field('x')` (one-arg) → `_kw_x` (only materializes when the captured
  *   content is a bare string; the deferred fn is harmless otherwise).
- * - `variant('y')` under rule kind `K` → `polymorphHiddenName(K, 'y')`,
- *   i.e. `_<visible K>_y` (a hidden parent's leading `_` is not doubled).
- * - `alias('z')` (one-arg) → `_z`.
+ * - `variant('y')` under rule kind `K` → `polymorphVisibleName(K, 'y')`,
+ *   i.e. the visible `<visible K>_y`.
+ * - `alias('z')` (one-arg) → the hidden `_z`.
  */
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireHasDeposit`
+
+Whether the active wire context holds a deposited body under `name`. Only
+rules wire minted from a placeholder are ever deposited, so this is the
+stamped fact "wire created this rule" — the flattening classifier reads it
+to tell a variant's own rule from an existing kind an unmaterializable
+variant arm left in place.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterFlattenedParent`
+
+Record `name` as a parent whose rule reduced to a pure choice of its own
+variant rules. Registration is a candidacy: `wrapSupertypesCallback`
+makes the final decision once every rule has been evaluated.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wrapSupertypesCallback`
+
+Wraps the grammar's `supertypes` callback so registered flattened parents
+are appended to the base list, the way conflict groups are appended to
+`conflicts`. tree-sitter evaluates `supertypes` after every rule, so the
+whole-grammar facts are complete here. A parent is skipped when it is
+already listed, or when its name is an alias target: some other rule
+presents content as a node of that kind, and tree-sitter cannot treat one
+kind as both a concrete node and a supertype (node-type generation panics
+sorting the supertype graph). typescript's `decorator` aliasing
+`decorator_call_expression` to `call_expression` is the case that forces it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::recordAliasTargets`
+
+The last wrapper applied to every rule fn: after the rule evaluates, walk
+its final tree and add each named `ALIAS` value to
+`context.aliasTargets`. It wraps outside pattern replacement and the
+visible-externals rewrite so it sees the tree those passes produce.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsPrecedenceRankedRule`
 
@@ -255,6 +282,15 @@ list is consulted: a grammar's own `externals:` callback may carry side effects
  * unresolved until `transform()` fires need this pass.
  */
 ```
+
+### `packages/codegen/src/dsl/wire/wire.ts::defaultAbsentVariantName`
+
+The absent-case rule a patch map will mint without naming it: when any
+`variant()` entry addresses a choice through an optional (`N/0/M`) and none is
+declared `{ absent: true }`, the hoist names the absent case
+`<parent>_${ABSENT_VARIANT_NAME}`, so wire pre-registers that name with the
+others. If the hoist then does not fire, nothing deposits it and orphan
+pruning removes the empty rule in both pipelines.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 

@@ -2572,48 +2572,24 @@ parents.
 
 ### `packages/codegen/src/compiler/evaluate.ts::prunePlaceholderOrphans`
 
-```text
-/**
- * Remove `_kw_*` / `_<parent>_<suffix>` placeholder rules that were
- * pre-registered by wire() at setup time but never actually
- * deposited-into at rule-evaluation time.
- *
- * @remarks
- * `injectPlaceholderHiddenRules` blindly registers a deferred
- * rule fn for every `field()` / `alias()` / `variant()` placeholder it
- * sees, even though only some placeholders will actually synthesize at
- * resolve time (`field('x')` with non-string content, e.g. the rust
- * `self_parameter.lifetime_name` field wrapping `optional($.lifetime)`,
- * never feeds `maybeKeywordSymbol`). The pre-registration is required
- * under tree-sitter's native `grammar()` because tree-sitter walks
- * rules in dependency order and errors on any unknown SYMBOL the
- * parent rule references — so the safe move at wire time is to register
- * every potentially-used name. But when the placeholder never actually
- * deposits, the registered deferred fn returns `blank()` and the
- * resulting empty rule lingers in the grammar as orphan leaf noise.
- * This pass deletes those orphans: for every `_`-prefixed rule whose
- * body is the empty-choice sentinel `blank()` emits AND which has no
- * matching deposit, drop the entry.
- *
- * Skips rules that DID receive a deposit (they're real synthesized
- * content). Skips rules whose body is non-blank (author-declared hidden
- * helpers are legitimate and can have any body). Runs once the metadata
- * callbacks have been evaluated, because a declared supertype is a root
- * too: `_whitespace` is referenced by nothing but the `supertypes:` list.
- */
-```
+Remove the rules wire pre-registered for a placeholder that never deposited,
+and any other rule nothing reaches (`collectOrphanedRules`). Wire has to
+register every name a placeholder might mint before tree-sitter walks the
+rule map, so an unfired `field('x')`, `alias()` or `variant()` — including an
+absent-case `bare` whose hoist did not fire — leaves an empty rule behind.
+Deposit-backed names and declared supertypes are roots besides visible rules
+with a body (`_whitespace` is referenced by nothing but `supertypes:`), so this
+runs once the metadata callbacks have been evaluated.
 
 #### body
 
 ```text
 // Twin of `transpile/prune-grammar-json.ts` over the SAME shared
-// reachability traversal — hidden rules nothing reaches (unfired wire
-// placeholders, enrich mints stranded by an override redeclaring their
-// owner) must vanish from the sittir-evaluated map exactly as they vanish
-// from grammar.json, or the model carries kinds the parser never emits
-// (the phantom-kind class). Only deposit-backed names root beyond visible
-// rules — inline/conflict bookkeeping deliberately does not (an orphaned
-// mint would keep itself alive through its own entries).
+// reachability traversal — rules nothing reaches must vanish from the
+// sittir-evaluated map exactly as they vanish from grammar.json, or the
+// model carries kinds the parser never emits (the phantom-kind class).
+// inline/conflict bookkeeping deliberately does not root (an orphaned mint
+// would keep itself alive through its own entries).
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::isBlankRule`
@@ -3686,6 +3662,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  `cyclicInlineTargets` failed to catch. */
 ```
 
+The ref's own annotations survive the splice, merged over the body's: a fact stamped on the occurrence (`hoisted` on a variant deposit whose body is a single hidden symbol, `variant`/`variantOf` on an arm) describes the occurrence, not the rule being inlined, and dropping it would silently change how the host classifies.
+
 ### `packages/codegen/src/compiler/link.ts::cyclicInlineTargets`
 
 ```text
@@ -3729,15 +3707,16 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 // alias, present in both phases — widen the phase view with a cast.
 ```
 
-### `packages/codegen/src/compiler/link.ts::collectHiddenChoicesWithNamedAliasMembers`
+### `packages/codegen/src/compiler/link.ts::collectHiddenNamedArmChoices`
 
 ```text
 /**
  * Collect the set of hidden (`_`-prefixed) kind names whose OWN raw rule
- * body is a `choice` where **ALL** members are named aliases.
+ * body is a `choice` where **ALL** members are named arms: a named alias over
+ * a symbol, or a symbol the grammar declared as a variant of this choice
+ * (`annotations.variantOf`, the shape a visible variant rule takes).
  *
- * These are pure alias-dispatch choices like `_export_statement_default`
- * where every choice arm is `alias(symbol(_child), $.visible)`. `resolveRule`
+ * These are dispatch choices where every arm names its own CST node. `resolveRule`
  * keeps a bare-symbol-content named alias as the ALIAS wrapper rather than
  * collapsing it to a plain `symbol` ref (`aliasedSymbolWithin` is what makes
  * that shape eligible to stay wrapped) — but without this set,
@@ -3748,9 +3727,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  * make the transport expect transparent subtype dispatch, which fails at
  * decode when the reader sees the concrete kind ID.
  *
- * Mixed choices (some alias + some symbol, like `_match_block`) are
- * intentionally excluded: they may still need supertype treatment for the
- * non-aliased arms. Only pure alias-dispatch choices need the branch override.
+ * A choice with an arm that is neither (a bare, undeclared symbol) is
+ * excluded: it may still need supertype treatment for that arm.
  *
  * Used in `classifyHiddenChoiceRule` to block unwanted supertype promotion.
  *
@@ -4319,26 +4297,7 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  replaces it (id/fieldName/multiplicity/nonterminal/metadata) — NOT `members`. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::resolveGroupsConfigKey`
-
-```text
-/**
- * (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
- * addresses a hidden rule by the EXACT name `variant()` would
- * normally register it under (`polymorphHiddenName`, e.g.
- * `_visibility_modifier_pub`). When enrich's widened choice-arm mint
- * already claimed that arm before `resolvePatch` ran, the rename there is
- * LABEL-ONLY (re-keying the underlying rule was ruled out as unsafe:
- * base-grammar rules can't be deleted). By the time `link()` reaches
- * `applyGroupOverrides`, though, `resolveRule`'s ALIAS case and
- * `mintContentAliasKinds` have ALREADY resolved that alias away and
- * registered the body under its VISIBLE name (`kind` minus its leading
- * `_`) — confirmed via probe: `rules['visibility_modifier_pub']` exists
- * with the correct body, `rules['_visibility_modifier_pub']` does not. So
- * the fallback here is a direct visible-name lookup, not an alias search —
- * the alias is long gone by this phase.
- */
-```
+### `packages/codegen/src/compiler/link.ts::validateGroupsConfig`
 
 ```text
 /**
@@ -5750,12 +5709,6 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
  */
 ```
 
-### `packages/codegen/src/compiler/variant-structural.ts::stripHiddenPrefix`
-
-```text
-/** Strip a single leading `_` (hidden-kind marker), if present. */
-```
-
 ### `packages/codegen/src/compiler/variant-structural.ts::isAliasMintedRef`
 
 ```text
@@ -5790,192 +5743,41 @@ the text a SEQ collapses to is spaced by the grammar's word shape, not `\w`.
  */
 ```
 
-### `packages/codegen/src/compiler/variant-structural.ts::namedKindRefTarget`
-
-```text
-/**
- * Resolve a rule to its named-kind target name, unwrapping an
- * OPTIONAL wrapper if present (an optional-wrapped alias/symbol still
- * REFERENCES the same target kind — optionality doesn't change what the arm
- * names). Returns null when `rule` is not (through those wrappers) an
- * ALIAS/SYMBOL ref, or when it IS such a ref but not alias-minted (see
- * {@link isAliasMintedRef}) — an ordinary independently-authored sibling
- * rule reference is not a "named-kind arm" for variant-adoption purposes,
- * regardless of prefix-name coincidence.
- */
-```
-
-### `packages/codegen/src/compiler/variant-structural.ts::namedKindArmTarget`
-
-```text
-/**
- * Is `rule` a "named-kind arm" for choice-membership purposes? Bare
- * ALIAS/SYMBOL (through OPTIONAL wrappers), or a SEQ whose FIRST
- * member is such a reference — the `function_type` shape, where each choice
- * arm is `seq(alias, field('parameters', ...))` and every arm shares the
- * trailing content. Returns the target name, or null if this arm doesn't
- * qualify EITHER because it isn't a named-kind ref at all, or because the
- * ref target is an ordinary independently-authored rule (not alias-minted —
- * see {@link isAliasMintedRef}).
- */
-```
-
 ### `packages/codegen/src/compiler/variant-structural.ts::VariantChild`
 
-```text
-/**
- * One variant arm of a parent: the child's full target kind and the name the
- * arm is addressed by. Carrying the name here is the point — it is resolved
- * once during derivation and read unchanged by every consumer, rather than
- * each of them re-deriving it from the two kind names.
- */
-```
-
-### `packages/codegen/src/compiler/variant-structural.ts::declaredVariantName`
-
-```text
-/**
- * The variant name an author declared for this arm, or `undefined` when they
- * declared none. Walks the arm's `content` chain because the annotation is
- * stamped on an ALIAS's content rather than the wrapper. Honoured only when
- * the annotation's declaring kind matches `parentKind`: a child kind is
- * reachable from several parents, and a name declared under one of them says
- * nothing about how another addresses the same arm.
- */
-```
+One variant of a parent: the kind the arm names and the variant name it is
+addressed by, both resolved once in the derivation and read unchanged by
+every consumer.
 
 ### `packages/codegen/src/compiler/variant-structural.ts::prefixNamedSuffix`
 
-```text
-/**
- * Two jobs, and only one of them is still about naming. It GATES which arms
- * count as variant children at all, and it supplies the arm's name only when
- * the author declared none — a declared annotation wins. Hand-authored
- * grammars mint their arms as plain `alias()` calls following this naming
- * convention with nothing declaring them, so the convention remains the only
- * way to recognise those.
- *
- * Does `targetName` look like a prefix-named variant child of `parentKind`
- * — i.e. does it equal `polymorphVisibleName(parentKind, suffix)` (wire.ts,
- * the SAME helper wire's placeholder registration and transform.ts use
- * to mint a variant child's visible name — imported here, not reimplemented,
- * so the two derivations can never drift) for some non-empty `suffix`? Both
- * `parentKind` and `targetName` may carry a leading `_` (hidden kind);
- * RESOLUTION 3 admits hidden target names, and `polymorphVisibleName` itself
- * strips the PARENT's leading `_` (a hidden parent still mints a visible
- * child name) — the target's own leading `_` is stripped here before
- * comparison, since a hidden target's mint name is `_` + the visible form.
- * Returns the suffix on match, else null.
- */
-```
+The suffix that turns `parentKind`'s visible name into `targetName`
+(`polymorphVisibleName(parentKind, suffix)`), or `null` when `targetName` is
+not so named or the suffix would be empty. Both names may carry a leading
+`_`. A naming helper only: it never decides whether an arm is a variant.
 
-### `packages/codegen/src/compiler/variant-structural.ts::declaredKindArmTarget`
+### `packages/codegen/src/compiler/variant-structural.ts::deriveVariantChildren`
 
-```text
-/** The declared kind an arm references directly — an alias whose face is a
- *  declared rule, or a plain symbol to one — or `null`. Such an arm is a
- *  form of the parent by virtue of what it seats, so it needs no minted
- *  per-parent kind and no parent-prefixed name: its arm name is its own
- *  kind name. Only consulted once a choice is anchored as a form choice by
- *  a minted or declared arm; a choice of plain kind references alone is an
- *  ordinary union slot, not a set of forms. */
-```
+`{parent -> VariantChild[]}` for every rule in `rules` that has at least one
+variant, by `variantChildrenOf`.
 
-### `packages/codegen/src/compiler/variant-structural.ts::matchStructuralVariantChoice`
+### `packages/codegen/src/compiler/variant-structural.ts::variantChildrenOf`
 
-```text
-/**
- * Does CHOICE `rule` qualify as a variant-adoption site for `parentKind` —
- * at least one member a prefix-named named-kind arm? Returns the qualifying
- * arms (order-preserving) plus the set of member indices that contributed,
- * or null when NO member qualifies (the ANY-match semantics from the module
- * doc, mirroring `applyOverridePolymorphs`'s `symbolInRule`). Non-qualifying
- * sibling arms — an unrelated bare keyword symbol, a literal, `NEWLINE` —
- * are excluded from `arms` but are NOT failures; the caller still recurses
- * into them (a qualifying choice doesn't shadow a nested adoption site
- * living inside one of its own non-qualifying siblings, e.g. rust's
- * `range_pattern` root choice: arm 0 is a SEQ with no qualifying prefix at
- * this level, arm 1 IS `range_pattern_prefix` — arm 0 must still be walked
- * to find its OWN nested qualifying choice at `members.0.members.1`).
- */
-```
+The variants of `parentKind` in `rule`, in tree-walk order and listed once
+each. The walk descends every container and wrapper, and a flattened
+parent's supertype subtypes (link keeps the arm annotations on each subtype
+ref), stopping at the first node that is itself a variant arm.
 
+### `packages/codegen/src/compiler/variant-structural.ts::variantArmOf`
 
-#### body
+The variant a node declares for `parentKind`: a symbol carrying the
+annotations (the child kind is the symbol's name), or a named alias whose own
+annotations — or its content symbol's — carry them (the child kind is the
+alias's visible value). Annotations for a different parent do not count.
 
-```text
-// A choice is a form choice when at least one arm is minted or declared
-// for this parent. Every arm then contributes a form, in member order:
-// minted/declared arms take their suffix or declared name, and sibling arms
-// that reference an existing declared kind take that kind's name. Arms that
-// reference nothing (literals, unresolved symbols) contribute nothing and do
-// not disqualify the choice.
-```
-### `packages/codegen/src/compiler/variant-structural.ts::collectStructuralVariantChoices`
+### `packages/codegen/src/compiler/variant-structural.ts::annotationsOf`
 
-```text
-/**
- * Recursively walk `rule` (a kind's post-link body) collecting every
- * qualifying variant-adoption CHOICE node — decision-1's "assessed at
- * whatever level the choice appears when traveling downward through the
- * rule tree" (RESOLUTIONS, decision 1 clarification). When a CHOICE
- * qualifies, its QUALIFYING arms are leaves (not descended into further —
- * they're bare kind refs with nothing to find), but any NON-qualifying
- * sibling arm is still recursed into (it may hide its own nested adoption
- * site — see `matchStructuralVariantChoice`'s doc). Non-CHOICE structural
- * nodes recurse through every child (SEQ members; OPTIONAL/FIELD/REPEAT/
- * REPEAT1/GROUP/ALIAS/TOKEN content) so nested sites (rust's
- * `function_type`, `range_pattern`) are found regardless of nesting depth.
- */
-```
-
-### `packages/codegen/src/compiler/variant-structural.ts::findStructuralVariantChoices`
-
-```text
-/**
- * Find every qualifying variant-adoption choice in kind `kind`'s post-link
- * rule body — the per-choice-node diagnostic view the probe tool reports
- * (MATCH/EXTRA/MISSING per kind, per RESOLUTIONS decision 2's per-(kind,
- * choice) granularity, flattened to today's per-kind flat surface since
- * every current kind has exactly one qualifying choice or none).
- *
- * @param rules - The full grammar's post-link rule map, needed by
- *   {@link isAliasMintedTarget} to check whether an arm's target name has an
- *   independent rule body of its own (excludes ordinary sibling-rule
- *   collisions like python's `dictionary`/`dictionary_splat`).
- */
-```
-
-### `packages/codegen/src/compiler/variant-structural.ts::deriveStructuralVariantChildren`
-
-```text
-/**
- * Derive `{parent -> VariantChild[]}` for every kind in `rules`, purely
- * structurally. Link calls it twice: `applyOverridePolymorphs` derives on
- * the pre-classification rules to push ambient scaffold into variant
- * children, and the end of link derives on the final rules to stamp
- * `LinkedGrammar.variantChildren` — the single table `normalize.ts`'s
- * `variantSkip` and `assemble.ts`'s `variantChildrenByParent` read; neither
- * re-derives. Each entry pairs the arm's FULL target kind name
- * (`arm.targetName`) with the name it is addressed by, so no consumer
- * reconstructs either. The kind is never a `${kind}_${suffix}` rebuild, which is
- * unsound when a hidden (`_`-prefixed) parent has a VISIBLE target (ts's
- * `_export_statement_default` → `export_statement_default_from_arm`; the
- * target strips its own leading `_` independently of the parent's, per
- * RESOLUTION 3 — see `prefixNamedSuffix`). Target names are ordered by
- * first-discovered choice-arm order; when a kind has more than one
- * qualifying choice (none observed on the current 3 grammars, but the
- * predicate doesn't assume it), names from every qualifying choice are
- * concatenated in tree-walk order. De-duplicated (first-seen order
- * preserved): the same alias-minted target can appear as more than one
- * choice arm within a kind's body (ts's `string_fragment`, aliased once for
- * the double-quote branch and once for the single-quote branch of a
- * `refine()`-correlated form — one child kind, two mint sites) — the
- * former wire channel's registration was documented idempotent for the
- * same reason; this derivation preserves the same one-entry-per-child-kind
- * shape structurally.
- */
-```
+The rule's annotation payload, when it has one.
 
 ### `packages/codegen/src/compiler/flatten.ts::flatten`
 
@@ -6755,7 +6557,7 @@ parts with the space its parser needs.
  * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
  * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
  * `HiddenClassifyCtx` (hidden-rule classification cluster: `inline`,
- * `derivations`, `applyPromotedRules`, `hiddenChoicesWithNamedAliasMembers`)
+ * `derivations`, `applyPromotedRules`, `hiddenNamedArmChoices`)
  * — both were R4 / #14 pass-constant/pass-shared state for the same `link()`
  * call, just threaded as two separate bags. `currentName`/per-rule `name`
  * stay explicit trailing params (CW6), as in `resolveRule(rule, ctx, name)`.
@@ -7706,17 +7508,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 */
 ```
 
-### `packages/codegen/src/compiler/variant-structural.ts::StructuralVariantChoice`
-
-```text
-/**
- * One qualifying choice node found while walking a kind's rule body: the
- * choice itself, plus the resolved `{name -> targetName}` pairs for each
- * arm (in member order). `name` is the arm's DECLARED variant name when the
- * author gave one, and the prefix-derived suffix otherwise.
- */
-```
-
 ### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
@@ -8287,22 +8078,20 @@ source, one derivation.
 // require its separator the way the 3-window's mandatory head does.
 ```
 
-### `packages/codegen/src/compiler/flatten.ts::module`
+### `packages/codegen/src/compiler/variant-structural.ts::module`
 
-```text
-/**
- * compiler/flatten.ts — the wrapper-free view of a rule tree.
- *
- * `flatten` is a re-evaluation of the tree through `attributeBuilder`
- * (dsl/builders.ts) — the `RuleBuilder<'normalize'>` strategy that
- * implements every constructor as attribute-push instead of node
- * construction — not an edit of the tree: `rebuild` recurses bottom-up so
- * each `attributeBuilder` call receives already-finished `Rule<'normalize'>`
- * children and looks exactly one level down. The result type is
- * `Rule<'normalize'>` (`RenderRule`): the union with no wrapper variants, so
- * consumers that only see it cannot accidentally re-wrap a leaf.
- */
-```
+Which arms of a rule are its variants, read from the one fact that declares
+them: the `variant` / `variantOf` annotations a `variant()` patch stamps on
+the arm it resolves. Nothing here recognises a variant by name or by shape —
+a prefix-named sibling rule, a `groups:` entry or an upstream external that
+happens to share the parent's name is not a variant, and a hand-built hidden
+rule plus alias is not one either until the grammar declares it with
+`variant()`.
+
+Link reads the derivation twice (`applyOverridePolymorphs`, and the final
+`LinkedGrammar.variantChildren` table that normalize and assemble consume),
+so the answer is computed from the rule tree at each point rather than
+carried through a side channel.
 
 ### `packages/codegen/src/compiler/opaque-facts.ts::OPAQUE_FACTS`
 
@@ -9056,7 +8845,7 @@ source, one derivation.
 // receive, not `ruleCatalog.rootsByKind`, so a pass-through-but-
 // unidentified entry would still reach template/factory emission as
 // if it were live grammar structure. Reachability is the shared
-// `collectUnreachableHiddenRules` walk from every visible rule and every
+// `collectOrphanedRules` walk from every visible rule with a body and every
 // `ctx.roots` name, the same walk evaluate and link prune with; a grammar
 // with no visible rule at all keeps everything, since nothing is orphaned
 // relative to a nonexistent root set. The RAW `rules` map this function
@@ -9162,7 +8951,7 @@ source, one derivation.
 // of `raw.rules`, independent of it) so ONE LinkCtx instance can serve
 // both the resolve walk and the later hidden-rule classification pass.
 //
-// hiddenChoicesWithNamedAliasMembers: hidden choice kinds whose own body
+// hiddenNamedArmChoices: hidden choice kinds whose own body
 // has named-alias members → must NOT be promoted to supertype.
 ```
 
@@ -9306,7 +9095,7 @@ source, one derivation.
 ```text
 // Compute the remaining classification guard from the RAW (pre-resolveRule)
 // rules so the original alias structure is still visible.
-// (hiddenChoicesWithNamedAliasMembers is computed earlier, above the
+// (hiddenNamedArmChoices is computed earlier, above the
 // resolve loop, and already lives on `linkCtx`.)
 //
 // - parentAliasedKinds: hidden kinds that appear as the content of a
@@ -9999,15 +9788,6 @@ every root rebuild so the assembled node still reads it.
 ```
 
 #### body
-
-```text
-// `kind` may be variant()/polymorphs' INTENDED hidden name rather
-// than the name the rule is actually registered under — see
-// `resolveGroupsConfigKey`'s doc comment. `deriveSynthesizedName`
-// below still uses the ORIGINAL `kind` (the naming convention
-// callers/templates expect), only the rules-map read/write target
-// resolves to wherever the body actually lives.
-```
 
 ```text
 // deep first

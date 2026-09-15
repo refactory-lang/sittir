@@ -1,6 +1,8 @@
 import { withHoistedAnnotation } from '../annotations.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
+import type { AnyRule } from '../../types/rule.ts';
 import { typeEq, isChoiceType, isBlankType } from '../../types/runtime-shapes.ts';
+import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
@@ -13,11 +15,13 @@ import {
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import {
+	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
 	nestVariant,
 	variantMintName,
 	type VariantPlaceholder
 } from '../primitives/variant.ts';
+import { parsePath } from '../transform/transform-path.ts';
 import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -44,6 +48,8 @@ export interface WireContext {
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
+	readonly flattenedParents: Set<string>;
+	readonly aliasTargets: Set<string>;
 }
 
 export interface RefineForm {
@@ -63,6 +69,10 @@ export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): b
 	return true;
 }
 
+export function wireHasDeposit(name: string): boolean {
+	return currentContext?.deposits.has(name) ?? false;
+}
+
 export function wireRegisterSyntheticInline(name: string): boolean {
 	if (!currentContext) return false;
 	if (currentContext.authoredRuleNames.has(name)) return false;
@@ -78,6 +88,12 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 	if (!exists) {
 		currentContext.conflictGroups.push([...names]);
 	}
+	return true;
+}
+
+export function wireRegisterFlattenedParent(name: string): boolean {
+	if (!currentContext) return false;
+	currentContext.flattenedParents.add(name);
 	return true;
 }
 
@@ -127,7 +143,9 @@ export function withWireContext<T>(
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set(),
 		extraRuleNames: new Set(),
-		precedenceRankedNames: new Set()
+		precedenceRankedNames: new Set(),
+		flattenedParents: new Set(),
+		aliasTargets: new Set()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -298,7 +316,9 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
-		precedenceRankedNames: precedenceRankedNames(cfg, baseArg)
+		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
+		flattenedParents: new Set(),
+		aliasTargets: new Set()
 	};
 
 	const patches = cfg.patches ?? {};
@@ -342,15 +362,18 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		}
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
+	recordAliasTargets(outRules, context);
 
 	const conflicts = wrapConflictsCallback(cfg.conflicts as ConflictsFn | undefined, context);
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
+	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
 	const wired = {
 		...cfg,
 		rules: outRules,
 		...(conflicts === undefined ? {} : { conflicts }),
-		...(inline === undefined ? {} : { inline })
+		...(inline === undefined ? {} : { inline }),
+		supertypes
 	} as unknown as WiredOpts;
 	Object.defineProperty(wired, '__wireContext__', {
 		value: context,
@@ -363,10 +386,6 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 export function polymorphVisibleName(parentKind: string, suffix: string): string {
 	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
 	return `${visibleParent}_${suffix}`;
-}
-
-export function polymorphHiddenName(parentKind: string, suffix: string): string {
-	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
 function knownRuleNames(cfg: WireConfig<any>, base: BaseArg | undefined): ReadonlySet<string> {
@@ -456,13 +475,8 @@ function buildPatchedParentFn(
 	userFn: SittirRuleFn | undefined,
 	context: WireContext
 ): SittirRuleFn {
-	const isHidden = kind.startsWith('_');
 	return function wiredPatchedParent($, original) {
-		const base = userFn
-			? userFn($, original)
-			: isHidden && context.deposits.has(kind)
-				? context.deposits.get(kind)
-				: original;
+		const base = userFn ? userFn($, original) : (context.deposits.get(kind) ?? original);
 		return patchSets.length === 0
 			? base
 			: (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
@@ -471,7 +485,7 @@ function buildPatchedParentFn(
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
 	if (isFieldPlaceholder(value)) return `_kw_${value.name}`;
-	if (isVariantPlaceholder(value)) return polymorphHiddenName(parentKind, variantMintName(value));
+	if (isVariantPlaceholder(value)) return polymorphVisibleName(parentKind, variantMintName(value));
 	if (isAliasPlaceholder(value)) return `_${value.name}`;
 	return undefined;
 }
@@ -558,13 +572,25 @@ function injectPlaceholderHiddenRules(
 	for (const [kind, entry] of Object.entries(patches)) {
 		if (!entry) continue;
 		for (const patchMap of patchSetsOf(entry)) {
-			for (const value of Object.values(patchMap)) {
-				const hiddenName = placeholderHiddenName(value, kind);
+			const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
+			const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
+			if (defaultAbsent !== undefined) names.push(defaultAbsent);
+			for (const hiddenName of names) {
 				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
 				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 			}
 		}
 	}
+}
+
+function defaultAbsentVariantName(kind: string, patchMap: PatchMap): string | undefined {
+	const variants = Object.entries(patchMap).filter((entry): entry is [string, VariantPlaceholder] => isVariantPlaceholder(entry[1]));
+	if (variants.some(([, v]) => v.absent === true)) return undefined;
+	const throughOptional = variants.some(([key]) => {
+		const segs = parsePath(key);
+		return segs.length === 3 && segs.every((s) => s.kind === 'index') && (segs[1] as { value: number }).value === 0;
+	});
+	return throughOptional ? polymorphVisibleName(kind, ABSENT_VARIANT_NAME) : undefined;
 }
 
 function makeDeferredContentFn(context: WireContext, hiddenName: string): SittirRuleFn {
@@ -598,6 +624,32 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 	};
 }
 
+
+function wrapSupertypesCallback(userSupertypes: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
+	return function wiredSupertypes(this: unknown, $: unknown, previous?: unknown) {
+		const base = userSupertypes ? (userSupertypes as (d: unknown, p?: unknown) => unknown[]).call(this, $, previous) : ((previous as unknown[] | undefined) ?? []);
+		const listed = new Set(symbolNamesOf(base));
+		const flattened = [...context.flattenedParents]
+			.filter((name) => !listed.has(name) && !context.aliasTargets.has(name))
+			.map((name) => symbolizeRef($, name));
+		return [...base, ...flattened];
+	} as unknown as DollarFn<unknown[]>;
+}
+
+function recordAliasTargets(rules: Record<string, RuleFn>, context: WireContext): void {
+	const walker = new RuleWalker<AnyRule>();
+	for (const [name, fn] of Object.entries(rules)) {
+		rules[name] = function aliasRecordingRuleFn(this: unknown, $, previous) {
+			const rule = (fn as (d: unknown, p: unknown) => AnyRule).call(this, $, previous);
+			walker.fold(rule, context.aliasTargets, (targets, node) => {
+				const alias = node as { type?: string; named?: boolean; value?: unknown };
+				if (alias.type === 'ALIAS' && alias.named !== false && typeof alias.value === 'string') targets.add(alias.value);
+				return targets;
+			});
+			return rule;
+		} as RuleFn;
+	}
+}
 
 function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
 	return buildWiredConflictsFn(userConflicts, context);

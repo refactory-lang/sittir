@@ -1,8 +1,6 @@
-rust: hoisted=53 seated=53 unseated=0
-typescript: hoisted=34 seated=29 unseated=5
-  _binary_expression_in
-  _class_body_member
-  _class_body_method
-  _class_body_method_sig
-  _import_statement_clause_from
-python: hoisted=12 seated=12 unseated=0
+rust: hoisted=66 seated=66 unseated=0
+typescript: hoisted=37 seated=34 unseated=3
+  class_body_member
+  class_body_method
+  class_body_method_sig
+python: hoisted=14 seated=14 unseated=0

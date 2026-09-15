@@ -1,3 +1,5 @@
+import { isEmptyBody } from '../types/runtime-shapes.ts';
+
 export function rootRuleName(rules: Readonly<Record<string, unknown>>): string | undefined {
 	return Object.keys(rules)[0];
 }
@@ -13,7 +15,7 @@ export function collectSymbolRefs(node: unknown, into: Set<string>): void {
 	for (const value of Object.values(obj)) collectSymbolRefs(value, into);
 }
 
-export function collectUnreachableHiddenRules(
+export function collectOrphanedRules(
 	rules: Readonly<Record<string, unknown>>,
 	protectedNames: ReadonlySet<string>
 ): string[] {
@@ -24,8 +26,9 @@ export function collectUnreachableHiddenRules(
 		reachable.add(name);
 		queue.push(name);
 	};
+	const isRoot = (name: string): boolean => !name.startsWith('_') && !isEmptyBody(rules[name]);
 	for (const name of Object.keys(rules)) {
-		if (!name.startsWith('_')) enqueue(name);
+		if (isRoot(name)) enqueue(name);
 	}
 	for (const name of protectedNames) enqueue(name);
 	while (queue.length > 0) {
@@ -33,5 +36,5 @@ export function collectUnreachableHiddenRules(
 		collectSymbolRefs(rules[queue.pop()!], refs);
 		for (const ref of refs) enqueue(ref);
 	}
-	return Object.keys(rules).filter((name) => name.startsWith('_') && !reachable.has(name));
+	return Object.keys(rules).filter((name) => !isRoot(name) && !reachable.has(name));
 }

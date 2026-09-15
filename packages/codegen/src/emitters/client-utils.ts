@@ -99,6 +99,18 @@ function emitAttachProps(): string[] {
 		'    });',
 		'  }',
 		'  return callable as Hoisted<B>;',
+		'}',
+		'',
+		'export function hoistRoutes<B extends Record<string, unknown>>(b: B): Hoisted<B> {',
+		'  const out: Record<string, unknown> = {};',
+		'  for (const [key, value] of Object.entries(b)) {',
+		'    out[key] = isFlavorPair(value)',
+		'      ? hoist(value)',
+		'      : typeof value === "object" && value !== null',
+		'        ? hoistRoutes(value as Record<string, unknown>)',
+		'        : value;',
+		'  }',
+		'  return out as Hoisted<B>;',
 		'}'
 	];
 }

@@ -13,7 +13,7 @@ import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
 } from './kind-discriminant.ts';
-import { bundleEntries } from './overlays/module.ts';
+import { bundleEntries, flattenedVariantParents } from './overlays/module.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
@@ -78,9 +78,12 @@ export function emitIr(config: EmitIrConfig): string {
 		if (isFlatLeafOrKeyword(kind, node, kindEntries)) flatRefByKey.set(node.irKey!, `F.${node.rawFactoryName}`);
 	}
 	let needsAttachProps = false;
+	const flattenedParents = flattenedVariantParents(nodeMap, generatedIdTables);
+	const flattenedKinds = new Set(flattenedParents.map((parent) => parent.node.kind));
+	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype)) continue;
+		if (!(node instanceof AssembledSupertype) || flattenedKinds.has(kind)) continue;
 		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
@@ -92,6 +95,15 @@ export function emitIr(config: EmitIrConfig): string {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
+			const flattenedKey = flattenedKeyByKind.get(subKind);
+			if (flattenedKey !== undefined) {
+				const memberKey = memberKeyFor(subKind, kind);
+				if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
+				usedMemberKeys.add(memberKey);
+				memberEntries.push(`  ${memberKey}: F.${flattenedKey},`);
+				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${flattenedKey};`);
+				continue;
+			}
 			if (sub.factoryInline) continue;
 			if (!sub.rawFactoryName) continue;
 			if (
@@ -194,6 +206,11 @@ export function emitIr(config: EmitIrConfig): string {
 		const ref = bundleRef(node);
 		irValueLines.push(`  ${key}: ${ref},`);
 		irTypeMembers.push(`  readonly ${key}: typeof ${ref};`);
+	}
+	for (const { key } of flattenedParents) {
+		if (usedGroupNames.has(key)) continue;
+		irValueLines.push(`  ${key}: F.${key},`);
+		irTypeMembers.push(`  readonly ${key}: typeof F.${key};`);
 	}
 	irValueLines.push('');
 

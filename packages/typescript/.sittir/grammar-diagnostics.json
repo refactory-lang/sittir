@@ -19,7 +19,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [_binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -41,8 +41,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_enum_body_elements",
-    "message": "[collect-slots] kind '_enum_body_elements': choice rule:_enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "ownerKind": "enum_body_elements",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -60,8 +60,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_export_statement_default_declaration",
-    "message": "[collect-slots] kind '_export_statement_default_declaration': choice rule:_export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "export_statement_default_declaration",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -75,8 +75,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_declaration_default_kw': choice rule:_export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [_export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "export_statement_default_declaration_default_kw",
+    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

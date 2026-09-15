@@ -1,5 +1,23 @@
 [
   {
+    "type": "_for_header",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "for_header_let_const_kind",
+        "named": true
+      },
+      {
+        "type": "for_header_lhs",
+        "named": true
+      },
+      {
+        "type": "for_header_var_kind",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -57,6 +75,42 @@
       },
       {
         "type": "variable_declaration",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "export_statement",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "export_statement_default",
+        "named": true
+      },
+      {
+        "type": "export_statement_equals_export",
+        "named": true
+      },
+      {
+        "type": "export_statement_namespace_export",
+        "named": true
+      },
+      {
+        "type": "export_statement_type_export",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "export_statement_default",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "export_statement_default_declaration",
+        "named": true
+      },
+      {
+        "type": "export_statement_default_from",
         "named": true
       }
     ]
@@ -123,6 +177,48 @@
       },
       {
         "type": "yield_expression",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "import_specifier",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "import_specifier_as",
+        "named": true
+      },
+      {
+        "type": "import_specifier_name",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "index_signature",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "index_signature_colon",
+        "named": true
+      },
+      {
+        "type": "index_signature_mapped_type_clause",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "meta_property",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "meta_property_import_meta",
+        "named": true
+      },
+      {
+        "type": "meta_property_new_target",
         "named": true
       }
     ]
@@ -445,6 +541,34 @@
       },
       {
         "type": "readonly_type",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "update_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "update_expression_postfix",
+        "named": true
+      },
+      {
+        "type": "update_expression_prefix",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "variable_declarator",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "variable_declarator_definite",
+        "named": true
+      },
+      {
+        "type": "variable_declarator_plain",
         "named": true
       }
     ]
@@ -2506,52 +2630,6 @@
     }
   },
   {
-    "type": "export_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "export_statement_default",
-          "named": true
-        },
-        {
-          "type": "export_statement_equals_export",
-          "named": true
-        },
-        {
-          "type": "export_statement_namespace_export",
-          "named": true
-        },
-        {
-          "type": "export_statement_type_export",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "export_statement_default",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "export_statement_default_declaration",
-          "named": true
-        },
-        {
-          "type": "export_statement_default_from",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "export_statement_default_declaration",
     "named": true,
     "fields": {
@@ -3195,15 +3273,7 @@
       "required": true,
       "types": [
         {
-          "type": "for_header_let_const_kind",
-          "named": true
-        },
-        {
-          "type": "for_header_lhs",
-          "named": true
-        },
-        {
-          "type": "for_header_var_kind",
+          "type": "_for_header",
           "named": true
         }
       ]
@@ -4013,25 +4083,6 @@
     }
   },
   {
-    "type": "import_specifier",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "import_specifier_as",
-          "named": true
-        },
-        {
-          "type": "import_specifier_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "import_specifier_as",
     "named": true,
     "fields": {
@@ -4204,25 +4255,6 @@
       "types": [
         {
           "type": "import_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "index_signature",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "index_signature_colon",
-          "named": true
-        },
-        {
-          "type": "index_signature_mapped_type_clause",
           "named": true
         }
       ]
@@ -4866,25 +4898,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "meta_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "meta_property_import_meta",
-          "named": true
-        },
-        {
-          "type": "meta_property_new_target",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -7275,25 +7288,6 @@
     }
   },
   {
-    "type": "update_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "update_expression_postfix",
-          "named": true
-        },
-        {
-          "type": "update_expression_prefix",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "update_expression_postfix",
     "named": true,
     "fields": {
@@ -7381,25 +7375,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "variable_declarator",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "variable_declarator_definite",
-          "named": true
-        },
-        {
-          "type": "variable_declarator_plain",
-          "named": true
-        }
-      ]
     }
   },
   {

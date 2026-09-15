@@ -240,6 +240,11 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** True if `t` equals `upper` (both runtimes now agree on the discriminant case). */
 ```
 
+### `packages/codegen/src/types/runtime-shapes.ts::isEmptyBody`
+
+Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
+`BLANK`, or sittir evaluate's `blank()`, a choice with no members.
+
 ### `packages/codegen/src/types/diagnostics.ts::GrammarDiagnostic`
 
 ```text

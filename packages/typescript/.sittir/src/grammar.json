@@ -50,83 +50,51 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_default",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "default",
-              "variantOf": "export_statement"
-            }
-          },
-          "named": true,
-          "value": "export_statement_default",
+          "type": "SYMBOL",
+          "name": "export_statement_default",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "default",
+            "variantOf": "export_statement"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_type_export",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "type_export",
-              "variantOf": "export_statement"
-            }
-          },
-          "named": true,
-          "value": "export_statement_type_export",
+          "type": "SYMBOL",
+          "name": "export_statement_type_export",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "type_export",
+            "variantOf": "export_statement"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_equals_export",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "equals_export",
-              "variantOf": "export_statement"
-            }
-          },
-          "named": true,
-          "value": "export_statement_equals_export",
+          "type": "SYMBOL",
+          "name": "export_statement_equals_export",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "equals_export",
+            "variantOf": "export_statement"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_namespace_export",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "namespace_export",
-              "variantOf": "export_statement"
-            }
-          },
-          "named": true,
-          "value": "export_statement_namespace_export",
+          "type": "SYMBOL",
+          "name": "export_statement_namespace_export",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "namespace_export",
+            "variantOf": "export_statement"
           }
         }
       ]
@@ -159,19 +127,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_specifiers",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "export_specifiers",
+              "type": "SYMBOL",
+              "name": "export_specifiers",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -379,23 +339,15 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_import_statement_clause_from",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  },
-                  "annotations": {
-                    "variant": "clause_from",
-                    "variantOf": "import_statement"
-                  }
-                },
-                "named": true,
-                "value": "import_statement_clause_from",
+                "type": "SYMBOL",
+                "name": "import_statement_clause_from",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "clause_from",
+                  "variantOf": "import_statement"
                 }
               },
               {
@@ -477,23 +429,15 @@
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_clause_default_import",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "default_import",
-              "variantOf": "import_clause"
-            }
-          },
-          "named": true,
-          "value": "import_clause_default_import",
+          "type": "SYMBOL",
+          "name": "import_clause_default_import",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "default_import",
+            "variantOf": "import_clause"
           }
         }
       ]
@@ -550,19 +494,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_import_specifiers",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "import_specifiers",
+              "type": "SYMBOL",
+              "name": "import_specifiers",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -580,30 +516,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_specifier_name",
-            "annotations": {
-              "variant": "name",
-              "variantOf": "import_specifier"
-            }
-          },
-          "named": true,
-          "value": "import_specifier_name"
+          "type": "SYMBOL",
+          "name": "import_specifier_name",
+          "annotations": {
+            "variant": "name",
+            "variantOf": "import_specifier"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_import_specifier_as",
-            "annotations": {
-              "variant": "as",
-              "variantOf": "import_specifier"
-            }
-          },
-          "named": true,
-          "value": "import_specifier_as"
+          "type": "SYMBOL",
+          "name": "import_specifier_as",
+          "annotations": {
+            "variant": "as",
+            "variantOf": "import_specifier"
+          }
         }
       ]
     },
@@ -881,46 +807,30 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_variable_declarator_plain",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "plain",
-              "variantOf": "variable_declarator"
-            }
-          },
-          "named": true,
-          "value": "variable_declarator_plain",
+          "type": "SYMBOL",
+          "name": "variable_declarator_plain",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "plain",
+            "variantOf": "variable_declarator"
           }
         },
         {
           "type": "PREC",
           "value": "declaration",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_variable_declarator_definite",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "definite",
-                "variantOf": "variable_declarator"
-              }
-            },
-            "named": true,
-            "value": "variable_declarator_definite",
+            "type": "SYMBOL",
+            "name": "variable_declarator_definite",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "definite",
+              "variantOf": "variable_declarator"
             }
           }
         }
@@ -1229,43 +1139,28 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_for_header_lhs",
-            "annotations": {
-              "variant": "lhs",
-              "variantOf": "_for_header"
-            }
-          },
-          "named": true,
-          "value": "for_header_lhs"
+          "type": "SYMBOL",
+          "name": "for_header_lhs",
+          "annotations": {
+            "variant": "lhs",
+            "variantOf": "_for_header"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_for_header_var_kind",
-            "annotations": {
-              "variant": "var_kind",
-              "variantOf": "_for_header"
-            }
-          },
-          "named": true,
-          "value": "for_header_var_kind"
+          "type": "SYMBOL",
+          "name": "for_header_var_kind",
+          "annotations": {
+            "variant": "var_kind",
+            "variantOf": "_for_header"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_for_header_let_const_kind",
-            "annotations": {
-              "variant": "let_const_kind",
-              "variantOf": "_for_header"
-            }
-          },
-          "named": true,
-          "value": "for_header_let_const_kind"
+          "type": "SYMBOL",
+          "name": "for_header_let_const_kind",
+          "annotations": {
+            "variant": "let_const_kind",
+            "variantOf": "_for_header"
+          }
         }
       ]
     },
@@ -1742,19 +1637,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_catch_clause_group",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "catch_clause_group",
+              "type": "SYMBOL",
+              "name": "catch_clause_group",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -1793,30 +1680,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_parenthesized_expression_typed",
-            "annotations": {
-              "variant": "typed",
-              "variantOf": "parenthesized_expression"
-            }
-          },
-          "named": true,
-          "value": "parenthesized_expression_typed"
+          "type": "SYMBOL",
+          "name": "parenthesized_expression_typed",
+          "annotations": {
+            "variant": "typed",
+            "variantOf": "parenthesized_expression"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_parenthesized_expression_sequence",
-            "annotations": {
-              "variant": "sequence",
-              "variantOf": "parenthesized_expression"
-            }
-          },
-          "named": true,
-          "value": "parenthesized_expression_sequence"
+          "type": "SYMBOL",
+          "name": "parenthesized_expression_sequence",
+          "annotations": {
+            "variant": "sequence",
+            "variantOf": "parenthesized_expression"
+          }
         }
       ]
     },
@@ -3234,23 +3111,15 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_class_heritage_extends_clause",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "extends_clause",
-              "variantOf": "class_heritage"
-            }
-          },
-          "named": true,
-          "value": "class_heritage_extends_clause",
+          "type": "SYMBOL",
+          "name": "class_heritage_extends_clause",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "extends_clause",
+            "variantOf": "class_heritage"
           }
         },
         {
@@ -3558,17 +3427,12 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_arrow_function_parameter",
-                "annotations": {
-                  "variant": "parameter",
-                  "variantOf": "arrow_function"
-                }
-              },
-              "named": true,
-              "value": "arrow_function_parameter"
+              "type": "SYMBOL",
+              "name": "arrow_function_parameter",
+              "annotations": {
+                "variant": "parameter",
+                "variantOf": "arrow_function"
+              }
             },
             {
               "type": "SYMBOL",
@@ -3681,23 +3545,15 @@
           "type": "PREC",
           "value": "call",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_call_expression_call",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "call",
-                "variantOf": "call_expression"
-              }
-            },
-            "named": true,
-            "value": "call_expression_call",
+            "type": "SYMBOL",
+            "name": "call_expression_call",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "call",
+              "variantOf": "call_expression"
             }
           }
         },
@@ -3705,23 +3561,15 @@
           "type": "PREC",
           "value": "template_call",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_call_expression_template_call",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "template_call",
-                "variantOf": "call_expression"
-              }
-            },
-            "named": true,
-            "value": "call_expression_template_call",
+            "type": "SYMBOL",
+            "name": "call_expression_template_call",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "template_call",
+              "variantOf": "call_expression"
             }
           }
         },
@@ -3729,23 +3577,15 @@
           "type": "PREC",
           "value": "member",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_call_expression_member",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "member",
-                "variantOf": "call_expression"
-              }
-            },
-            "named": true,
-            "value": "call_expression_member",
+            "type": "SYMBOL",
+            "name": "call_expression_member",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "member",
+              "variantOf": "call_expression"
             }
           }
         }
@@ -5097,23 +4937,15 @@
           "type": "PREC_LEFT",
           "value": "binary_relation",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_binary_expression_in",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "in",
-                "variantOf": "binary_expression"
-              }
-            },
-            "named": true,
-            "value": "binary_expression_in",
+            "type": "SYMBOL",
+            "name": "binary_expression_in",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "in",
+              "variantOf": "binary_expression"
             }
           }
         }
@@ -5180,43 +5012,27 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_update_expression_postfix",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "postfix",
-                "variantOf": "update_expression"
-              }
-            },
-            "named": true,
-            "value": "update_expression_postfix",
+            "type": "SYMBOL",
+            "name": "update_expression_postfix",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "postfix",
+              "variantOf": "update_expression"
             }
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_update_expression_prefix",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "prefix",
-                "variantOf": "update_expression"
-              }
-            },
-            "named": true,
-            "value": "update_expression_prefix",
+            "type": "SYMBOL",
+            "name": "update_expression_prefix",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            },
+            "annotations": {
+              "variant": "prefix",
+              "variantOf": "update_expression"
             }
           }
         ]
@@ -5269,30 +5085,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_string_double",
-            "annotations": {
-              "variant": "double",
-              "variantOf": "string"
-            }
-          },
-          "named": true,
-          "value": "string_double"
+          "type": "SYMBOL",
+          "name": "string_double",
+          "annotations": {
+            "variant": "double",
+            "variantOf": "string"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_string_single",
-            "annotations": {
-              "variant": "single",
-              "variantOf": "string"
-            }
-          },
-          "named": true,
-          "value": "string_single"
+          "type": "SYMBOL",
+          "name": "string_single",
+          "annotations": {
+            "variant": "single",
+            "variantOf": "string"
+          }
         }
       ]
     },
@@ -6133,43 +5939,27 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_meta_property_new_target",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "new_target",
-              "variantOf": "meta_property"
-            }
-          },
-          "named": true,
-          "value": "meta_property_new_target",
+          "type": "SYMBOL",
+          "name": "meta_property_new_target",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "new_target",
+            "variantOf": "meta_property"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_meta_property_import_meta",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "import_meta",
-              "variantOf": "meta_property"
-            }
-          },
-          "named": true,
-          "value": "meta_property_import_meta",
+          "type": "SYMBOL",
+          "name": "meta_property_import_meta",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "import_meta",
+            "variantOf": "meta_property"
           }
         }
       ]
@@ -6449,36 +6239,23 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_class_body_method",
-                    "annotations": {
-                      "variant": "method",
-                      "variantOf": "class_body"
-                    }
-                  },
-                  "named": true,
-                  "value": "class_body_method"
+                  "type": "SYMBOL",
+                  "name": "class_body_method",
+                  "annotations": {
+                    "variant": "method",
+                    "variantOf": "class_body"
+                  }
                 },
                 {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_class_body_method_sig",
-                    "metadata": {
-                      "author": "enrich",
-                      "symbolSource": "group-lift"
-                    },
-                    "annotations": {
-                      "variant": "method_sig",
-                      "variantOf": "class_body"
-                    }
-                  },
-                  "named": true,
-                  "value": "class_body_method_sig",
+                  "type": "SYMBOL",
+                  "name": "class_body_method_sig",
                   "metadata": {
-                    "author": "enrich"
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  },
+                  "annotations": {
+                    "variant": "method_sig",
+                    "variantOf": "class_body"
                   }
                 },
                 {
@@ -6486,23 +6263,15 @@
                   "name": "class_static_block"
                 },
                 {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_class_body_member",
-                    "metadata": {
-                      "author": "enrich",
-                      "symbolSource": "group-lift"
-                    },
-                    "annotations": {
-                      "variant": "member",
-                      "variantOf": "class_body"
-                    }
-                  },
-                  "named": true,
-                  "value": "class_body_member",
+                  "type": "SYMBOL",
+                  "name": "class_body_member",
                   "metadata": {
-                    "author": "enrich"
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  },
+                  "annotations": {
+                    "variant": "member",
+                    "variantOf": "class_body"
                   }
                 },
                 {
@@ -6593,19 +6362,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_formal_parameters_elements",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "formal_parameters_elements",
+              "type": "SYMBOL",
+              "name": "formal_parameters_elements",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -8209,36 +7970,23 @@
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_ambient_declaration_global",
-                "annotations": {
-                  "variant": "global",
-                  "variantOf": "ambient_declaration"
-                }
-              },
-              "named": true,
-              "value": "ambient_declaration_global"
+              "type": "SYMBOL",
+              "name": "ambient_declaration_global",
+              "annotations": {
+                "variant": "global",
+                "variantOf": "ambient_declaration"
+              }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_ambient_declaration_module",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "module",
-                  "variantOf": "ambient_declaration"
-                }
-              },
-              "named": true,
-              "value": "ambient_declaration_module",
+              "type": "SYMBOL",
+              "name": "ambient_declaration_module",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "module",
+                "variantOf": "ambient_declaration"
               }
             }
           ]
@@ -8677,19 +8425,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_enum_body_elements",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "enum_body_elements",
+              "type": "SYMBOL",
+              "name": "enum_body_elements",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -10384,19 +10124,11 @@
           "value": "<"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_types",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "types",
+          "type": "SYMBOL",
+          "name": "types",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -10605,19 +10337,11 @@
           "value": "<"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_type_parameters_elements",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "type_parameters_elements",
+          "type": "SYMBOL",
+          "name": "type_parameters_elements",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -10811,30 +10535,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_index_signature_colon",
-            "annotations": {
-              "variant": "colon",
-              "variantOf": "index_signature"
-            }
-          },
-          "named": true,
-          "value": "index_signature_colon"
+          "type": "SYMBOL",
+          "name": "index_signature_colon",
+          "annotations": {
+            "variant": "colon",
+            "variantOf": "index_signature"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_index_signature_mapped_type_clause",
-            "annotations": {
-              "variant": "mapped_type_clause",
-              "variantOf": "index_signature"
-            }
-          },
-          "named": true,
-          "value": "index_signature_mapped_type_clause"
+          "type": "SYMBOL",
+          "name": "index_signature_mapped_type_clause",
+          "annotations": {
+            "variant": "mapped_type_clause",
+            "variantOf": "index_signature"
+          }
         }
       ]
     },
@@ -10873,19 +10587,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_tuple_type_members",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "tuple_type_members",
+              "type": "SYMBOL",
+              "name": "tuple_type_members",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -11108,7 +10814,314 @@
       "type": "STRING",
       "value": "const"
     },
-    "_export_specifiers": {
+    "export_statement_arm1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "namespace_export"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_from_clause"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_arm2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_star_from",
+              "annotations": {
+                "variant": "star_from",
+                "variantOf": "export_statement_default"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_ns_from",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "ns_from",
+                "variantOf": "export_statement_default"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_clause_from",
+              "annotations": {
+                "variant": "clause_from",
+                "variantOf": "export_statement_default"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_clause"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "export_statement_arm3": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_arm4": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "default"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declaration",
+              "content": {
+                "type": "SYMBOL",
+                "name": "declaration"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_statement_default_declaration_default_kw_value",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "value",
+                "variantOf": "export_statement_default"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "export_statement_arm5": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "export_statement_arm2",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "FIELD",
+                "name": "decorator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "decorator"
+                }
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "export"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "declaration",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "declaration"
+                  }
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "export_statement_arm4",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_arm6": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "type"
+        },
+        {
+          "type": "FIELD",
+          "name": "export_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "export_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_from_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_arm7": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_statement_arm8": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "STRING",
+          "value": "namespace"
+        },
+        {
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "export_specifiers": {
       "type": "SEQ",
       "members": [
         {
@@ -11182,7 +11195,7 @@
         "hoisted": true
       }
     },
-    "_import_specifiers": {
+    "import_specifiers": {
       "type": "SEQ",
       "members": [
         {
@@ -11236,6 +11249,186 @@
         "hoisted": true
       }
     },
+    "variable_declarator_arm1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_initializer"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "variable_declarator_arm2": {
+      "type": "PREC",
+      "value": "declaration",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "!"
+          },
+          {
+            "type": "FIELD",
+            "name": "type",
+            "content": {
+              "type": "SYMBOL",
+              "name": "type_annotation"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_header_arm1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "STRING",
+            "value": "var"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "left",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_initializer"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "for_header_arm2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_kind"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "left",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_automatic_semicolon"
+              },
+              "named": true,
+              "value": "automatic_semicolon"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_jsx_attribute_optional1": {
       "type": "SEQ",
       "members": [
@@ -11252,7 +11445,339 @@
         "hoisted": true
       }
     },
-    "_formal_parameters_elements": {
+    "call_expression_arm1": {
+      "type": "PREC",
+      "value": "call",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "import"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "type_arguments",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "type_arguments"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "arguments",
+            "content": {
+              "type": "SYMBOL",
+              "name": "arguments"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "call_expression_arm2": {
+      "type": "PREC",
+      "value": "template_call",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "primary_expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "new_expression"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "arguments",
+            "content": {
+              "type": "SYMBOL",
+              "name": "template_string"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "call_expression_arm3": {
+      "type": "PREC",
+      "value": "member",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "SYMBOL",
+              "name": "primary_expression"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": "?."
+          },
+          {
+            "type": "FIELD",
+            "name": "type_arguments",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "type_arguments"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "arguments",
+            "content": {
+              "type": "SYMBOL",
+              "name": "arguments"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "update_expression_arm1": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "++"
+                },
+                {
+                  "type": "STRING",
+                  "value": "--"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "update_expression_arm2": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "++"
+                },
+                {
+                  "type": "STRING",
+                  "value": "--"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "meta_property_arm1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "new"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": "target"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "meta_property_arm2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "import"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": "meta"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "class_body_arm1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "method_signature"
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_function_signature_automatic_semicolon"
+                },
+                "named": true,
+                "value": "function_signature_automatic_semicolon"
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ]
+    },
+    "class_body_arm2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "abstract_method_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "index_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "method_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "public_field_definition"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_semicolon"
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        }
+      ]
+    },
+    "formal_parameters_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -11315,7 +11840,7 @@
       "named": true,
       "value": "jsx_opening_element_content"
     },
-    "_enum_body_elements": {
+    "enum_body_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -11424,7 +11949,7 @@
         "hoisted": true
       }
     },
-    "_types": {
+    "types": {
       "type": "SEQ",
       "members": [
         {
@@ -11478,7 +12003,150 @@
         "hoisted": true
       }
     },
-    "_type_parameters_elements": {
+    "object_type_elements": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "STRING",
+                  "value": ";"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "element",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "export_statement"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "property_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "call_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "construct_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "index_signature"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "method_signature"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_semicolon"
+                  }
+                ]
+              },
+              {
+                "type": "FIELD",
+                "name": "element",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "export_statement"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "property_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "call_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "construct_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "index_signature"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "method_signature"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_semicolon"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "type_parameters_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -11573,7 +12241,7 @@
         }
       ]
     },
-    "_tuple_type_members": {
+    "tuple_type_members": {
       "type": "SEQ",
       "members": [
         {
@@ -11627,7 +12295,23 @@
         "hoisted": true
       }
     },
-    "_import_clause_group": {
+    "import_statement_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "import_clause"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_from_clause"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "import_clause_group": {
       "type": "SEQ",
       "members": [
         {
@@ -11652,7 +12336,77 @@
         "hoisted": true
       }
     },
-    "_catch_clause_group": {
+    "import_clause_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_import_identifier"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "import_clause_group",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "import_specifier_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_module_export_name"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "STRING",
+                  "value": "type"
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "alias",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_identifier"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "catch_clause_group": {
       "type": "SEQ",
       "members": [
         {
@@ -11701,7 +12455,111 @@
         "hoisted": true
       }
     },
-    "_jsx_start_opening_element_arm": {
+    "parenthesized_expression_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "class_heritage_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "extends_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "extends_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "implements_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "binary_expression_arm": {
+      "type": "PREC_LEFT",
+      "value": "binary_relation",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "left",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "private_property_identifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "STRING",
+              "value": "in"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "right",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "jsx_start_opening_element_arm": {
       "type": "SEQ",
       "members": [
         {
@@ -11740,6 +12598,85 @@
                 "type": "BLANK"
               }
             ]
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "ambient_declaration_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "module"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "property_identifier"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "index_signature_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "index_type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
           }
         }
       ],
@@ -11846,7 +12783,7 @@
         }
       ]
     },
-    "_ambient_declaration_global": {
+    "ambient_declaration_global": {
       "type": "SEQ",
       "members": [
         {
@@ -11866,7 +12803,7 @@
         }
       ]
     },
-    "_ambient_declaration_module": {
+    "ambient_declaration_module": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -12064,45 +13001,32 @@
         }
       ]
     },
-    "_export_statement_default": {
+    "export_statement_default": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_default_from",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "from",
-              "variantOf": "_export_statement_default"
-            }
-          },
-          "named": true,
-          "value": "export_statement_default_from",
+          "type": "SYMBOL",
+          "name": "export_statement_default_from",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "from",
+            "variantOf": "export_statement_default"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_export_statement_default_declaration",
-            "annotations": {
-              "variant": "declaration",
-              "variantOf": "_export_statement_default"
-            }
-          },
-          "named": true,
-          "value": "export_statement_default_declaration"
+          "type": "SYMBOL",
+          "name": "export_statement_default_declaration",
+          "annotations": {
+            "variant": "declaration",
+            "variantOf": "export_statement_default"
+          }
         }
       ]
     },
-    "_export_statement_namespace_export": {
+    "export_statement_namespace_export": {
       "type": "SEQ",
       "members": [
         {
@@ -12141,7 +13065,7 @@
         }
       ]
     },
-    "_export_statement_type_export": {
+    "export_statement_type_export": {
       "type": "SEQ",
       "members": [
         {
@@ -12188,7 +13112,7 @@
         }
       ]
     },
-    "_export_statement_equals_export": {
+    "export_statement_equals_export": {
       "type": "SEQ",
       "members": [
         {
@@ -12223,7 +13147,7 @@
         }
       ]
     },
-    "_binary_expression_in": {
+    "binary_expression_in": {
       "type": "PREC_LEFT",
       "value": "binary_relation",
       "content": {
@@ -12268,7 +13192,7 @@
         "hoisted": true
       }
     },
-    "_class_body_method": {
+    "class_body_method": {
       "type": "SEQ",
       "members": [
         {
@@ -12310,7 +13234,7 @@
         "hoisted": true
       }
     },
-    "_class_body_method_sig": {
+    "class_body_method_sig": {
       "type": "SEQ",
       "members": [
         {
@@ -12347,7 +13271,7 @@
         "hoisted": true
       }
     },
-    "_class_body_member": {
+    "class_body_member": {
       "type": "SEQ",
       "members": [
         {
@@ -12400,7 +13324,7 @@
       "type": "STRING",
       "value": "?"
     },
-    "_index_signature_colon": {
+    "index_signature_colon": {
       "type": "SEQ",
       "members": [
         {
@@ -12499,7 +13423,7 @@
         "hoisted": true
       }
     },
-    "_index_signature_mapped_type_clause": {
+    "index_signature_mapped_type_clause": {
       "type": "SEQ",
       "members": [
         {
@@ -12560,7 +13484,7 @@
         "hoisted": true
       }
     },
-    "_import_statement_clause_from": {
+    "import_statement_clause_from": {
       "type": "SEQ",
       "members": [
         {
@@ -12576,7 +13500,7 @@
         "hoisted": true
       }
     },
-    "_import_specifier_name": {
+    "import_specifier_name": {
       "type": "SEQ",
       "members": [
         {
@@ -12620,7 +13544,7 @@
         "hoisted": true
       }
     },
-    "_import_specifier_as": {
+    "import_specifier_as": {
       "type": "SEQ",
       "members": [
         {
@@ -12698,7 +13622,7 @@
         "hoisted": true
       }
     },
-    "_parenthesized_expression_typed": {
+    "parenthesized_expression_typed": {
       "type": "SEQ",
       "members": [
         {
@@ -12742,7 +13666,7 @@
         "hoisted": true
       }
     },
-    "_parenthesized_expression_sequence": {
+    "parenthesized_expression_sequence": {
       "type": "SEQ",
       "members": [
         {
@@ -12762,7 +13686,7 @@
         "hoisted": true
       }
     },
-    "_call_expression_call": {
+    "call_expression_call": {
       "type": "PREC",
       "value": "call",
       "content": {
@@ -12815,7 +13739,7 @@
         "hoisted": true
       }
     },
-    "_call_expression_template_call": {
+    "call_expression_template_call": {
       "type": "PREC",
       "value": "template_call",
       "content": {
@@ -12852,7 +13776,7 @@
         "hoisted": true
       }
     },
-    "_call_expression_member": {
+    "call_expression_member": {
       "type": "PREC",
       "value": "member",
       "content": {
@@ -12900,7 +13824,7 @@
         "hoisted": true
       }
     },
-    "_string_double": {
+    "string_double": {
       "type": "SEQ",
       "members": [
         {
@@ -12939,7 +13863,7 @@
         "hoisted": true
       }
     },
-    "_string_single": {
+    "string_single": {
       "type": "SEQ",
       "members": [
         {
@@ -12978,7 +13902,7 @@
         "hoisted": true
       }
     },
-    "_update_expression_postfix": {
+    "update_expression_postfix": {
       "type": "PREC_LEFT",
       "value": 0,
       "content": {
@@ -13015,7 +13939,7 @@
         "hoisted": true
       }
     },
-    "_update_expression_prefix": {
+    "update_expression_prefix": {
       "type": "PREC_LEFT",
       "value": 0,
       "content": {
@@ -13052,7 +13976,7 @@
         "hoisted": true
       }
     },
-    "_arrow_function_parameter": {
+    "arrow_function_parameter": {
       "type": "FIELD",
       "name": "parameter",
       "content": {
@@ -13077,7 +14001,7 @@
         "hoisted": true
       }
     },
-    "_class_heritage_extends_clause": {
+    "class_heritage_extends_clause": {
       "type": "SEQ",
       "members": [
         {
@@ -13108,7 +14032,7 @@
         "hoisted": true
       }
     },
-    "_import_clause_default_import": {
+    "import_clause_default_import": {
       "type": "SEQ",
       "members": [
         {
@@ -13119,19 +14043,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_import_clause_group",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "import_clause_group",
+              "type": "SYMBOL",
+              "name": "import_clause_group",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -13144,7 +14060,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_from": {
+    "export_statement_default_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13155,50 +14071,32 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_star_from",
-                "annotations": {
-                  "variant": "star_from",
-                  "variantOf": "_export_statement_default"
-                }
-              },
-              "named": true,
-              "value": "export_statement_default_from_star_from"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_ns_from",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "ns_from",
-                  "variantOf": "_export_statement_default"
-                }
-              },
-              "named": true,
-              "value": "export_statement_default_from_ns_from",
-              "metadata": {
-                "author": "enrich"
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_star_from",
+              "annotations": {
+                "variant": "star_from",
+                "variantOf": "export_statement_default"
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_clause_from",
-                "annotations": {
-                  "variant": "clause_from",
-                  "variantOf": "_export_statement_default"
-                }
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_ns_from",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
               },
-              "named": true,
-              "value": "export_statement_default_from_clause_from"
+              "annotations": {
+                "variant": "ns_from",
+                "variantOf": "export_statement_default"
+              }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_statement_default_from_clause_from",
+              "annotations": {
+                "variant": "clause_from",
+                "variantOf": "export_statement_default"
+              }
             },
             {
               "type": "SYMBOL",
@@ -13215,7 +14113,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_declaration": {
+    "export_statement_default_declaration": {
       "type": "SEQ",
       "members": [
         {
@@ -13245,23 +14143,15 @@
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_declaration_default_kw",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "default_kw",
-                  "variantOf": "_export_statement_default"
-                }
-              },
-              "named": true,
-              "value": "export_statement_default_declaration_default_kw",
+              "type": "SYMBOL",
+              "name": "export_statement_default_declaration_default_kw",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "default_kw",
+                "variantOf": "export_statement_default"
               }
             }
           ]
@@ -13271,7 +14161,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_from_star_from": {
+    "export_statement_default_from_star_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13287,7 +14177,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_from_ns_from": {
+    "export_statement_default_from_ns_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13303,7 +14193,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_from_clause_from": {
+    "export_statement_default_from_clause_from": {
       "type": "SEQ",
       "members": [
         {
@@ -13319,7 +14209,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_declaration_default_kw": {
+    "export_statement_default_declaration_default_kw": {
       "type": "SEQ",
       "members": [
         {
@@ -13338,23 +14228,15 @@
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_declaration_default_kw_value",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "value",
-                  "variantOf": "_export_statement_default"
-                }
-              },
-              "named": true,
-              "value": "export_statement_default_declaration_default_kw_value",
+              "type": "SYMBOL",
+              "name": "export_statement_default_declaration_default_kw_value",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "value",
+                "variantOf": "export_statement_default"
               }
             }
           ]
@@ -13364,7 +14246,7 @@
         "hoisted": true
       }
     },
-    "_export_statement_default_declaration_default_kw_value": {
+    "export_statement_default_declaration_default_kw_value": {
       "type": "SEQ",
       "members": [
         {
@@ -13384,7 +14266,7 @@
         "hoisted": true
       }
     },
-    "_variable_declarator_plain": {
+    "variable_declarator_plain": {
       "type": "SEQ",
       "members": [
         {
@@ -13437,7 +14319,7 @@
         "hoisted": true
       }
     },
-    "_variable_declarator_definite": {
+    "variable_declarator_definite": {
       "type": "PREC",
       "value": "declaration",
       "content": {
@@ -13469,7 +14351,7 @@
         "hoisted": true
       }
     },
-    "_meta_property_new_target": {
+    "meta_property_new_target": {
       "type": "SEQ",
       "members": [
         {
@@ -13489,7 +14371,7 @@
         "hoisted": true
       }
     },
-    "_meta_property_import_meta": {
+    "meta_property_import_meta": {
       "type": "SEQ",
       "members": [
         {
@@ -13509,7 +14391,7 @@
         "hoisted": true
       }
     },
-    "_for_header_lhs": {
+    "for_header_lhs": {
       "type": "SEQ",
       "members": [
         {
@@ -13566,7 +14448,7 @@
         "hoisted": true
       }
     },
-    "_for_header_var_kind": {
+    "for_header_var_kind": {
       "type": "SEQ",
       "members": [
         {
@@ -13643,7 +14525,7 @@
         "hoisted": true
       }
     },
-    "_for_header_let_const_kind": {
+    "for_header_let_const_kind": {
       "type": "SEQ",
       "members": [
         {
@@ -13752,13 +14634,8 @@
               }
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_jsx_start_opening_element_arm"
-              },
-              "named": true,
-              "value": "jsx_start_opening_element_arm"
+              "type": "SYMBOL",
+              "name": "jsx_start_opening_element_arm"
             }
           ]
         },
@@ -14007,11 +14884,11 @@
     ],
     [
       "sequence_expression",
-      "_parenthesized_expression_typed"
+      "parenthesized_expression_typed"
     ],
     [
       "sequence_expression",
-      "_parenthesized_expression_typed"
+      "parenthesized_expression_typed"
     ],
     [
       "primary_expression",
@@ -14266,210 +15143,210 @@
     ],
     [
       "primary_expression",
-      "_export_statement_namespace_export"
+      "export_statement_namespace_export"
     ],
     [
       "binary_expression",
       "unary_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "await_expression",
       "binary_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "binary_expression",
       "update_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "binary_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "_type_query_call_expression_in_type_annotation",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "_type_query_call_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "primary_expression",
-      "_export_statement_default"
+      "export_statement_default"
     ],
     [
       "string"
     ],
     [
       "await_expression",
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
       "await_expression",
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
       "arrow_function",
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
       "await_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "await_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "as_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
-      "_call_expression_call",
-      "_binary_expression_in"
+      "call_expression_call",
+      "binary_expression_in"
     ],
     [
       "call_expression",
-      "_binary_expression_in",
+      "binary_expression_in",
       "unary_expression",
       "instantiation_expression"
     ],
     [
       "call_expression",
       "await_expression",
-      "_binary_expression_in",
+      "binary_expression_in",
       "instantiation_expression"
     ],
     [
       "call_expression",
-      "_binary_expression_in",
+      "binary_expression_in",
       "update_expression",
       "instantiation_expression"
     ],
     [
       "call_expression",
-      "_binary_expression_in",
+      "binary_expression_in",
       "instantiation_expression"
     ],
     [
       "_initializer",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
-      "_binary_expression_in",
+      "binary_expression_in",
       "unary_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "await_expression",
-      "_binary_expression_in",
+      "binary_expression_in",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
-      "_binary_expression_in",
+      "binary_expression_in",
       "update_expression",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
-      "_binary_expression_in",
+      "binary_expression_in",
       "instantiation_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "subscript_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "member_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "member_expression",
       "subscript_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "binary_expression",
       "instantiation_expression",
-      "_call_expression_call",
-      "_binary_expression_in"
+      "call_expression_call",
+      "binary_expression_in"
     ],
     [
       "non_null_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "satisfies_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
-      "_binary_expression_in",
-      "_update_expression_postfix"
+      "binary_expression_in",
+      "update_expression_postfix"
     ],
     [
-      "_binary_expression_in",
-      "_update_expression_prefix"
+      "binary_expression_in",
+      "update_expression_prefix"
     ],
     [
-      "_binary_expression_in",
-      "_update_expression_postfix"
+      "binary_expression_in",
+      "update_expression_postfix"
     ],
     [
       "ternary_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "arrow_function",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
       "arrow_function",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "expression",
-      "_call_expression_template_call"
+      "call_expression_template_call"
     ],
     [
-      "_variable_declarator_plain",
-      "_for_header_let_const_kind"
+      "variable_declarator_plain",
+      "for_header_let_const_kind"
     ],
     [
       "primary_expression",
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ],
     [
-      "_variable_declarator_plain",
-      "_for_header_let_const_kind"
+      "variable_declarator_plain",
+      "for_header_let_const_kind"
     ],
     [
-      "_class_body_method_sig",
-      "_class_body_member"
+      "class_body_method_sig",
+      "class_body_member"
     ],
     [
       "import",
-      "_meta_property_import_meta"
+      "meta_property_import_meta"
     ],
     [
       "primary_expression",
-      "_meta_property_new_target"
+      "meta_property_new_target"
     ],
     [
       "_lhs_expression",
-      "_export_statement_equals_export"
+      "export_statement_equals_export"
     ],
     [
       "object_assignment_pattern",
@@ -14478,7 +15355,7 @@
     [
       "object_assignment_pattern",
       "_lhs_expression",
-      "_export_statement_equals_export"
+      "export_statement_equals_export"
     ],
     [
       "primary_expression",
@@ -14528,23 +15405,23 @@
     ],
     [
       "await_expression",
-      "_update_expression_prefix"
+      "update_expression_prefix"
     ],
     [
       "arrow_function",
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
       "arrow_function",
-      "_update_expression_prefix"
+      "update_expression_prefix"
     ],
     [
       "primary_expression",
-      "_export_statement_default_from"
+      "export_statement_default_from"
     ],
     [
       "primary_expression",
-      "_export_statement_default_declaration"
+      "export_statement_default_declaration"
     ],
     [
       "primary_expression",
@@ -14552,11 +15429,11 @@
       "readonly_type"
     ],
     [
-      "_class_body_method"
+      "class_body_method"
     ],
     [
-      "_class_body_method_sig",
-      "_class_body_member"
+      "class_body_method_sig",
+      "class_body_member"
     ],
     [
       "public_field_definition"
@@ -14576,107 +15453,107 @@
     ],
     [
       "primary_expression",
-      "_for_header_lhs"
+      "for_header_lhs"
     ],
     [
       "primary_expression",
-      "_for_header_var_kind"
+      "for_header_var_kind"
     ],
     [
       "primary_expression",
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ],
     [
       "variable_declarator",
-      "_for_header_var_kind"
+      "for_header_var_kind"
     ],
     [
       "variable_declarator",
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ],
     [
       "export_statement",
-      "_export_statement_default_from_ns_from"
+      "export_statement_default_from_ns_from"
     ],
     [
-      "_export_statement_default_from_ns_from"
-    ],
-    [
-      "export_statement",
-      "_export_statement_default_from"
-    ],
-    [
-      "_export_statement_default_from"
+      "export_statement_default_from_ns_from"
     ],
     [
       "export_statement",
-      "_export_statement_default_declaration_default_kw_value"
+      "export_statement_default_from"
     ],
     [
-      "_export_statement_default_declaration_default_kw_value"
-    ],
-    [
-      "export_statement",
-      "_export_statement_default_declaration_default_kw"
-    ],
-    [
-      "_export_statement_default_declaration_default_kw"
+      "export_statement_default_from"
     ],
     [
       "export_statement",
-      "_export_statement_default"
+      "export_statement_default_declaration_default_kw_value"
     ],
     [
-      "_export_statement_default"
-    ],
-    [
-      "export_statement",
-      "_export_statement_type_export"
-    ],
-    [
-      "_export_statement_type_export"
+      "export_statement_default_declaration_default_kw_value"
     ],
     [
       "export_statement",
-      "_export_statement_equals_export"
+      "export_statement_default_declaration_default_kw"
     ],
     [
-      "_export_statement_equals_export"
+      "export_statement_default_declaration_default_kw"
     ],
     [
       "export_statement",
-      "_export_statement_namespace_export"
+      "export_statement_default"
     ],
     [
-      "_export_statement_namespace_export"
+      "export_statement_default"
+    ],
+    [
+      "export_statement",
+      "export_statement_type_export"
+    ],
+    [
+      "export_statement_type_export"
+    ],
+    [
+      "export_statement",
+      "export_statement_equals_export"
+    ],
+    [
+      "export_statement_equals_export"
+    ],
+    [
+      "export_statement",
+      "export_statement_namespace_export"
+    ],
+    [
+      "export_statement_namespace_export"
     ],
     [
       "export_clause",
-      "_export_specifiers"
+      "export_specifiers"
     ],
     [
-      "_export_specifiers"
+      "export_specifiers"
     ],
     [
       "named_imports",
-      "_import_specifiers"
+      "import_specifiers"
     ],
     [
-      "_import_specifiers"
-    ],
-    [
-      "variable_declarator",
-      "_variable_declarator_plain"
-    ],
-    [
-      "_variable_declarator_plain"
+      "import_specifiers"
     ],
     [
       "variable_declarator",
-      "_variable_declarator_definite"
+      "variable_declarator_plain"
     ],
     [
-      "_variable_declarator_definite"
+      "variable_declarator_plain"
+    ],
+    [
+      "variable_declarator",
+      "variable_declarator_definite"
+    ],
+    [
+      "variable_declarator_definite"
     ],
     [
       "_for_header",
@@ -14687,17 +15564,17 @@
     ],
     [
       "_for_header",
-      "_for_header_var_kind"
+      "for_header_var_kind"
     ],
     [
-      "_for_header_var_kind"
+      "for_header_var_kind"
     ],
     [
       "_for_header",
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ],
     [
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ],
     [
       "arrow_function",
@@ -14708,222 +15585,229 @@
     ],
     [
       "call_expression",
-      "_call_expression_call"
+      "call_expression_call"
     ],
     [
-      "_call_expression_call"
-    ],
-    [
-      "call_expression",
-      "_call_expression_template_call"
-    ],
-    [
-      "_call_expression_template_call"
+      "call_expression_call"
     ],
     [
       "call_expression",
-      "_call_expression_member"
+      "call_expression_template_call"
     ],
     [
-      "_call_expression_member"
+      "call_expression_template_call"
+    ],
+    [
+      "call_expression",
+      "call_expression_member"
+    ],
+    [
+      "call_expression_member"
     ],
     [
       "update_expression",
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
-      "_update_expression_postfix"
+      "update_expression_postfix"
     ],
     [
       "update_expression",
-      "_update_expression_prefix"
+      "update_expression_prefix"
     ],
     [
-      "_update_expression_prefix"
-    ],
-    [
-      "meta_property",
-      "_meta_property_new_target"
-    ],
-    [
-      "_meta_property_new_target"
+      "update_expression_prefix"
     ],
     [
       "meta_property",
-      "_meta_property_import_meta"
+      "meta_property_new_target"
     ],
     [
-      "_meta_property_import_meta"
+      "meta_property_new_target"
+    ],
+    [
+      "meta_property",
+      "meta_property_import_meta"
+    ],
+    [
+      "meta_property_import_meta"
     ],
     [
       "class_body",
-      "_class_body_method_sig"
+      "class_body_method_sig"
     ],
     [
-      "_class_body_method_sig"
+      "class_body_method_sig"
     ],
     [
       "class_body",
-      "_class_body_member"
+      "class_body_member"
     ],
     [
-      "_class_body_member"
+      "class_body_member"
     ],
     [
       "formal_parameters",
-      "_formal_parameters_elements"
+      "formal_parameters_elements"
     ],
     [
-      "_formal_parameters_elements"
+      "formal_parameters_elements"
     ],
     [
       "enum_body",
-      "_enum_body_elements"
+      "enum_body_elements"
     ],
     [
-      "_enum_body_elements"
+      "enum_body_elements"
     ],
     [
       "type_arguments",
-      "_types"
+      "types"
     ],
     [
-      "_types"
+      "types"
+    ],
+    [
+      "object_type",
+      "object_type_elements"
+    ],
+    [
+      "object_type_elements"
     ],
     [
       "type_parameters",
-      "_type_parameters_elements"
+      "type_parameters_elements"
     ],
     [
-      "_type_parameters_elements"
+      "type_parameters_elements"
     ],
     [
       "tuple_type",
-      "_tuple_type_members"
+      "tuple_type_members"
     ],
     [
-      "_tuple_type_members"
+      "tuple_type_members"
     ],
     [
       "import_statement",
-      "_import_statement_clause_from"
+      "import_statement_clause_from"
     ],
     [
-      "_import_statement_clause_from"
-    ],
-    [
-      "import_clause",
-      "_import_clause_group"
-    ],
-    [
-      "_import_clause_group"
+      "import_statement_clause_from"
     ],
     [
       "import_clause",
-      "_import_clause_default_import"
+      "import_clause_group"
     ],
     [
-      "_import_clause_default_import"
+      "import_clause_group"
+    ],
+    [
+      "import_clause",
+      "import_clause_default_import"
+    ],
+    [
+      "import_clause_default_import"
     ],
     [
       "import_specifier",
-      "_import_specifier_as"
+      "import_specifier_as"
     ],
     [
-      "_import_specifier_as"
+      "import_specifier_as"
     ],
     [
       "catch_clause",
-      "_catch_clause_group"
+      "catch_clause_group"
     ],
     [
-      "_catch_clause_group"
+      "catch_clause_group"
     ],
     [
       "parenthesized_expression",
-      "_parenthesized_expression_typed"
+      "parenthesized_expression_typed"
     ],
     [
-      "_parenthesized_expression_typed"
+      "parenthesized_expression_typed"
     ],
     [
       "class_heritage",
-      "_class_heritage_extends_clause"
+      "class_heritage_extends_clause"
     ],
     [
-      "_class_heritage_extends_clause"
+      "class_heritage_extends_clause"
     ],
     [
       "binary_expression",
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
-      "_binary_expression_in"
+      "binary_expression_in"
     ],
     [
       "_jsx_start_opening_element",
-      "_jsx_start_opening_element_arm"
+      "jsx_start_opening_element_arm"
     ],
     [
-      "_jsx_start_opening_element_arm"
+      "jsx_start_opening_element_arm"
     ],
     [
       "ambient_declaration",
-      "_ambient_declaration_module"
+      "ambient_declaration_module"
     ],
     [
-      "_ambient_declaration_module"
+      "ambient_declaration_module"
     ],
     [
       "index_signature",
-      "_index_signature_colon"
+      "index_signature_colon"
     ],
     [
-      "_index_signature_colon"
+      "index_signature_colon"
     ],
     [
-      "_index_signature_colon",
-      "_index_signature_mapped_type_clause"
+      "index_signature_colon",
+      "index_signature_mapped_type_clause"
     ],
     [
-      "_index_signature_colon"
+      "index_signature_colon"
     ],
     [
-      "_index_signature_mapped_type_clause"
+      "index_signature_mapped_type_clause"
     ],
     [
-      "_import_specifier_name",
-      "_import_specifier_as"
+      "import_specifier_name",
+      "import_specifier_as"
     ],
     [
-      "_import_specifier_name"
+      "import_specifier_name"
     ],
     [
-      "_import_specifier_as"
+      "import_specifier_as"
     ],
     [
-      "_parenthesized_expression_typed",
-      "_parenthesized_expression_sequence"
+      "parenthesized_expression_typed",
+      "parenthesized_expression_sequence"
     ],
     [
-      "_parenthesized_expression_typed"
+      "parenthesized_expression_typed"
     ],
     [
-      "_parenthesized_expression_sequence"
+      "parenthesized_expression_sequence"
     ],
     [
-      "_for_header_lhs",
-      "_for_header_var_kind",
-      "_for_header_let_const_kind"
+      "for_header_lhs",
+      "for_header_var_kind",
+      "for_header_let_const_kind"
     ],
     [
-      "_for_header_lhs"
+      "for_header_lhs"
     ],
     [
-      "_for_header_var_kind"
+      "for_header_var_kind"
     ],
     [
-      "_for_header_let_const_kind"
+      "for_header_let_const_kind"
     ]
   ],
   "precedences": [
@@ -15621,7 +16505,15 @@
     "pattern",
     "type",
     "primary_type",
-    "_whitespace"
+    "_whitespace",
+    "index_signature",
+    "import_specifier",
+    "export_statement",
+    "update_expression",
+    "export_statement_default",
+    "variable_declarator",
+    "meta_property",
+    "_for_header"
   ],
   "reserved": {}
 }

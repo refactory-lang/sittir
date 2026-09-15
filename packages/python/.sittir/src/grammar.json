@@ -43,19 +43,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_simple_statements_elements",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "simple_statements_elements",
+          "type": "SYMBOL",
+          "name": "simple_statements_elements",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -235,17 +227,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_parenthesized_import_list",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
+                "name": "_parenthesized_import_list"
               },
               "named": true,
-              "value": "parenthesized_import_list",
-              "metadata": {
-                "author": "enrich"
-              }
+              "value": "parenthesized_import_list"
             }
           ]
         }
@@ -309,17 +294,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_parenthesized_import_list",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
+                "name": "_parenthesized_import_list"
               },
               "named": true,
-              "value": "parenthesized_import_list",
-              "metadata": {
-                "author": "enrich"
-              }
+              "value": "parenthesized_import_list"
             }
           ]
         }
@@ -518,17 +496,12 @@
           "name": "expression"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_expression_statement_tuple",
-            "annotations": {
-              "variant": "tuple",
-              "variantOf": "expression_statement"
-            }
-          },
-          "named": true,
-          "value": "expression_statement_tuple"
+          "type": "SYMBOL",
+          "name": "expression_statement_tuple",
+          "annotations": {
+            "variant": "tuple",
+            "variantOf": "expression_statement"
+          }
         },
         {
           "type": "SYMBOL",
@@ -845,19 +818,11 @@
           "value": "match"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_subjects",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "subjects",
+          "type": "SYMBOL",
+          "name": "subjects",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -883,17 +848,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_match_block_block",
-            "annotations": {
-              "variant": "block",
-              "variantOf": "_match_block"
-            }
-          },
-          "named": true,
-          "value": "match_block_block"
+          "type": "SYMBOL",
+          "name": "match_block_block",
+          "annotations": {
+            "variant": "block",
+            "variantOf": "_match_block"
+          }
         },
         {
           "type": "ALIAS",
@@ -921,19 +881,11 @@
           "value": "case"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_case_patterns",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "case_patterns",
+          "type": "SYMBOL",
+          "name": "case_patterns",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -1200,23 +1152,15 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_except_clause_exception",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  },
-                  "annotations": {
-                    "variant": "exception",
-                    "variantOf": "except_clause"
-                  }
-                },
-                "named": true,
-                "value": "except_clause_exception",
+                "type": "SYMBOL",
+                "name": "except_clause_exception",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "exception",
+                  "variantOf": "except_clause"
                 }
               },
               {
@@ -1317,43 +1261,27 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_with_clause_bare",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "bare",
-              "variantOf": "with_clause"
-            }
-          },
-          "named": true,
-          "value": "with_clause_bare",
+          "type": "SYMBOL",
+          "name": "with_clause_bare",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "bare",
+            "variantOf": "with_clause"
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_with_clause_paren",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            },
-            "annotations": {
-              "variant": "paren",
-              "variantOf": "with_clause"
-            }
-          },
-          "named": true,
-          "value": "with_clause_paren",
+          "type": "SYMBOL",
+          "name": "with_clause_paren",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "paren",
+            "variantOf": "with_clause"
           }
         }
       ]
@@ -1782,19 +1710,11 @@
           "value": "["
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_types",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "types",
+          "type": "SYMBOL",
+          "name": "types",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -1852,19 +1772,11 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_argument_list_elements",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                "named": true,
-                "value": "argument_list_elements",
+                "type": "SYMBOL",
+                "name": "argument_list_elements",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -1951,48 +1863,28 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_simple_statements",
-            "annotations": {
-              "variant": "inline",
-              "variantOf": "_suite"
-            }
-          },
-          "named": true,
-          "value": "suite_inline"
+          "type": "SYMBOL",
+          "name": "suite_inline",
+          "annotations": {
+            "variant": "inline",
+            "variantOf": "_suite"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_suite_block",
-            "annotations": {
-              "variant": "block",
-              "variantOf": "_suite"
-            }
-          },
-          "named": true,
-          "value": "suite_block"
+          "type": "SYMBOL",
+          "name": "suite_block",
+          "annotations": {
+            "variant": "block",
+            "variantOf": "_suite"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_newline",
-              "annotations": {
-                "variant": "empty",
-                "variantOf": "_suite"
-              }
-            },
-            "named": true,
-            "value": "newline"
-          },
-          "named": true,
-          "value": "suite_empty"
+          "type": "SYMBOL",
+          "name": "suite_empty",
+          "annotations": {
+            "variant": "empty",
+            "variantOf": "_suite"
+          }
         }
       ]
     },
@@ -2040,19 +1932,11 @@
                   "value": ","
                 },
                 {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_expression_list_expressions",
-                    "metadata": {
-                      "author": "enrich",
-                      "symbolSource": "group-lift"
-                    }
-                  },
-                  "named": true,
-                  "value": "expression_list_expressions",
+                  "type": "SYMBOL",
+                  "name": "expression_list_expressions",
                   "metadata": {
-                    "author": "enrich"
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
                   }
                 }
               ]
@@ -2179,17 +2063,12 @@
             "name": "none"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_simple_pattern_negative",
-              "annotations": {
-                "variant": "negative",
-                "variantOf": "_simple_pattern"
-              }
-            },
-            "named": true,
-            "value": "simple_pattern_negative"
+            "type": "SYMBOL",
+            "name": "simple_pattern_negative",
+            "annotations": {
+              "variant": "negative",
+              "variantOf": "_simple_pattern"
+            }
           },
           {
             "type": "SYMBOL",
@@ -2269,19 +2148,11 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_dict_pattern_elements",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
-              },
-              "named": true,
-              "value": "dict_pattern_elements",
+              "type": "SYMBOL",
+              "name": "dict_pattern_elements",
               "metadata": {
-                "author": "enrich"
+                "author": "enrich",
+                "symbolSource": "group-lift"
               }
             },
             {
@@ -2425,19 +2296,11 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_list_pattern_case_patterns",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                "named": true,
-                "value": "list_pattern_case_patterns",
+                "type": "SYMBOL",
+                "name": "list_pattern_case_patterns",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -3818,43 +3681,28 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_assignment_eq",
-            "annotations": {
-              "variant": "eq",
-              "variantOf": "assignment"
-            }
-          },
-          "named": true,
-          "value": "assignment_eq"
+          "type": "SYMBOL",
+          "name": "assignment_eq",
+          "annotations": {
+            "variant": "eq",
+            "variantOf": "assignment"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_assignment_type",
-            "annotations": {
-              "variant": "type",
-              "variantOf": "assignment"
-            }
-          },
-          "named": true,
-          "value": "assignment_type"
+          "type": "SYMBOL",
+          "name": "assignment_type",
+          "annotations": {
+            "variant": "type",
+            "variantOf": "assignment"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_assignment_typed",
-            "annotations": {
-              "variant": "typed",
-              "variantOf": "assignment"
-            }
-          },
-          "named": true,
-          "value": "assignment_typed"
+          "type": "SYMBOL",
+          "name": "assignment_typed",
+          "annotations": {
+            "variant": "typed",
+            "variantOf": "assignment"
+          }
         }
       ]
     },
@@ -3918,19 +3766,11 @@
                 "value": ","
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_pattern_list_patterns",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                "named": true,
-                "value": "pattern_list_patterns",
+                "type": "SYMBOL",
+                "name": "pattern_list_patterns",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
               }
             ]
@@ -4057,19 +3897,11 @@
             "value": "["
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_subscripts",
-              "metadata": {
-                "author": "enrich",
-                "symbolSource": "group-lift"
-              }
-            },
-            "named": true,
-            "value": "subscripts",
+            "type": "SYMBOL",
+            "name": "subscripts",
             "metadata": {
-              "author": "enrich"
+              "author": "enrich",
+              "symbolSource": "group-lift"
             }
           },
           {
@@ -4131,19 +3963,11 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_slice_group",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                "named": true,
-                "value": "slice_group",
+                "type": "SYMBOL",
+                "name": "slice_group",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -4582,19 +4406,11 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_dictionary_elements",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
-                },
-                "named": true,
-                "value": "dictionary_elements",
+                "type": "SYMBOL",
+                "name": "dictionary_elements",
                 "metadata": {
-                  "author": "enrich"
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
               },
               {
@@ -5806,7 +5622,7 @@
       "type": "STRING",
       "value": "async"
     },
-    "_simple_statements_elements": {
+    "simple_statements_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -5860,6 +5676,100 @@
         "hoisted": true
       }
     },
+    "print_statement_arm1": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "print"
+          },
+          {
+            "type": "FIELD",
+            "name": "chevron",
+            "content": {
+              "type": "SYMBOL",
+              "name": "chevron"
+            },
+            "metadata": {
+              "fieldSource": "enriched"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "FIELD",
+                  "name": "argument",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "expression"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "arguments": {
+      "type": "PREC_DYNAMIC",
+      "value": -1,
+      "content": {
+        "type": "SYMBOL",
+        "name": "_print_arguments"
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "print_statement_arm2": {
+      "type": "PREC_DYNAMIC",
+      "value": -1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "print"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "arguments",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_raise_statement_optional1": {
       "type": "SEQ",
       "members": [
@@ -5880,7 +5790,7 @@
         "hoisted": true
       }
     },
-    "_subjects": {
+    "subjects": {
       "type": "SEQ",
       "members": [
         {
@@ -5928,7 +5838,7 @@
         "hoisted": true
       }
     },
-    "_case_patterns": {
+    "case_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -5982,7 +5892,61 @@
         "hoisted": true
       }
     },
-    "_with_clause_with_items": {
+    "with_items": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "with_item",
+          "content": {
+            "type": "SYMBOL",
+            "name": "with_item"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "with_item",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "with_item"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "with_clause_with_items": {
       "type": "SEQ",
       "members": [
         {
@@ -6107,7 +6071,7 @@
         "hoisted": true
       }
     },
-    "_types": {
+    "types": {
       "type": "SEQ",
       "members": [
         {
@@ -6161,7 +6125,7 @@
         "hoisted": true
       }
     },
-    "_argument_list_elements": {
+    "argument_list_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -6257,7 +6221,7 @@
         "hoisted": true
       }
     },
-    "_expression_list_expressions": {
+    "expression_list_expressions": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -6297,7 +6261,7 @@
         "hoisted": true
       }
     },
-    "_list_pattern_case_patterns": {
+    "list_pattern_case_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -6351,7 +6315,7 @@
         "hoisted": true
       }
     },
-    "_dict_pattern_elements": {
+    "dict_pattern_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -6439,7 +6403,7 @@
         "hoisted": true
       }
     },
-    "_pattern_list_patterns": {
+    "pattern_list_patterns": {
       "type": "SEQ",
       "members": [
         {
@@ -6475,7 +6439,7 @@
         "hoisted": true
       }
     },
-    "_subscripts": {
+    "subscripts": {
       "type": "PREC",
       "value": 22,
       "content": {
@@ -6545,7 +6509,7 @@
         "hoisted": true
       }
     },
-    "_dictionary_elements": {
+    "dictionary_elements": {
       "type": "SEQ",
       "members": [
         {
@@ -6617,7 +6581,149 @@
         "hoisted": true
       }
     },
-    "_slice_group": {
+    "future_import_statement_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_list"
+          },
+          "named": true,
+          "value": "names",
+          "metadata": {
+            "author": "enrich"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "except_clause_arm": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "except_clause_exception_as",
+          "annotations": {
+            "variant": "as",
+            "variantOf": "except_clause"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "except_clause_exception_list",
+          "annotations": {
+            "variant": "list",
+            "variantOf": "except_clause"
+          }
+        }
+      ]
+    },
+    "with_clause_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "with_clause_with_items",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "simple_pattern_arm": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "float"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "assignment_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "right",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_right_hand_side"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "slice_group": {
       "type": "SEQ",
       "members": [
         {
@@ -6763,7 +6869,7 @@
         }
       ]
     },
-    "_except_clause_exception_as": {
+    "except_clause_exception_as": {
       "type": "SEQ",
       "members": [
         {
@@ -6822,13 +6928,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_list_pattern_case_patterns"
-              },
-              "named": true,
-              "value": "list_pattern_case_patterns"
+              "type": "SYMBOL",
+              "name": "list_pattern_case_patterns"
             },
             {
               "type": "BLANK"
@@ -6852,13 +6953,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_list_pattern_case_patterns"
-              },
-              "named": true,
-              "value": "list_pattern_case_patterns"
+              "type": "SYMBOL",
+              "name": "list_pattern_case_patterns"
             },
             {
               "type": "BLANK"
@@ -7097,7 +7193,7 @@
         "value": "-"
       }
     },
-    "_simple_pattern_negative": {
+    "simple_pattern_negative": {
       "type": "PREC",
       "value": 1,
       "content": {
@@ -7141,7 +7237,7 @@
         }
       }
     },
-    "_except_clause_exception_list": {
+    "except_clause_exception_list": {
       "type": "SEQ",
       "members": [
         {
@@ -7177,34 +7273,24 @@
         "hoisted": true
       }
     },
-    "_except_clause_exception": {
+    "except_clause_exception": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_exception_as",
-            "annotations": {
-              "variant": "as",
-              "variantOf": "except_clause"
-            }
-          },
-          "named": true,
-          "value": "except_clause_exception_as"
+          "type": "SYMBOL",
+          "name": "except_clause_exception_as",
+          "annotations": {
+            "variant": "as",
+            "variantOf": "except_clause"
+          }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_except_clause_exception_list",
-            "annotations": {
-              "variant": "list",
-              "variantOf": "except_clause"
-            }
-          },
-          "named": true,
-          "value": "except_clause_exception_list"
+          "type": "SYMBOL",
+          "name": "except_clause_exception_list",
+          "annotations": {
+            "variant": "list",
+            "variantOf": "except_clause"
+          }
         }
       ],
       "annotations": {
@@ -7223,7 +7309,7 @@
       "type": "STRING",
       "value": "="
     },
-    "_assignment_eq": {
+    "assignment_eq": {
       "type": "SEQ",
       "members": [
         {
@@ -7256,7 +7342,7 @@
         "hoisted": true
       }
     },
-    "_assignment_type": {
+    "assignment_type": {
       "type": "SEQ",
       "members": [
         {
@@ -7289,7 +7375,7 @@
         "hoisted": true
       }
     },
-    "_assignment_typed": {
+    "assignment_typed": {
       "type": "SEQ",
       "members": [
         {
@@ -7337,7 +7423,7 @@
         "hoisted": true
       }
     },
-    "_expression_statement_tuple": {
+    "expression_statement_tuple": {
       "type": "SEQ",
       "members": [
         {
@@ -7396,7 +7482,7 @@
         "hoisted": true
       }
     },
-    "_with_clause_bare": {
+    "with_clause_bare": {
       "type": "SEQ",
       "members": [
         {
@@ -7450,7 +7536,7 @@
         "hoisted": true
       }
     },
-    "_with_clause_paren": {
+    "with_clause_paren": {
       "type": "SEQ",
       "members": [
         {
@@ -7458,19 +7544,11 @@
           "value": "("
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_with_clause_with_items",
-            "metadata": {
-              "author": "enrich",
-              "symbolSource": "group-lift"
-            }
-          },
-          "named": true,
-          "value": "with_clause_with_items",
+          "type": "SYMBOL",
+          "name": "with_clause_with_items",
           "metadata": {
-            "author": "enrich"
+            "author": "enrich",
+            "symbolSource": "group-lift"
           }
         },
         {
@@ -7482,7 +7560,7 @@
         "hoisted": true
       }
     },
-    "_match_block_block": {
+    "match_block_block": {
       "type": "SEQ",
       "members": [
         {
@@ -7509,7 +7587,14 @@
         "hoisted": true
       }
     },
-    "_suite_block": {
+    "suite_inline": {
+      "type": "SYMBOL",
+      "name": "_simple_statements",
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "suite_block": {
       "type": "SEQ",
       "members": [
         {
@@ -7524,6 +7609,18 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "suite_empty": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_newline",
+        "annotations": {
+          "hoisted": true
+        }
+      },
+      "named": true,
+      "value": "newline"
     },
     "_comparison_operator_comparator": {
       "type": "SEQ",
@@ -7673,15 +7770,15 @@
     ],
     [
       "expression_statement",
-      "_expression_statement_tuple"
+      "expression_statement_tuple"
     ],
     [
-      "_except_clause_exception_as",
-      "_except_clause_exception_list"
+      "except_clause_exception_as",
+      "except_clause_exception_list"
     ],
     [
       "as_pattern",
-      "_except_clause_exception_as"
+      "except_clause_exception_as"
     ],
     [
       "_expressions",
@@ -7696,10 +7793,10 @@
     ],
     [
       "_simple_statements",
-      "_simple_statements_elements"
+      "simple_statements_elements"
     ],
     [
-      "_simple_statements_elements"
+      "simple_statements_elements"
     ],
     [
       "future_import_statement",
@@ -7709,32 +7806,53 @@
       "_import_list"
     ],
     [
-      "match_statement",
-      "_subjects"
+      "print_statement",
+      "print_statement_arm1"
     ],
     [
-      "_subjects"
+      "print_statement_arm1"
+    ],
+    [
+      "print_statement",
+      "arguments"
+    ],
+    [
+      "arguments"
+    ],
+    [
+      "print_statement",
+      "print_statement_arm2"
+    ],
+    [
+      "print_statement_arm2"
+    ],
+    [
+      "match_statement",
+      "subjects"
+    ],
+    [
+      "subjects"
     ],
     [
       "case_clause",
-      "_case_patterns"
+      "case_patterns"
     ],
     [
-      "_case_patterns"
-    ],
-    [
-      "with_clause",
-      "_with_clause_bare"
-    ],
-    [
-      "_with_clause_bare"
+      "case_patterns"
     ],
     [
       "with_clause",
-      "_with_clause_with_items"
+      "with_clause_bare"
     ],
     [
-      "_with_clause_with_items"
+      "with_clause_bare"
+    ],
+    [
+      "with_clause",
+      "with_clause_with_items"
+    ],
+    [
+      "with_clause_with_items"
     ],
     [
       "parameters",
@@ -7745,24 +7863,24 @@
     ],
     [
       "type_parameter",
-      "_types"
+      "types"
     ],
     [
-      "_types"
+      "types"
     ],
     [
       "argument_list",
-      "_argument_list_elements"
+      "argument_list_elements"
     ],
     [
-      "_argument_list_elements"
+      "argument_list_elements"
     ],
     [
       "expression_list",
-      "_expression_list_expressions"
+      "expression_list_expressions"
     ],
     [
-      "_expression_list_expressions"
+      "expression_list_expressions"
     ],
     [
       "case_pattern",
@@ -7772,7 +7890,7 @@
       "_simple_pattern"
     ],
     [
-      "_list_pattern_case_patterns"
+      "list_pattern_case_patterns"
     ],
     [
       "dict_pattern",
@@ -7783,10 +7901,10 @@
     ],
     [
       "dict_pattern",
-      "_dict_pattern_elements"
+      "dict_pattern_elements"
     ],
     [
-      "_dict_pattern_elements"
+      "dict_pattern_elements"
     ],
     [
       "tuple_pattern",
@@ -7797,17 +7915,17 @@
     ],
     [
       "pattern_list",
-      "_pattern_list_patterns"
+      "pattern_list_patterns"
     ],
     [
-      "_pattern_list_patterns"
+      "pattern_list_patterns"
     ],
     [
       "subscript",
-      "_subscripts"
+      "subscripts"
     ],
     [
-      "_subscripts"
+      "subscripts"
     ],
     [
       "list",
@@ -7818,10 +7936,10 @@
     ],
     [
       "dictionary",
-      "_dictionary_elements"
+      "dictionary_elements"
     ],
     [
-      "_dictionary_elements"
+      "dictionary_elements"
     ],
     [
       "string_content",
@@ -7839,45 +7957,52 @@
     ],
     [
       "except_clause",
-      "_except_clause_exception"
+      "except_clause_exception"
     ],
     [
-      "_except_clause_exception"
+      "except_clause_exception"
     ],
     [
       "with_clause",
-      "_with_clause_paren"
+      "with_clause_paren"
     ],
     [
-      "_with_clause_paren"
+      "with_clause_paren"
+    ],
+    [
+      "_simple_pattern",
+      "simple_pattern_arm"
+    ],
+    [
+      "simple_pattern_arm"
     ],
     [
       "assignment",
-      "_assignment_typed"
+      "assignment_typed"
     ],
     [
-      "_assignment_typed"
+      "assignment_typed"
     ],
     [
       "slice",
-      "_slice_group"
+      "slice_group"
     ],
     [
-      "_slice_group"
+      "slice_group"
     ],
     [
-      "_assignment_eq",
-      "_assignment_type",
-      "_assignment_typed"
+      "assignment_eq",
+      "assignment_type",
+      "assignment_typed"
     ],
     [
-      "_assignment_eq"
+      "assignment_eq"
     ],
     [
-      "_assignment_type"
+      "assignment_type"
     ],
     [
-      "_assignment_typed"
+      "assignment_typed"
     ]
   ],
   "precedences": [],
@@ -7970,7 +8095,10 @@
     "primary_expression",
     "pattern",
     "parameter",
-    "_whitespace"
+    "_whitespace",
+    "assignment",
+    "with_clause",
+    "_suite"
   ],
   "reserved": {
     "global": [

@@ -133,10 +133,10 @@ export function spliceErrorEnum() {
 
 /** `impl std::fmt::Display for SpliceError { fn fmt(…) … }` */
 export function displayImpl() {
-	return ir.statement.impl({
+	return ir.statement.impl.body({
 		traitClause: 'std::fmt::Display',
 		type: 'SpliceError',
-		content: ir.declarationList.strict(
+		declarationList: ir.declarationList.strict(
 			ir.statement.function({
 				name: 'fmt',
 				parameters: ir.parameters.strict(
@@ -230,10 +230,10 @@ export function displayImpl() {
 
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImpl() {
-	return ir.statement.impl({
+	return ir.statement.impl.body({
 		traitClause: 'std::error::Error',
 		type: 'SpliceError',
-		content: ir.declarationList.strict(),
+		declarationList: ir.declarationList.strict(),
 	});
 }
 
@@ -295,7 +295,7 @@ export function applyEditsFn() {
 					ir.statement.expression(
 						ir.forExpression({
 							pattern: 'e',
-							value: ir.referenceExpression({ value: 'edits' }),
+							value: ir.referenceExpression.bare({ value: 'edits' }),
 							body: ir.block.strict(),
 						})
 					),

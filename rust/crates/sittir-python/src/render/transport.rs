@@ -106,7 +106,6 @@ pub enum AnyTransport {
     ExceptClause(ExceptClauseTransport),
     FinallyClause(FinallyClauseTransport),
     WithStatement(WithStatementTransport),
-    WithClause(WithClauseTransport),
     WithItem(WithItemTransport),
     FunctionDefinition(FunctionDefinitionTransport),
     Parameters(ParametersTransport),
@@ -123,7 +122,6 @@ pub enum AnyTransport {
     ArgumentList(ArgumentListTransport),
     DecoratedDefinition(DecoratedDefinitionTransport),
     Decorator(DecoratorTransport),
-    Suite(SuiteTransport),
     Block(BlockTransport),
     ExpressionList(ExpressionListTransport),
     DottedName(DottedNameTransport),
@@ -151,7 +149,6 @@ pub enum AnyTransport {
     ComparisonOperator(ComparisonOperatorTransport),
     Lambda(LambdaTransport),
     LambdaWithinForInClause(LambdaWithinForInClauseTransport),
-    Assignment(AssignmentTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
@@ -238,7 +235,9 @@ pub enum AnyTransport {
     WithClauseBare(WithClauseBareTransport),
     WithClauseParen(WithClauseParenTransport),
     MatchBlockBlock(MatchBlockBlockTransport),
+    SuiteInline(SuiteInlineTransport),
     SuiteBlock(SuiteBlockTransport),
+    SuiteEmpty(SuiteEmptyTransport),
     ComparisonOperatorComparator(ComparisonOperatorComparatorTransport),
     YieldFromClause(YieldFromClauseTransport),
     StringStart(StringStartTransport),
@@ -430,7 +429,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ExceptClause(t) => t.prepare(ctx),
             AnyTransport::FinallyClause(t) => t.prepare(ctx),
             AnyTransport::WithStatement(t) => t.prepare(ctx),
-            AnyTransport::WithClause(t) => t.prepare(ctx),
             AnyTransport::WithItem(t) => t.prepare(ctx),
             AnyTransport::FunctionDefinition(t) => t.prepare(ctx),
             AnyTransport::Parameters(t) => t.prepare(ctx),
@@ -447,7 +445,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ArgumentList(t) => t.prepare(ctx),
             AnyTransport::DecoratedDefinition(t) => t.prepare(ctx),
             AnyTransport::Decorator(t) => t.prepare(ctx),
-            AnyTransport::Suite(t) => t.prepare(ctx),
             AnyTransport::Block(t) => t.prepare(ctx),
             AnyTransport::ExpressionList(t) => t.prepare(ctx),
             AnyTransport::DottedName(t) => t.prepare(ctx),
@@ -475,7 +472,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ComparisonOperator(t) => t.prepare(ctx),
             AnyTransport::Lambda(t) => t.prepare(ctx),
             AnyTransport::LambdaWithinForInClause(t) => t.prepare(ctx),
-            AnyTransport::Assignment(t) => t.prepare(ctx),
             AnyTransport::AugmentedAssignment(t) => t.prepare(ctx),
             AnyTransport::PatternList(t) => t.prepare(ctx),
             AnyTransport::Yield(t) => t.prepare(ctx),
@@ -562,7 +558,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::WithClauseBare(t) => t.prepare(ctx),
             AnyTransport::WithClauseParen(t) => t.prepare(ctx),
             AnyTransport::MatchBlockBlock(t) => t.prepare(ctx),
+            AnyTransport::SuiteInline(t) => t.prepare(ctx),
             AnyTransport::SuiteBlock(t) => t.prepare(ctx),
+            AnyTransport::SuiteEmpty(t) => t.prepare(ctx),
             AnyTransport::ComparisonOperatorComparator(t) => t.prepare(ctx),
             AnyTransport::YieldFromClause(t) => t.prepare(ctx),
             AnyTransport::StringStart(t) => t.prepare(ctx),
@@ -867,10 +865,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 146 => Ok(AnyTransport::WithStatement(
                     WithStatementTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: with_clause (WITH_CLAUSE)
-                147 => Ok(AnyTransport::WithClause(
-                    WithClauseTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: with_item (WITH_ITEM)
                 148 => Ok(AnyTransport::WithItem(
                     WithItemTransport::from_napi_value(env, napi_val)?
@@ -1042,10 +1036,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: lambda_within_for_in_clause (LAMBDA_WITHIN_FOR_IN_CLAUSE)
                 198 => Ok(AnyTransport::LambdaWithinForInClause(
                     LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: assignment (ASSIGNMENT)
-                199 => Ok(AnyTransport::Assignment(
-                    AssignmentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: augmented_assignment (AUGMENTED_ASSIGNMENT)
                 200 => Ok(AnyTransport::AugmentedAssignment(
@@ -1247,55 +1237,55 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 240 => Ok(AnyTransport::KwAsyncMarker(
                     KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _simple_statements_elements (_SIMPLE_STATEMENTS_ELEMENTS)
+                // kind: simple_statements_elements (SIMPLE_STATEMENTS_ELEMENTS)
                 241 => Ok(AnyTransport::SimpleStatementsElements(
                     SimpleStatementsElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _subjects (_SUBJECTS)
+                // kind: subjects (SUBJECTS)
                 242 => Ok(AnyTransport::Subjects(
                     SubjectsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _case_patterns (_CASE_PATTERNS)
+                // kind: case_patterns (CASE_PATTERNS)
                 243 => Ok(AnyTransport::CasePatterns(
                     CasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _with_clause_with_items (_WITH_CLAUSE_WITH_ITEMS)
+                // kind: with_clause_with_items (WITH_CLAUSE_WITH_ITEMS)
                 244 => Ok(AnyTransport::WithClauseWithItems(
                     WithClauseWithItemsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _types (_TYPES)
+                // kind: types (TYPES)
                 245 => Ok(AnyTransport::Types(
                     TypesTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _argument_list_elements (_ARGUMENT_LIST_ELEMENTS)
+                // kind: argument_list_elements (ARGUMENT_LIST_ELEMENTS)
                 246 => Ok(AnyTransport::ArgumentListElements(
                     ArgumentListElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _expression_list_expressions (_EXPRESSION_LIST_EXPRESSIONS)
+                // kind: expression_list_expressions (EXPRESSION_LIST_EXPRESSIONS)
                 247 => Ok(AnyTransport::ExpressionListExpressions(
                     ExpressionListExpressionsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _list_pattern_case_patterns (_LIST_PATTERN_CASE_PATTERNS)
+                // kind: list_pattern_case_patterns (LIST_PATTERN_CASE_PATTERNS)
                 248 => Ok(AnyTransport::ListPatternCasePatterns(
                     ListPatternCasePatternsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _dict_pattern_elements (_DICT_PATTERN_ELEMENTS)
+                // kind: dict_pattern_elements (DICT_PATTERN_ELEMENTS)
                 249 => Ok(AnyTransport::DictPatternElements(
                     DictPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _pattern_list_patterns (_PATTERN_LIST_PATTERNS)
+                // kind: pattern_list_patterns (PATTERN_LIST_PATTERNS)
                 250 => Ok(AnyTransport::PatternListPatterns(
                     PatternListPatternsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _subscripts (_SUBSCRIPTS)
+                // kind: subscripts (SUBSCRIPTS)
                 251 => Ok(AnyTransport::Subscripts(
                     SubscriptsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _dictionary_elements (_DICTIONARY_ELEMENTS)
+                // kind: dictionary_elements (DICTIONARY_ELEMENTS)
                 252 => Ok(AnyTransport::DictionaryElements(
                     DictionaryElementsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _slice_group (_SLICE_GROUP)
+                // kind: slice_group (SLICE_GROUP)
                 253 => Ok(AnyTransport::SliceGroup(
                     SliceGroupTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1303,7 +1293,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 254 => Ok(AnyTransport::AugmentedAssignmentOperator(
                     AugmentedAssignmentOperatorEnum::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_exception_as (_EXCEPT_CLAUSE_EXCEPTION_AS)
+                // kind: except_clause_exception_as (EXCEPT_CLAUSE_EXCEPTION_AS)
                 255 => Ok(AnyTransport::ExceptClauseExceptionAs(
                     ExceptClauseExceptionAsTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1347,56 +1337,64 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 265 => Ok(AnyTransport::WildcardPattern(
                     WildcardPatternTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _simple_pattern_negative (_SIMPLE_PATTERN_NEGATIVE)
+                // kind: simple_pattern_negative (SIMPLE_PATTERN_NEGATIVE)
                 266 => Ok(AnyTransport::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_exception_list (_EXCEPT_CLAUSE_EXCEPTION_LIST)
+                // kind: except_clause_exception_list (EXCEPT_CLAUSE_EXCEPTION_LIST)
                 267 => Ok(AnyTransport::ExceptClauseExceptionList(
                     ExceptClauseExceptionListTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _except_clause_exception (_EXCEPT_CLAUSE_EXCEPTION)
+                // kind: except_clause_exception (EXCEPT_CLAUSE_EXCEPTION)
                 268 => Ok(AnyTransport::ExceptClauseException(
                     ExceptClauseExceptionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _assignment_eq (_ASSIGNMENT_EQ)
+                // kind: assignment_eq (ASSIGNMENT_EQ)
                 269 => Ok(AnyTransport::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _assignment_type (_ASSIGNMENT_TYPE)
+                // kind: assignment_type (ASSIGNMENT_TYPE)
                 270 => Ok(AnyTransport::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _assignment_typed (_ASSIGNMENT_TYPED)
+                // kind: assignment_typed (ASSIGNMENT_TYPED)
                 271 => Ok(AnyTransport::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _expression_statement_tuple (_EXPRESSION_STATEMENT_TUPLE)
+                // kind: expression_statement_tuple (EXPRESSION_STATEMENT_TUPLE)
                 272 => Ok(AnyTransport::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _with_clause_bare (_WITH_CLAUSE_BARE)
+                // kind: with_clause_bare (WITH_CLAUSE_BARE)
                 273 => Ok(AnyTransport::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _with_clause_paren (_WITH_CLAUSE_PAREN)
+                // kind: with_clause_paren (WITH_CLAUSE_PAREN)
                 274 => Ok(AnyTransport::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _match_block_block (_MATCH_BLOCK_BLOCK)
+                // kind: match_block_block (MATCH_BLOCK_BLOCK)
                 275 => Ok(AnyTransport::MatchBlockBlock(
                     MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _suite_block (_SUITE_BLOCK)
-                276 => Ok(AnyTransport::SuiteBlock(
+                // kind: suite_inline (SUITE_INLINE)
+                276 => Ok(AnyTransport::SuiteInline(
+                    SuiteInlineTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: suite_block (SUITE_BLOCK)
+                277 => Ok(AnyTransport::SuiteBlock(
                     SuiteBlockTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: suite_empty (SUITE_EMPTY)
+                278 => Ok(AnyTransport::SuiteEmpty(
+                    SuiteEmptyTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _comparison_operator_comparator (_COMPARISON_OPERATOR_COMPARATOR)
-                277 => Ok(AnyTransport::ComparisonOperatorComparator(
+                279 => Ok(AnyTransport::ComparisonOperatorComparator(
                     ComparisonOperatorComparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _yield_from_clause (_YIELD_FROM_CLAUSE)
-                278 => Ok(AnyTransport::YieldFromClause(
+                280 => Ok(AnyTransport::YieldFromClause(
                     YieldFromClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: string_start (STRING_START)
@@ -1787,8 +1785,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 61 => Ok(AnyTransport::IsKeyword(
                     IsKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // literal kind: _newline → "\n"
-                317 => Ok(AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65),
                 // literal kind: _not_in → "not in"
                 194 => Ok(AnyTransport::Literal50_5f_6e_6f_74_5f_69_6e),
                 // literal kind: _is_not → "is not"
@@ -2194,6 +2190,237 @@ impl ::sittir_core::view::KindOf for SimpleStatementTransport {
 impl ::sittir_core::render::Render for SimpleStatementTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_simple_statement(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum WithClauseTransport {
+    WithClauseBare(WithClauseBareTransport),
+    WithClauseParen(WithClauseParenTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for WithClauseTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            WithClauseTransport::WithClauseBare(t) => t.prepare(ctx),
+            WithClauseTransport::WithClauseParen(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    147 => {
+                        if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithClauseBare(value));
+                        }
+                        if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithClauseParen(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 147 in WithClauseTransport decodes as none of its members"))
+                    },
+                    273 => Ok(Self::WithClauseBare(
+                        WithClauseBareTransport::from_napi_value(env, napi_val)?
+                    )),
+                    274 => Ok(Self::WithClauseParen(
+                        WithClauseParenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in WithClauseTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in WithClauseTransport")
+                )?;
+                match kind_id {
+                    147 => {
+                        if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithClauseBare(value));
+                        }
+                        if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WithClauseParen(value));
+                        }
+                        Err(::napi::Error::from_reason("aliased kind id 147 in WithClauseTransport decodes as none of its members"))
+                    },
+                    273 => Ok(Self::WithClauseBare(
+                        WithClauseBareTransport::from_napi_value(env, napi_val)?
+                    )),
+                    274 => Ok(Self::WithClauseParen(
+                        WithClauseParenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in WithClauseTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("WithClauseTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WithClauseTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("WithClauseTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        WithClauseTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        WithClauseTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for WithClauseTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::WithClauseBare(inner) => inner.kind_in(kinds),
+            Self::WithClauseParen(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for WithClauseTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_clause(self, w)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SuiteTransport {
+    SuiteInline(SuiteInlineTransport),
+    SuiteBlock(SuiteBlockTransport),
+    SuiteEmpty(SuiteEmptyTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for SuiteTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SuiteTransport::SuiteInline(t) => t.prepare(ctx),
+            SuiteTransport::SuiteBlock(t) => t.prepare(ctx),
+            SuiteTransport::SuiteEmpty(t) => t.prepare(ctx),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SuiteTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    276 => Ok(Self::SuiteInline(
+                        SuiteInlineTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::SuiteEmpty(
+                        SuiteEmptyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SuiteTransport")
+                )?;
+                match kind_id {
+                    276 => Ok(Self::SuiteInline(
+                        SuiteInlineTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::SuiteBlock(
+                        SuiteBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::SuiteEmpty(
+                        SuiteEmptyTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SuiteTransport: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SuiteTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SuiteTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteTransport::to_napi_value(env, *val)
+    }
+}
+
+impl ::sittir_core::view::KindOf for SuiteTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::SuiteInline(inner) => inner.kind_in(kinds),
+            Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::SuiteEmpty(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for SuiteTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_suite(self, w)
     }
 }
 
@@ -3679,6 +3906,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
                     114 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
+                    319 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
                     135 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3718,6 +3948,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleStatementsTransportSlot {
                 )?;
                 match kind_id {
                     114 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    319 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     135 => Ok(Self::IfStatement(
@@ -4421,7 +4654,9 @@ pub enum ExpressionStatementContentTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionStatementTuple(ExpressionStatementTupleTransport),
-    Assignment(AssignmentTransport),
+    AssignmentEq(AssignmentEqTransport),
+    AssignmentType(AssignmentTypeTransport),
+    AssignmentTyped(AssignmentTypedTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     Yield(YieldTransport),
     Verbatim(VerbatimTransport),
@@ -4463,7 +4698,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::NamedExpression(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::AsPattern(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::ExpressionStatementTuple(t) => t.prepare(ctx),
-            ExpressionStatementContentTransportSlot::Assignment(t) => t.prepare(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentEq(t) => t.prepare(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentType(t) => t.prepare(ctx),
+            ExpressionStatementContentTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Yield(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -4507,7 +4744,9 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionStatementTuple(inner) => inner.kind_in(kinds),
-            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(69), ::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
@@ -4641,8 +4880,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     272 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -4778,8 +5023,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     272 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -4863,7 +5114,9 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
         ExpressionStatementContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
         ExpressionStatementContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
         ExpressionStatementContentTransportSlot::ExpressionStatementTuple(inner) => AnyTransport::ExpressionStatementTuple(inner),
-        ExpressionStatementContentTransportSlot::Assignment(inner) => AnyTransport::Assignment(inner),
+        ExpressionStatementContentTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
+        ExpressionStatementContentTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
+        ExpressionStatementContentTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
         ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
         ExpressionStatementContentTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
         ExpressionStatementContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -4906,7 +5159,9 @@ impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::NamedExpression(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::AsPattern(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::ExpressionStatementTuple(inner) => inner.render(w),
-            ExpressionStatementContentTransportSlot::Assignment(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::AssignmentEq(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::AssignmentType(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::AssignmentTyped(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::Yield(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::Verbatim(inner) => inner.render(w),
@@ -6400,131 +6655,6 @@ impl ::sittir_core::render::Render for RaiseStatementExpressionsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum IfStatementConsequenceTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for IfStatementConsequenceTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            IfStatementConsequenceTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            IfStatementConsequenceTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for IfStatementConsequenceTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in IfStatementConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in IfStatementConsequenceTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in IfStatementConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("IfStatementConsequenceTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IfStatementConsequenceTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("IfStatementConsequenceTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IfStatementConsequenceTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        IfStatementConsequenceTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementConsequenceTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        IfStatementConsequenceTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn if_statement_consequence_transport_slot_to_any(t: IfStatementConsequenceTransportSlot) -> AnyTransport {
-    match t {
-        IfStatementConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        IfStatementConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for IfStatementConsequenceTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            IfStatementConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
-            IfStatementConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            IfStatementConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum IfStatementAlternativeTransportSlot {
     ElifClause(ElifClauseTransport),
     ElseClause(ElseClauseTransport),
@@ -6637,256 +6767,6 @@ impl ::sittir_core::render::Render for IfStatementAlternativeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ElifClauseConsequenceTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for ElifClauseConsequenceTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ElifClauseConsequenceTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ElifClauseConsequenceTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ElifClauseConsequenceTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ElifClauseConsequenceTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElifClauseConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ElifClauseConsequenceTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElifClauseConsequenceTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ElifClauseConsequenceTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifClauseConsequenceTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ElifClauseConsequenceTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifClauseConsequenceTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElifClauseConsequenceTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn elif_clause_consequence_transport_slot_to_any(t: ElifClauseConsequenceTransportSlot) -> AnyTransport {
-    match t {
-        ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for ElifClauseConsequenceTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ElifClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ElifClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ElifClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ElseClauseBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for ElseClauseBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ElseClauseBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ElseClauseBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ElseClauseBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElseClauseBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ElseClauseBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ElseClauseBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ElseClauseBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ElseClauseBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ElseClauseBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseClauseBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ElseClauseBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ElseClauseBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn else_clause_body_transport_slot_to_any(t: ElseClauseBodyTransportSlot) -> AnyTransport {
-    match t {
-        ElseClauseBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ElseClauseBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for ElseClauseBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ElseClauseBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ElseClauseBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ElseClauseBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum MatchBlockContentTransportSlot {
     MatchBlockBlock(MatchBlockBlockTransport),
     Literal1_5f_6e_65_77_6c_69_6e_65,
@@ -6990,131 +6870,6 @@ impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
         match self {
             MatchBlockContentTransportSlot::MatchBlockBlock(inner) => inner.render(w),
             MatchBlockContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum CaseClauseConsequenceTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for CaseClauseConsequenceTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            CaseClauseConsequenceTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            CaseClauseConsequenceTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for CaseClauseConsequenceTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in CaseClauseConsequenceTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in CaseClauseConsequenceTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("CaseClauseConsequenceTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CaseClauseConsequenceTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CaseClauseConsequenceTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseClauseConsequenceTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CaseClauseConsequenceTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseClauseConsequenceTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CaseClauseConsequenceTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn case_clause_consequence_transport_slot_to_any(t: CaseClauseConsequenceTransportSlot) -> AnyTransport {
-    match t {
-        CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for CaseClauseConsequenceTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            CaseClauseConsequenceTransportSlot::SimpleStatements(inner) => inner.render(w),
-            CaseClauseConsequenceTransportSlot::SuiteBlock(inner) => inner.render(w),
-            CaseClauseConsequenceTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -7921,381 +7676,6 @@ impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ForStatementBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for ForStatementBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ForStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ForStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ForStatementBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ForStatementBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ForStatementBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForStatementBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForStatementBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForStatementBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ForStatementBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForStatementBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn for_statement_body_transport_slot_to_any(t: ForStatementBodyTransportSlot) -> AnyTransport {
-    match t {
-        ForStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ForStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for ForStatementBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ForStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ForStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ForStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum WhileStatementBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for WhileStatementBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            WhileStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            WhileStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for WhileStatementBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WhileStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in WhileStatementBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WhileStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("WhileStatementBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WhileStatementBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("WhileStatementBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileStatementBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        WhileStatementBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileStatementBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        WhileStatementBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn while_statement_body_transport_slot_to_any(t: WhileStatementBodyTransportSlot) -> AnyTransport {
-    match t {
-        WhileStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        WhileStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for WhileStatementBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            WhileStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            WhileStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            WhileStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum TryStatementBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for TryStatementBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            TryStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            TryStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for TryStatementBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TryStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TryStatementBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TryStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("TryStatementBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TryStatementBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TryStatementBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TryStatementBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TryStatementBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TryStatementBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TryStatementBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn try_statement_body_transport_slot_to_any(t: TryStatementBodyTransportSlot) -> AnyTransport {
-    match t {
-        TryStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        TryStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for TryStatementBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            TryStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            TryStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            TryStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ExceptClauseStarMarkerTransportSlot {
     Literal3_73_74_61_72,
 }
@@ -8388,256 +7768,6 @@ impl ::sittir_core::render::Render for ExceptClauseStarMarkerTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ExceptClauseStarMarkerTransportSlot::Literal3_73_74_61_72 => w.text("*"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExceptClauseSuiteTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for ExceptClauseSuiteTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ExceptClauseSuiteTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ExceptClauseSuiteTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ExceptClauseSuiteTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSuiteTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExceptClauseSuiteTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseSuiteTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExceptClauseSuiteTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseSuiteTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExceptClauseSuiteTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseSuiteTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptClauseSuiteTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseSuiteTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseSuiteTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn except_clause_suite_transport_slot_to_any(t: ExceptClauseSuiteTransportSlot) -> AnyTransport {
-    match t {
-        ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for ExceptClauseSuiteTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ExceptClauseSuiteTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ExceptClauseSuiteTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ExceptClauseSuiteTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum FinallyClauseBlockTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for FinallyClauseBlockTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            FinallyClauseBlockTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            FinallyClauseBlockTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for FinallyClauseBlockTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FinallyClauseBlockTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FinallyClauseBlockTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FinallyClauseBlockTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("FinallyClauseBlockTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FinallyClauseBlockTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FinallyClauseBlockTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyClauseBlockTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FinallyClauseBlockTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyClauseBlockTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FinallyClauseBlockTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn finally_clause_block_transport_slot_to_any(t: FinallyClauseBlockTransportSlot) -> AnyTransport {
-    match t {
-        FinallyClauseBlockTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        FinallyClauseBlockTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for FinallyClauseBlockTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            FinallyClauseBlockTransportSlot::SimpleStatements(inner) => inner.render(w),
-            FinallyClauseBlockTransportSlot::SuiteBlock(inner) => inner.render(w),
-            FinallyClauseBlockTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -8740,243 +7870,6 @@ impl ::sittir_core::render::Render for WithStatementAsyncMarkerTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum WithStatementBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for WithStatementBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            WithStatementBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            WithStatementBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for WithStatementBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in WithStatementBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithStatementBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("WithStatementBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithStatementBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("WithStatementBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithStatementBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        WithStatementBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithStatementBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn with_statement_body_transport_slot_to_any(t: WithStatementBodyTransportSlot) -> AnyTransport {
-    match t {
-        WithStatementBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        WithStatementBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for WithStatementBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            WithStatementBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            WithStatementBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            WithStatementBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum WithClauseContentTransportSlot {
-    WithClauseBare(WithClauseBareTransport),
-    WithClauseParen(WithClauseParenTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for WithClauseContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            WithClauseContentTransportSlot::WithClauseBare(t) => t.prepare(ctx),
-            WithClauseContentTransportSlot::WithClauseParen(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for WithClauseContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::WithClauseBare(inner) => inner.kind_in(kinds),
-            Self::WithClauseParen(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    273 => Ok(Self::WithClauseBare(
-                        WithClauseBareTransport::from_napi_value(env, napi_val)?
-                    )),
-                    274 => Ok(Self::WithClauseParen(
-                        WithClauseParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithClauseContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in WithClauseContentTransportSlot")
-                )?;
-                match kind_id {
-                    273 => Ok(Self::WithClauseBare(
-                        WithClauseBareTransport::from_napi_value(env, napi_val)?
-                    )),
-                    274 => Ok(Self::WithClauseParen(
-                        WithClauseParenTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithClauseContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("WithClauseContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithClauseContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("WithClauseContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        WithClauseContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithClauseContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn with_clause_content_transport_slot_to_any(t: WithClauseContentTransportSlot) -> AnyTransport {
-    match t {
-        WithClauseContentTransportSlot::WithClauseBare(inner) => AnyTransport::WithClauseBare(inner),
-        WithClauseContentTransportSlot::WithClauseParen(inner) => AnyTransport::WithClauseParen(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for WithClauseContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            WithClauseContentTransportSlot::WithClauseBare(inner) => inner.render(w),
-            WithClauseContentTransportSlot::WithClauseParen(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum FunctionDefinitionAsyncMarkerTransportSlot {
     Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
@@ -9069,131 +7962,6 @@ impl ::sittir_core::render::Render for FunctionDefinitionAsyncMarkerTransportSlo
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => w.text("async"),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum FunctionDefinitionBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for FunctionDefinitionBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            FunctionDefinitionBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            FunctionDefinitionBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for FunctionDefinitionBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FunctionDefinitionBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionDefinitionBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("FunctionDefinitionBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionDefinitionBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDefinitionBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FunctionDefinitionBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionDefinitionBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn function_definition_body_transport_slot_to_any(t: FunctionDefinitionBodyTransportSlot) -> AnyTransport {
-    match t {
-        FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for FunctionDefinitionBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            FunctionDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            FunctionDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            FunctionDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -9348,131 +8116,6 @@ impl ::sittir_core::render::Render for ExecStatementCodeTransportSlot {
             ExecStatementCodeTransportSlot::String(inner) => inner.render(w),
             ExecStatementCodeTransportSlot::Identifier(inner) => inner.render(w),
             ExecStatementCodeTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ClassDefinitionBodyTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for ClassDefinitionBodyTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            ClassDefinitionBodyTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            ClassDefinitionBodyTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for ClassDefinitionBodyTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ClassDefinitionBodyTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassDefinitionBodyTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ClassDefinitionBodyTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassDefinitionBodyTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClassDefinitionBodyTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassDefinitionBodyTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ClassDefinitionBodyTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDefinitionBodyTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassDefinitionBodyTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn class_definition_body_transport_slot_to_any(t: ClassDefinitionBodyTransportSlot) -> AnyTransport {
-    match t {
-        ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for ClassDefinitionBodyTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            ClassDefinitionBodyTransportSlot::SimpleStatements(inner) => inner.render(w),
-            ClassDefinitionBodyTransportSlot::SuiteBlock(inner) => inner.render(w),
-            ClassDefinitionBodyTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -9708,131 +8351,6 @@ impl ::sittir_core::render::Render for DecoratedDefinitionDefinitionTransportSlo
 }
 
 #[derive(Debug, Clone)]
-pub enum SuiteContentTransportSlot {
-    SimpleStatements(SimpleStatementsTransport),
-    SuiteBlock(SuiteBlockTransport),
-    Literal1_5f_6e_65_77_6c_69_6e_65,
-}
-
-impl ::sittir_core::prepare::Prepare for SuiteContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            SuiteContentTransportSlot::SimpleStatements(t) => t.prepare(ctx),
-            SuiteContentTransportSlot::SuiteBlock(t) => t.prepare(ctx),
-            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for SuiteContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::SimpleStatements(inner) => inner.kind_in(kinds),
-            Self::SuiteBlock(inner) => inner.kind_in(kinds),
-            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(317)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SuiteContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in SuiteContentTransportSlot")
-                )?;
-                match kind_id {
-                    317 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
-                    114 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    318 => Ok(Self::SimpleStatements(
-                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    276 => Ok(Self::SuiteBlock(
-                        SuiteBlockTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in SuiteContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("SuiteContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SuiteContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SuiteContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SuiteContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SuiteContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn suite_content_transport_slot_to_any(t: SuiteContentTransportSlot) -> AnyTransport {
-    match t {
-        SuiteContentTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
-        SuiteContentTransportSlot::SuiteBlock(inner) => AnyTransport::SuiteBlock(inner),
-        SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
-    }
-}
-
-impl ::sittir_core::render::Render for SuiteContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            SuiteContentTransportSlot::SimpleStatements(inner) => inner.render(w),
-            SuiteContentTransportSlot::SuiteBlock(inner) => inner.render(w),
-            SuiteContentTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum BlockStatementsTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     IfStatement(IfStatementTransport),
@@ -9892,6 +8410,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
                     114 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
+                    319 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
                     135 => Ok(Self::IfStatement(
                         IfStatementTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9931,6 +8452,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockStatementsTransportSlot {
                 )?;
                 match kind_id {
                     114 => Ok(Self::SimpleStatements(
+                        SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    319 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
                     135 => Ok(Self::IfStatement(
@@ -13185,129 +11709,6 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot 
 }
 
 #[derive(Debug, Clone)]
-pub enum AssignmentContentTransportSlot {
-    AssignmentEq(AssignmentEqTransport),
-    AssignmentType(AssignmentTypeTransport),
-    AssignmentTyped(AssignmentTypedTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for AssignmentContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            AssignmentContentTransportSlot::AssignmentEq(t) => t.prepare(ctx),
-            AssignmentContentTransportSlot::AssignmentType(t) => t.prepare(ctx),
-            AssignmentContentTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for AssignmentContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::AssignmentEq(inner) => inner.kind_in(kinds),
-            Self::AssignmentType(inner) => inner.kind_in(kinds),
-            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    269 => Ok(Self::AssignmentEq(
-                        AssignmentEqTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::AssignmentType(
-                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    271 => Ok(Self::AssignmentTyped(
-                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in AssignmentContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in AssignmentContentTransportSlot")
-                )?;
-                match kind_id {
-                    269 => Ok(Self::AssignmentEq(
-                        AssignmentEqTransport::from_napi_value(env, napi_val)?
-                    )),
-                    270 => Ok(Self::AssignmentType(
-                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    271 => Ok(Self::AssignmentTyped(
-                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in AssignmentContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("AssignmentContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AssignmentContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AssignmentContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AssignmentContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AssignmentContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AssignmentContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn assignment_content_transport_slot_to_any(t: AssignmentContentTransportSlot) -> AnyTransport {
-    match t {
-        AssignmentContentTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
-        AssignmentContentTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
-        AssignmentContentTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for AssignmentContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            AssignmentContentTransportSlot::AssignmentEq(inner) => inner.render(w),
-            AssignmentContentTransportSlot::AssignmentType(inner) => inner.render(w),
-            AssignmentContentTransportSlot::AssignmentTyped(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum AugmentedAssignmentLeftTransportSlot {
     Identifier(IdentifierTransport),
     Subscript(SubscriptTransport),
@@ -13732,7 +12133,9 @@ pub enum AugmentedAssignmentRightTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
-    Assignment(AssignmentTransport),
+    AssignmentEq(AssignmentEqTransport),
+    AssignmentType(AssignmentTypeTransport),
+    AssignmentTyped(AssignmentTypedTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
@@ -13775,7 +12178,9 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::NamedExpression(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::AsPattern(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            AugmentedAssignmentRightTransportSlot::Assignment(t) => t.prepare(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentEq(t) => t.prepare(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentType(t) => t.prepare(ctx),
+            AugmentedAssignmentRightTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::Yield(t) => t.prepare(ctx),
@@ -13820,7 +12225,9 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
@@ -13955,8 +12362,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -14095,8 +12508,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -14183,7 +12602,9 @@ fn augmented_assignment_right_transport_slot_to_any(t: AugmentedAssignmentRightT
         AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
         AugmentedAssignmentRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
         AugmentedAssignmentRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AugmentedAssignmentRightTransportSlot::Assignment(inner) => AnyTransport::Assignment(inner),
+        AugmentedAssignmentRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
+        AugmentedAssignmentRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
+        AugmentedAssignmentRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
         AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
         AugmentedAssignmentRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
         AugmentedAssignmentRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
@@ -14227,7 +12648,9 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::NamedExpression(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::AsPattern(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::ExpressionList(inner) => inner.render(w),
-            AugmentedAssignmentRightTransportSlot::Assignment(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::AssignmentEq(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::AssignmentType(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::AssignmentTyped(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::PatternList(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::Yield(inner) => inner.render(w),
@@ -14488,7 +12911,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::YieldFromClause(
+                    280 => Ok(Self::YieldFromClause(
                         YieldFromClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     196 => Ok(Self::ComparisonOperator(
@@ -14619,7 +13042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     64 => Ok(Self::Ellipsis(
                         EllipsisTransport::from_napi_value(env, napi_val)?
                     )),
-                    278 => Ok(Self::YieldFromClause(
+                    280 => Ok(Self::YieldFromClause(
                         YieldFromClauseTransport::from_napi_value(env, napi_val)?
                     )),
                     196 => Ok(Self::ComparisonOperator(
@@ -18733,7 +17156,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     233 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::Interpolation(
+                    317 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18750,7 +17173,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     233 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    315 => Ok(Self::Interpolation(
+                    317 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20847,7 +19270,9 @@ pub enum AssignmentEqRightTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
-    Assignment(AssignmentTransport),
+    AssignmentEq(AssignmentEqTransport),
+    AssignmentType(AssignmentTypeTransport),
+    AssignmentTyped(AssignmentTypedTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
@@ -20890,7 +19315,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::NamedExpression(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::AsPattern(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            AssignmentEqRightTransportSlot::Assignment(t) => t.prepare(ctx),
+            AssignmentEqRightTransportSlot::AssignmentEq(t) => t.prepare(ctx),
+            AssignmentEqRightTransportSlot::AssignmentType(t) => t.prepare(ctx),
+            AssignmentEqRightTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::Yield(t) => t.prepare(ctx),
@@ -20935,7 +19362,9 @@ impl ::sittir_core::view::KindOf for AssignmentEqRightTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
@@ -21070,8 +19499,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -21210,8 +19645,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -21298,7 +19739,9 @@ fn assignment_eq_right_transport_slot_to_any(t: AssignmentEqRightTransportSlot) 
         AssignmentEqRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
         AssignmentEqRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
         AssignmentEqRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AssignmentEqRightTransportSlot::Assignment(inner) => AnyTransport::Assignment(inner),
+        AssignmentEqRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
+        AssignmentEqRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
+        AssignmentEqRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
         AssignmentEqRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
         AssignmentEqRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
         AssignmentEqRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
@@ -21342,7 +19785,9 @@ impl ::sittir_core::render::Render for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::NamedExpression(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::AsPattern(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::ExpressionList(inner) => inner.render(w),
-            AssignmentEqRightTransportSlot::Assignment(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::AssignmentEq(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::AssignmentType(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::AssignmentTyped(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::PatternList(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::Yield(inner) => inner.render(w),
@@ -21804,7 +20249,9 @@ pub enum AssignmentTypedRightTransportSlot {
     NamedExpression(NamedExpressionTransport),
     AsPattern(AsPatternTransport),
     ExpressionList(ExpressionListTransport),
-    Assignment(AssignmentTransport),
+    AssignmentEq(AssignmentEqTransport),
+    AssignmentType(AssignmentTypeTransport),
+    AssignmentTyped(AssignmentTypedTransport),
     AugmentedAssignment(AugmentedAssignmentTransport),
     PatternList(PatternListTransport),
     Yield(YieldTransport),
@@ -21847,7 +20294,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedRightTransportSlot {
             AssignmentTypedRightTransportSlot::NamedExpression(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::AsPattern(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::ExpressionList(t) => t.prepare(ctx),
-            AssignmentTypedRightTransportSlot::Assignment(t) => t.prepare(ctx),
+            AssignmentTypedRightTransportSlot::AssignmentEq(t) => t.prepare(ctx),
+            AssignmentTypedRightTransportSlot::AssignmentType(t) => t.prepare(ctx),
+            AssignmentTypedRightTransportSlot::AssignmentTyped(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::AugmentedAssignment(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::PatternList(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::Yield(t) => t.prepare(ctx),
@@ -21892,7 +20341,9 @@ impl ::sittir_core::view::KindOf for AssignmentTypedRightTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Assignment(inner) => inner.kind_in(kinds),
+            Self::AssignmentEq(inner) => inner.kind_in(kinds),
+            Self::AssignmentType(inner) => inner.kind_in(kinds),
+            Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
@@ -22027,8 +20478,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -22167,8 +20624,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     165 => Ok(Self::ExpressionList(
                         ExpressionListTransport::from_napi_value(env, napi_val)?
                     )),
-                    199 => Ok(Self::Assignment(
-                        AssignmentTransport::from_napi_value(env, napi_val)?
+                    269 => Ok(Self::AssignmentEq(
+                        AssignmentEqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    270 => Ok(Self::AssignmentType(
+                        AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    271 => Ok(Self::AssignmentTyped(
+                        AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     200 => Ok(Self::AugmentedAssignment(
                         AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
@@ -22255,7 +20718,9 @@ fn assignment_typed_right_transport_slot_to_any(t: AssignmentTypedRightTransport
         AssignmentTypedRightTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
         AssignmentTypedRightTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
         AssignmentTypedRightTransportSlot::ExpressionList(inner) => AnyTransport::ExpressionList(inner),
-        AssignmentTypedRightTransportSlot::Assignment(inner) => AnyTransport::Assignment(inner),
+        AssignmentTypedRightTransportSlot::AssignmentEq(inner) => AnyTransport::AssignmentEq(inner),
+        AssignmentTypedRightTransportSlot::AssignmentType(inner) => AnyTransport::AssignmentType(inner),
+        AssignmentTypedRightTransportSlot::AssignmentTyped(inner) => AnyTransport::AssignmentTyped(inner),
         AssignmentTypedRightTransportSlot::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(inner),
         AssignmentTypedRightTransportSlot::PatternList(inner) => AnyTransport::PatternList(inner),
         AssignmentTypedRightTransportSlot::Yield(inner) => AnyTransport::Yield(inner),
@@ -22299,11 +20764,110 @@ impl ::sittir_core::render::Render for AssignmentTypedRightTransportSlot {
             AssignmentTypedRightTransportSlot::NamedExpression(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::AsPattern(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::ExpressionList(inner) => inner.render(w),
-            AssignmentTypedRightTransportSlot::Assignment(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::AssignmentEq(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::AssignmentType(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::AssignmentTyped(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::AugmentedAssignment(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::PatternList(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::Yield(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum SuiteEmptyNewlineTransportSlot {
+    Literal1_5f_6e_65_77_6c_69_6e_65,
+}
+
+impl ::sittir_core::prepare::Prepare for SuiteEmptyNewlineTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            SuiteEmptyNewlineTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for SuiteEmptyNewlineTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal1_5f_6e_65_77_6c_69_6e_65 => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SuiteEmptyNewlineTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    101 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteEmptyNewlineTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SuiteEmptyNewlineTransportSlot")
+                )?;
+                match kind_id {
+                    101 => Ok(Self::Literal1_5f_6e_65_77_6c_69_6e_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SuiteEmptyNewlineTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SuiteEmptyNewlineTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SuiteEmptyNewlineTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SuiteEmptyNewlineTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteEmptyNewlineTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteEmptyNewlineTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteEmptyNewlineTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteEmptyNewlineTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn suite_empty_newline_transport_slot_to_any(t: SuiteEmptyNewlineTransportSlot) -> AnyTransport {
+    match t {
+        SuiteEmptyNewlineTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => AnyTransport::Literal1_5f_6e_65_77_6c_69_6e_65,
+    }
+}
+
+impl ::sittir_core::render::Render for SuiteEmptyNewlineTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            SuiteEmptyNewlineTransportSlot::Literal1_5f_6e_65_77_6c_69_6e_65 => { w.token_seam("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) },
         }
     }
 }
@@ -24082,7 +22646,7 @@ pub struct IfStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: ::sittir_core::SlotValue<IfStatementConsequenceTransportSlot>,
+    pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<Vec<::sittir_core::SlotValue<IfStatementAlternativeTransportSlot>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative_separator_space"))]
@@ -24182,7 +22746,7 @@ pub struct ElifClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: ::sittir_core::SlotValue<ElifClauseConsequenceTransportSlot>,
+    pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -24249,7 +22813,7 @@ pub struct ElseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<ElseClauseBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -24434,7 +22998,7 @@ pub struct CaseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_guard"))]
     pub guard: Option<::sittir_core::SlotValue<IfClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: ::sittir_core::SlotValue<CaseClauseConsequenceTransportSlot>,
+    pub consequence: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_patterns"))]
     pub case_patterns: ::sittir_core::SlotValue<CasePatternsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
@@ -24510,7 +23074,7 @@ pub struct ForStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ::sittir_core::SlotValue<ForStatementRightTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<ForStatementBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
@@ -24590,7 +23154,7 @@ pub struct WhileStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ::sittir_core::SlotValue<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<WhileStatementBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<::sittir_core::SlotValue<ElseClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
@@ -24660,7 +23224,7 @@ pub struct TryStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<TryStatementBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses"))]
     pub except_clauses: Option<Vec<::sittir_core::SlotValue<ExceptClauseTransport>>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause"))]
@@ -24758,7 +23322,7 @@ pub struct ExceptClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exception"))]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
-    pub suite: ::sittir_core::SlotValue<ExceptClauseSuiteTransportSlot>,
+    pub suite: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_before"))]
     pub star_marker_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker_after"))]
@@ -24832,7 +23396,7 @@ pub struct FinallyClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
-    pub block: ::sittir_core::SlotValue<FinallyClauseBlockTransportSlot>,
+    pub block: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -24902,7 +23466,7 @@ pub struct WithStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<WithStatementBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -24961,54 +23525,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         WithStatementTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct WithClauseTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<WithClauseContentTransportSlot>,
-}
-
-impl ::sittir_core::view::KindOf for WithClauseTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for WithClauseTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_with_clause(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for WithClauseTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.content.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithClauseTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        WithClauseTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithClauseTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithClauseTransport::to_napi_value(env, *val)
     }
 }
 
@@ -25076,7 +23592,7 @@ pub struct FunctionDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<::sittir_core::SlotValue<TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<FunctionDefinitionBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_before"))]
     pub dash_gt_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dash_gt_after"))]
@@ -25787,7 +24303,7 @@ pub struct ClassDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_superclasses"))]
     pub superclasses: Option<::sittir_core::SlotValue<ArgumentListTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<ClassDefinitionBodyTransportSlot>,
+    pub body: ::sittir_core::SlotValue<SuiteTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_before"))]
     pub colon_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_after"))]
@@ -26182,54 +24698,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DecoratorTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DecoratorTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct SuiteTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<SuiteContentTransportSlot>,
-}
-
-impl ::sittir_core::view::KindOf for SuiteTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        false
-    }
-}
-
-impl ::sittir_core::render::Render for SuiteTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_suite(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SuiteTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.content.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SuiteTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SuiteTransport::to_napi_value(env, *val)
     }
 }
 
@@ -28120,54 +26588,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<LambdaWithinForInClauseTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         LambdaWithinForInClauseTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct AssignmentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AssignmentContentTransportSlot>>,
-}
-
-impl ::sittir_core::view::KindOf for AssignmentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(199)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for AssignmentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_assignment(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AssignmentTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.content.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AssignmentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AssignmentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AssignmentTransport::to_napi_value(env, *val)
     }
 }
 
@@ -32194,23 +30614,14 @@ impl ::sittir_core::prepare::Prepare for SimpleStatementsElementsTransport {
                                     ExpressionStatementContentTransportSlot::AsPattern(t) => {
                                         t.as_pattern_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_AS_PATTERN_AFTER]);
                                     }
-                                    ExpressionStatementContentTransportSlot::Assignment(t) => {
-                                        if let ::sittir_core::SlotValue::Transport(seated) = &mut t.content {
-                                            let t: &mut AssignmentContentTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
-                                            match t {
-                                                AssignmentContentTransportSlot::AssignmentEq(t) => {
-                                                    t.assignment_eq_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_EQ_AFTER]);
-                                                }
-                                                AssignmentContentTransportSlot::AssignmentType(t) => {
-                                                    t.assignment_type_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_TYPE_AFTER]);
-                                                }
-                                                AssignmentContentTransportSlot::AssignmentTyped(t) => {
-                                                    t.assignment_typed_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_TYPED_AFTER]);
-                                                }
-                                                #[allow(unreachable_patterns)]
-                                                _ => {}
-                                            }
-                                        }
+                                    ExpressionStatementContentTransportSlot::AssignmentEq(t) => {
+                                        t.assignment_eq_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_EQ_AFTER]);
+                                    }
+                                    ExpressionStatementContentTransportSlot::AssignmentType(t) => {
+                                        t.assignment_type_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_TYPE_AFTER]);
+                                    }
+                                    ExpressionStatementContentTransportSlot::AssignmentTyped(t) => {
+                                        t.assignment_typed_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_ASSIGNMENT_TYPED_AFTER]);
                                     }
                                     ExpressionStatementContentTransportSlot::AugmentedAssignment(t) => {
                                         t.augmented_assignment_after.get_or_insert(ctx.options.spacing[options::SITE_SIMPLE_STATEMENTS_ELEMENTS_SIMPLE_STATEMENT_AUGMENTED_ASSIGNMENT_AFTER]);
@@ -35756,6 +34167,60 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct SuiteInlineTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements_elements"))]
+    pub simple_statements_elements: ::sittir_core::SlotValue<SimpleStatementsElementsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite_inline_before"))]
+    pub suite_inline_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite_inline_after"))]
+    pub suite_inline_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for SuiteInlineTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for SuiteInlineTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_suite_inline(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SuiteInlineTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.suite_inline_before.get_or_insert(ctx.options.spacing[options::SITE_SUITE_INLINE_SUITE_INLINE_BEFORE]);
+        self.suite_inline_after.get_or_insert(ctx.options.spacing[options::SITE_SUITE_INLINE_SUITE_INLINE_AFTER]);
+        self.simple_statements_elements.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteInlineTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteInlineTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteInlineTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteInlineTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct SuiteBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -35769,7 +34234,7 @@ pub struct SuiteBlockTransport {
 
 impl ::sittir_core::view::KindOf for SuiteBlockTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(276)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35810,6 +34275,54 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteBlockTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct SuiteEmptyTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_newline"))]
+    pub newline: ::sittir_core::SlotValue<NewlineTransport>,
+}
+
+impl ::sittir_core::view::KindOf for SuiteEmptyTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for SuiteEmptyTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_suite_empty(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for SuiteEmptyTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.newline.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SuiteEmptyTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SuiteEmptyTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SuiteEmptyTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SuiteEmptyTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ComparisonOperatorComparatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -35829,7 +34342,7 @@ pub struct ComparisonOperatorComparatorTransport {
 
 impl ::sittir_core::view::KindOf for ComparisonOperatorComparatorTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(277)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(279)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35890,7 +34403,7 @@ pub struct YieldFromClauseTransport {
 
 impl ::sittir_core::view::KindOf for YieldFromClauseTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(278)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -45486,12 +43999,6 @@ fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_cor
     Ok(())
 }
 
-fn render_with_clause(node: &WithClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    content.render(w)?;
-    Ok(())
-}
-
 fn render_with_item(node: &WithItemTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let value = &node.value;
     value.render(w)?;
@@ -45747,11 +44254,6 @@ fn render_decorator(node: &DecoratorTransport, w: &mut dyn ::sittir_core::render
     expression.render(w)?;
     w.token_seam("\n");
     w.site(node.decorator_after.unwrap_or(0));
-    Ok(())
-}
-
-fn render_suite(node: &SuiteTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    node.content.render(w)?;
     Ok(())
 }
 
@@ -46130,12 +44632,6 @@ fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, w
     w.site(node.colon_after.unwrap_or(0));
     body.render(w)?;
     w.site(node.lambda_within_for_in_clause_after.unwrap_or(0));
-    Ok(())
-}
-
-fn render_assignment(node: &AssignmentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    content.render(w)?;
     Ok(())
 }
 
@@ -47218,6 +45714,15 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, w: &mut dyn ::sitti
     Ok(())
 }
 
+fn render_suite_inline(node: &SuiteInlineTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let simple_statements_elements = &node.simple_statements_elements;
+    w.site(node.suite_inline_before.unwrap_or(0));
+    simple_statements_elements.render(w)?;
+    w.token_seam("\n");
+    w.site(node.suite_inline_after.unwrap_or(0));
+    Ok(())
+}
+
 fn render_suite_block(node: &SuiteBlockTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let block = &node.block;
     w.site(node.suite_block_before.unwrap_or(0));
@@ -47225,6 +45730,11 @@ fn render_suite_block(node: &SuiteBlockTransport, w: &mut dyn ::sittir_core::ren
     w.seam("\n");
     block.render(w)?;
     w.site(node.suite_block_after.unwrap_or(0));
+    Ok(())
+}
+
+fn render_suite_empty(node: &SuiteEmptyTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.token_seam("\n");
     Ok(())
 }
 
@@ -47663,6 +46173,21 @@ fn render_simple_statement(t: &SimpleStatementTransport, w: &mut dyn ::sittir_co
     }
 }
 
+fn render_with_clause(t: &WithClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        WithClauseTransport::WithClauseBare(inner) => inner.render(w),
+        WithClauseTransport::WithClauseParen(inner) => inner.render(w),
+    }
+}
+
+fn render_suite(t: &SuiteTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        SuiteTransport::SuiteInline(inner) => inner.render(w),
+        SuiteTransport::SuiteBlock(inner) => inner.render(w),
+        SuiteTransport::SuiteEmpty(inner) => inner.render(w),
+    }
+}
+
 fn render_parameter(t: &ParameterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     match t {
         ParameterTransport::Identifier(inner) => inner.render(w),
@@ -47790,7 +46315,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ExceptClause(inner) => inner.kind_in(kinds),
             Self::FinallyClause(inner) => inner.kind_in(kinds),
             Self::WithStatement(inner) => inner.kind_in(kinds),
-            Self::WithClause(inner) => inner.kind_in(kinds),
             Self::WithItem(inner) => inner.kind_in(kinds),
             Self::FunctionDefinition(inner) => inner.kind_in(kinds),
             Self::Parameters(inner) => inner.kind_in(kinds),
@@ -47807,7 +46331,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ArgumentList(inner) => inner.kind_in(kinds),
             Self::DecoratedDefinition(inner) => inner.kind_in(kinds),
             Self::Decorator(inner) => inner.kind_in(kinds),
-            Self::Suite(inner) => inner.kind_in(kinds),
             Self::Block(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
             Self::DottedName(inner) => inner.kind_in(kinds),
@@ -47835,7 +46358,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ComparisonOperator(inner) => inner.kind_in(kinds),
             Self::Lambda(inner) => inner.kind_in(kinds),
             Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
-            Self::Assignment(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
@@ -47922,7 +46444,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::WithClauseBare(inner) => inner.kind_in(kinds),
             Self::WithClauseParen(inner) => inner.kind_in(kinds),
             Self::MatchBlockBlock(inner) => inner.kind_in(kinds),
+            Self::SuiteInline(inner) => inner.kind_in(kinds),
             Self::SuiteBlock(inner) => inner.kind_in(kinds),
+            Self::SuiteEmpty(inner) => inner.kind_in(kinds),
             Self::ComparisonOperatorComparator(inner) => inner.kind_in(kinds),
             Self::YieldFromClause(inner) => inner.kind_in(kinds),
             Self::StringStart(inner) => inner.kind_in(kinds),
@@ -48063,7 +46587,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ExceptClause(t) => t.render(w),
             AnyTransport::FinallyClause(t) => t.render(w),
             AnyTransport::WithStatement(t) => t.render(w),
-            AnyTransport::WithClause(t) => t.render(w),
             AnyTransport::WithItem(t) => t.render(w),
             AnyTransport::FunctionDefinition(t) => t.render(w),
             AnyTransport::Parameters(t) => t.render(w),
@@ -48080,7 +46603,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ArgumentList(t) => t.render(w),
             AnyTransport::DecoratedDefinition(t) => t.render(w),
             AnyTransport::Decorator(t) => t.render(w),
-            AnyTransport::Suite(t) => t.render(w),
             AnyTransport::Block(t) => t.render(w),
             AnyTransport::ExpressionList(t) => t.render(w),
             AnyTransport::DottedName(t) => t.render(w),
@@ -48108,7 +46630,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ComparisonOperator(t) => t.render(w),
             AnyTransport::Lambda(t) => t.render(w),
             AnyTransport::LambdaWithinForInClause(t) => t.render(w),
-            AnyTransport::Assignment(t) => t.render(w),
             AnyTransport::AugmentedAssignment(t) => t.render(w),
             AnyTransport::PatternList(t) => t.render(w),
             AnyTransport::Yield(t) => t.render(w),
@@ -48195,7 +46716,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::WithClauseBare(t) => t.render(w),
             AnyTransport::WithClauseParen(t) => t.render(w),
             AnyTransport::MatchBlockBlock(t) => t.render(w),
+            AnyTransport::SuiteInline(t) => t.render(w),
             AnyTransport::SuiteBlock(t) => t.render(w),
+            AnyTransport::SuiteEmpty(t) => t.render(w),
             AnyTransport::ComparisonOperatorComparator(t) => t.render(w),
             AnyTransport::YieldFromClause(t) => t.render(w),
             AnyTransport::StringStart(t) => t.render(w),

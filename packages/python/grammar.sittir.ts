@@ -30,9 +30,9 @@ export default grammar(
 			},
 			conflicts: ($, previous) => [
 				...(previous ?? []),
-				[$.expression_statement, $._expression_statement_tuple],
-				[$._except_clause_exception_as, $._except_clause_exception_list],
-				[$.as_pattern, $._except_clause_exception_as],
+				[$.expression_statement, $.expression_statement_tuple],
+				[$.except_clause_exception_as, $.except_clause_exception_list],
+				[$.as_pattern, $.except_clause_exception_as],
 				[$._expressions, $.expression_list]
 			],
 			inline: ($, previous) => [...(previous ?? []), $._except_clause_exception_as_optional1],
@@ -275,7 +275,7 @@ export default grammar(
 
 					return choice(...base.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
 				},
-				_except_clause_exception_as: ($) => seq(field('value', $.expression), optional($._except_clause_exception_as_optional1)),
+				except_clause_exception_as: ($) => seq(field('value', $.expression), optional($._except_clause_exception_as_optional1)),
 				_except_clause_exception_as_optional1: ($) => seq('as', field('alias', $.expression)),
 
 				// See docs/python-grammar-sittir-glossary.md::string_content
@@ -304,10 +304,8 @@ export default grammar(
 				tuple: ($) => seq('(', optional(alias($._collection_elements, $.collection_elements)), ')'),
 
 				// See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
-				case_tuple_pattern: ($) =>
-					seq('(', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ')'),
-				case_list_pattern: ($) =>
-					seq('[', optional(alias($._list_pattern_case_patterns, $.list_pattern_case_patterns)), ']'),
+				case_tuple_pattern: ($) => seq('(', optional($.list_pattern_case_patterns), ')'),
+				case_list_pattern: ($) => seq('[', optional($.list_pattern_case_patterns), ']'),
 
 				// See docs/python-grammar-sittir-glossary.md::case_as_pattern
 				case_as_pattern: ($) => seq($.case_pattern, 'as', $.identifier),

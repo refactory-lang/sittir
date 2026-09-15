@@ -506,9 +506,11 @@ function variantFormsOf(
 }
 
 /**
- * A hoisted compound has no flat `ir` binding — hoisting is what keeps it out
- * of the bundle — so its spelling is the variant form its parent declares:
- * `ir.<parent>.<form>`. The parent composes in turn while it is itself
+ * A variant of a flattened parent is spelled by codegen's published route
+ * (`node-model.json5` `variantRoutes`, e.g. `ir.exportStatement.default.from`).
+ * Any other hoisted compound has no flat `ir` binding — hoisting is what keeps
+ * it out of the bundle — so its spelling is the variant form its parent
+ * declares: `ir.<parent>.<form>`. The parent composes in turn while it is itself
  * hoisted, and the path stops at the first kind that owns a flat binding.
  * Being declared under a variant form does not settle this on its own: a kind
  * that is not hoisted carries both spellings, and its flat one is canonical.
@@ -516,10 +518,13 @@ function variantFormsOf(
 function irPathResolver(
 	irKeys: Record<string, string>,
 	variantForms: ReadonlyMap<string, VariantForm>,
-	hoistedKinds: ReadonlySet<string>
+	hoistedKinds: ReadonlySet<string>,
+	variantRoutes: Readonly<Record<string, string>>
 ): (kind: string) => string {
 	const isHoisted = (kind: string): boolean => hoistedKinds.has(kind) || hoistedKinds.has(`_${kind}`);
 	const segments = (kind: string, seen: Set<string>): string[] => {
+		const route = variantRoutes[kind] ?? variantRoutes[`_${kind}`];
+		if (route !== undefined) return [route];
 		const form = variantForms.get(kind);
 		if (form === undefined || !isHoisted(kind) || seen.has(kind)) {
 			return [irKeys[kind] ?? camelCase(kind)];
@@ -629,7 +634,8 @@ export async function emitFactorySourceText(grammar: string, source: string, exp
 		irPathOfKind: irPathResolver(
 			withPublicNames(model.irKeys),
 			variantFormsOf(model.polymorphVariants, model.modelTypes),
-			model.hoistedKinds
+			model.hoistedKinds,
+			model.variantRoutes
 		),
 		seats: model.seats,
 		slotKinds: withPublicNames(model.slotKinds),
