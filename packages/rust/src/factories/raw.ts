@@ -1523,31 +1523,38 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bu
 	);
 }
 
+export function buildUseWildcard(value?: T.UseWildcardGroup): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(
 	value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-): T.UseWildcard.Built {
-	const _path = coerceMixedEnumStorage<NonNullable<T.UseWildcard['_path']>>(value, [
-		['self', TSKindId.Self] as const,
-		['super', TSKindId.Super] as const,
-		['crate', TSKindId.Crate] as const
-	]);
+): ReturnType<typeof _buildUseWildcard>;
+export function buildUseWildcard(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildUseWildcard(args[0] as T.UseWildcardGroup);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.UseWildcardGroup as const);
+	return prebuilt
+		? _buildUseWildcard(args[0] as T.UseWildcardGroup)
+		: _buildUseWildcard((buildUseWildcardGroup as (...a: unknown[]) => unknown)(...args) as T.UseWildcardGroup);
+}
+function _buildUseWildcard(value?: T.UseWildcardGroup): T.UseWildcard.Built {
+	const _use_wildcard_group = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.UseWildcard as const,
 				$source: 2 as const,
 				$named: true as const,
-				_path,
+				_use_wildcard_group,
 				$with: {
-					path: (
-						value?: NonNullable<
-							TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-						>
-					) => buildUseWildcard(value)
+					useWildcardGroup: (value?: T.UseWildcardGroup) => buildUseWildcard(value)
 				}
 			},
 			{
-				path: () => _path
+				useWildcardGroup: () => _use_wildcard_group
 			}
 		),
 		methodsEngine
@@ -5128,6 +5135,37 @@ function _buildStructPatternElements(
 	);
 }
 
+export function buildUseWildcardGroup(
+	value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+): T.UseWildcardGroup.Built {
+	const _path = coerceMixedEnumStorage<NonNullable<T.UseWildcardGroup['_path']>>(value, [
+		['self', TSKindId.Self] as const,
+		['super', TSKindId.Super] as const,
+		['crate', TSKindId.Crate] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.UseWildcardGroup as const,
+				$source: 2 as const,
+				$named: true as const,
+				_path,
+				$with: {
+					path: (
+						value?: NonNullable<
+							TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+						>
+					) => buildUseWildcardGroup(value)
+				}
+			},
+			{
+				path: () => _path
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildVisibilityModifierGroup(
 	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath
 ): T.VisibilityModifierGroup.Built {
@@ -7457,6 +7495,7 @@ export type FluentKindMap = {
 	tuple_pattern_elements: T.TuplePatternElements.Built;
 	patterns: T.Patterns.Built;
 	struct_pattern_elements: T.StructPatternElements.Built;
+	use_wildcard_group: T.UseWildcardGroup.Built;
 	visibility_modifier_group: T.VisibilityModifierGroup.Built;
 	_tuple_type_elements: T.TupleTypeElements.Built;
 	_tuple_expression_elements: T.TupleExpressionElements.Built;
@@ -7696,6 +7735,7 @@ export const _factoryMap = {
 	tuple_pattern_elements: buildTuplePatternElements,
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
+	use_wildcard_group: buildUseWildcardGroup,
 	visibility_modifier_group: buildVisibilityModifierGroup,
 	_tuple_type_elements: buildTupleTypeElements,
 	_tuple_expression_elements: buildTupleExpressionElements,

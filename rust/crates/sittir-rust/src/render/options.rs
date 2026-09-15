@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::ResolvedOptions;
 
-pub const SPACING_SITE_COUNT: usize = 1606;
+pub const SPACING_SITE_COUNT: usize = 1608;
 pub const DELIMITER_SITE_COUNT: usize = 18;
 
 pub const SITE_ABSTRACT_TYPE_FOR_KEYWORD_BEFORE: usize = 0;
@@ -1566,51 +1566,53 @@ pub const SITE_USE_LIST_USE_LIST_BEFORE: usize = 1557;
 pub const SITE_USE_LIST_USE_LIST_AFTER: usize = 1558;
 pub const SITE_USE_WILDCARD_STAR_BEFORE: usize = 1559;
 pub const SITE_USE_WILDCARD_STAR_AFTER: usize = 1560;
-pub const SITE_USE_WILDCARD_COLON_COLON_BEFORE: usize = 1561;
-pub const SITE_USE_WILDCARD_COLON_COLON_AFTER: usize = 1562;
-pub const SITE_USE_WILDCARD_USE_WILDCARD_BEFORE: usize = 1563;
-pub const SITE_USE_WILDCARD_USE_WILDCARD_AFTER: usize = 1564;
-pub const SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE: usize = 1565;
-pub const SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_AFTER: usize = 1566;
-pub const SITE_VARIADIC_PARAMETER_COLON_BEFORE: usize = 1567;
-pub const SITE_VARIADIC_PARAMETER_COLON_AFTER: usize = 1568;
-pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_BEFORE: usize = 1569;
-pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER: usize = 1570;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_BEFORE: usize = 1571;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_AFTER: usize = 1572;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE: usize = 1573;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_AFTER: usize = 1574;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE: usize = 1575;
-pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER: usize = 1576;
-pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_BEFORE: usize = 1577;
-pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER: usize = 1578;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 1579;
-pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 1580;
-pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE: usize = 1581;
-pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER: usize = 1582;
-pub const SITE_WHERE_CLAUSE_WHERE_KEYWORD_BEFORE: usize = 1583;
-pub const SITE_WHERE_CLAUSE_WHERE_KEYWORD_AFTER: usize = 1584;
-pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE: usize = 1585;
-pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER: usize = 1586;
-pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_BEFORE: usize = 1587;
-pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 1588;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 1589;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_END: usize = 1590;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_START: usize = 1591;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE: usize = 1592;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER: usize = 1593;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE: usize = 1594;
-pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER: usize = 1595;
-pub const SITE_WHILE_EXPRESSION_COLON_BEFORE: usize = 1596;
-pub const SITE_WHILE_EXPRESSION_COLON_AFTER: usize = 1597;
-pub const SITE_WHILE_EXPRESSION_WHILE_KEYWORD_BEFORE: usize = 1598;
-pub const SITE_WHILE_EXPRESSION_WHILE_KEYWORD_AFTER: usize = 1599;
-pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE: usize = 1600;
-pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER: usize = 1601;
-pub const SITE_YIELD_EXPRESSION_YIELD_KEYWORD_BEFORE: usize = 1602;
-pub const SITE_YIELD_EXPRESSION_YIELD_KEYWORD_AFTER: usize = 1603;
-pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE: usize = 1604;
-pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER: usize = 1605;
+pub const SITE_USE_WILDCARD_USE_WILDCARD_BEFORE: usize = 1561;
+pub const SITE_USE_WILDCARD_USE_WILDCARD_AFTER: usize = 1562;
+pub const SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE: usize = 1563;
+pub const SITE_USE_WILDCARD_GROUP_COLON_COLON_AFTER: usize = 1564;
+pub const SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE: usize = 1565;
+pub const SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER: usize = 1566;
+pub const SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_BEFORE: usize = 1567;
+pub const SITE_VARIADIC_PARAMETER_DOT_DOT_DOT_AFTER: usize = 1568;
+pub const SITE_VARIADIC_PARAMETER_COLON_BEFORE: usize = 1569;
+pub const SITE_VARIADIC_PARAMETER_COLON_AFTER: usize = 1570;
+pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_BEFORE: usize = 1571;
+pub const SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER: usize = 1572;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_BEFORE: usize = 1573;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_LPAREN_AFTER: usize = 1574;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_BEFORE: usize = 1575;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_RPAREN_AFTER: usize = 1576;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_BEFORE: usize = 1577;
+pub const SITE_VISIBILITY_MODIFIER_GROUP_VISIBILITY_MODIFIER_GROUP_AFTER: usize = 1578;
+pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_BEFORE: usize = 1579;
+pub const SITE_VISIBILITY_MODIFIER_PUB_PUB_KEYWORD_AFTER: usize = 1580;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_BEFORE: usize = 1581;
+pub const SITE_VISIBILITY_MODIFIER_PUB_VISIBILITY_MODIFIER_PUB_AFTER: usize = 1582;
+pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_BEFORE: usize = 1583;
+pub const SITE_VISIBILITY_MODIFIER_PUB_IN_PATH_VISIBILITY_MODIFIER_PUB_IN_PATH_AFTER: usize = 1584;
+pub const SITE_WHERE_CLAUSE_WHERE_KEYWORD_BEFORE: usize = 1585;
+pub const SITE_WHERE_CLAUSE_WHERE_KEYWORD_AFTER: usize = 1586;
+pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_BEFORE: usize = 1587;
+pub const SITE_WHERE_CLAUSE_WHERE_CLAUSE_AFTER: usize = 1588;
+pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_BEFORE: usize = 1589;
+pub const SITE_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 1590;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_WHERE_PREDICATE_AFTER: usize = 1591;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_END: usize = 1592;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_START: usize = 1593;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_BEFORE: usize = 1594;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATE_SEPARATOR_SPACE_AFTER: usize = 1595;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_BEFORE: usize = 1596;
+pub const SITE_WHERE_PREDICATES_WHERE_PREDICATES_AFTER: usize = 1597;
+pub const SITE_WHILE_EXPRESSION_COLON_BEFORE: usize = 1598;
+pub const SITE_WHILE_EXPRESSION_COLON_AFTER: usize = 1599;
+pub const SITE_WHILE_EXPRESSION_WHILE_KEYWORD_BEFORE: usize = 1600;
+pub const SITE_WHILE_EXPRESSION_WHILE_KEYWORD_AFTER: usize = 1601;
+pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_BEFORE: usize = 1602;
+pub const SITE_WHILE_EXPRESSION_WHILE_EXPRESSION_AFTER: usize = 1603;
+pub const SITE_YIELD_EXPRESSION_YIELD_KEYWORD_BEFORE: usize = 1604;
+pub const SITE_YIELD_EXPRESSION_YIELD_KEYWORD_AFTER: usize = 1605;
+pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_BEFORE: usize = 1606;
+pub const SITE_YIELD_EXPRESSION_YIELD_EXPRESSION_AFTER: usize = 1607;
 pub const DELIM_ARGUMENTS_ELEMENTS_ELEMENT: usize = 0;
 pub const DELIM_ENUM_VARIANT_LIST_ELEMENTS_ELEMENT: usize = 1;
 pub const DELIM_FIELD_DECLARATION_LIST_ELEMENTS_ELEMENT: usize = 2;
@@ -3193,10 +3195,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[
     ("use_list", "use_list_after", "use_list_after", 157, &[157, 158, 159, 160, 161, 162]),
     ("use_wildcard", "star_before", "star_before", 157, &[157, 158, 159, 160, 161, 162]),
     ("use_wildcard", "star_after", "star_after", 157, &[157, 158, 159, 160, 161, 162]),
-    ("use_wildcard", "colon_colon_before", "colon_colon_before", 157, &[157, 158, 159, 160, 161, 162]),
-    ("use_wildcard", "colon_colon_after", "colon_colon_after", 157, &[157, 158, 159, 160, 161, 162]),
     ("use_wildcard", "use_wildcard_before", "use_wildcard_before", 157, &[157, 158, 159, 160, 161, 162]),
     ("use_wildcard", "use_wildcard_after", "use_wildcard_after", 157, &[157, 158, 159, 160, 161, 162]),
+    ("use_wildcard_group", "colon_colon_before", "colon_colon_before", 157, &[157, 158, 159, 160, 161, 162]),
+    ("use_wildcard_group", "colon_colon_after", "colon_colon_after", 157, &[157, 158, 159, 160, 161, 162]),
+    ("use_wildcard_group", "use_wildcard_group_before", "use_wildcard_group_before", 157, &[157, 158, 159, 160, 161, 162]),
+    ("use_wildcard_group", "use_wildcard_group_after", "use_wildcard_group_after", 157, &[157, 158, 159, 160, 161, 162]),
     ("variadic_parameter", "dot_dot_dot_before", "dot_dot_dot_before", 157, &[157, 158, 159, 160, 161, 162]),
     ("variadic_parameter", "dot_dot_dot_after", "dot_dot_dot_after", 157, &[157, 158, 159, 160, 161, 162]),
     ("variadic_parameter", "colon_before", "colon_before", 157, &[157, 158, 159, 160, 161, 162]),
@@ -3466,16 +3470,17 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("use_clauses", &[1545, 1542, 1541, 1546, 1536, 1537, 1538, 1539, 1540]),
     ("use_declaration", &[1551, 1549, 1550, 1547, 1548, 1552]),
     ("use_list", &[1557, 1553, 1554, 1555, 1556, 1558]),
-    ("use_wildcard", &[1563, 1561, 1562, 1559, 1560, 1564]),
-    ("variadic_parameter", &[1569, 1567, 1568, 1565, 1566, 1570]),
-    ("visibility_modifier_group", &[1575, 1571, 1572, 1573, 1574, 1576]),
-    ("visibility_modifier_pub", &[1579, 1577, 1578, 1580]),
-    ("visibility_modifier_pub_in_path", &[1581, 1582]),
-    ("where_clause", &[1585, 1583, 1584, 1586]),
-    ("where_predicate", &[1587, 1588]),
-    ("where_predicates", &[1594, 1591, 1590, 1595, 1589]),
-    ("while_expression", &[1600, 1596, 1597, 1598, 1599, 1601]),
-    ("yield_expression", &[1604, 1602, 1603, 1605]),
+    ("use_wildcard", &[1561, 1559, 1560, 1562]),
+    ("use_wildcard_group", &[1565, 1563, 1564, 1566]),
+    ("variadic_parameter", &[1571, 1569, 1570, 1567, 1568, 1572]),
+    ("visibility_modifier_group", &[1577, 1573, 1574, 1575, 1576, 1578]),
+    ("visibility_modifier_pub", &[1581, 1579, 1580, 1582]),
+    ("visibility_modifier_pub_in_path", &[1583, 1584]),
+    ("where_clause", &[1587, 1585, 1586, 1588]),
+    ("where_predicate", &[1589, 1590]),
+    ("where_predicates", &[1596, 1593, 1592, 1597, 1591]),
+    ("while_expression", &[1602, 1598, 1599, 1600, 1601, 1603]),
+    ("yield_expression", &[1606, 1604, 1605, 1607]),
 ];
 
 pub fn spacing_text(kind: u16) -> &'static str {
@@ -3709,6 +3714,7 @@ pub struct Options {
     pub use_declaration: Option<UseDeclarationOptions>,
     pub use_list: Option<UseListOptions>,
     pub use_wildcard: Option<UseWildcardOptions>,
+    pub use_wildcard_group: Option<UseWildcardGroupOptions>,
     pub variadic_parameter: Option<VariadicParameterOptions>,
     pub visibility_modifier_group: Option<VisibilityModifierGroupOptions>,
     pub visibility_modifier_pub: Option<VisibilityModifierPubOptions>,
@@ -3724,7 +3730,7 @@ pub struct Options {
 impl ::napi::bindgen_prelude::FromNapiValue for Options {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "abstract_type", "arguments", "arguments_elements", "array_expression_list", "array_expression_semi", "array_type", "assignment_expression", "associated_type", "async_block", "attribute", "attribute_input", "attribute_item", "attributed_argument", "attributed_enum_variant", "attributed_field_declaration", "attributed_ordered_field", "attributed_parameter", "attributed_type_parameter", "await_expression", "base_field_initializer", "binary_expression", "block", "block_comment", "block_comment_doc_inner", "block_comment_doc_outer", "body", "bounded_type", "bracketed_type", "break_expression", "call_expression", "captured_pattern", "char_literal", "closure_expression_block", "closure_expression_expr", "closure_parameters", "compound_assignment_expr", "compound_assignment_expr_operator", "const_block", "const_item", "const_parameter", "continue_expression", "declaration_list", "delim_token_tree_brace", "delim_token_tree_bracket", "delim_token_tree_paren", "dynamic_type", "else_clause", "enum_item", "enum_variant", "enum_variant_list", "enum_variant_list_elements", "expression_statement_with_semi", "extern_crate_declaration", "extern_modifier", "field_declaration", "field_declaration_list", "field_declaration_list_elements", "field_expression", "field_initializer", "field_initializer_list", "field_initializer_list_elements", "field_pattern_named", "field_pattern_shorthand", "for_expression", "for_lifetimes", "foreign_mod_item_body", "foreign_mod_item_semi", "function_item", "function_modifiers", "function_signature_item", "function_type", "function_type_fn_form", "gap", "gen_block", "generic_function", "generic_pattern", "generic_type", "generic_type_with_turbofish", "higher_ranked_trait_bound", "if_expression", "impl_item_body", "impl_item_negative_clause", "impl_item_positive_clause", "impl_item_semi", "index_expression", "inner_attribute_item", "integer_literal", "label", "last_match_arm", "let_chain", "let_condition", "let_declaration", "lifetime", "lifetime_parameter", "lifetimes", "line_comment", "line_comment_doc_inner", "line_comment_doc_outer", "loop_expression", "macro_definition_brace", "macro_definition_bracket", "macro_definition_paren", "macro_invocation", "macro_rule", "macro_rules", "match_arm_block_ending", "match_arm_with_comma", "match_block", "match_block_arms", "match_expression", "match_pattern", "mod_item_external", "mod_item_inline", "mut_pattern", "negative_literal", "or_pattern_binary", "or_pattern_prefix", "ordered_field_declaration_list", "ordered_field_declaration_list_elements", "parameter", "parameters", "parameters_elements", "parenthesized_expression", "patterns", "pointer_type_const", "pointer_type_mut", "qualified_type", "range_expression_binary", "range_expression_postfix", "range_expression_prefix", "range_pattern_prefix", "range_pattern_with_left", "range_pattern_with_left_with_right", "raw_string_literal", "ref_pattern", "reference_expression_bare", "reference_expression_mut", "reference_expression_raw_const", "reference_expression_raw_mut", "reference_pattern", "reference_type", "removed_trait_bound", "return_expression", "scoped_identifier", "scoped_type_identifier", "scoped_type_identifier_in_expression_position", "scoped_use_list", "self_parameter", "shorthand_field_initializer", "slice_pattern", "source_file", "static_item", "string_literal", "struct_expression", "struct_item_brace", "struct_item_tuple", "struct_item_unit", "struct_pattern", "struct_pattern_elements", "token_binding_pattern", "token_keywords", "token_repetition", "token_repetition_pattern", "token_tree_brace", "token_tree_bracket", "token_tree_paren", "token_tree_pattern_brace", "token_tree_pattern_bracket", "token_tree_pattern_paren", "token_tree_punctuation", "trait_bounds", "trait_item", "try_block", "try_expression", "tuple_expression", "tuple_expression_elements", "tuple_pattern", "tuple_pattern_elements", "tuple_struct_pattern", "tuple_type", "tuple_type_elements", "type_argument", "type_arguments", "type_arguments_elements", "type_binding", "type_cast_expression", "type_item", "type_parameter", "type_parameters", "type_parameters_elements", "unary_expression", "union_item", "unit_expression", "unit_type", "unsafe_block", "use_as_clause", "use_bounds", "use_bounds_elements", "use_clauses", "use_declaration", "use_list", "use_wildcard", "variadic_parameter", "visibility_modifier_group", "visibility_modifier_pub", "visibility_modifier_pub_in_path", "where_clause", "where_predicate", "where_predicates", "while_expression", "yield_expression"], "")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "abstract_type", "arguments", "arguments_elements", "array_expression_list", "array_expression_semi", "array_type", "assignment_expression", "associated_type", "async_block", "attribute", "attribute_input", "attribute_item", "attributed_argument", "attributed_enum_variant", "attributed_field_declaration", "attributed_ordered_field", "attributed_parameter", "attributed_type_parameter", "await_expression", "base_field_initializer", "binary_expression", "block", "block_comment", "block_comment_doc_inner", "block_comment_doc_outer", "body", "bounded_type", "bracketed_type", "break_expression", "call_expression", "captured_pattern", "char_literal", "closure_expression_block", "closure_expression_expr", "closure_parameters", "compound_assignment_expr", "compound_assignment_expr_operator", "const_block", "const_item", "const_parameter", "continue_expression", "declaration_list", "delim_token_tree_brace", "delim_token_tree_bracket", "delim_token_tree_paren", "dynamic_type", "else_clause", "enum_item", "enum_variant", "enum_variant_list", "enum_variant_list_elements", "expression_statement_with_semi", "extern_crate_declaration", "extern_modifier", "field_declaration", "field_declaration_list", "field_declaration_list_elements", "field_expression", "field_initializer", "field_initializer_list", "field_initializer_list_elements", "field_pattern_named", "field_pattern_shorthand", "for_expression", "for_lifetimes", "foreign_mod_item_body", "foreign_mod_item_semi", "function_item", "function_modifiers", "function_signature_item", "function_type", "function_type_fn_form", "gap", "gen_block", "generic_function", "generic_pattern", "generic_type", "generic_type_with_turbofish", "higher_ranked_trait_bound", "if_expression", "impl_item_body", "impl_item_negative_clause", "impl_item_positive_clause", "impl_item_semi", "index_expression", "inner_attribute_item", "integer_literal", "label", "last_match_arm", "let_chain", "let_condition", "let_declaration", "lifetime", "lifetime_parameter", "lifetimes", "line_comment", "line_comment_doc_inner", "line_comment_doc_outer", "loop_expression", "macro_definition_brace", "macro_definition_bracket", "macro_definition_paren", "macro_invocation", "macro_rule", "macro_rules", "match_arm_block_ending", "match_arm_with_comma", "match_block", "match_block_arms", "match_expression", "match_pattern", "mod_item_external", "mod_item_inline", "mut_pattern", "negative_literal", "or_pattern_binary", "or_pattern_prefix", "ordered_field_declaration_list", "ordered_field_declaration_list_elements", "parameter", "parameters", "parameters_elements", "parenthesized_expression", "patterns", "pointer_type_const", "pointer_type_mut", "qualified_type", "range_expression_binary", "range_expression_postfix", "range_expression_prefix", "range_pattern_prefix", "range_pattern_with_left", "range_pattern_with_left_with_right", "raw_string_literal", "ref_pattern", "reference_expression_bare", "reference_expression_mut", "reference_expression_raw_const", "reference_expression_raw_mut", "reference_pattern", "reference_type", "removed_trait_bound", "return_expression", "scoped_identifier", "scoped_type_identifier", "scoped_type_identifier_in_expression_position", "scoped_use_list", "self_parameter", "shorthand_field_initializer", "slice_pattern", "source_file", "static_item", "string_literal", "struct_expression", "struct_item_brace", "struct_item_tuple", "struct_item_unit", "struct_pattern", "struct_pattern_elements", "token_binding_pattern", "token_keywords", "token_repetition", "token_repetition_pattern", "token_tree_brace", "token_tree_bracket", "token_tree_paren", "token_tree_pattern_brace", "token_tree_pattern_bracket", "token_tree_pattern_paren", "token_tree_punctuation", "trait_bounds", "trait_item", "try_block", "try_expression", "tuple_expression", "tuple_expression_elements", "tuple_pattern", "tuple_pattern_elements", "tuple_struct_pattern", "tuple_type", "tuple_type_elements", "type_argument", "type_arguments", "type_arguments_elements", "type_binding", "type_cast_expression", "type_item", "type_parameter", "type_parameters", "type_parameters_elements", "unary_expression", "union_item", "unit_expression", "unit_type", "unsafe_block", "use_as_clause", "use_bounds", "use_bounds_elements", "use_clauses", "use_declaration", "use_list", "use_wildcard", "use_wildcard_group", "variadic_parameter", "visibility_modifier_group", "visibility_modifier_pub", "visibility_modifier_pub_in_path", "where_clause", "where_predicate", "where_predicates", "while_expression", "yield_expression"], "")?;
         Ok(Self {
             indent: obj.get("indent")?,
             abstract_type: obj.get("abstract_type")?,
@@ -3929,6 +3935,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Options {
             use_declaration: obj.get("use_declaration")?,
             use_list: obj.get("use_list")?,
             use_wildcard: obj.get("use_wildcard")?,
+            use_wildcard_group: obj.get("use_wildcard_group")?,
             variadic_parameter: obj.get("variadic_parameter")?,
             visibility_modifier_group: obj.get("visibility_modifier_group")?,
             visibility_modifier_pub: obj.get("visibility_modifier_pub")?,
@@ -4149,6 +4156,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Options {
         obj.set("use_declaration", val.use_declaration)?;
         obj.set("use_list", val.use_list)?;
         obj.set("use_wildcard", val.use_wildcard)?;
+        obj.set("use_wildcard_group", val.use_wildcard_group)?;
         obj.set("variadic_parameter", val.variadic_parameter)?;
         obj.set("visibility_modifier_group", val.visibility_modifier_group)?;
         obj.set("visibility_modifier_pub", val.visibility_modifier_pub)?;
@@ -33400,7 +33408,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for UseListRbraceOptions {
 pub struct UseWildcardOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
-    pub colon_colon: Option<UseWildcardColonColonOptions>,
     pub star: Option<UseWildcardStarOptions>,
 }
 
@@ -33408,11 +33415,10 @@ pub struct UseWildcardOptions {
 impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before", "colon_colon", "star"], "(use_wildcard)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before", "star"], "(use_wildcard)")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
-            colon_colon: obj.get("colon_colon")?,
             star: obj.get("star")?,
         })
     }
@@ -33424,36 +33430,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardOptions {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
         obj.set("before", val.before)?;
-        obj.set("colon_colon", val.colon_colon)?;
         obj.set("star", val.star)?;
-        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
-    }
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct UseWildcardColonColonOptions {
-    pub after: Option<u16>,
-    pub before: Option<u16>,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardColonColonOptions {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(use_wildcard)/\"::\"")?;
-        Ok(Self {
-            after: obj.get("after")?,
-            before: obj.get("before")?,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardColonColonOptions {
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
-        obj.set("after", val.after)?;
-        obj.set("before", val.before)?;
         Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
     }
 }
@@ -33478,6 +33455,65 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardStarOptions {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardStarOptions {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
+        obj.set("after", val.after)?;
+        obj.set("before", val.before)?;
+        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct UseWildcardGroupOptions {
+    pub after: Option<u16>,
+    pub before: Option<u16>,
+    pub colon_colon: Option<UseWildcardGroupColonColonOptions>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardGroupOptions {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before", "colon_colon"], "(use_wildcard_group)")?;
+        Ok(Self {
+            after: obj.get("after")?,
+            before: obj.get("before")?,
+            colon_colon: obj.get("colon_colon")?,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardGroupOptions {
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
+        obj.set("after", val.after)?;
+        obj.set("before", val.before)?;
+        obj.set("colon_colon", val.colon_colon)?;
+        Ok(::napi::bindgen_prelude::JsValue::raw(&obj))
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct UseWildcardGroupColonColonOptions {
+    pub after: Option<u16>,
+    pub before: Option<u16>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardGroupColonColonOptions {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(use_wildcard_group)/\"::\"")?;
+        Ok(Self {
+            after: obj.get("after")?,
+            before: obj.get("before")?,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardGroupColonColonOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -38931,17 +38967,23 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     if let Some(v) = options.use_wildcard.as_ref().and_then(|o| o.before) {
         set_spacing(&mut table, SITE_USE_WILDCARD_USE_WILDCARD_BEFORE, SPACING_SITES[SITE_USE_WILDCARD_USE_WILDCARD_BEFORE].4, v, "(use_wildcard)/before")?;
     }
-    if let Some(v) = options.use_wildcard.as_ref().and_then(|o| o.colon_colon.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_USE_WILDCARD_COLON_COLON_AFTER, SPACING_SITES[SITE_USE_WILDCARD_COLON_COLON_AFTER].4, v, "(use_wildcard)/\"::\"/after")?;
-    }
-    if let Some(v) = options.use_wildcard.as_ref().and_then(|o| o.colon_colon.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_USE_WILDCARD_COLON_COLON_BEFORE, SPACING_SITES[SITE_USE_WILDCARD_COLON_COLON_BEFORE].4, v, "(use_wildcard)/\"::\"/before")?;
-    }
     if let Some(v) = options.use_wildcard.as_ref().and_then(|o| o.star.as_ref()).and_then(|o| o.after) {
         set_spacing(&mut table, SITE_USE_WILDCARD_STAR_AFTER, SPACING_SITES[SITE_USE_WILDCARD_STAR_AFTER].4, v, "(use_wildcard)/\"*\"/after")?;
     }
     if let Some(v) = options.use_wildcard.as_ref().and_then(|o| o.star.as_ref()).and_then(|o| o.before) {
         set_spacing(&mut table, SITE_USE_WILDCARD_STAR_BEFORE, SPACING_SITES[SITE_USE_WILDCARD_STAR_BEFORE].4, v, "(use_wildcard)/\"*\"/before")?;
+    }
+    if let Some(v) = options.use_wildcard_group.as_ref().and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER, SPACING_SITES[SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER].4, v, "(use_wildcard_group)/after")?;
+    }
+    if let Some(v) = options.use_wildcard_group.as_ref().and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE, SPACING_SITES[SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE].4, v, "(use_wildcard_group)/before")?;
+    }
+    if let Some(v) = options.use_wildcard_group.as_ref().and_then(|o| o.colon_colon.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_USE_WILDCARD_GROUP_COLON_COLON_AFTER, SPACING_SITES[SITE_USE_WILDCARD_GROUP_COLON_COLON_AFTER].4, v, "(use_wildcard_group)/\"::\"/after")?;
+    }
+    if let Some(v) = options.use_wildcard_group.as_ref().and_then(|o| o.colon_colon.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE, SPACING_SITES[SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE].4, v, "(use_wildcard_group)/\"::\"/before")?;
     }
     if let Some(v) = options.variadic_parameter.as_ref().and_then(|o| o.after) {
         set_spacing(&mut table, SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER, SPACING_SITES[SITE_VARIADIC_PARAMETER_VARIADIC_PARAMETER_AFTER].4, v, "(variadic_parameter)/after")?;

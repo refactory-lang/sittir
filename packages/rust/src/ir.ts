@@ -795,6 +795,7 @@ export const ir: {
 	readonly tuplePatternElements: typeof F.tuplePatternElements;
 	readonly patterns: typeof F.patterns;
 	readonly structPatternElements: typeof F.structPatternElements;
+	readonly useWildcardGroup: typeof F.useWildcardGroup;
 	readonly visibilityModifierGroup: typeof F.visibilityModifierGroup;
 	readonly tupleTypeElements: typeof F.tupleTypeElements;
 	readonly tupleExpressionElements: typeof F.tupleExpressionElements;
@@ -1064,6 +1065,7 @@ export const ir: {
 	tuplePatternElements: F.tuplePatternElements,
 	patterns: F.patterns,
 	structPatternElements: F.structPatternElements,
+	useWildcardGroup: F.useWildcardGroup,
 	visibilityModifierGroup: F.visibilityModifierGroup,
 	tupleTypeElements: F.tupleTypeElements,
 	tupleExpressionElements: F.tupleExpressionElements,

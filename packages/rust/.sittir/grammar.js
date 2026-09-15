@@ -5326,6 +5326,10 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        // See docs/rust-grammar-sittir-glossary.md::use_wildcard
+        use_wildcard: {
+          "0/0/0": field2("path")
+        },
         parameter: {
           "1": field2("name")
         },
@@ -5697,8 +5701,6 @@ var grammar_sittir_default = grammar(
           "where",
           "while"
         ),
-        use_wildcard: ($) => seq(optional($._use_wildcard_clause), "*"),
-        _use_wildcard_clause: ($) => seq(field2("path", $._path), "::"),
         where_predicates: ($, previous) => prec.right(0, previous),
         _wildcard_pattern: ($) => "_",
         _range_expression_bare: ($) => "..",

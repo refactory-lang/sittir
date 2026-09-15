@@ -2817,7 +2817,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_use_wildcard_clause"
+              "name": "use_wildcard_group",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              }
             },
             {
               "type": "BLANK"
@@ -9849,25 +9853,29 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_path"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "FIELD",
+          "name": "path",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_path"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
           "value": "::"
         }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
+      ]
     },
     "visibility_modifier_group": {
       "type": "SEQ",
@@ -10632,26 +10640,6 @@
         {
           "type": "STRING",
           "value": "while"
-        }
-      ]
-    },
-    "_use_wildcard_clause": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "path",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_path"
-          },
-          "metadata": {
-            "fieldSource": "override"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "::"
         }
       ]
     },

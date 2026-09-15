@@ -219,6 +219,7 @@ export type AddressRoot =
 	| 'use_declaration'
 	| 'use_list'
 	| 'use_wildcard'
+	| 'use_wildcard_group'
 	| 'variadic_parameter'
 	| 'visibility_modifier_group'
 	| 'visibility_modifier_pub'
@@ -1776,9 +1777,10 @@ export interface AddressBranch {
 	readonly use_list: 'after' | 'before' | 'lbrace' | 'rbrace';
 	readonly 'use_list/lbrace': 'after' | 'before';
 	readonly 'use_list/rbrace': 'after' | 'before';
-	readonly use_wildcard: 'after' | 'before' | 'colon_colon' | 'star';
-	readonly 'use_wildcard/colon_colon': 'after' | 'before';
+	readonly use_wildcard: 'after' | 'before' | 'star';
 	readonly 'use_wildcard/star': 'after' | 'before';
+	readonly use_wildcard_group: 'after' | 'before' | 'colon_colon';
+	readonly 'use_wildcard_group/colon_colon': 'after' | 'before';
 	readonly variadic_parameter: 'after' | 'before' | 'colon' | 'dot_dot_dot';
 	readonly 'variadic_parameter/colon': 'after' | 'before';
 	readonly 'variadic_parameter/dot_dot_dot': 'after' | 'before';
@@ -3386,10 +3388,12 @@ export interface AddressLeaf {
 	readonly 'use_list/rbrace/before': WhitespaceArm;
 	readonly 'use_wildcard/after': WhitespaceArm;
 	readonly 'use_wildcard/before': WhitespaceArm;
-	readonly 'use_wildcard/colon_colon/after': WhitespaceArm;
-	readonly 'use_wildcard/colon_colon/before': WhitespaceArm;
 	readonly 'use_wildcard/star/after': WhitespaceArm;
 	readonly 'use_wildcard/star/before': WhitespaceArm;
+	readonly 'use_wildcard_group/after': WhitespaceArm;
+	readonly 'use_wildcard_group/before': WhitespaceArm;
+	readonly 'use_wildcard_group/colon_colon/after': WhitespaceArm;
+	readonly 'use_wildcard_group/colon_colon/before': WhitespaceArm;
 	readonly 'variadic_parameter/after': WhitespaceArm;
 	readonly 'variadic_parameter/before': WhitespaceArm;
 	readonly 'variadic_parameter/colon/after': WhitespaceArm;

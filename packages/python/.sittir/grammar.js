@@ -5308,6 +5308,28 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        // See docs/python-grammar-sittir-glossary.md::parameters
+        parameters: {
+          "1/0": alias("parameters_elements")
+        },
+        lambda_parameters: {
+          ".": alias("parameters_elements")
+        },
+        tuple_pattern: {
+          "1/0": alias("patterns")
+        },
+        list_pattern: {
+          "1/0": alias("patterns")
+        },
+        list: {
+          "1/0": alias("collection_elements")
+        },
+        set: {
+          1: alias("collection_elements")
+        },
+        tuple: {
+          "1/0": alias("collection_elements")
+        },
         argument_list: {
           1: field("arguments")
         },
@@ -5449,13 +5471,6 @@ var grammar_sittir_default = grammar(
         ),
         // See docs/python-grammar-sittir-glossary.md::format_specifier
         format_specifier: ($) => seq(":", repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
-        parameters: ($) => seq("(", optional(alias($._parameters, $.parameters_elements)), ")"),
-        lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
-        tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.patterns)), ")"),
-        list_pattern: ($) => seq("[", optional(alias($._patterns, $.patterns)), "]"),
-        list: ($) => seq("[", optional(alias($._collection_elements, $.collection_elements)), "]"),
-        set: ($) => seq("{", alias($._collection_elements, $.collection_elements), "}"),
-        tuple: ($) => seq("(", optional(alias($._collection_elements, $.collection_elements)), ")"),
         // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
         case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
         case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),

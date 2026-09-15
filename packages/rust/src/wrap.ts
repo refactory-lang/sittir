@@ -3926,7 +3926,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 					span: (data as _NodeData).$span
 				}),
 				{ async: 111, default: 128, const: 53, unsafe: 110 },
-				{ 347: 111, 348: 128, 349: 53, 350: 110 }
+				{ 348: 111, 349: 128, 350: 53, 351: 110 }
 			),
 
 			modifiers() {
@@ -4949,35 +4949,25 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle) {
 }
 
 export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_path']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.UseWildcard as const }, _treeEngine(tree));
+	data = _keepModelledSlots(data, ['_use_wildcard_group']);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.UseWildcard as const,
-			_path: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._path, 'path', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'path',
-					span: (data as _NodeData).$span
-				}),
-				{ self: 129, super: 130, crate: 131 }
+			_use_wildcard_group: normalizeSingularWrapSlot(
+				data._use_wildcard_group,
+				'use_wildcard_group',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'use_wildcard_group', span: (data as _NodeData).$span }
 			),
 
-			path() {
-				return drillIn<
-					| TSKindId.Self
-					| T.Identifier
-					| T.Metavariable
-					| TSKindId.Super
-					| TSKindId.Crate
-					| T.ScopedIdentifier
-					| undefined
-				>(this._path, tree);
+			useWildcardGroup() {
+				return drillIn<T.UseWildcardGroup | undefined>(this._use_wildcard_group, tree);
 			},
 			$with: {
-				path: (v: NonNullable<T.UseWildcard['_path']>) => wrapUseWildcard({ ...$edited(data), _path: v }, tree)
+				useWildcardGroup: (v: NonNullable<T.UseWildcard['_use_wildcard_group']>) =>
+					wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -10584,6 +10574,45 @@ export function wrapStructPatternElements(
 	);
 }
 
+export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_path']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.UseWildcardGroup as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.UseWildcardGroup as const,
+			_path: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._path, 'path', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'path',
+					span: (data as _NodeData).$span
+				}),
+				{ self: 129, super: 130, crate: 131 }
+			),
+
+			path() {
+				return drillIn<
+					| TSKindId.Self
+					| T.Identifier
+					| T.Metavariable
+					| TSKindId.Super
+					| TSKindId.Crate
+					| T.ScopedIdentifier
+					| undefined
+				>(this._path, tree);
+			},
+			$with: {
+				path: (v: NonNullable<T.UseWildcardGroup['_path']>) =>
+					wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapVisibilityModifierGroup(
 	data: T.VisibilityModifierGroup & {
 		readonly _self?: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubInPath;
@@ -15243,6 +15272,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TuplePatternElements]: (d, t) => wrapTuplePatternElements(d as unknown as T.TuplePatternElements, t),
 	[TSKindId.Patterns]: (d, t) => wrapPatterns(d as unknown as T.Patterns, t),
 	[TSKindId.StructPatternElements]: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
+	[TSKindId.UseWildcardGroup]: (d, t) => wrapUseWildcardGroup(d as unknown as T.UseWildcardGroup, t),
 	[TSKindId.VisibilityModifierGroup]: (d, t) =>
 		wrapVisibilityModifierGroup(d as unknown as T.VisibilityModifierGroup, t),
 	[TSKindId.KwAsync]: (d) => ({ ...d, $type: TSKindId.KwAsync as const }),
@@ -15536,6 +15566,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.TuplePatternElements]: ReturnType<typeof wrapTuplePatternElements>;
 	[TSKindId.Patterns]: ReturnType<typeof wrapPatterns>;
 	[TSKindId.StructPatternElements]: ReturnType<typeof wrapStructPatternElements>;
+	[TSKindId.UseWildcardGroup]: ReturnType<typeof wrapUseWildcardGroup>;
 	[TSKindId.VisibilityModifierGroup]: ReturnType<typeof wrapVisibilityModifierGroup>;
 	[TSKindId.KwAsync]: _NodeData & { readonly $type: TSKindId.KwAsync };
 	[TSKindId.KwDefault]: _NodeData & { readonly $type: TSKindId.KwDefault };

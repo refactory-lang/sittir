@@ -468,6 +468,9 @@ export interface IsGuards {
 	structPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructPatternElements };
+	useWildcardGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
 	visibilityModifierGroup<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VisibilityModifierGroup };
@@ -732,6 +735,7 @@ export interface AssertGuards {
 	structPatternElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.StructPatternElements };
+	useWildcardGroup(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.UseWildcardGroup };
 	visibilityModifierGroup(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup };
@@ -795,7 +799,7 @@ const _supertype_macroDefinition_ids = new Set<number>([406, 407, 408]);
 const _supertype_tokenPattern_ids = new Set<number>([172, 171, 132]);
 const _supertype_tokenTreePattern_ids = new Set<number>([395, 396, 397]);
 const _supertype_tokens_ids = new Set<number>([174, 175, 132]);
-const _supertype_nonSpecialToken_ids = new Set<number>([318, 319, 118, 320, 116, 151, 1, 73, 129, 130, 131, 353, 354]);
+const _supertype_nonSpecialToken_ids = new Set<number>([318, 319, 118, 320, 116, 151, 1, 73, 129, 130, 131, 354, 355]);
 const _supertype_modItem_ids = new Set<number>([376, 377]);
 const _supertype_foreignModItem_ids = new Set<number>([386, 387]);
 const _supertype_structItem_ids = new Set<number>([413, 414, 415]);
@@ -975,6 +979,7 @@ export const is = {
 	tuplePatternElements: _g(TSKindId.TuplePatternElements),
 	patterns: _g(TSKindId.Patterns),
 	structPatternElements: _g(TSKindId.StructPatternElements),
+	useWildcardGroup: _g(TSKindId.UseWildcardGroup),
 	visibilityModifierGroup: _g(TSKindId.VisibilityModifierGroup),
 	TupleTypeElements: _g(TSKindId.TupleTypeElements),
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
@@ -1190,6 +1195,7 @@ export const assert = {
 	tuplePatternElements: _makeAssert('tuplePatternElements', is.tuplePatternElements as _AnyGuard),
 	patterns: _makeAssert('patterns', is.patterns as _AnyGuard),
 	structPatternElements: _makeAssert('structPatternElements', is.structPatternElements as _AnyGuard),
+	useWildcardGroup: _makeAssert('useWildcardGroup', is.useWildcardGroup as _AnyGuard),
 	visibilityModifierGroup: _makeAssert('visibilityModifierGroup', is.visibilityModifierGroup as _AnyGuard),
 	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
