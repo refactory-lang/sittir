@@ -524,6 +524,25 @@
     "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
+    "ownerKind": "_parameters",
+    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Parameters",
+      "newType": "_Parameters",
+      "visibleKinds": [
+        "parameters"
+      ]
+    },
+    "location": "_parameters"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
     "ownerKind": "_string_content",
     "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
     "canProceed": true,

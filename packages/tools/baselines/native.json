@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "7078b7b",
+    "commit": "17aac1013",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -75,41 +75,41 @@
                     "macro_definition_brace": 3,
                     "macro_invocation": 7,
                     "match_expression": 1,
-                    "source_file": 13,
+                    "source_file": 14,
                     "struct_expression": 1,
                     "struct_item_brace": 6,
                     "token_tree": 6,
-                    "use_declaration": 1
+                    "use_declaration": 2
                 },
-                "pass": 1412,
-                "total": 1412
+                "pass": 1435,
+                "total": 1435
             },
             "supertypeKindCount": 21,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 206,
-                    "total": 206
+                    "pass": 207,
+                    "total": 207
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1464,
+                    "astMatchPass": 1475,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1464,
-                    "total": 1464
+                    "pass": 1475,
+                    "total": 1475
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 198,
-                    "total": 198
+                    "pass": 204,
+                    "total": 204
                 },
                 "roundtrip": {
-                    "astMatchPass": 134,
+                    "astMatchPass": 135,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 134,
+                    "pass": 135,
                     "total": 137
                 }
             }
@@ -166,8 +166,8 @@
         }
     },
     "totals": {
-        "fail": 6,
-        "pass": 9600,
-        "total": 9606
+        "fail": 5,
+        "pass": 9642,
+        "total": 9647
     }
 }

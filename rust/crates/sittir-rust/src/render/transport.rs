@@ -242,6 +242,7 @@ pub enum AnyTransport {
     TuplePatternElements(TuplePatternElementsTransport),
     Patterns(PatternsTransport),
     StructPatternElements(StructPatternElementsTransport),
+    UseWildcardGroup(UseWildcardGroupTransport),
     VisibilityModifierGroup(VisibilityModifierGroupTransport),
     KwAsync(KwAsyncTransport),
     KwDefault(KwDefaultTransport),
@@ -728,6 +729,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::TuplePatternElements(t) => t.prepare(ctx),
             AnyTransport::Patterns(t) => t.prepare(ctx),
             AnyTransport::StructPatternElements(t) => t.prepare(ctx),
+            AnyTransport::UseWildcardGroup(t) => t.prepare(ctx),
             AnyTransport::VisibilityModifierGroup(t) => t.prepare(ctx),
             AnyTransport::KwAsync(t) => t.prepare(ctx),
             AnyTransport::KwDefault(t) => t.prepare(ctx),
@@ -1727,40 +1729,44 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 345 => Ok(AnyTransport::StructPatternElements(
                     StructPatternElementsTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: use_wildcard_group (USE_WILDCARD_GROUP)
+                346 => Ok(AnyTransport::UseWildcardGroup(
+                    UseWildcardGroupTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: visibility_modifier_group (VISIBILITY_MODIFIER_GROUP)
-                346 => Ok(AnyTransport::VisibilityModifierGroup(
+                347 => Ok(AnyTransport::VisibilityModifierGroup(
                     VisibilityModifierGroupTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_async (_KW_ASYNC)
-                347 => Ok(AnyTransport::KwAsync(
+                348 => Ok(AnyTransport::KwAsync(
                     KwAsyncTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_default (_KW_DEFAULT)
-                348 => Ok(AnyTransport::KwDefault(
+                349 => Ok(AnyTransport::KwDefault(
                     KwDefaultTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_const (_KW_CONST)
-                349 => Ok(AnyTransport::KwConst(
+                350 => Ok(AnyTransport::KwConst(
                     KwConstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _kw_unsafe (_KW_UNSAFE)
-                350 => Ok(AnyTransport::KwUnsafe(
+                351 => Ok(AnyTransport::KwUnsafe(
                     KwUnsafeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tuple_type_elements (_TUPLE_TYPE_ELEMENTS)
-                351 => Ok(AnyTransport::TupleTypeElements(
+                352 => Ok(AnyTransport::TupleTypeElements(
                     TupleTypeElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tuple_expression_elements (_TUPLE_EXPRESSION_ELEMENTS)
-                352 => Ok(AnyTransport::TupleExpressionElements(
+                353 => Ok(AnyTransport::TupleExpressionElements(
                     TupleExpressionElementsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_tree_punctuation (_TOKEN_TREE_PUNCTUATION)
-                353 => Ok(AnyTransport::TokenTreePunctuation(
+                354 => Ok(AnyTransport::TokenTreePunctuation(
                     TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: _token_keywords (_TOKEN_KEYWORDS)
-                354 => Ok(AnyTransport::TokenKeywords(
+                355 => Ok(AnyTransport::TokenKeywords(
                     TokenKeywordsEnum::from_napi_value(env, napi_val)?
                 )),
                 // kind: _wildcard_pattern (_WILDCARD_PATTERN)
@@ -8565,7 +8571,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -8703,7 +8709,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -8939,7 +8945,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -9077,7 +9083,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -9807,7 +9813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -9945,7 +9951,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -10172,7 +10178,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -10310,7 +10316,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -14080,276 +14086,6 @@ impl ::sittir_core::render::Render for UseAsClausePathTransportSlot {
             UseAsClausePathTransportSlot::Literal20_73_75_70_65_72 => w.text("super"),
             UseAsClausePathTransportSlot::Literal21_63_72_61_74_65 => w.text("crate"),
             UseAsClausePathTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum UseWildcardPathTransportSlot {
-    Identifier(IdentifierTransport),
-    Metavariable(MetavariableTransport),
-    ScopedIdentifier(ScopedIdentifierTransport),
-    Literal19_73_65_6c_66,
-    Literal20_73_75_70_65_72,
-    Literal21_63_72_61_74_65,
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for UseWildcardPathTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            UseWildcardPathTransportSlot::Identifier(t) => t.prepare(ctx),
-            UseWildcardPathTransportSlot::Metavariable(t) => t.prepare(ctx),
-            UseWildcardPathTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            UseWildcardPathTransportSlot::Literal19_73_65_6c_66 => Ok(()),
-            UseWildcardPathTransportSlot::Literal20_73_75_70_65_72 => Ok(()),
-            UseWildcardPathTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
-            UseWildcardPathTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for UseWildcardPathTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Metavariable(inner) => inner.kind_in(kinds),
-            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
-            Self::Literal19_73_65_6c_66 => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
-            Self::Literal20_73_75_70_65_72 => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
-            Self::Literal21_63_72_61_74_65 => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardPathTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    129 => Ok(Self::Literal19_73_65_6c_66),
-                    130 => Ok(Self::Literal20_73_75_70_65_72),
-                    131 => Ok(Self::Literal21_63_72_61_74_65),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    27 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    29 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    132 => Ok(Self::Metavariable(
-                        MetavariableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::ScopedIdentifier(
-                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseWildcardPathTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in UseWildcardPathTransportSlot")
-                )?;
-                match kind_id {
-                    129 => Ok(Self::Literal19_73_65_6c_66),
-                    130 => Ok(Self::Literal20_73_75_70_65_72),
-                    131 => Ok(Self::Literal21_63_72_61_74_65),
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    27 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    28 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    29 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    30 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    31 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    32 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    33 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    34 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    35 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    36 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    38 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    39 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    40 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    41 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    42 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    43 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    50 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    112 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    132 => Ok(Self::Metavariable(
-                        MetavariableTransport::from_napi_value(env, napi_val)?
-                    )),
-                    250 => Ok(Self::ScopedIdentifier(
-                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in UseWildcardPathTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("UseWildcardPathTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardPathTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UseWildcardPathTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UseWildcardPathTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UseWildcardPathTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UseWildcardPathTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UseWildcardPathTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn use_wildcard_path_transport_slot_to_any(t: UseWildcardPathTransportSlot) -> AnyTransport {
-    match t {
-        UseWildcardPathTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        UseWildcardPathTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        UseWildcardPathTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        UseWildcardPathTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
-        UseWildcardPathTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
-        UseWildcardPathTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
-        UseWildcardPathTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for UseWildcardPathTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            UseWildcardPathTransportSlot::Identifier(inner) => inner.render(w),
-            UseWildcardPathTransportSlot::Metavariable(inner) => inner.render(w),
-            UseWildcardPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
-            UseWildcardPathTransportSlot::Literal19_73_65_6c_66 => w.text("self"),
-            UseWildcardPathTransportSlot::Literal20_73_75_70_65_72 => w.text("super"),
-            UseWildcardPathTransportSlot::Literal21_63_72_61_74_65 => w.text("crate"),
-            UseWildcardPathTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -29800,6 +29536,276 @@ impl ::sittir_core::render::Render for StructPatternElementsElementTransportSlot
 }
 
 #[derive(Debug, Clone)]
+pub enum UseWildcardGroupPathTransportSlot {
+    Identifier(IdentifierTransport),
+    Metavariable(MetavariableTransport),
+    ScopedIdentifier(ScopedIdentifierTransport),
+    Literal19_73_65_6c_66,
+    Literal20_73_75_70_65_72,
+    Literal21_63_72_61_74_65,
+    Verbatim(VerbatimTransport),
+}
+
+impl ::sittir_core::prepare::Prepare for UseWildcardGroupPathTransportSlot {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            UseWildcardGroupPathTransportSlot::Identifier(t) => t.prepare(ctx),
+            UseWildcardGroupPathTransportSlot::Metavariable(t) => t.prepare(ctx),
+            UseWildcardGroupPathTransportSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            UseWildcardGroupPathTransportSlot::Literal19_73_65_6c_66 => Ok(()),
+            UseWildcardGroupPathTransportSlot::Literal20_73_75_70_65_72 => Ok(()),
+            UseWildcardGroupPathTransportSlot::Literal21_63_72_61_74_65 => Ok(()),
+            UseWildcardGroupPathTransportSlot::Verbatim(t) => t.prepare(ctx),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for UseWildcardGroupPathTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Identifier(inner) => inner.kind_in(kinds),
+            Self::Metavariable(inner) => inner.kind_in(kinds),
+            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
+            Self::Literal19_73_65_6c_66 => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
+            Self::Literal20_73_75_70_65_72 => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
+            Self::Literal21_63_72_61_74_65 => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(132)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardGroupPathTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    129 => Ok(Self::Literal19_73_65_6c_66),
+                    130 => Ok(Self::Literal20_73_75_70_65_72),
+                    131 => Ok(Self::Literal21_63_72_61_74_65),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    27 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    50 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    132 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UseWildcardGroupPathTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in UseWildcardGroupPathTransportSlot")
+                )?;
+                match kind_id {
+                    129 => Ok(Self::Literal19_73_65_6c_66),
+                    130 => Ok(Self::Literal20_73_75_70_65_72),
+                    131 => Ok(Self::Literal21_63_72_61_74_65),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    27 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    50 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    132 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in UseWildcardGroupPathTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
+            _ => Err(::napi::Error::from_reason("UseWildcardGroupPathTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UseWildcardGroupPathTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("UseWildcardGroupPathTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseWildcardGroupPathTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UseWildcardGroupPathTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseWildcardGroupPathTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UseWildcardGroupPathTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn use_wildcard_group_path_transport_slot_to_any(t: UseWildcardGroupPathTransportSlot) -> AnyTransport {
+    match t {
+        UseWildcardGroupPathTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        UseWildcardGroupPathTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        UseWildcardGroupPathTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        UseWildcardGroupPathTransportSlot::Literal19_73_65_6c_66 => AnyTransport::Literal19_73_65_6c_66,
+        UseWildcardGroupPathTransportSlot::Literal20_73_75_70_65_72 => AnyTransport::Literal20_73_75_70_65_72,
+        UseWildcardGroupPathTransportSlot::Literal21_63_72_61_74_65 => AnyTransport::Literal21_63_72_61_74_65,
+        UseWildcardGroupPathTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl ::sittir_core::render::Render for UseWildcardGroupPathTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            UseWildcardGroupPathTransportSlot::Identifier(inner) => inner.render(w),
+            UseWildcardGroupPathTransportSlot::Metavariable(inner) => inner.render(w),
+            UseWildcardGroupPathTransportSlot::ScopedIdentifier(inner) => inner.render(w),
+            UseWildcardGroupPathTransportSlot::Literal19_73_65_6c_66 => w.text("self"),
+            UseWildcardGroupPathTransportSlot::Literal20_73_75_70_65_72 => w.text("super"),
+            UseWildcardGroupPathTransportSlot::Literal21_63_72_61_74_65 => w.text("crate"),
+            UseWildcardGroupPathTransportSlot::Verbatim(inner) => inner.render(w),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum VisibilityModifierGroupContentTransportSlot {
     VisibilityModifierPubInPath(VisibilityModifierPubInPathTransport),
     Literal19_73_65_6c_66,
@@ -33438,7 +33444,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -33576,7 +33582,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -33812,7 +33818,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -33950,7 +33956,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -34360,7 +34366,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -34498,7 +34504,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -34734,7 +34740,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -34872,7 +34878,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -35282,7 +35288,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -35420,7 +35426,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -35656,7 +35662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -35794,7 +35800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -36195,7 +36201,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -36333,7 +36339,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -36560,7 +36566,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -36698,7 +36704,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -37084,7 +37090,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -37222,7 +37228,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -37449,7 +37455,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -37587,7 +37593,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -37973,7 +37979,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -38111,7 +38117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -38338,7 +38344,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -38476,7 +38482,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     5 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -38866,7 +38872,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -39001,7 +39007,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -39244,7 +39250,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -39379,7 +39385,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -39786,7 +39792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -39921,7 +39927,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -40164,7 +40170,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -40299,7 +40305,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -40706,7 +40712,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -40841,7 +40847,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -41084,7 +41090,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     43 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
-                    353 => Ok(Self::TokenTreePunctuation(
+                    354 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     9 => Ok(Self::TokenTreePunctuation(
@@ -41219,7 +41225,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     11 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
-                    354 => Ok(Self::TokenKeywords(
+                    355 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
                     68 => Ok(Self::TokenKeywords(
@@ -48018,16 +48024,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UseAsClauseTransport> {
 pub struct UseWildcardTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
-    pub path: Option<::sittir_core::SlotValue<UseWildcardPathTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_wildcard_group"))]
+    pub use_wildcard_group: Option<::sittir_core::SlotValue<UseWildcardGroupTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
     pub star_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_after"))]
     pub star_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_before"))]
-    pub colon_colon_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_after"))]
-    pub colon_colon_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_wildcard_before"))]
     pub use_wildcard_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_wildcard_after"))]
@@ -48050,11 +48052,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.star_before.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_STAR_BEFORE]);
         self.star_after.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_STAR_AFTER]);
-        self.colon_colon_before.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_COLON_COLON_BEFORE]);
-        self.colon_colon_after.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_COLON_COLON_AFTER]);
         self.use_wildcard_before.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_USE_WILDCARD_BEFORE]);
         self.use_wildcard_after.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_USE_WILDCARD_AFTER]);
-        self.path.prepare(ctx)?;
+        self.use_wildcard_group.prepare(ctx)?;
         Ok(())
     }
 }
@@ -58164,6 +58164,66 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StructPatternElementsTransport
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct UseWildcardGroupTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
+    pub path: Option<::sittir_core::SlotValue<UseWildcardGroupPathTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_before"))]
+    pub colon_colon_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_colon_colon_after"))]
+    pub colon_colon_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_wildcard_group_before"))]
+    pub use_wildcard_group_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_use_wildcard_group_after"))]
+    pub use_wildcard_group_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for UseWildcardGroupTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(346)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UseWildcardGroupTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_use_wildcard_group(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for UseWildcardGroupTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.colon_colon_before.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_GROUP_COLON_COLON_BEFORE]);
+        self.colon_colon_after.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_GROUP_COLON_COLON_AFTER]);
+        self.use_wildcard_group_before.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_BEFORE]);
+        self.use_wildcard_group_after.get_or_insert(ctx.options.spacing[options::SITE_USE_WILDCARD_GROUP_USE_WILDCARD_GROUP_AFTER]);
+        self.path.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UseWildcardGroupTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UseWildcardGroupTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UseWildcardGroupTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UseWildcardGroupTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct VisibilityModifierGroupTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -58185,7 +58245,7 @@ pub struct VisibilityModifierGroupTransport {
 
 impl ::sittir_core::view::KindOf for VisibilityModifierGroupTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(346)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(347)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58236,7 +58296,7 @@ pub struct KwAsyncTransport {
 
 impl ::sittir_core::view::KindOf for KwAsyncTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(347)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(348)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58330,7 +58390,7 @@ pub struct KwDefaultTransport {
 
 impl ::sittir_core::view::KindOf for KwDefaultTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(348)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(349)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58424,7 +58484,7 @@ pub struct KwConstTransport {
 
 impl ::sittir_core::view::KindOf for KwConstTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(349)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(350)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58518,7 +58578,7 @@ pub struct KwUnsafeTransport {
 
 impl ::sittir_core::view::KindOf for KwUnsafeTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(350)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(351)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58800,7 +58860,7 @@ pub struct TupleTypeElementsTransport {
 
 impl ::sittir_core::view::KindOf for TupleTypeElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(351)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(352)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -58934,7 +58994,7 @@ pub struct TupleExpressionElementsTransport {
 
 impl ::sittir_core::view::KindOf for TupleExpressionElementsTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(352)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(353)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -79690,14 +79750,9 @@ fn render_use_as_clause(node: &UseAsClauseTransport, w: &mut dyn ::sittir_core::
 }
 
 fn render_use_wildcard(node: &UseWildcardTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let path = View::new(&node.path, "{}");
+    let use_wildcard_group = View::new(&node.use_wildcard_group, "{}");
     w.site(node.use_wildcard_before.unwrap_or(0));
-    if path.is_present() {
-        path.render(w)?;
-        w.site(node.colon_colon_before.unwrap_or(0));
-        w.text("::")?;
-        w.site(node.colon_colon_after.unwrap_or(0));
-    }
+    use_wildcard_group.render(w)?;
     w.site(node.star_before.unwrap_or(0));
     w.text("*")?;
     w.site(node.star_after.unwrap_or(0));
@@ -81307,6 +81362,17 @@ fn render_struct_pattern_elements(node: &StructPatternElementsTransport, w: &mut
     w.site(node.struct_pattern_elements_before.unwrap_or(0));
     element.render(w)?;
     w.site(node.struct_pattern_elements_after.unwrap_or(0));
+    Ok(())
+}
+
+fn render_use_wildcard_group(node: &UseWildcardGroupTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let path = View::new(&node.path, "{}");
+    w.site(node.use_wildcard_group_before.unwrap_or(0));
+    path.render(w)?;
+    w.site(node.colon_colon_before.unwrap_or(0));
+    w.text("::")?;
+    w.site(node.colon_colon_after.unwrap_or(0));
+    w.site(node.use_wildcard_group_after.unwrap_or(0));
     Ok(())
 }
 
@@ -83482,6 +83548,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::TuplePatternElements(inner) => inner.kind_in(kinds),
             Self::Patterns(inner) => inner.kind_in(kinds),
             Self::StructPatternElements(inner) => inner.kind_in(kinds),
+            Self::UseWildcardGroup(inner) => inner.kind_in(kinds),
             Self::VisibilityModifierGroup(inner) => inner.kind_in(kinds),
             Self::KwAsync(inner) => inner.kind_in(kinds),
             Self::KwDefault(inner) => inner.kind_in(kinds),
@@ -83883,6 +83950,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::TuplePatternElements(t) => t.render(w),
             AnyTransport::Patterns(t) => t.render(w),
             AnyTransport::StructPatternElements(t) => t.render(w),
+            AnyTransport::UseWildcardGroup(t) => t.render(w),
             AnyTransport::VisibilityModifierGroup(t) => t.render(w),
             AnyTransport::KwAsync(t) => t.render(w),
             AnyTransport::KwDefault(t) => t.render(w),

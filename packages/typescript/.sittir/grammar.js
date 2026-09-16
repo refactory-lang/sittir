@@ -5512,6 +5512,7 @@ var grammar_sittir_default = grammar(
           "1/1": variant("global"),
           "1/2": variant("module")
         },
+        jsx_namespace_name: { 0: field("namespace"), 2: field("name") },
         as_expression: {
           2: field("type_annotation")
         },
@@ -5839,7 +5840,6 @@ var grammar_sittir_default = grammar(
             members: flatMembers
           };
         },
-        jsx_namespace_name: ($) => seq(field("namespace", $._jsx_identifier), ":", field("name", $._jsx_identifier)),
         // Upstream's `_extends_clause_single` (base grammar.js) carries two
         // fields (value, type_arguments) but is never aliased visible, so it
         // falls to the render layer's single-slot inline path and silently

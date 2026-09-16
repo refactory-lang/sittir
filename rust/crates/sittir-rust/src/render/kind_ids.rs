@@ -353,16 +353,16 @@ pub const FIELD_INITIALIZER_LIST_ELEMENTS: KindId = KindId(342);
 pub const TUPLE_PATTERN_ELEMENTS: KindId = KindId(343);
 pub const PATTERNS: KindId = KindId(344);
 pub const STRUCT_PATTERN_ELEMENTS: KindId = KindId(345);
-pub const VISIBILITY_MODIFIER_GROUP: KindId = KindId(346);
-pub const _KW_ASYNC: KindId = KindId(347);
-pub const _KW_DEFAULT: KindId = KindId(348);
-pub const _KW_CONST: KindId = KindId(349);
-pub const _KW_UNSAFE: KindId = KindId(350);
-pub const _TUPLE_TYPE_ELEMENTS: KindId = KindId(351);
-pub const _TUPLE_EXPRESSION_ELEMENTS: KindId = KindId(352);
-pub const _TOKEN_TREE_PUNCTUATION: KindId = KindId(353);
-pub const _TOKEN_KEYWORDS: KindId = KindId(354);
-pub const _USE_WILDCARD_CLAUSE: KindId = KindId(355);
+pub const USE_WILDCARD_GROUP: KindId = KindId(346);
+pub const VISIBILITY_MODIFIER_GROUP: KindId = KindId(347);
+pub const _KW_ASYNC: KindId = KindId(348);
+pub const _KW_DEFAULT: KindId = KindId(349);
+pub const _KW_CONST: KindId = KindId(350);
+pub const _KW_UNSAFE: KindId = KindId(351);
+pub const _TUPLE_TYPE_ELEMENTS: KindId = KindId(352);
+pub const _TUPLE_EXPRESSION_ELEMENTS: KindId = KindId(353);
+pub const _TOKEN_TREE_PUNCTUATION: KindId = KindId(354);
+pub const _TOKEN_KEYWORDS: KindId = KindId(355);
 pub const _WILDCARD_PATTERN: KindId = KindId(356);
 pub const _RANGE_EXPRESSION_BARE: KindId = KindId(357);
 pub const _IMPL_ITEM_UNSAFE_MARKER: KindId = KindId(358);
@@ -814,16 +814,16 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         343 => "tuple_pattern_elements", // "tuple_pattern_elements"
         344 => "patterns", // "patterns"
         345 => "struct_pattern_elements", // "struct_pattern_elements"
-        346 => "visibility_modifier_group", // "visibility_modifier_group"
-        347 => "_kw_async", // "_kw_async"
-        348 => "_kw_default", // "_kw_default"
-        349 => "_kw_const", // "_kw_const"
-        350 => "_kw_unsafe", // "_kw_unsafe"
-        351 => "tuple_type_elements", // "_tuple_type_elements"
-        352 => "tuple_expression_elements", // "_tuple_expression_elements"
-        353 => "token_tree_punctuation", // "_token_tree_punctuation"
-        354 => "_token_keywords", // "_token_keywords"
-        355 => "_use_wildcard_clause", // "_use_wildcard_clause"
+        346 => "use_wildcard_group", // "use_wildcard_group"
+        347 => "visibility_modifier_group", // "visibility_modifier_group"
+        348 => "_kw_async", // "_kw_async"
+        349 => "_kw_default", // "_kw_default"
+        350 => "_kw_const", // "_kw_const"
+        351 => "_kw_unsafe", // "_kw_unsafe"
+        352 => "tuple_type_elements", // "_tuple_type_elements"
+        353 => "tuple_expression_elements", // "_tuple_expression_elements"
+        354 => "token_tree_punctuation", // "_token_tree_punctuation"
+        355 => "_token_keywords", // "_token_keywords"
         356 => "wildcard_pattern", // "_wildcard_pattern"
         357 => "range_expression_bare", // "_range_expression_bare"
         358 => "_impl_item_unsafe_marker", // "_impl_item_unsafe_marker"
@@ -933,7 +933,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 116 | 118 | 119 | 127 | 132 | 141 | 145 | 147 | 148 | 149 | 150 | 151 | 154 | 155 | 156 | 173 | 320 | 353 | 354 | 390 | 454 | 457)
+    matches!(kind.0, 1 | 116 | 118 | 119 | 127 | 132 | 141 | 145 | 147 | 148 | 149 | 150 | 151 | 154 | 155 | 156 | 173 | 320 | 354 | 355 | 390 | 454 | 457)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
@@ -962,8 +962,8 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (343, "element", &[134]),
     (344, "pattern", &[134]),
     (345, "element", &[134]),
-    (351, "type", &[134]),
-    (352, "element", &[134]),
+    (352, "type", &[134]),
+    (353, "element", &[134]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

@@ -588,16 +588,16 @@ export const enum TSKindId {
 	TuplePatternElements = 343,
 	Patterns = 344,
 	StructPatternElements = 345,
-	VisibilityModifierGroup = 346,
-	KwAsync = 347,
-	KwDefault = 348,
-	KwConst = 349,
-	KwUnsafe = 350,
-	TupleTypeElements = 351,
-	TupleExpressionElements = 352,
-	TokenTreePunctuation = 353,
-	TokenKeywords = 354,
-	_UseWildcardClause = 355,
+	UseWildcardGroup = 346,
+	VisibilityModifierGroup = 347,
+	KwAsync = 348,
+	KwDefault = 349,
+	KwConst = 350,
+	KwUnsafe = 351,
+	TupleTypeElements = 352,
+	TupleExpressionElements = 353,
+	TokenTreePunctuation = 354,
+	TokenKeywords = 355,
 	WildcardPattern = 356,
 	RangeExpressionBare = 357,
 	ImplItemUnsafeMarker = 358,
@@ -1048,16 +1048,16 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[343, 'tuple_pattern_elements'],
 	[344, 'patterns'],
 	[345, 'struct_pattern_elements'],
-	[346, 'visibility_modifier_group'],
-	[347, '_kw_async'],
-	[348, '_kw_default'],
-	[349, '_kw_const'],
-	[350, '_kw_unsafe'],
-	[351, '_tuple_type_elements'],
-	[352, '_tuple_expression_elements'],
-	[353, '_token_tree_punctuation'],
-	[354, '_token_keywords'],
-	[355, '_use_wildcard_clause'],
+	[346, 'use_wildcard_group'],
+	[347, 'visibility_modifier_group'],
+	[348, '_kw_async'],
+	[349, '_kw_default'],
+	[350, '_kw_const'],
+	[351, '_kw_unsafe'],
+	[352, '_tuple_type_elements'],
+	[353, '_tuple_expression_elements'],
+	[354, '_token_tree_punctuation'],
+	[355, '_token_keywords'],
 	[356, '_wildcard_pattern'],
 	[357, '_range_expression_bare'],
 	[358, '_impl_item_unsafe_marker'],
@@ -1509,16 +1509,16 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[343, 'tuple_pattern_elements'],
 	[344, 'patterns'],
 	[345, 'struct_pattern_elements'],
-	[346, 'visibility_modifier_group'],
-	[347, '_kw_async'],
-	[348, '_kw_default'],
-	[349, '_kw_const'],
-	[350, '_kw_unsafe'],
-	[351, 'tuple_type_elements'],
-	[352, 'tuple_expression_elements'],
-	[353, 'token_tree_punctuation'],
-	[354, '_token_keywords'],
-	[355, '_use_wildcard_clause'],
+	[346, 'use_wildcard_group'],
+	[347, 'visibility_modifier_group'],
+	[348, '_kw_async'],
+	[349, '_kw_default'],
+	[350, '_kw_const'],
+	[351, '_kw_unsafe'],
+	[352, 'tuple_type_elements'],
+	[353, 'tuple_expression_elements'],
+	[354, 'token_tree_punctuation'],
+	[355, '_token_keywords'],
 	[356, 'wildcard_pattern'],
 	[357, 'range_expression_bare'],
 	[358, '_impl_item_unsafe_marker'],
@@ -2317,6 +2317,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Patterns;
 		case 'struct_pattern_elements':
 			return TSKindId.StructPatternElements;
+		case 'use_wildcard_group':
+			return TSKindId.UseWildcardGroup;
 		case 'visibility_modifier_group':
 			return TSKindId.VisibilityModifierGroup;
 		case '_kw_async':
@@ -2335,8 +2337,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
 			return TSKindId.TokenKeywords;
-		case '_use_wildcard_clause':
-			return TSKindId._UseWildcardClause;
 		case '_wildcard_pattern':
 			return TSKindId.WildcardPattern;
 		case '_range_expression_bare':
@@ -4988,15 +4988,16 @@ export interface UseAsClause {
 
 export interface UseWildcard {
 	readonly $type: TSKindId.UseWildcard;
-	readonly _path?: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
-	readonly __inputHints__?: {
-		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
-			| Identifier
-			| Metavariable
-			| ScopedIdentifier;
+	readonly _use_wildcard_group?: UseWildcardGroup;
+	readonly __looseHints__?: {
+		readonly use_wildcard_group?:
+			| UseWildcardGroup
+			| 'self'
+			| 'super'
+			| 'crate'
+			| readonly ('self' | Identifier | Metavariable | 'super' | 'crate' | ScopedIdentifier)[];
 	};
-	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier | undefined;
+	useWildcardGroup(): UseWildcardGroup | undefined;
 }
 
 export interface Parameters {
@@ -6817,6 +6818,19 @@ export interface StructPatternElements {
 	readonly $type: TSKindId.StructPatternElements;
 	readonly _element: NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
 	elements(): NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
+}
+
+export interface UseWildcardGroup {
+	readonly $type: TSKindId.UseWildcardGroup;
+	readonly _path?: TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier;
+	readonly __inputHints__?: {
+		readonly path?:
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| Identifier
+			| Metavariable
+			| ScopedIdentifier;
+	};
+	path(): TSKindId.Self | Identifier | Metavariable | TSKindId.Super | TSKindId.Crate | ScopedIdentifier | undefined;
 }
 
 export interface VisibilityModifierGroup {
@@ -10201,6 +10215,7 @@ export interface FieldInitializerListElementsTree extends TreeNode<'field_initia
 export interface TuplePatternElementsTree extends TreeNode<'tuple_pattern_elements'> {}
 export interface PatternsTree extends TreeNode<'patterns'> {}
 export interface StructPatternElementsTree extends TreeNode<'struct_pattern_elements'> {}
+export interface UseWildcardGroupTree extends TreeNode<'use_wildcard_group'> {}
 export interface VisibilityModifierGroupTree extends TreeNode<'visibility_modifier_group'> {}
 export interface TupleTypeElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_type_elements';
@@ -11485,6 +11500,7 @@ export type RustNode =
 	| TuplePatternElements
 	| Patterns
 	| StructPatternElements
+	| UseWildcardGroup
 	| VisibilityModifierGroup
 	| TupleTypeElements
 	| TupleExpressionElements
@@ -11694,6 +11710,7 @@ export interface KindMap {
 	tuple_pattern_elements: TuplePatternElements;
 	patterns: Patterns;
 	struct_pattern_elements: StructPatternElements;
+	use_wildcard_group: UseWildcardGroup;
 	visibility_modifier_group: VisibilityModifierGroup;
 	_tuple_type_elements: TupleTypeElements;
 	_tuple_expression_elements: TupleExpressionElements;
@@ -12268,7 +12285,7 @@ export interface UseWildcardNs extends NodeNs<
 	UseWildcard.Built,
 	UseWildcard.BuildArgs,
 	UseWildcard.LooseArgs,
-	'path',
+	'use_wildcard_group',
 	'use_wildcard'
 > {}
 export interface ParametersNs extends NodeNs<
@@ -13360,6 +13377,17 @@ export interface StructPatternElementsNs extends NodeNs<
 	'element',
 	'struct_pattern_elements'
 > {}
+export interface UseWildcardGroupNs extends NodeNs<
+	UseWildcardGroup,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	UseWildcardGroup.Built,
+	UseWildcardGroup.BuildArgs,
+	UseWildcardGroup.LooseArgs,
+	'path',
+	'use_wildcard_group'
+> {}
 export interface VisibilityModifierGroupNs extends NodeNs<
 	VisibilityModifierGroup,
 	LeafScalarMap,
@@ -14421,6 +14449,7 @@ export interface NamespaceMap {
 	[TSKindId.TuplePatternElements]: TuplePatternElementsNs;
 	[TSKindId.Patterns]: PatternsNs;
 	[TSKindId.StructPatternElements]: StructPatternElementsNs;
+	[TSKindId.UseWildcardGroup]: UseWildcardGroupNs;
 	[TSKindId.VisibilityModifierGroup]: VisibilityModifierGroupNs;
 	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
@@ -15438,26 +15467,13 @@ export namespace UseWildcard {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			path(
-				value?: NonNullable<
-					TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-				>
-			): T.UseWildcard.Built;
+			useWildcardGroup(value?: T.UseWildcardGroup): T.UseWildcard.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.UseWildcard>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcard>;
-	export type BuildArgs = [
-		value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
-	];
-	export type LooseArgs = [
-		value?: LooseValue<
-			TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type BuildArgs = [value?: T.UseWildcardGroup];
+	export type LooseArgs = [value?: LooseValue<T.UseWildcardGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.UseWildcard>;
 	export type Kind = 'use_wildcard';
 }
@@ -17568,6 +17584,35 @@ export namespace StructPatternElements {
 	];
 	export type Tree = TreeFor<TSKindId.StructPatternElements>;
 	export type Kind = 'struct_pattern_elements';
+}
+export namespace UseWildcardGroup {
+	export type Config = ConfigFor<TSKindId.UseWildcardGroup>;
+	export interface Built extends T.UseWildcardGroup, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			path(
+				value?: NonNullable<
+					TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+				>
+			): T.UseWildcardGroup.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.UseWildcardGroup>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcardGroup>;
+	export type BuildArgs = [
+		value?: TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier
+	];
+	export type LooseArgs = [
+		value?: LooseValue<
+			TSKindId.Self | T.Identifier | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.ScopedIdentifier,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.UseWildcardGroup>;
+	export type Kind = 'use_wildcard_group';
 }
 export namespace VisibilityModifierGroup {
 	export type Config = ConfigFor<TSKindId.VisibilityModifierGroup>;

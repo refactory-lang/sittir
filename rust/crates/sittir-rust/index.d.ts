@@ -2332,13 +2332,20 @@ export interface UseListTransport {
   _use_list_after?: number
 }
 
-export interface UseWildcardTransport {
+export interface UseWildcardGroupTransport {
   '$_trivia'?: TransportTrivia
-  _path?: SlotValue<UseWildcardPathTransportSlot>
-  _star_before?: number
-  _star_after?: number
+  _path?: SlotValue<UseWildcardGroupPathTransportSlot>
   _colon_colon_before?: number
   _colon_colon_after?: number
+  _use_wildcard_group_before?: number
+  _use_wildcard_group_after?: number
+}
+
+export interface UseWildcardTransport {
+  '$_trivia'?: TransportTrivia
+  _use_wildcard_group?: SlotValue<UseWildcardGroupTransport>
+  _star_before?: number
+  _star_after?: number
   _use_wildcard_before?: number
   _use_wildcard_after?: number
 }

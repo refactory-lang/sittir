@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 427,
+  "nodeCount": 428,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1334,7 +1334,7 @@
       }
     },
     "use_wildcard": {
-      "path": {
+      "use_wildcard_group": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2800,6 +2800,15 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      }
+    },
+    "use_wildcard_group": {
+      "path": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "visibility_modifier_group": {
@@ -20461,10 +20470,46 @@
     },
     {
       "kind": "use_wildcard",
-      "modelType": "polymorph",
+      "modelType": "envelope",
       "typeName": "UseWildcard",
       "factoryName": "useWildcard",
       "irKey": "useWildcard",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "use_wildcard_group",
+          "propertyName": "useWildcardGroup",
+          "paramName": "useWildcardGroup",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "use_wildcard_group"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "use_wildcard_group",
+              "parseKind": "use_wildcard_group",
+              "unresolved": true
+            }
+          ]
+        }
+      ],
+      "factoryShape": "forwarded",
+      "forwardsTo": "use_wildcard_group",
+      "factoryFields": [
+        "use_wildcard_group"
+      ]
+    },
+    {
+      "kind": "use_wildcard_group",
+      "modelType": "polymorph",
+      "typeName": "UseWildcardGroup",
+      "factoryName": "useWildcardGroup",
+      "irKey": "useWildcardGroup",
       "hidden": false,
       "slots": [
         {
