@@ -158,7 +158,7 @@ function kindsBeneath(d: Derivation, v: string): string[] {
 const refOf = (path: string): TypeExpr => ({ k: 'ref', path: path.split('.').map(tsname), generic: true });
 const setOf = (path: string): TypeExpr => ({
 	k: 'ref',
-	path: [...path.split('.').map(tsname), 'Kinds'],
+	path: [...path.split('.').map(tsname), 'Any'],
 	generic: true
 });
 
@@ -298,7 +298,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		const mems = levelMembers(d, v);
 		const ext = sameTop ? refOf(parentPath) : null;
 		const paths = kindsBeneath(d, v);
-		const members: Member[] = paths.length > 0 ? [kindMember(paths)] : [];
+		const members: Member[] = paths.length > 0 ? [kindMember([v])] : [];
 		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
 			if (LAYOUT.has(cm)) continue;
 			members.push(memberDecl(d, v, cm, f));
@@ -320,7 +320,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		const claimed = [...d.allvocab].filter((o) => o === v || o.startsWith(`${v}.`)).sort();
 		statements.push({
 			k: 'alias',
-			name: 'Kinds',
+			name: 'Any',
 			value:
 				claimed.length === 0
 					? { k: 'kw', name: 'never' }
@@ -342,7 +342,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 			statements.push({
 				k: 'namespace',
 				name: tsname(top),
-				statements: [{ k: 'alias', name: 'Kinds', value: refOf(top) }]
+				statements: [{ k: 'alias', name: 'Any', value: refOf(top) }]
 			});
 		}
 		files.push({
@@ -390,7 +390,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				k: 'interface',
 				name: 'BaseContext',
 				extendsType: { k: 'ident', name: 'GrammarContext' },
-				members: contextMembers((t) => ({ k: 'ref', path: [tsname(t), 'Kinds'], generic: true })),
+				members: contextMembers((t) => ({ k: 'ref', path: [tsname(t), 'Any'], generic: true })),
 				bodyLeading: [],
 				trailing: [],
 				generic: false,
@@ -555,7 +555,7 @@ function interfaceIr(s: Interface, base: boolean): TsStatement {
 		...(s.extendsType ? { extendsTypeClause: ir.extendsTypeClause.strict(extendsIr(s.extendsType, base)) } : {}),
 		body: ir.objectType.strict({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
 	});
-	const built = ir.exportStatement.strict(ir.exportStatementDefault.declaration.strict({ content: decl }));
+	const built = ir.exportStatement.default.declaration.strict({ content: decl });
 	const t = trivia(s.leading, s.trailing);
 	return t ? built.$trivia(t) : built;
 }
@@ -565,30 +565,26 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 		case 'interface':
 			return interfaceIr(s, base);
 		case 'alias':
-			return ir.exportStatement.strict(
-				ir.exportStatementDefault.declaration.strict({
-					content: ir.typeAliasDeclaration.strict({
-						name: ir.identifier(s.name),
-						typeParameters: typeParams(),
-						value: toIr(s.value, base),
-						terminator: TSKindId.Semi
-					})
+			return ir.exportStatement.default.declaration.strict({
+				content: ir.typeAliasDeclaration.strict({
+					name: ir.identifier(s.name),
+					typeParameters: typeParams(),
+					value: toIr(s.value, base),
+					terminator: TSKindId.Semi
 				})
-			);
+			});
 		case 'namespace':
-			return ir.exportStatement.strict(
-				ir.exportStatementDefault.declaration.strict({
-					content: ir.internalModule.strict({
-						name: ir.identifier(s.name),
-						body: ir.statementBlock.strict({ statements: s.statements.map((x) => statementIr(x, base)) })
-					})
+			return ir.exportStatement.default.declaration.strict({
+				content: ir.internalModule.strict({
+					name: ir.identifier(s.name),
+					body: ir.statementBlock.strict({ statements: s.statements.map((x) => statementIr(x, base)) })
 				})
-			);
+			});
 	}
 }
 
 function importIr(imp: VocabularyFile['imports'][number], leading: readonly string[]): TsStatement {
-	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.strict({ content: ir.identifier(n) }));
+	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
 			? ir.importClause.strict(ir.namespaceImport.strict(ir.identifier(imp.namespace)))
