@@ -2277,15 +2277,6 @@
         "nonEmpty": false
       }
     },
-    "_parenthesized_import_list": {
-      "import_list": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_print_arguments": {
       "argument": {
         "unnamed": false,
@@ -2326,6 +2317,15 @@
     },
     "print_statement_plain": {
       "print_arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_parenthesized_import_list": {
+      "import_list": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

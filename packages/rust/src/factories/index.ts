@@ -155,6 +155,7 @@ export const fieldInitializerListElements: Hoisted<typeof O.fieldInitializerList
 export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoist(O.tuplePatternElements);
 export const patterns: Hoisted<typeof O.patterns> = hoist(O.patterns);
 export const structPatternElements: Hoisted<typeof O.structPatternElements> = hoist(O.structPatternElements);
+export const useWildcardGroup: Hoisted<typeof O.useWildcardGroup> = hoist(O.useWildcardGroup);
 export const visibilityModifierGroup: Hoisted<typeof O.visibilityModifierGroup> = hoist(O.visibilityModifierGroup);
 export const tupleTypeElements: Hoisted<typeof O.tupleTypeElements> = hoist(O.tupleTypeElements);
 export const tupleExpressionElements: Hoisted<typeof O.tupleExpressionElements> = hoist(O.tupleExpressionElements);

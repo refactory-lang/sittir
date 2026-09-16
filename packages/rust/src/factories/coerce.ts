@@ -166,6 +166,7 @@ export const _fromMap = {
 	tuple_pattern_elements: coerceToTuplePatternElements,
 	patterns: coerceToPatterns,
 	struct_pattern_elements: coerceToStructPatternElements,
+	use_wildcard_group: coerceToUseWildcardGroup,
 	visibility_modifier_group: coerceToVisibilityModifierGroup,
 	_tuple_type_elements: coerceToTupleTypeElements,
 	_tuple_expression_elements: coerceToTupleExpressionElements,
@@ -346,13 +347,14 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 	visibility_modifier_pub: () => F.buildVisibilityModifierPub()
 };
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
-	'use_wildcard',
 	'visibility_modifier',
+	'use_wildcard_group',
 	'visibility_modifier_group',
 	'visibility_modifier_pub_in_path',
 	'expression_statement',
 	'removed_trait_bound',
 	'use_list',
+	'use_wildcard',
 	'bracketed_type',
 	'lifetime',
 	'for_lifetimes',
@@ -405,7 +407,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	63, 64, 65, 66, 67, 68, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
 	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 117, 120,
 	121, 122, 125, 126, 128, 129, 130, 131, 133, 134, 135, 136, 137, 138, 139, 140, 142, 146, 152, 153, 157, 158, 159,
-	160, 161, 162, 165, 173, 231, 241, 268, 308, 320, 322, 323, 325, 326, 327, 328, 329, 347, 348, 349, 350, 353, 354,
+	160, 161, 162, 165, 173, 231, 241, 268, 308, 320, 322, 323, 325, 326, 327, 328, 329, 348, 349, 350, 351, 354, 355,
 	356, 357, 358, 411
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -422,23 +424,23 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	ordered_field_declaration_list: new Set([333, 421]),
 	where_clause: new Set([199, 334]),
 	removed_trait_bound: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381
 	]),
 	type_parameters: new Set([335, 419]),
-	use_list: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336]),
-	use_wildcard: new Set([1, 129, 130, 131, 132, 250]),
+	use_list: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336, 346]),
+	use_wildcard: new Set([1, 129, 130, 131, 132, 250, 346]),
 	parameters: new Set([337, 418]),
 	extern_modifier: new Set([318]),
-	visibility_modifier: new Set([1, 129, 130, 131, 132, 250, 346, 372, 373]),
+	visibility_modifier: new Set([1, 129, 130, 131, 132, 250, 347, 372, 373]),
 	bracketed_type: new Set([
-		1, 132, 204, 205, 225, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+		1, 132, 204, 205, 225, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 226, 338]),
-	tuple_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381]),
+	tuple_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381]),
 	use_bounds: new Set([1, 226, 339]),
 	type_arguments: new Set([340, 422]),
-	dynamic_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381]),
+	dynamic_type: new Set([1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381]),
 	range_expression: new Set([
 		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
 		274, 279, 284, 285, 286, 287, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 318, 319, 320, 357, 359, 360,
@@ -512,7 +514,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	ordered_field_declaration_list_elements: new Set([421]),
 	where_predicates: new Set([199]),
 	type_parameters_elements: new Set([419]),
-	use_clauses: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336]),
+	use_clauses: new Set([1, 129, 130, 131, 132, 213, 214, 215, 216, 250, 336, 346]),
 	parameters_elements: new Set([418]),
 	lifetimes: new Set([1, 226]),
 	use_bounds_elements: new Set([1, 226]),
@@ -532,9 +534,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		344, 356, 362, 363, 378, 379, 409, 412
 	]),
 	struct_pattern_elements: new Set([308, 404, 405]),
+	use_wildcard_group: new Set([1, 129, 130, 131, 132, 250]),
 	visibility_modifier_group: new Set([1, 129, 130, 131, 132, 250, 373]),
 	_tuple_type_elements: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381
 	]),
 	_tuple_expression_elements: new Set([
 		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
@@ -563,7 +566,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	impl_item_positive_clause: new Set([1, 233, 252]),
 	impl_item_negative_clause: new Set([1, 233, 252]),
-	visibility_modifier_pub: new Set([1, 129, 130, 131, 132, 250, 346, 373]),
+	visibility_modifier_pub: new Set([1, 129, 130, 131, 132, 250, 347, 373]),
 	visibility_modifier_pub_in_path: new Set([1, 129, 130, 131, 132, 250]),
 	function_type_trait_form: new Set([1, 252]),
 	function_type_fn_form: new Set([197]),
@@ -572,10 +575,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		344, 356, 362, 363, 378, 379, 409, 412
 	]),
 	pointer_type_const: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381
 	]),
 	pointer_type_mut: new Set([
-		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 351, 380, 381
+		1, 132, 204, 205, 227, 229, 230, 231, 233, 235, 239, 241, 242, 243, 246, 252, 352, 380, 381
 	]),
 	range_expression_postfix: new Set([
 		1, 116, 118, 129, 132, 151, 232, 246, 250, 253, 254, 255, 257, 258, 259, 260, 261, 262, 263, 266, 267, 268, 269,
@@ -754,6 +757,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	tuple_pattern_elements: TSKindId.TuplePatternElements,
 	patterns: TSKindId.Patterns,
 	struct_pattern_elements: TSKindId.StructPatternElements,
+	use_wildcard_group: TSKindId.UseWildcardGroup,
 	visibility_modifier_group: TSKindId.VisibilityModifierGroup,
 	_tuple_type_elements: TSKindId.TupleTypeElements,
 	_tuple_expression_elements: TSKindId.TupleExpressionElements,
@@ -800,6 +804,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	removed_trait_bound: '_type',
 	type_parameters: 'type_parameters_elements',
 	use_list: 'use_clauses',
+	use_wildcard: 'use_wildcard_group',
 	parameters: 'parameters_elements',
 	extern_modifier: 'string_literal',
 	visibility_modifier: 'visibility_modifier_pub',
@@ -993,6 +998,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (F.buildPatterns as (...args: unknown[]) => unknown)(...children);
 		case 'struct_pattern_elements':
 			return (F.buildStructPatternElements as (...args: unknown[]) => unknown)(...children);
+		case 'use_wildcard_group':
+			return F.buildUseWildcardGroup(children[0] as Parameters<typeof F.buildUseWildcardGroup>[0]);
 		case 'visibility_modifier_group':
 			return F.buildVisibilityModifierGroup(children[0] as Parameters<typeof F.buildVisibilityModifierGroup>[0]);
 		case '_tuple_type_elements':
@@ -3175,30 +3182,21 @@ export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<type
 	});
 }
 
-export function resolveUseWildcard_path(value: T.UseWildcard.LooseConfig['path']): T.UseWildcard['_path'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
-		),
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
-	);
+export function resolveUseWildcard_useWildcardGroup(
+	value: T.UseWildcard.LooseConfig['useWildcardGroup']
+): T.UseWildcard['_use_wildcard_group'] {
+	return _resolveOneBranch<T.UseWildcardGroup>(value, 'use_wildcard_group');
 }
 
 export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typeof F.buildUseWildcard> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseWildcard)
 		return input as unknown as ReturnType<typeof F.buildUseWildcard>;
 	return F.buildUseWildcard(
-		coerceMixedEnumStorage(
-			_resolveKindEnum(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
-				() =>
-					_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
-						input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
-						_K8,
-						_K9
-					)
-			),
-			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+		_resolveOneBranch<T.UseWildcardGroup>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'useWildcardGroup' in input
+				? input.useWildcardGroup
+				: input,
+			'use_wildcard_group'
 		)
 	);
 }
@@ -5971,6 +5969,36 @@ export function coerceToStructPatternElements(
 	}
 	return F.buildStructPatternElements(
 		...(input as unknown as NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>)
+	);
+}
+
+export function resolveUseWildcardGroup_path(
+	value: T.UseWildcardGroup.LooseConfig['path']
+): T.UseWildcardGroup['_path'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(value, _K8, _K9)
+		),
+		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+	);
+}
+
+export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): ReturnType<typeof F.buildUseWildcardGroup> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UseWildcardGroup)
+		return input as unknown as ReturnType<typeof F.buildUseWildcardGroup>;
+	return F.buildUseWildcardGroup(
+		coerceMixedEnumStorage(
+			_resolveKindEnum(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
+				() =>
+					_resolveOne<'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
+						input !== null && typeof input === 'object' && !isNodeData(input) && 'path' in input ? input.path : input,
+						_K8,
+						_K9
+					)
+			),
+			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+		)
 	);
 }
 

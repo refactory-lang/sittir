@@ -1771,7 +1771,7 @@ describe('use_declaration sub-factories', () => {
 	});
 	it('useWildcard builds the parent', () => {
 		const node = ir.useDeclaration.useWildcard({
-			argument: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
+			argument: [{ $type: TSKindId.UseWildcardGroup, $text: 'test', $source: 2, $named: true } as any]
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBeDefined();
@@ -1947,31 +1947,31 @@ describe('use_wildcard sub-factories', () => {
 	it('self builds the parent', () => {
 		const node = ir.useWildcard.self({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBe(TSKindId.Self);
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.useWildcard.identifier('test');
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBeDefined();
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('metavariable builds the parent', () => {
 		const node = ir.useWildcard.metavariable('$x');
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBeDefined();
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('super builds the parent', () => {
 		const node = ir.useWildcard.super({ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBe(TSKindId.Super);
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.useWildcard.crate({ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any);
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBe(TSKindId.Crate);
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
@@ -1979,7 +1979,7 @@ describe('use_wildcard sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseWildcard);
-		expect((node as any).path()).toBeDefined();
+		expect((node as any).useWildcardGroup()?.$type).toBe(TSKindId.UseWildcardGroup);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -7021,6 +7021,55 @@ describe('struct_pattern_elements', () => {
 		const node = ir.structPatternElements(
 			...[{ $type: TSKindId.RemainingFieldPattern, $text: '..', $source: 2, $named: true } as any]
 		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('use_wildcard_group', () => {
+	it('factory produces correct type', () => {
+		const node = ir.useWildcardGroup();
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect(node.$source).toBe(2);
+	});
+});
+
+describe('use_wildcard_group sub-factories', () => {
+	it('self builds the parent', () => {
+		const node = ir.useWildcardGroup.self({ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBe(TSKindId.Self);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('identifier builds the parent', () => {
+		const node = ir.useWildcardGroup.identifier('test');
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('metavariable builds the parent', () => {
+		const node = ir.useWildcardGroup.metavariable('$x');
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('super builds the parent', () => {
+		const node = ir.useWildcardGroup.super({ $type: TSKindId.Super, $text: 'super', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBe(TSKindId.Super);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('crate builds the parent', () => {
+		const node = ir.useWildcardGroup.crate({ $type: TSKindId.Crate, $text: 'crate', $source: 2, $named: true } as any);
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBe(TSKindId.Crate);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('scopedIdentifier builds the parent', () => {
+		const node = ir.useWildcardGroup.scopedIdentifier({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.UseWildcardGroup);
+		expect((node as any).path()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

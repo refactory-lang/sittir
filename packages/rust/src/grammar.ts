@@ -2451,6 +2451,12 @@ export type RustGrammar = {
 	readonly use_wildcard: {
 		type: 'use_wildcard';
 		named: true;
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'use_wildcard_group'; named: true }] };
+	};
+	readonly use_wildcard_group: {
+		type: 'use_wildcard_group';
+		named: true;
 		fields: {
 			path: {
 				multiple: false;

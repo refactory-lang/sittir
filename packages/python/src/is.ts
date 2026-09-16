@@ -398,9 +398,6 @@ export interface IsGuards {
 	comprehensionClauses<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ComprehensionClauses };
-	ParenthesizedImportList<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	PrintArguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintArguments };
@@ -413,6 +410,9 @@ export interface IsGuards {
 	printStatementPlain<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrintStatementPlain };
+	ParenthesizedImportList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ParenthesizedImportList };
 	expressionStatementTuple<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -626,9 +626,6 @@ export interface AssertGuards {
 	comprehensionClauses(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
-	ParenthesizedImportList(
-		v: { readonly $type: number } | number
-	): asserts v is { readonly $type: TSKindId.ParenthesizedImportList };
 	PrintArguments(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.PrintArguments };
 	PrintChevronArguments(
 		v: { readonly $type: number } | number
@@ -639,6 +636,9 @@ export interface AssertGuards {
 	printStatementPlain(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.PrintStatementPlain };
+	ParenthesizedImportList(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.ParenthesizedImportList };
 	expressionStatementTuple(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
@@ -685,7 +685,7 @@ const _supertype_compoundStatement_ids = new Set<number>([135, 141, 142, 143, 14
 const _supertype_withClause_ids = new Set<number>([273, 274]);
 const _supertype_suite_ids = new Set<number>([276, 277, 278]);
 const _supertype_simplePattern_ids = new Set<number>([
-	174, 173, 169, 257, 256, 170, 231, 230, 74, 75, 76, 266, 175, 166, 265
+	174, 173, 169, 257, 256, 170, 231, 230, 74, 75, 76, 266, 175, 166, 264
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 208, 182, 183, 184, 180, 239, 238, 185]);
 const _supertype_pattern_ids = new Set<number>([1, 205, 204, 184, 180, 181]);
@@ -824,11 +824,11 @@ export const is = {
 	caseListPattern: _g(TSKindId.CaseListPattern),
 	caseAsPattern: _g(TSKindId.CaseAsPattern),
 	comprehensionClauses: _g(TSKindId.ComprehensionClauses),
-	ParenthesizedImportList: _g(TSKindId.ParenthesizedImportList),
 	PrintArguments: _g(TSKindId.PrintArguments),
 	PrintChevronArguments: _g(TSKindId.PrintChevronArguments),
 	printStatementChevron: _g(TSKindId.PrintStatementChevron),
 	printStatementPlain: _g(TSKindId.PrintStatementPlain),
+	ParenthesizedImportList: _g(TSKindId.ParenthesizedImportList),
 	expressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	withClauseBare: _g(TSKindId.WithClauseBare),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
@@ -999,11 +999,11 @@ export const assert = {
 	caseListPattern: _makeAssert('caseListPattern', is.caseListPattern as _AnyGuard),
 	caseAsPattern: _makeAssert('caseAsPattern', is.caseAsPattern as _AnyGuard),
 	comprehensionClauses: _makeAssert('comprehensionClauses', is.comprehensionClauses as _AnyGuard),
-	ParenthesizedImportList: _makeAssert('ParenthesizedImportList', is.ParenthesizedImportList as _AnyGuard),
 	PrintArguments: _makeAssert('PrintArguments', is.PrintArguments as _AnyGuard),
 	PrintChevronArguments: _makeAssert('PrintChevronArguments', is.PrintChevronArguments as _AnyGuard),
 	printStatementChevron: _makeAssert('printStatementChevron', is.printStatementChevron as _AnyGuard),
 	printStatementPlain: _makeAssert('printStatementPlain', is.printStatementPlain as _AnyGuard),
+	ParenthesizedImportList: _makeAssert('ParenthesizedImportList', is.ParenthesizedImportList as _AnyGuard),
 	expressionStatementTuple: _makeAssert('expressionStatementTuple', is.expressionStatementTuple as _AnyGuard),
 	withClauseBare: _makeAssert('withClauseBare', is.withClauseBare as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),

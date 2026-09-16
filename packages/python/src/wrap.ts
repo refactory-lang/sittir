@@ -3948,8 +3948,8 @@ export function wrapCasePattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 74, False: 75, None: 76, _: 265 },
-				{ 48: 265 }
+				{ True: 74, False: 75, None: 76, _: 264 },
+				{ 48: 264 }
 			),
 
 			content() {
@@ -4074,8 +4074,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 265 },
-				{ 48: 265 }
+				{ True: 74, False: 75, None: 76, _: 264 },
+				{ 48: 264 }
 			),
 
 			patterns() {
@@ -4170,8 +4170,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 265 },
-				{ 48: 265 }
+				{ True: 74, False: 75, None: 76, _: 264 },
+				{ 48: 264 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -4234,8 +4234,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 74, False: 75, None: 76, _: 265 },
-				{ 48: 265 }
+				{ True: 74, False: 75, None: 76, _: 264 },
+				{ 48: 264 }
 			),
 
 			name() {
@@ -8364,32 +8364,6 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
 	return _node;
 }
 
-export function wrapParenthesizedImportList(data: T.ParenthesizedImportList, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_import_list']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.ParenthesizedImportList as const,
-			_import_list: normalizeSingularWrapSlot(data._import_list, 'import_list', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'import_list',
-				span: (data as _NodeData).$span
-			}),
-
-			importList() {
-				return drillIn<T.ImportList>(this._import_list, tree);
-			},
-			$with: {
-				importList: (v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
-					wrapParenthesizedImportList({ ...$edited(data), _import_list: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapPrintArguments(
 	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
@@ -8516,6 +8490,32 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 			$with: {
 				printArguments: (v: NonNullable<T.PrintStatementPlain['_print_arguments']>) =>
 					wrapPrintStatementPlain({ ...$edited(data), _print_arguments: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapParenthesizedImportList(data: T.ParenthesizedImportList, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_import_list']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.ParenthesizedImportList as const,
+			_import_list: normalizeSingularWrapSlot(data._import_list, 'import_list', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'import_list',
+				span: (data as _NodeData).$span
+			}),
+
+			importList() {
+				return drillIn<T.ImportList>(this._import_list, tree);
+			},
+			$with: {
+				importList: (v: NonNullable<T.ParenthesizedImportList['_import_list']>) =>
+					wrapParenthesizedImportList({ ...$edited(data), _import_list: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -9461,13 +9461,13 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CaseListPattern]: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
 	[TSKindId.CaseAsPattern]: (d, t) => wrapCaseAsPattern(d as unknown as T.CaseAsPattern, t),
 	[TSKindId.ComprehensionClauses]: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
-	[TSKindId.ParenthesizedImportList]: (d, t) =>
-		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.PrintArguments]: (d, t) => wrapPrintArguments(d as unknown as T.PrintArguments, t),
 	[TSKindId.PrintChevronArguments]: (d, t) => wrapPrintChevronArguments(d as unknown as T.PrintChevronArguments, t),
 	[TSKindId.PrintStatementChevron]: (d, t) => wrapPrintStatementChevron(d as unknown as T.PrintStatementChevron, t),
 	[TSKindId.PrintStatementPlain]: (d, t) => wrapPrintStatementPlain(d as unknown as T.PrintStatementPlain, t),
 	[TSKindId.WildcardPattern]: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
+	[TSKindId.ParenthesizedImportList]: (d, t) =>
+		wrapParenthesizedImportList(d as unknown as T.ParenthesizedImportList, t),
 	[TSKindId.SimplePatternNegative]: (d, t) => wrapSimplePatternNegative(d as unknown as T.SimplePatternNegative, t),
 	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
 		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
@@ -9651,12 +9651,12 @@ interface _WrapReturnByKindId {
 	[TSKindId.CaseListPattern]: ReturnType<typeof wrapCaseListPattern>;
 	[TSKindId.CaseAsPattern]: ReturnType<typeof wrapCaseAsPattern>;
 	[TSKindId.ComprehensionClauses]: ReturnType<typeof wrapComprehensionClauses>;
-	[TSKindId.ParenthesizedImportList]: ReturnType<typeof wrapParenthesizedImportList>;
 	[TSKindId.PrintArguments]: ReturnType<typeof wrapPrintArguments>;
 	[TSKindId.PrintChevronArguments]: ReturnType<typeof wrapPrintChevronArguments>;
 	[TSKindId.PrintStatementChevron]: ReturnType<typeof wrapPrintStatementChevron>;
 	[TSKindId.PrintStatementPlain]: ReturnType<typeof wrapPrintStatementPlain>;
 	[TSKindId.WildcardPattern]: _NodeData & { readonly $type: TSKindId.WildcardPattern };
+	[TSKindId.ParenthesizedImportList]: ReturnType<typeof wrapParenthesizedImportList>;
 	[TSKindId.SimplePatternNegative]: ReturnType<typeof wrapSimplePatternNegative>;
 	[TSKindId.ExceptClauseExceptionList]: ReturnType<typeof wrapExceptClauseExceptionList>;
 	[TSKindId.ExceptClauseException]: ReturnType<typeof wrapExceptClauseException>;

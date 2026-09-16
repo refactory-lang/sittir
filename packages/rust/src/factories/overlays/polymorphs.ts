@@ -3024,6 +3024,83 @@ export const scopedUseList: typeof B.scopedUseList & {
 	}
 };
 
+const useWildcardGroup$self =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$identifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$metavariable =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$super =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$crate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const useWildcardGroup$scopedIdentifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const useWildcardGroup: typeof B.useWildcardGroup & {
+	self: {
+		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	identifier: {
+		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	metavariable: {
+		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	super: {
+		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	crate: {
+		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+	scopedIdentifier: {
+		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+	};
+} = {
+	...B.useWildcardGroup,
+	self: {
+		strict: useWildcardGroup$self(F.buildUseWildcardGroup, F.buildSelf),
+		coerce: useWildcardGroup$self(C.coerceToUseWildcardGroup, C.coerceToSelf)
+	},
+	identifier: {
+		strict: useWildcardGroup$identifier(F.buildUseWildcardGroup, F.buildIdentifier),
+		coerce: useWildcardGroup$identifier(C.coerceToUseWildcardGroup, C.coerceToIdentifier)
+	},
+	metavariable: {
+		strict: useWildcardGroup$metavariable(F.buildUseWildcardGroup, F.buildMetavariable),
+		coerce: useWildcardGroup$metavariable(C.coerceToUseWildcardGroup, C.coerceToMetavariable)
+	},
+	super: {
+		strict: useWildcardGroup$super(F.buildUseWildcardGroup, F.buildSuper),
+		coerce: useWildcardGroup$super(C.coerceToUseWildcardGroup, C.coerceToSuper)
+	},
+	crate: {
+		strict: useWildcardGroup$crate(F.buildUseWildcardGroup, F.buildCrate),
+		coerce: useWildcardGroup$crate(C.coerceToUseWildcardGroup, C.coerceToCrate)
+	},
+	scopedIdentifier: {
+		strict: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, F.buildScopedIdentifier),
+		coerce: useWildcardGroup$scopedIdentifier(C.coerceToUseWildcardGroup, C.coerceToScopedIdentifier)
+	}
+};
+
 const useWildcard$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -3050,54 +3127,56 @@ const useWildcard$scopedIdentifier =
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const useWildcard: typeof B.useWildcard & {
 	self: {
-		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.self.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.self.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 	identifier: {
-		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.identifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 	metavariable: {
-		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.metavariable.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.metavariable.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 	super: {
-		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.super.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.super.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 	crate: {
-		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.crate.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.crate.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 	scopedIdentifier: {
-		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof C.coerceToUseWildcard>;
+		strict: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
+		coerce: (
+			...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.coerce>
+		) => ReturnType<typeof C.coerceToUseWildcard>;
 	};
 } = {
 	...B.useWildcard,
 	self: {
-		strict: useWildcard$self(F.buildUseWildcard, F.buildSelf),
-		coerce: useWildcard$self(C.coerceToUseWildcard, C.coerceToSelf)
+		strict: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.strict),
+		coerce: useWildcard$self(C.coerceToUseWildcard, useWildcardGroup.self.coerce)
 	},
 	identifier: {
-		strict: useWildcard$identifier(F.buildUseWildcard, F.buildIdentifier),
-		coerce: useWildcard$identifier(C.coerceToUseWildcard, C.coerceToIdentifier)
+		strict: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.strict),
+		coerce: useWildcard$identifier(C.coerceToUseWildcard, useWildcardGroup.identifier.coerce)
 	},
 	metavariable: {
-		strict: useWildcard$metavariable(F.buildUseWildcard, F.buildMetavariable),
-		coerce: useWildcard$metavariable(C.coerceToUseWildcard, C.coerceToMetavariable)
+		strict: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.strict),
+		coerce: useWildcard$metavariable(C.coerceToUseWildcard, useWildcardGroup.metavariable.coerce)
 	},
 	super: {
-		strict: useWildcard$super(F.buildUseWildcard, F.buildSuper),
-		coerce: useWildcard$super(C.coerceToUseWildcard, C.coerceToSuper)
+		strict: useWildcard$super(F.buildUseWildcard, useWildcardGroup.super.strict),
+		coerce: useWildcard$super(C.coerceToUseWildcard, useWildcardGroup.super.coerce)
 	},
 	crate: {
-		strict: useWildcard$crate(F.buildUseWildcard, F.buildCrate),
-		coerce: useWildcard$crate(C.coerceToUseWildcard, C.coerceToCrate)
+		strict: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.strict),
+		coerce: useWildcard$crate(C.coerceToUseWildcard, useWildcardGroup.crate.coerce)
 	},
 	scopedIdentifier: {
-		strict: useWildcard$scopedIdentifier(F.buildUseWildcard, F.buildScopedIdentifier),
-		coerce: useWildcard$scopedIdentifier(C.coerceToUseWildcard, C.coerceToScopedIdentifier)
+		strict: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.strict),
+		coerce: useWildcard$scopedIdentifier(C.coerceToUseWildcard, useWildcardGroup.scopedIdentifier.coerce)
 	}
 };
 

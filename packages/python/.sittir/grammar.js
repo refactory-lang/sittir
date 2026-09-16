@@ -5308,6 +5308,28 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        // See docs/python-grammar-sittir-glossary.md::parameters
+        parameters: {
+          "1/0": alias("parameters_elements")
+        },
+        lambda_parameters: {
+          ".": alias("parameters_elements")
+        },
+        tuple_pattern: {
+          "1/0": alias("patterns")
+        },
+        list_pattern: {
+          "1/0": alias("patterns")
+        },
+        list: {
+          "1/0": alias("collection_elements")
+        },
+        set: {
+          1: alias("collection_elements")
+        },
+        tuple: {
+          "1/0": alias("collection_elements")
+        },
         argument_list: {
           1: field("arguments")
         },
@@ -5373,6 +5395,8 @@ var grammar_sittir_default = grammar(
           { "3/2": alias("parenthesized_import_list") }
         ],
         future_import_statement: { "3/1": alias("parenthesized_import_list") },
+        // See docs/python-grammar-sittir-glossary.md::_parenthesized_import_list
+        _parenthesized_import_list: { 1: alias("import_list") },
         interpolation: {
           "2/0": field("eq_marker")
         },
@@ -5449,13 +5473,6 @@ var grammar_sittir_default = grammar(
         ),
         // See docs/python-grammar-sittir-glossary.md::format_specifier
         format_specifier: ($) => seq(":", repeat(choice(token.immediate(prec(1, /[^{}\n]+/)), alias($.interpolation, $.format_expression)))),
-        parameters: ($) => seq("(", optional(alias($._parameters, $.parameters_elements)), ")"),
-        lambda_parameters: ($) => alias($._parameters, $.parameters_elements),
-        tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.patterns)), ")"),
-        list_pattern: ($) => seq("[", optional(alias($._patterns, $.patterns)), "]"),
-        list: ($) => seq("[", optional(alias($._collection_elements, $.collection_elements)), "]"),
-        set: ($) => seq("{", alias($._collection_elements, $.collection_elements), "}"),
-        tuple: ($) => seq("(", optional(alias($._collection_elements, $.collection_elements)), ")"),
         // See docs/python-grammar-sittir-glossary.md::case_tuple_pattern
         case_tuple_pattern: ($) => seq("(", optional($.list_pattern_case_patterns), ")"),
         case_list_pattern: ($) => seq("[", optional($.list_pattern_case_patterns), "]"),
@@ -5468,8 +5485,6 @@ var grammar_sittir_default = grammar(
         dictionary_comprehension: ($) => seq("{", field("body", $.pair), $.comprehension_clauses, "}"),
         set_comprehension: ($) => seq("{", field("body", $.expression), $.comprehension_clauses, "}"),
         generator_expression: ($) => seq("(", field("body", $.expression), $.comprehension_clauses, ")"),
-        // See docs/python-grammar-sittir-glossary.md::_parenthesized_import_list
-        _parenthesized_import_list: ($) => seq("(", alias($._import_list, $.import_list), ")"),
         _print_arguments: ($) => seq(field("argument", $.expression), repeat(seq(",", field("argument", $.expression))), optional(",")),
         _print_chevron_arguments: ($) => seq(repeat1(seq(",", field("argument", $.expression))), optional(",")),
         print_statement_chevron: ($) => seq("print", $.chevron, optional(choice(alias($._print_chevron_arguments, $.print_chevron_arguments), ","))),

@@ -267,12 +267,12 @@ pub const CASE_TUPLE_PATTERN: KindId = KindId(256);
 pub const CASE_LIST_PATTERN: KindId = KindId(257);
 pub const CASE_AS_PATTERN: KindId = KindId(258);
 pub const COMPREHENSION_CLAUSES: KindId = KindId(259);
-pub const _PARENTHESIZED_IMPORT_LIST: KindId = KindId(260);
-pub const _PRINT_ARGUMENTS: KindId = KindId(261);
-pub const _PRINT_CHEVRON_ARGUMENTS: KindId = KindId(262);
-pub const PRINT_STATEMENT_CHEVRON: KindId = KindId(263);
-pub const PRINT_STATEMENT_PLAIN: KindId = KindId(264);
-pub const _WILDCARD_PATTERN: KindId = KindId(265);
+pub const _PRINT_ARGUMENTS: KindId = KindId(260);
+pub const _PRINT_CHEVRON_ARGUMENTS: KindId = KindId(261);
+pub const PRINT_STATEMENT_CHEVRON: KindId = KindId(262);
+pub const PRINT_STATEMENT_PLAIN: KindId = KindId(263);
+pub const _WILDCARD_PATTERN: KindId = KindId(264);
+pub const _PARENTHESIZED_IMPORT_LIST: KindId = KindId(265);
 pub const SIMPLE_PATTERN_NEGATIVE: KindId = KindId(266);
 pub const EXCEPT_CLAUSE_EXCEPTION_LIST: KindId = KindId(267);
 pub const EXCEPT_CLAUSE_EXCEPTION: KindId = KindId(268);
@@ -590,12 +590,12 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         257 => "case_list_pattern", // "case_list_pattern"
         258 => "case_as_pattern", // "case_as_pattern"
         259 => "comprehension_clauses", // "comprehension_clauses"
-        260 => "parenthesized_import_list", // "_parenthesized_import_list"
-        261 => "print_arguments", // "_print_arguments"
-        262 => "print_chevron_arguments", // "_print_chevron_arguments"
-        263 => "print_statement_chevron", // "print_statement_chevron"
-        264 => "print_statement_plain", // "print_statement_plain"
-        265 => "wildcard_pattern", // "_wildcard_pattern"
+        260 => "print_arguments", // "_print_arguments"
+        261 => "print_chevron_arguments", // "_print_chevron_arguments"
+        262 => "print_statement_chevron", // "print_statement_chevron"
+        263 => "print_statement_plain", // "print_statement_plain"
+        264 => "wildcard_pattern", // "_wildcard_pattern"
+        265 => "parenthesized_import_list", // "_parenthesized_import_list"
         266 => "simple_pattern_negative", // "simple_pattern_negative"
         267 => "except_clause_exception_list", // "except_clause_exception_list"
         268 => "except_clause_exception", // "except_clause_exception"
@@ -688,8 +688,8 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (249, "element", &[6]),
     (251, "subscript", &[6]),
     (252, "element", &[6]),
+    (260, "argument", &[6]),
     (261, "argument", &[6]),
-    (262, "argument", &[6]),
     (267, "value", &[6]),
     (272, "expression", &[6]),
     (273, "with_item", &[6]),

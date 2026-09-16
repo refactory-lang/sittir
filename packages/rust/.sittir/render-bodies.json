@@ -8100,33 +8100,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "path",
+					"test": "use_wildcard_group",
 					"body": [
 						{
-							"kind": "if",
-							"arms": [
-								{
-									"test": "path",
-									"body": [
-										{
-											"kind": "slot",
-											"name": "path"
-										}
-									]
-								}
-							]
-						},
-						{
-							"kind": "seam",
-							"field": "colon_colon_before"
-						},
-						{
-							"kind": "text",
-							"text": "::"
-						},
-						{
-							"kind": "seam",
-							"field": "colon_colon_after"
+							"kind": "slot",
+							"name": "use_wildcard_group"
 						}
 					]
 				}
@@ -8147,6 +8125,42 @@
 		{
 			"kind": "seam",
 			"field": "use_wildcard_after"
+		}
+	],
+	"use_wildcard_group": [
+		{
+			"kind": "seam",
+			"field": "use_wildcard_group_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "path",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "path"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "colon_colon_before"
+		},
+		{
+			"kind": "text",
+			"text": "::"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_colon_after"
+		},
+		{
+			"kind": "seam",
+			"field": "use_wildcard_group_after"
 		}
 	],
 	"variadic_parameter": [

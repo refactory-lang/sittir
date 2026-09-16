@@ -4126,48 +4126,6 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 	);
 }
 
-export function buildParenthesizedImportList(value: T.ImportList): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(
-	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
-): ReturnType<typeof _buildParenthesizedImportList>;
-export function buildParenthesizedImportList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildParenthesizedImportList(args[0] as T.ImportList);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
-	return prebuilt
-		? _buildParenthesizedImportList(args[0] as T.ImportList)
-		: _buildParenthesizedImportList((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
-}
-function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImportList.Built {
-	const _import_list = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ParenthesizedImportList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_list,
-				$with: {
-					importList: (value: T.ImportList) => buildParenthesizedImportList(value)
-				}
-			},
-			{
-				importList: () => _import_list
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildPrintArguments(...elements: NonEmptyArray<T.Expression>): ReturnType<typeof _buildPrintArguments>;
 export function buildPrintArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
@@ -4326,6 +4284,48 @@ function _buildPrintStatementPlain(value: T.PrintArguments): T.PrintStatementPla
 			},
 			{
 				printArguments: () => _print_arguments
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildParenthesizedImportList(value: T.ImportList): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList(
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
+): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList(
+	...elements: NonEmptyArray<T.DottedName | T.AliasedImport>
+): ReturnType<typeof _buildParenthesizedImportList>;
+export function buildParenthesizedImportList(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildParenthesizedImportList(args[0] as T.ImportList);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportList as const);
+	return prebuilt
+		? _buildParenthesizedImportList(args[0] as T.ImportList)
+		: _buildParenthesizedImportList((buildImportList as (...a: unknown[]) => unknown)(...args) as T.ImportList);
+}
+function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImportList.Built {
+	const _import_list = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ParenthesizedImportList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_list,
+				$with: {
+					importList: (value: T.ImportList) => buildParenthesizedImportList(value)
+				}
+			},
+			{
+				importList: () => _import_list
 			}
 		),
 		methodsEngine
@@ -5044,11 +5044,11 @@ export type FluentKindMap = {
 	case_list_pattern: T.CaseListPattern.Built;
 	case_as_pattern: T.CaseAsPattern.Built;
 	comprehension_clauses: T.ComprehensionClauses.Built;
-	_parenthesized_import_list: T.ParenthesizedImportList.Built;
 	_print_arguments: T.PrintArguments.Built;
 	_print_chevron_arguments: T.PrintChevronArguments.Built;
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
+	_parenthesized_import_list: T.ParenthesizedImportList.Built;
 	simple_pattern_negative: T.SimplePatternNegative.Built;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	except_clause_exception: T.ExceptClauseException.Built;
@@ -5215,11 +5215,11 @@ export const _factoryMap = {
 	case_list_pattern: buildCaseListPattern,
 	case_as_pattern: buildCaseAsPattern,
 	comprehension_clauses: buildComprehensionClauses,
-	_parenthesized_import_list: buildParenthesizedImportList,
 	_print_arguments: buildPrintArguments,
 	_print_chevron_arguments: buildPrintChevronArguments,
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
+	_parenthesized_import_list: buildParenthesizedImportList,
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,

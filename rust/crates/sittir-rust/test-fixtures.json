@@ -6856,7 +6856,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -6938,7 +6938,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_expression_elements": {
-                    "$type": 352,
+                    "$type": 353,
                     "$source": 0,
                     "$named": true,
                     "_element": [
@@ -10057,7 +10057,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_expression_elements": {
-                  "$type": 352,
+                  "$type": 353,
                   "$source": 0,
                   "$named": true,
                   "_element": [
@@ -11405,7 +11405,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_expression_elements": {
-          "$type": 352,
+          "$type": 353,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -11860,7 +11860,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -11942,7 +11942,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -13952,7 +13952,7 @@
                           "$source": 0,
                           "$named": true,
                           "_tuple_type_elements": {
-                            "$type": 351,
+                            "$type": 352,
                             "$source": 0,
                             "$named": true,
                             "_type": [
@@ -14269,7 +14269,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_type_elements": {
-                        "$type": 351,
+                        "$type": 352,
                         "$source": 0,
                         "$named": true,
                         "_type": [
@@ -14706,7 +14706,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 351,
+                      "$type": 352,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -14870,7 +14870,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 351,
+                    "$type": 352,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -14980,7 +14980,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -20325,6 +20325,2286 @@
     "expectedReparseTree": "(field_expression value: (identifier) field: (field_identifier))",
     "wrappedText": "fn _f() { let _ = ap.as_va_list; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use abc;\nuse phrases::japanese;\nuse sayings::english::greetings;\nuse sayings::english::greetings as en_greetings ;\nuse phrases::english::{greetings,farewells};\nuse sayings::japanese::farewells::*;\npub use self::greetings::hello;\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\nuse three::{ dot::{one, four} };\nuse my::{ some::* };\nuse my::{*};\nuse ::*;",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse::*;",
+    "expectedReparseTree": "(source_file statements: (use_declaration argument: (identifier)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (use_declaration argument: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (use_as_clause path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) alias: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))))) statements: (use_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) argument: (scoped_identifier path: (scoped_identifier path: (self) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (self) use_clause: (use_as_clause path: (identifier) alias: (identifier)) use_clause: (use_as_clause path: (identifier) alias: (identifier)))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier)))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard (use_wildcard_group path: (identifier))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group))))",
+    "wrappedText": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse::*;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "abc",
+        "$span": {
+          "start": 4,
+          "end": 7
+        }
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 0,
+            "end": 3
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 7,
+            "end": 8
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use abc;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use abc;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use abc;",
+    "expectedReparseTree": "(use_declaration argument: (identifier))",
+    "wrappedText": "use abc;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "phrases",
+          "$span": {
+            "start": 13,
+            "end": 20
+          }
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "japanese",
+          "$span": {
+            "start": 22,
+            "end": 30
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 20,
+              "end": 22
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 9,
+            "end": 12
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 30,
+            "end": 31
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use phrases::japanese;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use phrases::japanese;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use phrases::japanese;",
+    "expectedReparseTree": "(use_declaration argument: (scoped_identifier path: (identifier) name: (identifier)))",
+    "wrappedText": "use phrases::japanese;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 250,
+          "$source": 0,
+          "$named": true,
+          "_path": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "sayings",
+            "$span": {
+              "start": 36,
+              "end": 43
+            }
+          },
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "english",
+            "$span": {
+              "start": 45,
+              "end": 52
+            }
+          },
+          "$other": [
+            {
+              "$type": 65,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 43,
+                "end": 45
+              }
+            }
+          ],
+          "$slotOrder": [
+            "path",
+            "name"
+          ]
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "greetings",
+          "$span": {
+            "start": 54,
+            "end": 63
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 52,
+              "end": 54
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 32,
+            "end": 35
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 63,
+            "end": 64
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use sayings::english::greetings;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use sayings::english::greetings;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use sayings::english::greetings;",
+    "expectedReparseTree": "(use_declaration argument: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)))",
+    "wrappedText": "use sayings::english::greetings;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 215,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 250,
+          "$source": 0,
+          "$named": true,
+          "_path": {
+            "$type": 250,
+            "$source": 0,
+            "$named": true,
+            "_path": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "sayings",
+              "$span": {
+                "start": 69,
+                "end": 76
+              }
+            },
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "english",
+              "$span": {
+                "start": 78,
+                "end": 85
+              }
+            },
+            "$other": [
+              {
+                "$type": 65,
+                "$source": 0,
+                "$named": false,
+                "$text": "::",
+                "$span": {
+                  "start": 76,
+                  "end": 78
+                }
+              }
+            ],
+            "$slotOrder": [
+              "path",
+              "name"
+            ]
+          },
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "greetings",
+            "$span": {
+              "start": 87,
+              "end": 96
+            }
+          },
+          "$other": [
+            {
+              "$type": 65,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 85,
+                "end": 87
+              }
+            }
+          ],
+          "$slotOrder": [
+            "path",
+            "name"
+          ]
+        },
+        "_alias": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "en_greetings",
+          "$span": {
+            "start": 100,
+            "end": 112
+          }
+        },
+        "$other": [
+          {
+            "$type": 66,
+            "$source": 0,
+            "$named": false,
+            "$text": "as",
+            "$span": {
+              "start": 97,
+              "end": 99
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "alias"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 65,
+            "end": 68
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 113,
+            "end": 114
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use sayings::english::greetings as en_greetings;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use sayings::english::greetings as en_greetings ;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use sayings::english::greetings as en_greetings;",
+    "expectedReparseTree": "(use_declaration argument: (use_as_clause path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) alias: (identifier)))",
+    "wrappedText": "use sayings::english::greetings as en_greetings;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use phrases::english::{greetings,farewells};",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use phrases::english::{greetings,farewells};",
+    "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier)))))",
+    "wrappedText": "use phrases::english::{greetings,farewells};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "_use_wildcard_group": {
+          "$type": 346,
+          "$source": 0,
+          "$named": true,
+          "_path": {
+            "$type": 250,
+            "$source": 0,
+            "$named": true,
+            "_path": {
+              "$type": 250,
+              "$source": 0,
+              "$named": true,
+              "_path": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "sayings",
+                "$span": {
+                  "start": 164,
+                  "end": 171
+                }
+              },
+              "_name": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "japanese",
+                "$span": {
+                  "start": 173,
+                  "end": 181
+                }
+              },
+              "$other": [
+                {
+                  "$type": 65,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "::",
+                  "$span": {
+                    "start": 171,
+                    "end": 173
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "path",
+                "name"
+              ]
+            },
+            "_name": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "farewells",
+              "$span": {
+                "start": 183,
+                "end": 192
+              }
+            },
+            "$other": [
+              {
+                "$type": 65,
+                "$source": 0,
+                "$named": false,
+                "$text": "::",
+                "$span": {
+                  "start": 181,
+                  "end": 183
+                }
+              }
+            ],
+            "$slotOrder": [
+              "path",
+              "name"
+            ]
+          },
+          "$other": [
+            {
+              "$type": 65,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 192,
+                "end": 194
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 10,
+            "$source": 0,
+            "$named": false,
+            "$text": "*",
+            "$span": {
+              "start": 194,
+              "end": 195
+            }
+          }
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 160,
+            "end": 163
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 195,
+            "end": 196
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use sayings::japanese::farewells::*;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use sayings::japanese::farewells::*;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use sayings::japanese::farewells::*;",
+    "expectedReparseTree": "(use_declaration argument: (use_wildcard (use_wildcard_group path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)))))",
+    "wrappedText": "use sayings::japanese::farewells::*;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 222,
+        "$source": 0,
+        "$named": true,
+        "_content": {
+          "$type": 372,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 197,
+            "end": 200
+          }
+        }
+      },
+      "_argument": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 250,
+          "$source": 0,
+          "$named": true,
+          "_path": 129,
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "greetings",
+            "$span": {
+              "start": 211,
+              "end": 220
+            }
+          },
+          "$other": [
+            {
+              "$type": 65,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 209,
+                "end": 211
+              }
+            }
+          ],
+          "$slotOrder": [
+            "path",
+            "name"
+          ]
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "hello",
+          "$span": {
+            "start": 222,
+            "end": 227
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 220,
+              "end": 222
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 201,
+            "end": 204
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 227,
+            "end": 228
+          }
+        }
+      ],
+      "$slotOrder": [
+        "visibility_modifier",
+        "argument"
+      ]
+    },
+    "expectedOutput": "pub use self::greetings::hello;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub use self::greetings::hello;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "pub use self::greetings::hello;",
+    "expectedReparseTree": "(use_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) argument: (scoped_identifier path: (scoped_identifier path: (self) name: (identifier)) name: (identifier)))",
+    "wrappedText": "pub use self::greetings::hello;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 213,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 250,
+          "$source": 0,
+          "$named": true,
+          "_path": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "sayings",
+            "$span": {
+              "start": 233,
+              "end": 240
+            }
+          },
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "english",
+            "$span": {
+              "start": 242,
+              "end": 249
+            }
+          },
+          "$other": [
+            {
+              "$type": 65,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 240,
+                "end": 242
+              }
+            }
+          ],
+          "$slotOrder": [
+            "path",
+            "name"
+          ]
+        },
+        "_list": {
+          "$type": 214,
+          "$source": 0,
+          "$named": true,
+          "_use_clauses": {
+            "$type": 336,
+            "$source": 0,
+            "$named": true,
+            "_use_clause": [
+              {
+                "$type": 129,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 252,
+                  "end": 256
+                },
+                "$text": "self"
+              },
+              {
+                "$type": 215,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "greetings",
+                  "$span": {
+                    "start": 258,
+                    "end": 267
+                  }
+                },
+                "_alias": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "en_greetings",
+                  "$span": {
+                    "start": 271,
+                    "end": 283
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 66,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "as",
+                    "$span": {
+                      "start": 268,
+                      "end": 270
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "path",
+                  "alias"
+                ]
+              },
+              {
+                "$type": 215,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "farewells",
+                  "$span": {
+                    "start": 285,
+                    "end": 294
+                  }
+                },
+                "_alias": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "en_farewells",
+                  "$span": {
+                    "start": 298,
+                    "end": 310
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 66,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "as",
+                    "$span": {
+                      "start": 295,
+                      "end": 297
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "path",
+                  "alias"
+                ]
+              }
+            ],
+            "$other": [
+              {
+                "$type": 134,
+                "$source": 0,
+                "$named": false,
+                "$text": ",",
+                "$span": {
+                  "start": 256,
+                  "end": 257
+                }
+              },
+              {
+                "$type": 134,
+                "$source": 0,
+                "$named": false,
+                "$text": ",",
+                "$span": {
+                  "start": 283,
+                  "end": 284
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 48,
+              "$source": 0,
+              "$named": false,
+              "$text": "{",
+              "$span": {
+                "start": 251,
+                "end": 252
+              }
+            },
+            {
+              "$type": 49,
+              "$source": 0,
+              "$named": false,
+              "$text": "}",
+              "$span": {
+                "start": 310,
+                "end": 311
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 249,
+              "end": 251
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "list"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 229,
+            "end": 232
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 311,
+            "end": 312
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use sayings::english::{self, greetings as en_greetings, farewells as en_farewells};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use sayings::english::{self, greetings as en_greetings, farewells as en_farewells};",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use sayings::english::{self, greetings as en_greetings, farewells as en_farewells};",
+    "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (self) use_clause: (use_as_clause path: (identifier) alias: (identifier)) use_clause: (use_as_clause path: (identifier) alias: (identifier))))))",
+    "wrappedText": "use sayings::english::{self, greetings as en_greetings, farewells as en_farewells};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 213,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "three",
+          "$span": {
+            "start": 317,
+            "end": 322
+          }
+        },
+        "_list": {
+          "$type": 214,
+          "$source": 0,
+          "$named": true,
+          "_use_clauses": {
+            "$type": 336,
+            "$source": 0,
+            "$named": true,
+            "_use_clause": [
+              {
+                "$type": 213,
+                "$source": 0,
+                "$named": true,
+                "_path": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "dot",
+                  "$span": {
+                    "start": 326,
+                    "end": 329
+                  }
+                },
+                "_list": {
+                  "$type": 214,
+                  "$source": 0,
+                  "$named": true,
+                  "_use_clauses": {
+                    "$type": 336,
+                    "$source": 0,
+                    "$named": true,
+                    "_use_clause": [
+                      {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "one",
+                        "$span": {
+                          "start": 332,
+                          "end": 335
+                        }
+                      },
+                      {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "four",
+                        "$span": {
+                          "start": 337,
+                          "end": 341
+                        }
+                      }
+                    ],
+                    "$other": [
+                      {
+                        "$type": 134,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": ",",
+                        "$span": {
+                          "start": 335,
+                          "end": 336
+                        }
+                      }
+                    ],
+                    "_delimiter": 0
+                  },
+                  "$other": [
+                    {
+                      "$type": 48,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "{",
+                      "$span": {
+                        "start": 331,
+                        "end": 332
+                      }
+                    },
+                    {
+                      "$type": 49,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "}",
+                      "$span": {
+                        "start": 341,
+                        "end": 342
+                      }
+                    }
+                  ]
+                },
+                "$other": [
+                  {
+                    "$type": 65,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "::",
+                    "$span": {
+                      "start": 329,
+                      "end": 331
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "path",
+                  "list"
+                ]
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 48,
+              "$source": 0,
+              "$named": false,
+              "$text": "{",
+              "$span": {
+                "start": 324,
+                "end": 325
+              }
+            },
+            {
+              "$type": 49,
+              "$source": 0,
+              "$named": false,
+              "$text": "}",
+              "$span": {
+                "start": 343,
+                "end": 344
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 322,
+              "end": 324
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "list"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 313,
+            "end": 316
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 344,
+            "end": 345
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use three::{dot::{one, four}};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use three::{ dot::{one, four} };",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use three::{dot::{one, four}};",
+    "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier))))))))",
+    "wrappedText": "use three::{dot::{one, four}};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 213,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "my",
+          "$span": {
+            "start": 350,
+            "end": 352
+          }
+        },
+        "_list": {
+          "$type": 214,
+          "$source": 0,
+          "$named": true,
+          "_use_clauses": {
+            "$type": 336,
+            "$source": 0,
+            "$named": true,
+            "_use_clause": [
+              {
+                "$type": 216,
+                "$source": 0,
+                "$named": true,
+                "_use_wildcard_group": {
+                  "$type": 346,
+                  "$source": 0,
+                  "$named": true,
+                  "_path": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "some",
+                    "$span": {
+                      "start": 356,
+                      "end": 360
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 65,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "::",
+                      "$span": {
+                        "start": 360,
+                        "end": 362
+                      }
+                    }
+                  ]
+                },
+                "$other": [
+                  {
+                    "$type": 10,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "*",
+                    "$span": {
+                      "start": 362,
+                      "end": 363
+                    }
+                  }
+                ]
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 48,
+              "$source": 0,
+              "$named": false,
+              "$text": "{",
+              "$span": {
+                "start": 354,
+                "end": 355
+              }
+            },
+            {
+              "$type": 49,
+              "$source": 0,
+              "$named": false,
+              "$text": "}",
+              "$span": {
+                "start": 364,
+                "end": 365
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 352,
+              "end": 354
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "list"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 346,
+            "end": 349
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 365,
+            "end": 366
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use my::{some::*};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use my::{ some::* };",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use my::{some::*};",
+    "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard (use_wildcard_group path: (identifier)))))))",
+    "wrappedText": "use my::{some::*};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 213,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "my",
+          "$span": {
+            "start": 371,
+            "end": 373
+          }
+        },
+        "_list": {
+          "$type": 214,
+          "$source": 0,
+          "$named": true,
+          "_use_clauses": {
+            "$type": 336,
+            "$source": 0,
+            "$named": true,
+            "_use_clause": [
+              {
+                "$type": 216,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 376,
+                  "end": 377
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 48,
+              "$source": 0,
+              "$named": false,
+              "$text": "{",
+              "$span": {
+                "start": 375,
+                "end": 376
+              }
+            },
+            {
+              "$type": 49,
+              "$source": 0,
+              "$named": false,
+              "$text": "}",
+              "$span": {
+                "start": 377,
+                "end": 378
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 373,
+              "end": 375
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "list"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 367,
+            "end": 370
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 378,
+            "end": 379
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use my::{*};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use my::{*};",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use my::{*};",
+    "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard)))))",
+    "wrappedText": "use my::{*};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "_use_wildcard_group": {
+          "$type": 346,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 384,
+            "end": 386
+          }
+        },
+        "$other": [
+          {
+            "$type": 10,
+            "$source": 0,
+            "$named": false,
+            "$text": "*",
+            "$span": {
+              "start": 386,
+              "end": 387
+            }
+          }
+        ]
+      },
+      "$other": [
+        {
+          "$type": 64,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 380,
+            "end": 383
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 387,
+            "end": 388
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use::*;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "use ::*;",
+    "pattern": "use_declaration",
+    "edits": [],
+    "expectedSourceOut": "use::*;",
+    "expectedReparseTree": "(use_declaration argument: (use_wildcard (use_wildcard_group)))",
+    "wrappedText": "use::*;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "phrases",
+        "$span": {
+          "start": 13,
+          "end": 20
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "japanese",
+        "$span": {
+          "start": 22,
+          "end": 30
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 20,
+            "end": 22
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "phrases::japanese"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "phrases::japanese",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "phrases::japanese",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = phrases::japanese; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "sayings",
+          "$span": {
+            "start": 36,
+            "end": 43
+          }
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "english",
+          "$span": {
+            "start": 45,
+            "end": 52
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 43,
+              "end": 45
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "greetings",
+        "$span": {
+          "start": 54,
+          "end": 63
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 52,
+            "end": 54
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::english::greetings"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::english::greetings",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::english::greetings",
+    "expectedReparseTree": "(scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::english::greetings; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "sayings",
+        "$span": {
+          "start": 36,
+          "end": 43
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "english",
+        "$span": {
+          "start": 45,
+          "end": 52
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 43,
+            "end": 45
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::english"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::english",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::english",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::english; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "sayings",
+          "$span": {
+            "start": 69,
+            "end": 76
+          }
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "english",
+          "$span": {
+            "start": 78,
+            "end": 85
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 76,
+              "end": 78
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "greetings",
+        "$span": {
+          "start": 87,
+          "end": 96
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 85,
+            "end": 87
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::english::greetings"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::english::greetings",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::english::greetings",
+    "expectedReparseTree": "(scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::english::greetings; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "sayings",
+        "$span": {
+          "start": 69,
+          "end": 76
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "english",
+        "$span": {
+          "start": 78,
+          "end": 85
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 76,
+            "end": 78
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::english"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::english",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::english",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::english; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "phrases",
+        "$span": {
+          "start": 119,
+          "end": 126
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "english",
+        "$span": {
+          "start": 128,
+          "end": 135
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 126,
+            "end": 128
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "phrases::english"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "phrases::english",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "phrases::english",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = phrases::english; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "sayings",
+          "$span": {
+            "start": 164,
+            "end": 171
+          }
+        },
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "japanese",
+          "$span": {
+            "start": 173,
+            "end": 181
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 171,
+              "end": 173
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "farewells",
+        "$span": {
+          "start": 183,
+          "end": 192
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 181,
+            "end": 183
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::japanese::farewells"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::japanese::farewells",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::japanese::farewells",
+    "expectedReparseTree": "(scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::japanese::farewells; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "sayings",
+        "$span": {
+          "start": 164,
+          "end": 171
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "japanese",
+        "$span": {
+          "start": 173,
+          "end": 181
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 171,
+            "end": 173
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::japanese"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::japanese",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::japanese",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::japanese; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 250,
+        "$source": 0,
+        "$named": true,
+        "_path": 129,
+        "_name": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "greetings",
+          "$span": {
+            "start": 211,
+            "end": 220
+          }
+        },
+        "$other": [
+          {
+            "$type": 65,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 209,
+              "end": 211
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "name"
+        ]
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "hello",
+        "$span": {
+          "start": 222,
+          "end": 227
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 220,
+            "end": 222
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "self::greetings::hello"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "self::greetings::hello",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "self::greetings::hello",
+    "expectedReparseTree": "(scoped_identifier path: (scoped_identifier path: (self) name: (identifier)) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = self::greetings::hello; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": 129,
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "greetings",
+        "$span": {
+          "start": 211,
+          "end": 220
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 209,
+            "end": 211
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "self::greetings"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "self::greetings",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "self::greetings",
+    "expectedReparseTree": "(scoped_identifier path: (self) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = self::greetings; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "scoped_identifier",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$named": true,
+      "_path": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "sayings",
+        "$span": {
+          "start": 233,
+          "end": 240
+        }
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$named": true,
+        "$text": "english",
+        "$span": {
+          "start": 242,
+          "end": 249
+        }
+      },
+      "$other": [
+        {
+          "$type": 65,
+          "$source": 0,
+          "$named": false,
+          "$text": "::",
+          "$span": {
+            "start": 240,
+            "end": 242
+          }
+        }
+      ],
+      "$slotOrder": [
+        "path",
+        "name"
+      ]
+    },
+    "expectedOutput": "sayings::english"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "sayings::english",
+    "pattern": "scoped_identifier",
+    "edits": [],
+    "expectedSourceOut": "sayings::english",
+    "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
+    "wrappedText": "fn _f() { let _ = sayings::english; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "visibility_modifier",
+    "input": {
+      "$type": 222,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 372,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 197,
+          "end": 200
+        }
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -35949,7 +38229,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_type_elements": {
-                        "$type": 351,
+                        "$type": 352,
                         "$source": 0,
                         "$named": true,
                         "_type": [
@@ -36606,7 +38886,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 351,
+                    "$type": 352,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -37171,7 +39451,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 351,
+                  "$type": 352,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -37619,7 +39899,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -38114,7 +40394,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -40701,7 +42981,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 351,
+                      "$type": 352,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -41235,7 +43515,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 351,
+                  "$type": 352,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -41681,7 +43961,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_type_elements": {
-                "$type": 351,
+                "$type": 352,
                 "$source": 0,
                 "$named": true,
                 "_type": [
@@ -41895,7 +44175,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 351,
+              "$type": 352,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -42078,7 +44358,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 351,
+            "$type": 352,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -42230,7 +44510,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -42351,7 +44631,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -43968,7 +46248,7 @@
                 }
               },
               {
-                "$type": 353,
+                "$type": 354,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -44460,7 +46740,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -44569,7 +46849,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "::",
@@ -44949,7 +47229,7 @@
                 }
               },
               {
-                "$type": 353,
+                "$type": 354,
                 "$source": 0,
                 "$named": true,
                 "$text": "::",
@@ -45184,7 +47464,7 @@
                       }
                     },
                     {
-                      "$type": 353,
+                      "$type": 354,
                       "$source": 0,
                       "$named": true,
                       "$text": "=",
@@ -45405,7 +47685,7 @@
                 }
               },
               {
-                "$type": 353,
+                "$type": 354,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -45574,7 +47854,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -48127,7 +50407,7 @@
       "$named": true,
       "_delim_tokens": [
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": ".",
@@ -48483,7 +50763,7 @@
                                           }
                                         },
                                         {
-                                          "$type": 353,
+                                          "$type": 354,
                                           "$source": 0,
                                           "$named": true,
                                           "$text": "=",
@@ -48958,7 +51238,7 @@
                     }
                   ],
                   "_tuple_expression_elements": {
-                    "$type": 352,
+                    "$type": 353,
                     "$source": 0,
                     "$named": true,
                     "_element": [
@@ -49260,7 +51540,7 @@
                                       }
                                     },
                                     {
-                                      "$type": 353,
+                                      "$type": 354,
                                       "$source": 0,
                                       "$named": true,
                                       "$text": "=",
@@ -49735,7 +52015,7 @@
                 }
               ],
               "_tuple_expression_elements": {
-                "$type": 352,
+                "$type": 353,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -50038,7 +52318,7 @@
                                     }
                                   },
                                   {
-                                    "$type": 353,
+                                    "$type": 354,
                                     "$source": 0,
                                     "$named": true,
                                     "$text": "=",
@@ -50513,7 +52793,7 @@
               }
             ],
             "_tuple_expression_elements": {
-              "$type": 352,
+              "$type": 353,
               "$source": 0,
               "$named": true,
               "_element": [
@@ -50759,7 +53039,7 @@
                             }
                           },
                           {
-                            "$type": 353,
+                            "$type": 354,
                             "$source": 0,
                             "$named": true,
                             "$text": "=",
@@ -51018,7 +53298,7 @@
                           }
                         },
                         {
-                          "$type": 353,
+                          "$type": 354,
                           "$source": 0,
                           "$named": true,
                           "$text": "=",
@@ -51242,7 +53522,7 @@
                 }
               },
               {
-                "$type": 353,
+                "$type": 354,
                 "$source": 0,
                 "$named": true,
                 "$text": "=",
@@ -51528,7 +53808,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "=",
@@ -51985,7 +54265,7 @@
           }
         ],
         "_tuple_expression_elements": {
-          "$type": 352,
+          "$type": 353,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -52364,7 +54644,7 @@
         }
       ],
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -57486,7 +59766,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 351,
+                  "$type": 352,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -57836,7 +60116,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 351,
+              "$type": 352,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -58050,7 +60330,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 351,
+            "$type": 352,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -58235,7 +60515,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -58389,7 +60669,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -63493,7 +65773,7 @@
                         "$source": 0,
                         "$named": true,
                         "_tuple_type_elements": {
-                          "$type": 351,
+                          "$type": 352,
                           "$source": 0,
                           "$named": true,
                           "_type": [
@@ -64355,7 +66635,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 351,
+                      "$type": 352,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -64703,7 +66983,7 @@
                   "$source": 0,
                   "$named": true,
                   "_tuple_type_elements": {
-                    "$type": 351,
+                    "$type": 352,
                     "$source": 0,
                     "$named": true,
                     "_type": [
@@ -65026,7 +67306,7 @@
           "$source": 0,
           "$named": true,
           "_tuple_type_elements": {
-            "$type": 351,
+            "$type": 352,
             "$source": 0,
             "$named": true,
             "_type": [
@@ -65265,7 +67545,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -65510,7 +67790,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -77430,7 +79710,7 @@
               "$source": 0,
               "$named": true,
               "_visibility_modifier_group": {
-                "$type": 346,
+                "$type": 347,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -77528,7 +79808,7 @@
               "$source": 0,
               "$named": true,
               "_visibility_modifier_group": {
-                "$type": 346,
+                "$type": 347,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -77626,7 +79906,7 @@
               "$source": 0,
               "$named": true,
               "_visibility_modifier_group": {
-                "$type": 346,
+                "$type": 347,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -77724,7 +80004,7 @@
               "$source": 0,
               "$named": true,
               "_visibility_modifier_group": {
-                "$type": 346,
+                "$type": 347,
                 "$source": 0,
                 "$named": true,
                 "$other": [
@@ -77960,7 +80240,7 @@
           "$source": 0,
           "$named": true,
           "_visibility_modifier_group": {
-            "$type": 346,
+            "$type": 347,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -78075,7 +80355,7 @@
           "$source": 0,
           "$named": true,
           "_visibility_modifier_group": {
-            "$type": 346,
+            "$type": 347,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -78190,7 +80470,7 @@
           "$source": 0,
           "$named": true,
           "_visibility_modifier_group": {
-            "$type": 346,
+            "$type": 347,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -78305,7 +80585,7 @@
           "$source": 0,
           "$named": true,
           "_visibility_modifier_group": {
-            "$type": 346,
+            "$type": 347,
             "$source": 0,
             "$named": true,
             "$other": [
@@ -78487,7 +80767,7 @@
         "$source": 0,
         "$named": true,
         "_visibility_modifier_group": {
-          "$type": 346,
+          "$type": 347,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -78554,7 +80834,7 @@
         "$source": 0,
         "$named": true,
         "_visibility_modifier_group": {
-          "$type": 346,
+          "$type": 347,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -78621,7 +80901,7 @@
         "$source": 0,
         "$named": true,
         "_visibility_modifier_group": {
-          "$type": 346,
+          "$type": 347,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -78688,7 +80968,7 @@
         "$source": 0,
         "$named": true,
         "_visibility_modifier_group": {
-          "$type": 346,
+          "$type": 347,
           "$source": 0,
           "$named": true,
           "$other": [
@@ -81939,7 +84219,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_type_elements": {
-                      "$type": 351,
+                      "$type": 352,
                       "$source": 0,
                       "$named": true,
                       "_type": [
@@ -87793,7 +90073,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_type_elements": {
-                  "$type": 351,
+                  "$type": 352,
                   "$source": 0,
                   "$named": true,
                   "_type": [
@@ -89723,7 +92003,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
@@ -105351,7 +107631,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_expression_elements": {
-                "$type": 352,
+                "$type": 353,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -105514,7 +107794,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_expression_elements": {
-              "$type": 352,
+              "$type": 353,
               "$source": 0,
               "$named": true,
               "_element": [
@@ -105658,7 +107938,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -105733,7 +108013,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -105929,7 +108209,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_expression_elements": {
-          "$type": 352,
+          "$type": 353,
           "$source": 0,
           "$named": true,
           "_element": [
@@ -149800,7 +152080,7 @@
             }
           },
           {
-            "$type": 353,
+            "$type": 354,
             "$source": 0,
             "$named": true,
             "$text": "..=",
@@ -149907,7 +152187,7 @@
             }
           },
           {
-            "$type": 353,
+            "$type": 354,
             "$source": 0,
             "$named": true,
             "$text": "..=",
@@ -150667,7 +152947,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "..=",
@@ -150743,7 +153023,7 @@
           }
         },
         {
-          "$type": 353,
+          "$type": 354,
           "$source": 0,
           "$named": true,
           "$text": "..=",
@@ -151774,7 +154054,7 @@
                     }
                   },
                   {
-                    "$type": 353,
+                    "$type": 354,
                     "$source": 0,
                     "$named": true,
                     "$text": "!",
@@ -151861,7 +154141,7 @@
                     }
                   },
                   {
-                    "$type": 353,
+                    "$type": 354,
                     "$source": 0,
                     "$named": true,
                     "$text": ";",
@@ -152324,7 +154604,7 @@
             }
           },
           {
-            "$type": 353,
+            "$type": 354,
             "$source": 0,
             "$named": true,
             "$text": "!",
@@ -152411,7 +154691,7 @@
             }
           },
           {
-            "$type": 353,
+            "$type": 354,
             "$source": 0,
             "$named": true,
             "$text": ";",
@@ -155470,7 +157750,7 @@
                     "$source": 0,
                     "$named": true,
                     "_tuple_expression_elements": {
-                      "$type": 352,
+                      "$type": 353,
                       "$source": 0,
                       "$named": true,
                       "_element": [
@@ -155743,7 +158023,7 @@
                       "$source": 0,
                       "$named": true,
                       "_tuple_expression_elements": {
-                        "$type": 352,
+                        "$type": 353,
                         "$source": 0,
                         "$named": true,
                         "_element": [
@@ -156530,7 +158810,7 @@
               "$source": 0,
               "$named": true,
               "_tuple_expression_elements": {
-                "$type": 352,
+                "$type": 353,
                 "$source": 0,
                 "$named": true,
                 "_element": [
@@ -156803,7 +159083,7 @@
                 "$source": 0,
                 "$named": true,
                 "_tuple_expression_elements": {
-                  "$type": 352,
+                  "$type": 353,
                   "$source": 0,
                   "$named": true,
                   "_element": [
@@ -157693,7 +159973,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -157811,7 +160091,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_expression_elements": {
-        "$type": 352,
+        "$type": 353,
         "$source": 0,
         "$named": true,
         "_element": [
@@ -181289,7 +183569,7 @@
             "$source": 0,
             "$named": true,
             "_tuple_type_elements": {
-              "$type": 351,
+              "$type": 352,
               "$source": 0,
               "$named": true,
               "_type": [
@@ -181425,7 +183705,7 @@
         "$source": 0,
         "$named": true,
         "_tuple_type_elements": {
-          "$type": 351,
+          "$type": 352,
           "$source": 0,
           "$named": true,
           "_type": [
@@ -181545,7 +183825,7 @@
       "$source": 0,
       "$named": true,
       "_tuple_type_elements": {
-        "$type": 351,
+        "$type": 352,
         "$source": 0,
         "$named": true,
         "_type": [
