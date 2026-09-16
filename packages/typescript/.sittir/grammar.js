@@ -5510,8 +5510,7 @@ var grammar_sittir_default = grammar(
         ambient_declaration: {
           "1/0": variant("declaration"),
           "1/1": variant("global"),
-          "1/2": variant("module"),
-          "1/1/1": field("body")
+          "1/2": variant("module")
         },
         jsx_namespace_name: { 0: field("namespace"), 2: field("name") },
         as_expression: {
@@ -5854,6 +5853,7 @@ var grammar_sittir_default = grammar(
             repeat(seq(",", alias($._extends_clause_single, $.extends_clause_single)))
           )
         ),
+        ambient_declaration_global: ($) => seq("global", field("body", $.statement_block)),
         ambient_declaration_module: ($) => prec.right(
           seq(
             "module",

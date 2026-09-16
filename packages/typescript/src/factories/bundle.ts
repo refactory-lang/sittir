@@ -186,6 +186,7 @@ export const enumBodyElements = bundle(F.buildEnumBodyElements, C.coerceToEnumBo
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const typeParametersElements = bundle(F.buildTypeParametersElements, C.coerceToTypeParametersElements);
 export const tupleTypeMembers = bundle(F.buildTupleTypeMembers, C.coerceToTupleTypeMembers);
+export const ambientDeclarationGlobal = bundle(F.buildAmbientDeclarationGlobal, C.coerceToAmbientDeclarationGlobal);
 export const ambientDeclarationModule = bundle(F.buildAmbientDeclarationModule, C.coerceToAmbientDeclarationModule);
 export const objectTypeContent = bundle(F.buildObjectTypeContent, C.coerceToObjectTypeContent);
 export const exportStatementNamespaceExport = bundle(

@@ -5684,6 +5684,51 @@ export function buildCatchClauseGroup(config: T.CatchClauseGroup.Config): T.Catc
 	);
 }
 
+export function buildAmbientDeclarationGlobal(
+	value: T.StatementBlock
+): ReturnType<typeof _buildAmbientDeclarationGlobal>;
+export function buildAmbientDeclarationGlobal(
+	_config?: Partial<T.StatementBlock.Config>
+): ReturnType<typeof _buildAmbientDeclarationGlobal>;
+export function buildAmbientDeclarationGlobal(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildAmbientDeclarationGlobal(buildStatementBlock() as T.StatementBlock);
+	}
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
+	return prebuilt
+		? _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock)
+		: _buildAmbientDeclarationGlobal(
+				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as T.StatementBlock
+			);
+}
+function _buildAmbientDeclarationGlobal(value: T.StatementBlock): T.AmbientDeclarationGlobal.Built {
+	const _body = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.AmbientDeclarationGlobal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				$with: {
+					body: (value: T.StatementBlock) => buildAmbientDeclarationGlobal(value)
+				}
+			},
+			{
+				body: () => _body
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAmbientDeclarationModule(
 	config: T.AmbientDeclarationModule.Config
 ): T.AmbientDeclarationModule.Built {
@@ -6048,51 +6093,6 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config): T.ClassB
 			{
 				content: () => _content,
 				terminator: () => _terminator
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildAmbientDeclarationGlobal(
-	value: T.StatementBlock
-): ReturnType<typeof _buildAmbientDeclarationGlobal>;
-export function buildAmbientDeclarationGlobal(
-	_config?: Partial<T.StatementBlock.Config>
-): ReturnType<typeof _buildAmbientDeclarationGlobal>;
-export function buildAmbientDeclarationGlobal(...args: unknown[]) {
-	if (args.length === 0) {
-		return _buildAmbientDeclarationGlobal(buildStatementBlock() as T.StatementBlock);
-	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
-	return prebuilt
-		? _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock)
-		: _buildAmbientDeclarationGlobal(
-				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as T.StatementBlock
-			);
-}
-function _buildAmbientDeclarationGlobal(value: T.StatementBlock): T.AmbientDeclarationGlobal.Built {
-	const _body = value;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AmbientDeclarationGlobal as const,
-				$source: 2 as const,
-				$named: true as const,
-				_body,
-				$with: {
-					body: (value: T.StatementBlock) => buildAmbientDeclarationGlobal(value)
-				}
-			},
-			{
-				body: () => _body
 			}
 		),
 		methodsEngine
@@ -7397,6 +7397,7 @@ export type FluentKindMap = {
 	tuple_type_members: T.TupleTypeMembers.Built;
 	import_clause_group: T.ImportClauseGroup.Built;
 	catch_clause_group: T.CatchClauseGroup.Built;
+	ambient_declaration_global: T.AmbientDeclarationGlobal.Built;
 	ambient_declaration_module: T.AmbientDeclarationModule.Built;
 	object_type_content: T.ObjectTypeContent.Built;
 	export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
@@ -7406,7 +7407,6 @@ export type FluentKindMap = {
 	class_body_method: T.ClassBodyMethod.Built;
 	class_body_method_sig: T.ClassBodyMethodSig.Built;
 	class_body_member: T.ClassBodyMember.Built;
-	ambient_declaration_global: T.AmbientDeclarationGlobal.Built;
 	index_signature_colon: T.IndexSignatureColon.Built;
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Built;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Built;
@@ -7630,6 +7630,7 @@ export const _factoryMap = {
 	tuple_type_members: buildTupleTypeMembers,
 	import_clause_group: buildImportClauseGroup,
 	catch_clause_group: buildCatchClauseGroup,
+	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
 	export_statement_namespace_export: buildExportStatementNamespaceExport,
@@ -7639,7 +7640,6 @@ export const _factoryMap = {
 	class_body_method: buildClassBodyMethod,
 	class_body_method_sig: buildClassBodyMethodSig,
 	class_body_member: buildClassBodyMember,
-	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,

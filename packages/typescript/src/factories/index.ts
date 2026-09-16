@@ -180,6 +180,7 @@ export const enumBodyElements: Hoisted<typeof O.enumBodyElements> = hoist(O.enum
 export const types: Hoisted<typeof O.types> = hoist(O.types);
 export const typeParametersElements: Hoisted<typeof O.typeParametersElements> = hoist(O.typeParametersElements);
 export const tupleTypeMembers: Hoisted<typeof O.tupleTypeMembers> = hoist(O.tupleTypeMembers);
+export const ambientDeclarationGlobal: Hoisted<typeof O.ambientDeclarationGlobal> = hoist(O.ambientDeclarationGlobal);
 export const ambientDeclarationModule: Hoisted<typeof O.ambientDeclarationModule> = hoist(O.ambientDeclarationModule);
 export const objectTypeContent: Hoisted<typeof O.objectTypeContent> = hoist(O.objectTypeContent);
 export const exportStatementNamespaceExport: Hoisted<typeof O.exportStatementNamespaceExport> = hoist(

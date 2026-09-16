@@ -522,6 +522,9 @@ export interface IsGuards {
 	tupleTypeMembers<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleTypeMembers };
+	ambientDeclarationGlobal<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationGlobal };
 	ambientDeclarationModule<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AmbientDeclarationModule };
@@ -846,6 +849,9 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TypeParametersElements };
 	tupleTypeMembers(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TupleTypeMembers };
+	ambientDeclarationGlobal(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.AmbientDeclarationGlobal };
 	ambientDeclarationModule(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.AmbientDeclarationModule };
@@ -906,7 +912,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([383, 384, 382]);
+const _supertype_exportStatement_ids = new Set<number>([384, 385, 383]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 255]);
 const _supertype_declaration_ids = new Set<number>([
 	231, 233, 228, 191, 190, 279, 290, 291, 292, 301, 298, 296, 294, 289
@@ -1105,6 +1111,7 @@ export const is = {
 	types: _g(TSKindId.Types),
 	typeParametersElements: _g(TSKindId.TypeParametersElements),
 	tupleTypeMembers: _g(TSKindId.TupleTypeMembers),
+	ambientDeclarationGlobal: _g(TSKindId.AmbientDeclarationGlobal),
 	ambientDeclarationModule: _g(TSKindId.AmbientDeclarationModule),
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
@@ -1347,6 +1354,7 @@ export const assert = {
 	types: _makeAssert('types', is.types as _AnyGuard),
 	typeParametersElements: _makeAssert('typeParametersElements', is.typeParametersElements as _AnyGuard),
 	tupleTypeMembers: _makeAssert('tupleTypeMembers', is.tupleTypeMembers as _AnyGuard),
+	ambientDeclarationGlobal: _makeAssert('ambientDeclarationGlobal', is.ambientDeclarationGlobal as _AnyGuard),
 	ambientDeclarationModule: _makeAssert('ambientDeclarationModule', is.ambientDeclarationModule as _AnyGuard),
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	exportStatementNamespaceExport: _makeAssert(

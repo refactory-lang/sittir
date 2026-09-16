@@ -12972,6 +12972,32 @@ export function wrapCatchClauseGroup(data: T.CatchClauseGroup, tree: TreeHandle)
 	return _node;
 }
 
+export function wrapAmbientDeclarationGlobal(data: T.AmbientDeclarationGlobal, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_body']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.AmbientDeclarationGlobal as const,
+			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'body',
+				span: (data as _NodeData).$span
+			}),
+
+			body() {
+				return drillIn<T.StatementBlock>(this._body, tree);
+			},
+			$with: {
+				body: (v: NonNullable<T.AmbientDeclarationGlobal['_body']>) =>
+					wrapAmbientDeclarationGlobal({ ...$edited(data), _body: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_type', '_terminator']);
 	if (_isReadTextLeaf(data))
@@ -13698,32 +13724,6 @@ export function wrapClassBodyMember(
 					wrapClassBodyMember({ ...$edited(data), _content: v }, tree),
 				terminator: (v: NonNullable<T.ClassBodyMember['_terminator']>) =>
 					wrapClassBodyMember({ ...$edited(data), _terminator: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapAmbientDeclarationGlobal(data: T.AmbientDeclarationGlobal, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_body']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.AmbientDeclarationGlobal as const,
-			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'body',
-				span: (data as _NodeData).$span
-			}),
-
-			body() {
-				return drillIn<T.StatementBlock>(this._body, tree);
-			},
-			$with: {
-				body: (v: NonNullable<T.AmbientDeclarationGlobal['_body']>) =>
-					wrapAmbientDeclarationGlobal({ ...$edited(data), _body: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -16130,6 +16130,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CatchClauseGroup]: (d, t) => wrapCatchClauseGroup(d as unknown as T.CatchClauseGroup, t),
 	[TSKindId.Kind]: (d) => ({ ...d, $type: TSKindId.Kind as const }),
 	[TSKindId.ForHeaderOperator]: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
+	[TSKindId.AmbientDeclarationGlobal]: (d, t) =>
+		wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
 	[TSKindId.AmbientDeclarationModule]: (d, t) =>
 		wrapAmbientDeclarationModule(d as unknown as T.AmbientDeclarationModule, t),
 	[TSKindId.ObjectTypeContent]: (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
@@ -16144,8 +16146,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
 	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
 	[TSKindId.ClassBodyMember]: (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
-	[TSKindId.AmbientDeclarationGlobal]: (d, t) =>
-		wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
 	[TSKindId.IndexSignatureColon]: (d, t) => wrapIndexSignatureColon(d as unknown as T.IndexSignatureColon, t),
 	[TSKindId.IndexSignatureMappedTypeClause]: (d, t) =>
 		wrapIndexSignatureMappedTypeClause(d as unknown as T.IndexSignatureMappedTypeClause, t),
@@ -16430,6 +16430,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.CatchClauseGroup]: ReturnType<typeof wrapCatchClauseGroup>;
 	[TSKindId.Kind]: _NodeData & { readonly $type: TSKindId.Kind };
 	[TSKindId.ForHeaderOperator]: _NodeData & { readonly $type: TSKindId.ForHeaderOperator };
+	[TSKindId.AmbientDeclarationGlobal]: ReturnType<typeof wrapAmbientDeclarationGlobal>;
 	[TSKindId.AmbientDeclarationModule]: ReturnType<typeof wrapAmbientDeclarationModule>;
 	[TSKindId.ObjectTypeContent]: ReturnType<typeof wrapObjectTypeContent>;
 	[TSKindId.ExportStatementDefault]: ReturnType<typeof wrapExportStatementDefault>;
@@ -16440,7 +16441,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.ClassBodyMethod]: ReturnType<typeof wrapClassBodyMethod>;
 	[TSKindId.ClassBodyMethodSig]: ReturnType<typeof wrapClassBodyMethodSig>;
 	[TSKindId.ClassBodyMember]: ReturnType<typeof wrapClassBodyMember>;
-	[TSKindId.AmbientDeclarationGlobal]: ReturnType<typeof wrapAmbientDeclarationGlobal>;
 	[TSKindId.IndexSignatureColon]: ReturnType<typeof wrapIndexSignatureColon>;
 	[TSKindId.IndexSignatureMappedTypeClause]: ReturnType<typeof wrapIndexSignatureMappedTypeClause>;
 	[TSKindId.ImportStatementClauseFrom]: ReturnType<typeof wrapImportStatementClauseFrom>;

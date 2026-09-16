@@ -330,8 +330,7 @@ export default grammar(
 				ambient_declaration: {
 					'1/0': variant('declaration'),
 					'1/1': variant('global'),
-					'1/2': variant('module'),
-					'1/1/1': field('body')
+					'1/2': variant('module')
 				},
 
 				jsx_namespace_name: { 0: field('namespace'), 2: field('name') },
@@ -744,6 +743,7 @@ export default grammar(
 						)
 					),
 
+				ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				ambient_declaration_module: ($) =>
 					prec.right(
 						seq(

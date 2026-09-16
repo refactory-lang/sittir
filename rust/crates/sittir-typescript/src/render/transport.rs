@@ -274,6 +274,7 @@ pub enum AnyTransport {
     UnaryExpressionOperator(UnaryExpressionOperatorEnum),
     NumberOperator(NumberOperatorEnum),
     Operator(OperatorEnum),
+    AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
     AmbientDeclarationModule(AmbientDeclarationModuleTransport),
     ObjectTypeContent(ObjectTypeContentTransport),
     ExportStatementNamespaceExport(ExportStatementNamespaceExportTransport),
@@ -283,7 +284,6 @@ pub enum AnyTransport {
     ClassBodyMethod(ClassBodyMethodTransport),
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
     ClassBodyMember(ClassBodyMemberTransport),
-    AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
     IndexSignatureColon(IndexSignatureColonTransport),
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
     ImportStatementClauseFrom(ImportStatementClauseFromTransport),
@@ -463,8 +463,8 @@ pub enum AnyTransport {
     DeleteKeyword(DeleteKeywordTransport),
     PlusPlus(PlusPlusTransport),
     DashDash(DashDashTransport),
-    FromKeyword(FromKeywordTransport),
     GlobalKeyword(GlobalKeywordTransport),
+    FromKeyword(FromKeywordTransport),
     Dquote(DquoteTransport),
     Squote(SquoteTransport),
     TargetKeyword(TargetKeywordTransport),
@@ -782,6 +782,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::UnaryExpressionOperator(t) => t.prepare(ctx),
             AnyTransport::NumberOperator(t) => t.prepare(ctx),
             AnyTransport::Operator(t) => t.prepare(ctx),
+            AnyTransport::AmbientDeclarationGlobal(t) => t.prepare(ctx),
             AnyTransport::AmbientDeclarationModule(t) => t.prepare(ctx),
             AnyTransport::ObjectTypeContent(t) => t.prepare(ctx),
             AnyTransport::ExportStatementNamespaceExport(t) => t.prepare(ctx),
@@ -791,7 +792,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ClassBodyMethod(t) => t.prepare(ctx),
             AnyTransport::ClassBodyMethodSig(t) => t.prepare(ctx),
             AnyTransport::ClassBodyMember(t) => t.prepare(ctx),
-            AnyTransport::AmbientDeclarationGlobal(t) => t.prepare(ctx),
             AnyTransport::IndexSignatureColon(t) => t.prepare(ctx),
             AnyTransport::IndexSignatureMappedTypeClause(t) => t.prepare(ctx),
             AnyTransport::ImportStatementClauseFrom(t) => t.prepare(ctx),
@@ -971,8 +971,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::DeleteKeyword(t) => t.prepare(ctx),
             AnyTransport::PlusPlus(t) => t.prepare(ctx),
             AnyTransport::DashDash(t) => t.prepare(ctx),
-            AnyTransport::FromKeyword(t) => t.prepare(ctx),
             AnyTransport::GlobalKeyword(t) => t.prepare(ctx),
+            AnyTransport::FromKeyword(t) => t.prepare(ctx),
             AnyTransport::Dquote(t) => t.prepare(ctx),
             AnyTransport::Squote(t) => t.prepare(ctx),
             AnyTransport::TargetKeyword(t) => t.prepare(ctx),
@@ -1891,45 +1891,45 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 378 => Ok(AnyTransport::ForHeaderOperator(
                     ForHeaderOperatorEnum::from_napi_value(env, napi_val)?
                 )),
+                // kind: ambient_declaration_global (AMBIENT_DECLARATION_GLOBAL)
+                379 => Ok(AnyTransport::AmbientDeclarationGlobal(
+                    AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: ambient_declaration_module (AMBIENT_DECLARATION_MODULE)
-                379 => Ok(AnyTransport::AmbientDeclarationModule(
+                380 => Ok(AnyTransport::AmbientDeclarationModule(
                     AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: object_type_content (OBJECT_TYPE_CONTENT)
-                380 => Ok(AnyTransport::ObjectTypeContent(
+                381 => Ok(AnyTransport::ObjectTypeContent(
                     ObjectTypeContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_statement_namespace_export (EXPORT_STATEMENT_NAMESPACE_EXPORT)
-                382 => Ok(AnyTransport::ExportStatementNamespaceExport(
+                383 => Ok(AnyTransport::ExportStatementNamespaceExport(
                     ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_statement_type_export (EXPORT_STATEMENT_TYPE_EXPORT)
-                383 => Ok(AnyTransport::ExportStatementTypeExport(
+                384 => Ok(AnyTransport::ExportStatementTypeExport(
                     ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: export_statement_equals_export (EXPORT_STATEMENT_EQUALS_EXPORT)
-                384 => Ok(AnyTransport::ExportStatementEqualsExport(
+                385 => Ok(AnyTransport::ExportStatementEqualsExport(
                     ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: binary_expression_in (BINARY_EXPRESSION_IN)
-                385 => Ok(AnyTransport::BinaryExpressionIn(
+                386 => Ok(AnyTransport::BinaryExpressionIn(
                     BinaryExpressionInTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_body_method (CLASS_BODY_METHOD)
-                386 => Ok(AnyTransport::ClassBodyMethod(
+                387 => Ok(AnyTransport::ClassBodyMethod(
                     ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_body_method_sig (CLASS_BODY_METHOD_SIG)
-                387 => Ok(AnyTransport::ClassBodyMethodSig(
+                388 => Ok(AnyTransport::ClassBodyMethodSig(
                     ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: class_body_member (CLASS_BODY_MEMBER)
-                388 => Ok(AnyTransport::ClassBodyMember(
+                389 => Ok(AnyTransport::ClassBodyMember(
                     ClassBodyMemberTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: ambient_declaration_global (AMBIENT_DECLARATION_GLOBAL)
-                389 => Ok(AnyTransport::AmbientDeclarationGlobal(
-                    AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: index_signature_colon (INDEX_SIGNATURE_COLON)
                 390 => Ok(AnyTransport::IndexSignatureColon(
@@ -2647,13 +2647,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 157 => Ok(AnyTransport::DashDash(
                     DashDashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: from_keyword (FROM_KEYWORD)
-                10 => Ok(AnyTransport::FromKeyword(
-                    FromKeywordTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: global_keyword (GLOBAL_KEYWORD)
                 153 => Ok(AnyTransport::GlobalKeyword(
                     GlobalKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: from_keyword (FROM_KEYWORD)
+                10 => Ok(AnyTransport::FromKeyword(
+                    FromKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dquote (DQUOTE)
                 154 => Ok(AnyTransport::Dquote(
@@ -2896,16 +2896,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTransport {
                     408 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ExportStatementDefault(
+                    382 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatementTypeExport(
+                    384 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ExportStatementEqualsExport(
+                    385 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatementNamespaceExport(
+                    383 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2940,16 +2940,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTransport {
                     408 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ExportStatementDefault(
+                    382 => Ok(Self::ExportStatementDefault(
                         ExportStatementDefaultTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatementTypeExport(
+                    384 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ExportStatementEqualsExport(
+                    385 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatementNamespaceExport(
+                    383 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -3589,19 +3589,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     408 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatement(
-                        ExportStatementTransport::from_napi_value(env, napi_val)?
-                    )),
                     384 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatement(
+                    385 => Ok(Self::ExportStatement(
+                        ExportStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    383 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     174 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ExportStatement(
+                    382 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     181 => Ok(Self::ImportStatement(
@@ -3783,19 +3783,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     408 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatement(
-                        ExportStatementTransport::from_napi_value(env, napi_val)?
-                    )),
                     384 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatement(
+                    385 => Ok(Self::ExportStatement(
+                        ExportStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    383 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     174 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    381 => Ok(Self::ExportStatement(
+                    382 => Ok(Self::ExportStatement(
                         ExportStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     181 => Ok(Self::ImportStatement(
@@ -7582,14 +7582,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultTransport 
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    381 => {
+                    382 => {
                         if let Ok(value) = ExportStatementDefaultFromTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatementDefaultFrom(value));
                         }
                         if let Ok(value) = ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatementDefaultDeclaration(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 381 in ExportStatementDefaultTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 382 in ExportStatementDefaultTransport decodes as none of its members"))
                     },
                     407 => Ok(Self::ExportStatementDefaultFrom(
                         ExportStatementDefaultFromTransport::from_napi_value(env, napi_val)?
@@ -7608,14 +7608,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultTransport 
                     ::napi::Error::from_reason("$type property missing in ExportStatementDefaultTransport")
                 )?;
                 match kind_id {
-                    381 => {
+                    382 => {
                         if let Ok(value) = ExportStatementDefaultFromTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatementDefaultFrom(value));
                         }
                         if let Ok(value) = ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExportStatementDefaultDeclaration(value));
                         }
-                        Err(::napi::Error::from_reason("aliased kind id 381 in ExportStatementDefaultTransport decodes as none of its members"))
+                        Err(::napi::Error::from_reason("aliased kind id 382 in ExportStatementDefaultTransport decodes as none of its members"))
                     },
                     407 => Ok(Self::ExportStatementDefaultFrom(
                         ExportStatementDefaultFromTransport::from_napi_value(env, napi_val)?
@@ -25217,16 +25217,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    386 => Ok(Self::ClassBodyMethod(
+                    387 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    387 => Ok(Self::ClassBodyMethodSig(
+                    388 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
                     266 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    388 => Ok(Self::ClassBodyMember(
+                    389 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -25241,16 +25241,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                 )?;
                 match kind_id {
                     20 => Ok(Self::Literal3_73_65_6d_69),
-                    386 => Ok(Self::ClassBodyMethod(
+                    387 => Ok(Self::ClassBodyMethod(
                         ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                     )),
-                    387 => Ok(Self::ClassBodyMethodSig(
+                    388 => Ok(Self::ClassBodyMethodSig(
                         ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                     )),
                     266 => Ok(Self::ClassStaticBlock(
                         ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                     )),
-                    388 => Ok(Self::ClassBodyMember(
+                    389 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -32112,10 +32112,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationContentTranspo
                     289 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    389 => Ok(Self::AmbientDeclarationGlobal(
+                    379 => Ok(Self::AmbientDeclarationGlobal(
                         AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                     )),
-                    379 => Ok(Self::AmbientDeclarationModule(
+                    380 => Ok(Self::AmbientDeclarationModule(
                         AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -32171,10 +32171,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationContentTranspo
                     289 => Ok(Self::AmbientDeclaration(
                         AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    389 => Ok(Self::AmbientDeclarationGlobal(
+                    379 => Ok(Self::AmbientDeclarationGlobal(
                         AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
                     )),
-                    379 => Ok(Self::AmbientDeclarationModule(
+                    380 => Ok(Self::AmbientDeclarationModule(
                         AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -41253,13 +41253,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeContentContentTranspor
                     408 => Ok(Self::ExportStatementDefaultDeclaration(
                         ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatementTypeExport(
+                    384 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ExportStatementEqualsExport(
+                    385 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatementNamespaceExport(
+                    383 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     347 => Ok(Self::PropertySignature(
@@ -41297,13 +41297,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeContentContentTranspor
                     408 => Ok(Self::ExportStatementDefaultDeclaration(
                         ExportStatementDefaultDeclarationTransport::from_napi_value(env, napi_val)?
                     )),
-                    383 => Ok(Self::ExportStatementTypeExport(
+                    384 => Ok(Self::ExportStatementTypeExport(
                         ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    384 => Ok(Self::ExportStatementEqualsExport(
+                    385 => Ok(Self::ExportStatementEqualsExport(
                         ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                     )),
-                    382 => Ok(Self::ExportStatementNamespaceExport(
+                    383 => Ok(Self::ExportStatementNamespaceExport(
                         ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                     )),
                     347 => Ok(Self::PropertySignature(
@@ -67592,6 +67592,66 @@ pub type OperatorEnum = Seamed<OperatorArm>;
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct AmbientDeclarationGlobalTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_before"))]
+    pub global_keyword_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_after"))]
+    pub global_keyword_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_before"))]
+    pub ambient_declaration_global_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_after"))]
+    pub ambient_declaration_global_after: Option<u16>,
+}
+
+impl ::sittir_core::view::KindOf for AmbientDeclarationGlobalTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(379)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AmbientDeclarationGlobalTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_ambient_declaration_global(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AmbientDeclarationGlobalTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.global_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_KEYWORD_BEFORE]);
+        self.global_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_KEYWORD_AFTER]);
+        self.ambient_declaration_global_before.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_BEFORE]);
+        self.ambient_declaration_global_after.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_AFTER]);
+        self.body.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AmbientDeclarationGlobalTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationGlobalTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AmbientDeclarationGlobalTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AmbientDeclarationModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -67623,7 +67683,7 @@ pub struct AmbientDeclarationModuleTransport {
 
 impl ::sittir_core::view::KindOf for AmbientDeclarationModuleTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(379)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(380)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -67698,7 +67758,7 @@ pub struct ObjectTypeContentTransport {
 
 impl ::sittir_core::view::KindOf for ObjectTypeContentTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(380)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(381)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -67820,7 +67880,7 @@ pub struct ExportStatementNamespaceExportTransport {
 
 impl ::sittir_core::view::KindOf for ExportStatementNamespaceExportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(382)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(383)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -67900,7 +67960,7 @@ pub struct ExportStatementTypeExportTransport {
 
 impl ::sittir_core::view::KindOf for ExportStatementTypeExportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(383)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(384)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -67975,7 +68035,7 @@ pub struct ExportStatementEqualsExportTransport {
 
 impl ::sittir_core::view::KindOf for ExportStatementEqualsExportTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(384)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(385)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -68037,7 +68097,7 @@ pub struct BinaryExpressionInTransport {
 
 impl ::sittir_core::view::KindOf for BinaryExpressionInTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(385)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(386)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -68104,7 +68164,7 @@ pub struct ClassBodyMethodTransport {
 
 impl ::sittir_core::view::KindOf for ClassBodyMethodTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(386)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(387)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -68184,7 +68244,7 @@ pub struct ClassBodyMethodSigTransport {
 
 impl ::sittir_core::view::KindOf for ClassBodyMethodSigTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(387)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(388)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -68244,7 +68304,7 @@ pub struct ClassBodyMemberTransport {
 
 impl ::sittir_core::view::KindOf for ClassBodyMemberTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(388)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(389)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -68282,66 +68342,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ClassBodyMemberTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct AmbientDeclarationGlobalTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ::sittir_core::SlotValue<StatementBlockTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_before"))]
-    pub global_keyword_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_global_keyword_after"))]
-    pub global_keyword_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_before"))]
-    pub ambient_declaration_global_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_global_after"))]
-    pub ambient_declaration_global_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for AmbientDeclarationGlobalTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(389)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for AmbientDeclarationGlobalTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_ambient_declaration_global(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for AmbientDeclarationGlobalTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.global_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_KEYWORD_BEFORE]);
-        self.global_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_GLOBAL_KEYWORD_AFTER]);
-        self.ambient_declaration_global_before.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_BEFORE]);
-        self.ambient_declaration_global_after.get_or_insert(ctx.options.spacing[options::SITE_AMBIENT_DECLARATION_GLOBAL_AMBIENT_DECLARATION_GLOBAL_AFTER]);
-        self.body.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AmbientDeclarationGlobalTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AmbientDeclarationGlobalTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AmbientDeclarationGlobalTransport::to_napi_value(env, *val)
     }
 }
 
@@ -84397,100 +84397,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DashDashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FromKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for FromKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for FromKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for FromKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "from".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "from".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "from".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FromKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FromKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FromKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FromKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FromKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct GlobalKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -84581,6 +84487,100 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<GlobalKeywordTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         GlobalKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FromKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for FromKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(10)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FromKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FromKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "from".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "from".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FromKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "from".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FromKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FromKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FromKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FromKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FromKeywordTransport::to_napi_value(env, *val)
     }
 }
 
@@ -87740,6 +87740,18 @@ fn render_operator(t: &OperatorEnum, w: &mut dyn ::sittir_core::render::RenderSi
     t.render(w)
 }
 
+fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let body = &node.body;
+    w.site(node.ambient_declaration_global_before.unwrap_or(0));
+    w.site(node.global_keyword_before.unwrap_or(0));
+    w.text("global")?;
+    w.adjacent();
+    w.site(node.global_keyword_after.unwrap_or(0));
+    body.render(w)?;
+    w.site(node.ambient_declaration_global_after.unwrap_or(0));
+    Ok(())
+}
+
 fn render_ambient_declaration_module(node: &AmbientDeclarationModuleTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = &node.name;
     let terminator = View::new(&node.terminator, "{}");
@@ -87892,18 +87904,6 @@ fn render_class_body_member(node: &ClassBodyMemberTransport, w: &mut dyn ::sitti
     content.render(w)?;
     terminator.render(w)?;
     w.site(node.class_body_member_after.unwrap_or(0));
-    Ok(())
-}
-
-fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let body = &node.body;
-    w.site(node.ambient_declaration_global_before.unwrap_or(0));
-    w.site(node.global_keyword_before.unwrap_or(0));
-    w.text("global")?;
-    w.adjacent();
-    w.site(node.global_keyword_after.unwrap_or(0));
-    body.render(w)?;
-    w.site(node.ambient_declaration_global_after.unwrap_or(0));
     Ok(())
 }
 
@@ -88966,11 +88966,11 @@ fn render_dash_dash(t: &DashDashTransport, w: &mut dyn ::sittir_core::render::Re
     w.text(&t.text)
 }
 
-fn render_from_keyword(t: &FromKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_global_keyword(t: &GlobalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_global_keyword(t: &GlobalKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_from_keyword(t: &FromKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -89428,6 +89428,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::UnaryExpressionOperator(inner) => inner.kind_in(kinds),
             Self::NumberOperator(inner) => inner.kind_in(kinds),
             Self::Operator(inner) => inner.kind_in(kinds),
+            Self::AmbientDeclarationGlobal(inner) => inner.kind_in(kinds),
             Self::AmbientDeclarationModule(inner) => inner.kind_in(kinds),
             Self::ObjectTypeContent(inner) => inner.kind_in(kinds),
             Self::ExportStatementNamespaceExport(inner) => inner.kind_in(kinds),
@@ -89437,7 +89438,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ClassBodyMethod(inner) => inner.kind_in(kinds),
             Self::ClassBodyMethodSig(inner) => inner.kind_in(kinds),
             Self::ClassBodyMember(inner) => inner.kind_in(kinds),
-            Self::AmbientDeclarationGlobal(inner) => inner.kind_in(kinds),
             Self::IndexSignatureColon(inner) => inner.kind_in(kinds),
             Self::IndexSignatureMappedTypeClause(inner) => inner.kind_in(kinds),
             Self::ImportStatementClauseFrom(inner) => inner.kind_in(kinds),
@@ -89617,8 +89617,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::DeleteKeyword(inner) => inner.kind_in(kinds),
             Self::PlusPlus(inner) => inner.kind_in(kinds),
             Self::DashDash(inner) => inner.kind_in(kinds),
-            Self::FromKeyword(inner) => inner.kind_in(kinds),
             Self::GlobalKeyword(inner) => inner.kind_in(kinds),
+            Self::FromKeyword(inner) => inner.kind_in(kinds),
             Self::Dquote(inner) => inner.kind_in(kinds),
             Self::Squote(inner) => inner.kind_in(kinds),
             Self::TargetKeyword(inner) => inner.kind_in(kinds),
@@ -89832,6 +89832,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::UnaryExpressionOperator(t) => t.render(w),
             AnyTransport::NumberOperator(t) => t.render(w),
             AnyTransport::Operator(t) => t.render(w),
+            AnyTransport::AmbientDeclarationGlobal(t) => t.render(w),
             AnyTransport::AmbientDeclarationModule(t) => t.render(w),
             AnyTransport::ObjectTypeContent(t) => t.render(w),
             AnyTransport::ExportStatementNamespaceExport(t) => t.render(w),
@@ -89841,7 +89842,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ClassBodyMethod(t) => t.render(w),
             AnyTransport::ClassBodyMethodSig(t) => t.render(w),
             AnyTransport::ClassBodyMember(t) => t.render(w),
-            AnyTransport::AmbientDeclarationGlobal(t) => t.render(w),
             AnyTransport::IndexSignatureColon(t) => t.render(w),
             AnyTransport::IndexSignatureMappedTypeClause(t) => t.render(w),
             AnyTransport::ImportStatementClauseFrom(t) => t.render(w),
@@ -90021,8 +90021,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::DeleteKeyword(t) => t.render(w),
             AnyTransport::PlusPlus(t) => t.render(w),
             AnyTransport::DashDash(t) => t.render(w),
-            AnyTransport::FromKeyword(t) => t.render(w),
             AnyTransport::GlobalKeyword(t) => t.render(w),
+            AnyTransport::FromKeyword(t) => t.render(w),
             AnyTransport::Dquote(t) => t.render(w),
             AnyTransport::Squote(t) => t.render(w),
             AnyTransport::TargetKeyword(t) => t.render(w),
