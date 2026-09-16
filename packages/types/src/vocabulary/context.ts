@@ -26,18 +26,18 @@ export interface Unmapped<K extends string> {
 
 /** The permissive closure: every namespace's full kind-set. */
 export interface BaseContext extends GrammarContext {
-	readonly argument: V.Argument.Kinds<BaseContext>;
-	readonly attribute: V.Attribute.Kinds<BaseContext>;
-	readonly clause: V.Clause.Kinds<BaseContext>;
-	readonly comment: V.Comment.Kinds<BaseContext>;
-	readonly declaration: V.Declaration.Kinds<BaseContext>;
-	readonly element: V.Element.Kinds<BaseContext>;
-	readonly expression: V.Expression.Kinds<BaseContext>;
-	readonly identifier: V.Identifier.Kinds<BaseContext>;
-	readonly literal: V.Literal.Kinds<BaseContext>;
-	readonly modifier: V.Modifier.Kinds<BaseContext>;
-	readonly module: V.Module.Kinds<BaseContext>;
-	readonly pattern: V.Pattern.Kinds<BaseContext>;
-	readonly statement: V.Statement.Kinds<BaseContext>;
-	readonly type: V.Type.Kinds<BaseContext>;
+	readonly argument: V.Argument.Any<BaseContext>;
+	readonly attribute: V.Attribute.Any<BaseContext>;
+	readonly clause: V.Clause.Any<BaseContext>;
+	readonly comment: V.Comment.Any<BaseContext>;
+	readonly declaration: V.Declaration.Any<BaseContext>;
+	readonly element: V.Element.Any<BaseContext>;
+	readonly expression: V.Expression.Any<BaseContext>;
+	readonly identifier: V.Identifier.Any<BaseContext>;
+	readonly literal: V.Literal.Any<BaseContext>;
+	readonly modifier: V.Modifier.Any<BaseContext>;
+	readonly module: V.Module.Any<BaseContext>;
+	readonly pattern: V.Pattern.Any<BaseContext>;
+	readonly statement: V.Statement.Any<BaseContext>;
+	readonly type: V.Type.Any<BaseContext>;
 }

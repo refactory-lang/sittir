@@ -5,26 +5,15 @@ import type * as V from './index.ts';
 
 export interface Attribute<G extends GrammarContext> {
 	// claimed by r
-	readonly kind:
-		| 'attribute'
-		| 'attribute.content'
-		| 'attribute.content.call'
-		| 'attribute.content.member'
-		| 'attribute.content.parenthesized'
-		| 'attribute.decorator'
-		| 'attribute.inner';
-	readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>;
+	readonly kind: 'attribute';
+	readonly content?: G['identifier'] | V.Attribute.Content.Any<G>;
 	// rt only
 }
 
 export namespace Attribute {
 	export interface Content<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by r
-		readonly kind:
-			| 'attribute.content'
-			| 'attribute.content.call'
-			| 'attribute.content.member'
-			| 'attribute.content.parenthesized';
+		readonly kind: 'attribute.content';
 		readonly input?: V.Unmapped<'rust:attribute_input'>;
 		// unmapped: <rust:attribute_input>
 		readonly path?: G['identifier'];
@@ -46,9 +35,9 @@ export namespace Attribute {
 		export interface Parenthesized<G extends GrammarContext> extends V.Attribute.Content<G> {
 			// claimed by t
 			readonly kind: 'attribute.content.parenthesized';
-			readonly content: G['identifier'] | V.Attribute.Content.Kinds<G>;
+			readonly content: G['identifier'] | V.Attribute.Content.Any<G>;
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Attribute.Content<G>
 			| V.Attribute.Content.Call<G>
 			| V.Attribute.Content.Member<G>
@@ -57,7 +46,7 @@ export namespace Attribute {
 	export interface Decorator<G extends GrammarContext> extends V.Attribute<G> {
 		// claimed by pt
 		readonly kind: 'attribute.decorator';
-		readonly content?: G['identifier'] | V.Attribute.Content.Kinds<G>;
+		readonly content?: G['identifier'] | V.Attribute.Content.Any<G>;
 		// t only
 		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 		// p only
@@ -67,7 +56,7 @@ export namespace Attribute {
 		readonly kind: 'attribute.inner';
 		readonly content: V.Attribute.Content<G>;
 	}
-	export type Kinds<G extends GrammarContext> =
+	export type Any<G extends GrammarContext> =
 		| V.Attribute<G>
 		| V.Attribute.Content<G>
 		| V.Attribute.Content.Call<G>

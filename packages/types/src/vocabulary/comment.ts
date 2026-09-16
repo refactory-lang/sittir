@@ -5,20 +5,13 @@ import type * as V from './index.ts';
 
 export interface Comment<G extends GrammarContext> {
 	// claimed by t
-	readonly kind:
-		| 'comment'
-		| 'comment.block'
-		| 'comment.block.doc'
-		| 'comment.block.doc.inner'
-		| 'comment.line'
-		| 'comment.line.doc'
-		| 'comment.line.doc.inner';
+	readonly kind: 'comment';
 }
 
 export namespace Comment {
 	export interface Block<G extends GrammarContext> extends V.Comment<G> {
 		// claimed by rt
-		readonly kind: 'comment.block' | 'comment.block.doc' | 'comment.block.doc.inner';
+		readonly kind: 'comment.block';
 		readonly content?:
 			| V.Unmapped<'rust:block_comment_content'>
 			| V.Unmapped<'rust:block_comment_doc_inner'>
@@ -29,7 +22,7 @@ export namespace Comment {
 	export namespace Block {
 		export interface Doc<G extends GrammarContext> extends V.Comment.Block<G> {
 			// claimed by rt
-			readonly kind: 'comment.block.doc' | 'comment.block.doc.inner';
+			readonly kind: 'comment.block.doc';
 			readonly content?:
 				| V.Unmapped<'rust:block_comment_content'>
 				| V.Unmapped<'rust:block_comment_doc_inner'>
@@ -47,16 +40,16 @@ export namespace Comment {
 					| V.Unmapped<'rust:block_comment_doc_outer'>;
 				// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
 			}
-			export type Kinds<G extends GrammarContext> = V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
+			export type Any<G extends GrammarContext> = V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Comment.Block<G>
 			| V.Comment.Block.Doc<G>
 			| V.Comment.Block.Doc.Inner<G>;
 	}
 	export interface Line<G extends GrammarContext> extends V.Comment<G> {
 		// claimed by prt
-		readonly kind: 'comment.line' | 'comment.line.doc' | 'comment.line.doc.inner';
+		readonly kind: 'comment.line';
 		readonly content?:
 			| V.Unmapped<'rust:line_comment_content'>
 			| V.Unmapped<'rust:line_comment_doc_inner'>
@@ -68,7 +61,7 @@ export namespace Comment {
 	export namespace Line {
 		export interface Doc<G extends GrammarContext> extends V.Comment.Line<G> {
 			// claimed by r
-			readonly kind: 'comment.line.doc' | 'comment.line.doc.inner';
+			readonly kind: 'comment.line.doc';
 			readonly content:
 				| V.Unmapped<'rust:line_comment_content'>
 				| V.Unmapped<'rust:line_comment_doc_inner'>
@@ -87,14 +80,11 @@ export namespace Comment {
 					| V.Unmapped<'rust:line_comment_regular_dslash'>;
 				// unmapped: <rust:line_comment_content> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_regular_dslash>
 			}
-			export type Kinds<G extends GrammarContext> = V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
+			export type Any<G extends GrammarContext> = V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 		}
-		export type Kinds<G extends GrammarContext> =
-			| V.Comment.Line<G>
-			| V.Comment.Line.Doc<G>
-			| V.Comment.Line.Doc.Inner<G>;
+		export type Any<G extends GrammarContext> = V.Comment.Line<G> | V.Comment.Line.Doc<G> | V.Comment.Line.Doc.Inner<G>;
 	}
-	export type Kinds<G extends GrammarContext> =
+	export type Any<G extends GrammarContext> =
 		| V.Comment<G>
 		| V.Comment.Block<G>
 		| V.Comment.Block.Doc<G>

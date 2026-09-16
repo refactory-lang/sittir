@@ -5,26 +5,7 @@ import type * as V from './index.ts';
 
 export interface Identifier<G extends GrammarContext> {
 	// claimed by prt
-	readonly kind:
-		| 'identifier'
-		| 'identifier.crate'
-		| 'identifier.dotted'
-		| 'identifier.field'
-		| 'identifier.jsx'
-		| 'identifier.jsx.namespace'
-		| 'identifier.keyword'
-		| 'identifier.label'
-		| 'identifier.lifetime'
-		| 'identifier.metavariable'
-		| 'identifier.nested'
-		| 'identifier.property'
-		| 'identifier.property.computed'
-		| 'identifier.property.private'
-		| 'identifier.property.shorthand'
-		| 'identifier.scoped'
-		| 'identifier.self'
-		| 'identifier.super'
-		| 'identifier.type';
+	readonly kind: 'identifier';
 }
 
 export namespace Identifier {
@@ -43,14 +24,14 @@ export namespace Identifier {
 	}
 	export interface Jsx<G extends GrammarContext> extends V.Identifier<G> {
 		// claimed by t
-		readonly kind: 'identifier.jsx' | 'identifier.jsx.namespace';
+		readonly kind: 'identifier.jsx';
 	}
 	export namespace Jsx {
 		export interface Namespace<G extends GrammarContext> extends V.Identifier.Jsx<G> {
 			// claimed by t
 			readonly kind: 'identifier.jsx.namespace';
 		}
-		export type Kinds<G extends GrammarContext> = V.Identifier.Jsx<G> | V.Identifier.Jsx.Namespace<G>;
+		export type Any<G extends GrammarContext> = V.Identifier.Jsx<G> | V.Identifier.Jsx.Namespace<G>;
 	}
 	export interface Keyword<G extends GrammarContext> extends V.Identifier<G> {
 		// claimed by p
@@ -79,11 +60,7 @@ export namespace Identifier {
 	}
 	export interface Property<G extends GrammarContext> extends V.Identifier<G> {
 		// claimed by t
-		readonly kind:
-			| 'identifier.property'
-			| 'identifier.property.computed'
-			| 'identifier.property.private'
-			| 'identifier.property.shorthand';
+		readonly kind: 'identifier.property';
 	}
 	export namespace Property {
 		export interface Computed<G extends GrammarContext> extends V.Identifier.Property<G> {
@@ -99,7 +76,7 @@ export namespace Identifier {
 			// claimed by t
 			readonly kind: 'identifier.property.shorthand';
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Identifier.Property<G>
 			| V.Identifier.Property.Computed<G>
 			| V.Identifier.Property.Private<G>
@@ -123,7 +100,7 @@ export namespace Identifier {
 		// claimed by prt
 		readonly kind: 'identifier.type';
 	}
-	export type Kinds<G extends GrammarContext> =
+	export type Any<G extends GrammarContext> =
 		| V.Identifier<G>
 		| V.Identifier.Crate<G>
 		| V.Identifier.Dotted<G>

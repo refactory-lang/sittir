@@ -4,7 +4,7 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 
 export interface Argument<G extends GrammarContext> {
-	readonly kind: 'argument.keyword';
+	readonly kind: 'argument';
 	readonly name: G['identifier'];
 	// p only
 	readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
@@ -18,5 +18,5 @@ export namespace Argument {
 		readonly name: G['identifier'];
 		readonly value: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 	}
-	export type Kinds<G extends GrammarContext> = V.Argument.Keyword<G>;
+	export type Any<G extends GrammarContext> = V.Argument.Keyword<G>;
 }

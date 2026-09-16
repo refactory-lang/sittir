@@ -4,38 +4,13 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 
 export interface Literal<G extends GrammarContext> {
-	readonly kind:
-		| 'literal.boolean'
-		| 'literal.boolean.false'
-		| 'literal.boolean.true'
-		| 'literal.char'
-		| 'literal.ellipsis'
-		| 'literal.html_entity'
-		| 'literal.null'
-		| 'literal.null.undefined'
-		| 'literal.number'
-		| 'literal.number.float'
-		| 'literal.number.integer'
-		| 'literal.number.integer.hex'
-		| 'literal.number.negative'
-		| 'literal.regex'
-		| 'literal.regex.flags'
-		| 'literal.regex.pattern'
-		| 'literal.string'
-		| 'literal.string.bytes'
-		| 'literal.string.concatenated'
-		| 'literal.string.docstring'
-		| 'literal.string.escape'
-		| 'literal.string.f'
-		| 'literal.string.raw'
-		| 'literal.string.triple'
-		| 'literal.template';
+	readonly kind: 'literal';
 }
 
 export namespace Literal {
 	export interface Boolean<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by r
-		readonly kind: 'literal.boolean' | 'literal.boolean.false' | 'literal.boolean.true';
+		readonly kind: 'literal.boolean';
 	}
 	export namespace Boolean {
 		export interface False<G extends GrammarContext> extends V.Literal.Boolean<G> {
@@ -46,7 +21,7 @@ export namespace Literal {
 			// claimed by prt
 			readonly kind: 'literal.boolean.true';
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Literal.Boolean<G>
 			| V.Literal.Boolean.False<G>
 			| V.Literal.Boolean.True<G>;
@@ -65,23 +40,18 @@ export namespace Literal {
 	}
 	export interface Null<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by pt
-		readonly kind: 'literal.null' | 'literal.null.undefined';
+		readonly kind: 'literal.null';
 	}
 	export namespace Null {
 		export interface Undefined<G extends GrammarContext> extends V.Literal.Null<G> {
 			// claimed by t
 			readonly kind: 'literal.null.undefined';
 		}
-		export type Kinds<G extends GrammarContext> = V.Literal.Null<G> | V.Literal.Null.Undefined<G>;
+		export type Any<G extends GrammarContext> = V.Literal.Null<G> | V.Literal.Null.Undefined<G>;
 	}
 	export interface Number<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by t
-		readonly kind:
-			| 'literal.number'
-			| 'literal.number.float'
-			| 'literal.number.integer'
-			| 'literal.number.integer.hex'
-			| 'literal.number.negative';
+		readonly kind: 'literal.number';
 	}
 	export namespace Number {
 		export interface Float<G extends GrammarContext> extends V.Literal.Number<G> {
@@ -90,21 +60,21 @@ export namespace Literal {
 		}
 		export interface Integer<G extends GrammarContext> extends V.Literal.Number<G> {
 			// claimed by pr
-			readonly kind: 'literal.number.integer' | 'literal.number.integer.hex';
+			readonly kind: 'literal.number.integer';
 		}
 		export namespace Integer {
 			export interface Hex<G extends GrammarContext> extends V.Literal.Number.Integer<G> {
 				// claimed by p
 				readonly kind: 'literal.number.integer.hex';
 			}
-			export type Kinds<G extends GrammarContext> = V.Literal.Number.Integer<G> | V.Literal.Number.Integer.Hex<G>;
+			export type Any<G extends GrammarContext> = V.Literal.Number.Integer<G> | V.Literal.Number.Integer.Hex<G>;
 		}
 		export interface Negative<G extends GrammarContext> extends V.Literal.Number<G> {
 			// claimed by r
 			readonly kind: 'literal.number.negative';
-			readonly value: V.Literal.Number.Kinds<G>;
+			readonly value: V.Literal.Number.Any<G>;
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Literal.Number<G>
 			| V.Literal.Number.Float<G>
 			| V.Literal.Number.Integer<G>
@@ -113,7 +83,7 @@ export namespace Literal {
 	}
 	export interface Regex<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by t
-		readonly kind: 'literal.regex' | 'literal.regex.flags' | 'literal.regex.pattern';
+		readonly kind: 'literal.regex';
 		readonly flags?: V.Literal.Regex.Flags<G>;
 		readonly pattern?: V.Literal.Regex.Pattern<G>;
 	}
@@ -126,22 +96,14 @@ export namespace Literal {
 			// claimed by t
 			readonly kind: 'literal.regex.pattern';
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Literal.Regex<G>
 			| V.Literal.Regex.Flags<G>
 			| V.Literal.Regex.Pattern<G>;
 	}
 	export interface String<G extends GrammarContext> extends V.Literal<G> {
 		// claimed by prt
-		readonly kind:
-			| 'literal.string'
-			| 'literal.string.bytes'
-			| 'literal.string.concatenated'
-			| 'literal.string.docstring'
-			| 'literal.string.escape'
-			| 'literal.string.f'
-			| 'literal.string.raw'
-			| 'literal.string.triple';
+		readonly kind: 'literal.string';
 		readonly content?: V.Unmapped<'typescript:string_double'> | V.Unmapped<'typescript:string_single'>;
 		// t only
 		// unmapped: <typescript:string_double> <typescript:string_single>
@@ -193,7 +155,7 @@ export namespace Literal {
 			// claimed by p
 			readonly kind: 'literal.string.triple';
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Literal.String<G>
 			| V.Literal.String.Bytes<G>
 			| V.Literal.String.Concatenated<G>
@@ -213,7 +175,7 @@ export namespace Literal {
 		)[];
 		// unmapped: <typescript:template_chars>
 	}
-	export type Kinds<G extends GrammarContext> =
+	export type Any<G extends GrammarContext> =
 		| V.Literal.Boolean<G>
 		| V.Literal.Boolean.False<G>
 		| V.Literal.Boolean.True<G>

@@ -17,5 +17,5 @@ export interface Module<G extends GrammarContext> {
 }
 
 export namespace Module {
-	export type Kinds<G extends GrammarContext> = V.Module<G>;
+	export type Any<G extends GrammarContext> = V.Module<G>;
 }

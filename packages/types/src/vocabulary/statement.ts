@@ -4,40 +4,7 @@ import type { GrammarContext } from './context.ts';
 import type * as V from './index.ts';
 
 export interface Statement<G extends GrammarContext> {
-	readonly kind:
-		| 'statement.assert'
-		| 'statement.block'
-		| 'statement.block.static'
-		| 'statement.break'
-		| 'statement.continue'
-		| 'statement.debugger'
-		| 'statement.delete'
-		| 'statement.empty'
-		| 'statement.exec'
-		| 'statement.export'
-		| 'statement.expression'
-		| 'statement.global'
-		| 'statement.if'
-		| 'statement.import'
-		| 'statement.import.crate'
-		| 'statement.import.from'
-		| 'statement.import.future'
-		| 'statement.loop'
-		| 'statement.loop.counted'
-		| 'statement.loop.do_while'
-		| 'statement.loop.for'
-		| 'statement.loop.while'
-		| 'statement.match'
-		| 'statement.nonlocal'
-		| 'statement.pass'
-		| 'statement.print'
-		| 'statement.print.chevron'
-		| 'statement.return'
-		| 'statement.scope'
-		| 'statement.switch'
-		| 'statement.throw'
-		| 'statement.try'
-		| 'statement.with';
+	readonly kind: 'statement';
 }
 
 export namespace Statement {
@@ -48,7 +15,7 @@ export namespace Statement {
 	}
 	export interface Block<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by prt
-		readonly kind: 'statement.block' | 'statement.block.static';
+		readonly kind: 'statement.block';
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 		readonly statements?: (
@@ -68,7 +35,7 @@ export namespace Statement {
 			readonly kind: 'statement.block.static';
 			readonly body: V.Statement.Block<G>;
 		}
-		export type Kinds<G extends GrammarContext> = V.Statement.Block<G> | V.Statement.Block.Static<G>;
+		export type Any<G extends GrammarContext> = V.Statement.Block<G> | V.Statement.Block.Static<G>;
 	}
 	export interface Break<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by prt
@@ -109,12 +76,6 @@ export namespace Statement {
 	export interface Export<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by t
 		readonly kind: 'statement.export';
-		readonly content:
-			| V.Unmapped<'typescript:export_statement_default'>
-			| V.Unmapped<'typescript:export_statement_equals_export'>
-			| V.Unmapped<'typescript:export_statement_namespace_export'>
-			| V.Unmapped<'typescript:export_statement_type_export'>;
-		// unmapped: <typescript:export_statement_default> <typescript:export_statement_equals_export> <typescript:export_statement_namespace_export> <typescript:export_statement_type_export>
 		readonly label?: V.Identifier.Label<G>;
 	}
 	export interface Expression<G extends GrammarContext> extends V.Statement<G> {
@@ -153,17 +114,17 @@ export namespace Statement {
 			| G['identifier']
 			| G['literal']
 			| G['pattern']
-			| V.Clause.Let.Kinds<G>
+			| V.Clause.Let.Any<G>
 			| G['statement'];
-		readonly consequence: V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		// unmapped: literal:_newline
+		readonly consequence: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		// unmapped: <python:suite>
 		readonly label?: V.Identifier.Label<G>;
 		// t only
 	}
 	export interface Import<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by prt
-		readonly kind: 'statement.import' | 'statement.import.crate' | 'statement.import.from' | 'statement.import.future';
-		readonly argument?: G['identifier'] | V.Clause.Import.Kinds<G>;
+		readonly kind: 'statement.import';
+		readonly argument?: G['identifier'] | V.Clause.Import.Any<G>;
 		// r only
 		readonly fromClause?:
 			| V.Unmapped<'typescript:import_statement_clause_from'>
@@ -207,7 +168,7 @@ export namespace Statement {
 			readonly content: V.Unmapped<'python:import_list'> | V.Unmapped<'python:parenthesized_import_list'>;
 			// unmapped: <python:import_list> <python:parenthesized_import_list>
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Statement.Import<G>
 			| V.Statement.Import.Crate<G>
 			| V.Statement.Import.From<G>
@@ -215,15 +176,10 @@ export namespace Statement {
 	}
 	export interface Loop<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by r
-		readonly kind:
-			| 'statement.loop'
-			| 'statement.loop.counted'
-			| 'statement.loop.do_while'
-			| 'statement.loop.for'
-			| 'statement.loop.while';
-		readonly body: V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+		readonly kind: 'statement.loop';
+		readonly body: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		// prt only
-		// unmapped: literal:_newline
+		// unmapped: <python:suite>
 		readonly label?: V.Identifier.Label<G>;
 		// rt only
 	}
@@ -258,46 +214,36 @@ export namespace Statement {
 			// p only
 			readonly await?: boolean;
 			// t only
-			readonly body: V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			// unmapped: literal:_newline
-			readonly content?:
-				| V.Unmapped<'typescript:for_header_let_const_kind'>
-				| V.Unmapped<'typescript:for_header_lhs'>
-				| V.Unmapped<'typescript:for_header_var_kind'>;
+			readonly body: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			// unmapped: <python:suite>
+			readonly forHeader?: V.Unmapped<'typescript:for_header'>;
 			// t only
-			// unmapped: <typescript:for_header_let_const_kind> <typescript:for_header_lhs> <typescript:for_header_var_kind>
+			// unmapped: <typescript:for_header>
 			readonly label?: V.Identifier.Label<G>;
 			// rt only
 			readonly left?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
 			// pr only
-			readonly operator?: 'in' | 'of';
-			// t only
-			readonly right:
-				| V.Declaration.Module<G>
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['pattern']
-				| G['statement'];
+			readonly right?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
+			// pr only
 		}
 		export interface While<G extends GrammarContext> extends V.Statement.Loop<G> {
 			// claimed by prt
 			readonly kind: 'statement.loop.while';
 			readonly alternative?: V.Clause.Else<G>;
 			// p only
-			readonly body: V.Statement.Block<G> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-			// unmapped: literal:_newline
+			readonly body: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
+			// unmapped: <python:suite>
 			readonly condition:
 				| G['expression']
 				| G['identifier']
 				| G['literal']
 				| G['pattern']
-				| V.Clause.Let.Kinds<G>
+				| V.Clause.Let.Any<G>
 				| G['statement'];
 			readonly label?: V.Identifier.Label<G>;
 			// rt only
 		}
-		export type Kinds<G extends GrammarContext> =
+		export type Any<G extends GrammarContext> =
 			| V.Statement.Loop<G>
 			| V.Statement.Loop.Counted<G>
 			| V.Statement.Loop.DoWhile<G>
@@ -326,8 +272,8 @@ export namespace Statement {
 	}
 	export interface Print<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by p
-		readonly kind: 'statement.print' | 'statement.print.chevron';
-		readonly content?: V.Statement.Print.Kinds<G>;
+		readonly kind: 'statement.print';
+		readonly content?: V.Statement.Print.Any<G>;
 		readonly printArguments?: V.Unmapped<'python:print_arguments'>;
 		// unmapped: <python:print_arguments>
 	}
@@ -339,7 +285,7 @@ export namespace Statement {
 			readonly printChevronArguments?: V.Unmapped<'python:print_chevron_arguments'> | ',';
 			// unmapped: <python:print_chevron_arguments>
 		}
-		export type Kinds<G extends GrammarContext> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
+		export type Any<G extends GrammarContext> = V.Statement.Print<G> | V.Statement.Print.Chevron<G>;
 	}
 	export interface Return<G extends GrammarContext> extends V.Statement<G> {
 		// claimed by prt
@@ -382,8 +328,8 @@ export namespace Statement {
 		readonly kind: 'statement.try';
 		readonly alternative?: V.Clause.Else<G>;
 		// p only
-		readonly body: V.Statement.Block<G>;
-		// unmapped: literal:_newline
+		readonly body: V.Unmapped<'python:suite'> | V.Statement.Block<G>;
+		// unmapped: <python:suite>
 		readonly exceptClauses?: V.Clause.Except<G>[];
 		// p only
 		readonly finalizer?: V.Clause.Finally<G>;
@@ -396,11 +342,11 @@ export namespace Statement {
 		// claimed by p
 		readonly kind: 'statement.with';
 		readonly async?: boolean;
-		readonly body: V.Statement.Block<G>;
-		// unmapped: literal:_newline
+		readonly body: V.Unmapped<'python:suite'>;
+		// unmapped: <python:suite>
 		readonly withClause: V.Clause.With<G>;
 	}
-	export type Kinds<G extends GrammarContext> =
+	export type Any<G extends GrammarContext> =
 		| V.Statement.Assert<G>
 		| V.Statement.Block<G>
 		| V.Statement.Block.Static<G>
