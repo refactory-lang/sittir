@@ -56,6 +56,7 @@ import {
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
 	soleSlotFacts,
+	canDefaultToEmpty,
 	canonicalSeparatedListField,
 	escForSource,
 	emitsPlainBuiltAlias,
@@ -435,7 +436,18 @@ function slotStorageExpr(
 	typeName: string
 ): string {
 	const valueExpr = `${configAccess}.${f.configKey}`;
-	const withDefault = isMultiple(f) ? `(${valueExpr} ?? [])` : valueExpr;
+	// A required field alongside an optional sibling (e.g. async_block's
+	// body next to moveMarker) is what makes `config` itself defaultable to
+	// `{}` (argumentOptional, above) — reading it bare would then silently
+	// store `undefined` instead of the empty construction that field's own
+	// omission means. `canDefaultToEmpty` is the same fact `emitBranchFrom`
+	// (from.ts) already applies on the loose surface.
+	const defaultFactory = isMultiple(f) ? undefined : canDefaultToEmpty(f, nodeMap);
+	const withDefault = isMultiple(f)
+		? `(${valueExpr} ?? [])`
+		: defaultFactory
+			? `(${valueExpr} ?? ${defaultFactory}())`
+			: valueExpr;
 	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries, typeName);
 }
 
@@ -722,7 +734,13 @@ function resolveFactorySurface(
 		};
 	}
 	const slots = node.slots;
-	const opt = resolveConfigOptional(slots);
+	// The same recursive fact the loose surface's `emitBranchFrom` derives
+	// its own optionality from (node-map.ts `argumentOptional`): a required
+	// slot only blocks the no-argument call when it has no default-empty
+	// construction of its own (an optional sibling slot alongside it never
+	// blocks on its own, unlike the shallow "any slot required" scan this
+	// replaced).
+	const opt = node.argumentOptional(nodeMap) ? '?' : '';
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
@@ -1106,12 +1124,6 @@ function resolveRefineFormConfigOptional(
 	narrowed: ReadonlyMap<string, string>
 ): '' | '?' {
 	const hasRequired = slots.some((f) => isRequired(f) && !narrowed.has(f.name));
-	return hasRequired ? '' : '?';
-}
-
-function resolveConfigOptional(slots: readonly AssembledNonterminal[]): '' | '?' {
-	slots = slots ?? [];
-	const hasRequired = slots.some((f) => isRequired(f));
 	return hasRequired ? '' : '?';
 }
 

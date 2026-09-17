@@ -227,6 +227,12 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
+/** A `kind:` discriminant names its kind by the grammar string or the
+ *  stamped `TSKindId` enum value — both spellings resolve to the same name. */
+function _kindNameOf(kind: unknown): string | undefined {
+	return typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+}
+
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
@@ -545,11 +551,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	])
 };
 
-function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {
-	if (arms.length <= 1) return arms[0];
-	return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;
-}
-
 function _resolveOne<T>(
 	v: _LooseFieldInput,
 	leafKinds: readonly string[],
@@ -562,11 +563,13 @@ function _resolveOne<T>(
 		const kindName = KIND_NAMES.get(kindId);
 		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
-		const arm = _pickArm(arms, defaultArm);
+		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
 		if (isNodeData(v)) return v as T;
 		if (arms.length > 1) {
-			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
+			throw new Error(
+				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
+			);
 		}
 	}
 	if (typeof v === 'boolean' || typeof v === 'number') {
@@ -584,16 +587,33 @@ function _resolveOne<T>(
 			if (build !== undefined) return build() as T;
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
-		const fwd = _pickArm(branchKinds, defaultArm);
-		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
-		if (typeof kind === 'string' && _isFromKind(kind)) return _resolveByKind(kind, rest) as T;
+		const kindName = _kindNameOf(kind);
+		if (kindName !== undefined && _isFromKind(kindName)) return _resolveByKind(kindName, rest) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
 		if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
+	}
+	if (!(typeof v === 'object' && !Array.isArray(v))) {
+		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
+		const target =
+			candidates.length === 1
+				? candidates[0]
+				: defaultArm !== undefined && candidates.includes(defaultArm)
+					? defaultArm
+					: undefined;
+		if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {
+			return _wrapArray(target, v) as T;
+		}
+		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
+		if (typeof v === 'string' && candidates.length > 1) {
+			throw new Error(
+				`_resolveOne: a bare string fits more than one arm: [${candidates.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
+			);
+		}
 	}
 	if (typeof v === 'object') {
 		throw new Error(
@@ -627,7 +647,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
-		if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest) as T;
+		const kn = _kindNameOf(k);
+		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
@@ -775,6 +796,56 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	suite_block: 'block',
 	_yield_from_clause: 'expression'
 };
+
+const _wrapDirectKinds: ReadonlySet<string> = new Set([
+	'_simple_statements',
+	'import_statement',
+	'future_import_statement',
+	'print_statement',
+	'chevron',
+	'expression_statement',
+	'return_statement',
+	'delete_statement',
+	'else_clause',
+	'_match_block',
+	'finally_clause',
+	'with_item',
+	'parameters',
+	'lambda_parameters',
+	'list_splat',
+	'dictionary_splat',
+	'type_parameter',
+	'parenthesized_list_splat',
+	'argument_list',
+	'decorator',
+	'case_pattern',
+	'dict_pattern',
+	'tuple_pattern',
+	'list_pattern',
+	'list_splat_pattern',
+	'dictionary_splat_pattern',
+	'not_operator',
+	'yield',
+	'type',
+	'list',
+	'set',
+	'tuple',
+	'dictionary',
+	'parenthesized_expression',
+	'if_clause',
+	'await',
+	'slice_group',
+	'case_tuple_pattern',
+	'case_list_pattern',
+	'print_statement_plain',
+	'_parenthesized_import_list',
+	'except_clause_exception',
+	'with_clause_paren',
+	'suite_inline',
+	'suite_block',
+	'suite_empty',
+	'_yield_from_clause'
+]);
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
@@ -943,8 +1014,36 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
+function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
+	const elementKind = _wrapElementKinds[kind];
+	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
+		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
+	}
+	const resolved = arr.map((e) => {
+		if (typeof e === 'string' || typeof e === 'number') return e;
+		if (isNodeData(e)) return e;
+		if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
+			if ('kind' in e) {
+				const { kind: k, ...rest } = e;
+				const kn = _kindNameOf(k);
+				if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest);
+			}
+			if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
+		}
+		return e;
+	});
+	return _wrapWithChildren(kind, resolved) as T;
+}
+
 function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
 	if (v === undefined || v === null) return v as T;
+	if (typeof v === 'object' && !Array.isArray(v) && !isNodeData(v) && 'kind' in v) {
+		const { kind: k, ...rest } = v;
+		const kn = _kindNameOf(k);
+		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
+			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
+		}
+	}
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
@@ -954,20 +1053,7 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 		return v as T;
 	}
 	if (Array.isArray(v) && kind in _wrapKindIds) {
-		const resolved = v.map((e) => {
-			if (typeof e === 'string' || typeof e === 'number') return e;
-			if (isNodeData(e)) return e;
-			if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
-				if ('kind' in e) {
-					const { kind: k, ...rest } = e;
-					if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest);
-				}
-				const elementKind = _wrapElementKinds[kind];
-				if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
-			}
-			return e;
-		});
-		return _wrapWithChildren(kind, resolved) as T;
+		return _wrapArray(kind, v) as T;
 	}
 	if ((typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') && _isFromKind(kind)) {
 		return _resolveByKind(kind, v) as T;
@@ -975,7 +1061,8 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		if ('kind' in v) {
 			const { kind: k, ...rest } = v;
-			if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest) as T;
+			const kn = _kindNameOf(k);
+			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
 		}
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
@@ -5345,34 +5432,32 @@ export function coerceToSuiteInline(input: T.SuiteInline.Loose): ReturnType<type
 	);
 }
 
-export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']): T.SuiteBlock['_block'] {
+export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block'] | undefined): T.SuiteBlock['_block'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToSuiteBlock(input: T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlock)
+export function coerceToSuiteBlock(input?: T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteBlock)
 		return input as unknown as ReturnType<typeof F.buildSuiteBlock>;
 	return F.buildSuiteBlock(
-		_requireField(
-			'suite_block',
-			'block',
-			_resolveOneBranch<T.Block>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
-				'block'
-			)
-		)
+		_resolveOneBranch<T.Block>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
+			'block'
+		) ?? F.buildBlock()
 	);
 }
 
-export function resolveSuiteEmpty_newline(value: T.SuiteEmpty.LooseConfig['newline']): T.SuiteEmpty['_newline'] {
+export function resolveSuiteEmpty_newline(
+	value: T.SuiteEmpty.LooseConfig['newline'] | undefined
+): T.SuiteEmpty['_newline'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'\n'>(value, _K0, _K0)),
 		[['\n', TSKindId.Newline] as const]
 	);
 }
 
-export function coerceToSuiteEmpty(input: T.SuiteEmpty.Loose): ReturnType<typeof F.buildSuiteEmpty> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteEmpty)
+export function coerceToSuiteEmpty(input?: T.SuiteEmpty.Loose): ReturnType<typeof F.buildSuiteEmpty> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.SuiteEmpty)
 		return input as unknown as ReturnType<typeof F.buildSuiteEmpty>;
 	return F.buildSuiteEmpty(
 		_requireField(

@@ -695,6 +695,48 @@ export function soleSlotFacts(node: AssembledNode, _nodeMap: NodeMap): SoleSlotF
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
+/**
+ * The target factory to call with no arguments when a required field is
+ * omitted — shared by both surfaces: the strict raw factory (a required
+ * config key with nothing to read) and the loose coercer (`canDirectFactoryCall`
+ * and the config-object path alike). `null` when the field must be supplied.
+ */
+export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
+	if (!isRequired(field)) return null;
+	if (isHiddenInfraSlot(field, nodeMap)) return null;
+	const kinds = slotKindNames(field);
+	if (kinds.length !== 1) return null;
+	const targetKind = kinds[0]!;
+	const targetNode = nodeMap.nodes.get(targetKind);
+	if (!targetNode) return null;
+	if (!targetNode.rawFactoryName) return null;
+
+	// A list envelope's own list target defaults exactly where
+	// `argumentOptional` already says a zero-argument call is legal for it —
+	// a separated list's own `argumentOptional` is unconditionally true
+	// (constructible with no elements), independent of whether the
+	// grammar's `repeat` is a `repeat1`.
+	if (targetNode instanceof AssembledList) {
+		return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
+	}
+
+	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
+	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
+		const facts = soleSlotFacts(branchTarget, nodeMap);
+		if (!facts) return null;
+		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
+		return null;
+	}
+
+	if (!(targetNode instanceof AbstractAssembledCompound)) {
+		return null;
+	}
+	const targetFields = targetNode.slots;
+	const hasBlockingField = targetFields.some((f) => isRequired(f));
+	if (hasBlockingField) return null;
+	return targetNode.rawFactoryName;
+}
+
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,

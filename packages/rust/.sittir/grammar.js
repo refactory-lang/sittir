@@ -5383,6 +5383,10 @@ var grammar_sittir_default = grammar(
           2: field2("right")
         },
         closure_expression: { "4/0": variant("block"), "4/1": variant("expr") },
+        // A braced, named-field body (`{ x: i32 }`) is what a bare array of
+        // field configs means; the parenthesized, ordered-tuple body stays
+        // reachable by building it explicitly.
+        enum_variant: { "2/0/0/0": arm.default },
         reference_expression: { "1/0/0": variant("raw_const"), "1/0/1": variant("raw_mut"), "1/0/2": variant("mut") },
         // Both trait-clause arms wrap the same `field('trait', <type>)`,
         // the negative one behind a leading `!`, so a bare type name fits

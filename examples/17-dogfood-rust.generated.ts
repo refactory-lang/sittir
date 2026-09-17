@@ -64,13 +64,13 @@ export function rebuildSpliceGenerated() {
 				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
 			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] })),
 		}), ir.implItem.body.positiveClause.strict({
-			traitClause: [ir.scopedTypeIdentifier.strict({
+			traitClause: ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("fmt"),
 				}),
 				name: ir.identifier("Display"),
-			})],
+			}),
 			type: ir.identifier("SpliceError"),
 			declarationList: ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),

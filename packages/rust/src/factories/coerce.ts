@@ -295,6 +295,12 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
+/** A `kind:` discriminant names its kind by the grammar string or the
+ *  stamped `TSKindId` enum value — both spellings resolve to the same name. */
+function _kindNameOf(kind: unknown): string | undefined {
+	return typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
+}
+
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
 	const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;
 	return fn(rest);
@@ -601,11 +607,6 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	block_comment_doc_inner: new Set([154])
 };
 
-function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {
-	if (arms.length <= 1) return arms[0];
-	return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;
-}
-
 function _resolveOne<T>(
 	v: _LooseFieldInput,
 	leafKinds: readonly string[],
@@ -618,11 +619,13 @@ function _resolveOne<T>(
 		const kindName = KIND_NAMES.get(kindId);
 		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
-		const arm = _pickArm(arms, defaultArm);
+		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
 		if (isNodeData(v)) return v as T;
 		if (arms.length > 1) {
-			throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]`);
+			throw new Error(
+				`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(', ')}]; name the arm explicitly`
+			);
 		}
 	}
 	if (typeof v === 'boolean' || typeof v === 'number') {
@@ -640,16 +643,33 @@ function _resolveOne<T>(
 			if (build !== undefined) return build() as T;
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
-		const fwd = _pickArm(branchKinds, defaultArm);
-		if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind, ...rest } = v;
-		if (typeof kind === 'string' && _isFromKind(kind)) return _resolveByKind(kind, rest) as T;
+		const kindName = _kindNameOf(kind);
+		if (kindName !== undefined && _isFromKind(kindName)) return _resolveByKind(kindName, rest) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
 		if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;
+	}
+	if (!(typeof v === 'object' && !Array.isArray(v))) {
+		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
+		const target =
+			candidates.length === 1
+				? candidates[0]
+				: defaultArm !== undefined && candidates.includes(defaultArm)
+					? defaultArm
+					: undefined;
+		if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {
+			return _wrapArray(target, v) as T;
+		}
+		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
+		if (typeof v === 'string' && candidates.length > 1) {
+			throw new Error(
+				`_resolveOne: a bare string fits more than one arm: [${candidates.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
+			);
+		}
 	}
 	if (typeof v === 'object') {
 		throw new Error(
@@ -683,7 +703,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 	}
 	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
-		if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest) as T;
+		const kn = _kindNameOf(k);
+		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
 	}
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
@@ -863,6 +884,76 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	block_comment_doc_outer: '_block_comment_content',
 	block_comment_doc_inner: '_block_comment_content'
 };
+
+const _wrapDirectKinds: ReadonlySet<string> = new Set([
+	'expression_statement',
+	'token_tree',
+	'attribute_item',
+	'inner_attribute_item',
+	'enum_variant_list',
+	'field_declaration_list',
+	'ordered_field_declaration_list',
+	'where_clause',
+	'removed_trait_bound',
+	'type_parameters',
+	'use_list',
+	'use_wildcard',
+	'parameters',
+	'extern_modifier',
+	'visibility_modifier',
+	'bracketed_type',
+	'lifetime',
+	'for_lifetimes',
+	'tuple_type',
+	'use_bounds',
+	'type_arguments',
+	'dynamic_type',
+	'range_expression',
+	'try_expression',
+	'return_expression',
+	'yield_expression',
+	'arguments',
+	'parenthesized_expression',
+	'field_initializer_list',
+	'base_field_initializer',
+	'else_clause',
+	'match_block',
+	'const_block',
+	'label',
+	'continue_expression',
+	'await_expression',
+	'unsafe_block',
+	'try_block',
+	'tuple_pattern',
+	'slice_pattern',
+	'mut_pattern',
+	'ref_pattern',
+	'negative_literal',
+	'line_comment',
+	'block_comment',
+	'use_wildcard_group',
+	'visibility_modifier_group',
+	'reference_expression_raw_const',
+	'reference_expression_raw_mut',
+	'reference_expression_mut',
+	'reference_expression_bare',
+	'impl_item_positive_clause',
+	'impl_item_negative_clause',
+	'visibility_modifier_pub',
+	'visibility_modifier_pub_in_path',
+	'function_type_trait_form',
+	'function_type_fn_form',
+	'or_pattern_prefix',
+	'pointer_type_const',
+	'pointer_type_mut',
+	'range_expression_postfix',
+	'range_expression_prefix',
+	'expression_statement_with_semi',
+	'line_comment_doc_outer',
+	'line_comment_doc_inner',
+	'block_comment_doc_outer',
+	'block_comment_doc_inner'
+]);
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
@@ -1075,8 +1166,36 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
+function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
+	const elementKind = _wrapElementKinds[kind];
+	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
+		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
+	}
+	const resolved = arr.map((e) => {
+		if (typeof e === 'string' || typeof e === 'number') return e;
+		if (isNodeData(e)) return e;
+		if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
+			if ('kind' in e) {
+				const { kind: k, ...rest } = e;
+				const kn = _kindNameOf(k);
+				if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest);
+			}
+			if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
+		}
+		return e;
+	});
+	return _wrapWithChildren(kind, resolved) as T;
+}
+
 function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
 	if (v === undefined || v === null) return v as T;
+	if (typeof v === 'object' && !Array.isArray(v) && !isNodeData(v) && 'kind' in v) {
+		const { kind: k, ...rest } = v;
+		const kn = _kindNameOf(k);
+		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
+			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
+		}
+	}
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
@@ -1086,20 +1205,7 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 		return v as T;
 	}
 	if (Array.isArray(v) && kind in _wrapKindIds) {
-		const resolved = v.map((e) => {
-			if (typeof e === 'string' || typeof e === 'number') return e;
-			if (isNodeData(e)) return e;
-			if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
-				if ('kind' in e) {
-					const { kind: k, ...rest } = e;
-					if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest);
-				}
-				const elementKind = _wrapElementKinds[kind];
-				if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
-			}
-			return e;
-		});
-		return _wrapWithChildren(kind, resolved) as T;
+		return _wrapArray(kind, v) as T;
 	}
 	if ((typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') && _isFromKind(kind)) {
 		return _resolveByKind(kind, v) as T;
@@ -1107,7 +1213,8 @@ function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: read
 	if (typeof v === 'object' && !Array.isArray(v)) {
 		if ('kind' in v) {
 			const { kind: k, ...rest } = v;
-			if (typeof k === 'string' && _isFromKind(k)) return _resolveByKind(k, rest) as T;
+			const kn = _kindNameOf(k);
+			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
 		}
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
@@ -2239,7 +2346,12 @@ export function resolveEnumVariant_name(value: T.EnumVariant.LooseConfig['name']
 }
 
 export function resolveEnumVariant_body(value: T.EnumVariant.LooseConfig['body']): T.EnumVariant['_body'] {
-	return _resolveOne<T.FieldDeclarationList | T.OrderedFieldDeclarationList>(value, _K2, _K11);
+	return _resolveOne<T.FieldDeclarationList | T.OrderedFieldDeclarationList>(
+		value,
+		_K2,
+		_K11,
+		'field_declaration_list'
+	);
 }
 
 export function resolveEnumVariant_value(value: T.EnumVariant.LooseConfig['value']): T.EnumVariant['_value'] {
@@ -3130,16 +3242,18 @@ export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['pa
 	);
 }
 
-export function resolveScopedUseList_list(value: T.ScopedUseList.LooseConfig['list']): T.ScopedUseList['_list'] {
+export function resolveScopedUseList_list(
+	value: T.ScopedUseList.LooseConfig['list'] | undefined
+): T.ScopedUseList['_list'] {
 	return _resolveOneBranch<T.UseList>(value, 'use_list');
 }
 
-export function coerceToScopedUseList(input: T.ScopedUseList.Loose): ReturnType<typeof F.buildScopedUseList> {
-	if (!_isLooseConfig<T.ScopedUseList.LooseConfig>(input))
+export function coerceToScopedUseList(input?: T.ScopedUseList.Loose): ReturnType<typeof F.buildScopedUseList> {
+	if (!_isLooseConfig<T.ScopedUseList.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildScopedUseList>;
 	return F.buildScopedUseList({
-		path: resolveScopedUseList_path(input.path),
-		list: resolveScopedUseList_list(input.list) ?? F.buildUseList()
+		path: resolveScopedUseList_path(input?.path),
+		list: resolveScopedUseList_list(input?.list) ?? F.buildUseList()
 	});
 }
 
@@ -4793,16 +4907,18 @@ export function resolveLoopExpression_label(value: T.LoopExpression.LooseConfig[
 	return _resolveOneBranch<T.Label>(value, 'label');
 }
 
-export function resolveLoopExpression_body(value: T.LoopExpression.LooseConfig['body']): T.LoopExpression['_body'] {
+export function resolveLoopExpression_body(
+	value: T.LoopExpression.LooseConfig['body'] | undefined
+): T.LoopExpression['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToLoopExpression(input: T.LoopExpression.Loose): ReturnType<typeof F.buildLoopExpression> {
-	if (!_isLooseConfig<T.LoopExpression.LooseConfig>(input))
+export function coerceToLoopExpression(input?: T.LoopExpression.Loose): ReturnType<typeof F.buildLoopExpression> {
+	if (!_isLooseConfig<T.LoopExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildLoopExpression>;
 	return F.buildLoopExpression({
-		label: resolveLoopExpression_label(input.label),
-		body: resolveLoopExpression_body(input.body) ?? F.buildBlock()
+		label: resolveLoopExpression_label(input?.label),
+		body: resolveLoopExpression_body(input?.body) ?? F.buildBlock()
 	});
 }
 
@@ -4841,22 +4957,18 @@ export function coerceToForExpression(input: T.ForExpression.Loose): ReturnType<
 	});
 }
 
-export function resolveConstBlock_body(value: T.ConstBlock.LooseConfig['body']): T.ConstBlock['_body'] {
+export function resolveConstBlock_body(value: T.ConstBlock.LooseConfig['body'] | undefined): T.ConstBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToConstBlock(input: T.ConstBlock.Loose): ReturnType<typeof F.buildConstBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ConstBlock)
+export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeof F.buildConstBlock> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ConstBlock)
 		return input as unknown as ReturnType<typeof F.buildConstBlock>;
 	return F.buildConstBlock(
-		_requireField(
-			'const_block',
-			'body',
-			_resolveOneBranch<T.Block>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				'block'
-			)
-		)
+		_resolveOneBranch<T.Block>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+			'block'
+		) ?? F.buildBlock()
 	);
 }
 
@@ -5041,22 +5153,18 @@ export function coerceToFieldExpression(input: T.FieldExpression.Loose): ReturnT
 	});
 }
 
-export function resolveUnsafeBlock_body(value: T.UnsafeBlock.LooseConfig['body']): T.UnsafeBlock['_body'] {
+export function resolveUnsafeBlock_body(value: T.UnsafeBlock.LooseConfig['body'] | undefined): T.UnsafeBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToUnsafeBlock(input: T.UnsafeBlock.Loose): ReturnType<typeof F.buildUnsafeBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.UnsafeBlock)
+export function coerceToUnsafeBlock(input?: T.UnsafeBlock.Loose): ReturnType<typeof F.buildUnsafeBlock> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.UnsafeBlock)
 		return input as unknown as ReturnType<typeof F.buildUnsafeBlock>;
 	return F.buildUnsafeBlock(
-		_requireField(
-			'unsafe_block',
-			'body',
-			_resolveOneBranch<T.Block>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				'block'
-			)
-		)
+		_resolveOneBranch<T.Block>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+			'block'
+		) ?? F.buildBlock()
 	);
 }
 
@@ -5066,15 +5174,16 @@ export function resolveAsyncBlock_moveMarker(
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveAsyncBlock_body(value: T.AsyncBlock.LooseConfig['body']): T.AsyncBlock['_body'] {
+export function resolveAsyncBlock_body(value: T.AsyncBlock.LooseConfig['body'] | undefined): T.AsyncBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToAsyncBlock(input: T.AsyncBlock.Loose): ReturnType<typeof F.buildAsyncBlock> {
-	if (!_isLooseConfig<T.AsyncBlock.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildAsyncBlock>;
+export function coerceToAsyncBlock(input?: T.AsyncBlock.Loose): ReturnType<typeof F.buildAsyncBlock> {
+	if (!_isLooseConfig<T.AsyncBlock.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildAsyncBlock>;
 	return F.buildAsyncBlock({
-		moveMarker: resolveAsyncBlock_moveMarker(input.moveMarker),
-		body: resolveAsyncBlock_body(input.body) ?? F.buildBlock()
+		moveMarker: resolveAsyncBlock_moveMarker(input?.moveMarker),
+		body: resolveAsyncBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
 
@@ -5082,34 +5191,31 @@ export function resolveGenBlock_moveMarker(value: T.GenBlock.LooseConfig['moveMa
 	return _resolveBooleanKeyword(value);
 }
 
-export function resolveGenBlock_body(value: T.GenBlock.LooseConfig['body']): T.GenBlock['_body'] {
+export function resolveGenBlock_body(value: T.GenBlock.LooseConfig['body'] | undefined): T.GenBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToGenBlock(input: T.GenBlock.Loose): ReturnType<typeof F.buildGenBlock> {
-	if (!_isLooseConfig<T.GenBlock.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildGenBlock>;
+export function coerceToGenBlock(input?: T.GenBlock.Loose): ReturnType<typeof F.buildGenBlock> {
+	if (!_isLooseConfig<T.GenBlock.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildGenBlock>;
 	return F.buildGenBlock({
-		moveMarker: resolveGenBlock_moveMarker(input.moveMarker),
-		body: resolveGenBlock_body(input.body) ?? F.buildBlock()
+		moveMarker: resolveGenBlock_moveMarker(input?.moveMarker),
+		body: resolveGenBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
 
-export function resolveTryBlock_body(value: T.TryBlock.LooseConfig['body']): T.TryBlock['_body'] {
+export function resolveTryBlock_body(value: T.TryBlock.LooseConfig['body'] | undefined): T.TryBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
-export function coerceToTryBlock(input: T.TryBlock.Loose): ReturnType<typeof F.buildTryBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TryBlock)
+export function coerceToTryBlock(input?: T.TryBlock.Loose): ReturnType<typeof F.buildTryBlock> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.TryBlock)
 		return input as unknown as ReturnType<typeof F.buildTryBlock>;
 	return F.buildTryBlock(
-		_requireField(
-			'try_block',
-			'body',
-			_resolveOneBranch<T.Block>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				'block'
-			)
-		)
+		_resolveOneBranch<T.Block>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
+			'block'
+		) ?? F.buildBlock()
 	);
 }
 
@@ -6996,19 +7102,19 @@ export function resolveForeignModItemSemi_visibilityModifier(
 }
 
 export function resolveForeignModItemSemi_externModifier(
-	value: T.ForeignModItemSemi.LooseConfig['externModifier']
+	value: T.ForeignModItemSemi.LooseConfig['externModifier'] | undefined
 ): T.ForeignModItemSemi['_extern_modifier'] {
 	return _resolveOneBranch<T.ExternModifier>(value, 'extern_modifier');
 }
 
 export function coerceToForeignModItemSemi(
-	input: T.ForeignModItemSemi.Loose
+	input?: T.ForeignModItemSemi.Loose
 ): ReturnType<typeof F.buildForeignModItemSemi> {
-	if (!_isLooseConfig<T.ForeignModItemSemi.LooseConfig>(input))
+	if (!_isLooseConfig<T.ForeignModItemSemi.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemSemi>;
 	return F.buildForeignModItemSemi({
-		visibilityModifier: resolveForeignModItemSemi_visibilityModifier(input.visibilityModifier),
-		externModifier: resolveForeignModItemSemi_externModifier(input.externModifier) ?? F.buildExternModifier()
+		visibilityModifier: resolveForeignModItemSemi_visibilityModifier(input?.visibilityModifier),
+		externModifier: resolveForeignModItemSemi_externModifier(input?.externModifier) ?? F.buildExternModifier()
 	});
 }
 

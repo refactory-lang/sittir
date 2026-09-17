@@ -396,7 +396,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -434,7 +434,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildEnumVariantList();
 	return withMethods(
 		withAccessors(
 			{
@@ -826,10 +826,10 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType, []);
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -878,7 +878,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(
 		config.returnType,
 		[]
@@ -1023,7 +1023,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		['str', TSKindId.StrKeyword] as const,
 		['char', TSKindId.CharKeyword] as const
 	]);
-	const _bounds = config.bounds;
+	const _bounds = config.bounds ?? buildTraitBounds();
 	return withMethods(
 		withAccessors(
 			{
@@ -1054,7 +1054,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
 	const _type_parameters = config.typeParameters;
 	const _bounds = config.bounds;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -1401,13 +1401,13 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 	);
 }
 
-export function buildScopedUseList(config: T.ScopedUseList.Config): T.ScopedUseList.Built {
+export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Built {
 	const _path = coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
 		['self', TSKindId.Self] as const,
 		['super', TSKindId.Super] as const,
 		['crate', TSKindId.Crate] as const
 	]);
-	const _list = config.list;
+	const _list = config.list ?? buildUseList();
 	return withMethods(
 		withAccessors(
 			{
@@ -1907,7 +1907,7 @@ function _buildForLifetimes(value: T.Lifetimes): T.ForLifetimes.Built {
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Built {
 	const _for_lifetimes = config.forLifetimes;
 	const _content = config.content;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType, []);
 	return withMethods(
 		withAccessors(
@@ -2703,7 +2703,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		['self', TSKindId.Self] as const,
 		['()', TSKindId.UnitExpression] as const
 	]);
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -2822,7 +2822,7 @@ export function buildUnitExpression(): TSKindId.UnitExpression {
 
 export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Built {
 	const _name = config.name;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldInitializerList();
 	return withMethods(
 		withAccessors(
 			{
@@ -2973,7 +2973,7 @@ export function buildBaseFieldInitializer(value: T.Expression): T.BaseFieldIniti
 
 export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression.Built {
 	const _condition = coerceMixedEnumStorage<NonNullable<T.IfExpression['_condition']>>(config.condition, []);
-	const _consequence = config.consequence;
+	const _consequence = config.consequence ?? buildBlock();
 	const _alternative = config.alternative;
 	return withMethods(
 		withAccessors(
@@ -3075,7 +3075,7 @@ export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.B
 
 export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Built {
 	const _value = coerceMixedEnumStorage<NonNullable<T.MatchExpression['_value']>>(config.value, []);
-	const _body = config.body;
+	const _body = config.body ?? buildMatchBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3184,7 +3184,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileExpression.Built {
 	const _label = config.label;
 	const _condition = coerceMixedEnumStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition, []);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3211,9 +3211,9 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 	);
 }
 
-export function buildLoopExpression(config: T.LoopExpression.Config): T.LoopExpression.Built {
+export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {}): T.LoopExpression.Built {
 	const _label = config.label;
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3240,7 +3240,7 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 	const _label = config.label;
 	const _pattern = coerceMixedEnumStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern, []);
 	const _value = coerceMixedEnumStorage<NonNullable<T.ForExpression['_value']>>(config.value, []);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3540,9 +3540,9 @@ function _buildUnsafeBlock(value: T.Block): T.UnsafeBlock.Built {
 	);
 }
 
-export function buildAsyncBlock(config: T.AsyncBlock.Config): T.AsyncBlock.Built {
+export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Built {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3566,9 +3566,9 @@ export function buildAsyncBlock(config: T.AsyncBlock.Config): T.AsyncBlock.Built
 	);
 }
 
-export function buildGenBlock(config: T.GenBlock.Config): T.GenBlock.Built {
+export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Built {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -5397,12 +5397,12 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildClosureParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
 		config.returnType,
 		[]
 	);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -5445,7 +5445,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildClosureParameters();
 	const _body = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body, [
 		['_', TSKindId.Underscore] as const
 	]);
@@ -5620,7 +5620,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	const _trait_clause = config.traitClause;
 	const _type = coerceMixedEnumStorage<NonNullable<T.ImplItemBody['_type']>>(config.type, []);
 	const _where_clause = config.whereClause;
-	const _declaration_list = config.declarationList;
+	const _declaration_list = config.declarationList ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -5867,7 +5867,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Built {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
-	const _body = config.body;
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6083,9 +6083,9 @@ export function buildExpressionStatementWithSemi(value: T.Expression): T.Express
 	);
 }
 
-export function buildForeignModItemSemi(config: T.ForeignModItemSemi.Config): T.ForeignModItemSemi.Built {
+export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Built {
 	const _visibility_modifier = config.visibilityModifier;
-	const _extern_modifier = config.externModifier;
+	const _extern_modifier = config.externModifier ?? buildExternModifier();
 	return withMethods(
 		withAccessors(
 			{
@@ -6111,8 +6111,8 @@ export function buildForeignModItemSemi(config: T.ForeignModItemSemi.Config): T.
 
 export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Built {
 	const _visibility_modifier = config.visibilityModifier;
-	const _extern_modifier = config.externModifier;
-	const _body = config.body;
+	const _extern_modifier = config.externModifier ?? buildExternModifier();
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6901,7 +6901,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6938,7 +6938,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _body = config.body;
+	const _body = config.body ?? buildOrderedFieldDeclarationList();
 	const _where_clause = config.whereClause;
 	return withMethods(
 		withAccessors(

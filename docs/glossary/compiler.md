@@ -4472,16 +4472,18 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
 
 ```text
 /**
- * §D-2a Task 4 — relocate group-inlining from the late `simplify` slot-wash to
- * a normalize-time rule-tree hoist so render AND slot projections derive the
- * inlined form from ONE source.
+ * Group-inlining as a normalize-time rule-tree hoist (relocated from the late
+ * `simplify` slot-wash) so render AND slot projections derive the inlined
+ * form from ONE source.
  *
  * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
  * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
  * parent reference `symbol(_x)` where `_x` is a fold-eligible hoisted /
  * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null, the hoisted fact
- * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)`
- * AND `_x !== '_import_list'` (gated until the deferred), the symbol is replaced
+ * read off `ctx.grammar.hoistedKinds`) AND `!keepRef.has(_x)` — `keepRef`
+ * holds every hidden rule referenced more than once, twinned, or named by a
+ * supertype, which is what keeps a shared list helper such as python's
+ * `_import_list` out of the fold — the symbol is replaced
  * by the group's body **as a unit**, carrying the referring symbol's
  * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
  * leaves). When `_x` has no remaining reference, its entry is deleted.

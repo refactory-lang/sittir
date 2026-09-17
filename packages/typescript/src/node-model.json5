@@ -6439,7 +6439,8 @@
               "seat": {
                 "kind": "arrow_function_parameter",
                 "shape": "arm",
-                "mount": "parameter"
+                "mount": "parameter",
+                "seated": true
               }
             },
             {
@@ -10577,7 +10578,8 @@
               "seat": {
                 "kind": "export_statement_default_declaration_default_kw",
                 "shape": "arm",
-                "mount": "defaultKw"
+                "mount": "defaultKw",
+                "seated": true
               }
             },
             {
@@ -10751,7 +10753,8 @@
               "seat": {
                 "kind": "export_statement_default_from_star_from",
                 "shape": "arm",
-                "mount": "starFrom"
+                "mount": "starFrom",
+                "seated": true
               }
             },
             {
@@ -13755,7 +13758,8 @@
               "seat": {
                 "kind": "import_clause_group",
                 "shape": "arm",
-                "mount": "importClauseGroup"
+                "mount": "importClauseGroup",
+                "seated": true
               }
             }
           ]

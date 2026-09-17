@@ -16138,9 +16138,9 @@ export namespace TryStatement {
 	}
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
-	export type BuildArgs = [config: ConfigOf<T.TryStatement>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.TryStatement>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
+		config?: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
 	];
 	export type Tree = TreeFor<TSKindId.TryStatement>;
 	export type Kind = 'try_statement';
@@ -16176,9 +16176,9 @@ export namespace BreakStatement {
 	}
 	export type Loose = LooseFor<TSKindId.BreakStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BreakStatement>;
-	export type BuildArgs = [config: ConfigOf<T.BreakStatement>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.BreakStatement>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.BreakStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.BreakStatement
+		config?: LooseConfigOf<T.BreakStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.BreakStatement
 	];
 	export type Tree = TreeFor<TSKindId.BreakStatement>;
 	export type Kind = 'break_statement';
@@ -16195,9 +16195,9 @@ export namespace ContinueStatement {
 	}
 	export type Loose = LooseFor<TSKindId.ContinueStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ContinueStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ContinueStatement>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ContinueStatement>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ContinueStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ContinueStatement
 	];
@@ -16234,9 +16234,9 @@ export namespace ReturnStatement {
 	}
 	export type Loose = LooseFor<TSKindId.ReturnStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ReturnStatement>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ReturnStatement>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ReturnStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ReturnStatement
+		config?: LooseConfigOf<T.ReturnStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ReturnStatement
 	];
 	export type Tree = TreeFor<TSKindId.ReturnStatement>;
 	export type Kind = 'return_statement';
@@ -16344,9 +16344,9 @@ export namespace CatchClause {
 	}
 	export type Loose = LooseFor<TSKindId.CatchClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
-	export type BuildArgs = [config: ConfigOf<T.CatchClause>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClause
+		config?: LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClause
 	];
 	export type Tree = TreeFor<TSKindId.CatchClause>;
 	export type Kind = 'catch_clause';
@@ -16590,9 +16590,9 @@ export namespace Class {
 	}
 	export type Loose = LooseFor<TSKindId.Class>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Class>;
-	export type BuildArgs = [config: ConfigOf<T.Class>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.Class>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Class
+		config?: LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Class
 	];
 	export type Tree = TreeFor<TSKindId.Class>;
 	export type Kind = 'class';
@@ -17253,9 +17253,11 @@ export namespace ClassStaticBlock {
 	}
 	export type Loose = LooseFor<TSKindId.ClassStaticBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassStaticBlock>;
-	export type BuildArgs = [config: ConfigOf<T.ClassStaticBlock>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ClassStaticBlock>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassStaticBlock
+		config?:
+			| LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.ClassStaticBlock
 	];
 	export type Tree = TreeFor<TSKindId.ClassStaticBlock>;
 	export type Kind = 'class_static_block';
@@ -18811,9 +18813,9 @@ export namespace CallSignature {
 	}
 	export type Loose = LooseFor<TSKindId.CallSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallSignature>;
-	export type BuildArgs = [config: ConfigOf<T.CallSignature>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CallSignature>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CallSignature
+		config?: LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CallSignature
 	];
 	export type Tree = TreeFor<TSKindId.CallSignature>;
 	export type Kind = 'call_signature';
@@ -18934,9 +18936,9 @@ export namespace ConstructSignature {
 	}
 	export type Loose = LooseFor<TSKindId.ConstructSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructSignature>;
-	export type BuildArgs = [config: ConfigOf<T.ConstructSignature>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructSignature>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ConstructSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ConstructSignature
 	];

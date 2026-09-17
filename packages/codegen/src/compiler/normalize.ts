@@ -118,7 +118,6 @@ export function inlineHiddenSeqRefs(
 	for (const name of Object.keys(rules)) {
 		if (!isHiddenRule(name, rules)) continue;
 		if (keepRef.has(name)) continue;
-		if (name === '_import_list') continue;
 		if (resolveGroupOrMultiInlineTarget({ name }, ictx) !== null) foldable.add(name);
 	}
 	if (foldable.size === 0) return false;

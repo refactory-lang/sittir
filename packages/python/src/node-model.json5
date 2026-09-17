@@ -6648,7 +6648,8 @@
               "seat": {
                 "kind": "except_clause_exception",
                 "shape": "arm",
-                "mount": "exception"
+                "mount": "exception",
+                "seated": true
               }
             }
           ]
@@ -12432,7 +12433,8 @@
               "seat": {
                 "kind": "_yield_from_clause",
                 "shape": "arm",
-                "mount": "fromClause"
+                "mount": "fromClause",
+                "seated": true
               }
             },
             {

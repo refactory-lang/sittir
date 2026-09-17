@@ -15419,9 +15419,9 @@ export namespace ScopedUseList {
 	}
 	export type Loose = LooseFor<TSKindId.ScopedUseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ScopedUseList>;
-	export type BuildArgs = [config: ConfigOf<T.ScopedUseList>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ScopedUseList>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ScopedUseList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ScopedUseList
+		config?: LooseConfigOf<T.ScopedUseList, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ScopedUseList
 	];
 	export type Tree = TreeFor<TSKindId.ScopedUseList>;
 	export type Kind = 'scoped_use_list';
@@ -16543,9 +16543,9 @@ export namespace LoopExpression {
 	}
 	export type Loose = LooseFor<TSKindId.LoopExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LoopExpression>;
-	export type BuildArgs = [config: ConfigOf<T.LoopExpression>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.LoopExpression>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.LoopExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LoopExpression
+		config?: LooseConfigOf<T.LoopExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LoopExpression
 	];
 	export type Tree = TreeFor<TSKindId.LoopExpression>;
 	export type Kind = 'loop_expression';
@@ -16738,9 +16738,9 @@ export namespace AsyncBlock {
 	}
 	export type Loose = LooseFor<TSKindId.AsyncBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsyncBlock>;
-	export type BuildArgs = [config: ConfigOf<T.AsyncBlock>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.AsyncBlock>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.AsyncBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsyncBlock
+		config?: LooseConfigOf<T.AsyncBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsyncBlock
 	];
 	export type Tree = TreeFor<TSKindId.AsyncBlock>;
 	export type Kind = 'async_block';
@@ -16757,9 +16757,9 @@ export namespace GenBlock {
 	}
 	export type Loose = LooseFor<TSKindId.GenBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenBlock>;
-	export type BuildArgs = [config: ConfigOf<T.GenBlock>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.GenBlock>>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.GenBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenBlock
+		config?: LooseConfigOf<T.GenBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenBlock
 	];
 	export type Tree = TreeFor<TSKindId.GenBlock>;
 	export type Kind = 'gen_block';
@@ -18218,9 +18218,9 @@ export namespace ForeignModItemSemi {
 	}
 	export type Loose = LooseFor<TSKindId.ForeignModItemSemi>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForeignModItemSemi>;
-	export type BuildArgs = [config: ConfigOf<T.ForeignModItemSemi>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ForeignModItemSemi>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ForeignModItemSemi, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ForeignModItemSemi
 	];

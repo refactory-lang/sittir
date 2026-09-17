@@ -6963,7 +6963,8 @@
               "seat": {
                 "kind": "block_comment_doc_outer",
                 "shape": "arm",
-                "mount": "docOuter"
+                "mount": "docOuter",
+                "seated": true
               }
             },
             {
@@ -6975,7 +6976,8 @@
               "seat": {
                 "kind": "block_comment_doc_inner",
                 "shape": "arm",
-                "mount": "docInner"
+                "mount": "docInner",
+                "seated": true
               }
             },
             {
@@ -9421,7 +9423,8 @@
               "seat": {
                 "kind": "expression_statement_with_semi",
                 "shape": "arm",
-                "mount": "withSemi"
+                "mount": "withSemi",
+                "seated": true
               }
             },
             {
@@ -11108,7 +11111,8 @@
               "seat": {
                 "kind": "function_type_trait_form",
                 "shape": "arm",
-                "mount": "traitForm"
+                "mount": "traitForm",
+                "seated": true
               }
             },
             {
@@ -11984,7 +11988,8 @@
               "seat": {
                 "kind": "impl_item_positive_clause",
                 "shape": "arm",
-                "mount": "positiveClause"
+                "mount": "positiveClause",
+                "seated": true
               }
             },
             {
@@ -11996,7 +12001,8 @@
               "seat": {
                 "kind": "impl_item_negative_clause",
                 "shape": "arm",
-                "mount": "negativeClause"
+                "mount": "negativeClause",
+                "seated": true
               }
             }
           ]
@@ -12261,7 +12267,8 @@
               "seat": {
                 "kind": "impl_item_positive_clause",
                 "shape": "arm",
-                "mount": "positiveClause"
+                "mount": "positiveClause",
+                "seated": true
               }
             },
             {
@@ -12273,7 +12280,8 @@
               "seat": {
                 "kind": "impl_item_negative_clause",
                 "shape": "arm",
-                "mount": "negativeClause"
+                "mount": "negativeClause",
+                "seated": true
               }
             }
           ]
@@ -13008,7 +13016,8 @@
               "seat": {
                 "kind": "line_comment_doc_outer",
                 "shape": "arm",
-                "mount": "docOuter"
+                "mount": "docOuter",
+                "seated": true
               }
             },
             {
@@ -13020,7 +13029,8 @@
               "seat": {
                 "kind": "line_comment_doc_inner",
                 "shape": "arm",
-                "mount": "docInner"
+                "mount": "docInner",
+                "seated": true
               }
             },
             {
@@ -15156,7 +15166,8 @@
               "seat": {
                 "kind": "range_expression_postfix",
                 "shape": "arm",
-                "mount": "postfix"
+                "mount": "postfix",
+                "seated": true
               }
             },
             {
@@ -15168,7 +15179,8 @@
               "seat": {
                 "kind": "range_expression_prefix",
                 "shape": "arm",
-                "mount": "prefix"
+                "mount": "prefix",
+                "seated": true
               }
             },
             {
@@ -20697,7 +20709,8 @@
               "seat": {
                 "kind": "visibility_modifier_pub",
                 "shape": "arm",
-                "mount": "pub"
+                "mount": "pub",
+                "seated": true
               }
             }
           ]
@@ -20761,7 +20774,8 @@
               "seat": {
                 "kind": "visibility_modifier_pub_in_path",
                 "shape": "arm",
-                "mount": "inPath"
+                "mount": "inPath",
+                "seated": true
               }
             }
           ]

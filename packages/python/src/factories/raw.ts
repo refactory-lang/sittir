@@ -274,7 +274,7 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Built {
-	const _name = config.name;
+	const _name = config.name ?? buildDottedName();
 	const _alias = config.alias;
 	return withMethods(
 		withAccessors(
@@ -860,7 +860,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = config.returnType;
 	const _body = config.body;
 	return withMethods(
@@ -1630,7 +1630,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Built {
-	const _name = config.name;
+	const _name = config.name ?? buildDottedName();
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -2807,7 +2807,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2836,7 +2836,7 @@ export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Built {
 	const _body = config.body;
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2862,7 +2862,7 @@ export function buildDictionaryComprehension(
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2889,7 +2889,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{

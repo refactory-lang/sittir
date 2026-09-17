@@ -1613,9 +1613,17 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
 		const seen = ctx.seen ?? EMPTY_SEEN;
 		if (seen.has(this.kind)) return false;
-		if (this._slots.every((slot) => !isRequired(slot))) return true;
-		const slot = this.soleSlot;
-		if (slot === undefined || isMultiple(slot)) return false;
+		// Optional sibling slots (e.g. a keyword-presence flag alongside a
+		// required body) never block a zero-argument call on their own — only
+		// the ONE required slot's own forwarding decides it. `soleSlot`
+		// (exactly one slot total) undercounts this: a node can have several
+		// slots and still take no argument as long as all but one are
+		// optional and that one forwards to an argument-optional target.
+		const requiredSlots = this._slots.filter((slot) => isRequired(slot));
+		if (requiredSlots.length === 0) return true;
+		if (requiredSlots.length > 1) return false;
+		const slot = requiredSlots[0]!;
+		if (isMultiple(slot)) return false;
 		const refs = slot.values.filter(isNodeRef);
 		const kindId = refs.length === 1 ? refs[0]!.storageKindId : undefined;
 		const target = kindId === undefined ? undefined : ctx.nodeByKindId.get(kindId);

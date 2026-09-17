@@ -562,7 +562,7 @@ function shape(
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 			`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF> }): ReturnType<PF> => {`,
 			`		const { ${k}: seated, ...rest } = config;`,
-			`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(...(seated as readonly unknown[])) });`,
+			`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(...seated) });`,
 			`	};`
 		],
 		paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}> })`

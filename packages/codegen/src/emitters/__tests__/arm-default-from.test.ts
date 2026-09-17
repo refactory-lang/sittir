@@ -9,8 +9,10 @@ import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 /**
  * Mirrors rust's `impl_item` trait clause: one slot, two arms wrapping the
  * same `trait` field, so a bare value fits either and the resolver cannot
- * choose. `arm.default` stamps `annotations.default` on the arm a bare value
- * means; this pins that the stamp reaches the emitted resolver call.
+ * choose on its own. `arm.default` stamps `annotations.default` on the arm
+ * a bare, kindless value hoists into; this pins that the stamp reaches the
+ * emitted resolver call — not through a shared "pick one of N arms" helper,
+ * but as the field's own declared default.
  */
 function clauseRule(negative: boolean): SeqRule<'link'> {
 	return {
@@ -64,7 +66,7 @@ function clauseResolverCall(src: string): string {
 	return lines[at + 1]!.trim();
 }
 
-describe('arm.default reaches the emitted resolver', () => {
+describe('arm.default reaches the emitted resolver as a hoist target', () => {
 	it('passes the declared arm as the resolver call default', () => {
 		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
 
@@ -95,10 +97,17 @@ describe('arm.default reaches the emitted resolver', () => {
 		expect(set).toContain('"_impl_negative"');
 	});
 
-	it('emits the shared arm-choosing helper', () => {
+	it('hoists a bare, kindless value into the default inline — no shared arm-picking helper exists', () => {
 		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(true) });
 
-		expect(src).toContain('function _pickArm(');
-		expect(src).toContain('return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;');
+		expect(src).not.toContain('function _pickArm(');
+		expect(src).toContain('typeof v === "object" && !Array.isArray(v)');
+		expect(src).toContain('candidates.includes(defaultArm)');
+	});
+
+	it('emits a clear ambiguity error when no default is declared', () => {
+		const src = emitFrom({ grammar: 'synth', nodeMap: makeImplNodeMap(false) });
+
+		expect(src).toContain('declare the arm (defaultArm())');
 	});
 });

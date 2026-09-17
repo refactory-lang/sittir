@@ -33,6 +33,7 @@ import {
 	fromForwardsToChildFactory,
 	fromBareInput,
 	resolveDirectFactorySlot,
+	canDefaultToEmpty,
 	scalarLeafKinds,
 	classifyFromEmission,
 	isWrapChildrenKind,
@@ -254,33 +255,6 @@ function emitBranchNodeDataPassthrough(
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
-function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
-	if (!isRequired(field)) return null;
-	if (isHiddenInfraSlot(field, nodeMap)) return null;
-	const kinds = slotKindNames(field);
-	if (kinds.length !== 1) return null;
-	const targetKind = kinds[0]!;
-	const targetNode = nodeMap.nodes.get(targetKind);
-	if (!targetNode) return null;
-	if (!targetNode.rawFactoryName) return null;
-
-	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
-	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
-		const facts = soleSlotFacts(branchTarget, nodeMap);
-		if (!facts) return null;
-		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
-		return null;
-	}
-
-	if (!(targetNode instanceof AbstractAssembledCompound)) {
-		return null;
-	}
-	const targetFields = targetNode.slots;
-	const hasBlockingField = targetFields.some((f) => isRequired(f));
-	if (hasBlockingField) return null;
-	return targetNode.rawFactoryName;
-}
-
 function emitBranchFrom(
 	node: FormChildForFrom,
 	nodeMap: NodeMap,
@@ -306,7 +280,11 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const slots = node.slots;
-	const opt = slots.some((f) => isRequired(f)) ? '' : '?';
+	// Loose optionality mirrors the strict surface's own derivation
+	// (`argumentOptional`, node-map.ts): a required field only blocks the
+	// no-argument call when it has no default-empty construction of its own
+	// (a blocking `repeat1`, or a target that itself requires an argument).
+	const opt = node.argumentOptional(nodeMap) ? '?' : '';
 	const typeName = node.typeName;
 	const lines: string[] = [];
 	const returnType = factoryReturnTypeExpr(factory);
@@ -317,7 +295,13 @@ function emitBranchFrom(
 	for (const f of resolverSlots) {
 		const body = resolveFieldCall('value', f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 		const key = JSON.stringify(f.configKey);
-		const signature = `export function ${fieldResolverName(typeName, f)}(value: T.${typeName}.LooseConfig[${key}]): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
+		// `input` being optional (argumentOptional) only ever leaves ONE
+		// required field forwarding to an empty-constructible target — the
+		// call site passes it as `input?.<key>`, so its own resolver has to
+		// accept the `undefined` that reaches it too, even though the field
+		// itself is required within a config that IS provided.
+		const valueType = `T.${typeName}.LooseConfig[${key}]${inputOptional && isRequired(f) ? ' | undefined' : ''}`;
+		const signature = `export function ${fieldResolverName(typeName, f)}(value: ${valueType}): T.${typeName}[${JSON.stringify(f.storageKey)}] {`;
 		if (needsNonEmptyHoist(f, nodeMap)) {
 			const storageKeyExpr = JSON.stringify(f.storageKey);
 			lines.push(
@@ -366,9 +350,12 @@ function emitBranchFrom(
 				undefined,
 				kindEntries
 			);
-			const guardedCall = isRequired(soleField)
-				? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
-				: call;
+			const directDefaultFactory = canDefaultToEmpty(soleField, nodeMap);
+			const guardedCall = directDefaultFactory
+				? `${call} ?? F.${directDefaultFactory}()`
+				: isRequired(soleField)
+					? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
+					: call;
 			lines.push(`  return ${factory}(${guardedCall});`);
 		} else {
 			lines.push(`  return ${factory}({`);
@@ -779,6 +766,15 @@ function altKindDiscriminants(
 	});
 }
 
+/**
+ * The storage kind of the arm a field's author declared as the default —
+ * either through a `preference()`-declared option arm, or the DSL's
+ * `defaultArm()` placeholder stamping `annotations.default` on the arm
+ * itself. `_resolveOne` hoists a bare, kindless value straight into this
+ * arm when the field admits more than one; it is never a candidate the
+ * kind/NodeData route re-targets, since that route is never ambiguous
+ * about a value's own kind.
+ */
 function defaultArmKindOf(field: { values: readonly NodeOrTerminal[]; optionDefaultArm?: string }): string | undefined {
 	const declared = field.optionDefaultArm;
 	if (declared !== undefined) {
@@ -899,6 +895,12 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  return k in _fromMap;');
 	lines.push('}');
 	lines.push('');
+	lines.push('/** A `kind:` discriminant names its kind by the grammar string or the');
+	lines.push(' *  stamped `TSKindId` enum value — both spellings resolve to the same name. */');
+	lines.push('function _kindNameOf(kind: unknown): string | undefined {');
+	lines.push('  return typeof kind === "number" ? KIND_NAMES.get(kind) : typeof kind === "string" ? kind : undefined;');
+	lines.push('}');
+	lines.push('');
 	lines.push('function _resolveByKind<K extends keyof _FromMap>(');
 	lines.push('  kind: K,');
 	lines.push('  rest: _LooseFieldInput,');
@@ -983,14 +985,6 @@ function emitBareRoutingTables(
 	lines.push('};');
 }
 
-function emitPickArmHelper(lines: string[]): void {
-	lines.push('function _pickArm(arms: readonly string[], defaultArm: string | undefined): string | undefined {');
-	lines.push('  if (arms.length <= 1) return arms[0];');
-	lines.push('  return defaultArm !== undefined && arms.includes(defaultArm) ? defaultArm : undefined;');
-	lines.push('}');
-	lines.push('');
-}
-
 function emitResolveOneHelper(lines: string[]): void {
 	lines.push('function _resolveOne<T>(');
 	lines.push('  v: _LooseFieldInput,');
@@ -1002,18 +996,23 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push(
 		'  const kindId = isNodeData(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
 	);
+	// A value that already names its own kind (NodeData, or a stored kind-id)
+	// is never re-targeted by a declared default — there is nothing ambiguous
+	// about what it is, only whether the arm it names is one this field
+	// admits. Genuine ambiguity here (the same kind-id fits more than one
+	// structurally distinct arm) always refuses, defaulted arm or not.
 	lines.push('  if (typeof kindId === "number") {');
 	lines.push('    const kindName = KIND_NAMES.get(kindId);');
 	lines.push(
 		'    if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;'
 	);
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
-	lines.push('    const arm = _pickArm(arms, defaultArm);');
+	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;');
 	lines.push('    if (isNodeData(v)) return v as T;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
-		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]`);'
+		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]; name the arm explicitly`);'
 	);
 	lines.push('    }');
 	lines.push('  }');
@@ -1032,18 +1031,37 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('      if (build !== undefined) return build() as T;');
 	lines.push('      if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;');
 	lines.push('    }');
-	lines.push('    const fwd = _pickArm(branchKinds, defaultArm);');
-	lines.push(
-		'    if (fwd !== undefined && _STRING_CAPABLE_BRANCHES.has(fwd) && _isFromKind(fwd)) return _resolveByKind(fwd, v) as T;'
-	);
 	lines.push('  }');
 	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
 	lines.push('    const { kind, ...rest } = v;');
-	lines.push('    if (typeof kind === "string" && _isFromKind(kind)) return _resolveByKind(kind, rest) as T;');
+	lines.push('    const kindName = _kindNameOf(kind);');
+	lines.push('    if (kindName !== undefined && _isFromKind(kindName)) return _resolveByKind(kindName, rest) as T;');
 	lines.push('  }');
 	lines.push('  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    const bk = branchKinds[0]!;');
 	lines.push('    if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;');
+	lines.push('  }');
+	// Not a config object, and not already-kinded data (handled above): a
+	// plain string, number, boolean, or array hoists straight into the
+	// field's declared default arm when the grammar names one — a single
+	// admissible arm is not a choice either, so it hoists the same way.
+	// Never a guess among several undeclared candidates.
+	lines.push('  if (!(typeof v === "object" && !Array.isArray(v))) {');
+	lines.push(
+		'    const candidates = typeof v === "string" ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;'
+	);
+	lines.push(
+		'    const target = candidates.length === 1 ? candidates[0] : defaultArm !== undefined && candidates.includes(defaultArm) ? defaultArm : undefined;'
+	);
+	lines.push('    if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {');
+	lines.push('      return _wrapArray(target, v) as T;');
+	lines.push('    }');
+	lines.push('    if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;');
+	lines.push('    if (typeof v === "string" && candidates.length > 1) {');
+	lines.push(
+		'      throw new Error(`_resolveOne: a bare string fits more than one arm: [${candidates.join(", ")}]; declare the arm (defaultArm()) or name it explicitly`);'
+	);
+	lines.push('    }');
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
@@ -1154,6 +1172,20 @@ function emitWrapWithChildrenTable(
 	lines.push('};');
 	lines.push('');
 
+	// A 'direct' kind's own factory takes ONE child (`children[0]`): when that
+	// child is itself a list envelope (`_wrapElementKinds[kind]` names another
+	// `_wrapKindIds` member), an array given at this position names the
+	// envelope's elements, not this kind's own — `_wrapArray` has to build the
+	// inner envelope first. 'spread'/'array' kinds take the array as their own
+	// children directly and never recurse.
+	lines.push('const _wrapDirectKinds: ReadonlySet<string> = new Set([');
+	for (const e of entries) {
+		if (e.childSurface !== 'direct') continue;
+		lines.push(`  ${JSON.stringify(e.kind)},`);
+	}
+	lines.push(']);');
+	lines.push('');
+
 	lines.push('function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {');
 	lines.push('  switch (kind) {');
 	for (const e of entries) {
@@ -1173,6 +1205,33 @@ function emitWrapWithChildrenTable(
 	}
 	lines.push('    default: return undefined;');
 	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+
+	// An array given where a wrap-children kind is expected: rule 4 (loose =
+	// strict + coercions) builds the envelope with one element per entry. A
+	// 'direct' kind's array is never its own children (it takes exactly one);
+	// when its sole child is itself a wrap-children kind (a nested list
+	// envelope), recurse into that kind first, then wrap the single result.
+	lines.push('function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {');
+	lines.push('  const elementKind = _wrapElementKinds[kind];');
+	lines.push('  if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {');
+	lines.push('    return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;');
+	lines.push('  }');
+	lines.push('  const resolved = arr.map(e => {');
+	lines.push('    if (typeof e === "string" || typeof e === "number") return e;');
+	lines.push('    if (isNodeData(e)) return e;');
+	lines.push('    if (typeof e === "object" && e !== null && !Array.isArray(e)) {');
+	lines.push('      if ("kind" in e) {');
+	lines.push('        const { kind: k, ...rest } = e;');
+	lines.push('        const kn = _kindNameOf(k);');
+	lines.push('        if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest);');
+	lines.push('      }');
+	lines.push('      if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);');
+	lines.push('    }');
+	lines.push('    return e;');
+	lines.push('  });');
+	lines.push('  return _wrapWithChildren(kind, resolved) as T;');
 	lines.push('}');
 	lines.push('');
 }
@@ -1285,7 +1344,6 @@ function emitResolverHelpers(
 	emitBareRoutingTables(lines, nodeMap, kindEntries);
 	lines.push('');
 
-	emitPickArmHelper(lines);
 	emitResolveOneHelper(lines);
 
 	lines.push('function _resolveMany<T>(');
@@ -1313,7 +1371,8 @@ function emitResolverHelpers(
 	lines.push('  }');
 	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
 	lines.push('    const { kind: k, ...rest } = v;');
-	lines.push('    if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest) as T;');
+	lines.push('    const kn = _kindNameOf(k);');
+	lines.push('    if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;');
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
@@ -1330,6 +1389,19 @@ function emitResolverHelpers(
 		'function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {'
 	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
+	// A `kind:` config naming a DIFFERENT concrete kind than this branch is
+	// itself the value a wrap-children kind's sole slot admits (rule 5): build
+	// it eagerly and run it through the SAME NodeData wrap-or-passthrough
+	// check below, rather than duplicating that check against a reassigned
+	// `v` (reassignment would widen every later narrowing of `v` in this
+	// function back to its declared type).
+	lines.push('  if (typeof v === "object" && !Array.isArray(v) && !isNodeData(v) && "kind" in v) {');
+	lines.push('    const { kind: k, ...rest } = v;');
+	lines.push('    const kn = _kindNameOf(k);');
+	lines.push('    if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {');
+	lines.push('      return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);');
+	lines.push('    }');
+	lines.push('  }');
 	lines.push('  if (isNodeData(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
@@ -1339,22 +1411,7 @@ function emitResolverHelpers(
 	lines.push('    return v as T;');
 	lines.push('  }');
 	lines.push('  if (Array.isArray(v) && kind in _wrapKindIds) {');
-	lines.push('    const resolved = v.map(e => {');
-	lines.push('      if (typeof e === "string" || typeof e === "number") return e;');
-	lines.push('      if (isNodeData(e)) return e;');
-	lines.push('      if (typeof e === "object" && e !== null && !Array.isArray(e)) {');
-	lines.push('        if ("kind" in e) {');
-	lines.push('          const { kind: k, ...rest } = e;');
-	lines.push('          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);');
-	lines.push('        }');
-	lines.push('        const elementKind = _wrapElementKinds[kind];');
-	lines.push(
-		'        if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);'
-	);
-	lines.push('      }');
-	lines.push('      return e;');
-	lines.push('    });');
-	lines.push('    return _wrapWithChildren(kind, resolved) as T;');
+	lines.push('    return _wrapArray(kind, v) as T;');
 	lines.push('  }');
 	lines.push(
 		'  if ((typeof v === "string" || typeof v === "number" || typeof v === "boolean") && _isFromKind(kind)) {'
@@ -1364,7 +1421,8 @@ function emitResolverHelpers(
 	lines.push('  if (typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    if ("kind" in v) {');
 	lines.push('      const { kind: k, ...rest } = v;');
-	lines.push('      if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest) as T;');
+	lines.push('      const kn = _kindNameOf(k);');
+	lines.push('      if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;');
 	lines.push('    }');
 	lines.push('    if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;');
 	lines.push('  }');

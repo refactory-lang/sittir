@@ -64,7 +64,7 @@ const printStatementChevron$printChevronArguments =
 		config: OmitEach<ArgsOf<PF>[0], 'printChevronArguments'> & { printChevronArguments: ArgsOf<CF> }
 	): ReturnType<PF> => {
 		const { printChevronArguments: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, printChevronArguments: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, printChevronArguments: _c(child)(...seated) });
 	};
 const printStatementChevron$comma =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -179,7 +179,7 @@ const patternList$patterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'tail'> & { tail: ArgsOf<CF> }): ReturnType<PF> => {
 		const { tail: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, tail: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, tail: _c(child)(...seated) });
 	};
 export const patternList: typeof B.patternList & {
 	comma: {
@@ -227,13 +227,13 @@ const assignmentType$comma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) });
 	};
 const assignmentType$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) });
 	};
 const assignmentType: {
 	patternList: {
@@ -299,13 +299,13 @@ const assignmentTyped$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const assignmentTyped$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const assignmentTyped$typed =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -413,13 +413,13 @@ const assignmentEq$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const assignmentEq$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const assignmentEq$typed =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -521,49 +521,49 @@ const augmentedAssignment$eqAssignmentEq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$typedAssignmentEq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$eqAssignmentType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$typedAssignmentType =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$eqAssignmentTyped =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$typedAssignmentTyped =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'right'> & { right: ArgsOf<CF> }): ReturnType<PF> => {
 		const { right: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, right: _c(child)(...seated) });
 	};
 const augmentedAssignment$type =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -772,7 +772,7 @@ const expressionList$expressions =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'tail'> & { tail: ArgsOf<CF> }): ReturnType<PF> => {
 		const { tail: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, tail: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, tail: _c(child)(...seated) });
 	};
 export const expressionList: typeof B.expressionList & {
 	comma: {
@@ -1264,13 +1264,13 @@ const raiseStatement$comma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expressions'> & { expressions: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expressions: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: _c(child)(...seated) });
 	};
 const raiseStatement$expressionListExpressions =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expressions'> & { expressions: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expressions: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expressions: _c(child)(...seated) });
 	};
 export const raiseStatement: typeof B.raiseStatement & {
 	expressionList: {
@@ -1324,32 +1324,32 @@ export const raiseStatement: typeof B.raiseStatement & {
 
 const ifStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 const ifStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...seated) });
 	};
 const ifStatement$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 export const ifStatement: typeof B.ifStatement & {
 	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteInline>;
+				consequence: ArgsOf<typeof F.buildSuiteInline>[0];
 			}
 		) => ReturnType<typeof F.buildIfStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteInline>;
+				consequence: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
@@ -1368,12 +1368,12 @@ export const ifStatement: typeof B.ifStatement & {
 	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteEmpty>;
+				consequence: ArgsOf<typeof F.buildSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof F.buildIfStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToIfStatement>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToIfStatement>;
 	};
@@ -1395,32 +1395,32 @@ export const ifStatement: typeof B.ifStatement & {
 
 const elifClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 const elifClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...seated) });
 	};
 const elifClause$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 export const elifClause: typeof B.elifClause & {
 	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteInline>;
+				consequence: ArgsOf<typeof F.buildSuiteInline>[0];
 			}
 		) => ReturnType<typeof F.buildElifClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteInline>;
+				consequence: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
@@ -1439,12 +1439,12 @@ export const elifClause: typeof B.elifClause & {
 	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteEmpty>;
+				consequence: ArgsOf<typeof F.buildSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof F.buildElifClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToElifClause>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToElifClause>;
 	};
@@ -1599,32 +1599,32 @@ const caseClause$seatedCoerce: (
 ) => ReturnType<typeof C.coerceToCaseClause> = caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns);
 const caseClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 const caseClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...seated) });
 	};
 const caseClause$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'consequence'> & { consequence: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { consequence: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, consequence: _c(child)(seated) });
 	};
 export const caseClause: typeof B.caseClause & {
 	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof caseClause$seated>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteInline>;
+				consequence: ArgsOf<typeof F.buildSuiteInline>[0];
 			}
 		) => ReturnType<typeof caseClause$seated>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof caseClause$seatedCoerce>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteInline>;
+				consequence: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof caseClause$seatedCoerce>;
 	};
@@ -1643,12 +1643,12 @@ export const caseClause: typeof B.caseClause & {
 	empty: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof caseClause$seated>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof F.buildSuiteEmpty>;
+				consequence: ArgsOf<typeof F.buildSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof caseClause$seated>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof caseClause$seatedCoerce>[0], 'consequence'> & {
-				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				consequence: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof caseClause$seatedCoerce>;
 	};
@@ -1674,30 +1674,30 @@ export const caseClause: typeof B.caseClause & {
 
 const forStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const forStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const forStatement$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const forStatement: typeof B.forStatement & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildForStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline>[0] }
 		) => ReturnType<typeof F.buildForStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToForStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToForStatement>;
 	};
@@ -1711,10 +1711,12 @@ export const forStatement: typeof B.forStatement & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildForStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildForStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildForStatement>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToForStatement>[0], 'body'> & { body: ArgsOf<typeof C.coerceToSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof C.coerceToForStatement>[0], 'body'> & {
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
+			}
 		) => ReturnType<typeof C.coerceToForStatement>;
 	};
 } = {
@@ -1735,30 +1737,30 @@ export const forStatement: typeof B.forStatement & {
 
 const whileStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const whileStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const whileStatement$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const whileStatement: typeof B.whileStatement & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline>[0] }
 		) => ReturnType<typeof F.buildWhileStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
@@ -1774,11 +1776,11 @@ export const whileStatement: typeof B.whileStatement & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildWhileStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildWhileStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWhileStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToWhileStatement>;
 	};
@@ -1800,30 +1802,30 @@ export const whileStatement: typeof B.whileStatement & {
 
 const tryStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const tryStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const tryStatement$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const tryStatement: typeof B.tryStatement & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline>[0] }
 		) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
@@ -1837,10 +1839,12 @@ export const tryStatement: typeof B.tryStatement & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildTryStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildTryStatement>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & { body: ArgsOf<typeof C.coerceToSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof C.coerceToTryStatement>[0], 'body'> & {
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
+			}
 		) => ReturnType<typeof C.coerceToTryStatement>;
 	};
 } = {
@@ -1895,48 +1899,48 @@ const exceptClauseException: {
 
 const exceptClause$exception =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { exception: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(seated) });
 	};
 const exceptClause$exceptionAs =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
 		const { exception: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...seated) });
 	};
 const exceptClause$exceptionList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'exception'> & { exception: ArgsOf<CF> }): ReturnType<PF> => {
 		const { exception: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, exception: _c(child)(...seated) });
 	};
 const exceptClause$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...seated) });
 	};
 const exceptClause$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exception$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
-		exception: ArgsOf<typeof F.buildExceptClauseException>;
+		exception: ArgsOf<typeof F.buildExceptClauseException>[0];
 	}
 ) => ReturnType<typeof F.buildExceptClause> = exceptClause$exception(F.buildExceptClause, F.buildExceptClauseException);
 const exceptClause$exception$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
-		exception: ArgsOf<typeof C.coerceToExceptClauseException>;
+		exception: ArgsOf<typeof C.coerceToExceptClauseException>[0];
 	}
 ) => ReturnType<typeof C.coerceToExceptClause> = exceptClause$exception(
 	C.coerceToExceptClause,
@@ -1944,21 +1948,21 @@ const exceptClause$exception$appliedCoerce: (
 );
 const exceptClause$exception$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exception$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...seated) });
 	};
 const exceptClause$exception$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exceptionAs$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
@@ -1978,21 +1982,21 @@ const exceptClause$exceptionAs$appliedCoerce: (
 );
 const exceptClause$exceptionAs$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exceptionAs$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...seated) });
 	};
 const exceptClause$exceptionAs$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exceptionList$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
@@ -2012,32 +2016,32 @@ const exceptClause$exceptionList$appliedCoerce: (
 );
 const exceptClause$exceptionList$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 const exceptClause$exceptionList$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...seated) });
 	};
 const exceptClause$exceptionList$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { suite: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) });
 	};
 export const exceptClause: typeof B.exceptClause & {
 	exception: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
-				exception: ArgsOf<typeof F.buildExceptClauseException>;
+				exception: ArgsOf<typeof F.buildExceptClauseException>[0];
 			}
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'exception'> & {
-				exception: ArgsOf<typeof C.coerceToExceptClauseException>;
+				exception: ArgsOf<typeof C.coerceToExceptClauseException>[0];
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 		as: {
@@ -2054,12 +2058,12 @@ export const exceptClause: typeof B.exceptClause & {
 			inline: {
 				strict: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteInline>;
+						suite: ArgsOf<typeof F.buildSuiteInline>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionAs$applied>;
 				coerce: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteInline>;
+						suite: ArgsOf<typeof C.coerceToSuiteInline>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionAs$appliedCoerce>;
 			};
@@ -2078,12 +2082,12 @@ export const exceptClause: typeof B.exceptClause & {
 			empty: {
 				strict: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteEmpty>;
+						suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionAs$applied>;
 				coerce: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionAs$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteEmpty>;
+						suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionAs$appliedCoerce>;
 			};
@@ -2102,12 +2106,12 @@ export const exceptClause: typeof B.exceptClause & {
 			inline: {
 				strict: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteInline>;
+						suite: ArgsOf<typeof F.buildSuiteInline>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionList$applied>;
 				coerce: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteInline>;
+						suite: ArgsOf<typeof C.coerceToSuiteInline>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionList$appliedCoerce>;
 			};
@@ -2126,12 +2130,12 @@ export const exceptClause: typeof B.exceptClause & {
 			empty: {
 				strict: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteEmpty>;
+						suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionList$applied>;
 				coerce: (
 					config: OmitEach<ArgsOf<typeof exceptClause$exceptionList$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteEmpty>;
+						suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 					}
 				) => ReturnType<typeof exceptClause$exceptionList$appliedCoerce>;
 			};
@@ -2139,12 +2143,12 @@ export const exceptClause: typeof B.exceptClause & {
 		inline: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'> & {
-					suite: ArgsOf<typeof F.buildSuiteInline>;
+					suite: ArgsOf<typeof F.buildSuiteInline>[0];
 				}
 			) => ReturnType<typeof exceptClause$exception$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'> & {
-					suite: ArgsOf<typeof C.coerceToSuiteInline>;
+					suite: ArgsOf<typeof C.coerceToSuiteInline>[0];
 				}
 			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
 		};
@@ -2163,23 +2167,23 @@ export const exceptClause: typeof B.exceptClause & {
 		empty: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'> & {
-					suite: ArgsOf<typeof F.buildSuiteEmpty>;
+					suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof exceptClause$exception$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'> & {
-					suite: ArgsOf<typeof C.coerceToSuiteEmpty>;
+					suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
 		};
 	};
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteInline>[0] }
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof C.coerceToSuiteInline>;
+				suite: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
@@ -2195,11 +2199,11 @@ export const exceptClause: typeof B.exceptClause & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};
@@ -2312,31 +2316,31 @@ const withStatement$bare =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'withClause'> & { withClause: ArgsOf<CF> }): ReturnType<PF> => {
 		const { withClause: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, withClause: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, withClause: _c(child)(...seated) });
 	};
 const withStatement$paren =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'withClause'> & { withClause: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'withClause'> & { withClause: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { withClause: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, withClause: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, withClause: _c(child)(seated) });
 	};
 const withStatement$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const withStatement$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const withStatement$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const withStatement$bare$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'withClause'> & {
@@ -2350,30 +2354,30 @@ const withStatement$bare$appliedCoerce: (
 ) => ReturnType<typeof C.coerceToWithStatement> = withStatement$bare(C.coerceToWithStatement, C.coerceToWithClauseBare);
 const withStatement$bare$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const withStatement$bare$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const withStatement$bare$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const withStatement$paren$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'withClause'> & {
-		withClause: ArgsOf<typeof F.buildWithClauseParen>;
+		withClause: ArgsOf<typeof F.buildWithClauseParen>[0];
 	}
 ) => ReturnType<typeof F.buildWithStatement> = withStatement$paren(F.buildWithStatement, F.buildWithClauseParen);
 const withStatement$paren$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'withClause'> & {
-		withClause: ArgsOf<typeof C.coerceToWithClauseParen>;
+		withClause: ArgsOf<typeof C.coerceToWithClauseParen>[0];
 	}
 ) => ReturnType<typeof C.coerceToWithStatement> = withStatement$paren(
 	C.coerceToWithStatement,
@@ -2381,21 +2385,21 @@ const withStatement$paren$appliedCoerce: (
 );
 const withStatement$paren$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const withStatement$paren$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const withStatement$paren$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const withStatement: typeof B.withStatement & {
 	bare: {
@@ -2412,12 +2416,12 @@ export const withStatement: typeof B.withStatement & {
 		inline: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof withStatement$bare$applied>[0], 'body'> & {
-					body: ArgsOf<typeof F.buildSuiteInline>;
+					body: ArgsOf<typeof F.buildSuiteInline>[0];
 				}
 			) => ReturnType<typeof withStatement$bare$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof withStatement$bare$appliedCoerce>[0], 'body'> & {
-					body: ArgsOf<typeof C.coerceToSuiteInline>;
+					body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 				}
 			) => ReturnType<typeof withStatement$bare$appliedCoerce>;
 		};
@@ -2436,12 +2440,12 @@ export const withStatement: typeof B.withStatement & {
 		empty: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof withStatement$bare$applied>[0], 'body'> & {
-					body: ArgsOf<typeof F.buildSuiteEmpty>;
+					body: ArgsOf<typeof F.buildSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof withStatement$bare$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof withStatement$bare$appliedCoerce>[0], 'body'> & {
-					body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+					body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof withStatement$bare$appliedCoerce>;
 		};
@@ -2449,23 +2453,23 @@ export const withStatement: typeof B.withStatement & {
 	paren: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'withClause'> & {
-				withClause: ArgsOf<typeof F.buildWithClauseParen>;
+				withClause: ArgsOf<typeof F.buildWithClauseParen>[0];
 			}
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'withClause'> & {
-				withClause: ArgsOf<typeof C.coerceToWithClauseParen>;
+				withClause: ArgsOf<typeof C.coerceToWithClauseParen>[0];
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 		inline: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof withStatement$paren$applied>[0], 'body'> & {
-					body: ArgsOf<typeof F.buildSuiteInline>;
+					body: ArgsOf<typeof F.buildSuiteInline>[0];
 				}
 			) => ReturnType<typeof withStatement$paren$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof withStatement$paren$appliedCoerce>[0], 'body'> & {
-					body: ArgsOf<typeof C.coerceToSuiteInline>;
+					body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 				}
 			) => ReturnType<typeof withStatement$paren$appliedCoerce>;
 		};
@@ -2484,23 +2488,23 @@ export const withStatement: typeof B.withStatement & {
 		empty: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof withStatement$paren$applied>[0], 'body'> & {
-					body: ArgsOf<typeof F.buildSuiteEmpty>;
+					body: ArgsOf<typeof F.buildSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof withStatement$paren$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof withStatement$paren$appliedCoerce>[0], 'body'> & {
-					body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+					body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 				}
 			) => ReturnType<typeof withStatement$paren$appliedCoerce>;
 		};
 	};
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline>[0] }
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
@@ -2516,11 +2520,11 @@ export const withStatement: typeof B.withStatement & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildWithStatement>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildWithStatement>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToWithStatement>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToWithStatement>;
 	};
@@ -2574,32 +2578,32 @@ export const withStatement: typeof B.withStatement & {
 
 const functionDefinition$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const functionDefinition$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const functionDefinition$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const functionDefinition: typeof B.functionDefinition & {
 	inline: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof F.buildSuiteInline>;
+				body: ArgsOf<typeof F.buildSuiteInline>[0];
 			}
 		) => ReturnType<typeof F.buildFunctionDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
@@ -2615,11 +2619,13 @@ export const functionDefinition: typeof B.functionDefinition & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildFunctionDefinition>[0], 'body'> & {
+				body: ArgsOf<typeof F.buildSuiteEmpty>[0];
+			}
 		) => ReturnType<typeof F.buildFunctionDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToFunctionDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToFunctionDefinition>;
 	};
@@ -2654,7 +2660,7 @@ const execStatement$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'code'> & { code: ArgsOf<CF> }): ReturnType<PF> => {
 		const { code: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, code: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, code: _c(child)(...seated) });
 	};
 export const execStatement: typeof B.execStatement & {
 	string: {
@@ -2689,30 +2695,32 @@ export const execStatement: typeof B.execStatement & {
 
 const classDefinition$inline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 const classDefinition$block =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...seated) });
 	};
 const classDefinition$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'body'> & { body: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { body: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, body: _c(child)(seated) });
 	};
 export const classDefinition: typeof B.classDefinition & {
 	inline: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteInline> }
+			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & {
+				body: ArgsOf<typeof F.buildSuiteInline>[0];
+			}
 		) => ReturnType<typeof F.buildClassDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteInline>;
+				body: ArgsOf<typeof C.coerceToSuiteInline>[0];
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
@@ -2728,11 +2736,11 @@ export const classDefinition: typeof B.classDefinition & {
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty> }
+			config: OmitEach<ArgsOf<typeof F.buildClassDefinition>[0], 'body'> & { body: ArgsOf<typeof F.buildSuiteEmpty>[0] }
 		) => ReturnType<typeof F.buildClassDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToClassDefinition>[0], 'body'> & {
-				body: ArgsOf<typeof C.coerceToSuiteEmpty>;
+				body: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
 			}
 		) => ReturnType<typeof C.coerceToClassDefinition>;
 	};
@@ -2801,37 +2809,37 @@ const decoratedDefinition$classDefinitionSuiteInline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$functionDefinitionSuiteInline =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$classDefinitionSuiteBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$functionDefinitionSuiteBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$classDefinitionSuiteEmpty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$functionDefinitionSuiteEmpty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'definition'> & { definition: ArgsOf<CF> }): ReturnType<PF> => {
 		const { definition: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, definition: _c(child)(...seated) });
 	};
 const decoratedDefinition$functionDefinition =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3085,13 +3093,13 @@ const simplePatternNegative$integer =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const simplePatternNegative$float =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const simplePatternNegative: {
 	integer: {
@@ -3214,37 +3222,37 @@ const keywordPattern$star =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$starStar =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$unionPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$caseListPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
 	};
 const keywordPattern$caseTuplePattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
 	};
 const keywordPattern$dictPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
 	};
 const keywordPattern$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3261,25 +3269,25 @@ const keywordPattern$concatenatedString =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$true =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$false =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$none =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3296,13 +3304,13 @@ const keywordPattern$integer =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$float =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$complexPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3319,19 +3327,19 @@ const keywordPattern$plus =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$dash =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$wildcardPattern =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -3399,34 +3407,36 @@ export const keywordPattern: typeof B.keywordPattern & {
 	caseListPattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildCaseListPattern>;
+				value: ArgsOf<typeof F.buildCaseListPattern>[0];
 			}
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToCaseListPattern>;
+				value: ArgsOf<typeof C.coerceToCaseListPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	caseTuplePattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof F.buildCaseTuplePattern>;
+				value: ArgsOf<typeof F.buildCaseTuplePattern>[0];
 			}
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToCaseTuplePattern>;
+				value: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	dictPattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildDictPattern> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+				value: ArgsOf<typeof F.buildDictPattern>[0];
+			}
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-				value: ArgsOf<typeof C.coerceToDictPattern>;
+				value: ArgsOf<typeof C.coerceToDictPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
@@ -3967,37 +3977,37 @@ const keyValuePattern$star =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$starStar =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$unionPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$caseListPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const keyValuePattern$caseTuplePattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const keyValuePattern$dictPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const keyValuePattern$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4014,25 +4024,25 @@ const keyValuePattern$concatenatedString =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$true =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$false =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$none =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4049,13 +4059,13 @@ const keyValuePattern$integer =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$float =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$complexPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4072,19 +4082,19 @@ const keyValuePattern$plus =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$dash =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$wildcardPattern =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -4141,33 +4151,35 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	};
 	caseListPattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildCaseListPattern> }
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildCaseListPattern>[0];
+			}
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToCaseListPattern>;
+				key: ArgsOf<typeof C.coerceToCaseListPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	caseTuplePattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof F.buildCaseTuplePattern>;
+				key: ArgsOf<typeof F.buildCaseTuplePattern>[0];
 			}
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToCaseTuplePattern>;
+				key: ArgsOf<typeof C.coerceToCaseTuplePattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	dictPattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDictPattern> }
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDictPattern>[0] }
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToDictPattern>;
+				key: ArgsOf<typeof C.coerceToDictPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
@@ -4390,13 +4402,13 @@ const defaultParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
 const defaultParameter$tuplePattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
 export const defaultParameter: typeof B.defaultParameter & {
 	identifier: {
@@ -4411,11 +4423,13 @@ export const defaultParameter: typeof B.defaultParameter & {
 	};
 	tuplePattern: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildDefaultParameter>[0], 'name'> & { name: ArgsOf<typeof F.buildTuplePattern> }
+			config: OmitEach<ArgsOf<typeof F.buildDefaultParameter>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildTuplePattern>[0];
+			}
 		) => ReturnType<typeof F.buildDefaultParameter>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToDefaultParameter>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToTuplePattern>;
+				name: ArgsOf<typeof C.coerceToTuplePattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToDefaultParameter>;
 	};
@@ -5150,9 +5164,9 @@ const call$generatorExpression =
 	};
 const call$argumentList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'arguments'> & { arguments: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { arguments: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, arguments: _c(child)(seated) });
 	};
 export const call: typeof B.call & {
 	generatorExpression: {
@@ -5165,11 +5179,13 @@ export const call: typeof B.call & {
 	};
 	argumentList: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCall>[0], 'arguments'> & { arguments: ArgsOf<typeof F.buildArgumentList> }
+			config: OmitEach<ArgsOf<typeof F.buildCall>[0], 'arguments'> & {
+				arguments: ArgsOf<typeof F.buildArgumentList>[0];
+			}
 		) => ReturnType<typeof F.buildCall>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToCall>[0], 'arguments'> & {
-				arguments: ArgsOf<typeof C.coerceToArgumentList>;
+				arguments: ArgsOf<typeof C.coerceToArgumentList>[0];
 			}
 		) => ReturnType<typeof C.coerceToCall>;
 	};
@@ -5189,43 +5205,43 @@ const typedParameter$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const typedParameter$listSplatPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) });
 	};
 const typedParameter$listSplatPatternSubscript =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const typedParameter$dictionarySplatPatternSubscript =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const typedParameter$listSplatPatternAttribute =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const typedParameter$dictionarySplatPatternAttribute =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
 const typedParameter$dictionarySplatPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) });
 	};
 export const typedParameter: typeof B.typedParameter & {
 	identifier: {
@@ -5243,12 +5259,12 @@ export const typedParameter: typeof B.typedParameter & {
 	listSplatPattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildListSplatPattern>;
+				content: ArgsOf<typeof F.buildListSplatPattern>[0];
 			}
 		) => ReturnType<typeof F.buildTypedParameter>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToListSplatPattern>;
+				content: ArgsOf<typeof C.coerceToListSplatPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToTypedParameter>;
 		subscript: {
@@ -5279,12 +5295,12 @@ export const typedParameter: typeof B.typedParameter & {
 	dictionarySplatPattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypedParameter>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildDictionarySplatPattern>;
+				content: ArgsOf<typeof F.buildDictionarySplatPattern>[0];
 			}
 		) => ReturnType<typeof F.buildTypedParameter>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypedParameter>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToDictionarySplatPattern>;
+				content: ArgsOf<typeof C.coerceToDictionarySplatPattern>[0];
 			}
 		) => ReturnType<typeof C.coerceToTypedParameter>;
 		subscript: {
@@ -5393,7 +5409,7 @@ const genericType$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
 const genericType$type =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -5635,13 +5651,13 @@ const forInClause$comma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) });
 	};
 const forInClause$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) });
 	};
 export const forInClause: typeof B.forInClause & {
 	patternList: {
@@ -5707,19 +5723,19 @@ const interpolation$expressionListComma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) });
 	};
 const interpolation$patternListComma =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) });
 	};
 const interpolation$expressionListExpressions =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) });
 	};
 const interpolation$patternList =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -5736,19 +5752,19 @@ const interpolation$patternListPatterns =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) });
 	};
 const interpolation$yield =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) });
 	};
 const interpolation$yieldFromClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> }): ReturnType<PF> => {
 		const { expression: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...(seated as readonly unknown[])) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) });
 	};
 export const interpolation: typeof B.interpolation & {
 	expressionList: {
@@ -5820,12 +5836,12 @@ export const interpolation: typeof B.interpolation & {
 	yield: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof F.buildYield>;
+				expression: ArgsOf<typeof F.buildYield>[0];
 			}
 		) => ReturnType<typeof F.buildInterpolation>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToInterpolation>[0], 'expression'> & {
-				expression: ArgsOf<typeof C.coerceToYield>;
+				expression: ArgsOf<typeof C.coerceToYield>[0];
 			}
 		) => ReturnType<typeof C.coerceToInterpolation>;
 		fromClause: {

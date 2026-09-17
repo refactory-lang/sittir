@@ -738,30 +738,28 @@ describe('enum_variant sub-factories', () => {
 	it('fieldDeclarationList builds the parent', () => {
 		const node = ir.enumVariant.fieldDeclarationList({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			body: [
-				{
-					$type: TSKindId.FieldDeclarationListElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.AttributedFieldDeclaration,
+			body: {
+				$type: TSKindId.FieldDeclarationListElements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_element: [
+					{
+						$type: TSKindId.AttributedFieldDeclaration,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_field_declaration: {
+							$type: TSKindId.FieldDeclaration,
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_field_declaration: {
-								$type: TSKindId.FieldDeclaration,
-								$text: 'test',
-								$source: 2,
-								$named: true,
-								_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-								_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-							} as any
+							_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+							_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 						} as any
-					]
-				} as any
-			]
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.EnumVariant);
 		expect((node as any).body()?.$type).toBe(TSKindId.FieldDeclarationList);
@@ -770,23 +768,21 @@ describe('enum_variant sub-factories', () => {
 	it('orderedFieldDeclarationList builds the parent', () => {
 		const node = ir.enumVariant.orderedFieldDeclarationList({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			body: [
-				{
-					$type: TSKindId.OrderedFieldDeclarationListElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_element: [
-						{
-							$type: TSKindId.AttributedOrderedField,
-							$text: 'test',
-							$source: 2,
-							$named: true,
-							_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-						} as any
-					]
-				} as any
-			]
+			body: {
+				$type: TSKindId.OrderedFieldDeclarationListElements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_element: [
+					{
+						$type: TSKindId.AttributedOrderedField,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
+					} as any
+				]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.EnumVariant);
 		expect((node as any).body()?.$type).toBe(TSKindId.OrderedFieldDeclarationList);
@@ -1041,7 +1037,7 @@ describe('where_predicate sub-factories', () => {
 				$named: true,
 				_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			left: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.WherePredicate);
 		expect((node as any).left()).toBeDefined();
@@ -1225,7 +1221,7 @@ describe('where_predicate sub-factories', () => {
 			left: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -1318,7 +1314,7 @@ describe('where_predicate sub-factories', () => {
 				$named: true,
 				_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			left: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			left: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.WherePredicate);
 		expect((node as any).left()).toBeDefined();
@@ -1333,7 +1329,7 @@ describe('where_predicate sub-factories', () => {
 				$named: true,
 				_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			left: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			left: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.WherePredicate);
 		expect((node as any).left()).toBeDefined();
@@ -1348,15 +1344,13 @@ describe('where_predicate sub-factories', () => {
 				$named: true,
 				_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
 			} as any,
-			left: [
-				{
-					$type: TSKindId.TupleTypeElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
+			left: {
+				$type: TSKindId.TupleTypeElements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.WherePredicate);
 		expect((node as any).left()).toBeDefined();
@@ -1587,7 +1581,7 @@ describe('const_parameter sub-factories', () => {
 		const node = ir.constParameter.negativeLiteral({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ $type: TSKindId.IntegerLiteral, $text: 'test', $source: 2, $named: true } as any]
+			value: { $type: TSKindId.IntegerLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ConstParameter);
 		expect((node as any).value()).toBeDefined();
@@ -1747,15 +1741,13 @@ describe('use_declaration sub-factories', () => {
 	});
 	it('useList builds the parent', () => {
 		const node = ir.useDeclaration.useList({
-			argument: [
-				{
-					$type: TSKindId.UseClauses,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_use_clause: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
-				} as any
-			]
+			argument: {
+				$type: TSKindId.UseClauses,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_use_clause: [{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBeDefined();
@@ -1771,7 +1763,7 @@ describe('use_declaration sub-factories', () => {
 	});
 	it('useWildcard builds the parent', () => {
 		const node = ir.useDeclaration.useWildcard({
-			argument: [{ $type: TSKindId.UseWildcardGroup, $text: 'test', $source: 2, $named: true } as any]
+			argument: { $type: TSKindId.UseWildcardGroup, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBeDefined();
@@ -2259,7 +2251,7 @@ describe('function_type sub-factories', () => {
 	it('traitForm builds the parent', () => {
 		const node = ir.functionType.traitForm({
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.FunctionType);
 		expect((node as any).content()?.$type).toBe(TSKindId.FunctionTypeTraitForm);
@@ -2389,7 +2381,7 @@ describe('function_type sub-factories', () => {
 			content: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -3097,7 +3089,7 @@ describe('abstract_type sub-factories', () => {
 			trait: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -3154,7 +3146,7 @@ describe('abstract_type sub-factories', () => {
 	});
 	it('removedTraitBound builds the parent', () => {
 		const node = ir.abstractType.removedTraitBound({
-			trait: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			trait: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AbstractType);
 		expect((node as any).trait()?.$type).toBe(TSKindId.RemovedTraitBound);
@@ -3180,7 +3172,7 @@ describe('abstract_type sub-factories', () => {
 			trait: [
 				{
 					parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-					content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+					content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -3211,15 +3203,13 @@ describe('abstract_type sub-factories', () => {
 	});
 	it('tupleType builds the parent', () => {
 		const node = ir.abstractType.tupleType({
-			trait: [
-				{
-					$type: TSKindId.TupleTypeElements,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-				} as any
-			]
+			trait: {
+				$type: TSKindId.TupleTypeElements,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.AbstractType);
 		expect((node as any).trait()?.$type).toBe(TSKindId.TupleType);
@@ -3366,7 +3356,7 @@ describe('dynamic_type sub-factories', () => {
 	it('scopedTypeIdentifier.bracketedType builds the parent', () => {
 		const node = ir.dynamicType.scopedTypeIdentifier.bracketedType({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.DynamicType);
 		expect((node as any).trait()?.$type).toBe(TSKindId.ScopedTypeIdentifier);
@@ -3433,7 +3423,7 @@ describe('dynamic_type sub-factories', () => {
 	it('functionType.traitForm builds the parent', () => {
 		const node = ir.dynamicType.functionType.traitForm({
 			parameters: { $type: TSKindId.Parameters, $text: 'test', $source: 2, $named: true } as any,
-			content: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.DynamicType);
 		expect((node as any).trait()?.$type).toBe(TSKindId.FunctionType);
@@ -3765,7 +3755,7 @@ describe('scoped_type_identifier sub-factories', () => {
 	it('bracketedType builds the parent', () => {
 		const node = ir.scopedTypeIdentifier.bracketedType({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+			path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ScopedTypeIdentifier);
 		expect((node as any).path()).toBeDefined();
@@ -4320,7 +4310,7 @@ describe('call_expression sub-factories', () => {
 	it('rawConst builds the parent', () => {
 		const node = ir.callExpression.rawConst({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4329,7 +4319,7 @@ describe('call_expression sub-factories', () => {
 	it('rawMut builds the parent', () => {
 		const node = ir.callExpression.rawMut({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4338,7 +4328,7 @@ describe('call_expression sub-factories', () => {
 	it('mut builds the parent', () => {
 		const node = ir.callExpression.mut({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4347,7 +4337,7 @@ describe('call_expression sub-factories', () => {
 	it('bare builds the parent', () => {
 		const node = ir.callExpression.bare({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4356,7 +4346,7 @@ describe('call_expression sub-factories', () => {
 	it('tryExpression builds the parent', () => {
 		const node = ir.callExpression.tryExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4643,7 +4633,7 @@ describe('call_expression sub-factories', () => {
 	it('returnExpression builds the parent', () => {
 		const node = ir.callExpression.returnExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4652,7 +4642,7 @@ describe('call_expression sub-factories', () => {
 	it('yieldExpression builds the parent', () => {
 		const node = ir.callExpression.yieldExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4739,7 +4729,7 @@ describe('call_expression sub-factories', () => {
 	it('awaitExpression builds the parent', () => {
 		const node = ir.callExpression.awaitExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4843,15 +4833,13 @@ describe('call_expression sub-factories', () => {
 	it('continueExpression builds the parent', () => {
 		const node = ir.callExpression.continueExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [
-				{
-					$type: TSKindId.Label,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
+			function: {
+				$type: TSKindId.Label,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -4908,7 +4896,7 @@ describe('call_expression sub-factories', () => {
 	it('parenthesizedExpression builds the parent', () => {
 		const node = ir.callExpression.parenthesizedExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -5014,7 +5002,7 @@ describe('call_expression sub-factories', () => {
 	it('unsafeBlock builds the parent', () => {
 		const node = ir.callExpression.unsafeBlock({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -5041,7 +5029,7 @@ describe('call_expression sub-factories', () => {
 	it('tryBlock builds the parent', () => {
 		const node = ir.callExpression.tryBlock({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -5156,7 +5144,7 @@ describe('call_expression sub-factories', () => {
 	it('constBlock builds the parent', () => {
 		const node = ir.callExpression.constBlock({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			function: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).function()).toBeDefined();
@@ -6218,7 +6206,7 @@ describe('struct_pattern sub-factories', () => {
 			type: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -7166,7 +7154,7 @@ describe('impl_item_body sub-factories', () => {
 		const node = ir.implItem.body.positiveClause.coerce({
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
 			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any,
-			traitClause: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			traitClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemBody);
 		expect((node as any).traitClause()?.$type).toBe(TSKindId.ImplItemPositiveClause);
@@ -7435,7 +7423,7 @@ describe('impl_item_body sub-factories', () => {
 			traitClause: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -7450,7 +7438,7 @@ describe('impl_item_body sub-factories', () => {
 			traitClause: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -7572,7 +7560,7 @@ describe('impl_item_body sub-factories', () => {
 		const node = ir.implItem.body.negativeClause.coerce({
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
 			declarationList: { $type: TSKindId.DeclarationList, $text: 'test', $source: 2, $named: true } as any,
-			traitClause: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			traitClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemBody);
 		expect((node as any).traitClause()?.$type).toBe(TSKindId.ImplItemNegativeClause);
@@ -7584,7 +7572,7 @@ describe('impl_item_semi sub-factories', () => {
 	it('positiveClause builds the parent', () => {
 		const node = ir.implItem.semi.positiveClause.coerce({
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
-			traitClause: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			traitClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemSemi);
 		expect((node as any).traitClause()?.$type).toBe(TSKindId.ImplItemPositiveClause);
@@ -7836,7 +7824,7 @@ describe('impl_item_semi sub-factories', () => {
 			traitClause: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -7850,7 +7838,7 @@ describe('impl_item_semi sub-factories', () => {
 			traitClause: [
 				{
 					name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					path: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
+					path: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -7967,7 +7955,7 @@ describe('impl_item_semi sub-factories', () => {
 	it('negativeClause builds the parent', () => {
 		const node = ir.implItem.semi.negativeClause.coerce({
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
-			traitClause: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+			traitClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemSemi);
 		expect((node as any).traitClause()?.$type).toBe(TSKindId.ImplItemNegativeClause);
@@ -7985,7 +7973,7 @@ describe('match_arm_block_ending sub-factories', () => {
 				$named: true,
 				_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			value: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			value: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
 		expect((node as any).value()?.$type).toBe(TSKindId.UnsafeBlock);
@@ -8030,7 +8018,7 @@ describe('match_arm_block_ending sub-factories', () => {
 				$named: true,
 				_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			value: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			value: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
 		expect((node as any).value()?.$type).toBe(TSKindId.TryBlock);
@@ -8213,7 +8201,7 @@ describe('match_arm_block_ending sub-factories', () => {
 				$named: true,
 				_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
 			} as any,
-			value: [{ $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any]
+			value: { $type: TSKindId.Block, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
 		expect((node as any).value()?.$type).toBe(TSKindId.ConstBlock);
