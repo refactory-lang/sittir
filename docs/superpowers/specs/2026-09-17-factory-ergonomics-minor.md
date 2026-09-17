@@ -117,3 +117,102 @@ union, and the strict wrapper's signature is unchanged.
   list-envelope slot and rejects a trailing options object on the wrapper.
 - `examples/17-dogfood-rust.ts` spells its single-element lists bare.
 - `factory-render-parse` counts unchanged.
+
+---
+
+## 3. A delimited leaf takes its content; the delimiters are its render rule
+
+> Generalized by `2026-09-17-token-interior-slots.md`: a token's interior is
+> its slot structure, named groups are fields inside a regex, and `renderAs`
+> keeps to external symbols. This item is that design's first application;
+> the text below is its original statement.
+
+### Problem
+
+A text leaf's factory takes the token's whole text. Where the token always
+carries a fixed affix, the caller supplies it and the factory at most tests
+the result against the pattern — under `SITTIR_DEBUG` only, and not at all
+for a `token(seq(…))` kind:
+
+```ts
+ir.charLiteral("'a'")   // → 'a'
+ir.charLiteral('a')     // → a — no guard, invalid output
+ir.shebang('#!/usr/bin/env rust-script\n')
+```
+
+The delimiter is not information the caller holds; it is the kind. Rust
+already models it that way where the grammar does: `lifetime` is
+`seq("'", identifier)`, so `ir.lifetime('a')` takes the name, and a line
+comment's `//` marker is a `renderAs` external beside a content leaf.
+
+### Decision
+
+**A leaf whose token carries a fixed affix takes its content, and the affix
+is the kind's render rule.** The kind's sittir-side body is declared through
+`renderAs`, today keyed to external symbols and extended here to any token or
+pattern kind whose sittir-side shape differs from the parser's:
+
+```ts
+renderAs: ($) => ({
+	char_literal: seq("'", /(?:[^\\']|\\.)+/, "'"),
+	shebang: seq('#!', /[^\n]*/, '\n'),
+	metavariable: seq('$', /[a-zA-Z_]\w*/),
+})
+```
+
+The parser keeps its token; the model sees one text slot between literal
+affixes, so every consumer follows: the factory takes the content
+(`ir.charLiteral('a')`), the render writes the affixes around it, the guard
+tests the content pattern, and the reader strips the affixes by the same
+rule so `$text` of a read node is its content. The round trip is
+byte-identical; what changes is the value a caller gives and gets.
+
+Content is the body as written in source: an escape stays escaped (`\n` is
+two characters). Formatting is the affixes and nothing else.
+
+**Two transports, one fact.** A read node of a delimited leaf is a
+coordinate until it is edited: untouched, it renders by folding its span,
+affixes and all (`VerbatimTransport`); a factory-built or edited node renders
+through the kind's typed transport, which holds content and writes the
+affixes from the rule. The two agree only if the reader strips exactly the
+literals the render rule writes — the one `renderAs` declaration, read by
+both. What follows from that:
+
+- `$text` of a read node is content. The wrap accessor, `nodeToConfig`,
+  `materializeWrappedNodeData` and the strict-rebuild emitter all see
+  content and never hand an affixed string to the typed transport, where the
+  affixes would double.
+- A `$with` setter or `markEdited` detaches the coordinate; from then on
+  the typed transport renders the node from its content.
+- The Verbatim arm is never built from a factory node (it has no
+  coordinate), and the typed arm is never fed a read node's whole text.
+  Slot transport enums already carry a Verbatim arm beside the typed leaf
+  arm for text kinds; a delimited leaf is that same pair, with the strip
+  on the read side.
+- The reader's text-capture classification gains one case beside
+  verbatim-whole (an identifier) and structured: content-with-affixes,
+  stripped on read from the same affix literals.
+
+**Where it applies, and where not.**
+
+| shape | example | what it is |
+| --- | --- | --- |
+| fixed prefix and/or suffix | rust `char_literal` `'…'`, `shebang` `#!…`, `metavariable` `$…`; typescript `hash_bang_line`, `private_property_identifier` `#…`; python `comment` `#…`; every `escape_sequence` `\…` | a render rule, this item |
+| optional prefix | rust `char_literal`'s `b'…'` | a presence flag beside the content (`{ byte: true }`), as any optional keyword |
+| a choice of delimiters | typescript `comment` (`//…` or `/*…*/`), python string prefixes | forms — `ir.comment.line(text)` / `.block(text)` — or left as text |
+| no affix | identifiers, numbers, string fragments | content is the text; unchanged |
+
+The census is `.sittir/src/grammar.json`: a `token(seq(…))` whose first or
+last member is a string, or a pattern whose regex opens on a literal. Nine
+kinds across the three grammars today.
+
+### Verification
+
+- `ir.charLiteral('a')` renders `'a'`; a read `'a'` has `$text` `a`; the
+  rebuild of a char literal is byte-identical. Same for each kind in the
+  table's first row.
+- The content guard rejects `ir.charLiteral("'a'")` by name.
+- `read-render-parse` and `factory-render-parse` counts unchanged; the byte
+  axis stays green.
+- `renderAs` has one glossary entry describing both uses, external symbols
+  and delimited leaves.

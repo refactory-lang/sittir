@@ -1,0 +1,190 @@
+# A token's interior is its slot structure
+
+**Status:** Design. Generalizes item 3 of the minor factory-ergonomics
+page (`2026-09-17-factory-ergonomics-minor.md`), which becomes its first
+application. Builds on the text-content design
+(`2026-08-26-text-content-vs-source-provenance.md`): a read node is a
+coordinate, a built node is a transport.
+
+---
+
+## Problem
+
+A text leaf's factory takes the token's whole text, and its `$text` is the
+whole text on read. Where the token always carries a fixed affix, the
+caller writes it and the model does not know it is there:
+
+```ts
+ir.charLiteral("'a'")   // → 'a'
+ir.charLiteral('a')     // → a — nothing tests it; invalid output
+ir.shebang('#!/usr/bin/env rust-script\n')
+ir.metavariable('$x')
+```
+
+The parser knows more than the model uses. `char_literal` is
+`token(seq(optional('b'), "'", …, "'"))`; the delimiters and the optional
+byte prefix are members of the rule, flattened to one text only because the
+model treats a token as opaque. And where a token is one regex — `shebang`
+`/#!.*/`, `metavariable` `/\$[a-zA-Z_]\w*/` — the regex has structure the
+author could name and nothing reads.
+
+Meanwhile `renderAs` gives an external symbol a sittir-side rule body because
+the parser has none. It is the right idea applied only where it was forced.
+
+## Decision
+
+**A token's interior is its model rule.** The model does not flatten a token
+to one text. Inside `token(…)` / `token.immediate(…)`:
+
+- a **string member** is template text — written on render, stripped on
+  read, never stored;
+- a **pattern member** is a text slot;
+- an **`optional(string)`** is a presence flag, as any optional keyword
+  (`{ byte: true }`);
+- a **`field(name, …)`** names the slot it wraps; an unnamed pattern member
+  in a token with exactly one pattern is the kind's content.
+
+**A capture group is a field inside a regex.** Where a token is a single
+pattern, a named group names a slot: `/#!(?<content>[^\n]*)\n/`,
+`/\$(?<name>[a-zA-Z_]\w*)/`. The text outside the groups is template text;
+the groups are slots. The lexer does not distinguish a capturing group from
+a non-capturing one, so the group is parse-side inert and model-side a
+field. A pattern with no group stays whole-text — `identifier`, `integer`
+— which is where the line falls: the author draws it with a `(?<…>)`,
+and the compiler never guesses.
+
+Every consumer follows the one rule: the factory takes the slots
+(`ir.charLiteral('a')`, `ir.charLiteral.byte('a')`, `ir.metavariable('x')`),
+the type is the slots, the template writes the literal runs around them,
+the guard tests each slot's own pattern, and the reader projects the token's
+text through the same structure into the same slots. `$text` of a read
+leaf is its content, not the token.
+
+Content is the body as written: an escape stays escaped (`\n` is two
+characters). Structure is the affixes and flags, nothing else.
+
+**`renderAs` keeps its one job.** A model rule where the parser has none —
+an external symbol. A token that has a parse rule never needs it; its
+structure is read from the rule.
+
+## The projection is a closed set
+
+The reader realizes a parse node into the model rule's slots by exactly one
+of these, classified at compile time from the pair (parse shape, model
+shape). Anything else is a compile-time diagnostic.
+
+| parse → model | on read | examples |
+| --- | --- | --- |
+| token → literals only | nothing stored; the text is fixed | `_automatic_semicolon`, doc-comment markers (`renderAs`) |
+| token → literals around one slot | strip prefix and suffix, store content | `char_literal`, `shebang`, `#name`, `escape_sequence`, python `comment` |
+| token → literals and several slots | anchored match of the model rule's patterns | `metavariable` `$name` is one slot; no grammar has two today |
+| compound → text | store the whole span | `raw_string_literal` (the hybrid kind of the text-content design) |
+| compound → compound, same slots | none; a render-only difference | separator and seam spacing, already derived rather than authored |
+
+The second row needs no regex engine on the native side: the affixes are
+literals of known length. The third row is authored by named groups and
+matched by the pattern; the native crates carry no regex dependency today,
+and no grammar has a multi-slot token, so that row is specified here and
+realized when a grammar needs it.
+
+## Two transports, one fact
+
+A read leaf is a coordinate until it is edited: untouched, it renders by
+folding its span, affixes and all. A factory-built or edited node renders
+through the kind's typed transport, which holds the slots and writes the
+literal runs from the rule. The two agree only because the reader strips
+exactly the literals the template writes — one rule, read by both. Hence:
+
+- `$text` of a read node is content, and every projection that builds a
+  transport from a read node — the wrap accessor, `nodeToConfig`,
+  `materializeWrappedNodeData`, the strict-rebuild emitter — sees content
+  and never hands the typed transport an affixed string, where the affixes
+  would double.
+- A `$with` setter or `markEdited` detaches the coordinate; from then on the
+  typed transport renders the node from its slots.
+- The Verbatim arm is never built from a factory node (it has no
+  coordinate) and the typed arm is never fed a read node's whole text. Slot
+  transport enums already hold a Verbatim arm beside the typed leaf arm for
+  text kinds; a structured token is that same pair.
+- The reader's text-capture classification has one more case beside
+  verbatim-whole and structured: content-with-affixes, stripped on read.
+
+## Where it applies
+
+The census is `.sittir/src/grammar.json`: a `token(seq(…))` whose first or
+last member is a string, or a single pattern whose regex opens or closes on
+a literal. Nine kinds across the three grammars:
+
+| kind | parse rule today | what the model reads |
+| --- | --- | --- |
+| rust `char_literal` | `token(seq(optional('b'), "'", …, "'"))` | flag `byte`, content, affixes `'` `'` — nothing to author |
+| rust `escape_sequence`, typescript `escape_sequence`, python `escape_sequence` | `token(seq('\\', …))` | prefix `\`, content — nothing to author |
+| typescript `private_property_identifier` | `token(seq('#', …))` | prefix `#`, content — nothing to author |
+| python `comment` | `token(seq('#', /.*/))` | prefix `#`, content — nothing to author |
+| rust `shebang` | `/#![\r\f\t\v ]*([^\[\n].*)?\n/` | re-authored: `/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/` |
+| typescript `hash_bang_line` | `/#!.*/` | re-authored: `/#!(?<content>.*)/` |
+| rust `metavariable` | `/\$[a-zA-Z_]\w*/` | re-authored: `/\$(?<name>[a-zA-Z_]\w*)/` |
+
+Six kinds need nothing: their parse rules already carry the structure.
+Three are single regexes and are re-authored with a named group. A regex
+re-authoring is a `patches:` entry at the rule's path, like every other
+authored fact — the `rules:` block is retired, and a placeholder that
+replaces a pattern's regex is the spelling.
+
+Rust's `lifetime` (`seq("'", identifier)`) and its line-comment markers
+(`renderAs` externals beside a content leaf) are the existing precedents;
+this design makes their shape the rule for tokens too.
+
+### Comments
+
+Comments are the case where all three token shapes meet, and the three
+grammars already hold one each:
+
+| grammar | parse rule | under this design |
+| --- | --- | --- |
+| python `comment` | `token(seq('#', /.*/))` | one content slot behind the `#` affix: `ir.comment(' note')` → `# note` |
+| typescript `comment` | `token(choice(seq('//', /.*/), seq('/*', …, '*/')))` | a choice inside the token is a choice: two forms, `ir.comment.line(' note')` and `ir.comment.block(' note ')`, each arm literals around one slot |
+| rust `line_comment`, `block_comment` | already structured — marker externals through `renderAs`, content leaves `line_comment_content`, `line_doc_content`, `block_comment_content` | unchanged; the shape the other two now take |
+
+**A `choice` inside a token is a choice.** Its arms are forms, named as
+choice arms are named everywhere else — `variant()` in `patches:`, or the
+arm's own literal when unnamed — and each arm's interior follows the rules
+above. The reader picks the arm whose affixes match the token's text; two
+arms whose literal prefixes cannot be told apart are a compile-time
+diagnostic, not a runtime guess. Python's string prefixes (`f"`, `rb'`)
+are the same shape on `string_start` and take the same treatment.
+
+**Trivia is not touched.** A comment carried as trivia on another node
+(`$trivia({ leading: […] })`) is verbatim text on the read side and the
+render side alike, and stays so; this design covers a comment built or
+read *as a node*. Typing trivia entries as comment nodes is a separate
+design.
+
+## Constraints verified
+
+- tree-sitter 0.26.9 `generate` accepts `(?<name>…)`, preserves the pattern
+  verbatim in `src/grammar.json`, and the generated lexer parses identically
+  to the same pattern without the group (checked on a scratch grammar with
+  `\$(?<name>…)` and `#!(?<content>…)`).
+- `grammar.json` is therefore a sufficient source for the group names; the
+  compiler reads them from the ground-truth artifact, not the DSL source.
+
+## Gates
+
+- `ir.charLiteral('a')` renders `'a'`; `ir.charLiteral.byte('a')` renders
+  `b'a'`; a read `'a'` has `$text` `a` and `byte` absent; the rebuilt node
+  is byte-identical to the read one. The same for each kind in the census.
+- The guard rejects `ir.charLiteral("'a'")` by name.
+- `read-render-parse`, `factory-render-parse` and `ir-render-parse` counts
+  unchanged in all three grammars; the byte axis stays green.
+- The generated strict rebuilds spell char literals, shebangs and
+  metavariables by their content.
+- The seam census does not change: template text inside a token is written
+  by the leaf's own render function, and no seam is minted inside a token.
+
+## Out of scope
+
+- Decoding or encoding escapes. Content is the source spelling.
+- A regex engine in the native crates; the multi-slot row waits for a grammar
+  that needs it.
+- Typing trivia entries as comment nodes.
