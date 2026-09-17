@@ -14,7 +14,7 @@ import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';
 import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
-import type { RawGrammar, DesugarDivergenceEvent } from '../types.ts';
+import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
 import type { GeneratedIdTables } from '../generated-metadata.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 
@@ -171,24 +171,38 @@ export function collectGrammarDiagnostics(input: {
 
 export function collectGrammarDiagnosticsForGrammar(input: {
 	rawGrammar: RawGrammar;
+	include?: IncludeFilter;
 	generatedIdTables?: GeneratedIdTables;
 }): {
+	linked: LinkedGrammar;
+	normalized: NormalizedGrammar;
 	nodeMap: AssembledNodeMap;
+	compilerDiagnostics: DiagnosticSink;
+	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const linkSink = new DiagnosticSink();
-	const linked = link(input.rawGrammar, { generatedIdTables: input.generatedIdTables, diagnostics: linkSink });
+	const compilerDiagnostics = new DiagnosticSink();
+	const linked = link(input.rawGrammar, {
+		include: input.include,
+		generatedIdTables: input.generatedIdTables,
+		diagnostics: compilerDiagnostics
+	});
 	const inlineKinds = new Set(loadGrammarJsonInlineList(input.rawGrammar.name) ?? []);
 	const normalized = normalizeGrammar(
 		linked,
 		new NormalizeCtx({
 			grammar: linked,
 			inlineKinds: buildInlinableKinds(inlineKinds, linked),
-			diagnostics: new DiagnosticSink()
+			diagnostics: compilerDiagnostics
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, input.generatedIdTables, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+		AssembleCtx.from(
+			normalized,
+			input.generatedIdTables,
+			compilerDiagnostics,
+			loadGrammarJsonAliasMap(input.rawGrammar.name)
+		)
 	);
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
@@ -196,7 +210,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		contentAliasedTo: linked.contentAliasedTo
 	});
 	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
-	const kindIdStampDiagnostics: GrammarDiagnostic[] = linkSink
+	const kindIdStampDiagnostics: GrammarDiagnostic[] = compilerDiagnostics
 		.all()
 		.filter(
 			(d) =>
@@ -223,7 +237,11 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		...(input.rawGrammar.desugarDivergences ?? []).map((event) => fromDesugarDivergence(input.rawGrammar.name, event))
 	];
 	return {
+		linked,
+		normalized,
 		nodeMap,
+		compilerDiagnostics,
+		slotGroupingDiagnostics,
 		diagnostics:
 			orphanedSyntheticGroups.size === 0
 				? allDiagnostics

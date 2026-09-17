@@ -6,14 +6,14 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { assertEmittable } from '../emit-gate.ts';
+import { assertCompilation } from '../compile.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
 
 // evaluate() reads a module from disk, so an inline grammar has to become a
 // real file. The chain below mirrors generate()'s own phase order, including
-// the assertEmittable gate that turns a blocking diagnostic into a throw.
+// the assertCompilation gate that turns a blocking diagnostic into a throw.
 async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-factory-inline-'));
 	const entry = resolve(dir, 'grammar.js');
@@ -21,9 +21,19 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	try {
 		const diagnostics = new DiagnosticSink();
 		const raw = await evaluate(entry);
-		const normalized = normalizeGrammar(link(raw, { diagnostics }));
+		const linked = link(raw, { diagnostics });
+		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
-		assertEmittable(nodeMap, diagnostics);
+		assertCompilation({
+			grammar: 'fi',
+			raw,
+			linked,
+			normalized,
+			nodeMap,
+			diagnostics,
+			slotGroupingDiagnostics: [],
+			grammarDiagnostics: []
+		});
 		return nodeMap;
 	} finally {
 		rmSync(dir, { recursive: true, force: true });

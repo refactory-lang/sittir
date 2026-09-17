@@ -7,19 +7,15 @@ import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
 import { generate } from './compiler/generate.ts';
-import { evaluate } from './compiler/evaluate.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from './compiler/resolve-grammar.ts';
+import { compileGrammar, type Compilation } from './compiler/compile.ts';
 import { loadGeneratedIdTables } from './compiler/generated-metadata.ts';
 import {
-	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
 	formatGrammarDiagnostics,
 	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
-	fromParseKindCollision,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
-import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
@@ -103,24 +99,17 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	allowDiagnostics: ReadonlySet<string>;
 	isTTY: boolean;
 	injectedDiagnostics?: readonly GrammarDiagnostic[];
+	compilation?: Compilation;
 	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
 }): Promise<void> {
 	let diagnostics: readonly GrammarDiagnostic[];
 	if (input.injectedDiagnostics !== undefined) {
 		diagnostics = input.injectedDiagnostics;
 	} else {
-		const overridesPath = resolveOverridesPath(input.grammar);
-		const grammarJsPath = resolveGrammarJsPath(input.grammar);
-		const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
-		const rawGrammar = await evaluate(entryPath);
-		const unaliasDiagnostics = getEnrichUnaliasDiagnostics(rawGrammar).map((d) =>
-			fromParseKindCollision(input.grammar, d)
-		);
-		const generatedIdTables = await loadGeneratedIdTables(input.grammar);
-		diagnostics = [
-			...collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables }).diagnostics,
-			...unaliasDiagnostics
-		];
+		const compilation =
+			input.compilation ??
+			(await compileGrammar({ grammar: input.grammar, generatedIdTables: await loadGeneratedIdTables(input.grammar) }));
+		diagnostics = compilation.grammarDiagnostics;
 	}
 
 	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
@@ -204,17 +193,24 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
 	}
 
+	const compilation = await compileGrammar({
+		grammar,
+		generatedIdTables: await loadGeneratedIdTables(grammar)
+	});
+
 	await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
-		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
+		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY),
+		compilation
 	});
 
 	console.log(`Generating ${grammar} IR...`);
 	const result = await generate({
 		grammar,
 		outputDir,
-		emitRenderModule: all
+		emitRenderModule: all,
+		compilation
 	});
 
 	if (result.slotGroupingDiagnostics.length > 0) {

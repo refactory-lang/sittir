@@ -646,6 +646,18 @@ parents.
 // noticing the case is gone.
 ```
 
+### `packages/codegen/src/compiler/assemble.ts::HydrateSlotRefsConfig`
+
+```text
+/**
+ * What hydration needs beside the NodeMap: `inline`, the grammar's declared
+ * inline kinds (`.sittir/src/grammar.json` `inline` list), which the parser
+ * never issues a node for and which may therefore be referenced without
+ * being assembled; and `diagnostics`, the compilation's sink, where a
+ * reference that is neither external nor inline is reported.
+ */
+```
+
 ### `packages/codegen/src/compiler/assemble.ts::hydrateSlotRefs`
 
 ```text
@@ -653,25 +665,25 @@ parents.
  * Hydrate every slot value's `node` reference from `UnresolvedRef` to the
  * concrete `AssembledNode` produced during assembly.
  *
- * Called by the codegen pipeline AFTER `assemble()` returns AND AFTER the
- * raw NodeMap has been serialized (e.g. `node-model.json5` emit) but
- * BEFORE the in-memory consumers (factories, types, render, etc.) read
- * slot graphs. Once hydrated, `slot.values[*].node` carries the full
- * `AssembledNode` reference — the consumer-side
- * `storageKindOfRef(v.node)` ternary becomes
- * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
+ * Runs inside `compileGrammar`, after `assemble()` and before the
+ * `Compilation` is returned, so every consumer — the node-model
+ * serializer included — sees the hydrated graph. Once hydrated,
+ * `slot.values[*].node` carries the full `AssembledNode`; emitters read
+ * `v.node.kind` (or `.modelType`) directly.
  *
- * THROWS on any reference that points to a kind absent from `nodes` —
- * unresolvable refs are codegen bugs, not runtime data, and must surface
- * loudly. The error names source kind, slot, and unresolved target.
+ * A reference whose target is absent from `nodes` is classified: an
+ * external symbol or a grammar-declared inline kind is legitimate and stays
+ * an `UnresolvedRef` (the parser never issues either a node); anything
+ * else is a dangling internal reference and enters the sink as the
+ * blocking diagnostic `dangling-internal-ref`, naming the owning kind, the
+ * slot and the target. `assertCompilation` refuses such a compilation.
  *
  * Mutation: rewrites `NodeRef.node` in place via a single justified
  * `readonly` cast. Slot `values` array identity is preserved; only the
- * `.node` field updates. Constitution VIII exception — this IS the
- * legitimate boundary turning the `T | UnresolvedRef` placeholder into
- * the resolved `T`. After hydration the node graph is CYCLIC, so the
- * NodeMap is no longer JSON-serializable — call this only after any
- * serialization passes.
+ * `.node` field updates. This is the one boundary turning the
+ * `T | UnresolvedRef` placeholder into the resolved `T`. After hydration
+ * the node graph is cyclic; the serializer emits node refs by name, never
+ * by walking `.node`.
  */
 ```
 
@@ -1687,15 +1699,50 @@ parents.
 	 */
 ```
 
-### `packages/codegen/src/compiler/emit-gate.ts::assertEmittable`
+### `packages/codegen/src/compiler/compile.ts::Compilation`
 
 ```text
-/**
- * The single Assemble→Project boundary check (spec §4b/§7.5).
- *
- * Throws EmitHaltedError if the sink contains any 'fail'-severity
- * diagnostics. Inert until PR-L: no producer currently emits 'fail'.
- */
+One evaluate→link→normalize→assemble pass and everything derived from it:
+the raw/linked/normalized grammars, the assembled NodeMap, the
+compiler-internal severity-based sink (`diagnostics` — the same one
+threaded through link/normalize/assemble, e.g. `assemble.ts`'s
+`emitUnnestable` fail), and the grammar-authoring canProceed-based list
+(`grammarDiagnostics` — parse-kind collisions, derive-shape, assemble
+warnings, slot-grouping, content-alias, kindid-stamp misses, body-pattern
+zero-matches, desugar divergences). These two diagnostic vocabularies stay
+separate rather than merged into one severity scale — `grammarDiagnostics`
+entries are `canProceed:false` without ever being `severity:'fail'` — but
+both are now reachable from ONE compile instead of two independent ones.
+```
+
+### `packages/codegen/src/compiler/compile.ts::compileGrammar`
+
+```text
+Runs evaluate→link→normalize→assemble exactly once and computes both
+diagnostic vocabularies — the compiler sink and the grammar-authoring
+diagnostics (parse-kind collisions, storage-name collisions, derive
+shapes, slots, content aliases, kind ids) — from that single pass. The CLI
+preflight and a library call to `generate()` consume the same
+`Compilation`, so both see the same checks and `evaluate()` (which
+installs the DSL on `globalThis`) runs once per generation.
+
+Calls `hydrateSlotRefs` (assemble.ts) before returning — the last mutation
+performed on the graph (UnresolvedRef → AssembledNode), so
+`assertCompilation` sees a dangling internal reference the same way it
+sees every other grammar-authoring diagnostic, and `generate()` receives an
+already-hydrated `nodeMap` ahead of `emitNodeModel`: node-model.json5
+carries an `unresolved: true` entry only for a reference that is
+legitimately external or inline.
+```
+
+### `packages/codegen/src/compiler/compile.ts::assertCompilation`
+
+```text
+The single Assemble→Project boundary check. Throws `EmitHaltedError` for
+a compiler-internal fail diagnostic, or `GrammarDiagnosticError` for a
+grammar-authoring diagnostic whose code is `canProceed:false` and not in
+the caller's `allowDiagnostics`. One gate, reached by the CLI preflight and
+by a plain `generate()` call alike.
 ```
 
 ### `packages/codegen/src/compiler/evaluate.ts::seq`
@@ -2457,6 +2504,22 @@ parents.
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::evaluate`
+
+```text
+/**
+ * Run the grammar's DSL a second time, sittir-side, and return the
+ * `RawGrammar`. The bundled grammar is written against tree-sitter's global
+ * DSL, so for the duration of one call the DSL functions are installed on
+ * `globalThis` and restored in `finally`. Calls are serialized behind a
+ * module-level promise chain (`evaluateMutex`): the body awaits the module
+ * import, and two interleaved calls would save and restore each other's
+ * globals. Serializing `evaluate` is what makes the module-level
+ * collectors downstream (link → normalize → assemble never await) safe
+ * to reset at the start of a compile and drain at its end.
+ */
+```
+
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateRulesAndInjectSynthetics`
 
 ```text
@@ -2900,6 +2963,14 @@ runs once the metadata callbacks have been evaluated.
  */
 ```
 
+Serialized behind a module-level `evaluateMutex`: `saveAndInjectDslGlobals` writes
+the DSL onto `globalThis` and `restoreSavedGlobals` restores it in `finally` —
+two concurrent calls (e.g. two grammars compiling at once) would interleave
+their save/inject/restore and could hand one call the other's globals. Each
+call installs its own pending promise as the new mutex value and awaits the
+previous one first, so calls run one at a time regardless of call order or
+which one fails; this is the only place `globalThis` is touched.
+
 ### `packages/codegen/src/compiler/evaluate.ts::saveAndInjectDslGlobals`
 
 ```text
@@ -3013,6 +3084,14 @@ runs once the metadata callbacks have been evaluated.
  * evaluate(grammar.js) → link → normalize → assemble → adapter → emitters
  */
 ```
+
+The compile-and-emit body runs inside a `try`/`finally` around the
+`addUnnamedChoiceListener` registration: `removeUnnamedChoiceListener()` used
+to run only on the success path, so a thrown diagnostic (or any other
+mid-generate failure) left that closure registered in
+`collect-slots.ts`'s `_extraUnnamedChoiceListeners` forever — a leak that
+grows by one stale listener per failed `generate()` call in a long-lived
+process (a watch daemon, a test run that retries).
 
 #### body
 
@@ -3136,7 +3215,7 @@ runs once the metadata callbacks have been evaluated.
 ```text
 // Surface accumulated compiler-phase warnings — e.g. the link-phase
 // `non-literal-separator` warning — to the author. `fail` diagnostics
-// already halted the pipeline via assertEmittable above.
+// already halted the pipeline via assertCompilation above.
 //
 // Deliberately scoped to `severity === 'warning'` AND `scope ===
 // 'compiler'` — NOT "every non-`fail` diagnostic". Empirically (all 3
@@ -6536,7 +6615,7 @@ parts with the space its parser needs.
 	 * Pipeline-wide `DiagnosticSink` (ctx threading). When supplied, Link
 	 * phase diagnostics (e.g. `liftSeparators`'s `non-literal-separator`
 	 * warning) land in THIS sink — the same instance `generate.ts` threads
-	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertEmittable` — so they
+	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertCompilation` — so they
 	 * are visible to callers reading the sink after the pipeline runs.
 	 * Defaults to a fresh, throwaway `DiagnosticSink` (pre-PR-S task 5
 	 * behavior) for callers (mostly tests) that only care about the returned
@@ -8213,26 +8292,6 @@ carried through a side channel.
 /** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
 ```
 
-### `packages/codegen/src/compiler/emit-gate.ts::module`
-
-```text
-/**
- * compiler/emit-gate.ts — the Assemble→Project boundary check.
- *
- * Spec §4b / §7.5 (compiler-simplification-design.md).
- *
- * This gate is INERT until PR-L. Nothing currently emits 'fail', so
- * assertEmittable always returns void today. The nodeMap parameter is
- * accepted for forward-compat — PR-L's 'unslotted-child' check reads it —
- * but is intentionally unused here (prefixed with _).
- *
- * Design note: the gate keys on severity === 'fail', NOT on canProceed.
- * This is deliberate: diagnostics/derive-shapes.ts already emits canProceed:false
- * diagnostics — keying on canProceed would halt emission the moment PR-H
- * routes real diagnostics into the sink. The (currently unused) 'fail'
- * severity is what makes the gate inert until PR-L.
- */
-```
 
 ### `packages/codegen/src/compiler/variant-structural.ts::module`
 
@@ -10687,32 +10746,15 @@ second, id-suffixed fallback.
 #### body
 
 ```text
-// the historical `_<name>` retry (visible alias-target name → hidden
-// MODEL node) was probed across all three grammars and fired ZERO
-// times — the mint now resolves canonical names, so every hydratable
-// ref hits the primary lookup above. Retired per the KindId-NodeRefs
-// spec §2.3 retire-list. A future grammar that reintroduces
-// visible→hidden refs surfaces below as the loud
-// unresolved-slot-reference diagnostic, not a silent rewire. Three
-// legitimate categories where the target ISN'T in the assembled
-// NodeMap and we leave the `UnresolvedRef` in place:
-//
-//   1. External tokens (lexer-callback symbols) — no rule body,
-//      just a name. Tracked in `nodeMap.externals`.
-//   2. Parser-only leaf kinds — the parser symbol table knows
-//      them but codegen has no rule body to assemble (e.g.
-//      `_as_pattern_target` in python). These behave like
-//      externals from the consumer's POV.
-//   3. Kinds inlined before assemble that an override still
-//      references by name.
-//
-// Distinguishing (1) from (2)/(3) without threading the parser
-// kind catalog isn't possible here. Logging a single line per
-// occurrence surfaces the (3) cases for follow-up; (1) and (2)
-// are expected and harmless. Consumers that walk
-// `slot.values[*]` already handle `isUnresolvedRef` defensively,
-// so leaving these as `UnresolvedRef` matches prior
-// behavior.
+// A ref resolves by its canonical name in the primary lookup. Two
+// categories legitimately have no assembled target and keep their
+// `UnresolvedRef`: external tokens (lexer-callback symbols, tracked in
+// `nodeMap.externals`) and the grammar's declared inline kinds
+// (`cfg.inline`) — the parser issues a node for neither, and every
+// consumer that walks `slot.values[*]` handles `isUnresolvedRef`. Any
+// other absent target is a dangling internal reference: a codegen gap, not
+// data, reported to the sink as `dangling-internal-ref` and refused by
+// `assertCompilation`. All three grammars carry zero.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveCollidingNames`

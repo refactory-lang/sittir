@@ -121,7 +121,7 @@ The spine; Tasks 7–9 land inside it.
 - Done: `evaluate` runs once per CLI generation (assert via a call counter in
   a test); `emit-gate.ts` is gone.
 
-### Task 7: Session-owned state, reentrant `evaluate()`
+### Task 7: Session-owned state, reentrant `evaluate()` — DONE except the accumulators (see Task 12)
 
 - `evaluate.ts:1100-1135`: `saveAndInjectDslGlobals` writes the DSL onto
   `globalThis`, awaits `importAndExtractGrammar`, restores in `finally` —
@@ -163,7 +163,9 @@ The spine; Tasks 7–9 land inside it.
 
 - `generate.ts:135` `emitNodeModel` precedes `:137` `hydrateSlotRefs`; the
   kindid-noderefs spec records 170 (rust) / 102 (python) `unresolved: true`
-  entries as a phase artifact of this ordering.
+  entries as a phase artifact of this ordering. Measured before the move:
+  rust 649, typescript 643, python 337; after: 0 / 0 / 0, equal to the Task
+  8 dangling baseline.
 - Move the serialization after hydration (inside Task 6's sealed model).
   **Not byte-identical for `node-model.json5`**: the `unresolved: true`
   entries are expected to drop to the Task 8 baseline. Check every reader
@@ -211,4 +213,28 @@ The spine; Tasks 7–9 land inside it.
   so staging both sides is its own design.
 - Done: kill the native build mid-run in a test harness; `git status`
   shows every generated file updated and the manifest present.
+
+---
+
+## Phase 5 — the accumulators
+
+### Task 12: Per-compile collectors replace the module-level accumulators
+
+- Left open by Task 7: `simplify.ts` `_slotGroupingDiagnostics` and
+  `node-map.ts` `_parseKindCollisionDiagnostics`, `_deriveShapeDiagnostics`,
+  `_assembleWarnings` are still module-level mutable collectors, drained by
+  `drainSlotGroupingDiagnostics` / `resetSlotGroupingDiagnostics`. They are
+  safe today only because `evaluate()` is serialized behind a mutex and
+  nothing awaits inside link → normalize → assemble.
+- Thread the `Compilation`'s `DiagnosticSink` through the `AssembledNode`
+  constructor hierarchy (a collector parameter on the constructors, or on
+  the `NodeMap` builder the constructors already receive), and delete the
+  four accumulators and their drain/reset functions.
+- `compile-concurrency.test.ts` does not discriminate (it passes with the
+  mutex removed). Replace it with a test that does — two `compileGrammar`
+  calls interleaved at an `await` inside `evaluate()` — or delete it; a test
+  that cannot fail is not kept.
+- Done: no `let` / mutable module-level collector under
+  `packages/codegen/src/compiler`; a concurrency test that fails without the
+  mutex.
 

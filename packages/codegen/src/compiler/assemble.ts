@@ -607,14 +607,29 @@ function resolveHiddenRuleContent(
 	}
 }
 
-export function hydrateSlotRefs(nodeMap: NodeMap): void {
+export interface HydrateSlotRefsConfig {
+	readonly inline?: ReadonlySet<string>;
+	readonly diagnostics?: DiagnosticSink;
+	readonly grammar?: string;
+}
+
+export function hydrateSlotRefs(nodeMap: NodeMap, cfg: HydrateSlotRefsConfig = {}): void {
 	const externals = nodeMap.externals ?? new Set<string>();
+	const inline = cfg.inline ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node instanceof AbstractAssembledCompound) {
-			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
+			hydrateSlots(kind, node.slots, nodeMap.nodes, externals, inline, cfg);
 		}
 		if (node instanceof AssembledSupertype) {
-			hydrateValues(node.subtypes, { parentKind: kind, siteLabel: 'subtypes', nodes: nodeMap.nodes, externals });
+			hydrateValues(node.subtypes, {
+				parentKind: kind,
+				siteLabel: 'subtypes',
+				nodes: nodeMap.nodes,
+				externals,
+				inline,
+				diagnostics: cfg.diagnostics,
+				grammar: cfg.grammar
+			});
 		}
 	}
 }
@@ -623,10 +638,20 @@ function hydrateSlots(
 	parentKind: string,
 	slots: readonly AssembledNonterminal[],
 	nodes: Map<string, AssembledNode>,
-	externals: ReadonlySet<string>
+	externals: ReadonlySet<string>,
+	inline: ReadonlySet<string>,
+	cfg: HydrateSlotRefsConfig
 ): void {
 	for (const slot of slots) {
-		hydrateValues(slot.values, { parentKind, siteLabel: `slot '${slot.name}'`, nodes, externals });
+		hydrateValues(slot.values, {
+			parentKind,
+			siteLabel: `slot '${slot.name}'`,
+			nodes,
+			externals,
+			inline,
+			diagnostics: cfg.diagnostics,
+			grammar: cfg.grammar
+		});
 	}
 }
 
@@ -635,10 +660,13 @@ interface HydrateValuesCtx {
 	readonly siteLabel: string;
 	readonly nodes: Map<string, AssembledNode>;
 	readonly externals: ReadonlySet<string>;
+	readonly inline: ReadonlySet<string>;
+	readonly diagnostics?: DiagnosticSink;
+	readonly grammar?: string;
 }
 
 function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
-	const { parentKind, siteLabel, nodes, externals } = ctx;
+	const { parentKind, siteLabel, nodes, externals, inline, diagnostics, grammar } = ctx;
 	for (const v of values) {
 		if (!isNodeRef(v)) continue;
 		if (!isUnresolvedRef(v.node)) continue;
@@ -649,16 +677,15 @@ function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx)
 			continue;
 		}
 		if (externals.has(targetName)) continue;
-		if (!process.env.SITTIR_QUIET) {
-			process.stderr.write(
-				`hydrateSlotRefs: unresolved slot reference — kind ` +
-					`'${parentKind}' ${siteLabel} references kind ` +
-					`'${targetName}' which is absent from the assembled ` +
-					`node map (likely parser-only leaf kind, alias collapse, ` +
-					`or override referencing an inlined kind). Leaving as ` +
-					`UnresolvedRef.\n`
-			);
-		}
+		if (inline.has(targetName)) continue;
+		diagnostics?.fail({
+			code: 'dangling-internal-ref',
+			message:
+				`hydrateSlotRefs: unresolved slot reference — kind '${parentKind}' ${siteLabel} ` +
+				`references kind '${targetName}' which is absent from the assembled node map, ` +
+				`is not external, and is not in the grammar's inline: array.`,
+			details: { grammar, parentKind, siteLabel, targetName }
+		});
 	}
 }
 

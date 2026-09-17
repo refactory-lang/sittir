@@ -1,11 +1,6 @@
-import { existsSync } from 'node:fs';
-import { evaluate } from './evaluate.ts';
-import { link } from './link.ts';
-import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
-import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
+import { compileGrammar, assertCompilation, type Compilation } from './compile.ts';
 
 import { emitGrammar } from '../emitters/grammar.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
@@ -17,15 +12,8 @@ import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles, withRootRole } from '../scm/extract-roles.ts';
-import { drainSlotGroupingDiagnostics } from './simplify.ts';
-import {
-	loadGrammarJsonInlineList,
-	loadGrammarJsonAliasMap,
-	buildInlinableKinds,
-	assertGrammarJsonInlineIntegrity
-} from './inline-sets.ts';
+import { loadGrammarJsonInlineList, assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
-import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 import { rootRuleName } from '../util/reachable-rules.ts';
@@ -70,130 +58,113 @@ export interface GenerateConfig {
 	include?: IncludeFilter;
 	strict?: boolean;
 	emitRenderModule?: boolean;
+	compilation?: Compilation;
 }
 
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
-	const diagnostics = new DiagnosticSink();
-
+	const unnamedChoiceSlotDiagnostics = new DiagnosticSink();
 	const removeUnnamedChoiceListener = addUnnamedChoiceListener((kind) => {
-		diagnostics.info({
+		unnamedChoiceSlotDiagnostics.info({
 			code: 'unnamed-choice-slot',
 			message: `Unnamed choice slot in kind '${kind ?? '(unknown)'}'`,
 			canProceed: true
 		});
 	});
 
-	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
+	try {
+		const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
+		const compilation =
+			cfg.compilation ?? (await compileGrammar({ grammar: cfg.grammar, include: cfg.include, generatedIdTables }));
+		const { raw, linked, normalized, nodeMap } = compilation;
+		tracePhaseRules('evaluate', raw.rules);
+		tracePhaseRules('link', linked.rules);
+		tracePhaseRules('normalize', normalized.rules);
+		traceAssembleNodes('assemble', nodeMap.nodes);
 
-	const overridesPath = resolveOverridesPath(cfg.grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
+		assertGrammarJsonInlineIntegrity(cfg.grammar);
+		const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
+		const inlineKinds = new Set(inlineKindsArray ?? []);
 
-	const raw = await evaluate(entryPath);
-	tracePhaseRules('evaluate', raw.rules);
-	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
+		assertCompilation(compilation);
 
-	const linked = link(raw, { include: cfg.include, generatedIdTables, diagnostics });
-	tracePhaseRules('link', linked.rules);
+		const compilerWarnings = compilation.diagnostics
+			.all()
+			.filter(
+				(d): d is CompilerDiagnostic => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
+			);
+		if (compilerWarnings.length > 0) {
+			process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
+		}
 
-	assertGrammarJsonInlineIntegrity(cfg.grammar);
-	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
-	const inlineKinds = new Set(inlineKindsArray ?? []);
+		const rootKind = rootRuleName(normalized.rules)!;
+		const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
+		const triviaKinds = grammarRoles.get('trivia');
 
-	const inlinableKinds = buildInlinableKinds(inlineKinds, linked);
+		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
-	const normalizeCtx = new NormalizeCtx({
-		grammar: linked,
-		inlineKinds: inlinableKinds,
-		diagnostics
-	});
-	const normalized = normalize(linked, normalizeCtx);
-	tracePhaseRules('normalize', normalized.rules);
+		const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
 
-	const nodeMap = assemble(
-		AssembleCtx.from(normalized, generatedIdTables, diagnostics, loadGrammarJsonAliasMap(cfg.grammar))
-	);
-	traceAssembleNodes('assemble', nodeMap.nodes);
+		nodeMap.scc = computeTransportSCC(nodeMap);
 
-	assertEmittable(nodeMap, diagnostics);
+		const emitted = emitAll({
+			grammar: cfg.grammar,
+			nodeMap,
+			generatedIdTables,
+			inlineKinds: [...inlineKinds],
+			synthesizedKinds: evaluateSynthesizedKinds,
+			strict: cfg.strict,
+			triviaKinds,
+			grammarRoles,
+			emitRenderModule: cfg.emitRenderModule,
+			expectTestFailures: raw.expectTestFailures,
+			options: raw.options,
+			visibleExternals: raw.visibleExternals
+		});
 
-	const compilerWarnings = diagnostics
-		.all()
-		.filter(
-			(d): d is CompilerDiagnostic => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
-		);
-	if (compilerWarnings.length > 0) {
-		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
+		const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
+		if (rootTypeName === undefined) {
+			throw new Error(
+				`generate: root kind '${grammarRoles.get('root')[0]}' has no NodeMap entry — cannot type the engine root`
+			);
+		}
+		const rootTreeTypeName = emitted.rootTreeTypeName;
+		if (rootTreeTypeName === undefined) {
+			throw new Error(
+				`generate: wrap emitter named no root surface for '${grammarRoles.get('root')[0]}' — cannot type engine.parse()`
+			);
+		}
+
+		const result: GeneratedFiles = {
+			grammar: emitGrammar({ grammar: cfg.grammar }),
+			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			types: emitted.types,
+			templates: emitted.templates,
+			factories: emitted.factories,
+			overlays: emitted.overlays,
+			factoriesBundle: emitted.factoriesBundle,
+			factoriesIndex: emitted.factoriesIndex,
+			wrap: emitted.wrap,
+			utils: emitted.utils,
+			from: emitted.from,
+			irNamespace: emitted.irNamespace,
+			consts: emitted.consts,
+			options: emitted.options,
+			index: emitIndex({ grammar: cfg.grammar, nodeMap }),
+			tests: emitted.tests,
+			config: emitConfig({ grammar: cfg.grammar }),
+			nodeModel,
+			is: emitted.is,
+			kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
+			nodeMap,
+			generatedIdTables,
+			renderModule: emitted.renderModule,
+			slotGroupingDiagnostics: compilation.slotGroupingDiagnostics
+		};
+		return result;
+	} finally {
+		removeUnnamedChoiceListener();
 	}
-
-	const rootKind = rootRuleName(normalized.rules)!;
-	const grammarRoles = withRootRole(extractGrammarRoles(cfg.grammar), rootKind);
-	const triviaKinds = grammarRoles.get('trivia');
-
-	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
-
-	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
-
-	hydrateSlotRefs(nodeMap);
-
-	nodeMap.scc = computeTransportSCC(nodeMap);
-
-	const emitted = emitAll({
-		grammar: cfg.grammar,
-		nodeMap,
-		generatedIdTables,
-		inlineKinds: [...inlineKinds],
-		synthesizedKinds: evaluateSynthesizedKinds,
-		strict: cfg.strict,
-		triviaKinds,
-		grammarRoles,
-		emitRenderModule: cfg.emitRenderModule,
-		expectTestFailures: raw.expectTestFailures,
-		options: raw.options,
-		visibleExternals: raw.visibleExternals
-	});
-
-	const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
-	if (rootTypeName === undefined) {
-		throw new Error(
-			`generate: root kind '${grammarRoles.get('root')[0]}' has no NodeMap entry — cannot type the engine root`
-		);
-	}
-	const rootTreeTypeName = emitted.rootTreeTypeName;
-	if (rootTreeTypeName === undefined) {
-		throw new Error(
-			`generate: wrap emitter named no root surface for '${grammarRoles.get('root')[0]}' — cannot type engine.parse()`
-		);
-	}
-
-	const result: GeneratedFiles = {
-		grammar: emitGrammar({ grammar: cfg.grammar }),
-		engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
-		renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
-		types: emitted.types,
-		templates: emitted.templates,
-		factories: emitted.factories,
-		overlays: emitted.overlays,
-		factoriesBundle: emitted.factoriesBundle,
-		factoriesIndex: emitted.factoriesIndex,
-		wrap: emitted.wrap,
-		utils: emitted.utils,
-		from: emitted.from,
-		irNamespace: emitted.irNamespace,
-		consts: emitted.consts,
-		options: emitted.options,
-		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
-		tests: emitted.tests,
-		config: emitConfig({ grammar: cfg.grammar }),
-		nodeModel,
-		is: emitted.is,
-		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
-		nodeMap,
-		generatedIdTables,
-		renderModule: emitted.renderModule,
-		slotGroupingDiagnostics: drainSlotGroupingDiagnostics()
-	};
-	removeUnnamedChoiceListener();
-	return result;
 }
 
 function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
