@@ -182,13 +182,13 @@ export function rebuildSpliceGenerated() {
 				}),
 			})),
 		}), ir.implItem.body.positiveClause.strict({
-			traitClause: [ir.scopedTypeIdentifier.strict({
+			traitClause: ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("error"),
 				}),
 				name: ir.identifier("Error"),
-			})],
+			}),
 			type: ir.identifier("SpliceError"),
 			declarationList: ir.declarationList.strict(),
 		}), ir.functionItem.strict({

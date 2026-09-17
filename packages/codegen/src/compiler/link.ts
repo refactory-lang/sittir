@@ -43,6 +43,7 @@ import {
 	isField
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
+import { runToFixpoint } from './fixpoint.ts';
 import {
 	collectGeneratedKindEntries,
 	findEntryForKindName,
@@ -779,21 +780,21 @@ function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): vo
 			r.id ?? body.id
 		);
 	};
-	for (let pass = 0; pass < 64; pass++) {
-		let changed = false;
-		for (const [name, rule] of Object.entries(rules)) {
-			const next = inlineOne(aliasedRefWalker.map(rule, inlineOne));
-			if (next !== rule) {
-				rules[name] = next;
-				changed = true;
+	runToFixpoint({
+		name: 'link.inlineReferences',
+		cap: 64,
+		diagnostics: ctx.diagnostics,
+		step: () => {
+			let changed = false;
+			for (const [name, rule] of Object.entries(rules)) {
+				const next = inlineOne(aliasedRefWalker.map(rule, inlineOne));
+				if (next !== rule) {
+					rules[name] = next;
+					changed = true;
+				}
 			}
+			return changed;
 		}
-		if (!changed) return;
-	}
-	ctx.diagnostics.warn({
-		code: 'inline-fixpoint-unreached',
-		message: 'link inlining did not reach a fixed point in 64 passes',
-		canProceed: true
 	});
 }
 

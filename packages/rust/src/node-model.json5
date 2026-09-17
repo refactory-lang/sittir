@@ -5464,12 +5464,70 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_expression"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -5483,12 +5541,35 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_type"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -5826,6 +5907,10 @@
       "forwardsTo": "arguments_elements",
       "factoryFields": [
         "arguments_elements"
+      ],
+      "bareAccepts": [
+        "_attributed_argument",
+        "arguments_elements"
       ]
     },
     {
@@ -5842,6 +5927,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "attributed_argument"
       ],
@@ -5854,6 +5940,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_argument"
       ]
     },
     {
@@ -6495,6 +6584,9 @@
       "forwardsTo": "attribute",
       "factoryFields": [
         "attribute"
+      ],
+      "bareAccepts": [
+        "attribute"
       ]
     },
     {
@@ -6529,6 +6621,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -6597,6 +6746,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -6916,6 +7122,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_block_comment_content",
+        "block_comment_doc_inner",
+        "block_comment_doc_outer"
       ]
     },
     {
@@ -6955,6 +7166,9 @@
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
         "doc"
+      ],
+      "bareAccepts": [
+        "_block_comment_content"
       ]
     },
     {
@@ -6994,6 +7208,9 @@
       "forwardsTo": "_block_comment_content",
       "factoryFields": [
         "doc"
+      ],
+      "bareAccepts": [
+        "_block_comment_content"
       ]
     },
     {
@@ -7155,6 +7372,29 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "qualified_type",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -8109,6 +8349,9 @@
       "forwardsTo": "block",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "block"
       ]
     },
     {
@@ -8349,6 +8592,10 @@
       "factoryShape": "forwarded",
       "forwardsTo": "label",
       "factoryFields": [
+        "label"
+      ],
+      "bareAccepts": [
+        "identifier",
         "label"
       ]
     },
@@ -8767,6 +9014,28 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -8808,6 +9077,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "block",
+        "if_expression"
       ]
     },
     {
@@ -9030,7 +9303,8 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "field_declaration_list",
-              "parseKind": "field_declaration_list"
+              "parseKind": "field_declaration_list",
+              "default": true
             },
             {
               "kind": "node-ref",
@@ -9102,6 +9376,10 @@
       "forwardsTo": "enum_variant_list_elements",
       "factoryFields": [
         "enum_variant_list_elements"
+      ],
+      "bareAccepts": [
+        "_attributed_enum_variant",
+        "enum_variant_list_elements"
       ]
     },
     {
@@ -9118,6 +9396,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.Trailing",
       "elementKinds": [
         "attributed_enum_variant"
       ],
@@ -9130,6 +9409,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_enum_variant"
       ]
     },
     {
@@ -9313,6 +9595,64 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "expression_statement_with_semi",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -9351,6 +9691,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -9474,6 +9871,9 @@
       "forwardsTo": "string_literal",
       "factoryFields": [
         "abi"
+      ],
+      "bareAccepts": [
+        "string_literal"
       ]
     },
     {
@@ -9621,6 +10021,10 @@
       "forwardsTo": "field_declaration_list_elements",
       "factoryFields": [
         "field_declaration_list_elements"
+      ],
+      "bareAccepts": [
+        "_attributed_field_declaration",
+        "field_declaration_list_elements"
       ]
     },
     {
@@ -9637,6 +10041,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.Trailing",
       "elementKinds": [
         "attributed_field_declaration"
       ],
@@ -9649,6 +10054,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_field_declaration"
       ]
     },
     {
@@ -9829,6 +10237,67 @@
       "forwardsTo": "field_initializer_list_elements",
       "factoryFields": [
         "initializers"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "base_field_initializer",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "field_initializer",
+        "field_initializer_list_elements",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "shorthand_field_initializer",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -9845,6 +10314,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "shorthand_field_initializer",
         "field_initializer",
@@ -9853,6 +10323,66 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "base_field_initializer",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "field_initializer",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "shorthand_field_initializer",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -10210,6 +10740,11 @@
       "factoryShape": "forwarded",
       "forwardsTo": "lifetimes",
       "factoryFields": [
+        "lifetimes"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "lifetime",
         "lifetimes"
       ]
     },
@@ -10959,6 +11494,9 @@
       "forwardsTo": "function_modifiers",
       "factoryFields": [
         "function_modifiers"
+      ],
+      "bareAccepts": [
+        "function_modifiers"
       ]
     },
     {
@@ -11004,6 +11542,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "scoped_type_identifier"
       ]
     },
     {
@@ -11703,7 +12245,8 @@
                 "shape": "arm",
                 "mount": "positiveClause",
                 "seated": true
-              }
+              },
+              "default": true
             },
             {
               "kind": "node-ref",
@@ -11841,6 +12384,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
+      ],
+      "bareAccepts": [
+        "generic_type",
+        "identifier",
+        "scoped_type_identifier"
       ]
     },
     {
@@ -11893,6 +12441,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "trait"
+      ],
+      "bareAccepts": [
+        "generic_type",
+        "identifier",
+        "scoped_type_identifier"
       ]
     },
     {
@@ -11969,7 +12522,8 @@
                 "shape": "arm",
                 "mount": "positiveClause",
                 "seated": true
-              }
+              },
+              "default": true
             },
             {
               "kind": "node-ref",
@@ -12148,6 +12702,9 @@
       "forwardsTo": "attribute",
       "factoryFields": [
         "attribute"
+      ],
+      "bareAccepts": [
+        "attribute"
       ]
     },
     {
@@ -12216,6 +12773,9 @@
       "forwardsTo": "identifier",
       "factoryFields": [
         "name"
+      ],
+      "bareAccepts": [
+        "identifier"
       ]
     },
     {
@@ -12560,6 +13120,9 @@
       "forwardsTo": "identifier",
       "factoryFields": [
         "name"
+      ],
+      "bareAccepts": [
+        "identifier"
       ]
     },
     {
@@ -12643,11 +13206,16 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "lifetime"
       ],
       "factoryShape": "elements",
       "factoryFields": [
+        "lifetime"
+      ],
+      "bareAccepts": [
+        "identifier",
         "lifetime"
       ]
     },
@@ -12726,6 +13294,13 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_line_doc_content",
+        "line_comment_content",
+        "line_comment_doc_inner",
+        "line_comment_doc_outer",
+        "line_comment_regular_dslash"
       ]
     },
     {
@@ -12778,6 +13353,9 @@
       "forwardsTo": "_line_doc_content",
       "factoryFields": [
         "doc"
+      ],
+      "bareAccepts": [
+        "_line_doc_content"
       ]
     },
     {
@@ -12817,6 +13395,9 @@
       "forwardsTo": "_line_doc_content",
       "factoryFields": [
         "doc"
+      ],
+      "bareAccepts": [
+        "_line_doc_content"
       ]
     },
     {
@@ -13298,11 +13879,15 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "macro_rule"
       ],
       "factoryShape": "elements",
       "factoryFields": [
+        "macro_rule"
+      ],
+      "bareAccepts": [
         "macro_rule"
       ]
     },
@@ -13610,6 +14195,9 @@
       "forwardsTo": "_match_block_arms",
       "factoryFields": [
         "match_block_arms"
+      ],
+      "bareAccepts": [
+        "_match_block_arms"
       ]
     },
     {
@@ -13977,6 +14565,39 @@
       "factoryShape": "direct",
       "factoryFields": [
         "pattern"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -14031,6 +14652,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "float_literal",
+        "integer_literal"
       ]
     },
     {
@@ -14178,6 +14803,39 @@
       "factoryShape": "direct",
       "factoryFields": [
         "right"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -14213,6 +14871,10 @@
       "forwardsTo": "ordered_field_declaration_list_elements",
       "factoryFields": [
         "attributes"
+      ],
+      "bareAccepts": [
+        "_attributed_ordered_field",
+        "ordered_field_declaration_list_elements"
       ]
     },
     {
@@ -14229,6 +14891,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "attributed_ordered_field"
       ],
@@ -14241,6 +14904,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_ordered_field"
       ]
     },
     {
@@ -14359,6 +15025,10 @@
       "forwardsTo": "parameters_elements",
       "factoryFields": [
         "parameters_elements"
+      ],
+      "bareAccepts": [
+        "_attributed_parameter",
+        "parameters_elements"
       ]
     },
     {
@@ -14375,6 +15045,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "attributed_parameter"
       ],
@@ -14387,6 +15058,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_parameter"
       ]
     },
     {
@@ -14421,6 +15095,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -14473,12 +15204,46 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_pattern"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "pattern"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -14606,6 +15371,28 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -14644,6 +15431,28 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -14805,6 +15614,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -14933,6 +15799,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "start"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -14971,6 +15894,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "end"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -15498,6 +16478,39 @@
       "factoryShape": "direct",
       "factoryFields": [
         "pattern"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -15550,6 +16563,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -15588,6 +16658,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -15626,6 +16753,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -15664,6 +16848,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -15842,6 +17083,28 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -15876,6 +17139,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -16550,6 +17870,39 @@
       "forwardsTo": "patterns",
       "factoryFields": [
         "patterns"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -17402,6 +18755,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "field_pattern",
         "remaining_field_pattern"
@@ -17409,6 +18763,11 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "field_pattern_named",
+        "field_pattern_shorthand",
+        "remaining_field_pattern"
       ]
     },
     {
@@ -17755,6 +19114,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "token_tree_brace",
+        "token_tree_bracket",
+        "token_tree_paren"
       ]
     },
     {
@@ -18410,6 +19774,9 @@
       "forwardsTo": "block",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "block"
       ]
     },
     {
@@ -18444,6 +19811,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "value"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {
@@ -18558,6 +19982,39 @@
       "forwardsTo": "tuple_pattern_elements",
       "factoryFields": [
         "elements"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -18574,6 +20031,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "_pattern",
         "closure_expression"
@@ -18581,6 +20039,39 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_wildcard_pattern",
+        "block",
+        "boolean_literal",
+        "captured_pattern",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "const_block",
+        "float_literal",
+        "generic_pattern",
+        "identifier",
+        "integer_literal",
+        "macro_invocation",
+        "mut_pattern",
+        "negative_literal",
+        "or_pattern_binary",
+        "or_pattern_prefix",
+        "patterns",
+        "range_pattern_prefix",
+        "range_pattern_with_left",
+        "raw_string_literal",
+        "ref_pattern",
+        "reference_pattern",
+        "remaining_field_pattern",
+        "scoped_identifier",
+        "slice_pattern",
+        "string_literal",
+        "struct_pattern",
+        "tuple_pattern",
+        "tuple_pattern_elements",
+        "tuple_struct_pattern"
       ]
     },
     {
@@ -18689,6 +20180,28 @@
       "forwardsTo": "_tuple_type_elements",
       "factoryFields": [
         "tuple_type_elements"
+      ],
+      "bareAccepts": [
+        "_primitive_type",
+        "_tuple_type_elements",
+        "abstract_type",
+        "array_type",
+        "bounded_type",
+        "dynamic_type",
+        "function_type",
+        "generic_type",
+        "higher_ranked_trait_bound",
+        "identifier",
+        "macro_invocation",
+        "metavariable",
+        "never_type",
+        "pointer_type_const",
+        "pointer_type_mut",
+        "reference_type",
+        "removed_trait_bound",
+        "scoped_type_identifier",
+        "tuple_type",
+        "unit_type"
       ]
     },
     {
@@ -18736,6 +20249,10 @@
       "forwardsTo": "type_arguments_elements",
       "factoryFields": [
         "type_arguments_elements"
+      ],
+      "bareAccepts": [
+        "_type_argument",
+        "type_arguments_elements"
       ]
     },
     {
@@ -18752,6 +20269,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "type_argument"
       ],
@@ -18764,6 +20282,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_type_argument"
       ]
     },
     {
@@ -19157,6 +20678,10 @@
       "forwardsTo": "type_parameters_elements",
       "factoryFields": [
         "type_parameters_elements"
+      ],
+      "bareAccepts": [
+        "_attributed_type_parameter",
+        "type_parameters_elements"
       ]
     },
     {
@@ -19173,6 +20698,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "attributed_type_parameter"
       ],
@@ -19185,6 +20711,9 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "_attributed_type_parameter"
       ]
     },
     {
@@ -19513,6 +21042,9 @@
       "forwardsTo": "block",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "block"
       ]
     },
     {
@@ -19650,6 +21182,11 @@
       "forwardsTo": "use_bounds_elements",
       "factoryFields": [
         "bounds"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "lifetime",
+        "use_bounds_elements"
       ]
     },
     {
@@ -19666,6 +21203,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "lifetime",
         "type_identifier"
@@ -19673,6 +21211,10 @@
       "factoryShape": "elements",
       "factoryFields": [
         "element"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "lifetime"
       ]
     },
     {
@@ -19689,6 +21231,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "self",
         "identifier",
@@ -19704,6 +21247,20 @@
       "factoryShape": "elements",
       "factoryFields": [
         "use_clause"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "scoped_use_list",
+        "self",
+        "super",
+        "use_as_clause",
+        "use_clauses",
+        "use_list",
+        "use_wildcard",
+        "use_wildcard_group"
       ]
     },
     {
@@ -19869,6 +21426,20 @@
       "forwardsTo": "use_clauses",
       "factoryFields": [
         "use_clauses"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "scoped_use_list",
+        "self",
+        "super",
+        "use_as_clause",
+        "use_clauses",
+        "use_list",
+        "use_wildcard",
+        "use_wildcard_group"
       ]
     },
     {
@@ -19903,6 +21474,15 @@
       "factoryShape": "forwarded",
       "forwardsTo": "use_wildcard_group",
       "factoryFields": [
+        "use_wildcard_group"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super",
         "use_wildcard_group"
       ]
     },
@@ -19973,6 +21553,14 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super"
       ]
     },
     {
@@ -20099,6 +21687,17 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super",
+        "visibility_modifier_group",
+        "visibility_modifier_pub",
+        "visibility_modifier_pub_in_path"
       ]
     },
     {
@@ -20160,6 +21759,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super",
+        "visibility_modifier_pub_in_path"
       ]
     },
     {
@@ -20199,6 +21807,16 @@
       "forwardsTo": "visibility_modifier_group",
       "factoryFields": [
         "visibility_modifier_group"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super",
+        "visibility_modifier_group",
+        "visibility_modifier_pub_in_path"
       ]
     },
     {
@@ -20272,6 +21890,14 @@
       "factoryShape": "direct",
       "factoryFields": [
         "path"
+      ],
+      "bareAccepts": [
+        "crate",
+        "identifier",
+        "metavariable",
+        "scoped_identifier",
+        "self",
+        "super"
       ]
     },
     {
@@ -20306,6 +21932,10 @@
       "factoryShape": "forwarded",
       "forwardsTo": "where_predicates",
       "factoryFields": [
+        "where_predicates"
+      ],
+      "bareAccepts": [
+        "where_predicate",
         "where_predicates"
       ]
     },
@@ -20453,11 +22083,15 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "where_predicate"
       ],
       "factoryShape": "elements",
       "factoryFields": [
+        "where_predicate"
+      ],
+      "bareAccepts": [
         "where_predicate"
       ]
     },
@@ -20595,6 +22229,63 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_range_expression_bare",
+        "array_expression_list",
+        "array_expression_semi",
+        "assignment_expression",
+        "async_block",
+        "await_expression",
+        "binary_expression",
+        "block",
+        "boolean_literal",
+        "break_expression",
+        "call_expression",
+        "char_literal",
+        "closure_expression_block",
+        "closure_expression_expr",
+        "compound_assignment_expr",
+        "const_block",
+        "continue_expression",
+        "field_expression",
+        "float_literal",
+        "for_expression",
+        "gen_block",
+        "generic_function",
+        "identifier",
+        "if_expression",
+        "index_expression",
+        "integer_literal",
+        "label",
+        "loop_expression",
+        "macro_invocation",
+        "match_expression",
+        "metavariable",
+        "parenthesized_expression",
+        "range_expression",
+        "range_expression_binary",
+        "range_expression_postfix",
+        "range_expression_prefix",
+        "raw_string_literal",
+        "reference_expression_bare",
+        "reference_expression_mut",
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut",
+        "return_expression",
+        "scoped_identifier",
+        "self",
+        "string_literal",
+        "struct_expression",
+        "try_block",
+        "try_expression",
+        "tuple_expression",
+        "type_cast_expression",
+        "unary_expression",
+        "unit_expression",
+        "unsafe_block",
+        "while_expression",
+        "yield_expression"
       ]
     },
     {

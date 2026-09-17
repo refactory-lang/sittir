@@ -299,6 +299,8 @@ Print the strict factory source that rebuilds a source file
 - `-f, --file <path>` — Source file to rebuild
 - `-e, --export <name>` — Exported function name (default: rebuild<Basename>)
 - `-o, --out <path>` — Write the module here instead of stdout
+- `-s, --surface <strict|loose>` — Construction surface to spell: strict calls, or the loose contract (default: `strict`)
+- `-n, --nested <calls|configs>` — On the loose surface, nested compounds as builder calls or config objects (default: `calls`)
 
 **Example**
 

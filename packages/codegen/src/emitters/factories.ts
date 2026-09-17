@@ -1249,7 +1249,7 @@ export function declaredSeparatorDefault(
 	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
-function declaredDelimiterDefault(node: AssembledList): string {
+export function declaredDelimiterDefault(node: AssembledList): string {
 	return node.resolvedDelimiterArm ?? 'Delimiter.None';
 }
 

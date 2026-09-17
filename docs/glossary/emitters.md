@@ -7873,6 +7873,11 @@ two agree. The delimiter is stamped the same way, `Delimiter.None` included.
  */
 ```
 
+`defaultDelimiter` is the `Delimiter` member the list's factory stamps when
+a caller gives none (`declaredDelimiterDefault`, the same expression the
+factory emitter prints), so a tool can tell a read delimiter that merely
+restates the default from one that must be spelled.
+
 ### `packages/codegen/src/emitters/node-model.ts::polymorphVariants`
 
 ```text
@@ -11083,6 +11088,20 @@ the routes the overlay emits from the same id tables. `emitNodeModel`
 passes the generator's `generatedIdTables` through for that reason.
 
 `variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.
+
+Each kind that takes a bare input on the loose surface also carries
+`bareAccepts`: the kind names its bare input admits, transitively, read from
+the same `bareAcceptClosure` the from emitter turns into `_BARE_ACCEPTS`.
+A tool that has to predict what the coercer wraps (the loose rebuild
+printer) reads the stamp rather than re-walking wrappers and lists. The
+kind entries come from the same `collectKindEntries` call the from emitter
+makes, so the two closures cannot differ.
+
+### `packages/codegen/src/emitters/node-model.ts::serializeValue`
+
+A slot value declared with `arm.default` serializes `default: true`, the
+one fact the loose surface's bare-value hoist reads; every other value
+omits the key.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::module`
 

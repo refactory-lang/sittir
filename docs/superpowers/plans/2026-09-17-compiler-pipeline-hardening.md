@@ -196,6 +196,16 @@ The spine; Tasks 7–9 land inside it.
 - Done: no `console.warn` in the compiler passes; a fixture that cycles fails
   compilation by pass name.
 
+**Completion note:** measured iterations-to-convergence across all three real
+grammars (rust, typescript, python) via a one-shot instrumented run, reverted
+after capturing the numbers. Max observed passes per helper, against its cap:
+`flatten.factorChoiceArmsToFixpoint` 2/16, `simplify.simplifyToFixpoint` 2/16,
+`normalize.iterateInliningToFixedPoint` 1/4, `normalize.inlineHiddenSeqRefs`
+1/8, `link.inlineReferences` 3/64. Every pass converges in at most 3 passes —
+well under its cap in every case (smallest margin is 4x, on
+`iterateInliningToFixedPoint`) — so per the criterion above, the worklist
+rewrite is deferred and no pass needs a monotone bound.
+
 ---
 
 ## Phase 4 — write ordering

@@ -5939,6 +5939,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -5987,6 +6032,25 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "abstract_class_declaration",
+        "ambient_declaration",
+        "ambient_declaration_global",
+        "ambient_declaration_module",
+        "class_declaration",
+        "enum_declaration",
+        "function_declaration",
+        "function_signature",
+        "generator_function_declaration",
+        "import_alias",
+        "interface_declaration",
+        "internal_module",
+        "lexical_declaration",
+        "module",
+        "statement_block",
+        "type_alias_declaration",
+        "variable_declaration"
       ]
     },
     {
@@ -6022,6 +6086,9 @@
       "forwardsTo": "statement_block",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "statement_block"
       ]
     },
     {
@@ -6317,6 +6384,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -6458,6 +6570,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "parameter"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "identifier"
       ]
     },
     {
@@ -6591,6 +6707,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "this",
+        "type_predicate"
       ]
     },
     {
@@ -6626,6 +6747,12 @@
       "forwardsTo": "asserts",
       "factoryFields": [
         "asserts"
+      ],
+      "bareAccepts": [
+        "asserts",
+        "identifier",
+        "this",
+        "type_predicate"
       ]
     },
     {
@@ -6944,6 +7071,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -7453,6 +7632,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call"
       ]
     },
     {
@@ -8562,6 +8746,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "class_heritage_extends_clause",
+        "implements_clause"
       ]
     },
     {
@@ -8753,6 +8941,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -9284,6 +9524,9 @@
       "factoryShape": "direct",
       "factoryFields": [
         "terminator"
+      ],
+      "bareAccepts": [
+        "_automatic_semicolon"
       ]
     },
     {
@@ -9375,6 +9618,12 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "decorator_parenthesized_expression",
+        "identifier"
       ]
     },
     {
@@ -9568,6 +9817,11 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "identifier"
       ]
     },
     {
@@ -9614,6 +9868,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -9798,6 +10097,48 @@
       "factoryShape": "direct",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "_automatic_semicolon",
+        "abstract_class_declaration",
+        "ambient_declaration",
+        "ambient_declaration_global",
+        "ambient_declaration_module",
+        "break_statement",
+        "class_declaration",
+        "continue_statement",
+        "debugger_statement",
+        "do_statement",
+        "empty_statement",
+        "enum_declaration",
+        "export_statement_default_declaration",
+        "export_statement_default_from",
+        "export_statement_equals_export",
+        "export_statement_namespace_export",
+        "export_statement_type_export",
+        "expression_statement",
+        "for_in_statement",
+        "for_statement",
+        "function_declaration",
+        "function_signature",
+        "generator_function_declaration",
+        "if_statement",
+        "import_alias",
+        "import_statement",
+        "interface_declaration",
+        "internal_module",
+        "labeled_statement",
+        "lexical_declaration",
+        "module",
+        "return_statement",
+        "statement_block",
+        "switch_statement",
+        "throw_statement",
+        "try_statement",
+        "type_alias_declaration",
+        "variable_declaration",
+        "while_statement",
+        "with_statement"
       ]
     },
     {
@@ -9941,6 +10282,62 @@
       "forwardsTo": "enum_body_elements",
       "factoryFields": [
         "enum_body_elements"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "computed_property_name",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "enum_assignment",
+        "enum_body_elements",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "private_property_identifier",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -9957,6 +10354,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.Trailing",
       "elementKinds": [
         "property_identifier",
         "private_property_identifier",
@@ -9968,6 +10366,61 @@
       "factoryShape": "elements",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "computed_property_name",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "enum_assignment",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "private_property_identifier",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -10157,6 +10610,10 @@
       "forwardsTo": "export_specifiers",
       "factoryFields": [
         "export_specifiers"
+      ],
+      "bareAccepts": [
+        "export_specifier",
+        "export_specifiers"
       ]
     },
     {
@@ -10279,11 +10736,15 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "export_specifier"
       ],
       "factoryShape": "elements",
       "factoryFields": [
+        "export_specifier"
+      ],
+      "bareAccepts": [
         "export_specifier"
       ]
     },
@@ -10433,6 +10894,26 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "abstract_class_declaration",
+        "ambient_declaration",
+        "ambient_declaration_global",
+        "ambient_declaration_module",
+        "class_declaration",
+        "enum_declaration",
+        "export_statement_default_declaration_default_kw_value",
+        "function_declaration",
+        "function_signature",
+        "generator_function_declaration",
+        "import_alias",
+        "interface_declaration",
+        "internal_module",
+        "lexical_declaration",
+        "module",
+        "statement_block",
+        "type_alias_declaration",
+        "variable_declaration"
       ]
     },
     {
@@ -10757,6 +11238,11 @@
       "forwardsTo": "string",
       "factoryFields": [
         "source"
+      ],
+      "bareAccepts": [
+        "string",
+        "string_double",
+        "string_single"
       ]
     },
     {
@@ -11196,6 +11682,9 @@
       "forwardsTo": "statement_block",
       "factoryFields": [
         "body"
+      ],
+      "bareAccepts": [
+        "statement_block"
       ]
     },
     {
@@ -11242,6 +11731,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -11870,6 +12404,11 @@
       "forwardsTo": "formal_parameters_elements",
       "factoryFields": [
         "formal_parameters_elements"
+      ],
+      "bareAccepts": [
+        "formal_parameters_elements",
+        "optional_parameter",
+        "required_parameter"
       ]
     },
     {
@@ -11886,6 +12425,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "required_parameter",
         "optional_parameter"
@@ -11893,6 +12433,10 @@
       "factoryShape": "elements",
       "factoryFields": [
         "formal_parameter"
+      ],
+      "bareAccepts": [
+        "optional_parameter",
+        "required_parameter"
       ]
     },
     {
@@ -13355,6 +13899,15 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "import_clause_default_import",
+        "import_specifier_as",
+        "import_specifier_name",
+        "import_specifiers",
+        "named_imports",
+        "namespace_import"
       ]
     },
     {
@@ -13471,6 +14024,14 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "import_specifier_as",
+        "import_specifier_name",
+        "import_specifiers",
+        "named_imports",
+        "namespace_import"
       ]
     },
     {
@@ -13738,12 +14299,17 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "import_specifier"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "import_specifier"
+      ],
+      "bareAccepts": [
+        "import_specifier_as",
+        "import_specifier_name"
       ]
     },
     {
@@ -14264,6 +14830,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -14940,6 +15551,17 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_number",
+        "false",
+        "null",
+        "number",
+        "string",
+        "string_double",
+        "string_single",
+        "true",
+        "undefined"
       ]
     },
     {
@@ -16006,6 +16628,11 @@
       "forwardsTo": "import_specifiers",
       "factoryFields": [
         "import_specifiers"
+      ],
+      "bareAccepts": [
+        "import_specifier_as",
+        "import_specifier_name",
+        "import_specifiers"
       ]
     },
     {
@@ -16047,6 +16674,12 @@
       "factoryShape": "direct",
       "factoryFields": [
         "module_export_name"
+      ],
+      "bareAccepts": [
+        "identifier",
+        "string",
+        "string_double",
+        "string_single"
       ]
     },
     {
@@ -16082,6 +16715,9 @@
       "forwardsTo": "identifier",
       "factoryFields": [
         "name"
+      ],
+      "bareAccepts": [
+        "identifier"
       ]
     },
     {
@@ -16352,6 +16988,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -16674,6 +17362,7 @@
       "hasNonterminalSeparator": true,
       "leadingDelimiter": "optional",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.Trailing",
       "elementKinds": [
         "export_statement",
         "property_signature",
@@ -16685,6 +17374,19 @@
       "factoryShape": "elements",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "call_signature",
+        "construct_signature",
+        "export_statement_default_declaration",
+        "export_statement_default_from",
+        "export_statement_equals_export",
+        "export_statement_namespace_export",
+        "export_statement_type_export",
+        "index_signature_colon",
+        "index_signature_mapped_type_clause",
+        "method_signature",
+        "property_signature"
       ]
     },
     {
@@ -16731,6 +17433,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -16765,6 +17512,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -17032,6 +17824,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -17302,6 +18139,14 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "identifier",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "sequence_expression"
       ]
     },
     {
@@ -17340,6 +18185,9 @@
       "factoryShape": "forwarded",
       "forwardsTo": "sequence_expression",
       "factoryFields": [
+        "sequence_expression"
+      ],
+      "bareAccepts": [
         "sequence_expression"
       ]
     },
@@ -17434,6 +18282,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -18365,6 +19258,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -18699,6 +19637,60 @@
       "factoryShape": "direct",
       "factoryFields": [
         "lhs_expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "array_pattern",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "object_pattern",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -18733,6 +19725,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -19004,6 +20041,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -19207,6 +20296,10 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "string_double",
+        "string_single"
       ]
     },
     {
@@ -19770,6 +20863,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {
@@ -19811,6 +20956,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -20189,6 +21379,51 @@
       "forwardsTo": "tuple_type_members",
       "factoryFields": [
         "tuple_type_members"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -20205,6 +21440,7 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "required_parameter",
         "optional_parameter",
@@ -20215,6 +21451,51 @@
       "factoryShape": "elements",
       "factoryFields": [
         "tuple_type_member"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -20369,6 +21650,51 @@
       "factoryShape": "direct",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -20404,6 +21730,52 @@
       "forwardsTo": "types",
       "factoryFields": [
         "types"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "types",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -20603,6 +21975,10 @@
       "forwardsTo": "type_parameters_elements",
       "factoryFields": [
         "type_parameters_elements"
+      ],
+      "bareAccepts": [
+        "type_parameter",
+        "type_parameters_elements"
       ]
     },
     {
@@ -20619,11 +21995,15 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "type_parameter"
       ],
       "factoryShape": "elements",
       "factoryFields": [
+        "type_parameter"
+      ],
+      "bareAccepts": [
         "type_parameter"
       ]
     },
@@ -20729,6 +22109,9 @@
       "forwardsTo": "type_predicate",
       "factoryFields": [
         "type_predicate"
+      ],
+      "bareAccepts": [
+        "type_predicate"
       ]
     },
     {
@@ -20798,6 +22181,14 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ],
+      "bareAccepts": [
+        "_type_query_call_expression",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_subscript_expression",
+        "identifier",
+        "this"
       ]
     },
     {
@@ -20826,12 +22217,58 @@
       "hasNonterminalSeparator": false,
       "leadingDelimiter": "none",
       "trailingDelimiter": "optional",
+      "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
         "type"
       ],
       "factoryShape": "elements",
       "factoryFields": [
         "type"
+      ],
+      "bareAccepts": [
+        "_number",
+        "_type_query_call_expression",
+        "_type_query_call_expression_in_type_annotation",
+        "_type_query_instantiation_expression",
+        "_type_query_member_expression",
+        "_type_query_member_expression_in_type_annotation",
+        "_type_query_subscript_expression",
+        "array_type",
+        "conditional_type",
+        "constructor_type",
+        "existential_type",
+        "false",
+        "flow_maybe_type",
+        "function_type",
+        "generic_type",
+        "identifier",
+        "index_type_query",
+        "infer_type",
+        "intersection_type",
+        "literal_type",
+        "lookup_type",
+        "nested_type_identifier",
+        "null",
+        "number",
+        "object_type",
+        "optional_tuple_parameter",
+        "optional_type",
+        "parenthesized_type",
+        "predefined_type",
+        "readonly_type",
+        "rest_type",
+        "string",
+        "string_double",
+        "string_single",
+        "template_literal_type",
+        "this",
+        "true",
+        "tuple_parameter",
+        "tuple_type",
+        "tuple_type_members",
+        "type_query",
+        "undefined",
+        "union_type"
       ]
     },
     {
@@ -21558,6 +22995,58 @@
       "factoryShape": "direct",
       "factoryFields": [
         "expression"
+      ],
+      "bareAccepts": [
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "call_expression",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "decorator_call_expression",
+        "decorator_member_expression",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "new_expression",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "string",
+        "string_double",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression"
       ]
     },
     {

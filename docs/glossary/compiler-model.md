@@ -1706,19 +1706,45 @@ flatten and simplify joins use.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::_parseKindCollisionDiagnostics`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembleDiagnosticsCollector`
 
 ```text
-// ============================================================================
-// 1. Diagnostics & module state
-// ============================================================================
-```
+The assemble phase's three diagnostic streams (parse-kind collisions,
+derive-shape diagnostics, assemble warnings) live on one collector per
+`assemble()` call, never at module scope, so two grammars compiling in one
+process cannot see each other's. One `AssembleDiagnosticsCollector`
+instance is born with each `AssembleCtx` (`ctx.assembleDiagnostics`) and
+threaded down through `CompoundOpts.assembleDiagnostics` →
+`DeriveCtx.diagnostics` — the same `ctx: KindedDeriveCtx` object
+`AbstractAssembledCompound`'s constructor already builds for `deriveSlots`/
+`resolveParseKindCollisions` — reaching collect-slots.ts's `resolveMember`/
+`buildSlot`/`recordUnclassifiableShape` and node-map.ts's own
+`auditDerivationShape`/`resolveParseKindCollisionsInSlot` call sites.
 
-### `packages/codegen/src/compiler/model/node-map.ts::_deriveShapeDiagnostics`
+`AssembledList` is the one class that does NOT forward this transparently:
+its constructor builds its OWN opts object for the `super()` call into
+`AbstractAssembledCompound` rather than passing its incoming `opts` through
+verbatim, so `assembleDiagnostics` must be re-added there explicitly
+(`assembleDiagnostics: ctx?.diagnostics`) — omitting it silently drops every
+assemble-time diagnostic for list-classified kinds (list elements are
+choice-shaped as often as branch/envelope kinds are, so this is not a
+theoretical case; a real grammar's `enum_body_elements` list caught it).
 
-```text
-// ---------------------------------------------------------------------------
-// Derive-shape diagnostic accumulator (mirrors parseKindCollisions pattern)
+`DedupedCollector<T>` is the shared generic underneath: a keyed
+record-once-then-push, replacing the three near-identical
+key/seen-Set/push trios. `record()` returns whether the item was newly
+added (not already deduped), which the slot-grouping caller
+(`simplify.ts`'s `computeSimplifiedRules`) uses to gate a one-time
+`ctx.diagnostics.info()` emission per distinct diagnostic.
+
+The slot-grouping accumulator (`simplify.ts`, a different phase/file)
+follows the same shape but is NOT part of `AssembleDiagnosticsCollector` —
+it must survive across two separate top-level calls in one compile
+(`normalizeGrammar` populates it, `collectGrammarDiagnosticsForGrammar`
+reads it back out after `assemble()` runs), so its owner is
+`collectGrammarDiagnosticsForGrammar` itself, threaded down through
+`NormalizeCtx.slotGroupingCollector` → `SimplifyCtx.slotGroupingCollector`.
+```rn)
 // ---------------------------------------------------------------------------
 ```
 

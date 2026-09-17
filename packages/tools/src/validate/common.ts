@@ -1073,6 +1073,13 @@ export interface LoadedNodeModel {
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly variantRoutes: Readonly<Record<string, string>>;
+	readonly subtypes: Record<string, readonly string[]>;
+	readonly slotRequired: Record<string, Record<string, boolean>>;
+	readonly slotMultiple: Record<string, Record<string, boolean>>;
+	readonly slotDefaults: Record<string, Record<string, string>>;
+	readonly bareAccepts: Record<string, readonly string[]>;
+	readonly forwardsTo: Record<string, string>;
+	readonly listDefaults: Record<string, string>;
 }
 
 /** Minimal shape of the parsed node-model.json5 — only the fields the
@@ -1087,13 +1094,19 @@ interface ParsedNodeModel {
 		slots?: ReadonlyArray<{
 			name: string;
 			propertyName: string;
+			required?: boolean;
+			multiple?: boolean;
 			kinds?: readonly string[];
 			storage?: string;
-			values?: ReadonlyArray<{ seat?: Seat }>;
+			values?: ReadonlyArray<{ seat?: Seat; name?: string; default?: true }>;
 		}>;
 		elementSeats?: readonly Seat[];
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
+		subtypes?: readonly string[];
+		bareAccepts?: readonly string[];
+		forwardsTo?: string;
+		defaultDelimiter?: string;
 	}>;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1113,7 +1126,14 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	factorySlots: {},
 	fieldAliasMap: {},
 	polymorphVariants: {},
-	variantRoutes: {}
+	variantRoutes: {},
+	subtypes: {},
+	slotRequired: {},
+	slotMultiple: {},
+	slotDefaults: {},
+	bareAccepts: {},
+	forwardsTo: {},
+	listDefaults: {}
 };
 
 /**
@@ -1150,6 +1170,13 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const slotStorage: Record<string, Record<string, string>> = {};
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const factoryFields: Record<string, readonly string[]> = {};
+	const subtypes: Record<string, readonly string[]> = {};
+	const slotRequired: Record<string, Record<string, boolean>> = {};
+	const slotMultiple: Record<string, Record<string, boolean>> = {};
+	const slotDefaults: Record<string, Record<string, string>> = {};
+	const bareAccepts: Record<string, readonly string[]> = {};
+	const forwardsTo: Record<string, string> = {};
+	const listDefaults: Record<string, string> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
@@ -1157,15 +1184,26 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
 			for (const slot of node.slots) {
-				for (const value of slot.values ?? []) if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
+				for (const value of slot.values ?? []) {
+					if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
+					if (value.default === true && value.name !== undefined) {
+						(slotDefaults[node.kind] ??= {})[slot.propertyName] = value.name;
+					}
+				}
 			}
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
+			slotRequired[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.required === true]));
+			slotMultiple[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.multiple === true]));
 			slotStorage[node.kind] = Object.fromEntries(
 				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.propertyName, slot.storage]]))
 			);
 		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;
 		if (node.factoryFields !== undefined) factoryFields[node.kind] = node.factoryFields;
+		if (node.subtypes !== undefined) subtypes[node.kind] = node.subtypes;
+		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
+		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
+		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 	}
 	return {
 		irKeys,
@@ -1179,7 +1217,14 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		factorySlots: model.factorySlots ?? {},
 		fieldAliasMap: model.fieldAliasMap ?? {},
 		polymorphVariants: model.polymorphVariants ?? {},
-		variantRoutes: model.variantRoutes ?? {}
+		variantRoutes: model.variantRoutes ?? {},
+		subtypes,
+		slotRequired,
+		slotMultiple,
+		slotDefaults,
+		bareAccepts,
+		forwardsTo,
+		listDefaults
 	};
 }
 
@@ -1917,9 +1962,11 @@ function carryElementTrivia(element: ReadNodeLike, config: Record<string, unknow
  * parent is flattened when the seat merges: its keys join the parent's, and
  * a nested arm inside it extends the route, since a variant minted inside
  * another variant's rule is spelled inside it (`withLeft.withRight`). A seat
- * the model marks `seated` — a key it would merge is also the parent's —
- * keeps its config whole under the slot; any other child hands the route
- * its own factory arguments under the slot.
+ * the model marks `seated` keeps its value whole under the slot — a
+ * config-shaped child its config, a one-argument child (direct, or forwarded
+ * to a non-spread target) its one argument — which is what the mount route
+ * hands the child's builder; any other child hands the route its own factory
+ * arguments under the slot, spread into the builder.
  */
 function projectArmSlot(
 	seat: Seat,
@@ -1960,7 +2007,16 @@ function projectArmSlot(
 		return setRoute(mount, undefined);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);
-	out[key] = args;
+	if (seat.seated === true) {
+		if (args.length !== 1) {
+			throw new Error(
+				`ir surface: seated arm ${seat.kind} on ${parentKind} takes ${args.length} arguments; a seated arm takes one`
+			);
+		}
+		out[key] = args[0];
+	} else {
+		out[key] = args;
+	}
 	setRoute(mount, args);
 }
 

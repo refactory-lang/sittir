@@ -229,6 +229,60 @@ Deliberately outside the contract:
 
 Each open row below names the rule it falls under.
 
+### The loose rebuild is the loose gate
+
+`sittir tool emit-factory-source --surface loose` prints the same file the
+strict emitter prints, through the bundle calls (`ir.<key>(…)`, never
+`.coerce`), with every coercion the contract admits spelled bare: a text
+leaf as its string where the slot admits one pattern kind (rule 1), a list
+envelope as its array where the slot's one branch kind or its declared
+default is the envelope (rules 4 and 6), a single-slot wrapper dropped
+where exactly one arm admits its inner value (rule 5), an empty config as
+a bare call (rule 7). `--nested configs` prints nested compounds as config
+objects, keyless at a one-kind slot and `kind: TSKindId.<Member>` elsewhere
+(rule 3); the default keeps the builder calls. Each grammar's loose rebuild
+is checked in beside the strict one (`examples/<n>-dogfood-<g>-loose.generated.ts`,
+`pnpm run gen:examples`), type-checked under the same ceiling, and held by
+the package verify tests to the target's tree — so a coercion the runtime
+refuses, or a spelling the loose types reject, is a diff and a count here.
+
+The printer decides each spelling from stamped facts (`node-model.json5`:
+`bareAccepts`, a slot value's `default`, a list's `defaultDelimiter`, the
+supertypes' `subtypes`), never by re-walking the grammar.
+
+Found while writing it: the emitted `_leafRegistry` carries no `pattern`
+for pattern leaves, so `_resolveLeafString` never tests a string against a
+leaf's pattern — a bare string resolves to the first pattern kind in the
+slot's leaf order whatever the text. Rule 1's "matched by the leaf's own
+pattern" is the contract; the runtime implements "first pattern kind". The
+printer spells a leaf bare only where the slot admits one pattern kind, so
+the rebuild stays honest either way; closing the gap means stamping each
+pattern leaf's regex into the registry (the model already carries it).
+
+What the three loose rebuilds measure today (rust `splice.rs`, typescript
+`format.ts`, python `python-4space.py`): all three render, re-parse to the
+target's tree and render the target's bytes. The type ceiling holds six
+errors, all on rust and all one gap:
+
+- **The loose list call does not type its options bag.** `ir.enumVariantListElements({ delimiter: Delimiter.Trailing }, …)`
+  builds correctly at runtime — the coercer hands the bag through — but
+  the loose overload admits elements only, so every list whose read
+  delimiter is not the stamped default is a type error. This is L2's
+  loose half, closed by the ergonomics page's item 2 (options first and
+  optional on the loose call too).
+
+Two spellings the printer deliberately does not attempt, because the
+runtime refuses them:
+
+- A bare kind id is never hoisted through a single-slot wrapper (rule 5
+  names node data and `kind:` objects, not ids): typescript's
+  `returnType: TSKindId.StringKeyword` lands in the slot unwrapped and
+  fails at render, where rust's `-> u32` happens to work only because its
+  `_type` slot admits the keyword directly.
+- Elements inside a bare array, and inside a tuple seat's array, keep
+  their calls: `_wrapArray` passes a string through uncoerced, and only a
+  repeated slot resolves per element.
+
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 
 A discriminated config accepts the raw grammar string but not the numeric enum

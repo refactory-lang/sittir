@@ -24,7 +24,9 @@ import {
 	separatorFactsEqual
 } from '../dsl/rule-patterns.ts';
 import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
-import { computeSimplifiedRules, resetSlotGroupingDiagnostics, SimplifyCtx } from './simplify.ts';
+import { computeSimplifiedRules, SimplifyCtx } from './simplify.ts';
+import { DedupedCollector } from './model/node-map.ts';
+import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { attributeBuilder } from '../dsl/builders.ts';
 import {
 	type InlineRefsCtx,
@@ -33,15 +35,23 @@ import {
 	type LeafMultiplicity
 } from '../dsl/rule-transforms.ts';
 import { flattenRules } from './flatten.ts';
+import { runToFixpoint } from './fixpoint.ts';
 import { withAttrsFrom, withKindFacts, rebaseRuleIds } from '../dsl/rule-attrs.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
 export class NormalizeCtx extends BaseCtx<'link'> {
 	readonly inlineKinds: ReadonlySet<string>;
-	constructor(init: BaseCtxInit<'link'> & { inlineKinds?: ReadonlySet<string> }) {
+	readonly slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
+	constructor(
+		init: BaseCtxInit<'link'> & {
+			inlineKinds?: ReadonlySet<string>;
+			slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
+		}
+	) {
 		super(init);
 		this.inlineKinds = init.inlineKinds ?? new Set();
+		this.slotGroupingCollector = init.slotGroupingCollector;
 	}
 
 	get rules(): Record<string, Rule<'link'>> {
@@ -246,15 +256,18 @@ function applyNormalizationPasses(
 export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
 
-	resetSlotGroupingDiagnostics();
 	const preserveKinds = deriveComplexAliasTargetHidden(linked.rules);
 	const rules = applyNormalizationPasses(linked.rules, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
-	const normalizedRules = flattenRules(rules, linked.wordMatcher);
-	for (let pass = 0; pass < 8; pass++) {
-		const keepRef = computeKeepRef(normalizedRules);
-		const changed = inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
-		if (!changed) break;
-	}
+	const normalizedRules = flattenRules(rules, linked.wordMatcher, ctx?.diagnostics);
+	runToFixpoint({
+		name: 'normalize.inlineHiddenSeqRefs',
+		cap: 8,
+		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+		step: () => {
+			const keepRef = computeKeepRef(normalizedRules);
+			return inlineHiddenSeqRefs(normalizedRules, ctx, keepRef);
+		}
+	});
 
 	const variantSkip = new Set<string>();
 	for (const [parentKind, children] of linked.variantChildren ?? []) {
@@ -286,7 +299,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			wordMatcher: ctx?.wordMatcher,
 			inlineKinds,
 			polymorphSkipExtra: variantSkip,
-			builder: attributeBuilder
+			builder: attributeBuilder,
+			slotGroupingCollector: ctx?.slotGroupingCollector
 		})
 	);
 
@@ -297,7 +311,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 			ctx,
 			preserveKinds.size > 0 ? preserveKinds : undefined
 		);
-		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher);
+		const aliasBodiesRender = flattenRules(aliasBodiesNormalized, linked.wordMatcher, ctx?.diagnostics);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender
@@ -309,7 +323,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 				wordMatcher: ctx?.wordMatcher,
 				inlineKinds,
 				polymorphSkipExtra: variantSkip,
-				builder: attributeBuilder
+				builder: attributeBuilder,
+				slotGroupingCollector: ctx?.slotGroupingCollector
 			})
 		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
@@ -494,21 +509,26 @@ function iterateInliningToFixedPoint(
 	ctx?: NormalizeCtx,
 	preserveKinds?: ReadonlySet<string>
 ): void {
-	for (let pass = 0; pass < 4; pass++) {
-		const refCounts = countReferences(work);
-		let changed = false;
-		for (const [name, rule] of Object.entries(work)) {
-			if (!isHiddenRule(name, work)) continue;
-			if (rule.annotations?.hoisted === true || isStructurallyMeaningfulHiddenRule(rule)) continue;
-			if (preserveKinds?.has(name)) continue;
-			const uses = refCounts.get(name) ?? 0;
-			if (uses !== 1) continue;
-			if (spliceHiddenRuleIntoSingleParent(work, name, rule)) {
-				changed = true;
+	runToFixpoint({
+		name: 'normalize.iterateInliningToFixedPoint',
+		cap: 4,
+		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+		step: () => {
+			const refCounts = countReferences(work);
+			let changed = false;
+			for (const [name, rule] of Object.entries(work)) {
+				if (!isHiddenRule(name, work)) continue;
+				if (rule.annotations?.hoisted === true || isStructurallyMeaningfulHiddenRule(rule)) continue;
+				if (preserveKinds?.has(name)) continue;
+				const uses = refCounts.get(name) ?? 0;
+				if (uses !== 1) continue;
+				if (spliceHiddenRuleIntoSingleParent(work, name, rule)) {
+					changed = true;
+				}
 			}
+			return changed;
 		}
-		if (!changed) break;
-	}
+	});
 }
 
 function isTerminalShape(rule: Rule<'link'>): boolean {

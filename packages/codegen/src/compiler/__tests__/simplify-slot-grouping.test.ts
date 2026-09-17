@@ -13,19 +13,10 @@
  */
 
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { describe, it, expect, afterEach } from 'vitest';
-import {
-	computeSimplifiedRules,
-	drainSlotGroupingDiagnostics,
-	SimplifyCtx,
-	makeNormalizedGrammar
-} from '../simplify.ts';
+import { describe, it, expect } from 'vitest';
+import { computeSimplifiedRules, makeSlotGroupingCollector, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
 import type { RenderRule } from '../../types/rule.ts';
-
-afterEach(() => {
-	// Always drain to avoid leaking between tests.
-	drainSlotGroupingDiagnostics();
-});
+import type { SlotGroupingDiagnostic } from '../diagnostics/slot-grouping.ts';
 
 describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 	it('auto-group helper kind in inlineKinds with multi-slot body → multi-slot-nested-seq', () => {
@@ -42,14 +33,16 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 			} as any
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
+		const slotGroupingCollector = makeSlotGroupingCollector();
 		computeSimplifiedRules(
 			new SimplifyCtx({
 				grammar: makeNormalizedGrammar(normalizedRules),
 				inlineKinds,
-				diagnostics: new DiagnosticSink()
+				diagnostics: new DiagnosticSink(),
+				slotGroupingCollector
 			})
 		);
-		const diagnostics = drainSlotGroupingDiagnostics();
+		const diagnostics: readonly SlotGroupingDiagnostic[] = slotGroupingCollector.all;
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
 		expect(multiSlot[0]!.ownerKind).toBe('_parent_repeat1');
@@ -69,11 +62,15 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				]
 			} as any
 		};
+		const slotGroupingCollector = makeSlotGroupingCollector();
 		computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+			new SimplifyCtx({
+				grammar: makeNormalizedGrammar(normalizedRules),
+				diagnostics: new DiagnosticSink(),
+				slotGroupingCollector
+			})
 		);
-		const diagnostics = drainSlotGroupingDiagnostics();
-		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
+		expect(slotGroupingCollector.all.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 
 	it('a rule with no multi-slot substructure produces no diagnostics', () => {
@@ -86,10 +83,14 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				]
 			} as any
 		};
+		const slotGroupingCollector = makeSlotGroupingCollector();
 		computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+			new SimplifyCtx({
+				grammar: makeNormalizedGrammar(normalizedRules),
+				diagnostics: new DiagnosticSink(),
+				slotGroupingCollector
+			})
 		);
-		const diagnostics = drainSlotGroupingDiagnostics();
-		expect(diagnostics).toHaveLength(0);
+		expect(slotGroupingCollector.all).toHaveLength(0);
 	});
 });

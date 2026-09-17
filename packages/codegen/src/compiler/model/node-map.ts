@@ -37,9 +37,6 @@ import {
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 
-const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
-const _parseKindCollisionSeen = new Set<string>();
-
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
 		diagnostic.code,
@@ -50,43 +47,8 @@ function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string
 	].join(' ');
 }
 
-function recordParseKindCollisionDiagnostic(diagnostic: ParseKindCollisionDiagnostic): void {
-	const key = parseKindCollisionKey(diagnostic);
-	if (_parseKindCollisionSeen.has(key)) return;
-	_parseKindCollisionSeen.add(key);
-	_parseKindCollisionDiagnostics.push(diagnostic);
-}
-
-export function resetParseKindCollisionDiagnostics(): void {
-	_parseKindCollisionDiagnostics.length = 0;
-	_parseKindCollisionSeen.clear();
-}
-
-export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
-	const out = [..._parseKindCollisionDiagnostics];
-	resetParseKindCollisionDiagnostics();
-	return out;
-}
-
-const _deriveShapeDiagnostics: DeriveShapeDiagnostic[] = [];
-const _deriveShapeSeen = new Set<string>();
-
-function recordDeriveShapeDiagnostic(d: DeriveShapeDiagnostic): void {
-	const key = `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
-	if (_deriveShapeSeen.has(key)) return;
-	_deriveShapeSeen.add(key);
-	_deriveShapeDiagnostics.push(d);
-}
-
-export function resetDeriveShapeDiagnostics(): void {
-	_deriveShapeDiagnostics.length = 0;
-	_deriveShapeSeen.clear();
-}
-
-export function drainDeriveShapeDiagnostics(): DeriveShapeDiagnostic[] {
-	const out = [..._deriveShapeDiagnostics];
-	resetDeriveShapeDiagnostics();
-	return out;
+function deriveShapeKey(d: DeriveShapeDiagnostic): string {
+	return `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
 }
 
 export interface AssembleWarning {
@@ -96,29 +58,41 @@ export interface AssembleWarning {
 	readonly details?: Record<string, unknown>;
 }
 
-const _assembleWarnings: AssembleWarning[] = [];
-const _assembleWarningSeen = new Set<string>();
-
 function assembleWarningKey(w: AssembleWarning): string {
 	return `${w.code}|${w.ownerKind ?? ''}|${w.message}`;
 }
 
-export function recordAssembleWarning(w: AssembleWarning): void {
-	const key = assembleWarningKey(w);
-	if (_assembleWarningSeen.has(key)) return;
-	_assembleWarningSeen.add(key);
-	_assembleWarnings.push(w);
+export class DedupedCollector<T> {
+	private readonly items: T[] = [];
+	private readonly seen = new Set<string>();
+
+	constructor(private readonly keyOf: (item: T) => string) {}
+
+	record(item: T): boolean {
+		const key = this.keyOf(item);
+		if (this.seen.has(key)) return false;
+		this.seen.add(key);
+		this.items.push(item);
+		return true;
+	}
+
+	get all(): readonly T[] {
+		return this.items;
+	}
 }
 
-export function resetAssembleWarnings(): void {
-	_assembleWarnings.length = 0;
-	_assembleWarningSeen.clear();
-}
-
-export function drainAssembleWarnings(): AssembleWarning[] {
-	const out = [..._assembleWarnings];
-	resetAssembleWarnings();
-	return out;
+/**
+ * One instance per `assemble()` call — created locally by `assemble()` and
+ * threaded through the `DeriveCtx`/`CompoundOpts` chain the node
+ * constructors already receive, replacing the three module-level `let`
+ * accumulators (`_parseKindCollisionDiagnostics`, `_deriveShapeDiagnostics`,
+ * `_assembleWarnings`) that made concurrent `assemble()` calls unsafe to
+ * interleave.
+ */
+export class AssembleDiagnosticsCollector {
+	readonly parseKindCollisions = new DedupedCollector<ParseKindCollisionDiagnostic>(parseKindCollisionKey);
+	readonly deriveShapeDiagnostics = new DedupedCollector<DeriveShapeDiagnostic>(deriveShapeKey);
+	readonly assembleWarnings = new DedupedCollector<AssembleWarning>(assembleWarningKey);
 }
 
 export { type Multiplicity } from '../../types/rule.ts';
@@ -396,12 +370,16 @@ let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;
 }
-function auditDerivationShape(rule: SimplifiedRule, context: 'fields' | 'children'): void {
+function auditDerivationShape(
+	rule: SimplifiedRule,
+	context: 'fields' | 'children',
+	diagnostics?: AssembleDiagnosticsCollector
+): void {
 	const mode = deriveAuditMode();
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
 	if (shape === 'canonical') return;
-	recordDeriveShapeDiagnostic(
+	diagnostics?.deriveShapeDiagnostics.record(
 		describeDeriveShape({
 			rawShape: shape,
 			ruleType: rule.type,
@@ -486,9 +464,9 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 	const prevAuditKind = currentAuditKind;
 	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
-		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields');
+		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields', ctx?.diagnostics);
 		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
+		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics));
 		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 		if (unionChoiceIds.size > 0) {
 			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -496,7 +474,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
 			);
 			if (colliding.length > 0) {
-				recordAssembleWarning({
+				ctx?.diagnostics?.assembleWarnings.record({
 					code: 'union-slot-content-collision',
 					ownerKind: kindName,
 					message:
@@ -507,7 +485,9 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				});
 				const prev = setUnionSlotRouting(false);
 				try {
-					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
+					slots = mergeSlotsByName(
+						collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics)
+					);
 				} finally {
 					setUnionSlotRouting(prev);
 					drainSynthesizedUnionChoiceIds();
@@ -568,6 +548,7 @@ export interface DeriveCtx {
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase>;
 	readonly stampArmFieldNamesAsParseName?: boolean;
+	readonly diagnostics?: AssembleDiagnosticsCollector;
 }
 
 export interface KindedDeriveCtx extends DeriveCtx {
@@ -624,7 +605,7 @@ function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: Kinde
 		values: describedValues
 	});
 	for (const diagnostic of resolution.diagnostics) {
-		recordParseKindCollisionDiagnostic(diagnostic);
+		ctx.diagnostics?.parseKindCollisions.record(diagnostic);
 	}
 	const nextValues = [...resolution.values];
 	const unchanged =
@@ -1490,6 +1471,7 @@ export interface CompoundOpts {
 	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
+	assembleDiagnostics?: AssembleDiagnosticsCollector;
 }
 
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1521,7 +1503,8 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 				kindEntries: opts?.kindEntries,
 				collision: opts?.parseKindCollisionContext,
 				visibleAliasTargets: opts?.visibleAliasTargets,
-				simplifiedRules: opts?.simplifiedRules
+				simplifiedRules: opts?.simplifiedRules,
+				diagnostics: opts?.assembleDiagnostics
 			};
 			const slots = [...deriveSlots(simplifiedRule, ctx)];
 			let resolvedSlots = resolveParseKindCollisions(slots, ctx);
@@ -1559,7 +1542,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 						const named = s.isUnnamed ? 'positional' : 'named';
 						return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
 					});
-					recordAssembleWarning({
+					ctx.diagnostics?.assembleWarnings.record({
 						code: 'storagename-collision',
 						message:
 							`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
@@ -1960,7 +1943,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			{
 				factoryName: nameNode(kind).factoryName,
 				kindEntries: opts.kindEntries,
-				parseKindCollisionContext: opts.parseKindCollisionContext
+				parseKindCollisionContext: opts.parseKindCollisionContext,
+				assembleDiagnostics: ctx?.diagnostics
 			},
 			rule
 		);

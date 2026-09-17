@@ -102,8 +102,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
-		const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
-
 		nodeMap.scc = computeTransportSCC(nodeMap);
 
 		const emitted = emitAll({
@@ -120,6 +118,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			options: raw.options,
 			visibleExternals: raw.visibleExternals
 		});
+
+		const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
 
 		const rootTypeName = nodeMap.nodes.get(grammarRoles.get('root')[0]!)?.typeName;
 		if (rootTypeName === undefined) {

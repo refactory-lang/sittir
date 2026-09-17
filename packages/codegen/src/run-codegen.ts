@@ -278,6 +278,13 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		);
 	}
 
+	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+
+	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
+	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
+
+	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+
 	const shouldEmitRustRender = all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(grammar);
 
 	if (shouldEmitRustRender) {
@@ -341,13 +348,6 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 			}
 		}
 	}
-
-	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
-
-	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
-	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
-
-	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 	const renderable = validateRenderableFromNodeMap(grammar, result.nodeMap);
 	console.log('');

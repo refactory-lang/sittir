@@ -26,6 +26,9 @@ import {
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
+import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
+import { bareAcceptClosure } from './from.ts';
+import { declaredDelimiterDefault } from './factories.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -43,6 +46,7 @@ interface SerializedValue {
 	unresolved?: boolean;
 	value?: string;
 	seat?: Seat;
+	default?: true;
 }
 
 interface SerializedSlot {
@@ -70,6 +74,7 @@ interface SerializedNodeBase {
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	factoryFields?: string[];
+	bareAccepts?: string[];
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
@@ -108,6 +113,7 @@ interface SerializedList extends SerializedNodeBase {
 	hasNonterminalSeparator: boolean;
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	defaultDelimiter: string;
 	elementKinds: string[];
 	elementSeats?: Seat[];
 }
@@ -142,6 +148,10 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {
 	const factoryData = buildFactoryMap(nodeMap);
 	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
+	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
 
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
@@ -155,6 +165,8 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
+		const accepts = bareAccepts.get(kind);
+		if (accepts !== undefined && accepts.size > 0) serialized.bareAccepts = [...accepts].sort(compareOrdinal);
 		nodes.push(serialized);
 	}
 
@@ -226,6 +238,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				hasNonterminalSeparator: node.separatorRule !== undefined,
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
+				defaultDelimiter: declaredDelimiterDefault(node),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
 				...seatsOfList(node, nodeMap, wires)
 			};
@@ -303,6 +316,7 @@ function serializeValue(v: NodeOrTerminal, seat: Seat | undefined): SerializedVa
 		if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 		if (isUnresolvedRef(v.node)) out.unresolved = true;
 		if (seat !== undefined) out.seat = seat;
+		if (v.default === true) out.default = true;
 		return out;
 	}
 	const out: SerializedValue = {

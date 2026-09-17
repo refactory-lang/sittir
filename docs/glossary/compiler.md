@@ -3093,6 +3093,12 @@ mid-generate failure) left that closure registered in
 grows by one stale listener per failed `generate()` call in a long-lived
 process (a watch daemon, a test run that retries).
 
+The node model is serialized after the emitters' walk, not before it: the
+site-preference resolution that walk runs (`collectSitePreferences`) stamps
+each list's `resolvedDelimiterArm` on the model, and the serialized
+`defaultDelimiter` must be the stamped arm the factory bakes in, not the
+fallback an unstamped list reports.
+
 #### body
 
 ```text
@@ -3733,12 +3739,12 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
  *  the occurrence site, not the definition site. The spliced body drops
  *  its source kind's own `hidden` stamp — it describes the SOURCE kind,
  *  not the host occurrence site, and simplify's single-member collapse
- *  would otherwise hoist that fact onto the host. Runs to a fixed point (no
- *  rule changed in a pass) or a 64-pass cap, whichever comes first; hitting
- *  the cap emits the `inline-fixpoint-unreached` diagnostic (`canProceed:
- *  true` — a stalled inline chain degrades slot naming, it does not break
- *  the build) rather than looping forever on a mutually-inlining cycle
- *  `cyclicInlineTargets` failed to catch. */
+ *  would otherwise hoist that fact onto the host. Runs via `fixpoint.ts`'s
+ *  `runToFixpoint` to a fixed point (no rule changed in a pass) or a
+ *  64-pass cap, whichever comes first; hitting the cap raises the blocking
+ *  `fixpoint-cap-reached` diagnostic naming this pass, rather than looping
+ *  forever on a mutually-inlining cycle `cyclicInlineTargets` failed to
+ *  catch. */
 ```
 
 The ref's own annotations survive the splice, merged over the body's: a fact stamped on the occurrence (`hoisted` on a variant deposit whose body is a single hidden symbol, `variant`/`variantOf` on an arm) describes the occurrence, not the rule being inlined, and dropping it would silently change how the host classifies.
@@ -4919,7 +4925,9 @@ The ref's own annotations survive the splice, merged over the body's: a fact sta
  * @remarks
  * One pass is usually enough; up to four iterations catch cascading
  * opportunities where a parent being inlined exposes a new single-use child.
- * The loop breaks early when a full pass produces no changes.
+ * Runs via `fixpoint.ts`'s `runToFixpoint`, which returns as soon as a pass
+ * produces no changes, or raises the blocking `fixpoint-cap-reached`
+ * diagnostic naming this pass if the four-pass cap is reached first.
  */
 ```
 
@@ -5976,6 +5984,10 @@ parts with the space its parser needs.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::AssembleCtx`
+
+Carries the phase's `assembleDiagnostics` collector, one per context, so the
+helpers that report into it take `(target, ctx)` rather than a bare
+collector parameter.
 
 ```text
 /**
@@ -11127,5 +11139,30 @@ second, id-suffixed fallback.
 
 ```text
 // Extract factored branches (the parts that differ)
+```
+
+### `packages/codegen/src/compiler/fixpoint.ts::runToFixpoint`
+
+```text
+The one iterate-to-a-fixed-point helper for the compiler passes
+(`simplify.simplifyToFixpoint`, `normalize.inlineHiddenSeqRefs`,
+`normalize.iterateInliningToFixedPoint`, `flatten.factorChoiceArmsToFixpoint`,
+`link.inlineReferences`): one cap per pass, one on-cap behavior for all of
+them, so no pass can loop silently or merely warn. `step()` runs one
+pass and reports whether anything changed; the loop returns as soon as a
+pass reports no change, and raises the blocking `fixpoint-cap-reached`
+diagnostic — naming the pass via `cfg.name` — if `cap` is reached first.
+Callers whose own `step` mutates shared state in place (most of them) fold
+their per-pass "did anything change" signal directly into the boolean
+`step` returns; callers with an immutable return value (`simplifyToFixpoint`,
+`factorChoiceArmsToFixpoint`) close over an outer `current` variable and
+compare it against `step`'s result themselves. Every real caller has a
+`DiagnosticSink` in scope (each phase's `ctx.diagnostics`); the few
+call sites whose own `ctx` parameter is optional (kept for isolated
+rule-level unit tests) fall back to a throwaway `new DiagnosticSink()`
+whose `fail()` is never read — consistent with the same fallback already
+used for `SimplifyCtx`/`NormalizeCtx` construction elsewhere in this file.
+Measured against all three real grammars (rust, typescript, python), every
+caller converges in at most 3 passes — well under its cap in every case.
 ```
 

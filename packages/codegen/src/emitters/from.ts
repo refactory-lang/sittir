@@ -926,7 +926,7 @@ function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal
 	}
 }
 
-function bareAcceptClosure(
+export function bareAcceptClosure(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): Map<string, ReadonlySet<string>> {

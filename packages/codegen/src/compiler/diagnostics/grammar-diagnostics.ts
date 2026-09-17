@@ -12,7 +12,7 @@ import {
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
-import { drainSlotGroupingDiagnostics } from '../simplify.ts';
+import { makeSlotGroupingCollector } from '../simplify.ts';
 import type { SlotGroupingDiagnostic } from './slot-grouping.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent } from '../types.ts';
 import type { GeneratedIdTables } from '../generated-metadata.ts';
@@ -182,6 +182,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	diagnostics: readonly GrammarDiagnostic[];
 } {
 	const compilerDiagnostics = new DiagnosticSink();
+	const slotGroupingCollector = makeSlotGroupingCollector();
 	const linked = link(input.rawGrammar, {
 		include: input.include,
 		generatedIdTables: input.generatedIdTables,
@@ -193,7 +194,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		new NormalizeCtx({
 			grammar: linked,
 			inlineKinds: buildInlinableKinds(inlineKinds, linked),
-			diagnostics: compilerDiagnostics
+			diagnostics: compilerDiagnostics,
+			slotGroupingCollector
 		})
 	);
 	const nodeMap = assemble(
@@ -204,7 +206,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			loadGrammarJsonAliasMap(input.rawGrammar.name)
 		)
 	);
-	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
+	const slotGroupingDiagnostics = slotGroupingCollector.all;
 	const contentAliasDiagnostics = diagnoseContentAliasInjectivity({
 		grammar: input.rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo

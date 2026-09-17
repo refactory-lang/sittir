@@ -7,7 +7,10 @@ const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const CASES = [
 	['rust', '17-dogfood-rust.generated.ts', 'rebuildSpliceGenerated', 'dogfood-rust.rendered'],
 	['typescript', '18-dogfood-typescript.generated.ts', 'rebuildFormatGenerated', 'dogfood-typescript.rendered'],
-	['python', '19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated', 'dogfood-python.rendered']
+	['python', '19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated', 'dogfood-python.rendered'],
+	['rust', '17-dogfood-rust-loose.generated.ts', 'rebuildSpliceLoose', 'dogfood-rust.rendered'],
+	['typescript', '18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose', 'dogfood-typescript.rendered'],
+	['python', '19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose', 'dogfood-python.rendered']
 ] as const;
 
 describe('dogfood rebuild render bytes', () => {
