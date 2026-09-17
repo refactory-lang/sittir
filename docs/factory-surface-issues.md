@@ -187,7 +187,49 @@ signal.
 
 ## Loose surface
 
-### L1 — The stamped kind enum is rejected as a `kind:` discriminant
+### The contract: loose = strict + six coercions
+
+Rule 2 (a bare scalar guessed into a keyword or enum member) is retired —
+numbering below kept stable for the open rows that cite rules 3/4/5/7 by
+number.
+
+The loose surface never chooses a kind by looking at a value's shape. The
+slot chooses, the caller names it, or the grammar declares a default. Every
+coercion below is value-level and driven by a classification the strict
+surface already owns — a leaf's pattern, a keyword's text, the `forwarded`
+factory shape, the list envelope, `arm.default`, slot multiplicity. Nothing
+picks among structurally distinct candidates.
+
+Strict ⊆ loose: a prebuilt node that fits the slot passes through untouched
+and is never re-interpreted.
+
+| # | input | becomes | condition (all slot-driven) |
+| --- | --- | --- | --- |
+| 1 | string | a text leaf | the slot admits leaf kinds; matched by the leaf's own pattern |
+| ~~2~~ | ~~string / number / boolean~~ | ~~a keyword or enum member~~ | **retired** — a bare scalar is never guessed into a keyword or enum member; name the kind (rule 3) instead |
+| 3 | plain object | a kind's config | the kind is `kind:` (grammar name or `TSKindId`), else the slot's only kind, else an error |
+| 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element |
+| 5 | kind-identified value (node data or a `kind:` object) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses |
+| 6 | bare non-object (string / number / boolean / array) | the field's declared `arm.default` | the slot has one candidate or declares a default; else an error |
+| 7 | omission | nothing | whatever strict lets you omit; all slots omittable ⇒ callable with no argument |
+
+Deliberately outside the contract:
+
+- Structural inference — "this object's keys look like kind K". Retired.
+- Rule 2, bare-scalar-to-keyword/enum-member guessing. Retired: a scalar
+  names nothing about which of several candidate keywords or enum members it
+  means, so the ambiguity is the same shape as structural inference above.
+- Default-arm hoisting for a kindless config object. A config names its kind
+  unless the slot is single-kind (rule 3); only bare values hoist (rule 6).
+- Form selection. Naming an alternative (`ir.callExpression.call`) chooses a
+  form, on both surfaces alike; a grammar-declared default variant routes a
+  bare call, and nothing else does.
+- Argument conventions shared with strict (the options object's position on a
+  list wrapper). Those are fixed or documented on both surfaces together.
+
+Each open row below names the rule it falls under.
+
+### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 
 A discriminated config accepts the raw grammar string but not the numeric enum
 the package exports for the purpose.
@@ -200,10 +242,23 @@ ir.matchArm({ pattern: { pattern: { kind: TSKindId.StructPattern, … } } }) // 
 `TSKindId.StructPattern` is `305`; the resolver matches on names only, so every
 config re-spells a name the enum already holds.
 
-Affects rust; the same resolver is shared, so typescript and python are
-expected to behave alike (unverified).
+Affected all three grammars (the resolver is shared). `_kindNameOf` (from.ts)
+now resolves a `kind:` discriminant's string or numeric spelling to the same
+name once, shared by every `"kind" in v` site (`_resolveOne`, `_resolveOneLeaf`,
+`_resolveOneBranch`, `_wrapArray`) instead of each re-deriving its own
+`typeof kind === "string"` check. Verified against all three regenerated
+packages (`tsc --noEmit` clean) and against rust at runtime: a numeric
+`TSKindId.StructPattern` and its string spelling now build byte-identical
+output through `ir.matchArm.withComma`.
 
-### L2 — List options are honoured only in first argument position
+### L2 — List options are honoured only in first argument position — outside the contract
+
+**Intended.** The options object is first so the elements stay a rest
+parameter and a spread, and it is optional because the grammar's `options:`
+block declares every default a list needs. A trailing options object is not
+a spelling. What the optionality buys is on the loose surface: a list slot
+takes its elements bare, `T | T[]` —
+`docs/superpowers/specs/2026-09-17-factory-ergonomics-minor.md`, item 2.
 
 A public strict list wrapper pins the options object to the first parameter;
 the elements-only overload takes no options object at all. Passing options in
@@ -217,23 +272,33 @@ ir.enumVariantList.strict(variantA, { delimiter: Delimiter.Trailing })  // type 
 
 Affects rust, typescript, python.
 
-### L3 — A two-branch list slot takes no array
+### L3 — A two-branch list slot takes no array — RESOLVED
 
 Where a slot accepts either of two list kinds, the coercer resolves neither from
-an array; the list node must be built explicitly.
+an array; the list node must be built explicitly. Under rule 4 the array
+builds the one list kind the slot admits, or the one `arm.default` names; a
+two-list slot with no declared default stays an error, and the fix is to
+declare the default in the grammar, not to pick one.
 
 ```ts
 ir.enumVariant({ name: 'V', body: [ir.fieldDeclaration({ … })] })              // rejected
 ir.enumVariant({ name: 'V', body: ir.fieldDeclarationList.strict(…) })         // → "V{a:u32}"
 ```
 
-Affects rust (`enum_variant.body`: `field_declaration_list |
-ordered_field_declaration_list`).
+Affected rust (`enum_variant.body`: `field_declaration_list |
+ordered_field_declaration_list`). `arm.default` is now declared on the
+braced, named-field form (`packages/rust/grammar.sittir.ts`, position
+`2/0/0/0`) — the shape a bare array of field configs means; the
+parenthesized, ordered-tuple form stays reachable by building it explicitly.
+Combined with L6's array-to-envelope fix, `ir.enumVariant({ name, body: [...] })`
+now builds the field list correctly.
 
-### L4 — A single-slot wrapper must be spelled by hand
+### L4 — A single-slot wrapper must be spelled by hand — rule 5
 
-Where a slot holds a wrapper whose own required slot has the same name, the
-coercer takes no bare inner value.
+Where a slot holds a wrapper whose own required slot admits the value, the
+coercer takes no bare inner value. The condition is the wrapper's `forwarded`
+factory shape (the classification behind the strict factory's target
+overload), not a coincidence of field names.
 
 ```ts
 ir.matchArm({ pattern: { kind: 'struct_pattern', … } })              // rejected
@@ -242,7 +307,32 @@ ir.matchArm({ pattern: { pattern: { kind: 'struct_pattern', … } } }) // → "T
 
 Affects rust (`match_arm.pattern` → `match_pattern`).
 
-### L5 — Whole-alternative arms need their form named
+**Investigated, not yet fixed.** `forwardedTargetKind(match_pattern, nodeMap)`
+returns `null` empirically (verified directly against the compiled node map):
+`match_pattern`'s sole field `pattern` targets `_pattern`, a hidden
+`AssembledSupertype` with ~19 subtypes and no `rawFactoryName` of its own, so
+`forwardedTargetKind`'s `target?.rawFactoryName` check fails.
+`classifyFactoryShape`/`isWrapChildrenKind` agree: `match_pattern` is not a
+wrap-children kind — its raw factory (`buildMatchPattern`) is genuinely
+config-shaped (`{pattern, condition}`), not positionally callable. The
+existing `_wrapKindIds`/`_wrapWithChildren` infrastructure (reused for L6)
+does not apply here. A real fix needs either (a) a new, narrow runtime fact
+(sole-required-field config key + its accepted-kind closure, computed the
+way `bareAcceptClosure` already walks slots) used only by
+`_resolveOneBranch`'s kind-identified-value path, or (b) extending
+`forwardedTargetKind` to admit a supertype target by checking subtype
+membership instead of requiring `rawFactoryName` — the latter is the "true
+root" fix but touches 7 existing callers across factories.ts/sub-factories.ts/
+factory-map.ts and needs its own re-verification pass. Deferred pending that
+design decision.
+
+**Direction.** Neither. This is a seating question, not a coercion one: the
+wrapper is spliced onto `match_arm` (and `last_match_arm`) so its keys are
+the parent's, and the value at `pattern` resolves against `_pattern` by
+rule 3. Rule 5 stays limited to genuinely `forwarded` single-slot wrappers.
+Design: `docs/superpowers/specs/2026-09-17-factory-ergonomics-minor.md`, item 1.
+
+### L5 — Whole-alternative arms need their form named — intended, outside the contract
 
 A kind whose rule is a choice of complete alternatives cannot be built from the
 bare kind; the arm's form has to be named, even on the loose surface.
@@ -252,15 +342,16 @@ ir.callExpression({ function: 'f', arguments: ir.arguments.strict() })      // r
 ir.callExpression.call({ function: 'f', arguments: ir.arguments.strict() }) // → "f()"
 ```
 
-Whether this is a defect or the intended surface is open — the forms exist and
-are reachable, so it may be a documentation matter rather than a gap.
+This is the surface, not a gap: naming an alternative chooses a form, on both
+surfaces alike. A grammar-declared default variant routes the bare call; a
+kind without one is named. Closed as documentation.
 
 Affects typescript (`call_expression`, `variable_declarator`, `import_statement`,
 `export_statement`).
 
 ---
 
-### L6 — A list envelope's array collapses to its first string
+### L6 — A list envelope's array collapses to its first string — RESOLVED
 
 A loose config that hands a list-envelope slot an array of texts stores the
 FIRST text as the envelope itself, dropping the rest; the envelope's transport
@@ -280,8 +371,16 @@ takes text only where a kind renders from text, so the loss surfaces as a
 render error. The loose coercer should build the envelope with one element
 per array entry.
 
-Affects rust (`generic_type.type_arguments`, `call_expression.arguments`;
-`examples/17-dogfood-rust.ts` marks five sites).
+Affected rust (`generic_type.type_arguments`, `call_expression.arguments`;
+`examples/17-dogfood-rust.ts` marked five sites). A new `_wrapArray` runtime
+helper (from.ts, alongside `_wrapKindIds`/`_wrapWithChildren`) recurses into
+the envelope's own list target before wrapping: a 'direct'-surface kind
+(one positional child) whose sole child is itself a wrap-children kind
+builds that inner list from the WHOLE array first, then wraps the single
+built list — instead of handing the raw array straight to the envelope's
+own one-argument factory. Verified against rust at runtime: both
+`typeArguments: ['Edit']` and `typeArguments: ['String', 'SpliceError']`
+now keep every element.
 
 ---
 
@@ -330,7 +429,7 @@ literal-site check covers the way the surface is used.
 
 Revisit only if by-reference config construction becomes a common pattern.
 
-### X2 — No-argument construction is inconsistent on the loose surface
+### X2 — No-argument construction is inconsistent on the loose surface — RESOLVED
 
 A factory whose slots are all omittable should be callable with no argument. The
 strict surface now derives this from slot multiplicity, so `ir.tryBlock.strict()`
@@ -345,6 +444,49 @@ renders `try{}`. The loose surface still requires `{}` in these cases:
 The `repeat1` kinds in these lists overlap S1 and should be excluded rather than
 fixed — an empty one is not legal. The remainder is the same coercion-side
 plumbing the strict side already has.
+
+**Resolved the coercion-side gap.** `emitBranchFrom`'s loose optionality
+(from.ts) computed `opt` from a shallow, LOCAL "does this node have a
+required slot" scan, diverging from the strict surface's own recursive
+`argumentOptional` (node-map.ts) whenever a required field forwards to a
+target that is itself constructible with no argument (a wrapper around an
+empty-constructible compound, e.g. `try_block.body: Block`). `opt` is now
+derived from `node.argumentOptional(nodeMap)` directly — the same fact
+`factories.ts`'s strict-surface `targetTakesNoArgs` already uses — and the
+`canDirectFactoryCall` code path now defaults an omitted required field via
+`canDefaultToEmpty` (previously only the config-object path did). Verified
+on rust: `constBlock`, `unsafeBlock`, `tryBlock`, `unsafe` now build with no
+argument.
+
+`canDefaultToEmpty` was also extended to a list-envelope's own list target
+(it previously excluded `AssembledList` outright), checked through the same
+`argumentOptional` — a separated list's own `argumentOptional` is
+unconditionally true (an empty separated list is a legal JS construction
+regardless of a `repeat1` grammar constraint), so `typeParameters`,
+`forLifetimes`, `tupleType`, `typeArguments` and `tuple` build empty with no
+argument too, matching what `ir.<kind>.strict()` already does today.
+
+**Root-caused and fixed the remaining kinds.** `scopedUseList`,
+`loopExpression`, `genBlock`, `async`, `gen`, `loop`, `scopedList` threw on
+omission on both surfaces, because `argumentOptional` (node-map.ts) itself
+undercounted this shape: it only recognized "every slot optional" or
+"exactly one slot total," missing a node with an optional sibling slot
+alongside its one required forwarding slot (e.g. `async_block`'s optional
+`moveMarker` next to its required `body: Block`). Generalized
+`argumentOptional` to the correct rule — a required slot only blocks the
+no-argument call when it has no forwarding target of its own that is
+argument-optional; any number of additional slots is fine as long as they
+are all optional. Since both the strict raw factory (`factories.ts`'s
+`resolveFactorySurface`) and the loose coercer (`from.ts`'s `emitBranchFrom`)
+already derive their own optionality from this one shared fact, the fix
+reached both surfaces without touching either emitter's own logic beyond
+threading the (now correct) result through: `factories.ts`'s
+`slotStorageExpr` was also given the same `canDefaultToEmpty` fallback the
+loose surface already had, so a config that supplies nothing for the
+one required-but-defaultable field constructs the empty target instead of
+storing `undefined`. Verified on rust: `asyncBlock`, `genBlock`,
+`loopExpression`, `scopedUseList` (and their aliases) now build with no
+argument on both surfaces.
 
 ---
 

@@ -1,7 +1,10 @@
 # Enum leaves are kind-id-stored
 
-> **Status:** Design (2026-09-07). Supersedes the "through supertypes" walk
-> in the strict-rebuild design; that design's emitter still depends on it.
+> **Status:** Landed. An enum leaf's type is its members' kind-id union
+> (`TokenTreePunctuation` in `packages/rust/src/types.ts`), it has no factory
+> or coercer, and the strict rebuild spells its token trees with
+> `TSKindId.Comma`. Supersedes the "through supertypes" walk in the
+> strict-rebuild design.
 
 ## Problem
 
