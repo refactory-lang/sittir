@@ -99,7 +99,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	stages.assemble = node ? summarizeAssembled(node) : null;
 
 	if (!opts.skipEmit) {
-		hydrateSlotRefs(nodeMap);
+		hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline) });
 		try {
 			const { emitTypes } = await load('types');
 			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
