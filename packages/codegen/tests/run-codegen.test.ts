@@ -10,4 +10,18 @@ describe('run-codegen library surface', () => {
 		const opts: CodegenOptions = { grammar: 'rust', outputDir: 'packages/rust/src', all: true };
 		expect(opts.grammar).toBe('rust');
 	});
+
+	it('restores SITTIR_INTERNAL_CODEGEN_RUN after a rejected call, so a manifest check made afterward is not skipped', async () => {
+		const previous = process.env['SITTIR_INTERNAL_CODEGEN_RUN'];
+		delete process.env['SITTIR_INTERNAL_CODEGEN_RUN'];
+		try {
+			await expect(runCodegen({ grammar: 'rust' } as CodegenOptions)).rejects.toThrow(
+				'Missing required argument: --output'
+			);
+			expect(process.env['SITTIR_INTERNAL_CODEGEN_RUN']).toBeUndefined();
+		} finally {
+			if (previous === undefined) delete process.env['SITTIR_INTERNAL_CODEGEN_RUN'];
+			else process.env['SITTIR_INTERNAL_CODEGEN_RUN'] = previous;
+		}
+	});
 });

@@ -29,7 +29,7 @@ const LIST_RULE: SeparatedListElementRule = {
 	type: CHOICE,
 	members: [{ type: SYMBOL, name: 'identifier' }],
 	multiplicity: 'array',
-	separator: { value: { type: STRING, value: ',' }, trailing: 'none' }
+	separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 };
 
 const KIND_ENTRIES: KindEnumEntry[] = [

@@ -28,11 +28,11 @@ import { writeManifestForGrammar, type Grammar } from './scripts/generated-manif
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
+import { compareOrdinal } from './emitters/shared.ts';
 
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
-	nodes?: string[];
 	all?: boolean;
 	testsDir?: string;
 	compileParser?: boolean;
@@ -182,16 +182,26 @@ export async function runCodegenCli(
 	return 0;
 }
 
-export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
+async function withInternalCodegenRun<T>(fn: () => Promise<T>): Promise<T> {
+	const previous = process.env.SITTIR_INTERNAL_CODEGEN_RUN;
 	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+	try {
+		return await fn();
+	} finally {
+		if (previous === undefined) delete process.env.SITTIR_INTERNAL_CODEGEN_RUN;
+		else process.env.SITTIR_INTERNAL_CODEGEN_RUN = previous;
+	}
+}
 
-	const { grammar, outputDir, all, nodes, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
+export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
+	return withInternalCodegenRun(() => runCodegenInternal(opts));
+}
+
+async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
+	const { grammar, outputDir, all, testsDir, noEmitDiff, buildNative, nativeDebug, workspaceCheck } = opts;
 
 	if (!outputDir) {
 		throw new Error('Missing required argument: --output. Use --help for usage.');
-	}
-	if (!all && (!nodes || nodes.length === 0)) {
-		throw new Error('Must provide --nodes or --all. Use --help for usage.');
 	}
 
 	await runGrammarDiagnosticsPreflight({
@@ -203,7 +213,6 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	console.log(`Generating ${grammar} IR...`);
 	const result = await generate({
 		grammar,
-		nodes: all ? undefined : nodes,
 		outputDir,
 		emitRenderModule: all
 	});
@@ -240,7 +249,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	writeFileSync(
 		join(dirname(outDir), '.sittir', 'render-bodies.json'),
-		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => a.localeCompare(b))), null, '\t') +
+		JSON.stringify(Object.fromEntries([...result.templates.bodies].sort(([a], [b]) => compareOrdinal(a, b))), null, '\t') +
 			'\n',
 		'utf8'
 	);
@@ -344,8 +353,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
-	const config = { grammar, nodes: all ? undefined : nodes, outputDir };
-	const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
+	const renderable = validateRenderableFromNodeMap(grammar, result.nodeMap);
 	console.log('');
 	console.log(formatRenderableReport(renderable));
 
@@ -381,8 +389,10 @@ Done! Generated:
 }
 
 export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
-	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+	return withInternalCodegenRun(() => runFullRegenInternal(opts));
+}
 
+async function runFullRegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const { grammar, skipTsChain, transpile, tsGenerate } = opts;
 
 	if (!skipTsChain && !transpile && !tsGenerate) {

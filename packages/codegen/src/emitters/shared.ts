@@ -137,6 +137,10 @@ export function isValidIdent(s: string): boolean {
 	return IDENT_RE.test(s);
 }
 
+export function compareOrdinal(a: string, b: string): number {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
 function _identOrQuoted(name: string): string {
 	return IDENT_RE.test(name) ? name : JSON.stringify(name);
 }

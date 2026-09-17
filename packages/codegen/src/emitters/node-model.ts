@@ -25,7 +25,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
-import { resolveFieldStorageInfo } from './shared.ts';
+import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -171,7 +171,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
 		polymorphVariants: factoryData.polymorphVariants,
-		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => a.localeCompare(b))),
+		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		nodes

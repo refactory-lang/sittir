@@ -17,7 +17,6 @@ Generate typed factories, templates, and native bindings from a grammar
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
 - `-o, --output <dir>` — Output directory
-- `-n, --nodes <list>` — Comma-separated node kinds to generate
 - `-a, --all` — Generate TS + native render-module artifacts (full chain)
 - `--tests-dir <dir>` — Output directory for test files
 - `--transpile` — Transpile grammar.sittir.ts → .sittir/grammar.js

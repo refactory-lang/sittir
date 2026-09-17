@@ -13,7 +13,6 @@ import { emitParityFixtures, runRoundtripProbes } from '@sittir/tools';
 interface GenCliOptions {
 	grammar?: string;
 	output?: string;
-	nodes?: string;
 	all?: boolean;
 	testsDir?: string;
 	transpile?: boolean;
@@ -37,7 +36,6 @@ export const gen: CommandModule = {
 	describe: 'Generate typed factories, templates, and native bindings from a grammar',
 	register: (program) => {
 		withOutput(withGrammar(defineCommand(program, gen)))
-			.option('-n, --nodes <list>', 'Comma-separated node kinds to generate')
 			.option('-a, --all', 'Generate TS + native render-module artifacts (full chain)')
 			.option('--tests-dir <dir>', 'Output directory for test files')
 			.option('--transpile', 'Transpile grammar.sittir.ts → .sittir/grammar.js')
@@ -63,7 +61,6 @@ export const gen: CommandModule = {
 				const codegenOpts: CodegenOptions = {
 					grammar: opts.grammar,
 					outputDir: opts.output ?? '',
-					nodes: opts.all ? undefined : opts.nodes?.split(','),
 					all: opts.all,
 					testsDir: opts.testsDir,
 					compileParser: opts.compileParser,
@@ -78,7 +75,7 @@ export const gen: CommandModule = {
 				};
 
 				// Standalone maintenance steps (--transpile / --compile-parser /
-				// --ts-generate) run with only --grammar — no --output/--nodes/--all
+				// --ts-generate) run with only --grammar — no --output/--all
 				// required. When no --output is given, they are the whole job.
 				if (opts.transpile || opts.compileParser || opts.tsGenerate) {
 					await runStandaloneSteps(codegenOpts);
@@ -86,7 +83,6 @@ export const gen: CommandModule = {
 				}
 
 				if (!opts.output) throw new Error('Missing required option: --output');
-				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
 
 				// Generate (codegen).
 				await (opts.all ? runFullRegen(codegenOpts) : runCodegen(codegenOpts));

@@ -1,5 +1,5 @@
 import type { VariantChild } from './variant-structural.ts';
-import { computeFieldStorageInfo } from '../emitters/shared.ts';
+import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
 	FIELD,
@@ -722,7 +722,7 @@ function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledN
 }
 
 function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string): void {
-	const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind));
+	const sorted = [...visible].sort((a, b) => compareOrdinal(a.kind, b.kind));
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
 		const newType = `${typeName}${i + 1}`;

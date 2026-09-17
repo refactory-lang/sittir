@@ -9,7 +9,13 @@ import {
 	AssembledToken
 } from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { keywordPresenceKind, keywordPresenceValues, keywordPresenceIsNonEmptyRepeat, escForSource } from './shared.ts';
+import {
+	keywordPresenceKind,
+	keywordPresenceValues,
+	keywordPresenceIsNonEmptyRepeat,
+	escForSource,
+	compareOrdinal
+} from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
 
 export interface EmitConstsConfig {
@@ -101,7 +107,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 	emitBitflagConstEnums(lines, nodeMap);
 
 	const emittedValueTypes = new Set<string>();
-	for (const ek of enumEntries.sort((a, b) => a.kind.localeCompare(b.kind))) {
+	for (const ek of enumEntries.sort((a, b) => compareOrdinal(a.kind, b.kind))) {
 		const constName = ek.kind.toUpperCase() + 'S';
 		const typeName =
 			ek.kind
@@ -259,8 +265,8 @@ function collectIdEntries(keys: readonly string[], ids: GeneratedIdTable | undef
 		.sort(
 			(a, b) =>
 				(a.entry.id ?? -1) - (b.entry.id ?? -1) ||
-				a.key.localeCompare(b.key) ||
-				(a.entry.parser?.cSymbol ?? '').localeCompare(b.entry.parser?.cSymbol ?? '')
+				compareOrdinal(a.key, b.key) ||
+				compareOrdinal(a.entry.parser?.cSymbol ?? '', b.entry.parser?.cSymbol ?? '')
 		);
 
 	for (const { key, entry } of keyedEntries) {
@@ -324,7 +330,7 @@ interface BitflagBinding {
 function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	const bindings = collectBitflagBindings(nodeMap);
 	if (bindings.length === 0) return;
-	bindings.sort((a, b) => a.constName.localeCompare(b.constName));
+	bindings.sort((a, b) => compareOrdinal(a.constName, b.constName));
 
 	lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field');
 	const seen = new Set<string>();

@@ -56,7 +56,8 @@ import {
 	wordCharAsciiTable,
 	literalMergePairs,
 	fieldTypeComponents,
-	slotSeparatorTexts
+	slotSeparatorTexts,
+	compareOrdinal
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -392,7 +393,7 @@ function emitStruct(
 		isUnnamed: unnamedNames.has(slot.name),
 		separator: separatorByName.get(slot.name)
 	}));
-	fields.sort((a, b) => a.name.localeCompare(b.name));
+	fields.sort((a, b) => compareOrdinal(a.name, b.name));
 	if (nodeMap !== undefined) {
 		for (const f of fields) {
 			if (f.hasTransportField || f.required || f.multiple) continue;
@@ -1007,7 +1008,7 @@ export function emitRenderModule(
 ): RustRenderModuleEmit {
 	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
-	for (const kind of [...templates.bodies.keys()].sort((a, b) => a.localeCompare(b))) {
+	for (const kind of [...templates.bodies.keys()].sort((a, b) => compareOrdinal(a, b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);

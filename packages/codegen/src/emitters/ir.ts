@@ -9,7 +9,7 @@ import {
 	AssembledPattern,
 	AssembledToken,
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, irNamespacesChildFactory } from './shared.ts';
+import { isValidIdent, irNamespacesChildFactory, compareOrdinal } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry,
 } from './kind-discriminant.ts';
@@ -234,7 +234,7 @@ export function emitIr(config: EmitIrConfig): string {
 	if (shortAliasBundles.size > 0) {
 		irValueLines.push('');
 		irValueLines.push('  // Supertype-stripped short aliases');
-		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => compareOrdinal(a, b))) {
 			irValueLines.push(`  ${alias}: ${bundle},`);
 			irTypeMembers.push(`  readonly ${alias}: typeof ${bundle};`);
 		}

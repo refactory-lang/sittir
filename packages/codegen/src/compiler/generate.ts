@@ -66,7 +66,6 @@ export interface GeneratedFiles {
 
 export interface GenerateConfig {
 	grammar: string;
-	nodes?: string[];
 	outputDir: string;
 	include?: IncludeFilter;
 	strict?: boolean;

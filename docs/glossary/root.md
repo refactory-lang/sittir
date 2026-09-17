@@ -486,6 +486,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // orchestrator's post-generate validation.
 ```
 
+### `packages/codegen/src/run-codegen.ts::withInternalCodegenRun`
+
+```text
+Sets `SITTIR_INTERNAL_CODEGEN_RUN=1` for the duration of `fn`, restoring (or
+deleting) the prior value in `finally` — reentrant, so a call nested inside
+another (`runFullRegen` calling `runCodegen`) restores the outer call's
+value rather than clearing the flag out from under it.
+```
+
 ### `packages/codegen/src/polymorph-variant.ts::PolymorphVariantDescriptor`
 
 ```text
@@ -538,12 +547,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Output directory for generated TS files (e.g. packages/rust/src). */
-```
-
-### `packages/codegen/src/run-codegen.ts::nodes`
-
-```text
-/** Specific node kinds to generate (mutually exclusive with `all`). */
 ```
 
 ### `packages/codegen/src/run-codegen.ts::all`
