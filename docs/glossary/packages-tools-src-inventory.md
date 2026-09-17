@@ -76,6 +76,14 @@ interfaces otherwise. Container kinds unwrap to their element type through
 `CONTAINER_ELEMENTS`; layout slots are never members.
 ```
 
+A sub-kind's interface — a refinement, a content-derived leaf, or a level
+under its top namespace — extends `Simplify<SubKindOf<V.<Parent><G>>>`
+rather than the parent itself: `SubKindOf` (`./utils.ts`, authored) narrows
+the parent's `kind` to the dotted sub-kind pattern, so a sub-kind is
+assignable to its parent while its own `kind` literal stays the narrower
+fact. A file imports `Simplify` (type-fest) and `SubKindOf` only when one of
+its interfaces extends that way.
+
 ### `packages/tools/src/inventory/emit.ts::renderVocabularyFile`
 
 ```text
