@@ -13,11 +13,8 @@ import {
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
-import { computeSimplifiedRules, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
-import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { flattenRules, flatten } from '../flatten.ts';
 import type { Rule, SymbolRule } from '../../types/rule.ts';
-import type { SimplifiedGrammar } from '../types.ts';
 import {
 	deriveSlots,
 	isRequired,

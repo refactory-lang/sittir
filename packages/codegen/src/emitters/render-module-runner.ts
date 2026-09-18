@@ -6,7 +6,7 @@ import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
-import { AssembledKeyword, AssembledSupertype } from '../compiler/model/node-map.ts';
+import { AssembledSupertype } from '../compiler/model/node-map.ts';
 
 export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;

@@ -47,8 +47,6 @@ import type {
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledList,
-	AssembledKeyword,
-	AssembledPunctuation,
 	AssembledEnum,
 	fixedTextOfKind,
 	snakeToCamel

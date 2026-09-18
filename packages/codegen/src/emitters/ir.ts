@@ -6,9 +6,7 @@ import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AssembledPattern,
-	AssembledPunctuation,
+	AssembledPattern
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';

@@ -1017,7 +1017,18 @@ export function collectFixedLiteral(
 	}
 }
 
-const CONTROL_CHARS = /[\x00-\x1f\x7f]/g;
+const DELETE_CODE = 0x7f;
+const SPACE_CODE = 0x20;
+
+function escapeControlChars(text: string): string {
+	let out = '';
+	for (let i = 0; i < text.length; i += 1) {
+		const char = text[i]!;
+		const code = char.charCodeAt(0);
+		out += code < SPACE_CODE || code === DELETE_CODE ? escapeControlChar(char, text[i + 1]) : char;
+	}
+	return out;
+}
 
 const LETTER_ESCAPES: Readonly<Record<string, string>> = {
 	'\n': '\\n',
@@ -1048,9 +1059,7 @@ export function composeTokenText(
 	const compose = (inner: Rule<'link'>): string | undefined => composeTokenText(inner, lookup, seen);
 	switch (rule.type) {
 		case STRING:
-			return rule.value
-				.replace(REGEX_SYNTAX_CHARS, '\\$&')
-				.replace(CONTROL_CHARS, (c, offset: number, whole: string) => escapeControlChar(c, whole[offset + 1]));
+			return escapeControlChars(rule.value.replace(REGEX_SYNTAX_CHARS, '\\$&'));
 		case PATTERN:
 			return rule.value === '' ? undefined : `(?:${rule.value})`;
 		case SEQ: {

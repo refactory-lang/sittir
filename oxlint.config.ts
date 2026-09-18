@@ -28,6 +28,15 @@ export default defineConfig({
 				// as `[^\x00-\x1F\s]` has no control-free spelling).
 				'no-control-regex': 'off'
 			}
+		},
+		{
+			// The emitted vocabulary declares `G extends GrammarContext` on every
+			// namespace-level interface for API uniformity, including the ones
+			// whose own members do not read it.
+			files: ['packages/types/src/vocabulary/**'],
+			rules: {
+				'no-unused-vars': ['error', { varsIgnorePattern: '^G$' }]
+			}
 		}
 	],
 	env: {
@@ -45,6 +54,8 @@ export default defineConfig({
 		'.claude/**',
 		'**/grammar.sittir.ts',
 		'tests/format-roundtrip/fixtures/**',
+		// Render fixtures for emit-factory-source: deliberately not real code.
+		'packages/tools/tests/emit/__fixtures__/**',
 		'archive/**'
 	]
 });

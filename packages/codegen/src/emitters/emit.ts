@@ -5,7 +5,6 @@ import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-r
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { AssembledPunctuation } from '../compiler/model/node-map.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';

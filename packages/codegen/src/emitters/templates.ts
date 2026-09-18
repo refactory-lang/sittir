@@ -14,7 +14,6 @@ import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns
 import type { NodeMap } from '../compiler/types.ts';
 import {
 	AbstractAssembledCompound,
-	AssembledKeyword,
 	isMultiple,
 	isRequired,
 	kindsOf,

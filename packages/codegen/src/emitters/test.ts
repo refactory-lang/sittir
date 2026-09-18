@@ -5,7 +5,6 @@ import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
-	AssembledKeyword,
 	AssembledList,
 	AssembledSupertype,
 	isNodeRef,
