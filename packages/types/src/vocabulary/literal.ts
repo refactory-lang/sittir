@@ -1,6 +1,10 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
 
+import type { Simplify } from 'type-fest';
+
+import type { SubKindOf } from './utils.ts';
+
 import type * as V from './index.ts';
 
 export interface Literal<G extends GrammarContext> {
@@ -8,16 +12,16 @@ export interface Literal<G extends GrammarContext> {
 }
 
 export namespace Literal {
-	export interface Boolean<G extends GrammarContext> extends V.Literal<G> {
+	export interface Boolean<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by r
 		readonly kind: 'literal.boolean';
 	}
 	export namespace Boolean {
-		export interface False<G extends GrammarContext> extends V.Literal.Boolean<G> {
+		export interface False<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Boolean<G>>> {
 			// claimed by prt
 			readonly kind: 'literal.boolean.false';
 		}
-		export interface True<G extends GrammarContext> extends V.Literal.Boolean<G> {
+		export interface True<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Boolean<G>>> {
 			// claimed by prt
 			readonly kind: 'literal.boolean.true';
 		}
@@ -26,50 +30,50 @@ export namespace Literal {
 			| V.Literal.Boolean.False<G>
 			| V.Literal.Boolean.True<G>;
 	}
-	export interface Char<G extends GrammarContext> extends V.Literal<G> {
+	export interface Char<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by r
 		readonly kind: 'literal.char';
 	}
-	export interface Ellipsis<G extends GrammarContext> extends V.Literal<G> {
+	export interface Ellipsis<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by p
 		readonly kind: 'literal.ellipsis';
 	}
-	export interface HtmlEntity<G extends GrammarContext> extends V.Literal<G> {
+	export interface HtmlEntity<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by t
 		readonly kind: 'literal.html_entity';
 	}
-	export interface Null<G extends GrammarContext> extends V.Literal<G> {
+	export interface Null<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by pt
 		readonly kind: 'literal.null';
 	}
 	export namespace Null {
-		export interface Undefined<G extends GrammarContext> extends V.Literal.Null<G> {
+		export interface Undefined<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Null<G>>> {
 			// claimed by t
 			readonly kind: 'literal.null.undefined';
 		}
 		export type Any<G extends GrammarContext> = V.Literal.Null<G> | V.Literal.Null.Undefined<G>;
 	}
-	export interface Number<G extends GrammarContext> extends V.Literal<G> {
+	export interface Number<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by t
 		readonly kind: 'literal.number';
 	}
 	export namespace Number {
-		export interface Float<G extends GrammarContext> extends V.Literal.Number<G> {
+		export interface Float<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
 			// claimed by pr
 			readonly kind: 'literal.number.float';
 		}
-		export interface Integer<G extends GrammarContext> extends V.Literal.Number<G> {
+		export interface Integer<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
 			// claimed by pr
 			readonly kind: 'literal.number.integer';
 		}
 		export namespace Integer {
-			export interface Hex<G extends GrammarContext> extends V.Literal.Number.Integer<G> {
+			export interface Hex<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number.Integer<G>>> {
 				// claimed by p
 				readonly kind: 'literal.number.integer.hex';
 			}
 			export type Any<G extends GrammarContext> = V.Literal.Number.Integer<G> | V.Literal.Number.Integer.Hex<G>;
 		}
-		export interface Negative<G extends GrammarContext> extends V.Literal.Number<G> {
+		export interface Negative<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
 			// claimed by r
 			readonly kind: 'literal.number.negative';
 			readonly value: V.Literal.Number.Any<G>;
@@ -81,18 +85,18 @@ export namespace Literal {
 			| V.Literal.Number.Integer.Hex<G>
 			| V.Literal.Number.Negative<G>;
 	}
-	export interface Regex<G extends GrammarContext> extends V.Literal<G> {
+	export interface Regex<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by t
 		readonly kind: 'literal.regex';
 		readonly flags?: V.Literal.Regex.Flags<G>;
 		readonly pattern?: V.Literal.Regex.Pattern<G>;
 	}
 	export namespace Regex {
-		export interface Flags<G extends GrammarContext> extends V.Literal.Regex<G> {
+		export interface Flags<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Regex<G>>> {
 			// claimed by t
 			readonly kind: 'literal.regex.flags';
 		}
-		export interface Pattern<G extends GrammarContext> extends V.Literal.Regex<G> {
+		export interface Pattern<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Regex<G>>> {
 			// claimed by t
 			readonly kind: 'literal.regex.pattern';
 		}
@@ -101,7 +105,7 @@ export namespace Literal {
 			| V.Literal.Regex.Flags<G>
 			| V.Literal.Regex.Pattern<G>;
 	}
-	export interface String<G extends GrammarContext> extends V.Literal<G> {
+	export interface String<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by prt
 		readonly kind: 'literal.string';
 		readonly content?: V.Unmapped<'typescript:string_double'> | V.Unmapped<'typescript:string_single'>;
@@ -115,30 +119,30 @@ export namespace Literal {
 		// unmapped: <rust:string_content>
 	}
 	export namespace String {
-		export interface Bytes<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Bytes<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.bytes';
 		}
-		export interface Concatenated<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Concatenated<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.concatenated';
 			readonly strings: V.Literal.String<G>[];
 		}
-		export interface Docstring<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Docstring<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.docstring';
 			readonly contents?: (V.Unmapped<'python:string_content'> | V.Expression.Interpolation<G>)[];
 			// unmapped: <python:string_content>
 		}
-		export interface Escape<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Escape<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by prt
 			readonly kind: 'literal.string.escape';
 		}
-		export interface F<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface F<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.f';
 		}
-		export interface Raw<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Raw<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by pr
 			readonly kind: 'literal.string.raw';
 			readonly rawStringLiteralEnd?: V.Unmapped<'rust:raw_string_literal_end'>;
@@ -151,7 +155,7 @@ export namespace Literal {
 			// r only
 			// unmapped: <rust:raw_string_literal_content>
 		}
-		export interface Triple<G extends GrammarContext> extends V.Literal.String<G> {
+		export interface Triple<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
 			readonly kind: 'literal.string.triple';
 		}
@@ -165,7 +169,7 @@ export namespace Literal {
 			| V.Literal.String.Raw<G>
 			| V.Literal.String.Triple<G>;
 	}
-	export interface Template<G extends GrammarContext> extends V.Literal<G> {
+	export interface Template<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by t
 		readonly kind: 'literal.template';
 		readonly elements?: (

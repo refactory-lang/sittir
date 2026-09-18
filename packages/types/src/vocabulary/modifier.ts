@@ -1,6 +1,10 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
 
+import type { Simplify } from 'type-fest';
+
+import type { SubKindOf } from './utils.ts';
+
 import type * as V from './index.ts';
 
 export interface Modifier<G extends GrammarContext> {
@@ -8,18 +12,18 @@ export interface Modifier<G extends GrammarContext> {
 }
 
 export namespace Modifier {
-	export interface Extern<G extends GrammarContext> extends V.Modifier<G> {
+	export interface Extern<G extends GrammarContext> extends Simplify<SubKindOf<V.Modifier<G>>> {
 		// claimed by r
 		readonly kind: 'modifier.extern';
 		readonly abi?: V.Literal.String<G>;
 	}
-	export interface Visibility<G extends GrammarContext> extends V.Modifier<G> {
+	export interface Visibility<G extends GrammarContext> extends Simplify<SubKindOf<V.Modifier<G>>> {
 		// claimed by r
 		readonly kind: 'modifier.visibility';
 		readonly content?: V.Identifier.Crate<G> | V.Modifier.Visibility.Pub<G>;
 	}
 	export namespace Visibility {
-		export interface Pub<G extends GrammarContext> extends V.Modifier.Visibility<G> {
+		export interface Pub<G extends GrammarContext> extends Simplify<SubKindOf<V.Modifier.Visibility<G>>> {
 			// claimed by r
 			readonly kind: 'modifier.visibility.pub';
 			readonly visibilityModifierGroup?: V.Unmapped<'rust:visibility_modifier_group'>;

@@ -1,6 +1,10 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
 
+import type { Simplify } from 'type-fest';
+
+import type { SubKindOf } from './utils.ts';
+
 import type * as V from './index.ts';
 
 export interface Comment<G extends GrammarContext> {
@@ -9,7 +13,7 @@ export interface Comment<G extends GrammarContext> {
 }
 
 export namespace Comment {
-	export interface Block<G extends GrammarContext> extends V.Comment<G> {
+	export interface Block<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment<G>>> {
 		// claimed by rt
 		readonly kind: 'comment.block';
 		readonly content?:
@@ -20,7 +24,7 @@ export namespace Comment {
 		// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
 	}
 	export namespace Block {
-		export interface Doc<G extends GrammarContext> extends V.Comment.Block<G> {
+		export interface Doc<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Block<G>>> {
 			// claimed by rt
 			readonly kind: 'comment.block.doc';
 			readonly content?:
@@ -31,7 +35,7 @@ export namespace Comment {
 			// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
 		}
 		export namespace Doc {
-			export interface Inner<G extends GrammarContext> extends V.Comment.Block.Doc<G> {
+			export interface Inner<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Block.Doc<G>>> {
 				// claimed by r
 				readonly kind: 'comment.block.doc.inner';
 				readonly content?:
@@ -47,7 +51,7 @@ export namespace Comment {
 			| V.Comment.Block.Doc<G>
 			| V.Comment.Block.Doc.Inner<G>;
 	}
-	export interface Line<G extends GrammarContext> extends V.Comment<G> {
+	export interface Line<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment<G>>> {
 		// claimed by prt
 		readonly kind: 'comment.line';
 		readonly content?:
@@ -59,7 +63,7 @@ export namespace Comment {
 		// unmapped: <rust:line_comment_content> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_regular_dslash>
 	}
 	export namespace Line {
-		export interface Doc<G extends GrammarContext> extends V.Comment.Line<G> {
+		export interface Doc<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Line<G>>> {
 			// claimed by r
 			readonly kind: 'comment.line.doc';
 			readonly content:
@@ -70,7 +74,7 @@ export namespace Comment {
 			// unmapped: <rust:line_comment_content> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_regular_dslash>
 		}
 		export namespace Doc {
-			export interface Inner<G extends GrammarContext> extends V.Comment.Line.Doc<G> {
+			export interface Inner<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Line.Doc<G>>> {
 				// claimed by r
 				readonly kind: 'comment.line.doc.inner';
 				readonly content:
