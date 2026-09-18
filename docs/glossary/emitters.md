@@ -1101,7 +1101,7 @@ as it always carries its delimiter.
 // otherwise this function wouldn't have been called).
 ```
 
-An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class.
+An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
 
 ### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegexLiteral`
 

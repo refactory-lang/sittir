@@ -30,7 +30,15 @@ describe('composeTokenText', () => {
 	});
 
 	it('escapes control characters so the emitted source stays printable', () => {
-		expect(composeTokenText(str('\0'))).toBe('\\x00');
+		expect(composeTokenText(str('\0'))).toBe('\\0');
+		expect(composeTokenText(str('\x01'))).toBe('\\x01');
+	});
+
+	it('spells control characters as letter escapes where one exists, with the same meaning', () => {
+		const source = composeTokenText(seq(str('\r\n'), str('\0'), str('\t\v\f'), str('\0'), pat('[0-9]')));
+		expect(source).toBe('\\r\\n\\0\\t\\v\\f\\0(?:[0-9])');
+		expect(whole(source).test('\r\n\0\t\v\f\x005')).toBe(true);
+		expect(whole(source).test('\r\n\t')).toBe(false);
 	});
 
 	it('follows a symbol through the lookup and refuses a cycle', () => {

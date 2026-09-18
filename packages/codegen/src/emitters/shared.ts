@@ -1003,6 +1003,8 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 	];
 }
 
+const LITERAL_IN_CLASS = '+.*?(){}|$/';
+
 export function stripUselessEscapes(pattern: string): string {
 	let out = '';
 	let i = 0;
@@ -1030,6 +1032,11 @@ export function stripUselessEscapes(pattern: string): string {
 			const next = pattern[i + 1];
 			if (next === '[') {
 				out += '[';
+				i += 2;
+				continue;
+			}
+			if (next !== undefined && LITERAL_IN_CLASS.includes(next)) {
+				out += next;
 				i += 2;
 				continue;
 			}

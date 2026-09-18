@@ -1019,6 +1019,21 @@ export function collectFixedLiteral(
 
 const CONTROL_CHARS = /[\x00-\x1f\x7f]/g;
 
+const LETTER_ESCAPES: Readonly<Record<string, string>> = {
+	'\n': '\\n',
+	'\r': '\\r',
+	'\t': '\\t',
+	'\v': '\\v',
+	'\f': '\\f'
+};
+
+function escapeControlChar(char: string, next: string | undefined): string {
+	const letter = LETTER_ESCAPES[char];
+	if (letter !== undefined) return letter;
+	if (char === '\0' && (next === undefined || !/[0-9]/.test(next))) return '\\0';
+	return `\\x${char.charCodeAt(0).toString(16).padStart(2, '0')}`;
+}
+
 const REGEX_SYNTAX_CHARS = /[.*+?^${}()|[\]\\]/g;
 
 function isBlankLinkRule(rule: Rule<'link'>): boolean {
@@ -1035,7 +1050,7 @@ export function composeTokenText(
 		case STRING:
 			return rule.value
 				.replace(REGEX_SYNTAX_CHARS, '\\$&')
-				.replace(CONTROL_CHARS, (c) => `\\x${c.charCodeAt(0).toString(16).padStart(2, '0')}`);
+				.replace(CONTROL_CHARS, (c, offset: number, whole: string) => escapeControlChar(c, whole[offset + 1]));
 		case PATTERN:
 			return rule.value === '' ? undefined : `(?:${rule.value})`;
 		case SEQ: {

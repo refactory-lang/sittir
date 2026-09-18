@@ -205,7 +205,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	float: {
 		pattern:
-			/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][\+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][\+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][\+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u,
+			/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u,
 		factory: F.buildFloat
 	},
 	identifier: { pattern: /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
@@ -213,7 +213,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	false: { values: ['False'], factory: () => F.buildFalse() },
 	none: { values: ['None'], factory: () => F.buildNone() },
 	comment: { pattern: /^(?:#(?:.*))$/u, factory: F.buildComment },
-	line_continuation: { pattern: /^(?:\\(?:(?:\x0d)?\x0a|\x00))$/u, factory: F.buildLineContinuation },
+	line_continuation: { pattern: /^(?:\\(?:(?:\r)?\n|\0))$/u, factory: F.buildLineContinuation },
 	positional_separator: { values: ['/'], factory: () => F.buildPositionalSeparator() },
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
 	string_start: { pattern: /^(?:(?:[a-zA-Z]*["']+))$/u, factory: F.buildStringStart },

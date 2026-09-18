@@ -22,7 +22,11 @@ export default defineConfig({
 			// undefined", not as an import error.
 			files: ['packages/rust/src/**', 'packages/typescript/src/**', 'packages/python/src/**'],
 			rules: {
-				'import/no-cycle': 'error'
+				'import/no-cycle': 'error',
+				// The generated text-leaf guards embed each grammar's own lexer
+				// patterns, which name control code points on purpose (a range such
+				// as `[^\x00-\x1F\s]` has no control-free spelling).
+				'no-control-regex': 'off'
 			}
 		}
 	],
