@@ -4425,7 +4425,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "word": false,
       "text": "\n"
     },
     {
@@ -4436,7 +4435,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
-      "word": false,
       "text": "\n\n"
     },
     {
@@ -4447,7 +4445,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
-      "word": false,
       "text": "﷑\n"
     },
     {
@@ -4562,7 +4559,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "word": false,
       "text": "\n"
     },
     {
@@ -4597,7 +4593,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
-      "word": false,
       "text": "﷐\n"
     },
     {
@@ -4622,7 +4617,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
-      "word": true,
       "text": "abstract",
       "factoryShape": "text"
     },
@@ -4635,7 +4629,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
-      "word": true,
       "text": "accessor",
       "factoryShape": "text"
     },
@@ -4648,7 +4641,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "word": true,
       "text": "async",
       "factoryShape": "text"
     },
@@ -4661,7 +4653,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
-      "word": true,
       "text": "await",
       "factoryShape": "text"
     },
@@ -4674,7 +4665,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
-      "word": true,
       "text": "const",
       "factoryShape": "text"
     },
@@ -4687,7 +4677,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
-      "word": true,
       "text": "declare",
       "factoryShape": "text"
     },
@@ -4700,7 +4689,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
-      "word": true,
       "text": "static",
       "factoryShape": "text"
     },
@@ -4713,7 +4701,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
-      "word": true,
       "text": "using",
       "factoryShape": "text"
     },
@@ -4755,7 +4742,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
-      "word": false,
       "text": "\n"
     },
     {
@@ -4918,7 +4904,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\" \" as const",
-      "word": false,
       "text": " "
     },
     {
@@ -4959,7 +4944,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\" as const",
-      "word": false,
       "text": ""
     },
     {
@@ -5647,7 +5631,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
-      "word": true,
       "text": "abstract",
       "factoryShape": "text"
     },
@@ -5904,7 +5887,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
-      "word": true,
       "text": "accessor",
       "factoryShape": "text"
     },
@@ -6182,7 +6164,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&\" as const",
-      "word": false,
       "text": "&"
     },
     {
@@ -6193,7 +6174,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&&\" as const",
-      "word": false,
       "text": "&&"
     },
     {
@@ -6204,7 +6184,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&&=\" as const",
-      "word": false,
       "text": "&&="
     },
     {
@@ -6215,7 +6194,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"&=\" as const",
-      "word": false,
       "text": "&="
     },
     {
@@ -6226,7 +6204,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"any\" as const",
-      "word": true,
       "text": "any",
       "factoryShape": "text"
     },
@@ -6646,7 +6623,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"as\" as const",
-      "word": true,
       "text": "as",
       "factoryShape": "text"
     },
@@ -6658,7 +6634,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"assert\" as const",
-      "word": true,
       "text": "assert",
       "factoryShape": "text"
     },
@@ -6764,7 +6739,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"asserts\" as const",
-      "word": true,
       "text": "asserts",
       "factoryShape": "text"
     },
@@ -6914,7 +6888,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "word": true,
       "text": "async",
       "factoryShape": "text"
     },
@@ -6926,7 +6899,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"@\" as const",
-      "word": false,
       "text": "@"
     },
     {
@@ -7134,7 +7106,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
-      "word": true,
       "text": "await",
       "factoryShape": "text"
     },
@@ -7146,7 +7117,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
-      "word": false,
       "text": "!"
     },
     {
@@ -7157,7 +7127,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!=\" as const",
-      "word": false,
       "text": "!="
     },
     {
@@ -7168,7 +7137,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!==\" as const",
-      "word": false,
       "text": "!=="
     },
     {
@@ -7484,7 +7452,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"boolean\" as const",
-      "word": true,
       "text": "boolean",
       "factoryShape": "text"
     },
@@ -7496,7 +7463,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"`\" as const",
-      "word": false,
       "text": "`"
     },
     {
@@ -7507,7 +7473,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
-      "word": true,
       "text": "break",
       "factoryShape": "text"
     },
@@ -7971,7 +7936,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"^\" as const",
-      "word": false,
       "text": "^"
     },
     {
@@ -7982,7 +7946,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"^=\" as const",
-      "word": false,
       "text": "^="
     },
     {
@@ -7993,7 +7956,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"case\" as const",
-      "word": true,
       "text": "case",
       "factoryShape": "text"
     },
@@ -8138,7 +8100,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"catch\" as const",
-      "word": true,
       "text": "catch",
       "factoryShape": "text"
     },
@@ -8820,7 +8781,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"class\" as const",
-      "word": true,
       "text": "class",
       "factoryShape": "text"
     },
@@ -8887,7 +8847,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\":\" as const",
-      "word": false,
       "text": ":"
     },
     {
@@ -8898,7 +8857,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\",\" as const",
-      "word": false,
       "text": ","
     },
     {
@@ -9101,7 +9059,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
-      "word": true,
       "text": "const",
       "factoryShape": "text"
     },
@@ -9366,7 +9323,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
-      "word": true,
       "text": "continue",
       "factoryShape": "text"
     },
@@ -9439,7 +9395,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-\" as const",
-      "word": false,
       "text": "-"
     },
     {
@@ -9450,7 +9405,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"--\" as const",
-      "word": false,
       "text": "--"
     },
     {
@@ -9461,7 +9415,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-=\" as const",
-      "word": false,
       "text": "-="
     },
     {
@@ -9472,7 +9425,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"-?:\" as const",
-      "word": false,
       "text": "-?:"
     },
     {
@@ -9483,7 +9435,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"debugger\" as const",
-      "word": true,
       "text": "debugger",
       "factoryShape": "text"
     },
@@ -9562,7 +9513,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
-      "word": true,
       "text": "declare",
       "factoryShape": "text"
     },
@@ -9833,7 +9783,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
-      "word": true,
       "text": "default",
       "factoryShape": "text"
     },
@@ -9924,7 +9873,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"delete\" as const",
-      "word": true,
       "text": "delete",
       "factoryShape": "text"
     },
@@ -9936,7 +9884,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"do\" as const",
-      "word": true,
       "text": "do",
       "factoryShape": "text"
     },
@@ -10030,7 +9977,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"${\" as const",
-      "word": false,
       "text": "${"
     },
     {
@@ -10041,7 +9987,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\".\" as const",
-      "word": false,
       "text": "."
     },
     {
@@ -10052,7 +9997,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
-      "word": false,
       "text": "..."
     },
     {
@@ -10063,7 +10007,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"\\\"\" as const",
-      "word": false,
       "text": "\""
     },
     {
@@ -10150,7 +10093,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"else\" as const",
-      "word": true,
       "text": "else",
       "factoryShape": "text"
     },
@@ -10163,7 +10105,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
-      "word": false,
       "text": ";",
       "factoryShape": "text"
     },
@@ -10508,7 +10449,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"enum\" as const",
-      "word": true,
       "text": "enum",
       "factoryShape": "text"
     },
@@ -10520,7 +10460,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=\" as const",
-      "word": false,
       "text": "="
     },
     {
@@ -10531,7 +10470,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"==\" as const",
-      "word": false,
       "text": "=="
     },
     {
@@ -10542,7 +10480,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"===\" as const",
-      "word": false,
       "text": "==="
     },
     {
@@ -10553,7 +10490,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"=>\" as const",
-      "word": false,
       "text": "=>"
     },
     {
@@ -10575,7 +10511,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
-      "word": false,
       "text": "*",
       "factoryShape": "text"
     },
@@ -10626,7 +10561,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"export\" as const",
-      "word": true,
       "text": "export",
       "factoryShape": "text"
     },
@@ -11586,7 +11520,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"extends\" as const",
-      "word": true,
       "text": "extends",
       "factoryShape": "text"
     },
@@ -11647,7 +11580,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
-      "word": true,
       "text": "false",
       "factoryShape": "text"
     },
@@ -11697,7 +11629,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"finally\" as const",
-      "word": true,
       "text": "finally",
       "factoryShape": "text"
     },
@@ -12223,7 +12154,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"for\" as const",
-      "word": true,
       "text": "for",
       "factoryShape": "text"
     },
@@ -12449,7 +12379,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"from\" as const",
-      "word": true,
       "text": "from",
       "factoryShape": "text"
     },
@@ -12788,7 +12717,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"function\" as const",
-      "word": true,
       "text": "function",
       "factoryShape": "text"
     },
@@ -13445,7 +13373,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"get\" as const",
-      "word": true,
       "text": "get",
       "factoryShape": "text"
     },
@@ -13457,7 +13384,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"global\" as const",
-      "word": true,
       "text": "global",
       "factoryShape": "text"
     },
@@ -13469,7 +13395,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">\" as const",
-      "word": false,
       "text": ">"
     },
     {
@@ -13480,7 +13405,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">=\" as const",
-      "word": false,
       "text": ">="
     },
     {
@@ -13491,7 +13415,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>\" as const",
-      "word": false,
       "text": ">>"
     },
     {
@@ -13502,7 +13425,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>=\" as const",
-      "word": false,
       "text": ">>="
     },
     {
@@ -13513,7 +13435,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>>\" as const",
-      "word": false,
       "text": ">>>"
     },
     {
@@ -13524,7 +13445,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\">>>=\" as const",
-      "word": false,
       "text": ">>>="
     },
     {
@@ -13563,7 +13483,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"if\" as const",
-      "word": true,
       "text": "if",
       "factoryShape": "text"
     },
@@ -13685,7 +13604,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"implements\" as const",
-      "word": true,
       "text": "implements",
       "factoryShape": "text"
     },
@@ -13698,7 +13616,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
-      "word": true,
       "text": "import",
       "factoryShape": "text"
     },
@@ -14044,7 +13961,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
-      "word": true,
       "text": "import",
       "factoryShape": "text"
     },
@@ -14508,7 +14424,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
-      "word": true,
       "text": "in",
       "factoryShape": "text"
     },
@@ -14887,7 +14802,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"infer\" as const",
-      "word": true,
       "text": "infer",
       "factoryShape": "text"
     },
@@ -14954,7 +14868,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"instanceof\" as const",
-      "word": true,
       "text": "instanceof",
       "factoryShape": "text"
     },
@@ -15118,7 +15031,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"interface\" as const",
-      "word": true,
       "text": "interface",
       "factoryShape": "text"
     },
@@ -15254,7 +15166,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"is\" as const",
-      "word": true,
       "text": "is",
       "factoryShape": "text"
     },
@@ -15275,7 +15186,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"keyof\" as const",
-      "word": true,
       "text": "keyof",
       "factoryShape": "text"
     },
@@ -15342,7 +15252,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"{\" as const",
-      "word": false,
       "text": "{"
     },
     {
@@ -15353,7 +15262,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"{|\" as const",
-      "word": false,
       "text": "{|"
     },
     {
@@ -15364,7 +15272,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"[\" as const",
-      "word": false,
       "text": "["
     },
     {
@@ -15375,7 +15282,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"let\" as const",
-      "word": true,
       "text": "let",
       "factoryShape": "text"
     },
@@ -15629,7 +15535,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"(\" as const",
-      "word": false,
       "text": "("
     },
     {
@@ -15640,7 +15545,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<\" as const",
-      "word": false,
       "text": "<"
     },
     {
@@ -15651,7 +15555,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<=\" as const",
-      "word": false,
       "text": "<="
     },
     {
@@ -15662,7 +15565,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<<\" as const",
-      "word": false,
       "text": "<<"
     },
     {
@@ -15673,7 +15575,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"<<=\" as const",
-      "word": false,
       "text": "<<="
     },
     {
@@ -15863,7 +15764,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"meta\" as const",
-      "word": true,
       "text": "meta",
       "factoryShape": "text"
     },
@@ -15891,7 +15791,6 @@
       },
       "isParameterless": true,
       "stampExpression": "\"import.meta\" as const",
-      "word": false,
       "text": "import.meta",
       "factoryShape": "text"
     },
@@ -15907,7 +15806,6 @@
       },
       "isParameterless": true,
       "stampExpression": "\"new.target\" as const",
-      "word": false,
       "text": "new.target",
       "factoryShape": "text"
     },
@@ -16593,7 +16491,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"module\" as const",
-      "word": true,
       "text": "module",
       "factoryShape": "text"
     },
@@ -16730,7 +16627,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"namespace\" as const",
-      "word": true,
       "text": "namespace",
       "factoryShape": "text"
     },
@@ -16866,7 +16762,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"never\" as const",
-      "word": true,
       "text": "never",
       "factoryShape": "text"
     },
@@ -16954,7 +16849,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"new\" as const",
-      "word": true,
       "text": "new",
       "factoryShape": "text"
     },
@@ -17053,7 +16947,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
-      "word": true,
       "text": "null",
       "factoryShape": "text"
     },
@@ -17074,7 +16967,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"number\" as const",
-      "word": true,
       "text": "number",
       "factoryShape": "text"
     },
@@ -17210,7 +17102,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"object\" as const",
-      "word": true,
       "text": "object",
       "factoryShape": "text"
     },
@@ -17399,7 +17290,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"of\" as const",
-      "word": true,
       "text": "of",
       "factoryShape": "text"
     },
@@ -17570,7 +17460,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
-      "word": false,
       "text": "?.",
       "factoryShape": "text"
     },
@@ -17881,7 +17770,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
-      "word": true,
       "text": "override",
       "factoryShape": "text"
     },
@@ -17894,7 +17782,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
-      "word": true,
       "text": "override",
       "factoryShape": "text"
     },
@@ -18351,7 +18238,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"%\" as const",
-      "word": false,
       "text": "%"
     },
     {
@@ -18362,7 +18248,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"%=\" as const",
-      "word": false,
       "text": "%="
     },
     {
@@ -18373,7 +18258,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
-      "word": false,
       "text": "|"
     },
     {
@@ -18384,7 +18268,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|=\" as const",
-      "word": false,
       "text": "|="
     },
     {
@@ -18395,7 +18278,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"||\" as const",
-      "word": false,
       "text": "||"
     },
     {
@@ -18406,7 +18288,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"||=\" as const",
-      "word": false,
       "text": "||="
     },
     {
@@ -18417,7 +18298,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"|}\" as const",
-      "word": false,
       "text": "|}"
     },
     {
@@ -18428,7 +18308,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+\" as const",
-      "word": false,
       "text": "+"
     },
     {
@@ -18439,7 +18318,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+=\" as const",
-      "word": false,
       "text": "+="
     },
     {
@@ -18450,7 +18328,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"++\" as const",
-      "word": false,
       "text": "++"
     },
     {
@@ -18461,7 +18338,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"+?:\" as const",
-      "word": false,
       "text": "+?:"
     },
     {
@@ -18556,7 +18432,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"private\" as const",
-      "word": true,
       "text": "private",
       "factoryShape": "text"
     },
@@ -18828,7 +18703,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"protected\" as const",
-      "word": true,
       "text": "protected",
       "factoryShape": "text"
     },
@@ -19135,7 +19009,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"public\" as const",
-      "word": true,
       "text": "public",
       "factoryShape": "text"
     },
@@ -19147,7 +19020,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?\" as const",
-      "word": false,
       "text": "?"
     },
     {
@@ -19158,7 +19030,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?:\" as const",
-      "word": false,
       "text": "?:"
     },
     {
@@ -19169,7 +19040,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
-      "word": false,
       "text": "?."
     },
     {
@@ -19180,7 +19050,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"??\" as const",
-      "word": false,
       "text": "??"
     },
     {
@@ -19191,7 +19060,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"??=\" as const",
-      "word": false,
       "text": "??="
     },
     {
@@ -19202,7 +19070,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"}\" as const",
-      "word": false,
       "text": "}"
     },
     {
@@ -19213,7 +19080,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"]\" as const",
-      "word": false,
       "text": "]"
     },
     {
@@ -19224,7 +19090,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
-      "word": true,
       "text": "readonly",
       "factoryShape": "text"
     },
@@ -19389,7 +19254,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"require\" as const",
-      "word": true,
       "text": "require",
       "factoryShape": "text"
     },
@@ -19782,7 +19646,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
-      "word": true,
       "text": "return",
       "factoryShape": "text"
     },
@@ -19862,7 +19725,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\")\" as const",
-      "word": false,
       "text": ")"
     },
     {
@@ -19928,7 +19790,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"satisfies\" as const",
-      "word": true,
       "text": "satisfies",
       "factoryShape": "text"
     },
@@ -19940,7 +19801,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\";\" as const",
-      "word": false,
       "text": ";"
     },
     {
@@ -19985,7 +19845,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"set\" as const",
-      "word": true,
       "text": "set",
       "factoryShape": "text"
     },
@@ -19997,7 +19856,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
-      "word": false,
       "text": "/"
     },
     {
@@ -20008,7 +19866,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"/=\" as const",
-      "word": false,
       "text": "/="
     },
     {
@@ -20105,7 +19962,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"'\" as const",
-      "word": false,
       "text": "'"
     },
     {
@@ -20116,7 +19972,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
-      "word": false,
       "text": "*"
     },
     {
@@ -20127,7 +19982,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"*=\" as const",
-      "word": false,
       "text": "*="
     },
     {
@@ -20138,7 +19992,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
-      "word": false,
       "text": "**"
     },
     {
@@ -20149,7 +20002,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"**=\" as const",
-      "word": false,
       "text": "**="
     },
     {
@@ -20245,7 +20097,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
-      "word": true,
       "text": "static",
       "factoryShape": "text"
     },
@@ -20357,7 +20208,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"string\" as const",
-      "word": true,
       "text": "string",
       "factoryShape": "text"
     },
@@ -20505,7 +20355,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
-      "word": true,
       "text": "super",
       "factoryShape": "text"
     },
@@ -20654,7 +20503,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"switch\" as const",
-      "word": true,
       "text": "switch",
       "factoryShape": "text"
     },
@@ -20721,7 +20569,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"symbol\" as const",
-      "word": true,
       "text": "symbol",
       "factoryShape": "text"
     },
@@ -20733,7 +20580,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"target\" as const",
-      "word": true,
       "text": "target",
       "factoryShape": "text"
     },
@@ -21090,7 +20936,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"this\" as const",
-      "word": true,
       "text": "this",
       "factoryShape": "text"
     },
@@ -21102,7 +20947,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"throw\" as const",
-      "word": true,
       "text": "throw",
       "factoryShape": "text"
     },
@@ -21182,7 +21026,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"~\" as const",
-      "word": false,
       "text": "~"
     },
     {
@@ -21194,7 +21037,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
-      "word": true,
       "text": "true",
       "factoryShape": "text"
     },
@@ -21206,7 +21048,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"try\" as const",
-      "word": true,
       "text": "try",
       "factoryShape": "text"
     },
@@ -21843,7 +21684,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"type\" as const",
-      "word": true,
       "text": "type",
       "factoryShape": "text"
     },
@@ -22201,7 +22041,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"typeof\" as const",
-      "word": true,
       "text": "typeof",
       "factoryShape": "text"
     },
@@ -22337,7 +22176,6 @@
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"undefined\" as const",
-      "word": true,
       "text": "undefined",
       "factoryShape": "text"
     },
@@ -22424,7 +22262,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"unique symbol\" as const",
-      "word": false,
       "text": "unique symbol"
     },
     {
@@ -22435,7 +22272,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"unknown\" as const",
-      "word": true,
       "text": "unknown",
       "factoryShape": "text"
     },
@@ -22577,7 +22413,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
-      "word": true,
       "text": "using",
       "factoryShape": "text"
     },
@@ -22589,7 +22424,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"var\" as const",
-      "word": true,
       "text": "var",
       "factoryShape": "text"
     },
@@ -22827,7 +22661,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"void\" as const",
-      "word": true,
       "text": "void",
       "factoryShape": "text"
     },
@@ -22839,7 +22672,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"while\" as const",
-      "word": true,
       "text": "while",
       "factoryShape": "text"
     },
@@ -22906,7 +22738,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"with\" as const",
-      "word": true,
       "text": "with",
       "factoryShape": "text"
     },
@@ -23059,7 +22890,6 @@
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"yield\" as const",
-      "word": true,
       "text": "yield",
       "factoryShape": "text"
     }

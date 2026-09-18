@@ -12,7 +12,6 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import {
-	AssembledKeyword,
 	AssembledSupertype,
 	isNodeRef,
 	isUnresolvedRef,
@@ -93,7 +92,6 @@ interface SerializedLeaf extends SerializedNodeBase {
 
 interface SerializedFixedText extends SerializedNodeBase {
 	modelType: 'keyword' | 'punctuation';
-	word: boolean;
 	text: string;
 }
 
@@ -223,7 +221,6 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 			return {
 				...base,
 				modelType: node.modelType,
-				word: node instanceof AssembledKeyword,
 				text: node.text
 			};
 		case 'enum':
