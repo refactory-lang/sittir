@@ -25,7 +25,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
-import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
+import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { bareAcceptClosure } from './from.ts';
 import { declaredDelimiterDefault } from './factories.ts';
@@ -87,6 +87,7 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
+	leafPattern?: string;
 	text?: string;
 }
 
@@ -214,6 +215,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				...base,
 				modelType: 'pattern',
 				pattern: node.pattern,
+				leafPattern: anchoredLeafRegexLiteral(node.kind, node.textPattern),
 				text: node.fixedLiteralText
 			};
 		case 'keyword':

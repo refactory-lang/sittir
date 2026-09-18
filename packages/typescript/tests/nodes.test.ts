@@ -2636,7 +2636,7 @@ describe('binary_expression sub-factories', () => {
 	it('in.privatePropertyIdentifier builds the parent', () => {
 		const node = ir.binaryExpression.in.privatePropertyIdentifier({
 			binaryExpressionIn: [
-				{ right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, left: ['test'] }
+				{ right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, left: ['#x'] }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
@@ -2718,12 +2718,21 @@ describe('unescaped_single_string_fragment', () => {
 	});
 });
 
+describe('escape_sequence', () => {
+	it('factory produces correct type', () => {
+		const node = ir.escapeSequence('\\n');
+		expect(node.$type).toBe(TSKindId.EscapeSequence);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('\\n');
+	});
+});
+
 describe('comment', () => {
 	it('factory produces correct type', () => {
-		const node = ir.comment('test');
+		const node = ir.comment('/* */');
 		expect(node.$type).toBe(TSKindId.Comment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('/* */');
 	});
 });
 
@@ -2798,10 +2807,10 @@ describe('regex_flags', () => {
 
 describe('number', () => {
 	it('factory produces correct type', () => {
-		const node = ir.number('test');
+		const node = ir.number('1');
 		expect(node.$type).toBe(TSKindId.Number);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('1');
 	});
 });
 
@@ -2816,10 +2825,10 @@ describe('identifier', () => {
 
 describe('private_property_identifier', () => {
 	it('factory produces correct type', () => {
-		const node = ir.privatePropertyIdentifier('test');
+		const node = ir.privatePropertyIdentifier('#x');
 		expect(node.$type).toBe(TSKindId.PrivatePropertyIdentifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('#x');
 	});
 });
 
@@ -3242,7 +3251,7 @@ describe('pair sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.pair.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['test']
+			key: ['#x']
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3278,7 +3287,7 @@ describe('pair sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.pair.number({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['test']
+			key: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -4084,7 +4093,7 @@ describe('enum_assignment sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.enumAssignment.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: ['test']
+			name: ['#x']
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4120,7 +4129,7 @@ describe('enum_assignment sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.enumAssignment.number({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: ['test']
+			name: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -5266,7 +5275,7 @@ describe('property_signature', () => {
 
 describe('property_signature sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
-		const node = ir.propertySignature.privatePropertyIdentifier({ name: ['test'] });
+		const node = ir.propertySignature.privatePropertyIdentifier({ name: ['#x'] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5292,7 +5301,7 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number builds the parent', () => {
-		const node = ir.propertySignature.number({ name: ['test'] });
+		const node = ir.propertySignature.number({ name: ['1'] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

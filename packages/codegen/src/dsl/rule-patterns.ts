@@ -1016,3 +1016,74 @@ export function collectFixedLiteral(
 			return undefined;
 	}
 }
+
+const CONTROL_CHARS = /[\x00-\x1f\x7f]/g;
+
+const REGEX_SYNTAX_CHARS = /[.*+?^${}()|[\]\\]/g;
+
+function isBlankLinkRule(rule: Rule<'link'>): boolean {
+	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
+}
+
+export function composeTokenText(
+	rule: Rule<'link'>,
+	lookup?: (name: string) => Rule<'link'> | undefined,
+	seen: ReadonlySet<string> = new Set()
+): string | undefined {
+	const compose = (inner: Rule<'link'>): string | undefined => composeTokenText(inner, lookup, seen);
+	switch (rule.type) {
+		case STRING:
+			return rule.value
+				.replace(REGEX_SYNTAX_CHARS, '\\$&')
+				.replace(CONTROL_CHARS, (c) => `\\x${c.charCodeAt(0).toString(16).padStart(2, '0')}`);
+		case PATTERN:
+			return rule.value === '' ? undefined : `(?:${rule.value})`;
+		case SEQ: {
+			const parts: string[] = [];
+			for (const member of rule.members) {
+				const part = compose(member);
+				if (part === undefined) return undefined;
+				parts.push(part);
+			}
+			return parts.join('');
+		}
+		case CHOICE: {
+			const arms: string[] = [];
+			let blank = false;
+			for (const member of rule.members) {
+				if (isBlankLinkRule(member)) {
+					blank = true;
+					continue;
+				}
+				const arm = compose(member);
+				if (arm === undefined) return undefined;
+				arms.push(arm);
+			}
+			if (arms.length === 0) return undefined;
+			return `(?:${arms.join('|')})${blank ? '?' : ''}`;
+		}
+		case OPTIONAL: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})?`;
+		}
+		case REPEAT: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})*`;
+		}
+		case REPEAT1: {
+			const inner = compose(rule.content);
+			return inner === undefined ? undefined : `(?:${inner})+`;
+		}
+		case TOKEN:
+		case FIELD:
+		case ALIAS:
+			return compose(rule.content);
+		case SYMBOL: {
+			const target = lookup?.(rule.name);
+			if (target === undefined || seen.has(rule.name)) return undefined;
+			return composeTokenText(target, lookup, new Set([...seen, rule.name]));
+		}
+		default:
+			return undefined;
+	}
+}

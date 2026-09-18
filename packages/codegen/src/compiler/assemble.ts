@@ -76,6 +76,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
+	readonly leafTextPatterns: ReadonlyMap<string, string>;
 	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	readonly assembleDiagnostics = new AssembleDiagnosticsCollector();
 	private readonly _nodes: Map<string, AssembledNode>;
@@ -85,6 +86,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
+			leafTextPatterns?: ReadonlyMap<string, string>;
 			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
@@ -93,6 +95,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.kindEntries = init.kindEntries;
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
+		this.leafTextPatterns = init.leafTextPatterns ?? new Map();
 		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
@@ -121,6 +124,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
+			leafTextPatterns: normalized.leafTextPatterns,
 			grammarJsonAliasMap
 		});
 	}
@@ -186,7 +190,11 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				break;
 			}
 			case 'pattern': {
-				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries, wordMatcher: wordMatcherRegex }));
+				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, {
+						kindEntries,
+						wordMatcher: wordMatcherRegex,
+						textPattern: normalized.leafTextPatterns?.get(kind)
+					}));
 				break;
 			}
 			case 'keyword':

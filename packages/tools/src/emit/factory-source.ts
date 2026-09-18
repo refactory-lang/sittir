@@ -21,6 +21,8 @@ export interface PrintContext {
 	readonly absorbedKinds?: ReadonlySet<string>;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
+	readonly leafPatterns?: Record<string, RegExp>;
+	readonly leafFindings?: string[];
 	readonly enumKinds?: ReadonlySet<string>;
 	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
@@ -197,10 +199,24 @@ export function triviaOf(node: ReadNodeLike | undefined, source?: string): NodeT
 	return leading.length === 0 && trailing.length === 0 ? undefined : { leading, trailing };
 }
 
-function textLeafOfSlot(kind: string, property: string, ctx: PrintContext): string | undefined {
+function leafKindsForText(kinds: readonly string[], text: string, ctx: PrintContext): string[] {
+	const candidates = kinds.filter((k) => ctx.textLeafKinds?.has(k));
+	const patterned = candidates.filter((k) => ctx.leafPatterns?.[k] !== undefined);
+	const matched = patterned.filter((k) => ctx.leafPatterns![k]!.test(text));
+	return matched.length > 0 ? matched : candidates.filter((k) => ctx.leafPatterns?.[k] === undefined);
+}
+
+function textLeafOfSlot(kind: string, property: string, text: string, ctx: PrintContext): string | undefined {
 	const kinds = ctx.slotKinds?.[kind]?.[property];
 	if (kinds === undefined || ctx.textLeafKinds === undefined) return undefined;
-	return kinds.find((k) => ctx.textLeafKinds!.has(k));
+	const matched = leafKindsForText(kinds, text, ctx);
+	const admitted = kinds.filter((k) => ctx.textLeafKinds!.has(k));
+	if (admitted.length > 0 && matched.length !== 1 && !(matched.length > 1 && matched.every((k) => k.startsWith('_')))) {
+		ctx.leafFindings?.push(
+			`${kind}.${property}: ${JSON.stringify(text)} matches ${matched.length === 0 ? 'no' : `${matched.length} (${matched.join(', ')})`} leaf kind of [${admitted.join(', ')}]`
+		);
+	}
+	return matched[0] ?? admitted[0];
 }
 
 /**
@@ -221,6 +237,7 @@ function printVerbatimText(
 	slotKinds: readonly string[] = [],
 	storage?: string
 ): unknown {
+	if (leaf?.startsWith('_')) return text;
 	if (leaf !== undefined) return new Printed(leaf, `${ctx.irPathOfKind(leaf)}(${JSON.stringify(text)})`, leaf);
 	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
 	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
@@ -251,14 +268,13 @@ function wrapTextLeaves(kind: string, config: unknown, ctx: PrintContext): unkno
 			out[property] = value === undefined || value === false || value === null ? undefined : true;
 			continue;
 		}
-		const leaf = textLeafOfSlot(kind, property, ctx);
 		const kinds = ctx.slotKinds?.[kind]?.[property] ?? [];
 		const storage = ctx.slotStorage?.[kind]?.[property];
 		const wrap = (v: unknown): unknown => {
 			const text = textLeafValue(v);
 			if (text === undefined) return v;
-			if (bareTextAdmitted(kind, property, ctx)) return text;
-			return printVerbatimText(text, leaf, ctx, kinds, storage);
+			if (bareTextAdmitted(kind, property, text, ctx)) return text;
+			return printVerbatimText(text, textLeafOfSlot(kind, property, text, ctx), ctx, kinds, storage);
 		};
 		out[property] = loosenAt(kind, property, Array.isArray(value) ? value.map(wrap) : wrap(value), ctx);
 	}
@@ -290,13 +306,13 @@ function slotKindsAt(kind: string, property: string, ctx: PrintContext): readonl
 }
 
 /**
- * The single pattern kind a slot admits, if it admits exactly one. A bare
- * string resolves to the FIRST pattern kind of the slot at runtime, whatever
- * the text, so only a slot with one pattern kind spells a leaf bare safely.
+ * The single leaf kind of a slot whose guard the text satisfies, if exactly
+ * one does. A bare string resolves at runtime to the leaf kind whose pattern
+ * it matches, so a leaf spells bare safely only when that kind is unique.
  */
-function solePatternKind(kinds: readonly string[], loose: LooseFacts): string | undefined {
-	const patterns = kinds.filter((k) => loose.modelTypes[k] === 'pattern');
-	return patterns.length === 1 ? patterns[0] : undefined;
+function soleLeafKind(kinds: readonly string[], text: string, ctx: PrintContext): string | undefined {
+	const matched = leafKindsForText(kinds, text, ctx);
+	return matched.length === 1 ? matched[0] : undefined;
 }
 
 /**
@@ -304,15 +320,14 @@ function solePatternKind(kinds: readonly string[], loose: LooseFacts): string | 
  * one pattern kind, which is the kind the strict spelling would name too
  * (the first text leaf of the slot), so a bare string builds the same leaf.
  */
-function bareTextAdmitted(kind: string, property: string, ctx: PrintContext): boolean {
-	const loose = ctx.loose;
+function bareTextAdmitted(kind: string, property: string, text: string, ctx: PrintContext): boolean {
 	const kinds = slotKindsAt(kind, property, ctx);
-	return loose !== undefined && kinds !== undefined && solePatternKind(kinds, loose) !== undefined;
+	return ctx.loose !== undefined && kinds !== undefined && soleLeafKind(kinds, text, ctx) !== undefined;
 }
 
-function readLeafBare(kind: string, ctx: PrintContext): boolean {
+function readLeafBare(kind: string, text: string, ctx: PrintContext): boolean {
 	const properties = Object.keys(ctx.slotKinds?.[kind] ?? {});
-	return properties.length === 1 && bareTextAdmitted(kind, properties[0]!, ctx);
+	return properties.length === 1 && bareTextAdmitted(kind, properties[0]!, text, ctx);
 }
 
 function loosenAt(kind: string, property: string, value: unknown, ctx: PrintContext): unknown {
@@ -430,8 +445,8 @@ function loosenValue(value: Printed, kinds: readonly string[], defaultArm: strin
 	const text = value.facts?.text;
 	if (text !== undefined && loose.modelTypes[value.kind] === 'pattern') {
 		const admits = kinds.includes(value.kind)
-			? solePatternKind(kinds, loose) === value.kind
-			: target !== undefined && solePatternKind(loose.bareAccepts[target] ?? [], loose) === value.kind;
+			? soleLeafKind(kinds, text, ctx) === value.kind
+			: target !== undefined && soleLeafKind(loose.bareAccepts[target] ?? [], text, ctx) === value.kind;
 		if (admits) return new Printed(value.$type, JSON.stringify(text), value.kind);
 	}
 	const config = value.facts?.config;
@@ -509,11 +524,11 @@ function placeDirectArg(kind: string, value: unknown, ctx: PrintContext): Placed
 	if (text === undefined) {
 		return { strict: value, loose: property === undefined ? value : loosenAt(kind, property, value, ctx) };
 	}
-	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, ctx);
+	const leaf = property === undefined ? undefined : textLeafOfSlot(kind, property, text, ctx);
 	const kinds = property === undefined ? [] : (ctx.slotKinds?.[kind]?.[property] ?? []);
 	const storage = property === undefined ? undefined : ctx.slotStorage?.[kind]?.[property];
 	const strict = printVerbatimText(text, leaf, ctx, kinds, storage);
-	return { strict, loose: readLeafBare(kind, ctx) ? text : strict };
+	return { strict, loose: readLeafBare(kind, text, ctx) ? text : strict };
 }
 
 function wrapDirectArg(kind: string, value: unknown, ctx: PrintContext): unknown {
@@ -905,6 +920,7 @@ export async function emitFactorySourceText(
 	const { findEntryForLiteralText } = await load('generatedMetadata');
 	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
+	const leafFindings: string[] = [];
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	const ctx: PrintContext = {
 		grammar,
@@ -919,6 +935,8 @@ export async function emitFactorySourceText(
 		seats: model.seats,
 		slotKinds: withPublicNames(model.slotKinds),
 		textLeafKinds,
+		leafPatterns: model.leafPatterns,
+		leafFindings,
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
@@ -962,6 +980,7 @@ export async function emitFactorySourceText(
 	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle }, ctx);
+	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
 	const flags = surface === 'loose' ? ` --surface loose${nested === 'configs' ? ' --nested configs' : ''}` : '';
 	return [
 		`// @generated by \`sittir tool emit-factory-source${flags}\`; do not edit.`,

@@ -1548,6 +1548,10 @@ flatten and simplify joins use.
  */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.textPattern`
+
+The regex source the kind's whole text must match: the pattern composed from the linked token, with its affixes, when one exists, otherwise the bare pattern of a pattern-only rule, otherwise `undefined`. `pattern` is the unwrapped pattern value; consumers that validate or match a leaf's text use `textPattern`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text

@@ -4926,6 +4926,7 @@
       "irKey": "templateChars",
       "hidden": false,
       "pattern": "[^`\\\\$]+",
+      "leafPattern": "/^(?:(?:[^`\\\\$]+))$/u",
       "factoryShape": "text"
     },
     {
@@ -4967,7 +4968,8 @@
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
-      "hidden": false
+      "hidden": false,
+      "leafPattern": "/^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u"
     },
     {
       "kind": "_type_query_call_expression",
@@ -8866,6 +8868,7 @@
       "factoryName": "comment",
       "irKey": "comment",
       "hidden": false,
+      "leafPattern": "/^(?:(?:\\/\\/(?:[^\\r\\n\\u2028\\u2029]*)|\\/\\*(?:[^*]*\\*+([^/*][^*]*\\*+)*)\\/))$/u",
       "factoryShape": "text"
     },
     {
@@ -10500,6 +10503,7 @@
       "irKey": "escapeSequence",
       "hidden": false,
       "pattern": "\\\\[^]",
+      "leafPattern": "/^(?:(?:\\\\[^]))$/u",
       "factoryShape": "text"
     },
     {
@@ -13455,6 +13459,7 @@
       "irKey": "hashBangLine",
       "hidden": false,
       "pattern": "#!.*",
+      "leafPattern": "/^(?:(?:#!.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -13473,6 +13478,7 @@
       "factoryName": "identifier",
       "irKey": "identifier",
       "hidden": false,
+      "leafPattern": "/^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u",
       "factoryShape": "text"
     },
     {
@@ -16957,6 +16963,7 @@
       "factoryName": "number",
       "irKey": "number",
       "hidden": false,
+      "leafPattern": "/^(?:(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)\\.(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|\\.(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*)|(?:\\d(_?\\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*))n))$/u",
       "factoryShape": "text"
     },
     {
@@ -18442,6 +18449,7 @@
       "factoryName": "privatePropertyIdentifier",
       "irKey": "privatePropertyIdentifier",
       "hidden": false,
+      "leafPattern": "/^(?:#(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u",
       "factoryShape": "text"
     },
     {
@@ -19235,6 +19243,7 @@
       "irKey": "regexFlags",
       "hidden": false,
       "pattern": "[a-z]+",
+      "leafPattern": "/^(?:(?:[a-z]+))$/u",
       "factoryShape": "text"
     },
     {
@@ -19244,6 +19253,7 @@
       "factoryName": "regexPattern",
       "irKey": "regexPattern",
       "hidden": false,
+      "leafPattern": "/^(?:(?:(?:\\[(?:(?:\\\\(?:.)|(?:[^\\]\\n\\\\])))*\\]|\\\\(?:.)|(?:[^/\\\\[\\n])))+)$/u",
       "factoryShape": "text"
     },
     {
@@ -22187,6 +22197,7 @@
       "irKey": "unescapedDoubleStringFragment",
       "hidden": false,
       "pattern": "[^\"\\\\\\r\\n]+",
+      "leafPattern": "/^(?:(?:[^\"\\\\\\r\\n]+))$/u",
       "factoryShape": "text"
     },
     {
@@ -22197,6 +22208,7 @@
       "irKey": "unescapedSingleStringFragment",
       "hidden": false,
       "pattern": "[^'\\\\\\r\\n]+",
+      "leafPattern": "/^(?:(?:[^'\\\\\\r\\n]+))$/u",
       "factoryShape": "text"
     },
     {

@@ -3551,6 +3551,10 @@ fallback an unstamped list reports.
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/compiler/link.ts::collectLeafTextPatterns`
+
+The whole-text regex of every linked rule that composes to one (`composeTokenText`, following symbol references through the linked rules), keyed by kind. It reads the linked rules because later phases drop a token's literal affixes (a comment's `//`, a character literal's quotes) from the model rule; the map is carried on the linked, normalized and simplified grammar to assembly, which stamps it on each pattern node.
+
 ### `packages/codegen/src/compiler/link.ts::stripResolvedRoleRules`
 
 ```text

@@ -251,9 +251,9 @@ export function rebuildKeywordOpenersTypescript() {
 					kind: TSKindId.ConstKeyword,
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("tpl"),
-						value: ir.templateString.strict(ir.templateChars("a"), ir.templateSubstitution.strict(ir.parenthesizedExpression.typed.strict({
+						value: ir.templateString.strict("a", ir.templateSubstitution.strict(ir.parenthesizedExpression.typed.strict({
 							expression: ir.identifier("x"),
-						})), ir.templateChars("b")),
+						})), "b"),
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({

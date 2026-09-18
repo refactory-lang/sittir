@@ -20,6 +20,7 @@ import type {
 type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 import {
+	anchoredLeafRegexLiteral,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -731,7 +732,8 @@ function buildSingleKindFastPath(
 	branchKinds: string[],
 	altKindExprs: readonly string[],
 	fieldMultiple: boolean,
-	elementType?: string
+	elementType?: string,
+	optionalSlot = false
 ): string | undefined {
 	const total = leafKinds.length + branchKinds.length;
 	if (total !== 1) return undefined;
@@ -746,7 +748,8 @@ function buildSingleKindFastPath(
 			: '_resolveOneBranch';
 	const tArg = elementType ? `<${elementType}>` : '';
 	const altArg = !isLeaf && altKindExprs.length > 0 ? `, [${altKindExprs.join(', ')}]` : '';
-	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)}${altArg})`;
+	const optionalArg = specialized === '_resolveOneBranch' && optionalSlot ? `${altArg === '' ? ', undefined' : ''}, true` : '';
+	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)}${altArg}${optionalArg})`;
 }
 
 function altKindDiscriminants(
@@ -837,7 +840,8 @@ function resolveFieldCall(
 		branchKinds,
 		altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
 		fieldMultiple,
-		elementType
+		elementType,
+		'name' in field && !isRequired(field as AssembledNonterminal)
 	);
 	const baseCall =
 		fastPath !== undefined
@@ -885,7 +889,10 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
 		} else if (node instanceof AssembledPattern) {
-			registryEntries.push(`  ${JSON.stringify(kind)}: { factory: ${factory} },`);
+			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { ${literal === undefined ? '' : `pattern: ${literal}, `}factory: ${factory} },`
+			);
 		}
 	}
 	return registryEntries;
@@ -1109,6 +1116,7 @@ interface WrapChildrenEntry {
 	readonly childSurface: 'direct' | 'spread' | 'array';
 	readonly kindIdExpr: string;
 	readonly elementKind: string | undefined;
+	readonly soleSlotOptional: boolean;
 }
 
 function soleElementKindOf(node: AssembledNode, nodeMap: NodeMap): string | undefined {
@@ -1141,7 +1149,8 @@ function collectWrapChildrenEntries(
 			factoryName,
 			childSurface,
 			kindIdExpr: `TSKindId.${entry.member}`,
-			elementKind: soleElementKindOf(node, nodeMap)
+			elementKind: soleElementKindOf(node, nodeMap),
+			soleSlotOptional: childSurface === 'direct' && soleSlotFacts(node, nodeMap)?.required === false
 		});
 	}
 	return entries;
@@ -1187,6 +1196,13 @@ function emitWrapWithChildrenTable(
 	lines.push(']);');
 	lines.push('');
 
+	lines.push('const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([');
+	for (const e of entries) {
+		if (e.soleSlotOptional) lines.push(`  ${JSON.stringify(e.kind)},`);
+	}
+	lines.push(']);');
+	lines.push('');
+
 	lines.push('function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {');
 	lines.push('  switch (kind) {');
 	for (const e of entries) {
@@ -1217,6 +1233,7 @@ function emitWrapWithChildrenTable(
 	lines.push('function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {');
 	lines.push('  const elementKind = _wrapElementKinds[kind];');
 	lines.push('  if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {');
+	lines.push('    if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;');
 	lines.push('    return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;');
 	lines.push('  }');
 	lines.push('  const resolved = arr.map(e => {');
@@ -1387,9 +1404,10 @@ function emitResolverHelpers(
 	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
 
 	lines.push(
-		'function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {'
+		'function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[], optionalSlot?: boolean): T {'
 	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
+	lines.push('  if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;');
 	// A `kind:` config naming a DIFFERENT concrete kind than this branch is
 	// itself the value a wrap-children kind's sole slot admits (rule 5): build
 	// it eagerly and run it through the SAME NodeData wrap-or-passthrough

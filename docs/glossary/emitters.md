@@ -202,49 +202,9 @@ read the third pass's rules.
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
-```text
-/**
- * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
- *
- * @param nodeMap - The assembled node map to scan for leaf nodes with patterns.
- * @param lines - Output line buffer; `const _leafRe_<name> = /.../` declarations
- *   are appended here as a side effect.
- * @returns Map from kind string to the emitted constant name (e.g. `_leafRe_identifier`).
- * @throws When a leaf pattern does not compile as a JavaScript `RegExp` under either
- *   the `'u'` flag or no flag.
- * @remarks
- *   RegExp constants are hoisted to module scope so they are compiled once at load
- *   time rather than per-call. For each patterned leaf, the `'u'` flag is tried
- *   first (needed for `\p{...}` property escapes), then no-flag. The constant name
- *   is `_leafRe_<camelKind>`; the leaf factory references it instead of the previous
- *   inline try/catch block.
- */
-```
+The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
-#### body
-
-```text
-// Token modelType hidden kinds (e.g. `_range_pattern_left_bare` = '..') have
-// no standalone factory — skip their regex consts. Non-token hidden kinds
-// (groups, branches) get fragment factories and may carry patterns.
-```
-
-#### body
-
-```text
-// Compile at codegen time to pick the flag. If NEITHER flag
-// compiles the grammar has a pattern we can't turn into a runtime
-// regex — surface this loudly instead of silently dropping the
-// validation guard (which would let the factory accept any string
-// for this leaf kind, bypassing grammar constraints).
-```
-
-#### body
-
-```text
-// Prefer a regex literal when the pattern has no unescaped `/`
-// (which would break the literal delimiter). Escape `/` if present.
-```
+The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
 ### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
 
@@ -1080,7 +1040,7 @@ config form. Group seating is emitted in one place.
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
-### `packages/codegen/src/emitters/factories.ts::stripUselessEscapes`
+### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
 
 ```text
 /**
@@ -1140,6 +1100,12 @@ as it always carries its delimiter.
 // something — fall back to the original (which we know compiled;
 // otherwise this function wouldn't have been called).
 ```
+
+An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class.
+
+### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegexLiteral`
+
+The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -1977,6 +1943,8 @@ so no kind-to-text table is needed here.
 // (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
 ```
 
+A single branch kind at an optional slot resolves through `_resolveOneBranch(value, kind, alt, true)`: the trailing flag marks the slot optional, so an empty array is the slot absent (`undefined`) instead of an elements node the non-empty guard would reject. A required slot passes no flag.
+
 ### `packages/codegen/src/emitters/from.ts::altKindDiscriminants`
 
 ```text
@@ -2064,6 +2032,8 @@ so no kind-to-text table is needed here.
  * @returns Array of registry entry source strings to push into the `_leafRegistry` literal.
  */
 ```
+
+A pattern leaf's entry carries `pattern:` (`anchoredLeafRegexLiteral`) when its kind has one, so `_resolveLeafString` picks the leaf kind whose guard the text satisfies rather than the first leaf kind a slot admits; only a kind with no derivable pattern is a last-resort match.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2343,6 +2313,8 @@ lifted into that arm.
 // overloaded signature's Parameters<> resolves to the
 // options-leading overload, not the rest tuple).
 ```
+
+`_wrapOptionalSoleKinds` names the direct wrapper kinds whose sole slot is optional. `_wrapArray` given an empty array for one of them builds the wrapper with no children rather than an empty inner elements node, which is the same optional-slot rule applied through the wrapper (`arguments: []` on a call).
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
 

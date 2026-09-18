@@ -4447,6 +4447,7 @@
       "irKey": "blockCommentContent",
       "hidden": false,
       "pattern": "[^]*",
+      "leafPattern": "/^(?:(?:[^]*))$/u",
       "factoryShape": "text"
     },
     {
@@ -4730,7 +4731,8 @@
       "factoryName": "fieldIdentifier",
       "irKey": "fieldIdentifier",
       "hidden": false,
-      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
+      "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u"
     },
     {
       "kind": "_impl_item_unsafe_marker",
@@ -4966,6 +4968,7 @@
       "irKey": "lineDocContent",
       "hidden": false,
       "pattern": ".*",
+      "leafPattern": "/^(?:(?:.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -5298,6 +5301,7 @@
       "irKey": "stringLiteralOpen",
       "hidden": false,
       "pattern": "[bc]?\"",
+      "leafPattern": "/^(?:(?:[bc]?\"))$/u",
       "factoryShape": "text"
     },
     {
@@ -5674,7 +5678,8 @@
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
-      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
+      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
+      "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u"
     },
     {
       "kind": "_use_clause",
@@ -7846,6 +7851,7 @@
       "factoryName": "charLiteral",
       "irKey": "charLiteral",
       "hidden": false,
+      "leafPattern": "/^(?:(?:b)?'(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?')$/u",
       "factoryShape": "text"
     },
     {
@@ -9396,6 +9402,7 @@
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
+      "leafPattern": "/^(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))$/u",
       "factoryShape": "text"
     },
     {
@@ -11978,6 +11985,7 @@
       "irKey": "identifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
+      "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u",
       "factoryShape": "text"
     },
     {
@@ -12634,6 +12642,7 @@
       "factoryName": "integerLiteral",
       "irKey": "integerLiteral",
       "hidden": false,
+      "leafPattern": "/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u",
       "factoryShape": "text"
     },
     {
@@ -13228,6 +13237,7 @@
         "hoisted": true
       },
       "pattern": ".*",
+      "leafPattern": "/^(?:(?:.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -13324,6 +13334,7 @@
       "annotations": {
         "hoisted": true
       },
+      "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -14260,6 +14271,7 @@
       "irKey": "metavariable",
       "hidden": false,
       "pattern": "\\$[a-zA-Z_]\\w*",
+      "leafPattern": "/^(?:(?:\\$[a-zA-Z_]\\w*))$/u",
       "factoryShape": "text"
     },
     {
@@ -17613,6 +17625,7 @@
       "irKey": "shebang",
       "hidden": false,
       "pattern": "#![\\r\\f\\t\\v ]*([^\\[\\n].*)?\\n",
+      "leafPattern": "/^(?:(?:#![\\r\\f\\t\\v ]*([^[\\n].*)?\\n))$/u",
       "factoryShape": "text"
     },
     {

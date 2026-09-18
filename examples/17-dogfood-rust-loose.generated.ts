@@ -12,8 +12,8 @@ export function rebuildSpliceLoose() {
 				name: "Edit",
 			}),
 		}).$trivia({ leading: ["//! Byte-level `apply_edits` on a source string.\n", "//!\n", "//! Sorts edits by `start_pos` descending, applies each as a raw byte\n", "//! splice on a `String`. Descending order guarantees earlier edits\n", "//! aren't shifted by later ones, so consumers can produce edits in any\n", "//! order and let us canonicalize.\n", "//!\n", "//! # Overlap handling\n", "//!\n", "//! Overlap detection is **explicitly** the consumer's responsibility —\n", "//! see contracts/napi-api.md `applyEdits` contract. This function does\n", "//! NOT validate that edits are disjoint; overlapping edits fall through\n", "//! to last-wins behavior (after sort-descending, the edit with the\n", "//! greatest `start_pos` applies first, and subsequent edits whose\n", "//! ranges still reference valid offsets within the intermediate string\n", "//! apply afterward).\n", "//!\n", "//! # Validation\n", "//!\n", "//! Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n", "//! Violations return `Err` rather than panic so the napi wrapper can\n", "//! surface a typed error to JS. UTF-8 boundary correctness is also\n", "//! checked on the splice (via `String::replace_range`) — non-char-\n", "//! boundary ranges produce a `Result::Err` instead of panicking.\n"] }), ir.attributeItem(ir.attribute.input({
-			path: ir.identifier("derive"),
-			arguments: ir.delimTokenTree.paren(ir.identifier("Debug"), TSKindId.Comma, ir.identifier("Clone"), TSKindId.Comma, ir.identifier("PartialEq"), TSKindId.Comma, ir.identifier("Eq")),
+			path: "derive",
+			arguments: ir.delimTokenTree.paren("Debug", TSKindId.Comma, "Clone", TSKindId.Comma, "PartialEq", TSKindId.Comma, "Eq"),
 		})).$trivia({ leading: ["/// Error returned from [`apply_edits`] when an edit is invalid.\n"] }), ir.enumItem({
 			visibilityModifier: ir.visibilityModifier.pub(),
 			name: "SpliceError",
@@ -66,24 +66,24 @@ export function rebuildSpliceLoose() {
 		}), ir.implItem.body.positiveClause({
 			traitClause: ir.scopedTypeIdentifier({
 				path: ir.scopedIdentifier({
-					path: ir.identifier("std"),
+					path: "std",
 					name: "fmt",
 				}),
 				name: "Display",
 			}),
-			type: ir.identifier("SpliceError"),
+			type: "SpliceError",
 			declarationList: [ir.functionItem({
-				name: ir.identifier("fmt"),
+				name: "fmt",
 				parameters: [ir.selfParameter({
 					reference: true,
 				}), ir.parameter({
-					name: ir.identifier("f"),
+					name: "f",
 					type: ir.referenceType({
 						mutableSpecifier: true,
 						type: ir.genericType({
 							type: ir.scopedTypeIdentifier({
 								path: ir.scopedIdentifier({
-									path: ir.identifier("std"),
+									path: "std",
 									name: "fmt",
 								}),
 								name: "Formatter",
@@ -94,7 +94,7 @@ export function rebuildSpliceLoose() {
 				})],
 				returnType: ir.scopedTypeIdentifier({
 					path: ir.scopedIdentifier({
-						path: ir.identifier("std"),
+						path: "std",
 						name: "fmt",
 					}),
 					name: "Result",
@@ -107,7 +107,7 @@ export function rebuildSpliceLoose() {
 								pattern: ir.matchPattern({
 									pattern: ir.structPattern({
 										type: ir.scopedTypeIdentifier({
-											path: ir.identifier("SpliceError"),
+											path: "SpliceError",
 											name: "NonCharBoundary",
 										}),
 										fields: [ir.fieldPattern.shorthand({
@@ -119,9 +119,9 @@ export function rebuildSpliceLoose() {
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
-									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
+									arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
 										stringOpen: "\"",
-										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+										elements: ["edit range not at UTF-8 char boundary: start={start}, end={end}"],
 									})),
 								}),
 								comma: true,
@@ -130,7 +130,7 @@ export function rebuildSpliceLoose() {
 								pattern: ir.matchPattern({
 									pattern: ir.structPattern({
 										type: ir.scopedTypeIdentifier({
-											path: ir.identifier("SpliceError"),
+											path: "SpliceError",
 											name: "InvalidRange",
 										}),
 										fields: [ir.fieldPattern.shorthand({
@@ -143,9 +143,9 @@ export function rebuildSpliceLoose() {
 								value: ir.block({
 									trailingExpression: ir.macroInvocation({
 										macro: "write",
-										arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
+										arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
 											stringOpen: "\"",
-											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
+											elements: ["invalid edit range: start={start}, end={end}"],
 										})),
 									}),
 								}),
@@ -153,7 +153,7 @@ export function rebuildSpliceLoose() {
 								pattern: ir.matchPattern({
 									pattern: ir.structPattern({
 										type: ir.scopedTypeIdentifier({
-											path: ir.identifier("SpliceError"),
+											path: "SpliceError",
 											name: "OutOfBounds",
 										}),
 										fields: [ir.fieldPattern.shorthand({
@@ -165,9 +165,9 @@ export function rebuildSpliceLoose() {
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
-									arguments: ir.delimTokenTree.paren(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral({
+									arguments: ir.delimTokenTree.paren("f", TSKindId.Comma, ir.stringLiteral({
 										stringOpen: "\"",
-										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
+										elements: ["edit out of bounds: end={end} > source length={source_len}"],
 									})),
 								}),
 							})],
@@ -178,24 +178,24 @@ export function rebuildSpliceLoose() {
 		}), ir.implItem.body.positiveClause({
 			traitClause: ir.scopedTypeIdentifier({
 				path: ir.scopedIdentifier({
-					path: ir.identifier("std"),
+					path: "std",
 					name: "error",
 				}),
 				name: "Error",
 			}),
-			type: ir.identifier("SpliceError"),
+			type: "SpliceError",
 			declarationList: [],
 		}), ir.functionItem({
 			visibilityModifier: ir.visibilityModifier.pub(),
-			name: ir.identifier("apply_edits"),
+			name: "apply_edits",
 			parameters: [ir.parameter({
-				name: ir.identifier("source"),
+				name: "source",
 				type: ir.referenceType({
 					type: TSKindId.StrKeyword,
 				}),
 			}), ir.parameter({
 				mutableSpecifier: true,
-				name: ir.identifier("edits"),
+				name: "edits",
 				type: ir.genericType({
 					type: "Vec",
 					typeArguments: [ir.identifier("Edit")],
@@ -207,50 +207,50 @@ export function rebuildSpliceLoose() {
 			}),
 			body: ir.block({
 				statements: [ir.letDeclaration({
-					pattern: ir.identifier("source_len"),
+					pattern: "source_len",
 					value: ir.callExpression({
 						function: ir.fieldExpression({
-							value: ir.identifier("source"),
-							field: ir.identifier("len"),
+							value: "source",
+							field: "len",
 						}),
 						arguments: ir.arguments(),
 					}),
 				}).$trivia({ leading: ["// Pre-validate every edit up-front so we fail atomically (no", "// partial application)."] }), ir.forExpression({
-					pattern: ir.identifier("e"),
-					value: ir.referenceExpression.bare(ir.identifier("edits")),
+					pattern: "e",
+					value: ir.referenceExpression.bare("edits"),
 					body: ir.block({
 						statements: [ir.ifExpression({
 							condition: ir.binaryExpression({
 								left: ir.fieldExpression({
-									value: ir.identifier("e"),
-									field: ir.identifier("end_pos"),
+									value: "e",
+									field: "end_pos",
 								}),
 								operator: TSKindId.Lt,
 								right: ir.fieldExpression({
-									value: ir.identifier("e"),
-									field: ir.identifier("start_pos"),
+									value: "e",
+									field: "start_pos",
 								}),
 							}),
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
-									function: ir.identifier("Err"),
+									function: "Err",
 									arguments: [{
 										expression: ir.structExpression({
 											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: ir.identifier("SpliceError"),
+												path: "SpliceError",
 												name: "InvalidRange",
 											}),
 											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: ir.identifier("start"),
+												field: "start",
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("start_pos"),
+													value: "e",
+													field: "start_pos",
 												}),
 											}), ir.fieldInitializer({
-												field: ir.identifier("end"),
+												field: "end",
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("end_pos"),
+													value: "e",
+													field: "end_pos",
 												}),
 											})),
 										}),
@@ -261,28 +261,28 @@ export function rebuildSpliceLoose() {
 							condition: ir.binaryExpression({
 								left: ir.parenthesizedExpression(ir.typeCastExpression({
 									value: ir.fieldExpression({
-										value: ir.identifier("e"),
-										field: ir.identifier("end_pos"),
+										value: "e",
+										field: "end_pos",
 									}),
 									type: TSKindId.UsizeKeyword,
 								})),
 								operator: TSKindId.Gt,
-								right: ir.identifier("source_len"),
+								right: "source_len",
 							}),
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
-									function: ir.identifier("Err"),
+									function: "Err",
 									arguments: [{
 										expression: ir.structExpression({
 											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: ir.identifier("SpliceError"),
+												path: "SpliceError",
 												name: "OutOfBounds",
 											}),
 											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: ir.identifier("end"),
+												field: "end",
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("end_pos"),
+													value: "e",
+													field: "end_pos",
 												}),
 											}), ir.shorthandFieldInitializer({
 												name: "source_len",
@@ -297,14 +297,14 @@ export function rebuildSpliceLoose() {
 									operator: TSKindId.Bang,
 									operand: ir.callExpression({
 										function: ir.fieldExpression({
-											value: ir.identifier("source"),
-											field: ir.identifier("is_char_boundary"),
+											value: "source",
+											field: "is_char_boundary",
 										}),
 										arguments: [{
 											expression: ir.typeCastExpression({
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("start_pos"),
+													value: "e",
+													field: "start_pos",
 												}),
 												type: TSKindId.UsizeKeyword,
 											}),
@@ -316,14 +316,14 @@ export function rebuildSpliceLoose() {
 									operator: TSKindId.Bang,
 									operand: ir.callExpression({
 										function: ir.fieldExpression({
-											value: ir.identifier("source"),
-											field: ir.identifier("is_char_boundary"),
+											value: "source",
+											field: "is_char_boundary",
 										}),
 										arguments: [{
 											expression: ir.typeCastExpression({
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("end_pos"),
+													value: "e",
+													field: "end_pos",
 												}),
 												type: TSKindId.UsizeKeyword,
 											}),
@@ -333,24 +333,24 @@ export function rebuildSpliceLoose() {
 							}),
 							consequence: ir.block({
 								statements: [ir.expressionStatement.withSemi(ir.returnExpression(ir.callExpression({
-									function: ir.identifier("Err"),
+									function: "Err",
 									arguments: [{
 										expression: ir.structExpression({
 											name: ir.scopedTypeIdentifierInExpressionPosition({
-												path: ir.identifier("SpliceError"),
+												path: "SpliceError",
 												name: "NonCharBoundary",
 											}),
 											body: ir.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, ir.fieldInitializer({
-												field: ir.identifier("start"),
+												field: "start",
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("start_pos"),
+													value: "e",
+													field: "start_pos",
 												}),
 											}), ir.fieldInitializer({
-												field: ir.identifier("end"),
+												field: "end",
 												value: ir.fieldExpression({
-													value: ir.identifier("e"),
-													field: ir.identifier("end_pos"),
+													value: "e",
+													field: "end_pos",
 												}),
 											})),
 										}),
@@ -361,31 +361,31 @@ export function rebuildSpliceLoose() {
 					}),
 				}), ir.expressionStatement.withSemi(ir.callExpression({
 					function: ir.fieldExpression({
-						value: ir.identifier("edits"),
-						field: ir.identifier("sort_by"),
+						value: "edits",
+						field: "sort_by",
 					}),
 					arguments: [{
 						expression: ir.closureExpression.expr({
-							parameters: [ir.identifier("a"), ir.identifier("b")],
+							parameters: ["a", "b"],
 							body: ir.block({
 								trailingExpression: ir.callExpression({
 									function: ir.fieldExpression({
 										value: ir.callExpression({
 											function: ir.fieldExpression({
 												value: ir.fieldExpression({
-													value: ir.identifier("b"),
-													field: ir.identifier("start_pos"),
+													value: "b",
+													field: "start_pos",
 												}),
-												field: ir.identifier("cmp"),
+												field: "cmp",
 											}),
 											arguments: [{
 												expression: ir.referenceExpression.bare(ir.fieldExpression({
-													value: ir.identifier("a"),
-													field: ir.identifier("start_pos"),
+													value: "a",
+													field: "start_pos",
 												})),
 											}],
 										}),
-										field: ir.identifier("then_with"),
+										field: "then_with",
 									}),
 									arguments: [{
 										expression: ir.closureExpression.expr({
@@ -393,15 +393,15 @@ export function rebuildSpliceLoose() {
 											body: ir.callExpression({
 												function: ir.fieldExpression({
 													value: ir.fieldExpression({
-														value: ir.identifier("b"),
-														field: ir.identifier("end_pos"),
+														value: "b",
+														field: "end_pos",
 													}),
-													field: ir.identifier("cmp"),
+													field: "cmp",
 												}),
 												arguments: [{
 													expression: ir.referenceExpression.bare(ir.fieldExpression({
-														value: ir.identifier("a"),
-														field: ir.identifier("end_pos"),
+														value: "a",
+														field: "end_pos",
 													})),
 												}],
 											}),
@@ -413,10 +413,10 @@ export function rebuildSpliceLoose() {
 					}],
 				})).$trivia({ leading: ["// Sort descending by start_pos. Ties broken by end_pos descending —", "// with identical start positions, the longer replacement applies", "// first so the shorter doesn't overwrite its tail. (Tie-breaking is", "// documented consumer-visible behavior; overlap detection is still", "// theirs.)"] }), ir.letDeclaration({
 					mutableSpecifier: true,
-					pattern: ir.identifier("buf"),
+					pattern: "buf",
 					value: ir.callExpression({
 						function: ir.scopedIdentifier({
-							path: ir.identifier("String"),
+							path: "String",
 							name: "from",
 						}),
 						arguments: [{
@@ -424,49 +424,49 @@ export function rebuildSpliceLoose() {
 						}],
 					}),
 				}), ir.forExpression({
-					pattern: ir.identifier("e"),
-					value: ir.identifier("edits"),
+					pattern: "e",
+					value: "edits",
 					body: ir.block({
 						statements: [ir.letDeclaration({
-							pattern: ir.identifier("start"),
+							pattern: "start",
 							value: ir.typeCastExpression({
 								value: ir.fieldExpression({
-									value: ir.identifier("e"),
-									field: ir.identifier("start_pos"),
+									value: "e",
+									field: "start_pos",
 								}),
 								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.letDeclaration({
-							pattern: ir.identifier("end"),
+							pattern: "end",
 							value: ir.typeCastExpression({
 								value: ir.fieldExpression({
-									value: ir.identifier("e"),
-									field: ir.identifier("end_pos"),
+									value: "e",
+									field: "end_pos",
 								}),
 								type: TSKindId.UsizeKeyword,
 							}),
 						}), ir.expressionStatement.withSemi(ir.callExpression({
 							function: ir.fieldExpression({
-								value: ir.identifier("buf"),
-								field: ir.identifier("replace_range"),
+								value: "buf",
+								field: "replace_range",
 							}),
 							arguments: [{
 								expression: ir.rangeExpression.binary({
-									start: ir.identifier("start"),
+									start: "start",
 									operator: TSKindId.DotDot,
-									end: ir.identifier("end"),
+									end: "end",
 								}),
 							}, {
 								expression: ir.referenceExpression.bare(ir.fieldExpression({
-									value: ir.identifier("e"),
-									field: ir.identifier("inserted_text"),
+									value: "e",
+									field: "inserted_text",
 								})),
 							}],
 						}))],
 					}),
 				})],
 				trailingExpression: ir.callExpression({
-					function: ir.identifier("Ok"),
+					function: "Ok",
 					arguments: [{
 						expression: ir.identifier("buf"),
 					}],

@@ -73,14 +73,14 @@ export function rebuildKeywordOpenersPython() {
 			right: ir.dictionary.strict({ delimiter: Delimiter.None }, ir.pair.strict({
 				key: ir.string.strict({
 					stringStart: ir.stringStart("\""),
-					content: [ir.stringContent.strict(ir.escapeInterpolation("k"))],
+					content: [ir.stringContent.strict("k")],
 					stringEnd: ir.stringEnd("\""),
 				}),
 				value: ir.parenthesizedExpression.strict(ir.integer("1")),
 			}), ir.pair.strict({
 				key: ir.string.strict({
 					stringStart: ir.stringStart("\""),
-					content: [ir.stringContent.strict(ir.escapeInterpolation("j"))],
+					content: [ir.stringContent.strict("j")],
 					stringEnd: ir.stringEnd("\""),
 				}),
 				value: ir.list.strict(ir.collectionElements.strict({ delimiter: Delimiter.None }, ir.integer("2"))),
@@ -89,7 +89,7 @@ export function rebuildKeywordOpenersPython() {
 			left: ir.identifier("s"),
 			right: ir.string.strict({
 				stringStart: ir.stringStart("f\""),
-				content: [ir.stringContent.strict(ir.escapeInterpolation("a")), ir.interpolation.strict({
+				content: [ir.stringContent.strict("a"), ir.interpolation.strict({
 					expression: ir.parenthesizedExpression.strict(ir.identifier("x")),
 				})],
 				stringEnd: ir.stringEnd("\""),

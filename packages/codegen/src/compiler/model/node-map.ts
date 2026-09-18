@@ -1692,13 +1692,26 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[]; wordMatcher?: RegExp }
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			kindEntries?: readonly GeneratedKindEntry[];
+			wordMatcher?: RegExp;
+			textPattern?: string;
+		}
 	) {
 		super(kind, rule, opts);
+		this.#textPattern = opts?.textPattern;
 	}
+
+	readonly #textPattern: string | undefined;
 
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
+	}
+
+	get textPattern(): string | undefined {
+		return this.#textPattern ?? this.pattern;
 	}
 
 	get fixedLiteralText(): string | undefined {

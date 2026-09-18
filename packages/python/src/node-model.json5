@@ -3622,6 +3622,7 @@
       "irKey": "_stringContent",
       "hidden": false,
       "pattern": "[^\"'\\\\{}\\n]+",
+      "leafPattern": "/^(?:(?:[^\"'\\\\{}\\n]+))$/u",
       "factoryShape": "text"
     },
     {
@@ -5867,6 +5868,7 @@
       "irKey": "comment",
       "hidden": false,
       "pattern": ".*",
+      "leafPattern": "/^(?:#(?:.*))$/u",
       "factoryShape": "text"
     },
     {
@@ -7277,6 +7279,7 @@
       "irKey": "escapeInterpolation",
       "hidden": false,
       "pattern": "\\{\\{|\\}\\}",
+      "leafPattern": "/^(?:(?:\\{\\{|\\}\\}))$/u",
       "factoryShape": "text"
     },
     {
@@ -7286,6 +7289,7 @@
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
+      "leafPattern": "/^(?:\\\\(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$/u",
       "factoryShape": "text"
     },
     {
@@ -8071,6 +8075,7 @@
       "factoryName": "float",
       "irKey": "float",
       "hidden": false,
+      "leafPattern": "/^(?:(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][\\+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][\\+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][\\+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u",
       "factoryShape": "text"
     },
     {
@@ -8770,6 +8775,7 @@
       "irKey": "identifier",
       "hidden": false,
       "pattern": "[_\\p{XID_Start}][_\\p{XID_Continue}]*",
+      "leafPattern": "/^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u",
       "factoryShape": "text"
     },
     {
@@ -9037,6 +9043,7 @@
       "factoryName": "importPrefix",
       "irKey": "importPrefix",
       "hidden": false,
+      "leafPattern": "/^(?:(?:\\.)+)$/u",
       "factoryShape": "text"
     },
     {
@@ -9097,6 +9104,7 @@
       "factoryName": "integer",
       "irKey": "integer",
       "hidden": false,
+      "leafPattern": "/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u",
       "factoryShape": "text"
     },
     {
@@ -9668,6 +9676,7 @@
       "factoryName": "lineContinuation",
       "irKey": "lineContinuation",
       "hidden": false,
+      "leafPattern": "/^(?:\\\\(?:(?:\\x0d)?\\x0a|\\x00))$/u",
       "factoryShape": "text"
     },
     {
@@ -12335,6 +12344,7 @@
       "irKey": "stringEnd",
       "hidden": false,
       "pattern": "[\"']+",
+      "leafPattern": "/^(?:(?:[\"']+))$/u",
       "factoryShape": "text"
     },
     {
@@ -12345,6 +12355,7 @@
       "irKey": "stringStart",
       "hidden": false,
       "pattern": "[a-zA-Z]*[\"']+",
+      "leafPattern": "/^(?:(?:[a-zA-Z]*[\"']+))$/u",
       "factoryShape": "text"
     },
     {
@@ -13166,6 +13177,7 @@
       "irKey": "typeConversion",
       "hidden": false,
       "pattern": "![a-z]",
+      "leafPattern": "/^(?:(?:![a-z]))$/u",
       "factoryShape": "text"
     },
     {

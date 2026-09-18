@@ -260,17 +260,28 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	mutable_specifier: { values: ['mut'], factory: () => F.buildMutableSpecifier() },
 	unit_expression: { values: ['()'], factory: () => F.buildUnitExpression() },
 	remaining_field_pattern: { values: ['..'], factory: () => F.buildRemainingFieldPattern() },
-	integer_literal: { factory: F.buildIntegerLiteral },
-	char_literal: { factory: F.buildCharLiteral },
-	escape_sequence: { factory: F.buildEscapeSequence },
-	identifier: { factory: F.buildIdentifier },
-	shebang: { factory: F.buildShebang },
+	integer_literal: {
+		pattern:
+			/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u,
+		factory: F.buildIntegerLiteral
+	},
+	char_literal: {
+		pattern:
+			/^(?:(?:b)?'(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\'])))?')$/u,
+		factory: F.buildCharLiteral
+	},
+	escape_sequence: {
+		pattern: /^(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u,
+		factory: F.buildEscapeSequence
+	},
+	identifier: { pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
+	shebang: { pattern: /^(?:(?:#![\r\f\t\v ]*([^[\n].*)?\n))$/u, factory: F.buildShebang },
 	self: { values: ['self'], factory: () => F.buildSelf() },
 	super: { values: ['super'], factory: () => F.buildSuper() },
 	crate: { values: ['crate'], factory: () => F.buildCrate() },
-	metavariable: { factory: F.buildMetavariable },
-	line_comment_regular_dslash: { factory: F.buildLineCommentRegularDslash },
-	line_comment_content: { factory: F.buildLineCommentContent },
+	metavariable: { pattern: /^(?:(?:\$[a-zA-Z_]\w*))$/u, factory: F.buildMetavariable },
+	line_comment_regular_dslash: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentRegularDslash },
+	line_comment_content: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentContent },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
 	string_content: { factory: F.buildStringContent },
 	raw_string_literal_content: { factory: F.buildRawStringLiteralContent },
@@ -955,6 +966,32 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'block_comment_doc_inner'
 ]);
 
+const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
+	'enum_variant_list',
+	'field_declaration_list',
+	'ordered_field_declaration_list',
+	'where_clause',
+	'use_list',
+	'use_wildcard',
+	'parameters',
+	'extern_modifier',
+	'use_bounds',
+	'return_expression',
+	'yield_expression',
+	'arguments',
+	'field_initializer_list',
+	'match_block',
+	'continue_expression',
+	'tuple_pattern',
+	'slice_pattern',
+	'block_comment',
+	'use_wildcard_group',
+	'visibility_modifier_pub',
+	'function_type_fn_form',
+	'block_comment_doc_outer',
+	'block_comment_doc_inner'
+]);
+
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case 'expression_statement':
@@ -1169,6 +1206,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
 	const elementKind = _wrapElementKinds[kind];
 	if (_wrapDirectKinds.has(kind) && elementKind !== undefined && elementKind in _wrapKindIds) {
+		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;
 		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
 	}
 	const resolved = arr.map((e) => {
@@ -1187,8 +1225,14 @@ function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
 	return _wrapWithChildren(kind, resolved) as T;
 }
 
-function _resolveOneBranch<T>(v: _LooseFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
+function _resolveOneBranch<T>(
+	v: _LooseFieldInput,
+	kind: string,
+	altKinds?: readonly (string | number)[],
+	optionalSlot?: boolean
+): T {
 	if (v === undefined || v === null) return v as T;
+	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
 	if (typeof v === 'object' && !Array.isArray(v) && !isNodeData(v) && 'kind' in v) {
 		const { kind: k, ...rest } = v;
 		const kn = _kindNameOf(k);
@@ -2201,7 +2245,7 @@ export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): T
 }
 
 export function resolveAttribute_input(value: T.Attribute.LooseConfig['input']): T.Attribute['_input'] {
-	return _resolveOneBranch<T.AttributeInput>(value, 'attribute_input');
+	return _resolveOneBranch<T.AttributeInput>(value, 'attribute_input', undefined, true);
 }
 
 export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
@@ -2247,7 +2291,7 @@ export function coerceToDeclarationList(
 export function resolveUnionItem_visibilityModifier(
 	value: T.UnionItem.LooseConfig['visibilityModifier']
 ): T.UnionItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveUnionItem_name(value: T.UnionItem.LooseConfig['name']): T.UnionItem['_name'] {
@@ -2257,13 +2301,13 @@ export function resolveUnionItem_name(value: T.UnionItem.LooseConfig['name']): T
 export function resolveUnionItem_typeParameters(
 	value: T.UnionItem.LooseConfig['typeParameters']
 ): T.UnionItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveUnionItem_whereClause(
 	value: T.UnionItem.LooseConfig['whereClause']
 ): T.UnionItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveUnionItem_body(value: T.UnionItem.LooseConfig['body']): T.UnionItem['_body'] {
@@ -2284,7 +2328,7 @@ export function coerceToUnionItem(input: T.UnionItem.Loose): ReturnType<typeof F
 export function resolveEnumItem_visibilityModifier(
 	value: T.EnumItem.LooseConfig['visibilityModifier']
 ): T.EnumItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveEnumItem_name(value: T.EnumItem.LooseConfig['name']): T.EnumItem['_name'] {
@@ -2294,11 +2338,11 @@ export function resolveEnumItem_name(value: T.EnumItem.LooseConfig['name']): T.E
 export function resolveEnumItem_typeParameters(
 	value: T.EnumItem.LooseConfig['typeParameters']
 ): T.EnumItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveEnumItem_whereClause(value: T.EnumItem.LooseConfig['whereClause']): T.EnumItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveEnumItem_body(value: T.EnumItem.LooseConfig['body']): T.EnumItem['_body'] {
@@ -2319,7 +2363,7 @@ export function coerceToEnumItem(input: T.EnumItem.Loose): ReturnType<typeof F.b
 export function resolveEnumVariantList_enumVariantListElements(
 	value: T.EnumVariantList.LooseConfig['enumVariantListElements']
 ): T.EnumVariantList['_enum_variant_list_elements'] {
-	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements');
+	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements', undefined, true);
 }
 
 export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList> {
@@ -2330,7 +2374,9 @@ export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): Return
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'enumVariantListElements' in input
 				? input.enumVariantListElements
 				: input,
-			'enum_variant_list_elements'
+			'enum_variant_list_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -2338,7 +2384,7 @@ export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): Return
 export function resolveEnumVariant_visibilityModifier(
 	value: T.EnumVariant.LooseConfig['visibilityModifier']
 ): T.EnumVariant['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveEnumVariant_name(value: T.EnumVariant.LooseConfig['name']): T.EnumVariant['_name'] {
@@ -2375,7 +2421,7 @@ export function coerceToEnumVariant(input: T.EnumVariant.Loose): ReturnType<type
 export function resolveFieldDeclarationList_fieldDeclarationListElements(
 	value: T.FieldDeclarationList.LooseConfig['fieldDeclarationListElements']
 ): T.FieldDeclarationList['_field_declaration_list_elements'] {
-	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements');
+	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements', undefined, true);
 }
 
 export function coerceToFieldDeclarationList(
@@ -2388,7 +2434,9 @@ export function coerceToFieldDeclarationList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'fieldDeclarationListElements' in input
 				? input.fieldDeclarationListElements
 				: input,
-			'field_declaration_list_elements'
+			'field_declaration_list_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -2396,7 +2444,7 @@ export function coerceToFieldDeclarationList(
 export function resolveFieldDeclaration_visibilityModifier(
 	value: T.FieldDeclaration.LooseConfig['visibilityModifier']
 ): T.FieldDeclaration['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveFieldDeclaration_name(
@@ -2427,7 +2475,12 @@ export function coerceToFieldDeclaration(input: T.FieldDeclaration.Loose): Retur
 export function resolveOrderedFieldDeclarationList_attributes(
 	value: T.OrderedFieldDeclarationList.LooseConfig['attributes']
 ): T.OrderedFieldDeclarationList['_attributes'] {
-	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(value, 'ordered_field_declaration_list_elements');
+	return _resolveOneBranch<T.OrderedFieldDeclarationListElements>(
+		value,
+		'ordered_field_declaration_list_elements',
+		undefined,
+		true
+	);
 }
 
 export function coerceToOrderedFieldDeclarationList(
@@ -2444,7 +2497,9 @@ export function coerceToOrderedFieldDeclarationList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'attributes' in input
 				? input.attributes
 				: input,
-			'ordered_field_declaration_list_elements'
+			'ordered_field_declaration_list_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -2452,7 +2507,7 @@ export function coerceToOrderedFieldDeclarationList(
 export function resolveExternCrateDeclaration_visibilityModifier(
 	value: T.ExternCrateDeclaration.LooseConfig['visibilityModifier']
 ): T.ExternCrateDeclaration['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveExternCrateDeclaration_name(
@@ -2482,7 +2537,7 @@ export function coerceToExternCrateDeclaration(
 export function resolveConstItem_visibilityModifier(
 	value: T.ConstItem.LooseConfig['visibilityModifier']
 ): T.ConstItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveConstItem_name(value: T.ConstItem.LooseConfig['name']): T.ConstItem['_name'] {
@@ -2516,7 +2571,7 @@ export function coerceToConstItem(input: T.ConstItem.Loose): ReturnType<typeof F
 export function resolveStaticItem_visibilityModifier(
 	value: T.StaticItem.LooseConfig['visibilityModifier']
 ): T.StaticItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveStaticItem_refMarker(value: T.StaticItem.LooseConfig['refMarker']): T.StaticItem['_ref_marker'] {
@@ -2562,7 +2617,7 @@ export function coerceToStaticItem(input: T.StaticItem.Loose): ReturnType<typeof
 export function resolveTypeItem_visibilityModifier(
 	value: T.TypeItem.LooseConfig['visibilityModifier']
 ): T.TypeItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveTypeItem_name(value: T.TypeItem.LooseConfig['name']): T.TypeItem['_name'] {
@@ -2572,11 +2627,11 @@ export function resolveTypeItem_name(value: T.TypeItem.LooseConfig['name']): T.T
 export function resolveTypeItem_typeParameters(
 	value: T.TypeItem.LooseConfig['typeParameters']
 ): T.TypeItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveTypeItem_whereClause(value: T.TypeItem.LooseConfig['whereClause']): T.TypeItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveTypeItem_type(value: T.TypeItem.LooseConfig['type']): T.TypeItem['_type'] {
@@ -2589,7 +2644,7 @@ export function resolveTypeItem_type(value: T.TypeItem.LooseConfig['type']): T.T
 export function resolveTypeItem_trailingWhereClause(
 	value: T.TypeItem.LooseConfig['trailingWhereClause']
 ): T.TypeItem['_trailing_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function coerceToTypeItem(input: T.TypeItem.Loose): ReturnType<typeof F.buildTypeItem> {
@@ -2607,13 +2662,13 @@ export function coerceToTypeItem(input: T.TypeItem.Loose): ReturnType<typeof F.b
 export function resolveFunctionItem_visibilityModifier(
 	value: T.FunctionItem.LooseConfig['visibilityModifier']
 ): T.FunctionItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveFunctionItem_functionModifiers(
 	value: T.FunctionItem.LooseConfig['functionModifiers']
 ): T.FunctionItem['_function_modifiers'] {
-	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers');
+	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers', undefined, true);
 }
 
 export function resolveFunctionItem_name(value: T.FunctionItem.LooseConfig['name']): T.FunctionItem['_name'] {
@@ -2623,7 +2678,7 @@ export function resolveFunctionItem_name(value: T.FunctionItem.LooseConfig['name
 export function resolveFunctionItem_typeParameters(
 	value: T.FunctionItem.LooseConfig['typeParameters']
 ): T.FunctionItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveFunctionItem_parameters(
@@ -2644,7 +2699,7 @@ export function resolveFunctionItem_returnType(
 export function resolveFunctionItem_whereClause(
 	value: T.FunctionItem.LooseConfig['whereClause']
 ): T.FunctionItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveFunctionItem_body(value: T.FunctionItem.LooseConfig['body']): T.FunctionItem['_body'] {
@@ -2669,13 +2724,13 @@ export function coerceToFunctionItem(input: T.FunctionItem.Loose): ReturnType<ty
 export function resolveFunctionSignatureItem_visibilityModifier(
 	value: T.FunctionSignatureItem.LooseConfig['visibilityModifier']
 ): T.FunctionSignatureItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveFunctionSignatureItem_functionModifiers(
 	value: T.FunctionSignatureItem.LooseConfig['functionModifiers']
 ): T.FunctionSignatureItem['_function_modifiers'] {
-	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers');
+	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers', undefined, true);
 }
 
 export function resolveFunctionSignatureItem_name(
@@ -2687,7 +2742,7 @@ export function resolveFunctionSignatureItem_name(
 export function resolveFunctionSignatureItem_typeParameters(
 	value: T.FunctionSignatureItem.LooseConfig['typeParameters']
 ): T.FunctionSignatureItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveFunctionSignatureItem_parameters(
@@ -2708,7 +2763,7 @@ export function resolveFunctionSignatureItem_returnType(
 export function resolveFunctionSignatureItem_whereClause(
 	value: T.FunctionSignatureItem.LooseConfig['whereClause']
 ): T.FunctionSignatureItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function coerceToFunctionSignatureItem(
@@ -2781,7 +2836,7 @@ export function coerceToFunctionModifiers(
 export function resolveWhereClause_wherePredicates(
 	value: T.WhereClause.LooseConfig['wherePredicates']
 ): T.WhereClause['_where_predicates'] {
-	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates');
+	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates', undefined, true);
 }
 
 export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typeof F.buildWhereClause> {
@@ -2792,7 +2847,9 @@ export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typ
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'wherePredicates' in input
 				? input.wherePredicates
 				: input,
-			'where_predicates'
+			'where_predicates',
+			undefined,
+			true
 		)
 	);
 }
@@ -2869,7 +2926,7 @@ export function coerceToWherePredicate(input: T.WherePredicate.Loose): ReturnTyp
 export function resolveTraitItem_visibilityModifier(
 	value: T.TraitItem.LooseConfig['visibilityModifier']
 ): T.TraitItem['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveTraitItem_unsafeMarker(
@@ -2885,17 +2942,17 @@ export function resolveTraitItem_name(value: T.TraitItem.LooseConfig['name']): T
 export function resolveTraitItem_typeParameters(
 	value: T.TraitItem.LooseConfig['typeParameters']
 ): T.TraitItem['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveTraitItem_bounds(value: T.TraitItem.LooseConfig['bounds']): T.TraitItem['_bounds'] {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
 }
 
 export function resolveTraitItem_whereClause(
 	value: T.TraitItem.LooseConfig['whereClause']
 ): T.TraitItem['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveTraitItem_body(value: T.TraitItem.LooseConfig['body']): T.TraitItem['_body'] {
@@ -2922,19 +2979,19 @@ export function resolveAssociatedType_name(value: T.AssociatedType.LooseConfig['
 export function resolveAssociatedType_typeParameters(
 	value: T.AssociatedType.LooseConfig['typeParameters']
 ): T.AssociatedType['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveAssociatedType_bounds(
 	value: T.AssociatedType.LooseConfig['bounds']
 ): T.AssociatedType['_bounds'] {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
 }
 
 export function resolveAssociatedType_whereClause(
 	value: T.AssociatedType.LooseConfig['whereClause']
 ): T.AssociatedType['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnType<typeof F.buildAssociatedType> {
@@ -3104,7 +3161,7 @@ export function resolveTypeParameter_name(value: T.TypeParameter.LooseConfig['na
 }
 
 export function resolveTypeParameter_bounds(value: T.TypeParameter.LooseConfig['bounds']): T.TypeParameter['_bounds'] {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
 }
 
 export function resolveTypeParameter_defaultType(
@@ -3135,7 +3192,7 @@ export function resolveLifetimeParameter_name(
 export function resolveLifetimeParameter_bounds(
 	value: T.LifetimeParameter.LooseConfig['bounds']
 ): T.LifetimeParameter['_bounds'] {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
 }
 
 export function coerceToLifetimeParameter(
@@ -3181,7 +3238,7 @@ export function resolveLetDeclaration_value(value: T.LetDeclaration.LooseConfig[
 export function resolveLetDeclaration_alternative(
 	value: T.LetDeclaration.LooseConfig['alternative']
 ): T.LetDeclaration['_alternative'] {
-	return _resolveOneBranch<T.Block>(value, 'block');
+	return _resolveOneBranch<T.Block>(value, 'block', undefined, true);
 }
 
 export function coerceToLetDeclaration(input: T.LetDeclaration.Loose): ReturnType<typeof F.buildLetDeclaration> {
@@ -3199,7 +3256,7 @@ export function coerceToLetDeclaration(input: T.LetDeclaration.Loose): ReturnTyp
 export function resolveUseDeclaration_visibilityModifier(
 	value: T.UseDeclaration.LooseConfig['visibilityModifier']
 ): T.UseDeclaration['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveUseDeclaration_argument(
@@ -3258,7 +3315,7 @@ export function coerceToScopedUseList(input?: T.ScopedUseList.Loose): ReturnType
 }
 
 export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClauses']): T.UseList['_use_clauses'] {
-	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses');
+	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses', undefined, true);
 }
 
 export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList> {
@@ -3269,7 +3326,9 @@ export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.bu
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'useClauses' in input
 				? input.useClauses
 				: input,
-			'use_clauses'
+			'use_clauses',
+			undefined,
+			true
 		)
 	);
 }
@@ -3299,7 +3358,7 @@ export function coerceToUseAsClause(input: T.UseAsClause.Loose): ReturnType<type
 export function resolveUseWildcard_useWildcardGroup(
 	value: T.UseWildcard.LooseConfig['useWildcardGroup']
 ): T.UseWildcard['_use_wildcard_group'] {
-	return _resolveOneBranch<T.UseWildcardGroup>(value, 'use_wildcard_group');
+	return _resolveOneBranch<T.UseWildcardGroup>(value, 'use_wildcard_group', undefined, true);
 }
 
 export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typeof F.buildUseWildcard> {
@@ -3310,7 +3369,9 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'useWildcardGroup' in input
 				? input.useWildcardGroup
 				: input,
-			'use_wildcard_group'
+			'use_wildcard_group',
+			undefined,
+			true
 		)
 	);
 }
@@ -3318,7 +3379,7 @@ export function coerceToUseWildcard(input?: T.UseWildcard.Loose): ReturnType<typ
 export function resolveParameters_parametersElements(
 	value: T.Parameters.LooseConfig['parametersElements']
 ): T.Parameters['_parameters_elements'] {
-	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements');
+	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
@@ -3329,7 +3390,9 @@ export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeo
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'parametersElements' in input
 				? input.parametersElements
 				: input,
-			'parameters_elements'
+			'parameters_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -3343,7 +3406,7 @@ export function resolveSelfParameter_reference(
 export function resolveSelfParameter_lifetime(
 	value: T.SelfParameter.LooseConfig['lifetime']
 ): T.SelfParameter['_lifetime'] {
-	return _resolveOneBranch<T.Lifetime>(value, 'lifetime');
+	return _resolveOneBranch<T.Lifetime>(value, 'lifetime', undefined, true);
 }
 
 export function resolveSelfParameter_mutableSpecifier(
@@ -3418,7 +3481,7 @@ export function coerceToParameter(input: T.Parameter.Loose): ReturnType<typeof F
 }
 
 export function resolveExternModifier_abi(value: T.ExternModifier.LooseConfig['abi']): T.ExternModifier['_abi'] {
-	return _resolveOneBranch<T.StringLiteral>(value, 'string_literal');
+	return _resolveOneBranch<T.StringLiteral>(value, 'string_literal', undefined, true);
 }
 
 export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnType<typeof F.buildExternModifier> {
@@ -3427,7 +3490,9 @@ export function coerceToExternModifier(input?: T.ExternModifier.Loose): ReturnTy
 	return F.buildExternModifier(
 		_resolveOneBranch<T.StringLiteral>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'abi' in input ? input.abi : input,
-			'string_literal'
+			'string_literal',
+			undefined,
+			true
 		)
 	);
 }
@@ -3596,7 +3661,7 @@ export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<ty
 export function resolveFunctionType_forLifetimes(
 	value: T.FunctionType.LooseConfig['forLifetimes']
 ): T.FunctionType['_for_lifetimes'] {
-	return _resolveOneBranch<T.ForLifetimes>(value, 'for_lifetimes');
+	return _resolveOneBranch<T.ForLifetimes>(value, 'for_lifetimes', undefined, true);
 }
 
 export function resolveFunctionType_content(value: T.FunctionType.LooseConfig['content']): T.FunctionType['_content'] {
@@ -3751,7 +3816,7 @@ export function coerceToBoundedType(input: T.BoundedType.Loose): ReturnType<type
 }
 
 export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']): T.UseBounds['_bounds'] {
-	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements');
+	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements', undefined, true);
 }
 
 export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds> {
@@ -3760,7 +3825,9 @@ export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof 
 	return F.buildUseBounds(
 		_resolveOneBranch<T.UseBoundsElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'bounds' in input ? input.bounds : input,
-			'use_bounds_elements'
+			'use_bounds_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -3795,7 +3862,7 @@ export function resolveTypeBinding_name(value: T.TypeBinding.LooseConfig['name']
 export function resolveTypeBinding_typeArguments(
 	value: T.TypeBinding.LooseConfig['typeArguments']
 ): T.TypeBinding['_type_arguments'] {
-	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments');
+	return _resolveOneBranch<T.TypeArguments>(value, 'type_arguments', undefined, true);
 }
 
 export function resolveTypeBinding_type(value: T.TypeBinding.LooseConfig['type']): T.TypeBinding['_type'] {
@@ -3818,7 +3885,7 @@ export function coerceToTypeBinding(input: T.TypeBinding.Loose): ReturnType<type
 export function resolveReferenceType_lifetime(
 	value: T.ReferenceType.LooseConfig['lifetime']
 ): T.ReferenceType['_lifetime'] {
-	return _resolveOneBranch<T.Lifetime>(value, 'lifetime');
+	return _resolveOneBranch<T.Lifetime>(value, 'lifetime', undefined, true);
 }
 
 export function resolveReferenceType_mutableSpecifier(
@@ -3851,7 +3918,7 @@ export function coerceToNeverType(_input?: T.NeverType.Loose): ReturnType<typeof
 export function resolveAbstractType_typeParameters(
 	value: T.AbstractType.LooseConfig['typeParameters']
 ): T.AbstractType['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveAbstractType_trait(value: T.AbstractType.LooseConfig['trait']): T.AbstractType['_trait'] {
@@ -4460,7 +4527,7 @@ export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnTyp
 export function resolveArguments_argumentsElements(
 	value: T.Arguments.LooseConfig['argumentsElements']
 ): T.Arguments['_arguments_elements'] {
-	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements');
+	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
 }
 
 export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments> {
@@ -4471,7 +4538,9 @@ export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof 
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'argumentsElements' in input
 				? input.argumentsElements
 				: input,
-			'arguments_elements'
+			'arguments_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -4571,7 +4640,7 @@ export function coerceToStructExpression(input: T.StructExpression.Loose): Retur
 export function resolveFieldInitializerList_initializers(
 	value: T.FieldInitializerList.LooseConfig['initializers']
 ): T.FieldInitializerList['_initializers'] {
-	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements');
+	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements', undefined, true);
 }
 
 export function coerceToFieldInitializerList(
@@ -4584,7 +4653,9 @@ export function coerceToFieldInitializerList(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'initializers' in input
 				? input.initializers
 				: input,
-			'field_initializer_list_elements'
+			'field_initializer_list_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -4697,7 +4768,7 @@ export function resolveIfExpression_consequence(
 export function resolveIfExpression_alternative(
 	value: T.IfExpression.LooseConfig['alternative']
 ): T.IfExpression['_alternative'] {
-	return _resolveOneBranch<T.ElseClause>(value, 'else_clause');
+	return _resolveOneBranch<T.ElseClause>(value, 'else_clause', undefined, true);
 }
 
 export function coerceToIfExpression(input: T.IfExpression.Loose): ReturnType<typeof F.buildIfExpression> {
@@ -4801,7 +4872,7 @@ export function coerceToMatchExpression(input: T.MatchExpression.Loose): ReturnT
 export function resolveMatchBlock_matchBlockArms(
 	value: T.MatchBlock.LooseConfig['matchBlockArms']
 ): T.MatchBlock['_match_block_arms'] {
-	return _resolveOneBranch<T.MatchBlockArms>(value, '_match_block_arms');
+	return _resolveOneBranch<T.MatchBlockArms>(value, '_match_block_arms', undefined, true);
 }
 
 export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
@@ -4812,7 +4883,9 @@ export function coerceToMatchBlock(input?: T.MatchBlock.Loose): ReturnType<typeo
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'matchBlockArms' in input
 				? input.matchBlockArms
 				: input,
-			'_match_block_arms'
+			'_match_block_arms',
+			undefined,
+			true
 		)
 	);
 }
@@ -4877,7 +4950,7 @@ export function coerceToMatchPattern(input: T.MatchPattern.Loose): ReturnType<ty
 export function resolveWhileExpression_label(
 	value: T.WhileExpression.LooseConfig['label']
 ): T.WhileExpression['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function resolveWhileExpression_condition(
@@ -4904,7 +4977,7 @@ export function coerceToWhileExpression(input: T.WhileExpression.Loose): ReturnT
 }
 
 export function resolveLoopExpression_label(value: T.LoopExpression.LooseConfig['label']): T.LoopExpression['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function resolveLoopExpression_body(
@@ -4923,7 +4996,7 @@ export function coerceToLoopExpression(input?: T.LoopExpression.Loose): ReturnTy
 }
 
 export function resolveForExpression_label(value: T.ForExpression.LooseConfig['label']): T.ForExpression['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function resolveForExpression_pattern(
@@ -5026,7 +5099,7 @@ export function coerceToLabel(input: T.Label.Loose): ReturnType<typeof F.buildLa
 export function resolveBreakExpression_label(
 	value: T.BreakExpression.LooseConfig['label']
 ): T.BreakExpression['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function resolveBreakExpression_expression(
@@ -5050,7 +5123,7 @@ export function coerceToBreakExpression(input?: T.BreakExpression.Loose): Return
 export function resolveContinueExpression_label(
 	value: T.ContinueExpression.LooseConfig['label']
 ): T.ContinueExpression['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function coerceToContinueExpression(
@@ -5061,7 +5134,9 @@ export function coerceToContinueExpression(
 	return F.buildContinueExpression(
 		_resolveOneBranch<T.Label>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'label' in input ? input.label : input,
-			'label'
+			'label',
+			undefined,
+			true
 		)
 	);
 }
@@ -5220,7 +5295,7 @@ export function coerceToTryBlock(input?: T.TryBlock.Loose): ReturnType<typeof F.
 }
 
 export function resolveBlock_label(value: T.Block.LooseConfig['label']): T.Block['_label'] {
-	return _resolveOneBranch<T.Label>(value, 'label');
+	return _resolveOneBranch<T.Label>(value, 'label', undefined, true);
 }
 
 export function resolveBlock_statements(value: T.Block.LooseConfig['statements']): T.Block['_statements'] {
@@ -5277,7 +5352,7 @@ export function coerceToGenericPattern(input: T.GenericPattern.Loose): ReturnTyp
 export function resolveTuplePattern_elements(
 	value: T.TuplePattern.LooseConfig['elements']
 ): T.TuplePattern['_elements'] {
-	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements');
+	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
 }
 
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
@@ -5286,7 +5361,9 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.TuplePatternElements>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'elements' in input ? input.elements : input,
-			'tuple_pattern_elements'
+			'tuple_pattern_elements',
+			undefined,
+			true
 		)
 	);
 }
@@ -5294,7 +5371,7 @@ export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<t
 export function resolveSlicePattern_patterns(
 	value: T.SlicePattern.LooseConfig['patterns']
 ): T.SlicePattern['_patterns'] {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns');
+	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
 export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern> {
@@ -5303,7 +5380,9 @@ export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<t
 	return F.buildSlicePattern(
 		_resolveOneBranch<T.Patterns>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'patterns' in input ? input.patterns : input,
-			'patterns'
+			'patterns',
+			undefined,
+			true
 		)
 	);
 }
@@ -5317,7 +5396,7 @@ export function resolveTupleStructPattern_type(
 export function resolveTupleStructPattern_patterns(
 	value: T.TupleStructPattern.LooseConfig['patterns']
 ): T.TupleStructPattern['_patterns'] {
-	return _resolveOneBranch<T.Patterns>(value, 'patterns');
+	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
 export function coerceToTupleStructPattern(
@@ -5336,7 +5415,7 @@ export function resolveStructPattern_type(value: T.StructPattern.LooseConfig['ty
 }
 
 export function resolveStructPattern_fields(value: T.StructPattern.LooseConfig['fields']): T.StructPattern['_fields'] {
-	return _resolveOneBranch<T.StructPatternElements>(value, 'struct_pattern_elements');
+	return _resolveOneBranch<T.StructPatternElements>(value, 'struct_pattern_elements', undefined, true);
 }
 
 export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<typeof F.buildStructPattern> {
@@ -6246,7 +6325,7 @@ export function resolveArrayExpressionList_attributes(
 export function resolveArrayExpressionList_argumentsElements(
 	value: T.ArrayExpressionList.LooseConfig['argumentsElements']
 ): T.ArrayExpressionList['_arguments_elements'] {
-	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements');
+	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
 }
 
 export function coerceToArrayExpressionList(
@@ -6584,7 +6663,7 @@ export function resolveImplItemBody_unsafeMarker(
 export function resolveImplItemBody_typeParameters(
 	value: T.ImplItemBody.LooseConfig['typeParameters']
 ): T.ImplItemBody['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveImplItemBody_traitClause(
@@ -6608,7 +6687,7 @@ export function resolveImplItemBody_type(value: T.ImplItemBody.LooseConfig['type
 export function resolveImplItemBody_whereClause(
 	value: T.ImplItemBody.LooseConfig['whereClause']
 ): T.ImplItemBody['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveImplItemBody_declarationList(
@@ -6639,7 +6718,7 @@ export function resolveImplItemSemi_unsafeMarker(
 export function resolveImplItemSemi_typeParameters(
 	value: T.ImplItemSemi.LooseConfig['typeParameters']
 ): T.ImplItemSemi['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveImplItemSemi_traitClause(
@@ -6663,7 +6742,7 @@ export function resolveImplItemSemi_type(value: T.ImplItemSemi.LooseConfig['type
 export function resolveImplItemSemi_whereClause(
 	value: T.ImplItemSemi.LooseConfig['whereClause']
 ): T.ImplItemSemi['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<typeof F.buildImplItemSemi> {
@@ -6681,7 +6760,7 @@ export function coerceToImplItemSemi(input: T.ImplItemSemi.Loose): ReturnType<ty
 export function resolveVisibilityModifierPub_visibilityModifierGroup(
 	value: T.VisibilityModifierPub.LooseConfig['visibilityModifierGroup']
 ): T.VisibilityModifierPub['_visibility_modifier_group'] {
-	return _resolveOneBranch<T.VisibilityModifierGroup>(value, 'visibility_modifier_group');
+	return _resolveOneBranch<T.VisibilityModifierGroup>(value, 'visibility_modifier_group', undefined, true);
 }
 
 export function coerceToVisibilityModifierPub(
@@ -6694,7 +6773,9 @@ export function coerceToVisibilityModifierPub(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'visibilityModifierGroup' in input
 				? input.visibilityModifierGroup
 				: input,
-			'visibility_modifier_group'
+			'visibility_modifier_group',
+			undefined,
+			true
 		)
 	);
 }
@@ -6762,7 +6843,7 @@ export function coerceToFunctionTypeTraitForm(
 export function resolveFunctionTypeFnForm_functionModifiers(
 	value: T.FunctionTypeFnForm.LooseConfig['functionModifiers']
 ): T.FunctionTypeFnForm['_function_modifiers'] {
-	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers');
+	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers', undefined, true);
 }
 
 export function coerceToFunctionTypeFnForm(
@@ -6775,7 +6856,9 @@ export function coerceToFunctionTypeFnForm(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'functionModifiers' in input
 				? input.functionModifiers
 				: input,
-			'function_modifiers'
+			'function_modifiers',
+			undefined,
+			true
 		)
 	);
 }
@@ -6783,7 +6866,7 @@ export function coerceToFunctionTypeFnForm(
 export function resolveModItemExternal_visibilityModifier(
 	value: T.ModItemExternal.LooseConfig['visibilityModifier']
 ): T.ModItemExternal['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveModItemExternal_name(value: T.ModItemExternal.LooseConfig['name']): T.ModItemExternal['_name'] {
@@ -6802,7 +6885,7 @@ export function coerceToModItemExternal(input: T.ModItemExternal.Loose): ReturnT
 export function resolveModItemInline_visibilityModifier(
 	value: T.ModItemInline.LooseConfig['visibilityModifier']
 ): T.ModItemInline['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveModItemInline_name(value: T.ModItemInline.LooseConfig['name']): T.ModItemInline['_name'] {
@@ -7098,7 +7181,7 @@ export function coerceToExpressionStatementWithSemi(
 export function resolveForeignModItemSemi_visibilityModifier(
 	value: T.ForeignModItemSemi.LooseConfig['visibilityModifier']
 ): T.ForeignModItemSemi['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveForeignModItemSemi_externModifier(
@@ -7121,7 +7204,7 @@ export function coerceToForeignModItemSemi(
 export function resolveForeignModItemBody_visibilityModifier(
 	value: T.ForeignModItemBody.LooseConfig['visibilityModifier']
 ): T.ForeignModItemBody['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveForeignModItemBody_externModifier(
@@ -7724,7 +7807,7 @@ export function resolveMacroDefinitionParen_name(
 export function resolveMacroDefinitionParen_macroRules(
 	value: T.MacroDefinitionParen.LooseConfig['macroRules']
 ): T.MacroDefinitionParen['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
 }
 
 export function coerceToMacroDefinitionParen(
@@ -7747,7 +7830,7 @@ export function resolveMacroDefinitionBracket_name(
 export function resolveMacroDefinitionBracket_macroRules(
 	value: T.MacroDefinitionBracket.LooseConfig['macroRules']
 ): T.MacroDefinitionBracket['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
 }
 
 export function coerceToMacroDefinitionBracket(
@@ -7770,7 +7853,7 @@ export function resolveMacroDefinitionBrace_name(
 export function resolveMacroDefinitionBrace_macroRules(
 	value: T.MacroDefinitionBrace.LooseConfig['macroRules']
 ): T.MacroDefinitionBrace['_macro_rules'] {
-	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules');
+	return _resolveOneBranch<T.MacroRules>(value, 'macro_rules', undefined, true);
 }
 
 export function coerceToMacroDefinitionBrace(
@@ -7906,7 +7989,7 @@ export function coerceToRangePatternWithLeft(
 export function resolveStructItemBrace_visibilityModifier(
 	value: T.StructItemBrace.LooseConfig['visibilityModifier']
 ): T.StructItemBrace['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveStructItemBrace_name(value: T.StructItemBrace.LooseConfig['name']): T.StructItemBrace['_name'] {
@@ -7916,13 +7999,13 @@ export function resolveStructItemBrace_name(value: T.StructItemBrace.LooseConfig
 export function resolveStructItemBrace_typeParameters(
 	value: T.StructItemBrace.LooseConfig['typeParameters']
 ): T.StructItemBrace['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveStructItemBrace_whereClause(
 	value: T.StructItemBrace.LooseConfig['whereClause']
 ): T.StructItemBrace['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function resolveStructItemBrace_body(value: T.StructItemBrace.LooseConfig['body']): T.StructItemBrace['_body'] {
@@ -7944,7 +8027,7 @@ export function coerceToStructItemBrace(input: T.StructItemBrace.Loose): ReturnT
 export function resolveStructItemTuple_visibilityModifier(
 	value: T.StructItemTuple.LooseConfig['visibilityModifier']
 ): T.StructItemTuple['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveStructItemTuple_name(value: T.StructItemTuple.LooseConfig['name']): T.StructItemTuple['_name'] {
@@ -7954,7 +8037,7 @@ export function resolveStructItemTuple_name(value: T.StructItemTuple.LooseConfig
 export function resolveStructItemTuple_typeParameters(
 	value: T.StructItemTuple.LooseConfig['typeParameters']
 ): T.StructItemTuple['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function resolveStructItemTuple_body(value: T.StructItemTuple.LooseConfig['body']): T.StructItemTuple['_body'] {
@@ -7964,7 +8047,7 @@ export function resolveStructItemTuple_body(value: T.StructItemTuple.LooseConfig
 export function resolveStructItemTuple_whereClause(
 	value: T.StructItemTuple.LooseConfig['whereClause']
 ): T.StructItemTuple['_where_clause'] {
-	return _resolveOneBranch<T.WhereClause>(value, 'where_clause');
+	return _resolveOneBranch<T.WhereClause>(value, 'where_clause', undefined, true);
 }
 
 export function coerceToStructItemTuple(input: T.StructItemTuple.Loose): ReturnType<typeof F.buildStructItemTuple> {
@@ -7982,7 +8065,7 @@ export function coerceToStructItemTuple(input: T.StructItemTuple.Loose): ReturnT
 export function resolveStructItemUnit_visibilityModifier(
 	value: T.StructItemUnit.LooseConfig['visibilityModifier']
 ): T.StructItemUnit['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveStructItemUnit_name(value: T.StructItemUnit.LooseConfig['name']): T.StructItemUnit['_name'] {
@@ -7992,7 +8075,7 @@ export function resolveStructItemUnit_name(value: T.StructItemUnit.LooseConfig['
 export function resolveStructItemUnit_typeParameters(
 	value: T.StructItemUnit.LooseConfig['typeParameters']
 ): T.StructItemUnit['_type_parameters'] {
-	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters');
+	return _resolveOneBranch<T.TypeParameters>(value, 'type_parameters', undefined, true);
 }
 
 export function coerceToStructItemUnit(input: T.StructItemUnit.Loose): ReturnType<typeof F.buildStructItemUnit> {
@@ -8062,7 +8145,7 @@ export function coerceToAttributedEnumVariant(
 export function resolveAttributedParameter_attributeItem(
 	value: T.AttributedParameter.LooseConfig['attributeItem']
 ): T.AttributedParameter['_attribute_item'] {
-	return _resolveOneBranch<T.AttributeItem>(value, 'attribute_item');
+	return _resolveOneBranch<T.AttributeItem>(value, 'attribute_item', undefined, true);
 }
 
 export function resolveAttributedParameter_content(
@@ -8153,7 +8236,7 @@ export function resolveAttributedOrderedField_attributeItems(
 export function resolveAttributedOrderedField_visibilityModifier(
 	value: T.AttributedOrderedField.LooseConfig['visibilityModifier']
 ): T.AttributedOrderedField['_visibility_modifier'] {
-	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier');
+	return _resolveOneBranch<T.VisibilityModifier>(value, 'visibility_modifier', undefined, true);
 }
 
 export function resolveAttributedOrderedField_type(
@@ -8189,7 +8272,7 @@ export function resolveTypeArgument_content(value: T.TypeArgument.LooseConfig['c
 export function resolveTypeArgument_traitBounds(
 	value: T.TypeArgument.LooseConfig['traitBounds']
 ): T.TypeArgument['_trait_bounds'] {
-	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds');
+	return _resolveOneBranch<T.TraitBounds>(value, 'trait_bounds', undefined, true);
 }
 
 export function coerceToTypeArgument(input: T.TypeArgument.Loose): ReturnType<typeof F.buildTypeArgument> {

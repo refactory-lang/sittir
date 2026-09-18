@@ -264,7 +264,7 @@ function childBareCallArgs(
 		case 'list':
 			return dummyValueForField(buildSeparatedListContentSlot(child), nodeMap, kindEntries, 0, new Set());
 		case 'pattern': {
-			const sample = pickSampleForPattern(child.pattern);
+			const sample = pickSampleForPattern(child.textPattern);
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
 		case 'keyword':
@@ -502,7 +502,7 @@ function emitLeafTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	const pattern = node.modelType === 'pattern' ? node.pattern : undefined;
+	const pattern = node.modelType === 'pattern' ? node.textPattern : undefined;
 	const sample = pickSampleForPattern(pattern);
 	if (sample === null) {
 		return;
@@ -536,6 +536,15 @@ function pickSampleForPattern(pattern: string | undefined): string | null {
 		'1.0',
 		'1e0',
 		'1u32',
+		'1_0',
+		'{{',
+		'.',
+		'!a',
+		'// a',
+		'# a',
+		'#x',
+		'\\n',
+		'\\\n',
 		'\n',
 		' '
 	];

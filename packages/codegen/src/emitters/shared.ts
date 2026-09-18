@@ -1002,3 +1002,74 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 		)
 	];
 }
+
+export function stripUselessEscapes(pattern: string): string {
+	let out = '';
+	let i = 0;
+	let inClass = false;
+	while (i < pattern.length) {
+		const c = pattern[i];
+		if (!inClass) {
+			if (c === '\\' && i + 1 < pattern.length) {
+				out += c + pattern[i + 1];
+				i += 2;
+				continue;
+			}
+			if (c === '[') inClass = true;
+			out += c;
+			i++;
+			continue;
+		}
+		if (c === ']') {
+			inClass = false;
+			out += c;
+			i++;
+			continue;
+		}
+		if (c === '\\' && i + 1 < pattern.length) {
+			const next = pattern[i + 1];
+			if (next === '[') {
+				out += '[';
+				i += 2;
+				continue;
+			}
+			if (next === '-' && pattern[i + 2] === ']') {
+				out += '-';
+				i += 2;
+				continue;
+			}
+			out += c + next;
+			i += 2;
+			continue;
+		}
+		out += c;
+		i++;
+	}
+	try {
+		new RegExp(out, 'u');
+	} catch {
+		return pattern;
+	}
+	return out;
+}
+
+export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
+	if (!textPattern) return undefined;
+	const anchored = `^(?:${stripUselessEscapes(textPattern)})$`;
+	let regex: RegExp;
+	try {
+		regex = new RegExp(anchored, 'u');
+	} catch {
+		try {
+			regex = new RegExp(anchored);
+		} catch (e) {
+			throw new Error(
+				`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
+					`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(anchored)}. ` +
+					`Cause: ${(e as Error).message}. ` +
+					`Either fix the grammar or add the kind to an emitter exception list.`
+			);
+		}
+	}
+	return `/${regex.source}/${regex.flags}`;
+}

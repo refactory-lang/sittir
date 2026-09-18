@@ -73,6 +73,7 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
+	composeTokenText,
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
 	isHiddenKind,
@@ -278,12 +279,22 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		derivations,
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
+		leafTextPatterns: collectLeafTextPatterns(rules),
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined
 	};
+}
+
+function collectLeafTextPatterns(rules: Record<string, Rule<'link'>>): ReadonlyMap<string, string> {
+	const out = new Map<string, string>();
+	for (const [kind, rule] of Object.entries(rules)) {
+		const pattern = composeTokenText(rule, (name) => rules[name]);
+		if (pattern !== undefined) out.set(kind, pattern);
+	}
+	return out;
 }
 
 function buildExternalRolesMap(rawExternalRoles: Map<string, ExternalRole> | undefined): Map<string, ExternalRole> {

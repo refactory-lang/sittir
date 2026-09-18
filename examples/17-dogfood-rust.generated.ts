@@ -126,7 +126,7 @@ export function rebuildSpliceGenerated() {
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-										stringOpen: ir.stringLiteralOpen("\""),
+										stringOpen: "\"",
 										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									})),
 								}),
@@ -150,7 +150,7 @@ export function rebuildSpliceGenerated() {
 									trailingExpression: ir.macroInvocation.strict({
 										macro: ir.identifier("write"),
 										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-											stringOpen: ir.stringLiteralOpen("\""),
+											stringOpen: "\"",
 											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
 										})),
 									}),
@@ -172,7 +172,7 @@ export function rebuildSpliceGenerated() {
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-										stringOpen: ir.stringLiteralOpen("\""),
+										stringOpen: "\"",
 										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
 									})),
 								}),

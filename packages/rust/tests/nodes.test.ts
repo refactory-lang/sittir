@@ -1591,7 +1591,7 @@ describe('const_parameter sub-factories', () => {
 		const node = ir.constParameter.negativeLiteral.integerLiteral({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any,
-			value: ['test']
+			value: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.ConstParameter);
 		expect((node as any).value()).toBeDefined();
@@ -2653,7 +2653,7 @@ describe('generic_function sub-factories', () => {
 				} as any
 			} as any,
 			function: [
-				{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any, field: ['test'] }
+				{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any, field: ['1'] }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.GenericFunction);
@@ -4719,7 +4719,7 @@ describe('call_expression sub-factories', () => {
 		const node = ir.callExpression.fieldExpression.integerLiteral({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
 			function: [
-				{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any, field: ['test'] }
+				{ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any, field: ['1'] }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
@@ -5430,7 +5430,7 @@ describe('field_initializer sub-factories', () => {
 	it('integerLiteral builds the parent', () => {
 		const node = ir.fieldInitializer.integerLiteral({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			field: ['test']
+			field: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
 		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
@@ -5819,7 +5819,7 @@ describe('field_expression sub-factories', () => {
 	it('integerLiteral builds the parent', () => {
 		const node = ir.fieldExpression.integerLiteral({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			field: ['test']
+			field: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
 		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
@@ -6334,7 +6334,7 @@ describe('negative_literal', () => {
 
 describe('negative_literal sub-factories', () => {
 	it('integerLiteral builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral('test');
+		const node = ir.negativeLiteral.integerLiteral('1');
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
 		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6349,10 +6349,10 @@ describe('negative_literal sub-factories', () => {
 
 describe('integer_literal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.integerLiteral('test');
+		const node = ir.integerLiteral('1');
 		expect(node.$type).toBe(TSKindId.IntegerLiteral);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('1');
 	});
 });
 
@@ -6394,19 +6394,19 @@ describe('raw_string_literal', () => {
 
 describe('char_literal', () => {
 	it('factory produces correct type', () => {
-		const node = ir.charLiteral('test');
+		const node = ir.charLiteral("'h'");
 		expect(node.$type).toBe(TSKindId.CharLiteral);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe("'h'");
 	});
 });
 
 describe('escape_sequence', () => {
 	it('factory produces correct type', () => {
-		const node = ir.escapeSequence('test');
+		const node = ir.escapeSequence('\\n');
 		expect(node.$type).toBe(TSKindId.EscapeSequence);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('\\n');
 	});
 });
 
@@ -6425,7 +6425,7 @@ describe('line_comment', () => {
 
 describe('line_comment sub-factories', () => {
 	it('regularDslash builds the parent', () => {
-		const node = ir.lineComment.regularDslash('test');
+		const node = ir.lineComment.regularDslash('// a');
 		expect(node.$type).toBe(TSKindId.LineComment);
 		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentRegularDslash);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -8211,10 +8211,10 @@ describe('match_arm_block_ending sub-factories', () => {
 
 describe('line_comment_regular_dslash', () => {
 	it('factory produces correct type', () => {
-		const node = ir.lineCommentRegularDslash('test');
+		const node = ir.lineCommentRegularDslash('// a');
 		expect(node.$type).toBe(TSKindId.LineCommentRegularDslash);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('// a');
 	});
 });
 
