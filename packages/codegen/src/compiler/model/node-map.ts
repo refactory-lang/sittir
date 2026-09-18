@@ -1452,6 +1452,10 @@ export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword
 	return isFixedTextLeaf(node) && !node.hidden;
 }
 
+export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && !node.hidden;
+}
+
 export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
 	return node instanceof AssembledPunctuation && node.hidden;
 }

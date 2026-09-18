@@ -10032,7 +10032,7 @@ pub enum ForStatementInitializerTransportSlot {
     NewExpression(NewExpressionTransport),
     YieldExpression(YieldExpressionTransport),
     SequenceExpression(SequenceExpressionTransport),
-    Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
+    Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams),
     Verbatim(VerbatimTransport),
 }
 
@@ -10082,7 +10082,11 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::SequenceExpression(t) => t.prepare(ctx),
-            ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => Ok(()),
+            ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_SEMI_BEFORE]);
+                t.after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_SEMI_AFTER]);
+                Ok(())
+            }
             ForStatementInitializerTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -10134,7 +10138,7 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SequenceExpression(inner) => inner.kind_in(kinds),
-            Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(_) => [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -10149,7 +10153,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams::default())),
                     106 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10356,7 +10360,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     ::napi::Error::from_reason("$type property missing in ForStatementInitializerTransportSlot")
                 )?;
                 match kind_id {
-                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams::default())),
                     106 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10638,7 +10642,7 @@ fn for_statement_initializer_transport_slot_to_any(t: ForStatementInitializerTra
         ForStatementInitializerTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
         ForStatementInitializerTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
         ForStatementInitializerTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
-        ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => AnyTransport::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
+        ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(_) => AnyTransport::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
         ForStatementInitializerTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -10689,7 +10693,13 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::YieldExpression(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::SequenceExpression(inner) => inner.render(w),
-            ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => w.text(";"),
+            ForStatementInitializerTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_SEMI_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text(";");
+                written?;
+                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_SEMI_AFTER, seams.after.unwrap_or(0)));
+                Ok(())
+            }
             ForStatementInitializerTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -10738,7 +10748,7 @@ pub enum ForStatementConditionTransportSlot {
     NewExpression(NewExpressionTransport),
     YieldExpression(YieldExpressionTransport),
     SequenceExpression(SequenceExpressionTransport),
-    Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
+    Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams),
     Verbatim(VerbatimTransport),
 }
 
@@ -10786,7 +10796,11 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::YieldExpression(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::SequenceExpression(t) => t.prepare(ctx),
-            ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => Ok(()),
+            ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_SEMI_BEFORE]);
+                t.after.get_or_insert(ctx.options.spacing[options::SITE_FOR_STATEMENT_SEMI_AFTER]);
+                Ok(())
+            }
             ForStatementConditionTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -10836,7 +10850,7 @@ impl ::sittir_core::view::KindOf for ForStatementConditionTransportSlot {
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::YieldExpression(inner) => inner.kind_in(kinds),
             Self::SequenceExpression(inner) => inner.kind_in(kinds),
-            Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k)),
+            Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(_) => [::sittir_core::types::KindId(212)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -10851,7 +10865,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams::default())),
                     106 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11052,7 +11066,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     ::napi::Error::from_reason("$type property missing in ForStatementConditionTransportSlot")
                 )?;
                 match kind_id {
-                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74),
+                    212 => Ok(Self::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(LiteralSeams::default())),
                     106 => Ok(Self::Undefined(
                         UndefinedTransport::from_napi_value(env, napi_val)?
                     )),
@@ -11326,7 +11340,7 @@ fn for_statement_condition_transport_slot_to_any(t: ForStatementConditionTranspo
         ForStatementConditionTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
         ForStatementConditionTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
         ForStatementConditionTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
-        ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => AnyTransport::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
+        ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(_) => AnyTransport::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74,
         ForStatementConditionTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -11375,7 +11389,13 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NewExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::YieldExpression(inner) => inner.render(w),
             ForStatementConditionTransportSlot::SequenceExpression(inner) => inner.render(w),
-            ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74 => w.text(";"),
+            ForStatementConditionTransportSlot::Literal8_65_6d_70_74_79_5f_73_74_61_74_65_6d_65_6e_74(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_SEMI_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text(";");
+                written?;
+                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_FOR_STATEMENT_SEMI_AFTER, seams.after.unwrap_or(0)));
+                Ok(())
+            }
             ForStatementConditionTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -20242,7 +20262,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
 #[derive(Debug, Clone)]
 pub enum MemberExpressionSeparatorTransportSlot {
     Literal12_64_6f_74(LiteralSeams),
-    Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+    Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams),
 }
 
 impl ::sittir_core::prepare::Prepare for MemberExpressionSeparatorTransportSlot {
@@ -20253,7 +20273,11 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionSeparatorTransportSlot 
                 t.after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_DOT_AFTER]);
                 Ok(())
             }
-            MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => Ok(()),
+            MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE]);
+                t.after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_QMARK_DOT_AFTER]);
+                Ok(())
+            }
         }
     }
 }
@@ -20262,7 +20286,7 @@ impl ::sittir_core::view::KindOf for MemberExpressionSeparatorTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal12_64_6f_74(_) => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k)),
+            Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(_) => [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -20277,7 +20301,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     39 => Ok(Self::Literal12_64_6f_74(LiteralSeams::default())),
-                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams::default())),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -20290,7 +20314,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
                 )?;
                 match kind_id {
                     39 => Ok(Self::Literal12_64_6f_74(LiteralSeams::default())),
-                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams::default())),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -20334,7 +20358,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MemberExpressionSeparatorTrans
 fn member_expression_separator_transport_slot_to_any(t: MemberExpressionSeparatorTransportSlot) -> AnyTransport {
     match t {
         MemberExpressionSeparatorTransportSlot::Literal12_64_6f_74(_) => AnyTransport::Literal12_64_6f_74,
-        MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => AnyTransport::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+        MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(_) => AnyTransport::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
     }
 }
 
@@ -20348,7 +20372,13 @@ impl ::sittir_core::render::Render for MemberExpressionSeparatorTransportSlot {
                 w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_MEMBER_EXPRESSION_DOT_AFTER, seams.after.unwrap_or(0)));
                 Ok(())
             }
-            MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => w.text("?."),
+            MemberExpressionSeparatorTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text("?.");
+                written?;
+                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_MEMBER_EXPRESSION_QMARK_DOT_AFTER, seams.after.unwrap_or(0)));
+                Ok(())
+            }
         }
     }
 }
@@ -26078,17 +26108,13 @@ impl ::sittir_core::render::Render for MethodDefinitionStaticMarkerTransportSlot
 
 #[derive(Debug, Clone)]
 pub enum MethodDefinitionOverrideModifierTransportSlot {
-    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams),
+    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for MethodDefinitionOverrideModifierTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_BEFORE]);
-                t.after.get_or_insert(ctx.options.spacing[options::SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_AFTER]);
-                Ok(())
-            }
+            MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
         }
     }
 }
@@ -26096,7 +26122,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionOverrideModifierTranspo
 impl ::sittir_core::view::KindOf for MethodDefinitionOverrideModifierTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
+            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -26110,7 +26136,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifier
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -26122,7 +26148,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifier
                     ::napi::Error::from_reason("$type property missing in MethodDefinitionOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
                     ))),
@@ -26165,20 +26191,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionOverrideModifi
 
 fn method_definition_override_modifier_transport_slot_to_any(t: MethodDefinitionOverrideModifierTransportSlot) -> AnyTransport {
     match t {
-        MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+        MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
     }
 }
 
 impl ::sittir_core::render::Render for MethodDefinitionOverrideModifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_BEFORE, seams.before.unwrap_or(0)));
-                let written = w.text("override");
-                written?;
-                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_METHOD_DEFINITION_OVERRIDE_MODIFIER_AFTER, seams.after.unwrap_or(0)));
-                Ok(())
-            }
+            MethodDefinitionOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),
         }
     }
 }
@@ -29401,17 +29421,13 @@ impl ::sittir_core::render::Render for MethodSignatureStaticMarkerTransportSlot 
 
 #[derive(Debug, Clone)]
 pub enum MethodSignatureOverrideModifierTransportSlot {
-    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams),
+    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for MethodSignatureOverrideModifierTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE]);
-                t.after.get_or_insert(ctx.options.spacing[options::SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER]);
-                Ok(())
-            }
+            MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
         }
     }
 }
@@ -29419,7 +29435,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignatureOverrideModifierTranspor
 impl ::sittir_core::view::KindOf for MethodSignatureOverrideModifierTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
+            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -29433,7 +29449,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierT
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -29445,7 +29461,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierT
                     ::napi::Error::from_reason("$type property missing in MethodSignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -29488,20 +29504,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureOverrideModifie
 
 fn method_signature_override_modifier_transport_slot_to_any(t: MethodSignatureOverrideModifierTransportSlot) -> AnyTransport {
     match t {
-        MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+        MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
     }
 }
 
 impl ::sittir_core::render::Render for MethodSignatureOverrideModifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE, seams.before.unwrap_or(0)));
-                let written = w.text("override");
-                written?;
-                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER, seams.after.unwrap_or(0)));
-                Ok(())
-            }
+            MethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),
         }
     }
 }
@@ -30472,17 +30482,13 @@ impl ::sittir_core::render::Render for AbstractMethodSignatureAccessibilityModif
 
 #[derive(Debug, Clone)]
 pub enum AbstractMethodSignatureOverrideModifierTransportSlot {
-    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams),
+    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureOverrideModifierTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE]);
-                t.after.get_or_insert(ctx.options.spacing[options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER]);
-                Ok(())
-            }
+            AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
         }
     }
 }
@@ -30490,7 +30496,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureOverrideModifier
 impl ::sittir_core::view::KindOf for AbstractMethodSignatureOverrideModifierTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
+            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -30504,7 +30510,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideM
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -30516,7 +30522,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideM
                     ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
                     ))),
@@ -30559,20 +30565,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractMethodSignatureOverrid
 
 fn abstract_method_signature_override_modifier_transport_slot_to_any(t: AbstractMethodSignatureOverrideModifierTransportSlot) -> AnyTransport {
     match t {
-        AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+        AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
     }
 }
 
 impl ::sittir_core::render::Render for AbstractMethodSignatureOverrideModifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_BEFORE, seams.before.unwrap_or(0)));
-                let written = w.text("override");
-                written?;
-                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_ABSTRACT_METHOD_SIGNATURE_OVERRIDE_MODIFIER_AFTER, seams.after.unwrap_or(0)));
-                Ok(())
-            }
+            AbstractMethodSignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),
         }
     }
 }
@@ -38745,17 +38745,13 @@ impl ::sittir_core::render::Render for PropertySignatureStaticMarkerTransportSlo
 
 #[derive(Debug, Clone)]
 pub enum PropertySignatureOverrideModifierTransportSlot {
-    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams),
+    Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
 }
 
 impl ::sittir_core::prepare::Prepare for PropertySignatureOverrideModifierTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(t) => {
-                t.before.get_or_insert(ctx.options.spacing[options::SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_BEFORE]);
-                t.after.get_or_insert(ctx.options.spacing[options::SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_AFTER]);
-                Ok(())
-            }
+            PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => Ok(()),
         }
     }
 }
@@ -38763,7 +38759,7 @@ impl ::sittir_core::prepare::Prepare for PropertySignatureOverrideModifierTransp
 impl ::sittir_core::view::KindOf for PropertySignatureOverrideModifierTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
+            Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => [::sittir_core::types::KindId(306)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -38777,7 +38773,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifie
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
                     ))),
@@ -38789,7 +38785,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifie
                     ::napi::Error::from_reason("$type property missing in PropertySignatureOverrideModifierTransportSlot")
                 )?;
                 match kind_id {
-                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(LiteralSeams::default())),
+                    306 => Ok(Self::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
                     ))),
@@ -38832,20 +38828,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureOverrideModif
 
 fn property_signature_override_modifier_transport_slot_to_any(t: PropertySignatureOverrideModifierTransportSlot) -> AnyTransport {
     match t {
-        PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(_) => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+        PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
     }
 }
 
 impl ::sittir_core::render::Render for PropertySignatureOverrideModifierTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72(seams) => {
-                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_BEFORE, seams.before.unwrap_or(0)));
-                let written = w.text("override");
-                written?;
-                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_PROPERTY_SIGNATURE_OVERRIDE_MODIFIER_AFTER, seams.after.unwrap_or(0)));
-                Ok(())
-            }
+            PropertySignatureOverrideModifierTransportSlot::Literal80_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => w.text("override"),
         }
     }
 }
@@ -55802,6 +55792,10 @@ pub struct MemberExpressionTransport {
     pub dot_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_after"))]
     pub dot_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_before"))]
+    pub qmark_dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_after"))]
+    pub qmark_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_expression_before"))]
     pub member_expression_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_member_expression_after"))]
@@ -55824,6 +55818,8 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.dot_before.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_DOT_BEFORE]);
         self.dot_after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_DOT_AFTER]);
+        self.qmark_dot_before.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_QMARK_DOT_BEFORE]);
+        self.qmark_dot_after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_QMARK_DOT_AFTER]);
         self.member_expression_before.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_MEMBER_EXPRESSION_BEFORE]);
         self.member_expression_after.get_or_insert(ctx.options.spacing[options::SITE_MEMBER_EXPRESSION_MEMBER_EXPRESSION_AFTER]);
         self.object.prepare(ctx)?;

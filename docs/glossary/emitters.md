@@ -3659,6 +3659,15 @@ is bounded by the supertype's subtype count, not the grammar.
 // Symmetric — named and unnamed slots both flow through `consider`.
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::literalArmSeamSites`
+
+The seam sites of the owner kind that a per-slot enum's literal arm carries,
+keyed by variant. A site belongs to an arm when its token equals
+`tokenNameOfText` of the arm's literal text, the same derivation the seam pass
+used to mint it, so an arm that is a kind reference to punctuation (the
+`optional_chain` arm of `member_expression`'s `dot` slot) finds the `?.` sites
+named for its text rather than for its kind name.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitPerSlotChildEnum`
 
 ```text

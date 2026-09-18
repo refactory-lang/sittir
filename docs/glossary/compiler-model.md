@@ -2442,6 +2442,15 @@ A fixed-text leaf that is not hidden: a visible kind that owns a factory and
 a type. Visibility is the leaf's `hidden` attribute, never its class; the
 class answers only whether the text is word-shaped.
 
+### `packages/codegen/src/compiler/model/node-map.ts::isVisiblePunctuationLeaf`
+
+A non-word fixed-text leaf that is not hidden: a named parser kind whose
+whole body is punctuation, such as typescript `optional_chain` (`?.`) or
+rust `unit_expression`. A grammar-wide `_` literal row addresses punctuation
+faces, and a keyword resolves its face through the word default instead, so
+the rule that seats a token seam for a node arm of a choice asks this class
+and not `isVisibleTextLeaf`.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
 
 A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
@@ -3582,6 +3591,8 @@ its arm renders: `for (init; cond; inc)` seats `semi/after` in the
 initializer's expression arm and nowhere else, so `for (let i = 0; i < 3; …)`
 spaces after its `;` while `for (;;)` stays tight. A bare token arm is
 wrapped in a sequence to hold the seam; a sequence arm takes it at its edge.
+An arm's token is its literal (`literalTokenOf`) or, for a reference to a
+visible punctuation kind, that kind's text (`fixedTextArmTokenOf`).
 A choice that is itself one seam site (a token set or an enum slot, which
 `seamNameOf` names as a whole) is left to the boundary's own token seams.
 Runs from `withTokenSeams` on both neighbours of every boundary, before
@@ -3605,6 +3616,24 @@ member a parent boundary reads the group's edge token from.
 ### `packages/codegen/src/compiler/model/render-rules.ts::withEdgeSeam`
 
 A nested seq with a seam choice prepended or appended.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::tokenNameOfText`
+
+The token name a literal's text answers to: the public catalog kind name of
+the entry that literal text resolves to, or nothing for whitespace-only text
+or a text with no catalog entry. It is the one derivation of "literal text
+to seam token", called by the seam pass when it mints a site and by the
+per-slot enum emitter when it pairs a site to a literal arm, so the two
+never disagree on a name.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::fixedTextArmTokenOf`
+
+The token name of a choice arm that is a reference to a visible punctuation
+kind (`isVisiblePunctuationLeaf`), named by that kind's text through
+`tokenNameOfText`. A member `choice('.', field(optional_chain))` has a
+string arm and a symbol arm; only the string arm is a literal to
+`literalTokenOf`, and this gives the symbol arm the same token identity as
+a bare `?.` written elsewhere, so a `_` row for `?.` reaches both.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTokenOf`
 

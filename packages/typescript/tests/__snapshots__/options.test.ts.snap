@@ -892,8 +892,9 @@ export interface AddressBranch {
 	readonly mapped_type_clause: 'after' | 'as_keyword' | 'before' | 'in_keyword';
 	readonly 'mapped_type_clause/as_keyword': 'after' | 'before';
 	readonly 'mapped_type_clause/in_keyword': 'after' | 'before';
-	readonly member_expression: 'after' | 'before' | 'dot';
+	readonly member_expression: 'after' | 'before' | 'dot' | 'qmark_dot';
 	readonly 'member_expression/dot': 'after' | 'before';
+	readonly 'member_expression/qmark_dot': 'after' | 'before';
 	readonly meta_property_import_meta: 'dot' | 'import_keyword' | 'meta_keyword';
 	readonly 'meta_property_import_meta/dot': 'after' | 'before';
 	readonly 'meta_property_import_meta/import_keyword': 'after';
@@ -2476,6 +2477,8 @@ export interface AddressLeaf {
 	readonly 'member_expression/before': WhitespaceArm;
 	readonly 'member_expression/dot/after': WhitespaceArm;
 	readonly 'member_expression/dot/before': WhitespaceArm;
+	readonly 'member_expression/qmark_dot/after': WhitespaceArm;
+	readonly 'member_expression/qmark_dot/before': WhitespaceArm;
 	readonly 'meta_property_import_meta/dot/after': WhitespaceArm;
 	readonly 'meta_property_import_meta/dot/before': WhitespaceArm;
 	readonly 'meta_property_import_meta/import_keyword/after': WhitespaceArm;

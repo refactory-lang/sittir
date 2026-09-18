@@ -865,9 +865,10 @@ export interface AddressBranch {
 	readonly 'if_statement/alternative/else_clause': 'after';
 	readonly 'if_statement/colon': 'after' | 'before';
 	readonly 'if_statement/if_keyword': 'after';
-	readonly import_from_statement: 'after' | 'before' | 'from_keyword' | 'import_keyword';
+	readonly import_from_statement: 'after' | 'before' | 'from_keyword' | 'import_keyword' | 'star';
 	readonly 'import_from_statement/from_keyword': 'after';
 	readonly 'import_from_statement/import_keyword': 'after' | 'before';
+	readonly 'import_from_statement/star': 'before';
 	readonly import_list: 'name';
 	readonly 'import_list/name': 'aliased_import' | 'delimiter' | 'separator';
 	readonly 'import_list/name/aliased_import': 'after';
@@ -2070,6 +2071,7 @@ export interface AddressLeaf {
 	readonly 'import_from_statement/from_keyword/after': SpacingArm;
 	readonly 'import_from_statement/import_keyword/after': SpacingArm;
 	readonly 'import_from_statement/import_keyword/before': SpacingArm;
+	readonly 'import_from_statement/star/before': SpacingArm;
 	readonly 'import_list/name/aliased_import/after': SpacingArm;
 	readonly 'import_list/name/delimiter': Delimiter.None | Delimiter.Trailing;
 	readonly 'import_list/name/separator/comma/after': SpacingArm;

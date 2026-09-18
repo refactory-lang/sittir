@@ -1066,7 +1066,8 @@ export interface AddressBranch {
 	readonly range_pattern_prefix: 'after' | 'before' | 'dot_dot' | 'dot_dot_eq';
 	readonly 'range_pattern_prefix/dot_dot': 'after';
 	readonly 'range_pattern_prefix/dot_dot_eq': 'after';
-	readonly range_pattern_with_left: 'after' | 'before';
+	readonly range_pattern_with_left: 'after' | 'before' | 'dot_dot';
+	readonly 'range_pattern_with_left/dot_dot': 'before';
 	readonly range_pattern_with_left_with_right: 'after' | 'before' | 'dot_dot' | 'dot_dot_dot' | 'dot_dot_eq';
 	readonly 'range_pattern_with_left_with_right/dot_dot': 'after';
 	readonly 'range_pattern_with_left_with_right/dot_dot_dot': 'after';
@@ -2750,6 +2751,7 @@ export interface AddressLeaf {
 	readonly 'range_pattern_prefix/dot_dot_eq/after': WhitespaceArm;
 	readonly 'range_pattern_with_left/after': WhitespaceArm;
 	readonly 'range_pattern_with_left/before': WhitespaceArm;
+	readonly 'range_pattern_with_left/dot_dot/before': WhitespaceArm;
 	readonly 'range_pattern_with_left_with_right/after': WhitespaceArm;
 	readonly 'range_pattern_with_left_with_right/before': WhitespaceArm;
 	readonly 'range_pattern_with_left_with_right/dot_dot/after': WhitespaceArm;

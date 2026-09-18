@@ -271,6 +271,27 @@ describe('seamRenderRules', () => {
 		expect(originsWith(false).fn).toMatchObject({ arm: 'space', origin: 'fallback' });
 	});
 
+	it('seats a token seam inside a choice arm that references a visible punctuation kind, by the literal text, and leaves a keyword or hidden arm alone', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'dot', anon: true, symbolName: '.', literalText: '.', member: 'Dot', id: 20 },
+			{ kind: 'qmark_dot', anon: true, symbolName: '?.', literalText: '?.', member: 'QmarkDot', id: 21 }
+		] as never;
+		const armsOf = (arm: RenderRule, node: object) => {
+			const member = seq(sym('object'), choice(str('.'), arm), sym('property'));
+			const config = { nodeMap: nodeMapOf({ member }, {}), kindEntries: entries };
+			config.nodeMap.nodes.set('arm_kind', node as never);
+			const out = seamRenderRules(spaceRenderRules(config), config);
+			const group = membersOf(out.rules.member!).find((m) => (m as { type: string }).type === 'CHOICE' && !isSeamChoice(m))!;
+			return membersOf(group).map((m) => ((m as { members?: unknown }).members === undefined ? [(m as { name?: string }).name ?? (m as { value?: string }).value!] : memberNames(m)));
+		};
+		const arm = sym('arm_kind', { fieldName: 'dot' });
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		expect(armsOf(arm, chain)[1]).toEqual(['S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)']);
+		expect(armsOf(arm, new AssembledPunctuation('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
+		expect(armsOf(arm, new AssembledKeyword('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
+	});
+
 	it('defaults to space where the seam-stamping dry run baked a space', () => {
 		const spacedParen = { ...str(')'), staticSeamBefore: 'spaced' } as unknown as RenderRule;
 		const { out } = seamed({ call: seq(sym('x'), spacedParen) });

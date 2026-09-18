@@ -43297,14 +43297,17 @@ impl ::sittir_core::render::Render for RangePatternWithLeftLeftTransportSlot {
 #[derive(Debug, Clone)]
 pub enum RangePatternWithLeftContentTransportSlot {
     RangePatternWithLeftWithRight(RangePatternWithLeftWithRightTransport),
-    Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
+    Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(LiteralSeams),
 }
 
 impl ::sittir_core::prepare::Prepare for RangePatternWithLeftContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(t) => t.prepare(ctx),
-            RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => Ok(()),
+            RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE]);
+                Ok(())
+            }
         }
     }
 }
@@ -43313,7 +43316,7 @@ impl ::sittir_core::view::KindOf for RangePatternWithLeftContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::RangePatternWithLeftWithRight(inner) => inner.kind_in(kinds),
-            Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => [::sittir_core::types::KindId(411)].iter().any(|k| kinds.contains(k)),
+            Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(_) => [::sittir_core::types::KindId(411)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -43327,7 +43330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftContentTrans
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    411 => Ok(Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65),
+                    411 => Ok(Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(LiteralSeams::default())),
                     410 => Ok(Self::RangePatternWithLeftWithRight(
                         RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
@@ -43342,7 +43345,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftContentTrans
                     ::napi::Error::from_reason("$type property missing in RangePatternWithLeftContentTransportSlot")
                 )?;
                 match kind_id {
-                    411 => Ok(Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65),
+                    411 => Ok(Self::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(LiteralSeams::default())),
                     410 => Ok(Self::RangePatternWithLeftWithRight(
                         RangePatternWithLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
@@ -43389,7 +43392,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RangePatternWithLeftContentTra
 fn range_pattern_with_left_content_transport_slot_to_any(t: RangePatternWithLeftContentTransportSlot) -> AnyTransport {
     match t {
         RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => AnyTransport::RangePatternWithLeftWithRight(inner),
-        RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => AnyTransport::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
+        RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(_) => AnyTransport::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65,
     }
 }
 
@@ -43397,7 +43400,12 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentTransportSlot 
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             RangePatternWithLeftContentTransportSlot::RangePatternWithLeftWithRight(inner) => inner.render(w),
-            RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65 => w.text(".."),
+            RangePatternWithLeftContentTransportSlot::Literal87_72_61_6e_67_65_5f_70_61_74_74_65_72_6e_5f_77_69_74_68_5f_6c_65_66_74_5f_62_61_72_65(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text("..");
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -64392,6 +64400,8 @@ pub struct RangePatternWithLeftTransport {
     pub left: ::sittir_core::SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<Box<RangePatternWithLeftContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_dot_dot_before"))]
+    pub dot_dot_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_with_left_before"))]
     pub range_pattern_with_left_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_with_left_after"))]
@@ -64412,6 +64422,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftTransport {
 
 impl ::sittir_core::prepare::Prepare for RangePatternWithLeftTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.dot_dot_before.get_or_insert(ctx.options.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE]);
         self.range_pattern_with_left_before.get_or_insert(ctx.options.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_BEFORE]);
         self.range_pattern_with_left_after.get_or_insert(ctx.options.spacing[options::SITE_RANGE_PATTERN_WITH_LEFT_RANGE_PATTERN_WITH_LEFT_AFTER]);
         self.left.prepare(ctx)?;

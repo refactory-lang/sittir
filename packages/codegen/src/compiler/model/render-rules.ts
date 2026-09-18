@@ -4,7 +4,7 @@ import type { RenderRule, Rule, RuleAnnotations, RuleId, SeamOrigin } from '../.
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, leftmostTerminalImmediate } from './node-map.ts';
+import { AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, isVisiblePunctuationLeaf, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByPublicName } from './supertype-members.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
@@ -442,11 +442,21 @@ function literalTextOf(rule: RenderRule): string | undefined {
 	return undefined;
 }
 
+export function tokenNameOfText(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {
+	if (text.trim() === '') return undefined;
+	const entry = findEntryForLiteralText(kindEntries, text);
+	return entry === undefined ? undefined : publicKindName(entry.kind);
+}
+
 function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
 	const text = literalTextOf(rule);
-	if (text === undefined || text.trim() === '') return undefined;
-	const entry = findEntryForLiteralText(config.kindEntries, text);
-	return entry === undefined ? undefined : publicKindName(entry.kind);
+	return text === undefined ? undefined : tokenNameOfText(text, config.kindEntries);
+}
+
+function fixedTextArmTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	const r = bag(rule);
+	const target = r.type === SYMBOL && r.name !== undefined ? config.nodeMap.nodes.get(r.name) : undefined;
+	return target !== undefined && isVisiblePunctuationLeaf(target) ? tokenNameOfText(target.text, config.kindEntries) : undefined;
 }
 
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
@@ -610,7 +620,7 @@ function withArmEdgeSeams(
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
 		if (side === 'first' && isImmediateRight(edge, config)) return arm;
-		const token = literalTokenOf(edge, config);
+		const token = literalTokenOf(edge, config) ?? fixedTextArmTokenOf(edge, config);
 		if (token === undefined) return arm;
 		const seam = seamChoice(kind, seamLabel(token, side === 'last' ? 'after' : 'before'), fallback, resolver, seams, undefined, isKeywordSeam(edge, config));
 		changed = true;

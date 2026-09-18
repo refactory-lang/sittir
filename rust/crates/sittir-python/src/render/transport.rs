@@ -4287,7 +4287,7 @@ impl ::sittir_core::render::Render for ImportFromStatementModuleNameTransportSlo
 pub enum ImportFromStatementContentTransportSlot {
     ImportList(ImportListTransport),
     ParenthesizedImportList(ParenthesizedImportListTransport),
-    Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
+    Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams),
 }
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot {
@@ -4295,7 +4295,10 @@ impl ::sittir_core::prepare::Prepare for ImportFromStatementContentTransportSlot
         match self {
             ImportFromStatementContentTransportSlot::ImportList(t) => t.prepare(ctx),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(t) => t.prepare(ctx),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => Ok(()),
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE]);
+                Ok(())
+            }
         }
     }
 }
@@ -4305,7 +4308,7 @@ impl ::sittir_core::view::KindOf for ImportFromStatementContentTransportSlot {
         match self {
             Self::ImportList(inner) => inner.kind_in(kinds),
             Self::ParenthesizedImportList(inner) => inner.kind_in(kinds),
-            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(_) => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4319,7 +4322,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    122 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
+                    122 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams::default())),
                     120 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4337,7 +4340,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementContentTransp
                     ::napi::Error::from_reason("$type property missing in ImportFromStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    122 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74),
+                    122 => Ok(Self::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(LiteralSeams::default())),
                     120 => Ok(Self::ImportList(
                         ImportListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4388,7 +4391,7 @@ fn import_from_statement_content_transport_slot_to_any(t: ImportFromStatementCon
     match t {
         ImportFromStatementContentTransportSlot::ImportList(inner) => AnyTransport::ImportList(inner),
         ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => AnyTransport::ParenthesizedImportList(inner),
-        ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
+        ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(_) => AnyTransport::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74,
     }
 }
 
@@ -4397,7 +4400,12 @@ impl ::sittir_core::render::Render for ImportFromStatementContentTransportSlot {
         match self {
             ImportFromStatementContentTransportSlot::ImportList(inner) => inner.render(w),
             ImportFromStatementContentTransportSlot::ParenthesizedImportList(inner) => inner.render(w),
-            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74 => w.text("*"),
+            ImportFromStatementContentTransportSlot::Literal0_77_69_6c_64_63_61_72_64_5f_69_6d_70_6f_72_74(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text("*");
+                written?;
+                Ok(())
+            }
         }
     }
 }
@@ -21533,6 +21541,8 @@ pub struct ImportFromStatementTransport {
     pub module_name: ::sittir_core::SlotValue<ImportFromStatementModuleNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ::sittir_core::SlotValue<ImportFromStatementContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_before"))]
+    pub star_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_keyword_after"))]
     pub from_keyword_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_keyword_before"))]
@@ -21559,6 +21569,7 @@ impl ::sittir_core::render::Render for ImportFromStatementTransport {
 
 impl ::sittir_core::prepare::Prepare for ImportFromStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.star_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_STAR_BEFORE]);
         self.from_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_FROM_KEYWORD_AFTER]);
         self.import_keyword_before.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_BEFORE]);
         self.import_keyword_after.get_or_insert(ctx.options.spacing[options::SITE_IMPORT_FROM_STATEMENT_IMPORT_KEYWORD_AFTER]);

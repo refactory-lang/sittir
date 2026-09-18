@@ -1,5 +1,6 @@
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { tokenNameOfText } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -2053,7 +2054,8 @@ interface LiteralArmSeams {
 function literalArmSeamSites(
 	entry: PerSlotChildEnum,
 	literalVariantByKey: ReadonlyMap<string, string>,
-	plan: RenderPlan
+	plan: RenderPlan,
+	kindEntries: readonly KindEnumEntry[]
 ): ReadonlyMap<string, LiteralArmSeams> {
 	const owner = publicKindName(entry.ownerKind);
 	const out = new Map<string, LiteralArmSeams>();
@@ -2061,10 +2063,11 @@ function literalArmSeamSites(
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant === undefined) continue;
 		const sites: { before?: string; after?: string } = {};
+		const token = tokenNameOfText(literal.text, kindEntries);
 		for (const site of plan.spacingSites) {
 			if (site.kind !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
 			const seam = parseSeamLabel(site.address);
-			if (seam?.token === publicKindName(literal.kind)) sites[seam.side] = site.constName;
+			if (token !== undefined && seam?.token === token) sites[seam.side] = site.constName;
 		}
 		if (sites.before !== undefined || sites.after !== undefined) out.set(variant, sites);
 	}
@@ -2104,7 +2107,7 @@ function emitPerSlotChildEnum(
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
 	const ownerKind = entry.ownerKind;
-	const literalSeams = literalArmSeamSites(entry, literalVariantByKey, plan);
+	const literalSeams = literalArmSeamSites(entry, literalVariantByKey, plan, kindEntries ?? []);
 
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
