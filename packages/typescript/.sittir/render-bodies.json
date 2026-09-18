@@ -6856,8 +6856,16 @@
 					"test": "optional_chain",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "qmark_dot_before"
+						},
+						{
 							"kind": "slot",
 							"name": "optional_chain"
+						},
+						{
+							"kind": "seam",
+							"field": "qmark_dot_after"
 						}
 					]
 				}

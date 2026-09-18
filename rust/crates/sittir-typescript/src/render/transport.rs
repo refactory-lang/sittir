@@ -21183,13 +21183,17 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum SubscriptExpressionOptionalChainTransportSlot {
-    Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+    Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams),
 }
 
 impl ::sittir_core::prepare::Prepare for SubscriptExpressionOptionalChainTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => Ok(()),
+            SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(t) => {
+                t.before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE]);
+                t.after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_AFTER]);
+                Ok(())
+            }
         }
     }
 }
@@ -21197,7 +21201,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionOptionalChainTranspo
 impl ::sittir_core::view::KindOf for SubscriptExpressionOptionalChainTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k)),
+            Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(_) => [::sittir_core::types::KindId(240)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -21211,7 +21215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChain
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams::default())),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
                     ))),
@@ -21223,7 +21227,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChain
                     ::napi::Error::from_reason("$type property missing in SubscriptExpressionOptionalChainTransportSlot")
                 )?;
                 match kind_id {
-                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    240 => Ok(Self::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(LiteralSeams::default())),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
                     ))),
@@ -21266,14 +21270,20 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptExpressionOptionalCha
 
 fn subscript_expression_optional_chain_transport_slot_to_any(t: SubscriptExpressionOptionalChainTransportSlot) -> AnyTransport {
     match t {
-        SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => AnyTransport::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+        SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(_) => AnyTransport::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
     }
 }
 
 impl ::sittir_core::render::Render for SubscriptExpressionOptionalChainTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => w.text("?."),
+            SubscriptExpressionOptionalChainTransportSlot::Literal13_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e(seams) => {
+                w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE, seams.before.unwrap_or(0)));
+                let written = w.text("?.");
+                written?;
+                w.site_with(seams.after.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_AFTER, seams.after.unwrap_or(0)));
+                Ok(())
+            }
         }
     }
 }
@@ -55860,6 +55870,10 @@ pub struct SubscriptExpressionTransport {
     pub optional_chain: Option<::sittir_core::SlotValue<OptionalChainTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
     pub index: ::sittir_core::SlotValue<Box<SubscriptExpressionIndexTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_before"))]
+    pub qmark_dot_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_qmark_dot_after"))]
+    pub qmark_dot_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_before"))]
     pub lbrack_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lbrack_after"))]
@@ -55886,6 +55900,8 @@ impl ::sittir_core::render::Render for SubscriptExpressionTransport {
 
 impl ::sittir_core::prepare::Prepare for SubscriptExpressionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.qmark_dot_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE]);
+        self.qmark_dot_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_AFTER]);
         self.lbrack_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_BEFORE]);
         self.lbrack_after.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_AFTER]);
         self.rbrack_before.get_or_insert(ctx.options.spacing[options::SITE_SUBSCRIPT_EXPRESSION_RBRACK_BEFORE]);
@@ -86019,7 +86035,11 @@ fn render_subscript_expression(node: &SubscriptExpressionTransport, w: &mut dyn 
     let optional_chain = View::new(&node.optional_chain, "{}");
     w.site_with(node.subscript_expression_before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_SUBSCRIPT_EXPRESSION_BEFORE, node.subscript_expression_before.unwrap_or(0)));
     object.render(w)?;
-    optional_chain.render(w)?;
+    if optional_chain.is_present() {
+        w.site_with(node.qmark_dot_before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE, node.qmark_dot_before.unwrap_or(0)));
+        optional_chain.render(w)?;
+        w.site_with(node.qmark_dot_after.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_QMARK_DOT_AFTER, node.qmark_dot_after.unwrap_or(0)));
+    }
     w.site_with(node.lbrack_before.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_BEFORE, node.lbrack_before.unwrap_or(0)));
     w.text("[")?;
     w.site_with(node.lbrack_after.unwrap_or(0), options::site_strength(options::SITE_SUBSCRIPT_EXPRESSION_LBRACK_AFTER, node.lbrack_after.unwrap_or(0)));

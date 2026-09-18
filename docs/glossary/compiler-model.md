@@ -3592,7 +3592,7 @@ initializer's expression arm and nowhere else, so `for (let i = 0; i < 3; …)`
 spaces after its `;` while `for (;;)` stays tight. A bare token arm is
 wrapped in a sequence to hold the seam; a sequence arm takes it at its edge.
 An arm's token is its literal (`literalTokenOf`) or, for a reference to a
-visible punctuation kind, that kind's text (`fixedTextArmTokenOf`).
+visible punctuation kind, that kind's text (`punctuationReferenceTokenOf`).
 A choice that is itself one seam site (a token set or an enum slot, which
 `seamNameOf` names as a whole) is left to the boundary's own token seams.
 Runs from `withTokenSeams` on both neighbours of every boundary, before
@@ -3626,14 +3626,26 @@ to seam token", called by the seam pass when it mints a site and by the
 per-slot enum emitter when it pairs a site to a literal arm, so the two
 never disagree on a name.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::fixedTextArmTokenOf`
+### `packages/codegen/src/compiler/model/render-rules.ts::punctuationTokenOfNode`
 
-The token name of a choice arm that is a reference to a visible punctuation
-kind (`isVisiblePunctuationLeaf`), named by that kind's text through
-`tokenNameOfText`. A member `choice('.', field(optional_chain))` has a
-string arm and a symbol arm; only the string arm is a literal to
-`literalTokenOf`, and this gives the symbol arm the same token identity as
-a bare `?.` written elsewhere, so a `_` row for `?.` reaches both.
+The token name a model node answers to when it is a visible punctuation leaf
+(`isVisiblePunctuationLeaf`): the name of its text through `tokenNameOfText`.
+Nothing for any other node, so a keyword, a hidden delimiter and a compound
+name no token. The one place that turns a punctuation kind into a token
+identity, read by the rule-side reader below and by the template emitter's
+slot lookup.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::punctuationReferenceTokenOf`
+
+The token name of a rule that is a reference to a visible punctuation kind,
+wherever it sits: a choice arm, or a member of a seq, optional or not. A
+member `choice('.', field(optional_chain))` has a string arm and a symbol
+arm, and `seq(object, optional(field(optional_chain)), '[', …)` holds the
+reference in the seq itself; neither is a literal to `literalTokenOf`, and
+this gives the reference the same token identity as a bare `?.` written
+elsewhere, so a `_` row for `?.` reaches all of them. A reference is a
+token however it is fielded; a keyword reference is not one, because a
+keyword face resolves through the word default.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTokenOf`
 
@@ -3685,7 +3697,8 @@ no arm names anything is returned as is.
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
 
 The name a member contributes to a seam beside it: its literal token's
-catalog kind, else its literal slot, else its enum slot, else its keyword
+catalog kind, else the token of a reference to a visible punctuation kind
+(`punctuationReferenceTokenOf`), else its literal slot, else its enum slot, else its keyword
 slot, else nothing.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`

@@ -1355,8 +1355,9 @@ export interface AddressBranch {
 	readonly string: 'content';
 	readonly string_double: 'after' | 'before';
 	readonly string_single: 'after' | 'before';
-	readonly subscript_expression: 'after' | 'before' | 'lbrack' | 'rbrack';
+	readonly subscript_expression: 'after' | 'before' | 'lbrack' | 'qmark_dot' | 'rbrack';
 	readonly 'subscript_expression/lbrack': 'after' | 'before';
+	readonly 'subscript_expression/qmark_dot': 'after' | 'before';
 	readonly 'subscript_expression/rbrack': 'before';
 	readonly switch_body: 'after' | 'before' | 'cases' | 'lbrace' | 'rbrace';
 	readonly 'switch_body/cases': 'end' | 'separator' | 'start' | 'switch_case' | 'switch_default';
@@ -2878,6 +2879,8 @@ export interface AddressLeaf {
 	readonly 'subscript_expression/before': WhitespaceArm;
 	readonly 'subscript_expression/lbrack/after': WhitespaceArm;
 	readonly 'subscript_expression/lbrack/before': WhitespaceArm;
+	readonly 'subscript_expression/qmark_dot/after': WhitespaceArm;
+	readonly 'subscript_expression/qmark_dot/before': WhitespaceArm;
 	readonly 'subscript_expression/rbrack/before': WhitespaceArm;
 	readonly 'switch_body/after': WhitespaceArm;
 	readonly 'switch_body/before': WhitespaceArm;

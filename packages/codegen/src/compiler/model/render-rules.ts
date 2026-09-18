@@ -4,7 +4,7 @@ import type { RenderRule, Rule, RuleAnnotations, RuleId, SeamOrigin } from '../.
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, isVisiblePunctuationLeaf, leftmostTerminalImmediate } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, isVisiblePunctuationLeaf, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
 import { supertypeMembersByPublicName } from './supertype-members.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
@@ -453,10 +453,13 @@ function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | u
 	return text === undefined ? undefined : tokenNameOfText(text, config.kindEntries);
 }
 
-function fixedTextArmTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+export function punctuationTokenOfNode(node: AssembledNode | undefined, kindEntries: readonly KindEntryLike[]): string | undefined {
+	return node !== undefined && isVisiblePunctuationLeaf(node) ? tokenNameOfText(node.text, kindEntries) : undefined;
+}
+
+function punctuationReferenceTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
 	const r = bag(rule);
-	const target = r.type === SYMBOL && r.name !== undefined ? config.nodeMap.nodes.get(r.name) : undefined;
-	return target !== undefined && isVisiblePunctuationLeaf(target) ? tokenNameOfText(target.text, config.kindEntries) : undefined;
+	return r.type === SYMBOL && r.name !== undefined ? punctuationTokenOfNode(config.nodeMap.nodes.get(r.name), config.kindEntries) : undefined;
 }
 
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
@@ -547,7 +550,7 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
-	return literalTokenOf(rule, config) ?? literalSlotOf(rule, config) ?? enumSlotOf(rule, config) ?? keywordSlotOf(rule, config);
+	return literalTokenOf(rule, config) ?? punctuationReferenceTokenOf(rule, config) ?? literalSlotOf(rule, config) ?? enumSlotOf(rule, config) ?? keywordSlotOf(rule, config);
 }
 
 function inlinedRuleNames(rules: Readonly<Record<string, RenderRule>>): ReadonlySet<string> {
@@ -620,7 +623,7 @@ function withArmEdgeSeams(
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
 		if (side === 'first' && isImmediateRight(edge, config)) return arm;
-		const token = literalTokenOf(edge, config) ?? fixedTextArmTokenOf(edge, config);
+		const token = literalTokenOf(edge, config) ?? punctuationReferenceTokenOf(edge, config);
 		if (token === undefined) return arm;
 		const seam = seamChoice(kind, seamLabel(token, side === 'last' ? 'after' : 'before'), fallback, resolver, seams, undefined, isKeywordSeam(edge, config));
 		changed = true;

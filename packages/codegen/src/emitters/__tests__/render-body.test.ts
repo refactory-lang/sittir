@@ -261,13 +261,14 @@ describe('seam nodes', () => {
 });
 
 describe('gateOptionalSlotSeams', () => {
+	const own = (slotName: string): readonly string[] => [slotName];
 	it('moves a slot\'s own seams inside its presence gate and leaves every other seam where it is', () => {
 		const body = concat(seam('x_before'), gate('x', slot('x')), seam('x_after'), seam('y_before'), slot('y'));
-		expect(gateOptionalSlotSeams(body)).toEqual(concat(gate('x', concat(seam('x_before'), slot('x'), seam('x_after'))), seam('y_before'), slot('y')));
+		expect(gateOptionalSlotSeams(body, own)).toEqual(concat(gate('x', concat(seam('x_before'), slot('x'), seam('x_after'))), seam('y_before'), slot('y')));
 	});
 
 	it('prints the seam call only inside the gate, so an absent slot leaves no site behind', () => {
-		const lines = printRustBody(gateOptionalSlotSeams(concat(text('in'), seam('comma_before'), gate('comma', slot('comma')))), {
+		const lines = printRustBody(gateOptionalSlotSeams(concat(text('in'), seam('comma_before'), gate('comma', slot('comma'))), own), {
 			field: (n) => n,
 			site: (n) => `options::SITE_${n.toUpperCase()}`,
 			kinds: (names) => `&[${names.join(', ')}]`
@@ -284,12 +285,19 @@ describe('gateOptionalSlotSeams', () => {
 		const flanked = gate('x', concat(text('->'), slot('x')));
 		for (const gated of [withFallback, kinded, flanked]) {
 			const body = concat(seam('x_before'), gated, seam('x_after'));
-			expect(gateOptionalSlotSeams(body)).toEqual(body);
+			expect(gateOptionalSlotSeams(body, own)).toEqual(body);
 		}
 	});
 
+	it('also folds the seams named by the token the slot renders, so an absent optional punctuation leaves no site behind', () => {
+		const names = (slotName: string): readonly string[] => [slotName, 'qmark_dot'];
+		expect(gateOptionalSlotSeams(concat(slot('object'), seam('qmark_dot_before'), gate('optional_chain', slot('optional_chain')), seam('qmark_dot_after'), text('[')), names)).toEqual(
+			concat(slot('object'), gate('optional_chain', concat(seam('qmark_dot_before'), slot('optional_chain'), seam('qmark_dot_after'))), text('['))
+		);
+	});
+
 	it('folds only the seam that is beside the gate and belongs to its slot', () => {
-		expect(gateOptionalSlotSeams(concat(seam('other_before'), gate('x', slot('x')), seam('x_after')))).toEqual(
+		expect(gateOptionalSlotSeams(concat(seam('other_before'), gate('x', slot('x')), seam('x_after')), own)).toEqual(
 			concat(seam('other_before'), gate('x', concat(slot('x'), seam('x_after'))))
 		);
 	});

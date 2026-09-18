@@ -109,20 +109,21 @@ function isBareSlotGate(node: BodyNode): node is IfNode & { readonly arms: reado
 	return arm.kinds === undefined && only?.kind === 'slot' && only.name === arm.test;
 }
 
-export function gateOptionalSlotSeams(body: Body): Body {
+export function gateOptionalSlotSeams(body: Body, seamNamesOf: (slot: string) => readonly string[]): Body {
 	const out: BodyNode[] = [];
 	for (let i = 0; i < body.length; i++) {
 		const node = body[i]!;
 		if (node.kind === 'if') {
-			const arms = node.arms.map((arm) => ({ ...arm, body: gateOptionalSlotSeams(arm.body) }));
-			const fallback = node.fallback === undefined ? undefined : gateOptionalSlotSeams(node.fallback);
+			const arms = node.arms.map((arm) => ({ ...arm, body: gateOptionalSlotSeams(arm.body, seamNamesOf) }));
+			const fallback = node.fallback === undefined ? undefined : gateOptionalSlotSeams(node.fallback, seamNamesOf);
 			const folded: IfNode = { ...node, arms, fallback };
 			if (isBareSlotGate(folded)) {
 				const test = folded.arms[0].test;
 				const prev = out[out.length - 1];
 				const next = body[i + 1];
-				const before = prev?.kind === 'seam' && prev.field === `${test}_before` ? prev : undefined;
-				const after = next?.kind === 'seam' && next.field === `${test}_after` ? next : undefined;
+				const names = seamNamesOf(test);
+				const before = prev?.kind === 'seam' && names.some((name) => prev.field === `${name}_before`) ? prev : undefined;
+				const after = next?.kind === 'seam' && names.some((name) => next.field === `${name}_after`) ? next : undefined;
 				if (before !== undefined || after !== undefined) {
 					if (before !== undefined) out.pop();
 					if (after !== undefined) i++;

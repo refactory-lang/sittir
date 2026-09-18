@@ -5211,6 +5211,11 @@ kinds test, and its body is exactly the slot the arm tests; the seam before
 it and the seam after it are folded into the arm only when their fields are
 that slot's own. Every other seam stays where it is. `TemplateEmitter` applies
 it once to each kind's finished body, before the slot-preservation checks.
+A slot's own seams are named by the slot and by the token it renders when
+its only values are visible punctuation kinds (`seamNamesOf`, supplied by the
+caller), so an optional `?.` reference folds `qmark_dot_before` and
+`qmark_dot_after` into its presence gate and an absent chain marker leaves no
+site behind.
 
 ### `packages/codegen/src/emitters/render-body.ts::liftGates`
 
@@ -10142,6 +10147,13 @@ token-default and fallback counts.
 // break between this header and the body. See core/render.ts for the
 // top-level `.trim()` that handles the outermost render.
 ```
+
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.slotSeamNames`
+
+The seam names a slot owns on a node: the slot's own name, plus the token of
+each value that is a visible punctuation kind, through
+`punctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
+to `gateOptionalSlotSeams`.
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
 

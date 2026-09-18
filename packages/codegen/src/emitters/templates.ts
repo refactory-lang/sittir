@@ -42,7 +42,7 @@ import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { flanksOf, isSeamChoice, seamChoiceDefault, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import { flanksOf, isSeamChoice, punctuationTokenOfNode, seamChoiceDefault, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { ADJACENT, DEDENT as DEDENT_BODY, DYNAMIC_EDGE, EMPTY, INDENT as INDENT_BODY, MARKER_EDGE, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, gateOptionalSlotSeams, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
@@ -113,11 +113,13 @@ export function stringifyRule(rule: RenderRule): string {
 export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	readonly #wordMatcher: RegExp;
 	readonly #ctx: EmitCtx;
+	readonly #kindEntries: readonly KindEntryLike[];
 	#bodies = new Map<string, Body>();
 	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
+		this.#kindEntries = config.kindEntries ?? [];
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
@@ -181,13 +183,23 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		};
 	}
 
+	#slotSeamNames(node: AssembledNode, slotName: string): readonly string[] {
+		if (!(node instanceof AbstractAssembledCompound)) return [slotName];
+		const slot = node.slots.find((candidate) => candidate.name === slotName);
+		const tokens = (slot?.values ?? []).flatMap((value) => {
+			const token = punctuationTokenOfNode(this.#ctx.nodeMap.nodes.get(storageKindOfValue(value) ?? ''), this.#kindEntries);
+			return token === undefined ? [] : [token];
+		});
+		return [slotName, ...tokens];
+	}
+
 	#emitNode(node: AssembledNode): void {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
 		this.#ctx.emittedSlotNames.clear();
 		const emitted = emitOne(node, this.#ctx);
-		const body = emitted === undefined ? undefined : gateOptionalSlotSeams(emitted);
+		const body = emitted === undefined ? undefined : gateOptionalSlotSeams(emitted, (slot) => this.#slotSeamNames(node, slot));
 
 		if (body === undefined) {
 			this.#bodies.set(node.kind, EMPTY);

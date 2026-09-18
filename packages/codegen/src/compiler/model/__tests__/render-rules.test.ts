@@ -292,6 +292,20 @@ describe('seamRenderRules', () => {
 		expect(armsOf(arm, new AssembledKeyword('arm_kind', str('?.') as never))[1]).toEqual(['arm_kind']);
 	});
 
+	it('seats token seams around a reference to a visible punctuation kind that sits in a seq, optional or not', () => {
+		const entries = [...(kindEntries as never as object[]), { kind: 'qmark_dot', anon: true, symbolName: '?.', literalText: '?.', member: 'QmarkDot', id: 21 }] as never;
+		const namesWith = (node: object, multiplicity?: string) => {
+			const member = seq(sym('object'), sym('arm_kind', { fieldName: 'chain', ...(multiplicity === undefined ? {} : { multiplicity }) }), sym('index'));
+			const config = { nodeMap: nodeMapOf({ member }, {}), kindEntries: entries };
+			config.nodeMap.nodes.set('arm_kind', node as never);
+			return memberNames(seamRenderRules(spaceRenderRules(config), config).rules.member!);
+		};
+		const chain = new AssembledPunctuation('arm_kind', str('?.') as never, { hidden: false });
+		expect(namesWith(chain, 'optional')).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
+		expect(namesWith(chain)).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
+		expect(namesWith(new AssembledKeyword('arm_kind', str('?.') as never))).toEqual(['object', 'S(chain_before)', 'arm_kind', 'S(chain_after)', 'index']);
+	});
+
 	it('defaults to space where the seam-stamping dry run baked a space', () => {
 		const spacedParen = { ...str(')'), staticSeamBefore: 'spaced' } as unknown as RenderRule;
 		const { out } = seamed({ call: seq(sym('x'), spacedParen) });
