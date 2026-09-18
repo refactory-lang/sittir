@@ -209,6 +209,30 @@ first two come to resemble. Whole-text leaves — `identifier`, numbers,
 string fragments — are the first two shapes with no interior, and nothing
 about them changes.
 
+### The model type follows the interior
+
+A token wrapper is not a class. Today `classifyNode` reaches a
+content-bearing token through `classifyTerminalFallback`, where any all-text
+shape becomes `pattern`; that is how typescript `comment` and `identifier`
+and rust `char_literal` are `pattern` leaves with no pattern on the node,
+and why their factories carry no regex. Under this design the classifier
+reads the interior as if the wrapper were absent, and the wrapper stamps
+one attribute on whatever class results: the kind is lexed and read as one
+text, and every seam inside it is immediate.
+
+| interior | model type | as it would be unwrapped |
+| --- | --- | --- |
+| one pattern | `pattern` | `identifier`, `number` |
+| one string | `keyword` or `punctuation` by word shape | `_automatic_semicolon` |
+| a choice of strings | `enum` | rust `mutable_specifier` |
+| strings and patterns in a sequence | the compound class the sequence yields, its string members immediate faces, its pattern members slots | `char_literal`, `private_property_identifier`, python `comment` |
+| a choice of such sequences | the compound with forms, one per arm | typescript `comment` |
+
+Consumers follow the class, not the wrapper: the factory, types, guard,
+render body and lazy projection of a token-wrapped compound are those of a
+compound whose leaves are immediate. A bare pattern with named groups is the
+fourth row with the groups as its pattern members.
+
 ### The read side does not drill
 
 A token is one parse node with no children; the typescript parser gives
