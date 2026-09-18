@@ -1,5 +1,4 @@
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { writeSync } from 'node:fs';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -909,6 +908,7 @@ function buildTypedTemplateBody(
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
+			site: (name) => `options::SITE_${toScreamingSnakeCase(publicKindName(struct.kind), publicKindName(struct.kind))}_${toScreamingSnakeCase(name, name)}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind)
 		})
 	);
@@ -1102,7 +1102,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries, plan)
 	);
 
 	return pruneUnreferencedBridges(
@@ -1190,6 +1190,12 @@ function pruneUnreferencedBridges(rendered: string): string {
 
 function armSeamSupport(): string {
 	return [
+		'#[derive(Debug, Clone, Copy, Default)]',
+		'pub struct LiteralSeams {',
+		'    pub before: Option<u16>,',
+		'    pub after: Option<u16>,',
+		'}',
+		'',
 		'pub trait ArmSeams {',
 		'    fn arm_seam_sites(&self) -> Option<(usize, usize)>;',
 		'}',
@@ -1223,11 +1229,12 @@ function armSeamSupport(): string {
 		'    }',
 		'}',
 		'',
-		'impl<T: ::sittir_core::render::Render> ::sittir_core::render::Render for Seamed<T> {',
+		'impl<T: ::sittir_core::render::Render + ArmSeams> ::sittir_core::render::Render for Seamed<T> {',
 		'    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {',
-		'        w.site(self.seam_before.unwrap_or(0));',
+		'        let (before, after) = self.value.arm_seam_sites().map_or((0u8, 0u8), |(b, a)| (options::site_strength(b, self.seam_before.unwrap_or(0)), options::site_strength(a, self.seam_after.unwrap_or(0))));',
+		'        w.site_with(self.seam_before.unwrap_or(0), before);',
 		'        self.value.render(w)?;',
-		'        w.site(self.seam_after.unwrap_or(0));',
+		'        w.site_with(self.seam_after.unwrap_or(0), after);',
 		'        Ok(())',
 		'    }',
 		'}',
@@ -1755,33 +1762,12 @@ interface AcceptedTransportIdsInput {
 	parseName?: string;
 }
 
-const DBG_KINDID_FASTPATH = process.env.DBG_KINDID_FASTPATH === '1';
-let literalKindIdFastPathHits = 0;
-let literalKindIdFallbackHits = 0;
-let transportIdsFastPathHits = 0;
-let transportIdsFallbackHits = 0;
-let kindidFastPathDumpRegistered = false;
-function registerKindIdFastPathDump(): void {
-	if (kindidFastPathDumpRegistered) return;
-	kindidFastPathDumpRegistered = true;
-	process.once('exit', () => {
-		writeSync(
-			2,
-			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
-				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
-		);
-	});
-}
-
 function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
 	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
-	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
 	let acceptedIds: number[];
 	if (stampedIds !== undefined) {
-		if (DBG_KINDID_FASTPATH) transportIdsFastPathHits++;
 		acceptedIds = [...stampedIds];
 	} else {
-		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
 		const nameKeyedIds = [
 			...new Set<string>([
 				...concreteKindsOf(kind, nodeMap),
@@ -2040,12 +2026,9 @@ function resolveLiteralKindId(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	kindIdByKind?: ReadonlyMap<string, number>
 ): number | undefined {
-	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
 	if (literal.resolvedKindId !== undefined) {
-		if (DBG_KINDID_FASTPATH) literalKindIdFastPathHits++;
 		return literal.resolvedKindId;
 	}
-	if (DBG_KINDID_FASTPATH) literalKindIdFallbackHits++;
 	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
 	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
 	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
@@ -2061,16 +2044,66 @@ function resolveLiteralKindId(
 	return id;
 }
 
+interface LiteralArmSeams {
+	readonly before?: string;
+	readonly after?: string;
+}
+
+function literalArmSeamSites(
+	entry: PerSlotChildEnum,
+	literalVariantByKey: ReadonlyMap<string, string>,
+	plan: RenderPlan
+): ReadonlyMap<string, LiteralArmSeams> {
+	const owner = publicKindName(entry.ownerKind);
+	const out = new Map<string, LiteralArmSeams>();
+	for (const literal of entry.literals) {
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (variant === undefined) continue;
+		const sites: { before?: string; after?: string } = {};
+		for (const site of plan.spacingSites) {
+			if (site.kind !== owner || site.side !== 'seam' || site.seat !== undefined) continue;
+			const seam = parseSeamLabel(site.address);
+			if (seam?.token === publicKindName(literal.kind)) sites[seam.side] = site.constName;
+		}
+		if (sites.before !== undefined || sites.after !== undefined) out.set(variant, sites);
+	}
+	return out;
+}
+
+function literalSeamFill(seams: LiteralArmSeams): string[] {
+	return (['before', 'after'] as const).flatMap((side) =>
+		seams[side] === undefined ? [] : [`t.${side}.get_or_insert(ctx.options.spacing[options::${seams[side]}]);`]
+	);
+}
+
+function literalSeamedArm(enumName: string, variant: string, write: string, seams: LiteralArmSeams): string[] {
+	const site = (side: 'before' | 'after'): string[] =>
+		seams[side] === undefined
+			? []
+			: [`                w.site_with(seams.${side}.unwrap_or(0), options::site_strength(options::${seams[side]}, seams.${side}.unwrap_or(0)));`];
+	return [
+		`            ${enumName}::${variant}(seams) => {`,
+		...site('before'),
+		`                let written = ${write};`,
+		'                written?;',
+		...site('after'),
+		'                Ok(())',
+		'            }'
+	];
+}
+
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
 	literalVariantByKey: ReadonlyMap<string, string>,
-	kindEntries?: readonly KindEnumEntry[]
+	kindEntries?: readonly KindEnumEntry[],
+	plan: RenderPlan = EMPTY_PLAN
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
 	const ownerKind = entry.ownerKind;
+	const literalSeams = literalArmSeamSites(entry, literalVariantByKey, plan);
 
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
@@ -2089,7 +2122,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`    ${variant},`);
+			lines.push(`    ${variant}${literalSeams.has(variant) ? '(LiteralSeams)' : ''},`);
 			literalVariants.push(variant);
 		}
 	}
@@ -2099,7 +2132,11 @@ function emitPerSlotChildEnum(
 	lines.push(
 		...prepareEnumImpl(enumName, [
 			...validKinds.map(({ node }) => ({ variant: rustTypeIdent(node.typeName), payload: true })),
-			...literalVariants.map((variant) => ({ variant, payload: false })),
+			...literalVariants.map((variant) => ({
+				variant,
+				payload: literalSeams.has(variant),
+				...(literalSeams.has(variant) ? { fill: literalSeamFill(literalSeams.get(variant)!) } : {})
+			})),
 			...(admitsVerbatim ? [{ variant: 'Verbatim', payload: true }] : [])
 		])
 	);
@@ -2112,7 +2149,7 @@ function emitPerSlotChildEnum(
 					const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 					if (variant === undefined) return [];
 					const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
-					return [{ variant, payload: false, ids: id === undefined ? [] : [id] }];
+					return [{ variant, payload: literalSeams.has(variant), ids: id === undefined ? [] : [id] }];
 				})
 			],
 			admitsVerbatim
@@ -2132,7 +2169,7 @@ function emitPerSlotChildEnum(
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
-			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}${literalSeams.has(variant) ? '(LiteralSeams::default())' : ''}),`);
 		}
 		for (const { kind, node, concreteName } of kindIdStoredFirst(validKinds, (v) => v.node)) {
 			const variant = rustTypeIdent(node.typeName);
@@ -2249,7 +2286,7 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
+			lines.push(`        ${enumName}::${variant}${literalSeams.has(variant) ? '(_)' : ''} => AnyTransport::${variant},`);
 		}
 	}
 	if (admitsVerbatim) lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
@@ -2273,7 +2310,9 @@ function emitPerSlotChildEnum(
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
 			const immediate = literal.immediate === true || isImmediateLeafKind(literal.kind, nodeMap);
-			lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
+			const seams = literalSeams.get(variant);
+			if (seams === undefined) lines.push(`            ${enumName}::${variant} => ${literalWriteArm(literal.text, immediate)},`);
+			else lines.push(...literalSeamedArm(enumName, variant, literalWriteArm(literal.text, immediate), seams));
 		}
 	}
 	if (admitsVerbatim) lines.push(`            ${verbatimRenderArm(enumName, entry.verbatimImmediate)}`);
@@ -2565,15 +2604,17 @@ const PREPARE_SIG = `fn prepare(&mut self, ctx: &${PREPARE_MOD}::RenderContext<'
 
 function prepareEnumImpl(
 	enumName: string,
-	arms: readonly { readonly variant: string; readonly payload: boolean }[]
+	arms: readonly { readonly variant: string; readonly payload: boolean; readonly fill?: readonly string[] }[]
 ): string[] {
 	const anyPayload = arms.some((a) => a.payload);
 	return [
 		`impl ${PREPARE_MOD}::Prepare for ${enumName} {`,
 		`    ${anyPayload ? PREPARE_SIG : PREPARE_SIG.replace('ctx:', '_ctx:')}`,
 		`        match self {`,
-		...arms.map((a) =>
-			a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`
+		...arms.flatMap((a) =>
+			a.fill !== undefined
+				? [`            ${enumName}::${a.variant}(t) => {`, ...a.fill.map((line) => `                ${line}`), `                Ok(())`, `            }`]
+				: [a.payload ? `            ${enumName}::${a.variant}(t) => t.prepare(ctx),` : `            ${enumName}::${a.variant} => Ok(()),`]
 		),
 		`        }`,
 		`    }`,

@@ -28,12 +28,16 @@ export type WrapperPhase = 'evaluate' | 'link';
 
 export type AnyRule = Rule<PhaseName>;
 
+export type SeamOrigin = 'preference' | 'token-default' | 'word-default' | 'cascade' | 'fallback';
+
 export type RuleAnnotations = {
 	readonly variant?: string;
 	readonly variantOf?: string;
 	readonly default?: true;
 	readonly preference?: string;
 	readonly hoisted?: true;
+	readonly origin?: SeamOrigin;
+	readonly edgeToken?: string;
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {

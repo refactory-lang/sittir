@@ -2127,26 +2127,6 @@ from the model instead of recovering them from the subtype's name.
  */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::DBG_KINDID_FALLBACK`
-
-```text
-// ---------------------------------------------------------------------------
-// `deriveValuesForRule`'s SYMBOL/SUPERTYPE/STRING/PATTERN cases read the ids
-// `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
-// of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
-// ONLY as a fallback for a rule that never passed through that stamping pass
-// — legitimately, that includes every hand-built `Rule` fixture this same
-// function is unit-tested against (see `derive-values-kindid-stamps.test.ts`,
-// which deliberately constructs UNSTAMPED rules to exercise this exact path),
-// so this function has no way to tell "expected test fixture" from "a real
-// post-link rule link.ts failed to stamp" — it cannot assert here without
-// breaking the former. `noteKindIdFallbackHit` stays a log, opt-in via
-// DBG_KINDID_FALLBACK; link.ts's `reportKindIdStampMisses` diagnostic is the
-// actual hard gate for a genuinely missing stamp, checked where the context
-// (a real generation run vs. a fixture) is actually known.
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::FACTORY_NAME_RESERVED`
 
 ```text
@@ -3443,6 +3423,11 @@ refused — the arm is wrong, not merely inapplicable.
  */
 ```
 
+`origin` is the `SeamOrigin` `withDeclaredArms` recorded when a declaration
+reached the site; an undeclared site has none and plans as the fallback.
+`edgeToken` rides through from the `RuleSpacingSite` so the cascade path can
+be built here as well as in `render-rules.ts`.
+
 ### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
 
 ```text
@@ -3571,6 +3556,15 @@ choices are where it lives, and naming them by the kind reaches keyword
 edges (`else_clause_before`) as well. A rule that is not a seq holds no
 literal of its own and is returned unchanged.
 
+The kind's edge terminal cascades onto the edge: when the seq opens (or
+closes) with a literal token, `edgeTokenOf` names it and the edge's
+`SpacingPart` carries it as `edgeToken`, so the site answers to that token's
+grammar-wide face as well as to `<kind>_before`/`_after` (see
+`site-addresses.ts::addressSites`). `arguments` opening with `(` takes the
+`_`-scope `"("/before` arm as its before-edge default without a row of its
+own; a kind row still overrides it, and a kind whose edge is a slot cascades
+nothing.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
 
 Whether a kind gets edge seams: it is a compound node, and it is either
@@ -3624,9 +3618,10 @@ fielded literal that is a slot (a `nonterminal` string, or a linked symbol
 carrying `literal`), or a choice whose leaves are all literals under one
 field name, the field read from the leaf or inherited from the nearest
 enclosing choice (an operator choice nests one choice per precedence
-group). At least one leaf must be punctuation under the grammar's word
-matcher: a slot of keywords only (`let` / `const`, a `readonly` marker)
-stays lexical, and a seam beside such a marker would also break the
+group). A slot of keywords only (`and` / `or`, an `in` operator) is a slot
+too, so the keyword's word-default face exists beside a cascaded opener;
+the exception is an all-keyword slot that is optional (`isOptionalRule`),
+which stays unseamed because a seam beside such a marker would break the
 emitter's collapse of modifier-ordering arms into one gate per marker.
 Such a member joins a seam like a punctuation literal, named by the slot
 instead of the token. A fielded string that renders as plain text is a
@@ -3640,10 +3635,12 @@ or a symbol carrying `literal`.
 ### `packages/codegen/src/compiler/model/render-rules.ts::armSeamName`
 
 The seam name a single literal arm of an enum contributes: its own anonymous
-token's catalog kind. Word-shaped arms name nothing — two words cannot abut,
-so the lexical rule already separates them and a site there would never be
-declared. The resolver is the anon-only one, because this asks which token
-identity a text already has, not which rule answers to that name.
+token's catalog kind. Word-shaped arms name nothing unless `includeWords`
+asks for them: `withArmSeams` asks only for a choice that also has a
+punctuation arm, so `typeof` and `void` beside `!` get their own seams
+while an all-keyword choice keeps its slot seam. The resolver is the
+anon-only one, because this asks which token identity a text already has,
+not which rule answers to that name.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmSeams`
 
@@ -3655,8 +3652,45 @@ no arm names anything is returned as is.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamNameOf`
 
-The name a member contributes to a seam beside it: its punctuation token's
-catalog kind, else its literal slot, else nothing.
+The name a member contributes to a seam beside it: its literal token's
+catalog kind, else its literal slot, else its enum slot, else its keyword
+slot, else nothing.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::keywordSlotOf`
+
+The slot name of a member that is a field referencing a keyword node
+(`AssembledKeyword` with the `word` flag), such as an arrow function's
+`async_marker`. It names a seam like an enum slot does, so a cascaded
+opener after the marker meets the keyword's face instead of nothing. A
+member inside a choice arm (`RenderRulesConfig.choiceArmNodes`) is left
+alone: the modifier-ordering arms of `public_field_definition` repeat the
+same marker per arm, and a seam beside each breaks the emitter's fold of
+those arms into one gate per marker.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::choiceArmNodesOf`
+
+Every node under any arm of any choice in a kind's rule, by identity. The
+seam pass computes it once per kind and hands it down as
+`RenderRulesConfig.choiceArmNodes`; leaves keep their identity through the
+rebuild, so `keywordSlotOf` can ask whether a member sat in an arm.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isOptionalRule`
+
+Whether a member, or any arm of a choice member, is optional.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
+
+Whether a literal's kind is a keyword the grammar's `word` rule claims: the
+catalog entry's node is an `AssembledKeyword` with `word` set. One
+attribute read on the model, decided at link time; no text is matched
+against a pattern here.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
+
+Whether the members a seam names are all keywords: a literal token, a
+literal slot or choice whose leaves are all keywords, an enum whose values
+all are, or a keyword-typed field. It feeds the `wordShaped` flag of
+`seamChoice`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::literalTextOf`
 
@@ -3673,7 +3707,10 @@ print inside the referencing kind, so they own no seam sites.
 The whitespace choice of one seam, token or kind edge: field name the
 address `<token>_<side>`, label the one the grammar declared for that
 address on the kind or the address itself, side `seam`, the resolved
-default arm, and the grammar's seam arms (`SeamArms`).
+default arm, and the grammar's seam arms (`SeamArms`). `resolveSeam`'s
+`origin` rides along on the `SpacingPart` into `whitespaceChoice`, which
+stamps it beside `default: true` on the resolved arm's member — the one
+place this fact is decided; nothing downstream re-derives it.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SeamArms`
 
@@ -3693,6 +3730,20 @@ separator's.
 ### `packages/codegen/src/compiler/model/render-rules.ts::seamPartOf`
 
 The `SpacingPart` of a seam choice, side `seam`.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::seamChoiceDefault`
+
+Reads back everything a seam choice's resolved default arm was stamped
+with, in one scan of its members — the label (the same address
+`isSeamChoice` parses off member 0), the `origin` (`undefined` for a
+separator gap's whitespace choice, which `resolver.resolveSeparator`
+builds without one), and the arm itself, recovered from the default
+member's symbol name via `publicKindName` (the inverse of
+`whitespaceSymbols`' `arm -> symbols[arm]` mapping, so no second table is
+needed to go back). The template emitter's `seamChoiceBetween` is the one
+caller — it reads both facts off a single found node rather than scanning
+twice, and never inspects an `annotations.preference` address itself to
+guess either one.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isAnyWhitespaceChoice`
 
@@ -3756,6 +3807,37 @@ the fallback — `space` for a separator gap, `tight` for a flank, and for a
 token seam the arm the seam-stamping dry run baked (`space` where the body
 had a static space, `tight` otherwise). A site's label is its address; a
 seam's resolved arm must be one its site admits.
+
+`declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
+`origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
+'fallback'>`) — `'preference'` for a kind- or supertype-scoped declaration,
+`'token-default'` for a wildcard (`_`-scope) one, decided once in
+`resolveBindings` from the winning entry's address (a leading `_` segment
+vs. a named one) and never re-derived downstream. `#resolve` adds the
+third state, `'fallback'`, when no declaration reaches the site at all —
+the full three-value type, `SeamOrigin`, is defined once at the types
+layer (`types/rule.ts`, alongside `RuleAnnotations.origin`) since it needs
+to be nameable there without importing back up from this module.
+`resolveSeam` is the only caller that surfaces the fallback state;
+`resolveSeparator`/`resolveFlank` only need the arm and discard origin —
+separator gaps and flanks are outside the seam census's origin tracking.
+
+A `'word-default'` origin marks a seam on a keyword that no row reaches:
+`resolveSeam` gives it the fallback arm (`space`) but at the declared
+strength, so a keyword never loses its space to a cascaded tight — `return
+(x)`, `typeof (x)`, `case (1)` — while a declared tight (`return;`,
+`pub(crate)`) still wins by rank. It applies to token seams, literal and
+keyword slots, enum slots, and the keyword arms of a mixed operator choice;
+kind edges never carry it, because a kind edge whose first token is a
+keyword takes its space from the fallback. `spacingSitesOf` and `partOf`
+carry the origin for this state only, since it is a fact of the rule and
+not of any declaration.
+
+A fourth origin, `'cascade'`, marks a site whose arm came from its edge
+token's `_`-scope face through the cascade path rather than from a row
+naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
+turns it into the middle strength tier the writer honours.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
 
 ```text
@@ -3778,6 +3860,11 @@ seam's resolved arm must be one its site admits.
 One whitespace choice of a spaced separator, flank or seam: the transport
 field it becomes (the site key), its label, its side, its default arm and
 the arms it admits, read from the choice's own members.
+
+`edgeToken` is set only on a kind edge whose seq opens or closes with a
+literal token: the public name of that token, stamped on the whitespace
+choice's own annotations by `whitespaceChoice` and read back by `partOf`, so
+`spacingSitesOf` can carry it onto the `RuleSpacingSite`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::flanksOf`
 
@@ -3820,6 +3907,12 @@ skipped. Flanks are injected only when both indentation kinds are declared.
 Every site with its canonical path, sorted. A site's index in the result is its
 site number, which is what makes a prefix-scoped declaration a contiguous range
 rather than a scan.
+
+A site that names an `edgeToken` (a kind edge whose kind opens or closes
+with that literal) also gets a `cascadePath`: `[kind, literal, side]`, the
+path the token's own seam would have inside that kind. `cascadePathOf`
+builds it; the primary `path` stays `[kind, side]`, so `options.ts` keys and
+kind rows are unchanged.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
 
@@ -3872,6 +3965,13 @@ supertype matches every site whose segment names one of its members, through
 `membersOf` (`supertypeMembersByPublicName`), so `(statement)/after` reaches
 the members' sites the way the flat `Members` fan-out did; a site path itself
 always names the concrete kind.
+
+`matchAddressWith` is the form that says how each hit was reached: through
+the site's own path, or through its `cascadePath`. Only an address whose
+head is the wildcard (`_`-scope) may cascade: a kind-scoped literal row names
+the token's interior seam in that kind and must never reach the exterior
+edge of a kind that closes with the literal it opened with (closure pipes,
+quotes, backticks). `matchAddress` is the same match with the flag dropped.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
 
@@ -3934,6 +4034,11 @@ naming a delimiter or a separator token is passed over rather than refused;
 the pass that sees every site is the one that refuses an address naming
 nothing.
 
+A site an entry reached only through its cascade path resolves with origin
+`'cascade'` rather than the entry's own origin: the arm is the token's
+grammar-wide face inherited by the kind edge, which the writer ranks below a
+declared arm and above the fallback.
+
 ### `packages/codegen/src/compiler/model/site-addresses.ts::addressSegments`
 
 A written path read as an address. The first segment is the kind, so a bare
@@ -3942,10 +4047,25 @@ kind in the `options:` block and an address written `(kind)/…` reach the same
 site. Parsing stays literal, because a label's head is virtual and must not be
 resolved against the grammar.
 
+### `packages/codegen/src/compiler/model/site-addresses.ts::resolveBindings`
+
+Each site's arm, with the narrowest binding that reaches it winning (see
+`addressSegments` above for the head-segment normalization specificity
+sorts on). The map's value also carries `origin: PreferenceOrigin` —
+`'token-default'` when the winning entry's address has a wildcard head
+(a bare `_`), `'preference'` otherwise — decided once here, from the
+address text, at the one place a site's winning declaration is chosen.
+Every other reader of a resolved arm (`declaredOptionArms`,
+`DefaultResolver`, the seam census) consumes this stamp; none re-parses
+an address to guess it. `withDeclaredArms` (`site-preferences.ts`), the
+other caller, only needs the arm and drops `origin`.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::declaredOptionArms`
 
 Each site's arm as the `options:` block declares it, keyed by kind and address —
-the form the default resolver already looks sites up by.
+the form the default resolver already looks sites up by. The map's value is
+`DeclaredArm` (`{ arm, origin }`), `origin` carried through unchanged from
+`resolveBindings`.
 
 It runs between the two render-rule passes, because that is the first point
 where the sites an address names exist: they are read off the built rules, not

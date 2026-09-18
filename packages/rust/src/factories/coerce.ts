@@ -237,13 +237,13 @@ export const _fromMap = {
 	_attributed_ordered_field: coerceToAttributedOrderedField,
 	_type_argument: coerceToTypeArgument,
 	_match_block_arms: coerceToMatchBlockArms,
+	_line_doc_content: coerceToLineDocContent,
+	_block_comment_content: coerceToBlockCommentContent,
 	string_content: coerceToStringContent,
 	_raw_string_literal_start: coerceToRawStringLiteralStart,
 	raw_string_literal_content: coerceToRawStringLiteralContent,
 	_raw_string_literal_end: coerceToRawStringLiteralEnd,
-	float_literal: coerceToFloatLiteral,
-	_block_comment_content: coerceToBlockCommentContent,
-	_line_doc_content: coerceToLineDocContent
+	float_literal: coerceToFloatLiteral
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -1819,13 +1819,12 @@ const _K52: readonly string[] = ['integer_literal', 'float_literal'];
 const _K53: readonly string[] = ['escape_sequence', 'string_content'];
 const _K54: readonly string[] = ['line_comment_regular_dslash', 'line_comment_content'];
 const _K55: readonly string[] = ['line_comment_doc_outer', 'line_comment_doc_inner'];
-const _K56: readonly string[] = ['_block_comment_content'];
-const _K57: readonly string[] = ['block_comment_doc_outer', 'block_comment_doc_inner'];
-const _K58: readonly string[] = ['self', 'super', 'crate'];
-const _K59: readonly string[] = ['visibility_modifier_pub_in_path'];
-const _K60: readonly string[] = ['scoped_type_identifier', 'generic_type'];
-const _K61: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
-const _K62: readonly string[] = [
+const _K56: readonly string[] = ['block_comment_doc_outer', 'block_comment_doc_inner'];
+const _K57: readonly string[] = ['self', 'super', 'crate'];
+const _K58: readonly string[] = ['visibility_modifier_pub_in_path'];
+const _K59: readonly string[] = ['scoped_type_identifier', 'generic_type'];
+const _K60: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
+const _K61: readonly string[] = [
 	'char_literal',
 	'boolean_literal',
 	'integer_literal',
@@ -1836,10 +1835,10 @@ const _K62: readonly string[] = [
 	'super',
 	'crate'
 ];
-const _K63: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
-const _K64: readonly string[] = ['range_pattern_with_left_bare'];
-const _K65: readonly string[] = ['range_pattern_with_left_with_right'];
-const _K66: readonly string[] = [
+const _K62: readonly string[] = ['string_literal', 'raw_string_literal', 'negative_literal', 'scoped_identifier'];
+const _K63: readonly string[] = ['range_pattern_with_left_bare'];
+const _K64: readonly string[] = ['range_pattern_with_left_with_right'];
+const _K65: readonly string[] = [
 	'parameter',
 	'self_parameter',
 	'variadic_parameter',
@@ -1857,9 +1856,9 @@ const _K66: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K67: readonly string[] = ['metavariable'];
-const _K68: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
-const _K69: readonly string[] = [
+const _K66: readonly string[] = ['metavariable'];
+const _K67: readonly string[] = ['type_parameter', 'lifetime_parameter', 'const_parameter'];
+const _K68: readonly string[] = [
 	'metavariable',
 	'unit_type',
 	'identifier',
@@ -1870,7 +1869,7 @@ const _K69: readonly string[] = [
 	'integer_literal',
 	'float_literal'
 ];
-const _K70: readonly string[] = [
+const _K69: readonly string[] = [
 	'abstract_type',
 	'reference_type',
 	'pointer_type_const',
@@ -5591,17 +5590,17 @@ export function coerceToLineComment(input: T.LineComment.Loose): ReturnType<type
 }
 
 export function resolveBlockComment_content(value: T.BlockComment.LooseConfig['content']): T.BlockComment['_content'] {
-	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(value, _K56, _K57);
+	return _resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'>(value, _K2, _K56);
 }
 
 export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.BlockComment)
 		return input as unknown as ReturnType<typeof F.buildBlockComment>;
 	return F.buildBlockComment(
-		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent>(
+		_resolveOne<T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-			_K56,
-			_K57
+			_K2,
+			_K56
 		)
 	);
 }
@@ -6113,7 +6112,7 @@ export function resolveVisibilityModifierGroup_content(
 ): T.VisibilityModifierGroup['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K58, _K59)
+			_resolveOne<'self' | 'super' | 'crate' | T.VisibilityModifierPubInPath>(value, _K57, _K58)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 	);
@@ -6138,8 +6137,8 @@ export function coerceToVisibilityModifierGroup(
 							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
 								? input.content
 								: input,
-							_K58,
-							_K59
+							_K57,
+							_K58
 						)
 				),
 				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -6530,7 +6529,7 @@ export function coerceToReferenceExpressionBare(
 export function resolveImplItemPositiveClause_trait(
 	value: T.ImplItemPositiveClause.LooseConfig['trait']
 ): T.ImplItemPositiveClause['_trait'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K60);
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K59);
 }
 
 export function coerceToImplItemPositiveClause(
@@ -6545,7 +6544,7 @@ export function coerceToImplItemPositiveClause(
 			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
 				_K32,
-				_K60
+				_K59
 			)
 		)
 	);
@@ -6554,7 +6553,7 @@ export function coerceToImplItemPositiveClause(
 export function resolveImplItemNegativeClause_trait(
 	value: T.ImplItemNegativeClause.LooseConfig['trait']
 ): T.ImplItemNegativeClause['_trait'] {
-	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K60);
+	return _resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(value, _K32, _K59);
 }
 
 export function coerceToImplItemNegativeClause(
@@ -6569,7 +6568,7 @@ export function coerceToImplItemNegativeClause(
 			_resolveOne<T.Identifier | T.ScopedTypeIdentifier | T.GenericType>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'trait' in input ? input.trait : input,
 				_K32,
-				_K60
+				_K59
 			)
 		)
 	);
@@ -6593,7 +6592,7 @@ export function resolveImplItemBody_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K61,
+		_K60,
 		'impl_item_positive_clause'
 	);
 }
@@ -6648,7 +6647,7 @@ export function resolveImplItemSemi_traitClause(
 	return _resolveOne<T.ImplItemPositiveClause | T.ImplItemNegativeClause>(
 		value,
 		_K2,
-		_K61,
+		_K60,
 		'impl_item_positive_clause'
 	);
 }
@@ -7800,8 +7799,8 @@ export function resolveRangePatternPrefix_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K62,
-				_K63
+				_K61,
+				_K62
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7835,8 +7834,8 @@ export function resolveRangePatternWithLeftWithRight_right(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K62,
-				_K63
+				_K61,
+				_K62
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7875,8 +7874,8 @@ export function resolveRangePatternWithLeft_left(
 		_resolveKindEnum(value, () =>
 			_resolveOne<T.LiteralPattern | 'self' | T.Identifier | T.Metavariable | 'super' | 'crate' | T.ScopedIdentifier>(
 				value,
-				_K62,
-				_K63
+				_K61,
+				_K62
 			)
 		),
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
@@ -7887,7 +7886,7 @@ export function resolveRangePatternWithLeft_content(
 	value: T.RangePatternWithLeft.LooseConfig['content']
 ): T.RangePatternWithLeft['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.RangePatternWithLeftWithRight | '..'>(value, _K64, _K65)),
+		_resolveKindEnum(value, () => _resolveOne<T.RangePatternWithLeftWithRight | '..'>(value, _K63, _K64)),
 		[['..', TSKindId.RangePatternWithLeftBare] as const]
 	);
 }
@@ -8070,7 +8069,7 @@ export function resolveAttributedParameter_content(
 ): T.AttributedParameter['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T.Type>(value, _K14, _K66)
+			_resolveOne<T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T.Type>(value, _K14, _K65)
 		),
 		[['_', TSKindId.Underscore] as const]
 	);
@@ -8096,7 +8095,7 @@ export function resolveAttributedTypeParameter_attributeItems(
 export function resolveAttributedTypeParameter_content(
 	value: T.AttributedTypeParameter.LooseConfig['content']
 ): T.AttributedTypeParameter['_content'] {
-	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K67, _K68);
+	return _resolveOne<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(value, _K66, _K67);
 }
 
 export function coerceToAttributedTypeParameter(
@@ -8180,7 +8179,7 @@ export function coerceToAttributedOrderedField(
 export function resolveTypeArgument_content(value: T.TypeArgument.LooseConfig['content']): T.TypeArgument['_content'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(value, _K69, _K70)
+			_resolveOne<T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(value, _K68, _K69)
 		),
 		[]
 	);
@@ -8222,6 +8221,18 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 	});
 }
 
+export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
+	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
+}
+
+export function coerceToBlockCommentContent(
+	input: T.BlockCommentContent.Loose
+): ReturnType<typeof F.buildBlockCommentContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
+	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
+}
+
 export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<typeof F.buildStringContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContent>;
 	return F.buildStringContent(input as Parameters<typeof F.buildStringContent>[0]);
@@ -8251,16 +8262,4 @@ export function coerceToRawStringLiteralEnd(
 export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
 	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
-}
-
-export function coerceToBlockCommentContent(
-	input: T.BlockCommentContent.Loose
-): ReturnType<typeof F.buildBlockCommentContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildBlockCommentContent>;
-	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
-}
-
-export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
-	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
 }

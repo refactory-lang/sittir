@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addressSites, matchAddress, resolveBindings } from '../site-addresses.ts';
+import { addressSites, matchAddress, matchAddressWith, resolveBindings } from '../site-addresses.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
@@ -21,6 +21,47 @@ describe('a supertype segment matches the sites of its members', () => {
 	});
 	it('reaches nothing without the membership', () => {
 		expect(matchAddress(parsePreferencePath('(statement)/after'), sites, NO_SUPERTYPES)).toEqual([]);
+	});
+});
+
+describe('a kind-scoped declaration on an envelope reaches only its own edge, never a nested envelope’s own members', () => {
+	// Models the rust regression: visibility_modifier_group is-a
+	// visibility_modifier_pub_in_path (its own polymorph arm), and that arm's
+	// OWN union separately admits scoped_identifier. The correct membership
+	// map stops at each envelope's direct arms — it never transitively folds
+	// an arm's own reachable content into its parent's membership.
+	const correctMembers = new Map<string, readonly string[]>([
+		['visibility_modifier_group', ['visibility_modifier_pub_in_path']],
+		['visibility_modifier_pub_in_path', ['scoped_identifier']]
+	]);
+	const buggyMembers = new Map<string, readonly string[]>([
+		['visibility_modifier_group', ['visibility_modifier_pub_in_path', 'scoped_identifier']],
+		['visibility_modifier_pub_in_path', ['scoped_identifier']]
+	]);
+	const sites = addressSites(
+		[
+			{
+				kind: 'visibility_modifier_group',
+				slot: 'x',
+				address: 'x',
+				label: 'x',
+				path: parsePreferencePath('(visibility_modifier_group)/before')
+			},
+			{ kind: 'scoped_identifier', slot: 'x', address: 'x', label: 'x', path: parsePreferencePath('(scoped_identifier)/before') }
+		],
+		[]
+	);
+
+	it('with correct membership, hits only its own edge', () => {
+		expect(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, correctMembers).map((s) => s.kind)).toEqual([
+			'visibility_modifier_group'
+		]);
+	});
+
+	it('with the buggy transitive membership, would also hit the unrelated kind', () => {
+		expect(
+			new Set(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, buggyMembers).map((s) => s.kind))
+		).toEqual(new Set(['visibility_modifier_group', 'scoped_identifier']));
 	});
 });
 
@@ -130,8 +171,8 @@ describe('resolveBindings', () => {
 			[site('token_tree_punctuation', 'comma_after'), site('token_tree_punctuation', 'colon_after')],
 			ENTRIES
 		);
-	const armsOf = (out: Map<number, string>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
-		new Map([...out].map(([i, arm]) => [sites[i]!.address, arm]));
+	const armsOf = (out: ReturnType<typeof resolveBindings>, sites: ReturnType<typeof addressSites>): Map<string, string> =>
+		new Map([...out].map(([i, { arm }]) => [sites[i]!.address, arm]));
 
 	it('applies a broad binding to every site it matches', () => {
 		const sites = punctuation();
@@ -140,7 +181,7 @@ describe('resolveBindings', () => {
 			[{ address: 'token_tree_punctuation', label: 'punctuation/after' }],
 			sites, NO_SUPERTYPES
 		);
-		expect([...out.values()]).toEqual(['space', 'space']);
+		expect([...out.values()].map((v) => v.arm)).toEqual(['space', 'space']);
 	});
 
 	it('lets a narrower declaration win over a broader binding', () => {
@@ -168,7 +209,7 @@ describe('resolveBindings', () => {
 			[{ address: 'keyword_argument/"="/before', label: 'assignment/before' }],
 			sites, NO_SUPERTYPES
 		);
-		expect([...out.values()]).toEqual(['tight']);
+		expect([...out.values()].map((v) => v.arm)).toEqual(['tight']);
 	});
 
 	it('rejects two addresses whose site sets overlap without nesting', () => {
@@ -255,8 +296,46 @@ describe('a separator gap names its token', () => {
 			[{ address: '_/_/separator/","/before', label: 'comma/before' }],
 			sites, NO_SUPERTYPES
 		);
-		const bySite = new Map([...arms].map(([i, arm]) => [sites[i]!.kind, arm]));
+		const bySite = new Map([...arms].map(([i, { arm }]) => [sites[i]!.kind, arm]));
 		expect(bySite.get('arguments')).toBe('tight');
 		expect(bySite.get('tuple_type')).toBe('space');
+	});
+});
+
+describe('a kind edge answers to its edge token’s face as a cascaded address', () => {
+	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
+	const sites = addressSites(
+		[
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeToken: 'lparen' },
+			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
+			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
+		],
+		kindEntries
+	);
+	it('matches the grammar-wide token face through the cascade path and marks the hit as cascaded', () => {
+		const hits = matchAddressWith(parsePreferencePath('_/"("/before'), sites, NO_SUPERTYPES);
+		expect(hits.map((h) => `${h.site.address}${h.cascade ? '~' : ''}`)).toEqual(['args_before~', 'lparen_before']);
+		expect(matchAddress(parsePreferencePath('_/"("/after'), sites, NO_SUPERTYPES)).toEqual([]);
+	});
+	it('never cascades a kind-scoped literal row onto that kind’s own edge', () => {
+		const hits = matchAddressWith(parsePreferencePath('args/"("/before'), sites, NO_SUPERTYPES);
+		expect(hits).toEqual([]);
+	});
+	it('resolves a cascaded hit with origin cascade and lets the kind’s own row win over it', () => {
+		const resolved = resolveBindings(
+			[
+				{ path: '_/"("/before', arm: 'tight' },
+				{ path: 'args/before', arm: 'space' }
+			],
+			[],
+			sites,
+			NO_SUPERTYPES,
+			false
+		);
+		const byAddress = new Map([...resolved].map(([i, v]) => [sites[i]!.address, v]));
+		expect(byAddress.get('args_before')).toEqual({ arm: 'space', origin: 'preference' });
+		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'token-default' });
+		const cascadedOnly = resolveBindings([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
+		expect(new Map([...cascadedOnly].map(([i, v]) => [sites[i]!.address, v])).get('args_before')).toEqual({ arm: 'tight', origin: 'cascade' });
 	});
 });

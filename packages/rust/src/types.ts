@@ -6673,8 +6673,8 @@ export interface LineComment {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent;
-	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
+	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | '[^]*';
+	content(): BlockCommentDocOuter | BlockCommentDocInner | '[^]*' | undefined;
 }
 
 export interface MacroRules {
@@ -10060,13 +10060,13 @@ export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
+export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
+export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
-export type BlockCommentContent = Terminal<TSKindId.BlockCommentContent, string>;
-export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 
 // Tree types
@@ -10399,6 +10399,12 @@ export interface LineCommentContentTree extends TreeNode<'line_comment_content'>
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
 }
+export interface LineDocContentTree extends AnyTreeNode {
+	readonly type: '_line_doc_content';
+}
+export interface BlockCommentContentTree extends AnyTreeNode {
+	readonly type: '_block_comment_content';
+}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralStartTree extends AnyTreeNode {
 	readonly type: '_raw_string_literal_start';
@@ -10410,12 +10416,6 @@ export interface RawStringLiteralEndTree extends AnyTreeNode {
 	readonly type: '_raw_string_literal_end';
 }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
-export interface BlockCommentContentTree extends AnyTreeNode {
-	readonly type: '_block_comment_content';
-}
-export interface LineDocContentTree extends AnyTreeNode {
-	readonly type: '_line_doc_content';
-}
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
 }
@@ -11815,13 +11815,13 @@ export interface KindMap {
 	line_comment_regular_dslash: LineCommentRegularDslash;
 	line_comment_content: LineCommentContent;
 	range_pattern_with_left_bare: RangePatternWithLeftBare;
+	_line_doc_content: LineDocContent;
+	_block_comment_content: BlockCommentContent;
 	string_content: StringContent;
 	_raw_string_literal_start: RawStringLiteralStart;
 	raw_string_literal_content: RawStringLiteralContent;
 	_raw_string_literal_end: RawStringLiteralEnd;
 	float_literal: FloatLiteral;
-	_block_comment_content: BlockCommentContent;
-	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;
 }
 
@@ -14250,6 +14250,20 @@ export interface LineCommentContentNs extends LeafNs<
 	LineCommentContentTree,
 	'line_comment_content'
 > {}
+export interface LineDocContentNs extends LeafNs<
+	LineDocContent,
+	string,
+	LineDocContent.Built,
+	LineDocContentTree,
+	'_line_doc_content'
+> {}
+export interface BlockCommentContentNs extends LeafNs<
+	BlockCommentContent,
+	string,
+	BlockCommentContent.Built,
+	BlockCommentContentTree,
+	'_block_comment_content'
+> {}
 export interface StringContentNs extends LeafNs<
 	StringContent,
 	string,
@@ -14284,20 +14298,6 @@ export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral.Built,
 	FloatLiteralTree,
 	'float_literal'
-> {}
-export interface BlockCommentContentNs extends LeafNs<
-	BlockCommentContent,
-	string,
-	BlockCommentContent.Built,
-	BlockCommentContentTree,
-	'_block_comment_content'
-> {}
-export interface LineDocContentNs extends LeafNs<
-	LineDocContent,
-	string,
-	LineDocContent.Built,
-	LineDocContentTree,
-	'_line_doc_content'
 > {}
 export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinel,
@@ -14548,13 +14548,13 @@ export interface NamespaceMap {
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
 	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
 	[TSKindId.LineCommentContent]: LineCommentContentNs;
+	[TSKindId.LineDocContent]: LineDocContentNs;
+	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
-	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
-	[TSKindId.LineDocContent]: LineDocContentNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -17053,15 +17053,15 @@ export namespace BlockComment {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent): T.BlockComment.Built;
+			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'): T.BlockComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
-	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent];
+	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'];
 	export type LooseArgs = [
 		value?: LooseValue<
-			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
+			T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*',
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -19408,6 +19408,36 @@ export namespace LineCommentContent {
 	export type Tree = LineCommentContentNs['Tree'];
 	export type Kind = 'line_comment_content';
 }
+export namespace LineDocContent {
+	export type Config = LineDocContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineDocContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = LineDocContentNs['Loose'];
+	export type LooseConfig = LineDocContentNs['LooseConfig'];
+	export type BuildArgs = LineDocContentNs['BuildArgs'];
+	export type LooseArgs = LineDocContentNs['LooseArgs'];
+	export type Tree = LineDocContentNs['Tree'];
+	export type Kind = '_line_doc_content';
+}
+export namespace BlockCommentContent {
+	export type Config = BlockCommentContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.BlockCommentContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = BlockCommentContentNs['Loose'];
+	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
+	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
+	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
+	export type Tree = BlockCommentContentNs['Tree'];
+	export type Kind = '_block_comment_content';
+}
 export namespace StringContent {
 	export type Config = StringContentNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19482,36 +19512,6 @@ export namespace FloatLiteral {
 	export type LooseArgs = FloatLiteralNs['LooseArgs'];
 	export type Tree = FloatLiteralNs['Tree'];
 	export type Kind = 'float_literal';
-}
-export namespace BlockCommentContent {
-	export type Config = BlockCommentContentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.BlockCommentContent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = BlockCommentContentNs['Loose'];
-	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
-	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
-	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
-	export type Tree = BlockCommentContentNs['Tree'];
-	export type Kind = '_block_comment_content';
-}
-export namespace LineDocContent {
-	export type Config = LineDocContentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.LineDocContent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = LineDocContentNs['Loose'];
-	export type LooseConfig = LineDocContentNs['LooseConfig'];
-	export type BuildArgs = LineDocContentNs['BuildArgs'];
-	export type LooseArgs = LineDocContentNs['LooseArgs'];
-	export type Tree = LineDocContentNs['Tree'];
-	export type Kind = '_line_doc_content';
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];

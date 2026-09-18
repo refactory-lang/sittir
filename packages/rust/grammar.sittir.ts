@@ -83,11 +83,36 @@ export default grammar(
 				},
 
 				_: {
-					'_/separator/","/before': preference('tight'),
-					'_/separator/";"/before': preference('tight'),
 					'_/separator/"+"/before': preference('space'),
 					'_/separator/"+"/after': preference('space'),
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'","/before': preference('tight'),
+					'_/separator/","/before': preference('tight'),
+					'_/separator/";"/before': preference('tight'),
+					'";"/before': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
+					'"::"/before': preference('tight'),
+					'"::"/after': preference('tight'),
+					'"<"/before': preference('tight'),
+					'"<"/after': preference('tight'),
+					'">"/before': preference('tight'),
+					'"!"/before': preference('tight'),
+					'"!"/after': preference('tight'),
+					'"&"/after': preference('tight'),
+					'"#"/after': preference('tight'),
+					'"$"/after': preference('tight'),
+					'"\'"/before': preference('tight'),
+					'"\'"/after': preference('tight'),
 					'"->"/before': preference('space'),
 					'"->"/after': preference('space'),
 					'"="/before': preference('space'),
@@ -95,26 +120,20 @@ export default grammar(
 					'"=>"/before': preference('space'),
 					'"=>"/after': preference('space'),
 					'operator:/before': preference('space'),
-					'operator:/after': preference('space'),
-					'"if"/after': preference('space'),
-					'"in"/after': preference('space')
+					'operator:/after': preference('space')
 				},
+
+				struct_pattern: { '"{"/before': preference('tight') },
+				macro_invocation: { '"!"/after': preference('tight') },
+				visibility_modifier_pub: { '"pub"/after': preference('tight') },
+				self_parameter: { 'reference:/after': preference('tight') },
+				closure_parameters: { '"|"/after': preference('tight'), '"|"/before': preference('tight'), after: preference('space') },
 
 				source_file: {
 					'statements:/separator': preference('tight'),
 					'statements:/(_)/after': preference('blankline'),
 					'statements:/(attribute_item)/after': preference('newline')
 				},
-
-				delim_token_tree_brace: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_bracket: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_paren: { 'delim_tokens:/separator': preference('tight') },
-				token_tree_brace: { 'tokens:/separator': preference('tight') },
-				token_tree_bracket: { 'tokens:/separator': preference('tight') },
-				token_tree_paren: { 'tokens:/separator': preference('tight') },
-				token_tree_pattern_brace: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_bracket: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_paren: { 'token_patterns:/separator': preference('tight') },
 
 				block: { before: preference('space'), 'statements:/end': preference('newline') },
 				match_block: { before: preference('space') },
@@ -666,9 +685,11 @@ export default grammar(
 					)
 			},
 			renderAs: (_$) => ({
-				_inner_line_doc_comment_marker: string('!'),
-				_outer_block_doc_comment_marker: string('*'),
-				_inner_block_doc_comment_marker: string('!')
+				_inner_line_doc_comment_marker: token.immediate('!'),
+				_outer_block_doc_comment_marker: token.immediate('*'),
+				_inner_block_doc_comment_marker: token.immediate('!'),
+				_line_doc_content: token.immediate(/.*/),
+				_block_comment_content: token.immediate(/[^]*/)
 			})
 		},
 		enrichedBase

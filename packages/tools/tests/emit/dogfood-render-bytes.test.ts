@@ -10,7 +10,10 @@ const CASES = [
 	['python', '19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated', 'dogfood-python.rendered'],
 	['rust', '17-dogfood-rust-loose.generated.ts', 'rebuildSpliceLoose', 'dogfood-rust.rendered'],
 	['typescript', '18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose', 'dogfood-typescript.rendered'],
-	['python', '19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose', 'dogfood-python.rendered']
+	['python', '19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose', 'dogfood-python.rendered'],
+	['rust', '20-keyword-openers-rust.generated.ts', 'rebuildKeywordOpenersRust', 'keyword-openers-rust.rendered'],
+	['typescript', '20-keyword-openers-typescript.generated.ts', 'rebuildKeywordOpenersTypescript', 'keyword-openers-typescript.rendered'],
+	['python', '20-keyword-openers-python.generated.ts', 'rebuildKeywordOpenersPython', 'keyword-openers-python.rendered']
 ] as const;
 
 describe('dogfood rebuild render bytes', () => {

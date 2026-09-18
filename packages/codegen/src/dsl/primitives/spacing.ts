@@ -12,7 +12,7 @@ export function depthBreakOf(text: string): string {
 export type SpacingArm = string;
 export type WhitespaceArm = string;
 export const SPACING_DEFAULT: SpacingArm = 'space';
-export const FLANK_DEFAULT: WhitespaceArm = 'tight';
+export const FLANK_DEFAULT: WhitespaceArm = 'space';
 export const EMPTY_SEPARATOR_TOKEN = 'empty';
 export const DELIMITER_LABEL = 'delimiter';
 export const DELIMITER_ARMS = ['Delimiter.None', 'Delimiter.Leading', 'Delimiter.Trailing', 'Delimiter.Both'] as const;

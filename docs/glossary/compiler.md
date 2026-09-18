@@ -10952,37 +10952,6 @@ second, id-suffixed fallback.
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
 ```
 
-### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`
-
-```text
-/**
- * Run the full ordered pipeline of non-lossy normalization passes over the
- * raw rule map from the linked grammar.
- *
- * @param linkRules - The rule map produced by the Link phase.
- * @returns A new rule map after all normalization passes have been applied.
- * @remarks
- * Order matters: collapse wrappers first (smallest trees → cleaner
- * downstream), then fan-out (expose nested choices), then factor (pull
- * common prefixes/suffixes), then dedupe adjacent duplicates, then inline
- * single-use hidden helpers, then re-collapse to flatten any degenerate
- * wrappers introduced by the previous passes.
- *
- * Polymorph classification lives in Link (variant()-driven, with
- * suggestion-only heuristic detection). This pipeline is simplification
- * only — it MUST NOT silently classify rules as polymorphs because
- * tree-sitter's parser-generator doesn't see these mutations and the parse
- * tree wouldn't match the typed surface. Heuristic candidates that need
- * promotion are recorded in the derivation log; the user authors variant() in
- * grammar.sittir.ts to make them explicit.
- */
-```
-
-```text
-// DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
-// after each normalization pass, to pinpoint where a rule id gets dropped.
-```
-
 ### `packages/codegen/src/compiler/normalize.ts::normalizeGrammar`
 
 #### body

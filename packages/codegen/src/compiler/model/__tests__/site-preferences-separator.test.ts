@@ -74,6 +74,7 @@ describe('collectSitePreferences — separator sites', () => {
 				{ value: 'semi', kind: 'semi' }
 			],
 			defaultArm: 'semi',
+			origin: 'preference',
 			source: 'separator'
 		});
 	});

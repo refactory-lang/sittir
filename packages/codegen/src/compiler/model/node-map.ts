@@ -682,14 +682,6 @@ export function deriveSlots(rule: SimplifiedRule, ctx?: DeriveCtx): readonly Ass
 	return _deriveSlotsInternal(rule, ctx);
 }
 
-const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
-function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
-	if (!DBG_KINDID_FALLBACK) return;
-	process.stderr.write(
-		`[DBG_KINDID_FALLBACK] ${hit.site}: literal/name lookup resolved an id for '${hit.name}' with no stamp present\n`
-	);
-}
-
 function findKindEntryById(lookup: {
 	entries: readonly GeneratedKindEntry[];
 	id: number;
@@ -735,7 +727,6 @@ export function deriveValuesForRule(
 					];
 				}
 				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(literal)', name: rule.literal });
 				return [
 					{
 						value: rule.literal,
@@ -763,9 +754,7 @@ export function deriveValuesForRule(
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			const parseEntry =
 				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
-			if (entry !== undefined || parseEntry !== undefined)
-				noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
-			return [
+						return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
 					storageKindId: entry?.id,
@@ -789,7 +778,6 @@ export function deriveValuesForRule(
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -817,7 +805,6 @@ export function deriveValuesForRule(
 				];
 			}
 			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'STRING/PATTERN', name: rule.value });
 			const rk = entry?.kind;
 			return [
 				{
@@ -1735,7 +1722,6 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -1776,7 +1762,6 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -2005,31 +1990,45 @@ export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolea
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
 }
 
-interface LeftmostWalkCtx {
+export interface LeftmostWalkCtx {
 	readonly rules: Record<string, RenderRule>;
 	readonly visiting: Set<string>;
 }
 
-function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+function coreLeftmostImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (isNullableMultiplicity(rule)) return false;
 	if (rule.immediate === true) return true;
 	switch (rule.type) {
 		case 'SEQ':
-			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
+			return rule.members.length > 0 && coreLeftmostImmediate(rule.members[0], ctx);
 		case 'CHOICE':
 			return (
 				rule.members.length > 0 &&
-				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
+				rule.members.every((m) => coreLeftmostImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
 			ctx.visiting.add(rule.name);
-			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
+			return coreLeftmostImmediate(ctx.rules[rule.name], ctx);
 		}
 		default:
 			return false;
 	}
+}
+
+export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	if (!rule) return false;
+	if (isNullableMultiplicity(rule)) return false;
+	return coreLeftmostImmediate(rule, ctx);
+}
+
+export function isBoundaryLeftImmediate(members: readonly RenderRule[], fromIndex: number, ctx: LeftmostWalkCtx): boolean {
+	for (let i = fromIndex; i < members.length; i++) {
+		const member = members[i]!;
+		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
+		if (!isNullableMultiplicity(member)) return true;
+	}
+	return false;
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';

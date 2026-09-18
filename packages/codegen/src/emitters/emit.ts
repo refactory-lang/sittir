@@ -1,4 +1,5 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -53,6 +54,7 @@ export interface EmitAllConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
+	diagnostics?: DiagnosticSink;
 }
 
 export interface EmitAllResult {
@@ -95,7 +97,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		emitRenderModule,
 		expectTestFailures,
 		options: optionsBlock,
-		visibleExternals
+		visibleExternals,
+		diagnostics
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
@@ -145,7 +148,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules && sitePreferences
 			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'

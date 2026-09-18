@@ -35,13 +35,15 @@ import type {
 	NodeOrTerminal,
 	SeamEdgeClass
 } from '../compiler/model/node-map.ts';
-import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
+import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
+import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from './shared.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { flanksOf, isSeamChoice, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
+import { flanksOf, isSeamChoice, seamChoiceDefault, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { ADJACENT, DEDENT as DEDENT_BODY, EMPTY, INDENT as INDENT_BODY, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
+import { ADJACENT, DEDENT as DEDENT_BODY, DYNAMIC_EDGE, EMPTY, INDENT as INDENT_BODY, MARKER_EDGE, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, gateOptionalSlotSeams, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -49,6 +51,7 @@ export interface EmitTemplatesConfig {
 	renderRules?: RenderRules;
 	grammarSha?: string;
 	kindEntries?: readonly KindEntryLike[];
+	diagnostics?: DiagnosticSink;
 }
 
 export interface EmittedTemplates {
@@ -61,6 +64,7 @@ export interface SeamBoundaryRecord {
 	readonly left: string;
 	readonly right: string;
 	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime-derivable' | 'runtime-varying';
+	readonly origin: SeamOrigin;
 }
 
 export interface SeamCensusSummary {
@@ -69,6 +73,11 @@ export interface SeamCensusSummary {
 	readonly staticSpaced: number;
 	readonly runtimeDerivable: number;
 	readonly runtimeVarying: number;
+	readonly preferenceOrigin: number;
+	readonly tokenDefaultOrigin: number;
+	readonly wordDefaultOrigin: number;
+	readonly cascadeOrigin: number;
+	readonly fallbackOrigin: number;
 }
 
 export interface EmitCtx {
@@ -86,57 +95,7 @@ export interface EmitCtx {
 	readonly mergePairRightChars?: ReadonlySet<string>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
-}
-
-interface SlotLookupMiss {
-	readonly kind: string | undefined;
-	readonly ruleType: string;
-	readonly ruleId: string | undefined;
-	readonly name: string | undefined;
-	readonly fieldName: string | undefined;
-	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'alias-source' | 'none';
-	readonly structural: boolean;
-}
-const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
-const SLOT_MISS_LOG: SlotLookupMiss[] = [];
-
-const DBG_SEAM_VARIES = process.env.DBG_SEAM_VARIES === '1';
-const SEAM_VARIES_TALLY = new Map<string, number>();
-function tallySeamVariesReason(reason: string): void {
-	if (!DBG_SEAM_VARIES) return;
-	SEAM_VARIES_TALLY.set(reason, (SEAM_VARIES_TALLY.get(reason) ?? 0) + 1);
-}
-function dumpSeamVariesTally(grammar: string): void {
-	if (!DBG_SEAM_VARIES || SEAM_VARIES_TALLY.size === 0) return;
-	const total = [...SEAM_VARIES_TALLY.values()].reduce((a, b) => a + b, 0);
-	process.stderr.write(`\n=== seam runtime-varying reasons [${grammar}] — ${total} total ===\n`);
-	for (const [reason, count] of [...SEAM_VARIES_TALLY.entries()].sort((a, b) => b[1] - a[1])) {
-		process.stderr.write(`  ${count.toString().padStart(4)}  ${reason}\n`);
-	}
-	SEAM_VARIES_TALLY.clear();
-}
-function dumpSlotMissLog(grammar: string): void {
-	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
-	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
-	let structural = 0;
-	for (const m of SLOT_MISS_LOG) {
-		if (m.structural) structural++;
-		else tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
-	}
-	const unexpected = SLOT_MISS_LOG.length - structural;
-	process.stderr.write(
-		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total: ` +
-			`${structural} structural (choice with seq arms, no single slot to resolve), ${unexpected} unexpected ` +
-			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
-	);
-	for (const m of SLOT_MISS_LOG) {
-		const tag = m.structural ? 'structural ' : m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
-		const label = m.name ? `${m.ruleType}(${m.name})` : m.ruleType;
-		process.stderr.write(
-			`  ${tag} kind=${m.kind ?? '?'} ${label}${m.fieldName ? ` field=${m.fieldName}` : ''} id=${m.ruleId ?? '<none>'}\n`
-		);
-	}
-	SLOT_MISS_LOG.length = 0;
+	readonly diagnostics?: DiagnosticSink;
 }
 
 export function stringifyRule(rule: RenderRule): string {
@@ -151,14 +110,12 @@ export function stringifyRule(rule: RenderRule): string {
 }
 
 export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
-	readonly #config: EmitTemplatesConfig;
 	readonly #wordMatcher: RegExp;
 	readonly #ctx: EmitCtx;
 	#bodies = new Map<string, Body>();
 	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
 
 	constructor(config: EmitTemplatesConfig) {
-		this.#config = config;
 		this.#wordMatcher = config.nodeMap.wordMatcher ?? /\w/;
 		this.#ctx = {
 			nodeMap: config.nodeMap,
@@ -191,7 +148,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			rules: config.renderRules?.rules ?? config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>(),
 			emittedSlotNames: new Set<string>(),
-			seamBoundaries: this.#seamBoundaries
+			seamBoundaries: this.#seamBoundaries,
+			diagnostics: config.diagnostics
 		};
 	}
 
@@ -204,8 +162,6 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	finalize(): EmittedTemplates {
-		dumpSlotMissLog(this.#config.grammar);
-		dumpSeamVariesTally(this.#config.grammar);
 		const boundaries = [...this.#seamBoundaries];
 		return {
 			bodies: new Map(this.#bodies),
@@ -214,7 +170,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				staticGlued: boundaries.filter((b) => b.resolution === 'static-glued').length,
 				staticSpaced: boundaries.filter((b) => b.resolution === 'static-spaced').length,
 				runtimeDerivable: boundaries.filter((b) => b.resolution === 'runtime-derivable').length,
-				runtimeVarying: boundaries.filter((b) => b.resolution === 'runtime-varying').length
+				runtimeVarying: boundaries.filter((b) => b.resolution === 'runtime-varying').length,
+				preferenceOrigin: boundaries.filter((b) => b.origin === 'preference').length,
+				tokenDefaultOrigin: boundaries.filter((b) => b.origin === 'token-default').length,
+				wordDefaultOrigin: boundaries.filter((b) => b.origin === 'word-default').length,
+				cascadeOrigin: boundaries.filter((b) => b.origin === 'cascade').length,
+				fallbackOrigin: boundaries.filter((b) => b.origin === 'fallback').length
 			}
 		};
 	}
@@ -224,7 +185,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 
 		this.#ctx.visitingHelpers.clear();
 		this.#ctx.emittedSlotNames.clear();
-		const body = emitOne(node, this.#ctx);
+		const emitted = emitOne(node, this.#ctx);
+		const body = emitted === undefined ? undefined : gateOptionalSlotSeams(emitted);
 
 		if (body === undefined) {
 			this.#bodies.set(node.kind, EMPTY);
@@ -293,43 +255,6 @@ function renderRuleEdge(
 	}
 }
 
-function describeVariesReason(rule: RenderRule, side: 'starts' | 'ends', ctx: EmitCtx, visiting: Set<string>): string {
-	const flanks = flanksOf(rule);
-	if (flanks !== undefined) return describeVariesReason(flanks.inner, side, ctx, visiting);
-	const mult = (rule as { multiplicity?: Multiplicity }).multiplicity;
-	if (mult !== undefined && mult !== 'single') return `multiplicity:${mult}`;
-	switch (rule.type) {
-		case PATTERN:
-			return side === 'ends' ? 'pattern-end-ambiguous' : 'pattern-start-varies';
-		case SEQ: {
-			const members = side === 'starts' ? rule.members : [...rule.members].reverse();
-			for (const m of members) {
-				if (isSeamChoice(m)) continue;
-				const e = renderRuleEdge(m, side, ctx, new Set(visiting));
-				if (e !== 'empty') return describeVariesReason(m, side, ctx, new Set(visiting));
-			}
-			return 'seq-all-empty';
-		}
-		case CHOICE: {
-			const edges = rule.members.map((m) => renderRuleEdge(m, side, ctx, new Set(visiting)));
-			return `choice-mismatch:${[...new Set(edges)].sort().join(',')}`;
-		}
-		case SYMBOL: {
-			if (visiting.has(rule.name)) return 'symbol-cycle';
-			visiting.add(rule.name);
-			const node = ctx.nodeMap.nodes.get(rule.name);
-			if (node !== undefined) {
-				if (node.modelType === 'pattern') return side === 'ends' ? 'pattern-end-ambiguous' : 'pattern-start-varies';
-				return `kind-edge-varies:${node.modelType}`;
-			}
-			const helper = ctx.rules[rule.name];
-			return helper !== undefined ? describeVariesReason(helper, side, ctx, visiting) : 'no-helper';
-		}
-		default:
-			return `unhandled-type:${rule.type}`;
-	}
-}
-
 function ownerSlotsFor(node: AssembledNode): Readonly<Record<string, AssembledNonterminal>> | undefined {
 	if (!(node instanceof AbstractAssembledCompound)) return undefined;
 	return Object.fromEntries(node.slots.map((slot) => [slot.name, slot]));
@@ -367,23 +292,11 @@ export function emitBranchTemplate(
 
 interface SeqBoundaryClassification {
 	readonly resolution: 'static-glued' | 'static-spaced' | 'runtime-varying';
-	readonly leftVaries: boolean;
-	readonly rightVaries: boolean;
-	readonly mergePairAmbiguous: boolean;
 }
 
-const STATIC_GLUED: SeqBoundaryClassification = {
-	resolution: 'static-glued',
-	leftVaries: false,
-	rightVaries: false,
-	mergePairAmbiguous: false
-};
-const STATIC_SPACED: SeqBoundaryClassification = {
-	resolution: 'static-spaced',
-	leftVaries: false,
-	rightVaries: false,
-	mergePairAmbiguous: false
-};
+const STATIC_GLUED: SeqBoundaryClassification = { resolution: 'static-glued' };
+const STATIC_SPACED: SeqBoundaryClassification = { resolution: 'static-spaced' };
+const RUNTIME_VARYING: SeqBoundaryClassification = { resolution: 'runtime-varying' };
 
 function classifySeqBoundary(
 	l: string,
@@ -392,31 +305,21 @@ function classifySeqBoundary(
 	rightRule: RenderRule,
 	ctx: EmitCtx
 ): SeqBoundaryClassification {
+	if (l === MARKER_EDGE || r === MARKER_EDGE) return STATIC_GLUED;
 	const partEdge = (rule: RenderRule, side: 'starts' | 'ends', c: string): SeamEdgeClass => {
-		if (side === 'starts' ? c !== '{' : c !== '}') return ctx.isWordChar(c) ? 'word' : 'not-word';
+		if (c !== DYNAMIC_EDGE) return ctx.isWordChar(c) ? 'word' : 'not-word';
 		const e = renderRuleEdge(rule, side, ctx, new Set());
 		return e === 'empty' ? 'varies' : e;
 	};
-	if (l === '}' || r === '{') {
+	if (l === DYNAMIC_EDGE || r === DYNAMIC_EDGE) {
 		const leftE = partEdge(leftRule, 'ends', l);
 		const rightE = partEdge(rightRule, 'starts', r);
-		if (leftE === 'varies' || rightE === 'varies') {
-			return {
-				resolution: 'runtime-varying',
-				leftVaries: leftE === 'varies',
-				rightVaries: rightE === 'varies',
-				mergePairAmbiguous: false
-			};
-		}
+		if (leftE === 'varies' || rightE === 'varies') return RUNTIME_VARYING;
 		if (seamNeedsSpace(leftE, rightE)) return STATIC_SPACED;
-		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) {
-			return { resolution: 'runtime-varying', leftVaries: false, rightVaries: false, mergePairAmbiguous: true };
-		}
+		if (ctx.mergePairClassCombos?.has(`${leftE}\0${rightE}`)) return RUNTIME_VARYING;
 		return STATIC_GLUED;
 	}
-	const charClass = (c: string): SeamEdgeClass => (ctx.isWordChar(c) ? 'word' : 'not-word');
-	const spaced = seamNeedsSpace(charClass(l), charClass(r)) || (l !== r && ctx.isLiteralMergePair(l, r));
-	return spaced ? STATIC_SPACED : STATIC_GLUED;
+	return STATIC_SPACED;
 }
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
@@ -468,8 +371,36 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				partIndices.push(i);
 			});
 			if (parts.length === 0) return EMPTY;
-			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution']): void => {
-				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution });
+			const ORIGIN_RANK: Record<SeamOrigin, number> = { preference: 4, 'token-default': 3, 'word-default': 2, cascade: 1, fallback: 0 };
+			const ARM_RANK: Record<string, number> = { indent: 3, dedent: 3, newline: 2, blankline: 2, tight: 1, space: 0 };
+			const seamChoiceBetween = (
+				leftPartIdx: number,
+				rightPartIdx: number
+			): { readonly origin: SeamOrigin; readonly arm: WhitespaceArm | undefined; readonly label: string | undefined } => {
+				const from = partIndices[leftPartIdx]! + 1;
+				const to = partIndices[rightPartIdx]!;
+				let bestOrigin: SeamOrigin = 'fallback';
+				let bestArm: WhitespaceArm | undefined;
+				let bestLabel: string | undefined;
+				let bestArmRank = -1;
+				for (let i = from; i < to; i++) {
+					const member = rule.members[i]!;
+					if (!isSeamChoice(member)) continue;
+					const resolved = seamChoiceDefault(member);
+					if (resolved === undefined) continue;
+					const origin = resolved.origin ?? 'fallback';
+					if (ORIGIN_RANK[origin] > ORIGIN_RANK[bestOrigin]) bestOrigin = origin;
+					const rank = ARM_RANK[resolved.arm] ?? 0;
+					if (rank > bestArmRank) {
+						bestArmRank = rank;
+						bestArm = resolved.arm;
+						bestLabel = resolved.label;
+					}
+				}
+				return { origin: bestOrigin, arm: bestArm, label: bestLabel };
+			};
+			const recordSeam = (l: string, r: string, resolution: SeamBoundaryRecord['resolution'], origin: SeamOrigin): void => {
+				ctx.seamBoundaries?.push({ kind: ctx.currentKind ?? '(unknown)', left: l, right: r, resolution, origin });
 			};
 			const stampSeam = (rightPartIdx: number, resolution: 'glued' | 'spaced'): void => {
 				const memberIdx = partIndices[rightPartIdx]!;
@@ -500,12 +431,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 					const cut = trailingSeams(body);
 					seams = concat(body.slice(cut), seams, whole.slice(0, lead));
 					body = body.slice(0, cut);
-					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					const l = edgeChar(body, 'ends');
 					const r = edgeChar(segment, 'starts');
+					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';
-						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued');
+						recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued', seamChoiceBetween(lastRealPartIdx, rightPartIdx).origin);
 						body = joinStaticSeam(body, segment, spaced, seams);
 						seams = EMPTY;
 						lastRealPartIdx = rightPartIdx;
@@ -514,24 +445,29 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 					const leftRule = partRules[lastRealPartIdx]!;
 					const rightRule = partRules[rightPartIdx]!;
 					const classification = classifySeqBoundary(l, r, leftRule, rightRule, ctx);
+					const governing = seamChoiceBetween(lastRealPartIdx, rightPartIdx);
 					if (classification.resolution === 'runtime-varying') {
-						recordSeam(l, r, 'runtime-varying');
-						if (DBG_SEAM_VARIES) {
-							if (classification.leftVaries)
-								tallySeamVariesReason(`left:${describeVariesReason(leftRule, 'ends', ctx, new Set())}`);
-							if (classification.rightVaries)
-								tallySeamVariesReason(`right:${describeVariesReason(rightRule, 'starts', ctx, new Set())}`);
-							if (classification.mergePairAmbiguous) tallySeamVariesReason('merge-pair-ambiguous');
-						}
+						recordSeam(l, r, 'runtime-varying', governing.origin);
 						body = concat(body, seams, segment);
 						seams = EMPTY;
 						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
-					recordSeam(l, r, classification.resolution);
-					const isGlued = classification.resolution !== 'static-spaced';
-					stampSeam(rightPartIdx, isGlued ? 'glued' : 'spaced');
-					body = joinStaticSeam(body, segment, !isGlued, seams);
+					let spaced = classification.resolution !== 'static-glued';
+					if (governing.arm !== undefined) {
+						spaced = governing.arm === 'space';
+						if (!spaced && ctx.isWordChar(l) && ctx.isWordChar(r)) {
+							ctx.diagnostics?.fail({
+								code: 'seam-word-hazard',
+								message: `${ctx.currentKind ?? '(unknown)'}: '${governing.label}' declares '${governing.arm}' between two word characters ('${l}', '${r}') — gluing them would change what they lex as`,
+								details: { kind: ctx.currentKind, address: governing.label, arm: governing.arm, left: l, right: r }
+							});
+							spaced = true;
+						}
+					}
+					recordSeam(l, r, spaced ? 'static-spaced' : 'static-glued', governing.origin);
+					stampSeam(rightPartIdx, spaced ? 'spaced' : 'glued');
+					body = joinStaticSeam(body, segment, spaced, seams);
 					seams = EMPTY;
 					lastRealPartIdx = rightPartIdx;
 				}
@@ -575,14 +511,12 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 		if (byId) return byId;
 	}
 	let recovered: AssembledNonterminal | undefined;
-	let recoveredBy: SlotLookupMiss['recoveredBy'] = 'none';
 	if (ctx.ownerSlots) {
 		const boundaryFieldName = (rule as { fieldName?: string }).fieldName;
 		if (boundaryFieldName !== undefined) {
 			const byFieldName = ctx.ownerSlots[boundaryFieldName.toLowerCase()];
 			if (byFieldName) {
 				recovered = byFieldName;
-				recoveredBy = 'fieldName';
 			}
 		}
 		if (
@@ -595,7 +529,6 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
 				recovered = byExactName;
-				recoveredBy = 'symbol-name';
 			}
 		}
 		if (recovered === undefined && rule.type === SYMBOL && rule.aliasedTo !== undefined) {
@@ -603,20 +536,8 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			const byAliasSource = ctx.ownerSlots[aliasSourceName];
 			if (byAliasSource) {
 				recovered = byAliasSource;
-				recoveredBy = 'alias-source';
 			}
 		}
-	}
-	if (DBG_SLOT_MISS) {
-		SLOT_MISS_LOG.push({
-			kind: ctx.currentKind,
-			ruleType: rule.type,
-			ruleId: rule.id,
-			name: (rule as { name?: string }).name,
-			fieldName: (rule as { fieldName?: string }).fieldName,
-			recoveredBy,
-			structural: rule.type === CHOICE && rule.members.some((m) => m.type === SEQ)
-		});
 	}
 	return recovered;
 }
@@ -657,7 +578,6 @@ function staticListInterior(
 	ctx: EmitCtx
 ): 'runtime-derivable' | 'runtime-varying' {
 	let verdict: 'runtime-derivable' | 'runtime-varying' = 'runtime-varying';
-	let detail = '';
 	if (sep !== '') {
 		const first = sep[0]!;
 		const last = sep[sep.length - 1]!;
@@ -667,7 +587,6 @@ function staticListInterior(
 			ctx.mergePairRightChars?.has(first) === false &&
 			ctx.mergePairLeftChars?.has(last) === false;
 		verdict = blocked ? 'runtime-derivable' : 'runtime-varying';
-		detail = `sep=${JSON.stringify(sep)}`;
 	} else {
 		const edgeCtx = {
 			nodes: ctx.nodeMap.nodes,
@@ -706,13 +625,7 @@ function staticListInterior(
 			}
 			const combos = ends.size * starts.size;
 			verdict = seams === combos || seams === 0 ? 'runtime-derivable' : 'runtime-varying';
-			detail = `ends={${[...ends].join('')}} starts={${[...starts].join('')}}`;
-		} else {
-			detail = 'edges unknown';
 		}
-	}
-	if (process.env['DBG_LIST_SEAM'] === '1') {
-		console.error(`[list-seam] ${ctx.currentKind ?? '?'}: ${detail} -> ${verdict}`);
 	}
 	return verdict;
 }
@@ -737,7 +650,8 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 			kind: ctx.currentKind ?? '(unknown)',
 			left: '·',
 			right: '·',
-			resolution: staticListInterior(slot, sep, ctx)
+			resolution: staticListInterior(slot, sep, ctx),
+			origin: 'fallback'
 		});
 	}
 	return slotRef(slotName);

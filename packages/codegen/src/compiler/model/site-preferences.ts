@@ -1,7 +1,7 @@
 import type { NodeMap } from '../types.ts';
 import { findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import { CHOICE, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule } from '../../types/rule.ts';
+import type { RenderRule, SeamOrigin } from '../../types/rule.ts';
 import { DELIMITER_LABEL, SEPARATOR_LABEL } from '../../dsl/primitives/spacing.ts';
 import {
 	AbstractAssembledCompound,
@@ -36,9 +36,11 @@ export interface SitePreference {
 	readonly arms: readonly PreferenceArm[];
 	readonly defaultArm: string;
 	readonly source: PreferenceSource;
+	readonly origin?: SeamOrigin;
 	readonly side?: SpacingSide;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
+	readonly edgeToken?: string;
 }
 
 export interface SiteCandidate {
@@ -81,8 +83,10 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 				defaultArm: site.defaultArm,
 				source: 'spacing',
 				side: site.side,
+				...(site.origin === undefined ? {} : { origin: site.origin }),
 				...(site.seat === undefined ? {} : { seat: site.seat }),
-				...(site.path === undefined ? {} : { path: site.path })
+				...(site.path === undefined ? {} : { path: site.path }),
+				...(site.edgeToken === undefined ? {} : { edgeToken: site.edgeToken })
 			});
 		}
 	}
@@ -166,15 +170,15 @@ function withDeclaredArms(
 	}
 
 	const out = [...sites];
-	for (const [index, arm] of resolveBindings(declarations, bindings, addressed, membersOf)) {
+	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, membersOf)) {
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
 			const { kind, slot, address, label, arms, path } = site;
-			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice' });
+			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice', origin });
 			continue;
 		}
-		out[site.siteIndex] = { ...sites[site.siteIndex]!, defaultArm: arm };
+		out[site.siteIndex] = { ...sites[site.siteIndex]!, defaultArm: arm, origin };
 	}
 	return out;
 }

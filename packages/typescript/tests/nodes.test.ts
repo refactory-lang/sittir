@@ -2718,15 +2718,6 @@ describe('unescaped_single_string_fragment', () => {
 	});
 });
 
-describe('escape_sequence', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequence('test');
-		expect(node.$type).toBe(TSKindId.EscapeSequence);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
 describe('comment', () => {
 	it('factory produces correct type', () => {
 		const node = ir.comment('test');

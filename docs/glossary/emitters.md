@@ -3804,6 +3804,16 @@ is bounded by the supertype's subtype count, not the grammar.
 // their kind.
 ```
 
+
+A literal arm whose token has seam sites under the owner kind (a
+statement's `;` terminator, `semi_before`) carries `LiteralSeams` as its
+payload: `literalArmSeamSites` finds the owner's `before` and `after` site
+constants in the render plan, `prepareEnumImpl`'s `fill` hook seats them
+from `ctx.options.spacing`, and `literalSeamedArm` writes them around the
+literal. The choice's seams sit inside the arm in the render rule, and the
+template collapses the choice to one slot, so the enum is where they are
+written; the parent never sees them. Literal arms with no such site stay
+unit variants.
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
 ```text
@@ -5181,6 +5191,18 @@ A Rust string literal for body text: quotes, backslashes, line breaks and
 tabs escaped, and every control character and writer mark (U+FDD0 and up)
 written as `\u{…}` so the marks never sit raw in generated source.
 
+### `packages/codegen/src/emitters/render-body.ts::gateOptionalSlotSeams`
+
+Moves the seams a slot owns inside its presence gate. The seam pass mints
+`<slot>_before` and `<slot>_after` beside an optional slot's member, and the
+template emits them as siblings of the slot's gate, so an absent slot still
+wrote its sites and a declared `tight` on an absent `comma` outranked the
+neighbour's space. A gate qualifies when it has one arm, no fallback and no
+kinds test, and its body is exactly the slot the arm tests; the seam before
+it and the seam after it are folded into the arm only when their fields are
+that slot's own. Every other seam stays where it is. `TemplateEmitter` applies
+it once to each kind's finished body, before the slot-preservation checks.
+
 ### `packages/codegen/src/emitters/render-body.ts::liftGates`
 
 Moves presence gates out of a body and onto the views. A gate that only
@@ -5205,6 +5227,12 @@ its seam payload, `w.dedent()`, `w.token_seam(...)`) — see
 `printStatements`'s payload rule for how a following literal's leading
 whitespace becomes that call's argument. A residual gate chain is an
 `if … else if … else` block over the views' `is_present`.
+
+A `seam` node prints as `w.site_with(node.<field>.unwrap_or(0),
+options::site_strength(<SITE const>, …))`: the printer's `site(name)` names
+the `options::SITE_*` constant for the field, so the writer receives the
+strength beside the arm. `render-module.ts` supplies it from the public kind
+name and the field, the same spelling `render-options-rs.ts` emits.
 
 ### `packages/codegen/src/emitters/render-body.ts::printStatements`
 
@@ -8286,8 +8314,9 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 
 ```text
 /**
-	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
-	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
+	 * The kind currently being emitted, threaded by `emitOne` so the seam
+	 * census and the emitter's diagnostics can attribute a boundary or a lookup
+	 * to its owning kind.
 	 */
 ```
 
@@ -9997,6 +10026,26 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * decide) — the writer's true residue. `runtime-derivable` survives only
  * for list interiors (`staticListInterior`), where baking is still
  * blocked on trailing-trivia edges.
+ *
+ * `origin` is a census-only fact, orthogonal to `resolution`: it names
+ * where the boundary's governing seam arm(s) came from, not how the
+ * boundary bakes. `preference` means a kind- or supertype-scoped
+ * `options:` declaration reached the seam; `token-default` means only a
+ * grammar-wide `_`-scope declaration did; `fallback` means neither did —
+ * the boundary has no `whitespaceChoice` neighbor at all (not
+ * token-adjacent, so no declaration could ever reach it), or its
+ * neighbor's default arm carries no stamped origin (a separator gap's
+ * `whitespaceChoice`, built from `DefaultResolver.resolveSeparator`,
+ * which does not track origin — separator gaps are outside this
+ * mechanism). When a boundary sits between two independently-resolved
+ * seam faces (a token's `after` face and the next token's `before`
+ * face), the record reports the more specific of the two
+ * (`preference` > `token-default` > `fallback`) — the same specificity
+ * order `resolveBindings` already uses to pick a winning declaration.
+ * Never re-derived from address text here or anywhere the record is
+ * read; it is read off the `origin` annotation
+ * `render-rules.ts::whitespaceChoice` stamps on the seam's resolved
+ * default-arm member, via `render-rules.ts::originOfSeamChoice`.
  */
 ```
 
@@ -10004,8 +10053,16 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 /** Per-grammar census of template-boundary seam resolutions — the
- *  static-seam-resolution spec's residue report. */
+ *  static-seam-resolution spec's residue report. `preferenceOrigin`,
+ *  `tokenDefaultOrigin` and `fallbackOrigin` count `boundaries` by
+ *  `SeamBoundaryRecord.origin` — the token-defaults design's measure of
+ *  how many boundaries a `_`-scope declaration would still need to
+ *  reach. */
 ```
+
+`cascadeOrigin` counts the boundaries whose seam took its arm from the edge
+token's grammar-wide face (origin `cascade`), beside the preference,
+token-default and fallback counts.
 
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
 
@@ -10064,21 +10121,6 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // char), one absent from the left set can never seam FORWARD — the
 // separator-side static rule in `staticListInterior` quantifies over
 // these instead of unknown element edges. Optional for hand-built ctx.
-```
-
-### `packages/codegen/src/emitters/templates.ts::SlotLookupMiss`
-
-```text
-// ---------------------------------------------------------------------------
-// DIAGNOSTIC: slotByRuleId-miss inventory (env-gated via `DBG_SLOT_MISS=1`).
-//
-// Records every rule where the primary O(1) `slotByRuleId.get(rule.id)` lookup
-// FAILED (no id, or id not registered), plus whether a name-based fallback
-// recovered it. `recoveredBy: 'none'` is the bug class — the emitter then falls
-// back to the arm/symbol name (e.g. choice `parameter` instead of slot
-// `content`), producing a `.jinja` var with no matching transport field.
-// Surfaces the rule-ID-not-preserved gap so it can be fixed at the source.
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::GENERATED_HEADER`
@@ -10200,7 +10242,7 @@ the edge of what the seam sits beside.
 
 ```text
 // currentKind always populated — the seam census attributes every
-// boundary to its owning kind (was DBG_SLOT_MISS-gated).
+// boundary to its owning kind.
 ```
 
 #### body
@@ -13922,30 +13964,6 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
 	 *  when it's reached only via `alias($.kind, $.parseName)` at this position. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::DBG_KINDID_FASTPATH`
-
-```text
-// ---------------------------------------------------------------------------
-// Fast-path coverage (env-gated via `DBG_KINDID_FASTPATH=1`): tallies how
-// often `resolveLiteralKindId`/`resolveAcceptedTransportIds` are satisfied by
-// their link-time mint-stamp fast path versus falling through to the
-// name/text derivation chains. The fallback chains stay load-bearing (not
-// every kind routes through the catalog yet) — this is measurement only.
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/render-module.ts::registerKindIdFastPathDump`
-
-#### body
-
-```text
-// `process.stderr.write` isn't guaranteed to flush from an `exit`
-// listener when stderr is an async pipe (as in CI) — Node only
-// permits synchronous work during `exit`, so a buffered async write
-// can be silently truncated or dropped. `writeSync` bypasses the
-// stream's buffering entirely.
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::resolveAcceptedTransportIds`
 
 ```text
@@ -15155,6 +15173,12 @@ and `defaultText` (the default token's text) for the render's fallback
 arm. It has no `side` and registers no top-level label, like the
 delimiter site.
 
+`strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
+`SPACING_SITES` row: how firmly the site's table default holds against the
+mark meeting it at the same gap. `seamStrength` maps the site's origin —
+declared (`preference`, `token-default`) is 2, `cascade` is 1, the fallback
+is 0; separator sites are declared.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
 ```text
@@ -15198,6 +15222,13 @@ A `source: 'separator'` site becomes a spacing-table row under its kind
 (`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
 default's token text is stamped on the row as `defaultText` here, where
 the kind catalog is in hand, so the render emitter never re-derives it.
+
+The emitted `site_strength(site, arm)` returns the row's strength when `arm`
+is the row's default and `SEAM_DECLARED` otherwise, so a value set on the
+node counts as declared. A value set explicitly to the default of a
+cascaded site is indistinguishable from the default and takes the cascade
+tier; the read-side inference that will set such values records
+explicitness when it lands.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 

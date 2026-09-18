@@ -435,6 +435,21 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
+`origin` is the one annotation here that is deliberately NOT allowed to decide
+emitted output, unlike every other field this type carries: it names where a
+seam choice's resolved default arm came from, stamped by
+`render-rules.ts::whitespaceChoice` alongside `default: true` and read back
+only by the template emitter's seam census (`render-rules.ts::originOfSeamChoice`).
+It rides in `RuleAnnotations` because that is the existing channel a
+`whitespaceChoice` member already carries per-arm facts on, not because it is
+meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
+`'token-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
+this file — the lower layer, so `compiler/model/site-addresses.ts` and
+`compiler/model/render-rules.ts` both import it rather than each declaring
+their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
+`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveBindings`
+itself ever produces).
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases
@@ -449,6 +464,11 @@ emitter.
  * was not declared for it.
  */
 ```
+
+`origin` admits `'cascade'` beside the declared origins and the fallback.
+`edgeToken` is set on a kind edge's whitespace choice only, naming the
+literal token the kind opens or closes with, so the edge can answer to that
+token's grammar-wide face.
 
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 

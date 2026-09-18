@@ -8,6 +8,7 @@ import { findEntryForKindName, type KindEntryLike } from '../generated-metadata.
 import { publicKindName } from './render-rules.ts';
 import type { AddressBinding, PathDeclaration } from '../../dsl/wire/options-block.ts';
 import type { SupertypeMembers } from './supertype-members.ts';
+import type { SeamOrigin } from '../../types/rule.ts';
 
 export interface SiteAddressInput {
 	readonly kind: string;
@@ -15,10 +16,12 @@ export interface SiteAddressInput {
 	readonly address: string;
 	readonly label: string;
 	readonly path?: readonly PreferenceSegment[];
+	readonly edgeToken?: string;
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
 	readonly path: readonly PreferenceSegment[];
+	readonly cascadePath?: readonly PreferenceSegment[];
 };
 
 export function addressSites<T extends SiteAddressInput>(
@@ -26,8 +29,21 @@ export function addressSites<T extends SiteAddressInput>(
 	kindEntries: readonly KindEntryLike[]
 ): AddressedSite<T>[] {
 	return sites
-		.map((site) => ({ ...site, path: pathOf(site, kindEntries) }))
+		.map((site) => {
+			const cascadePath = cascadePathOf(site, kindEntries);
+			return { ...site, path: pathOf(site, kindEntries), ...(cascadePath === undefined ? {} : { cascadePath }) };
+		})
 		.sort((a, b) => comparePreferencePaths(a.path, b.path));
+}
+
+export function cascadePathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] | undefined {
+	if (site.edgeToken === undefined) return undefined;
+	const own = publicKindName(site.kind);
+	const seam = parseSeamLabel(site.address);
+	if (seam === undefined || seam.token !== own) return undefined;
+	const text = anonTokenText(kindEntries, site.edgeToken);
+	const token: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: site.edgeToken } : { kind: 'literal', text };
+	return [{ kind: 'kind-match', name: own }, token, { kind: 'name', name: seam.side }];
 }
 
 export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
@@ -82,7 +98,35 @@ export function matchAddress<T extends SiteAddressInput>(
 	sites: readonly AddressedSite<T>[],
 	membersOf: SupertypeMembers
 ): AddressedSite<T>[] {
-	return sites.filter((site) => isPrefixOf(address, site.path, membersOf));
+	return matchAddressWith(address, sites, membersOf).map((hit) => hit.site);
+}
+
+export interface AddressHit<T extends SiteAddressInput> {
+	readonly site: AddressedSite<T>;
+	readonly cascade: boolean;
+}
+
+export function matchAddressWith<T extends SiteAddressInput>(
+	address: readonly PreferenceSegment[],
+	sites: readonly AddressedSite<T>[],
+	membersOf: SupertypeMembers
+): AddressHit<T>[] {
+	const out: AddressHit<T>[] = [];
+	const cascades = isWildcardHead(address);
+	for (const site of sites) {
+		if (isPrefixOf(address, site.path, membersOf)) out.push({ site, cascade: false });
+		else if (cascades && site.cascadePath !== undefined && isPrefixOf(address, site.cascadePath, membersOf)) out.push({ site, cascade: true });
+	}
+	return out;
+}
+
+/// Only a grammar-wide (`_`-scope) token face cascades onto a kind edge: a
+/// kind-scoped literal row names the token's interior seam in that kind, and
+/// must not reach the exterior edge of a kind that closes with the same
+/// literal it opened with.
+function isWildcardHead(address: readonly PreferenceSegment[]): boolean {
+	const head = address[0];
+	return head !== undefined && (head.kind === 'wildcard' || (head.kind === 'kind-match' && head.name === '_'));
 }
 
 function isPrefixOf(
@@ -117,40 +161,54 @@ function segmentMatches(a: PreferenceSegment, b: PreferenceSegment, membersOf: S
 	}
 }
 
+export type PreferenceOrigin = Exclude<SeamOrigin, 'fallback' | 'word-default'>;
+
+function originOf(address: string): PreferenceOrigin {
+	return addressSegments(address)[0]?.kind === 'wildcard' ? 'token-default' : 'preference';
+}
+
 export function resolveBindings(
 	declarations: readonly PathDeclaration[],
 	bindings: readonly AddressBinding[],
 	sites: readonly AddressedSite[],
 	membersOf: SupertypeMembers,
 	requireHit: boolean = true
-): Map<number, string> {
+): Map<number, { readonly arm: string; readonly origin: PreferenceOrigin }> {
 	const indexOf = new Map(sites.map((site, i) => [site, i]));
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
 	const labelled = new Set(bindings.map((binding) => binding.label));
 
-	const hitsOf = (address: string): Set<number> =>
-		new Set(matchAddress(addressSegments(address), sites, membersOf).map((site) => indexOf.get(site)!));
+	const hitsOf = (address: string): { hits: Set<number>; cascaded: Set<number> } => {
+		const hits = new Set<number>();
+		const cascaded = new Set<number>();
+		for (const { site, cascade } of matchAddressWith(addressSegments(address), sites, membersOf)) {
+			const index = indexOf.get(site)!;
+			hits.add(index);
+			if (cascade) cascaded.add(index);
+		}
+		return { hits, cascaded };
+	};
 
-	const entries: { address: string; arm: string; declared: boolean; hits: Set<number> }[] = [];
+	const entries: { address: string; arm: string; declared: boolean; hits: Set<number>; cascaded: Set<number> }[] = [];
 
 	for (const binding of bindings) {
 		const arm = armOfLabel.get(binding.label);
 		if (arm === undefined) throw new Error(`options: '${binding.address}' resolves to no arm`);
-		const hits = hitsOf(binding.address);
+		const { hits, cascaded } = hitsOf(binding.address);
 		if (hits.size === 0) {
 			if (!requireHit) continue;
 			throw new Error(`options: '${binding.address}' names no site`);
 		}
-		entries.push({ address: binding.address, arm, declared: false, hits });
+		entries.push({ address: binding.address, arm, declared: false, hits, cascaded });
 	}
 
 	for (const declaration of declarations) {
-		const hits = hitsOf(declaration.path);
+		const { hits, cascaded } = hitsOf(declaration.path);
 		if (hits.size === 0) {
 			if (labelled.has(declaration.path) || !requireHit) continue;
 			throw new Error(`options: '${declaration.path}' names no site`);
 		}
-		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits });
+		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits, cascaded });
 	}
 
 	for (let i = 0; i < entries.length; i++) {
@@ -167,10 +225,11 @@ export function resolveBindings(
 		}
 	}
 
-	const out = new Map<number, string>();
+	const out = new Map<number, { readonly arm: string; readonly origin: PreferenceOrigin }>();
 	const order = [...entries].sort((a, b) => b.hits.size - a.hits.size || Number(a.declared) - Number(b.declared));
-	for (const { arm, hits } of order) {
-		for (const site of hits) out.set(site, arm);
+	for (const { arm, hits, cascaded, address } of order) {
+		const origin = originOf(address);
+		for (const site of hits) out.set(site, { arm, origin: cascaded.has(site) ? 'cascade' : origin });
 	}
 	return out;
 }

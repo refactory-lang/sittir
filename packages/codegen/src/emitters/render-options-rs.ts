@@ -1,3 +1,4 @@
+import type { SeamOrigin } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
@@ -12,6 +13,25 @@ import { rustStringLiteral } from './render-body.ts';
 import { rustFieldIdent, rustTypeIdent } from './transport-common.ts';
 import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
 
+/** How firmly a site's table default holds against the mark meeting it at
+ *  the same gap: a declared value (a preference or token-default row, a
+ *  keyword's word-default, or a value set on the node) outranks a cascaded one (the edge token's face
+ *  reaching the kind edge), which outranks the bare fallback. */
+export type SeamStrength = 0 | 1 | 2;
+
+export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
+	switch (origin) {
+		case 'preference':
+		case 'token-default':
+		case 'word-default':
+			return 2;
+		case 'cascade':
+			return 1;
+		default:
+			return 0;
+	}
+}
+
 export interface SpacingSite {
 	readonly kind: string;
 	readonly slot: string;
@@ -22,6 +42,7 @@ export interface SpacingSite {
 	readonly wireKey: string;
 	readonly defaultId: number;
 	readonly allowedIds: readonly number[];
+	readonly strength: SeamStrength;
 	readonly side?: SpacingSide;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
@@ -117,6 +138,7 @@ export function planRenderOptions(
 				wireKey: '_separator',
 				defaultId: idOf(kindEntries, site.defaultArm, at),
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
+				strength: 2,
 				role: 'separator',
 				defaultText: defaultEntry.literalText
 			});
@@ -137,6 +159,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
+			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
@@ -393,11 +416,19 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
 	L.push('/// (kind, address, label, default kind id, allowed kind ids), in canonical path order.');
-	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[');
+	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
+		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}], ${s.strength}),`);
 	}
 	L.push('];', '');
+	L.push(
+		'/// The strength a site\'s arm carries into the writer: its table strength when the arm is the table default, declared otherwise.',
+		'pub fn site_strength(site: usize, arm: u16) -> u8 {',
+		'    let row = &SPACING_SITES[site];',
+		'    if arm == row.3 { row.5 } else { ::sittir_core::spacing::SEAM_DECLARED }',
+		'}',
+		''
+	);
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);

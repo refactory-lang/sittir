@@ -4940,6 +4940,7 @@
       "factoryName": "templateChars",
       "irKey": "templateChars",
       "hidden": false,
+      "pattern": "[^`\\\\$]+",
       "factoryShape": "text"
     },
     {
@@ -10562,6 +10563,7 @@
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
+      "pattern": "\\\\[^]",
       "factoryShape": "text"
     },
     {

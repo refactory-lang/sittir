@@ -2653,8 +2653,7 @@
         "nonEmpty": false,
         "wireKeys": [
           "_block_comment_doc_outer",
-          "_block_comment_doc_inner",
-          "_block_comment_content"
+          "_block_comment_doc_inner"
         ]
       }
     },
@@ -4447,6 +4446,7 @@
       "factoryName": "blockCommentContent",
       "irKey": "blockCommentContent",
       "hidden": false,
+      "pattern": "[^]*",
       "factoryShape": "text"
     },
     {
@@ -4979,6 +4979,7 @@
       "factoryName": "lineDocContent",
       "irKey": "lineDocContent",
       "hidden": false,
+      "pattern": ".*",
       "factoryShape": "text"
     },
     {
@@ -7082,8 +7083,7 @@
           "storage": "verbatim",
           "kinds": [
             "block_comment_doc_outer",
-            "block_comment_doc_inner",
-            "_block_comment_content"
+            "block_comment_doc_inner"
           ],
           "values": [
             {
@@ -7111,10 +7111,9 @@
               }
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_block_comment_content",
-              "parseKind": "_block_comment_content"
+              "value": "[^]*"
             }
           ]
         }

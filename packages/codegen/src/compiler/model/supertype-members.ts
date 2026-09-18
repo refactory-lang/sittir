@@ -27,9 +27,19 @@ function buildMembersMap(nodeMap: NodeMap, directMembers: (node: unknown) => rea
 		const direct = directMembers(node);
 		if (direct === null) return [kind];
 		const members = new Set<string>();
+		// A polymorph's arms are its own membership, full stop — an "is a"
+		// relationship. Chasing each arm's own union too would fold a
+		// sibling grouping's members into this one's ("contains", never
+		// "is a"): `visibility_modifier_group` is-a `visibility_modifier_pub_in_path`,
+		// but that arm's own union (its `path` field's admitted kinds,
+		// including `scoped_identifier`) is not also `visibility_modifier_group`'s
+		// membership. Only a true supertype's subtype chain expands
+		// transitively — that is the parser's own "is a" hierarchy.
+		const transitive = node instanceof AssembledSupertype;
 		for (const subtype of direct) {
 			members.add(subtype);
 			if (subtype.startsWith('_')) members.add(subtype.slice(1));
+			if (!transitive) continue;
 			for (const member of expandMembers(subtype, seen)) {
 				members.add(member);
 				if (member.startsWith('_')) members.add(member.slice(1));

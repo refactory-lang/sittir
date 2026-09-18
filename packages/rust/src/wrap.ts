@@ -9981,24 +9981,19 @@ export function wrapLineComment(
 
 export function wrapBlockComment(
 	data: T.BlockComment & {
-		readonly _block_comment_doc_outer?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
-		readonly _block_comment_doc_inner?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
-		readonly _block_comment_content?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+		readonly _block_comment_doc_outer?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*';
+		readonly _block_comment_doc_inner?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*';
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, [
-		'_content',
-		'_block_comment_doc_outer',
-		'_block_comment_doc_inner',
-		'_block_comment_content'
-	]);
+	data = _keepModelledSlots(data, ['_content', '_block_comment_doc_outer', '_block_comment_doc_inner']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BlockComment as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_block_comment_content', '_block_comment_doc_inner', '_block_comment_doc_outer']),
+			..._omitWrapKeys(data, ['_block_comment_doc_inner', '_block_comment_doc_outer']),
 			$type: TSKindId.BlockComment as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._block_comment_doc_outer ?? data._block_comment_doc_inner ?? data._block_comment_content,
+				data._content ?? data._block_comment_doc_outer ?? data._block_comment_doc_inner,
 				'content',
 				false,
 				data.$type,
@@ -10006,10 +10001,7 @@ export function wrapBlockComment(
 			),
 
 			content() {
-				return drillIn<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent | undefined>(
-					this._content,
-					tree
-				);
+				return drillIn<T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*' | undefined>(this._content, tree);
 			},
 			$with: {
 				content: (v: NonNullable<T.BlockComment['_content']>) =>
@@ -15362,13 +15354,13 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.AttributedOrderedField]: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	[TSKindId.TypeArgument]: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
+	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
+	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
 	[TSKindId.RawStringLiteralStart]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
-	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
-	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const })
 };
 
@@ -15645,13 +15637,13 @@ interface _WrapReturnByKindId {
 	[TSKindId.AttributedOrderedField]: ReturnType<typeof wrapAttributedOrderedField>;
 	[TSKindId.TypeArgument]: ReturnType<typeof wrapTypeArgument>;
 	[TSKindId.MatchBlockArms]: ReturnType<typeof wrapMatchBlockArms>;
+	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
+	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
 	[TSKindId.RawStringLiteralStart]: _NodeData & { readonly $type: TSKindId.RawStringLiteralStart };
 	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
 	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
-	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
-	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
 }
 

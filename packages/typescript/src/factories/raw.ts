@@ -24,7 +24,9 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 const _leafRe_buildHashBangLine = /^(?:#!.*)/u;
 const _leafRe_buildUnescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_buildUnescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
+const _leafRe_buildEscapeSequence = /^(?:\\[^])/u;
 const _leafRe_buildRegexFlags = /^(?:[a-z]+)/u;
+const _leafRe_buildTemplateChars = /^(?:[^`\\$]+)/u;
 
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = config.hashBangLine;
@@ -2049,6 +2051,8 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`escape_sequence: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildEscapeSequence.test(text))
+		throw new Error(`escape_sequence: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.EscapeSequence as const,
@@ -7145,6 +7149,8 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 export function buildTemplateChars(text: string): T.TemplateChars.Built {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_template_chars: text must be non-empty`);
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildTemplateChars.test(text))
+		throw new Error(`_template_chars: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TemplateChars as const,
