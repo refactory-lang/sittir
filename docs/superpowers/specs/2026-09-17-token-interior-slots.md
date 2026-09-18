@@ -191,6 +191,24 @@ design.
 
 ## Amendments
 
+### Three shapes, kept distinct
+
+The design covers leaves the parser emits as one childless node, and it
+takes their interior structure from exactly one place per shape:
+
+| shape | parse node | where the interior comes from | examples |
+| --- | --- | --- | --- |
+| `token(…)` / `token.immediate(…)` over a rule | one node, no children | the rule's own members: strings are template text, patterns are slots, `optional(string)` is a flag, a choice is forms | typescript `comment`, `private_property_identifier`; rust `char_literal`; every `escape_sequence`; python `comment` |
+| bare pattern | one node, no children | named groups the author draws in the regex; a pattern with no group has no interior and stays whole-text | rust `metavariable`, `shebang`; typescript `hash_bang_line` |
+| structured rule with external pieces | a node with children | the parse tree itself; `renderAs` gives an external a body because the parser has none | rust `line_comment`, `block_comment` |
+
+The first two are the subject of this design and share one read rule: the
+node is stored whole and projected lazily. The third is the existing
+compound path and is not changed; it is listed only because it is what the
+first two come to resemble. Whole-text leaves — `identifier`, numbers,
+string fragments — are the first two shapes with no interior, and nothing
+about them changes.
+
 ### The read side does not drill
 
 A token is one parse node with no children; the typescript parser gives
