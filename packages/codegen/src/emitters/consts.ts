@@ -189,7 +189,7 @@ function emitIdEnumBlock(
 ): void {
 	if (config.entries.length === 0) return;
 
-	lines.push(`export const enum ${config.enumName} {`);
+	lines.push(`export enum ${config.enumName} {`);
 	for (const entry of config.entries) {
 		lines.push(`  ${entry.memberName} = ${entry.id},`);
 	}
@@ -332,13 +332,13 @@ function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	if (bindings.length === 0) return;
 	bindings.sort((a, b) => compareOrdinal(a.constName, b.constName));
 
-	lines.push('// Bitflag const enums — ordered-unique literal sets per bitflag field');
+	lines.push('// Bitflag enums — ordered-unique literal sets per bitflag field');
 	const seen = new Set<string>();
 	for (const b of bindings) {
 		if (seen.has(b.constName)) continue;
 		seen.add(b.constName);
 		lines.push(`/** Bitflag set for \`${b.kind}.${b.field.name}\`. */`);
-		lines.push(`export const enum ${b.constName} {`);
+		lines.push(`export enum ${b.constName} {`);
 		if (!b.nonEmptyRepeat) {
 			lines.push('  None = 0,');
 		}

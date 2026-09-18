@@ -2236,7 +2236,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_type_identifier', id: 454, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
-export const enum TSFieldId {
+export enum TSFieldId {
 	FieldAbstractMarker = 1,
 	FieldAccessibilityModifier = 2,
 	FieldAccessorKind = 3,

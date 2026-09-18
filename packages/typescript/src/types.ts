@@ -182,7 +182,7 @@ export type LeafStringMap = {
 	[TSKindId.MetaKeyword]: 'meta';
 };
 
-export const enum TSKindId {
+export enum TSKindId {
 	Identifier = 1,
 	HashBangLine = 2,
 	Star = 3,
@@ -2768,7 +2768,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
-export const enum Delimiter {
+export enum Delimiter {
 	None = 0,
 	Leading = 1,
 	Trailing = 2,
@@ -2776,19 +2776,19 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
-export const enum ExportStatementKind {
+export enum ExportStatementKind {
 	ExportStatementDefault = 'export_statement_default',
 	ExportStatementTypeExport = 'export_statement_type_export',
 	ExportStatementEqualsExport = 'export_statement_equals_export',
 	ExportStatementNamespaceExport = 'export_statement_namespace_export'
 }
 
-export const enum ModuleExportNameKind {
+export enum ModuleExportNameKind {
 	Identifier = 'identifier',
 	String = 'string'
 }
 
-export const enum DeclarationKind {
+export enum DeclarationKind {
 	FunctionDeclaration = 'function_declaration',
 	GeneratorFunctionDeclaration = 'generator_function_declaration',
 	ClassDeclaration = 'class_declaration',
@@ -2805,12 +2805,12 @@ export const enum DeclarationKind {
 	AmbientDeclaration = 'ambient_declaration'
 }
 
-export const enum ImportSpecifierKind {
+export enum ImportSpecifierKind {
 	ImportSpecifierName = 'import_specifier_name',
 	ImportSpecifierAs = 'import_specifier_as'
 }
 
-export const enum StatementKind {
+export enum StatementKind {
 	ExportStatement = 'export_statement',
 	ImportStatement = 'import_statement',
 	DebuggerStatement = 'debugger_statement',
@@ -2833,23 +2833,23 @@ export const enum StatementKind {
 	LabeledStatement = 'labeled_statement'
 }
 
-export const enum VariableDeclaratorKind {
+export enum VariableDeclaratorKind {
 	VariableDeclaratorPlain = 'variable_declarator_plain',
 	VariableDeclaratorDefinite = 'variable_declarator_definite'
 }
 
-export const enum ForHeaderKind {
+export enum ForHeaderKind {
 	ForHeaderLhs = 'for_header_lhs',
 	ForHeaderVarKind = 'for_header_var_kind',
 	ForHeaderLetConstKind = 'for_header_let_const_kind'
 }
 
-export const enum ExpressionsKind {
+export enum ExpressionsKind {
 	Expression = 'expression',
 	SequenceExpression = 'sequence_expression'
 }
 
-export const enum ExpressionKind {
+export enum ExpressionKind {
 	AsExpression = 'as_expression',
 	SatisfiesExpression = 'satisfies_expression',
 	InstantiationExpression = 'instantiation_expression',
@@ -2867,7 +2867,7 @@ export const enum ExpressionKind {
 	YieldExpression = 'yield_expression'
 }
 
-export const enum PrimaryExpressionKind {
+export enum PrimaryExpressionKind {
 	SubscriptExpression = 'subscript_expression',
 	MemberExpression = 'member_expression',
 	ParenthesizedExpression = 'parenthesized_expression',
@@ -2894,12 +2894,12 @@ export const enum PrimaryExpressionKind {
 	NonNullExpression = 'non_null_expression'
 }
 
-export const enum FormalParameterKind {
+export enum FormalParameterKind {
 	RequiredParameter = 'required_parameter',
 	OptionalParameter = 'optional_parameter'
 }
 
-export const enum _LhsExpressionKind {
+export enum _LhsExpressionKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	Undefined = 'undefined',
@@ -2910,7 +2910,7 @@ export const enum _LhsExpressionKind {
 	NonNullExpression = 'non_null_expression'
 }
 
-export const enum AugmentedAssignmentLhsKind {
+export enum AugmentedAssignmentLhsKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	ReservedIdentifier = '_reserved_identifier',
@@ -2919,32 +2919,32 @@ export const enum AugmentedAssignmentLhsKind {
 	NonNullExpression = 'non_null_expression'
 }
 
-export const enum DestructuringPatternKind {
+export enum DestructuringPatternKind {
 	ObjectPattern = 'object_pattern',
 	ArrayPattern = 'array_pattern'
 }
 
-export const enum UpdateExpressionKind {
+export enum UpdateExpressionKind {
 	UpdateExpressionPostfix = 'update_expression_postfix',
 	UpdateExpressionPrefix = 'update_expression_prefix'
 }
 
-export const enum _IdentifierKind {
+export enum _IdentifierKind {
 	Undefined = 'undefined',
 	Identifier = 'identifier'
 }
 
-export const enum MetaPropertyKind {
+export enum MetaPropertyKind {
 	MetaPropertyNewTarget = 'meta_property_new_target',
 	MetaPropertyImportMeta = 'meta_property_import_meta'
 }
 
-export const enum PatternKind {
+export enum PatternKind {
 	_LhsExpression = '_lhs_expression',
 	RestPattern = 'rest_pattern'
 }
 
-export const enum PropertyNameKind {
+export enum PropertyNameKind {
 	_PropertyIdentifier = '_property_identifier',
 	PrivatePropertyIdentifier = 'private_property_identifier',
 	String = 'string',
@@ -2952,32 +2952,32 @@ export const enum PropertyNameKind {
 	ComputedPropertyName = 'computed_property_name'
 }
 
-export const enum StatementIdentifierKind {
+export enum StatementIdentifierKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum ShorthandPropertyIdentifierKind {
+export enum ShorthandPropertyIdentifierKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum ShorthandPropertyIdentifierPatternKind {
+export enum ShorthandPropertyIdentifierPatternKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum _PropertyIdentifierKind {
+export enum _PropertyIdentifierKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum ImportIdentifierKind {
+export enum ImportIdentifierKind {
 	Identifier = 'identifier',
 	TypeKeyword = 'type_keyword'
 }
 
-export const enum TypeKind {
+export enum TypeKind {
 	PrimaryType = 'primary_type',
 	FunctionType = 'function_type',
 	ReadonlyType = 'readonly_type',
@@ -2987,7 +2987,7 @@ export const enum TypeKind {
 	TypeQueryCallExpressionInTypeAnnotation = '_type_query_call_expression_in_type_annotation'
 }
 
-export const enum TupleTypeMemberKind {
+export enum TupleTypeMemberKind {
 	TupleParameter = 'tuple_parameter',
 	OptionalTupleParameter = 'optional_tuple_parameter',
 	OptionalType = 'optional_type',
@@ -2995,7 +2995,7 @@ export const enum TupleTypeMemberKind {
 	Type = 'type'
 }
 
-export const enum PrimaryTypeKind {
+export enum PrimaryTypeKind {
 	ParenthesizedType = 'parenthesized_type',
 	PredefinedType = 'predefined_type',
 	Identifier = 'identifier',
@@ -3017,12 +3017,12 @@ export const enum PrimaryTypeKind {
 	UnionType = 'union_type'
 }
 
-export const enum IndexSignatureKind {
+export enum IndexSignatureKind {
 	IndexSignatureColon = 'index_signature_colon',
 	IndexSignatureMappedTypeClause = 'index_signature_mapped_type_clause'
 }
 
-export const enum WhitespaceKind {
+export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
 	Newline = '_newline',
@@ -3031,12 +3031,12 @@ export const enum WhitespaceKind {
 	Dedent = '_dedent'
 }
 
-export const enum ExportStatementDefaultKind {
+export enum ExportStatementDefaultKind {
 	ExportStatementDefaultFrom = 'export_statement_default_from',
 	ExportStatementDefaultDeclaration = 'export_statement_default_declaration'
 }
 
-export const enum LhsExpressionKind {
+export enum LhsExpressionKind {
 	MemberExpression = 'member_expression',
 	SubscriptExpression = 'subscript_expression',
 	Undefined = 'undefined',
@@ -3047,7 +3047,7 @@ export const enum LhsExpressionKind {
 	NonNullExpression = 'non_null_expression'
 }
 
-export const enum PropertyIdentifierKind {
+export enum PropertyIdentifierKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }

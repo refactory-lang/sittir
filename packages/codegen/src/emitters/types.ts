@@ -174,7 +174,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			const enumName = typeName + 'Kind';
 			if (emittedKindEnums.has(enumName)) continue;
 			emittedKindEnums.add(enumName);
-			lines.push(`export const enum ${enumName} {`);
+			lines.push(`export enum ${enumName} {`);
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
 				const subNode = nodeMap.nodes.get(sub);
@@ -454,7 +454,7 @@ export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 function emitDelimiterEnum(lines: string[]): void {
 	lines.push("/** Separated-list optional-flank bitflag — the wire's `_delimiter` key");
 	lines.push(" *  and the list factories' `delimiter` option. */");
-	lines.push('export const enum Delimiter {');
+	lines.push('export enum Delimiter {');
 	for (const [member, value] of Object.entries(DelimiterFlags)) {
 		lines.push(`  ${toPascal(member)} = ${value},`);
 	}
@@ -463,7 +463,7 @@ function emitDelimiterEnum(lines: string[]): void {
 }
 
 function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nodeMap: NodeMap): void {
-	lines.push('export const enum TSKindId {');
+	lines.push('export enum TSKindId {');
 	for (const entry of entries) {
 		lines.push(`  ${entry.member} = ${entry.id},`);
 	}

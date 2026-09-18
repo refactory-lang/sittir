@@ -242,7 +242,7 @@ export type LeafStringMap = {
 	[TSKindId.RawKeyword]: 'raw';
 };
 
-export const enum TSKindId {
+export enum TSKindId {
 	Identifier = 1,
 	Semi = 2,
 	EqGt = 3,
@@ -2814,7 +2814,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
-export const enum Delimiter {
+export enum Delimiter {
 	None = 0,
 	Leading = 1,
 	Trailing = 2,
@@ -2822,7 +2822,7 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
-export const enum StatementKind {
+export enum StatementKind {
 	ExpressionStatement = 'expression_statement',
 	DeclarationStatement = '_declaration_statement',
 	ConstItem = 'const_item',
@@ -2848,7 +2848,7 @@ export const enum StatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum DeclarationStatementKind {
+export enum DeclarationStatementKind {
 	ConstItem = 'const_item',
 	MacroInvocation = 'macro_invocation',
 	MacroDefinition = 'macro_definition',
@@ -2872,13 +2872,13 @@ export const enum DeclarationStatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum MacroDefinitionKind {
+export enum MacroDefinitionKind {
 	MacroDefinitionParen = 'macro_definition_paren',
 	MacroDefinitionBracket = 'macro_definition_bracket',
 	MacroDefinitionBrace = 'macro_definition_brace'
 }
 
-export const enum TokenPatternKind {
+export enum TokenPatternKind {
 	TokenTreePattern = 'token_tree_pattern',
 	TokenRepetitionPattern = 'token_repetition_pattern',
 	TokenBindingPattern = 'token_binding_pattern',
@@ -2886,20 +2886,20 @@ export const enum TokenPatternKind {
 	_NonSpecialToken = '_non_special_token'
 }
 
-export const enum TokenTreePatternKind {
+export enum TokenTreePatternKind {
 	TokenTreePatternParen = 'token_tree_pattern_paren',
 	TokenTreePatternBracket = 'token_tree_pattern_bracket',
 	TokenTreePatternBrace = 'token_tree_pattern_brace'
 }
 
-export const enum TokensKind {
+export enum TokensKind {
 	TokenTree = 'token_tree',
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
 	_NonSpecialToken = '_non_special_token'
 }
 
-export const enum _NonSpecialTokenKind {
+export enum _NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -2917,28 +2917,28 @@ export const enum _NonSpecialTokenKind {
 	TokenKeywords = '_token_keywords'
 }
 
-export const enum ModItemKind {
+export enum ModItemKind {
 	ModItemExternal = 'mod_item_external',
 	ModItemInline = 'mod_item_inline'
 }
 
-export const enum ForeignModItemKind {
+export enum ForeignModItemKind {
 	ForeignModItemSemi = 'foreign_mod_item_semi',
 	ForeignModItemBody = 'foreign_mod_item_body'
 }
 
-export const enum StructItemKind {
+export enum StructItemKind {
 	StructItemBrace = 'struct_item_brace',
 	StructItemTuple = 'struct_item_tuple',
 	StructItemUnit = 'struct_item_unit'
 }
 
-export const enum ImplItemKind {
+export enum ImplItemKind {
 	ImplItemBody = 'impl_item_body',
 	ImplItemSemi = 'impl_item_semi'
 }
 
-export const enum UseClauseKind {
+export enum UseClauseKind {
 	Self = 'self',
 	Identifier = 'identifier',
 	Metavariable = 'metavariable',
@@ -2951,7 +2951,7 @@ export const enum UseClauseKind {
 	UseWildcard = 'use_wildcard'
 }
 
-export const enum TypeKind {
+export enum TypeKind {
 	AbstractType = 'abstract_type',
 	ReferenceType = 'reference_type',
 	Metavariable = 'metavariable',
@@ -2971,12 +2971,12 @@ export const enum TypeKind {
 	PrimitiveType = '_primitive_type'
 }
 
-export const enum PointerTypeKind {
+export enum PointerTypeKind {
 	PointerTypeConst = 'pointer_type_const',
 	PointerTypeMut = 'pointer_type_mut'
 }
 
-export const enum ExpressionExceptRangeKind {
+export enum ExpressionExceptRangeKind {
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
 	TryExpression = 'try_expression',
@@ -3024,7 +3024,7 @@ export const enum ExpressionExceptRangeKind {
 	ConstBlock = 'const_block'
 }
 
-export const enum ExpressionKind {
+export enum ExpressionKind {
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
 	TryExpression = 'try_expression',
@@ -3073,7 +3073,7 @@ export const enum ExpressionKind {
 	RangeExpression = 'range_expression'
 }
 
-export const enum ExpressionEndingWithBlockKind {
+export enum ExpressionEndingWithBlockKind {
 	UnsafeBlock = 'unsafe_block',
 	AsyncBlock = 'async_block',
 	GenBlock = 'gen_block',
@@ -3087,36 +3087,36 @@ export const enum ExpressionEndingWithBlockKind {
 	ConstBlock = 'const_block'
 }
 
-export const enum DelimTokenTreeKind {
+export enum DelimTokenTreeKind {
 	DelimTokenTreeParen = 'delim_token_tree_paren',
 	DelimTokenTreeBracket = 'delim_token_tree_bracket',
 	DelimTokenTreeBrace = 'delim_token_tree_brace'
 }
 
-export const enum DelimTokensKind {
+export enum DelimTokensKind {
 	_NonSpecialToken = '_non_special_token',
 	Dollar = 'dollar',
 	DelimTokenTree = 'delim_token_tree'
 }
 
-export const enum NonDelimTokenKind {
+export enum NonDelimTokenKind {
 	_NonSpecialToken = '_non_special_token',
 	Dollar = 'dollar'
 }
 
-export const enum ReferenceExpressionKind {
+export enum ReferenceExpressionKind {
 	ReferenceExpressionRawConst = 'reference_expression_raw_const',
 	ReferenceExpressionRawMut = 'reference_expression_raw_mut',
 	ReferenceExpressionMut = 'reference_expression_mut',
 	ReferenceExpressionBare = 'reference_expression_bare'
 }
 
-export const enum ArrayExpressionKind {
+export enum ArrayExpressionKind {
 	ArrayExpressionSemi = 'array_expression_semi',
 	ArrayExpressionList = 'array_expression_list'
 }
 
-export const enum ConditionKind {
+export enum ConditionKind {
 	Expression = '_expression',
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
@@ -3168,17 +3168,17 @@ export const enum ConditionKind {
 	LetChain = '_let_chain'
 }
 
-export const enum MatchArmKind {
+export enum MatchArmKind {
 	MatchArmWithComma = 'match_arm_with_comma',
 	MatchArmBlockEnding = 'match_arm_block_ending'
 }
 
-export const enum ClosureExpressionKind {
+export enum ClosureExpressionKind {
 	ClosureExpressionBlock = 'closure_expression_block',
 	ClosureExpressionExpr = 'closure_expression_expr'
 }
 
-export const enum PatternKind {
+export enum PatternKind {
 	LiteralPattern = '_literal_pattern',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3206,22 +3206,22 @@ export const enum PatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum FieldPatternKind {
+export enum FieldPatternKind {
 	FieldPatternShorthand = 'field_pattern_shorthand',
 	FieldPatternNamed = 'field_pattern_named'
 }
 
-export const enum RangePatternKind {
+export enum RangePatternKind {
 	RangePatternWithLeft = 'range_pattern_with_left',
 	RangePatternPrefix = 'range_pattern_prefix'
 }
 
-export const enum OrPatternKind {
+export enum OrPatternKind {
 	OrPatternBinary = 'or_pattern_binary',
 	OrPatternPrefix = 'or_pattern_prefix'
 }
 
-export const enum LiteralKind {
+export enum LiteralKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3230,7 +3230,7 @@ export const enum LiteralKind {
 	FloatLiteral = 'float_literal'
 }
 
-export const enum LiteralPatternKind {
+export enum LiteralPatternKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3240,7 +3240,7 @@ export const enum LiteralPatternKind {
 	NegativeLiteral = 'negative_literal'
 }
 
-export const enum PathKind {
+export enum PathKind {
 	Self = 'self',
 	Identifier = 'identifier',
 	Metavariable = 'metavariable',
@@ -3249,7 +3249,7 @@ export const enum PathKind {
 	ScopedIdentifier = 'scoped_identifier'
 }
 
-export const enum WhitespaceKind {
+export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
 	Newline = '_newline',
@@ -3258,7 +3258,7 @@ export const enum WhitespaceKind {
 	Dedent = '_dedent'
 }
 
-export const enum NonSpecialTokenKind {
+export enum NonSpecialTokenKind {
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',

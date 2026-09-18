@@ -101,7 +101,7 @@ describe('emitConsts', () => {
 	});
 
 	// ADR-0012 — bitflag const enum emission
-	it('emits a const enum for a bitflag field (repeat1 of choice-of-literals)', () => {
+	it('emits an enum for a bitflag field (repeat1 of choice-of-literals)', () => {
 		const modifiers = field('modifiers', [
 			{ value: 'async', multiplicity: 'nonEmptyArray' },
 			{ value: 'unsafe', multiplicity: 'nonEmptyArray' },
@@ -115,12 +115,12 @@ describe('emitConsts', () => {
 		);
 		const nodeMap = makeNodeMap([['function_item', node]]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain('export const enum Modifiers {');
+		expect(output).toContain('export enum Modifiers {');
 		expect(output).toContain('Async = 1 << 0,');
 		expect(output).toContain('Unsafe = 1 << 1,');
 		expect(output).toContain('Const = 1 << 2,');
 		// repeat1 → no None zero-flag member
-		expect(output).not.toMatch(/export const enum Modifiers \{\s+None = 0/);
+		expect(output).not.toMatch(/export enum Modifiers \{\s+None = 0/);
 	});
 
 	it('includes None = 0 when repeat allows zero flags', () => {
@@ -171,10 +171,10 @@ describe('emitConsts', () => {
 			['method_definition', methodNode]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
-		expect(output).toContain('export const enum ClassDeclarationModifiers {');
-		expect(output).toContain('export const enum MethodDefinitionModifiers {');
+		expect(output).toContain('export enum ClassDeclarationModifiers {');
+		expect(output).toContain('export enum MethodDefinitionModifiers {');
 		// Bare `Modifiers` should NOT appear when both are disambiguated.
-		expect(output).not.toMatch(/export const enum Modifiers \{/);
+		expect(output).not.toMatch(/export enum Modifiers \{/);
 	});
 
 	it('PascalCases keyword values with non-identifier characters', () => {
@@ -270,10 +270,10 @@ describe('emitConsts', () => {
 		expect(output).toContain('export const TREE_SITTER_KIND_ID_BY_KIND = {');
 		expect(output).toContain('"source_file": 1,');
 		expect(output).toContain('";": 2,');
-		expect(output).not.toContain('export const enum TSKindId {');
+		expect(output).not.toContain('export enum TSKindId {');
 		expect(output).toContain('"missing": 99,');
 		expect(output).not.toContain('FieldMissing');
-		expect(output).toContain('export const enum TSFieldId {');
+		expect(output).toContain('export enum TSFieldId {');
 		expect(output).toContain('FieldItem = 7,');
 		expect(output).toContain('"item": TSFieldId.FieldItem,');
 		expect(output).toContain('export const TREE_SITTER_KIND_ID_JSON = [');

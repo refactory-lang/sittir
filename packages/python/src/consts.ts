@@ -1497,7 +1497,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: '_names', id: 318, enumName: 'AliasNames', cName: 'alias_sym_names' }
 ] as const;
 
-export const enum TSFieldId {
+export enum TSFieldId {
 	FieldAlias = 1,
 	FieldAlternative = 2,
 	FieldArgument = 3,

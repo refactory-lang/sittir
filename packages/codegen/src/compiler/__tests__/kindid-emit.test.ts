@@ -76,7 +76,7 @@ describe('KindId emission', () => {
 			generatedIdTables
 		});
 
-		expect(contents).toContain('export const enum TSKindId {');
+		expect(contents).toContain('export enum TSKindId {');
 		expect(contents).toContain('$type: TSKindId.CallExpression;');
 		expect(contents).toContain('export const KIND_NAMES: ReadonlyMap<number, string>');
 		expect(contents).toContain('export function kindIdFromName(');
