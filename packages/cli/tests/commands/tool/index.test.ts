@@ -6,6 +6,7 @@ const EXPECTED = [
 	'assemble-shape-census',
 	'bench',
 	'bench-codemod',
+	'bindings-inventory',
 	'check-baseline',
 	'check-perf',
 	'classify',
@@ -36,7 +37,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 30 converted tools', () => {
+	it('registers exactly the 31 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 
