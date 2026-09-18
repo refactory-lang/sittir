@@ -239,6 +239,16 @@ mix a string marker with a pattern, and so gain structure, are:
 | rust | `char_literal` | optional `b`, `'`, escape or pattern, `'` |
 | rust | `integer_literal` | pattern + optional suffix string |
 
+A bare pattern rule is a lexer token too — one childless node — so the same
+read rule holds, and its structure comes from a named group in the regex
+rather than from token members:
+
+| grammar | kind | parse rule | authored structure |
+| --- | --- | --- | --- |
+| rust | `metavariable` | `/\$[a-zA-Z_]\w*/` | `/\$(?<name>[a-zA-Z_]\w*)/` |
+| rust | `shebang` | `/#![\r\f\t\v ]*([^\[\n].*)?\n/` | `/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/` |
+| typescript | `hash_bang_line` | `/#!.*/` | `/#!(?<content>.*)/` |
+
 The rest (identifiers, numbers, string fragments, regex flags) are lexical
 shape with no marker and stay whole-text. Rust's own comments are not
 tokens: `line_comment` and `block_comment` are sequences of a marker string
