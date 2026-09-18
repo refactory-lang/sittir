@@ -5265,6 +5265,8 @@ var grammar_sittir_default = grammar(
           '".."/after': preference("tight"),
           '"..="/before': preference("tight"),
           '"..="/after': preference("tight"),
+          '"..."/before': preference("tight"),
+          '"..."/after': preference("tight"),
           '","/before': preference("tight"),
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
@@ -5296,6 +5298,7 @@ var grammar_sittir_default = grammar(
         macro_invocation: { '"!"/after': preference("tight") },
         visibility_modifier_pub: { '"pub"/after': preference("tight") },
         self_parameter: { "reference:/after": preference("tight") },
+        variadic_parameter: { '"..."/before': preference("space") },
         closure_parameters: { '"|"/after': preference("tight"), '"|"/before': preference("tight"), after: preference("space") },
         source_file: {
           "statements:/separator": preference("tight"),
@@ -5315,8 +5318,9 @@ var grammar_sittir_default = grammar(
         last_match_arm: { before: preference("newline") },
         range_expression_binary: { "operator:/before": preference("tight"), "operator:/after": preference("tight") },
         range_expression_prefix: { "operator:/after": preference("tight") },
+        range_expression_postfix: { "operator:/before": preference("tight") },
         unary_expression: { "operator:/after": preference("tight") },
-        token_tree_punctuation: { '","/after': preference("space") },
+        token_tree_punctuation: { '","/after': preference("space"), '"..."/before': preference("space"), '"..."/after': preference("space") },
         _bindings: {
           'block/"{"/after': "body/before",
           'block/"}"/before': "body/after",

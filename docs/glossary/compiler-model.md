@@ -3437,7 +3437,7 @@ refused — the arm is wrong, not merely inapplicable.
 
 `origin` is the `SeamOrigin` `withDeclaredArms` recorded when a declaration
 reached the site; an undeclared site has none and plans as the fallback.
-`edgeToken` rides through from the `RuleSpacingSite` so the cascade path can
+`edgeTokens` rides through from the `RuleSpacingSite` so the cascade paths can
 be built here as well as in `render-rules.ts`.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
@@ -3569,8 +3569,9 @@ edges (`else_clause_before`) as well. A rule that is not a seq holds no
 literal of its own and is returned unchanged.
 
 The kind's edge terminal cascades onto the edge: when the seq opens (or
-closes) with a literal token, `edgeTokenOf` names it and the edge's
-`SpacingPart` carries it as `edgeToken`, so the site answers to that token's
+closes) with a literal token, or with a choice whose every arm is a token,
+`edgeTokensOf` names them as a set and the edge's `SpacingPart` carries it as
+`edgeTokens`, so the site answers to those tokens'
 grammar-wide face as well as to `<kind>_before`/`_after` (see
 `site-addresses.ts::addressSites`). `arguments` opening with `(` takes the
 `_`-scope `"("/before` arm as its before-edge default without a row of its
@@ -3907,8 +3908,9 @@ One whitespace choice of a spaced separator, flank or seam: the transport
 field it becomes (the site key), its label, its side, its default arm and
 the arms it admits, read from the choice's own members.
 
-`edgeToken` is set only on a kind edge whose seq opens or closes with a
-literal token: the public name of that token, stamped on the whitespace
+`edgeTokens` is set only on a kind edge whose seq opens or closes with a
+literal token or a choice of tokens: the public names of those tokens (one
+element in the single-token case), stamped on the whitespace
 choice's own annotations by `whitespaceChoice` and read back by `partOf`, so
 `spacingSitesOf` can carry it onto the `RuleSpacingSite`.
 
@@ -3954,10 +3956,10 @@ Every site with its canonical path, sorted. A site's index in the result is its
 site number, which is what makes a prefix-scoped declaration a contiguous range
 rather than a scan.
 
-A site that names an `edgeToken` (a kind edge whose kind opens or closes
-with that literal) also gets a `cascadePath`: `[kind, literal, side]`, the
-path the token's own seam would have inside that kind. `cascadePathOf`
-builds it; the primary `path` stays `[kind, side]`, so `options.ts` keys and
+A site that names `edgeTokens` (a kind edge whose kind opens or closes
+with those literals) also gets one `cascadePaths` entry per token:
+`[kind, literal, side]`, the path that token's own seam would have inside that
+kind. `cascadePathsOf` builds them; the primary `path` stays `[kind, side]`, so `options.ts` keys and
 kind rows are unchanged.
 
 ### `packages/codegen/src/compiler/model/site-addresses.ts::pathOf`
@@ -4013,11 +4015,21 @@ the members' sites the way the flat `Members` fan-out did; a site path itself
 always names the concrete kind.
 
 `matchAddressWith` is the form that says how each hit was reached: through
-the site's own path, or through its `cascadePath`. Only an address whose
+the site's own path, or through one of its `cascadePaths` (the hit then names
+the token index). Only an address whose
 head is the wildcard (`_`-scope) may cascade: a kind-scoped literal row names
 the token's interior seam in that kind and must never reach the exterior
 edge of a kind that closes with the literal it opened with (closure pipes,
 quotes, backticks). `matchAddress` is the same match with the flag dropped.
+
+An edge over a set of tokens takes a cascaded face only when every token has
+one and they are the same arm: `resolveBindings` records, per cascaded site,
+the arm each token's most specific cascading row gave it, and applies the
+face only if all tokens are covered and agree. A disagreeing or partly
+undeclared set takes no cascade and stays at its fallback. The rows of one
+set overlap on the site by construction, so the nesting check ignores
+cascade hits on a token-set site; the one-token edge is the one-element case
+of the same path.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
 

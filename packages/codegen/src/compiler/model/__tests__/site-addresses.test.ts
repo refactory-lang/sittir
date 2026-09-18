@@ -306,7 +306,7 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
 	const sites = addressSites(
 		[
-			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeToken: 'lparen' },
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeTokens: ['lparen'] },
 			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
 			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
 		],
@@ -337,5 +337,31 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'token-default' });
 		const cascadedOnly = resolveBindings([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
 		expect(new Map([...cascadedOnly].map(([i, v]) => [sites[i]!.address, v])).get('args_before')).toEqual({ arm: 'tight', origin: 'cascade' });
+	});
+});
+
+describe('a kind edge over a choice of tokens cascades only a unanimous face', () => {
+	const kindEntries = [
+		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },
+		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
+	] as unknown as KindEntryLike[];
+	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeTokens: ['dot_dot', 'dot_dot_eq'] }], kindEntries);
+	const resolve = (rows: { path: string; arm: string }[]) =>
+		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
+
+	it('gives the edge one cascade path per token', () => {
+		expect(sites[0]!.cascadePaths).toHaveLength(2);
+	});
+	it('cascades when every token resolves to the same declared face, without the rows overlapping', () => {
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'tight' }])).toEqual(['range_before=tight/cascade']);
+	});
+	it('cascades nothing when the tokens disagree or one token is undeclared', () => {
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'space' }])).toEqual([]);
+		expect(resolve([{ path: '_/".."/before', arm: 'tight' }])).toEqual([]);
+	});
+	it('lets the kind’s own row win over a unanimous cascade', () => {
+		expect(
+			resolve([{ path: '_/".."/before', arm: 'tight' }, { path: '_/"..="/before', arm: 'tight' }, { path: 'range/before', arm: 'space' }])
+		).toEqual(['range_before=space/preference']);
 	});
 });

@@ -34,7 +34,7 @@ export interface SpacingPart {
 	readonly side: SpacingSide;
 	readonly defaultArm: WhitespaceArm;
 	readonly origin?: SeamOrigin;
-	readonly edgeToken?: string;
+	readonly edgeTokens?: readonly string[];
 	readonly arms: readonly WhitespaceArm[];
 }
 
@@ -104,7 +104,7 @@ export interface RuleSpacingSite {
 	readonly origin?: SeamOrigin;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeToken?: string;
+	readonly edgeTokens?: readonly string[];
 }
 
 type Bag = {
@@ -273,7 +273,7 @@ function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], sym
 		type: CHOICE,
 		nonterminal: true,
 		fieldName: part.fieldName,
-		...(part.edgeToken === undefined ? {} : { annotations: { edgeToken: part.edgeToken } }),
+		...(part.edgeTokens === undefined ? {} : { annotations: { edgeTokens: part.edgeTokens } }),
 		members: arms.map((arm) => ({
 			type: SYMBOL,
 			name: symbols[arm]!,
@@ -308,14 +308,14 @@ function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
 	if (r.fieldName === undefined || defaultMember?.name === undefined) {
 		throw new Error('render rules: a spacing choice names its field and marks its default arm');
 	}
-	const edgeToken = r.annotations?.edgeToken;
+	const edgeTokens = r.annotations?.edgeTokens;
 	return {
 		fieldName: r.fieldName,
 		label: members[0]!.annotations!.preference!,
 		side,
 		defaultArm: publicKindName(defaultMember.name) as WhitespaceArm,
 		...(defaultMember.annotations?.origin === 'word-default' ? { origin: defaultMember.annotations.origin } : {}),
-		...(edgeToken === undefined ? {} : { edgeToken }),
+		...(edgeTokens === undefined ? {} : { edgeTokens }),
 		arms: members.map((m) => publicKindName(m.name!) as WhitespaceArm)
 	};
 }
@@ -576,20 +576,32 @@ function seamChoice(
 	fallback: WhitespaceArm,
 	resolver: DefaultResolver,
 	seams: SeamArms,
-	edgeToken?: string,
+	edgeTokens?: readonly string[],
 	wordShaped: boolean = false
 ): RenderRule {
 	const { label, arm, origin } = resolver.resolveSeam(kind, address, fallback, seams.arms, wordShaped);
 	return whitespaceChoice(
-		{ fieldName: address, label, side: 'seam', defaultArm: arm, origin, ...(edgeToken === undefined ? {} : { edgeToken }), arms: seams.arms },
+		{ fieldName: address, label, side: 'seam', defaultArm: arm, origin, ...(edgeTokens === undefined ? {} : { edgeTokens }), arms: seams.arms },
 		seams.arms,
 		seams.symbols
 	);
 }
 
-function edgeTokenOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): string | undefined {
+function edgeTokensOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
 	const edge = edgeMember(rule, side);
-	return edge === undefined ? undefined : literalTokenOf(edge, config);
+	if (edge === undefined) return undefined;
+	const token = (member: RenderRule): string | undefined => {
+		const own = literalTokenOf(member, config) ?? punctuationReferenceTokenOf(member, config);
+		if (own !== undefined || bag(member).type !== SEQ) return own;
+		const bare = (bag(member).members ?? []).filter((m) => !isAnyWhitespaceChoice(m));
+		return bare.length === 1 ? token(bare[0]!) : undefined;
+	};
+	const single = token(edge);
+	if (single !== undefined) return [single];
+	const r = bag(edge);
+	if (r.type !== CHOICE || r.members === undefined || r.members.length === 0) return undefined;
+	const tokens = r.members.map(token);
+	return tokens.every((t) => t !== undefined) ? [...new Set(tokens as string[])] : undefined;
 }
 
 function edgeMember(rule: RenderRule, side: 'first' | 'last'): RenderRule | undefined {
@@ -720,7 +732,7 @@ function withKindEdges(
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
 	const part = (side: SeparatorSide): RenderRule =>
-		seamChoice(kind, seamLabel(publicKindName(kind), side), 'space', resolver, seams, edgeTokenOf(rule, side === 'before' ? 'first' : 'last', config));
+		seamChoice(kind, seamLabel(publicKindName(kind), side), 'space', resolver, seams, edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config));
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {
@@ -825,7 +837,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				defaultArm: part.defaultArm,
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
-				...(part.edgeToken === undefined ? {} : { edgeToken: part.edgeToken })
+				...(part.edgeTokens === undefined ? {} : { edgeTokens: part.edgeTokens })
 			});
 		}
 	};

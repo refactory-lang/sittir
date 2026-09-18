@@ -466,9 +466,9 @@ itself ever produces).
 ```
 
 `origin` admits `'cascade'` beside the declared origins and the fallback.
-`edgeToken` is set on a kind edge's whitespace choice only, naming the
-literal token the kind opens or closes with, so the edge can answer to that
-token's grammar-wide face.
+`edgeTokens` is set on a kind edge's whitespace choice only, naming the
+literal tokens the kind opens or closes with (a single token or every arm of
+a choice of tokens), so the edge can answer to their grammar-wide face.
 
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 

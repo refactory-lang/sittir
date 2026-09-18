@@ -37,7 +37,7 @@ export type RuleAnnotations = {
 	readonly preference?: string;
 	readonly hoisted?: true;
 	readonly origin?: SeamOrigin;
-	readonly edgeToken?: string;
+	readonly edgeTokens?: readonly string[];
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {

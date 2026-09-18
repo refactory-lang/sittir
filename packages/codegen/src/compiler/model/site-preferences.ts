@@ -40,7 +40,7 @@ export interface SitePreference {
 	readonly side?: SpacingSide;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeToken?: string;
+	readonly edgeTokens?: readonly string[];
 }
 
 export interface SiteCandidate {
@@ -86,7 +86,7 @@ export function collectSitePreferences(config: SitePreferencesConfig): SitePrefe
 				...(site.origin === undefined ? {} : { origin: site.origin }),
 				...(site.seat === undefined ? {} : { seat: site.seat }),
 				...(site.path === undefined ? {} : { path: site.path }),
-				...(site.edgeToken === undefined ? {} : { edgeToken: site.edgeToken })
+				...(site.edgeTokens === undefined ? {} : { edgeTokens: site.edgeTokens })
 			});
 		}
 	}

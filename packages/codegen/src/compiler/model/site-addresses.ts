@@ -16,12 +16,12 @@ export interface SiteAddressInput {
 	readonly address: string;
 	readonly label: string;
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeToken?: string;
+	readonly edgeTokens?: readonly string[];
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
 	readonly path: readonly PreferenceSegment[];
-	readonly cascadePath?: readonly PreferenceSegment[];
+	readonly cascadePaths?: readonly (readonly PreferenceSegment[])[];
 };
 
 export function addressSites<T extends SiteAddressInput>(
@@ -30,20 +30,25 @@ export function addressSites<T extends SiteAddressInput>(
 ): AddressedSite<T>[] {
 	return sites
 		.map((site) => {
-			const cascadePath = cascadePathOf(site, kindEntries);
-			return { ...site, path: pathOf(site, kindEntries), ...(cascadePath === undefined ? {} : { cascadePath }) };
+			const cascadePaths = cascadePathsOf(site, kindEntries);
+			return { ...site, path: pathOf(site, kindEntries), ...(cascadePaths === undefined ? {} : { cascadePaths }) };
 		})
 		.sort((a, b) => comparePreferencePaths(a.path, b.path));
 }
 
-export function cascadePathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] | undefined {
-	if (site.edgeToken === undefined) return undefined;
+export function cascadePathsOf(
+	site: SiteAddressInput,
+	kindEntries: readonly KindEntryLike[]
+): readonly (readonly PreferenceSegment[])[] | undefined {
+	if (site.edgeTokens === undefined || site.edgeTokens.length === 0) return undefined;
 	const own = publicKindName(site.kind);
 	const seam = parseSeamLabel(site.address);
 	if (seam === undefined || seam.token !== own) return undefined;
-	const text = anonTokenText(kindEntries, site.edgeToken);
-	const token: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: site.edgeToken } : { kind: 'literal', text };
-	return [{ kind: 'kind-match', name: own }, token, { kind: 'name', name: seam.side }];
+	return site.edgeTokens.map((edgeToken) => {
+		const text = anonTokenText(kindEntries, edgeToken);
+		const token: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: edgeToken } : { kind: 'literal', text };
+		return [{ kind: 'kind-match', name: own }, token, { kind: 'name', name: seam.side }];
+	});
 }
 
 export function pathOf(site: SiteAddressInput, kindEntries: readonly KindEntryLike[]): readonly PreferenceSegment[] {
@@ -104,6 +109,7 @@ export function matchAddress<T extends SiteAddressInput>(
 export interface AddressHit<T extends SiteAddressInput> {
 	readonly site: AddressedSite<T>;
 	readonly cascade: boolean;
+	readonly token?: number;
 }
 
 export function matchAddressWith<T extends SiteAddressInput>(
@@ -115,7 +121,10 @@ export function matchAddressWith<T extends SiteAddressInput>(
 	const cascades = isWildcardHead(address);
 	for (const site of sites) {
 		if (isPrefixOf(address, site.path, membersOf)) out.push({ site, cascade: false });
-		else if (cascades && site.cascadePath !== undefined && isPrefixOf(address, site.cascadePath, membersOf)) out.push({ site, cascade: true });
+		else if (cascades && site.cascadePaths !== undefined) {
+			const token = site.cascadePaths.findIndex((path) => isPrefixOf(address, path, membersOf));
+			if (token >= 0) out.push({ site, cascade: true, token });
+		}
 	}
 	return out;
 }
@@ -178,18 +187,18 @@ export function resolveBindings(
 	const armOfLabel = new Map(declarations.map((declaration) => [declaration.path, declaration.arm]));
 	const labelled = new Set(bindings.map((binding) => binding.label));
 
-	const hitsOf = (address: string): { hits: Set<number>; cascaded: Set<number> } => {
+	const hitsOf = (address: string): { hits: Set<number>; cascaded: Map<number, number> } => {
 		const hits = new Set<number>();
-		const cascaded = new Set<number>();
-		for (const { site, cascade } of matchAddressWith(addressSegments(address), sites, membersOf)) {
+		const cascaded = new Map<number, number>();
+		for (const { site, cascade, token } of matchAddressWith(addressSegments(address), sites, membersOf)) {
 			const index = indexOf.get(site)!;
 			hits.add(index);
-			if (cascade) cascaded.add(index);
+			if (cascade) cascaded.set(index, token!);
 		}
 		return { hits, cascaded };
 	};
 
-	const entries: { address: string; arm: string; declared: boolean; hits: Set<number>; cascaded: Set<number> }[] = [];
+	const entries: { address: string; arm: string; declared: boolean; hits: Set<number>; cascaded: Map<number, number> }[] = [];
 
 	for (const binding of bindings) {
 		const arm = armOfLabel.get(binding.label);
@@ -211,10 +220,14 @@ export function resolveBindings(
 		entries.push({ address: declaration.path, arm: declaration.arm, declared: true, hits, cascaded });
 	}
 
+	const tokenSetSite = (site: number): boolean => (sites[site]!.cascadePaths?.length ?? 0) > 1;
+	const nestable = (entry: { hits: Set<number>; cascaded: Map<number, number> }): Set<number> =>
+		new Set([...entry.hits].filter((site) => !(entry.cascaded.has(site) && tokenSetSite(site))));
+
 	for (let i = 0; i < entries.length; i++) {
 		for (let j = i + 1; j < entries.length; j++) {
-			const a = entries[i]!.hits;
-			const b = entries[j]!.hits;
+			const a = nestable(entries[i]!);
+			const b = nestable(entries[j]!);
 			if (![...a].some((site) => b.has(site))) continue;
 			const nests = [...a].every((site) => b.has(site)) || [...b].every((site) => a.has(site));
 			if (!nests) {
@@ -227,9 +240,25 @@ export function resolveBindings(
 
 	const out = new Map<number, { readonly arm: string; readonly origin: PreferenceOrigin }>();
 	const order = [...entries].sort((a, b) => b.hits.size - a.hits.size || Number(a.declared) - Number(b.declared));
+	const armOfToken = new Map<number, Map<number, string>>();
+	for (const { arm, cascaded } of order) {
+		for (const [site, token] of cascaded) {
+			const byToken = armOfToken.get(site) ?? new Map<number, string>();
+			byToken.set(token, arm);
+			armOfToken.set(site, byToken);
+		}
+	}
+	const unanimous = new Map<number, string>();
+	for (const [site, byToken] of armOfToken) {
+		const arms = [...byToken.values()];
+		if (byToken.size === (sites[site]!.cascadePaths?.length ?? 1) && arms.every((arm) => arm === arms[0])) unanimous.set(site, arms[0]!);
+	}
 	for (const { arm, hits, cascaded, address } of order) {
 		const origin = originOf(address);
-		for (const site of hits) out.set(site, { arm, origin: cascaded.has(site) ? 'cascade' : origin });
+		for (const site of hits) {
+			if (!cascaded.has(site)) out.set(site, { arm, origin });
+			else if (unanimous.has(site)) out.set(site, { arm: unanimous.get(site)!, origin: 'cascade' });
+		}
 	}
 	return out;
 }
