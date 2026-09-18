@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
 import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
@@ -116,7 +117,8 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'pattern':
 				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
@@ -265,7 +267,8 @@ function childBareCallArgs(
 			const sample = pickSampleForPattern(child.pattern);
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			return isWordOrVisibleTextLeaf(child)
 				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
 				: undefined;
@@ -590,7 +593,7 @@ function resolveConcreteKind(
 		}
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
 		if (current.startsWith('_')) continue;
-		if (node.modelType === 'pattern' || node.modelType === 'token') return current;
+		if (node.modelType === 'pattern' || isFixedTextLeaf(node)) return current;
 		if (node.modelType === 'enum') enumCandidates.push(current);
 		else nonLeafCandidates.push(current);
 	}
@@ -692,7 +695,7 @@ function dummyValue(
 function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return 'test';
-	if (node.modelType === 'token') return node.text;
+	if (isFixedTextLeaf(node)) return node.text;
 	if (node.modelType === 'enum' && node.values.length > 0) return node.values[0]!;
 	return 'test';
 }

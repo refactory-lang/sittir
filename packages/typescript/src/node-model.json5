@@ -4419,7 +4419,7 @@
     },
     {
       "kind": "_automatic_semicolon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "AutomaticSemicolon",
       "irKey": "automaticSemicolon",
       "hidden": true,
@@ -4430,7 +4430,7 @@
     },
     {
       "kind": "_blankline",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Blankline",
       "irKey": "blankline",
       "hidden": true,
@@ -4441,7 +4441,7 @@
     },
     {
       "kind": "_dedent",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Dedent",
       "irKey": "dedent",
       "hidden": true,
@@ -4556,7 +4556,7 @@
     },
     {
       "kind": "_function_signature_automatic_semicolon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "FunctionSignatureAutomaticSemicolon",
       "irKey": "functionSignatureAutomaticSemicolon",
       "hidden": true,
@@ -4591,7 +4591,7 @@
     },
     {
       "kind": "_indent",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Indent",
       "irKey": "indent",
       "hidden": true,
@@ -4615,7 +4615,7 @@
     },
     {
       "kind": "_kw_abstract_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwAbstractMarker",
       "factoryName": "kwAbstractMarker",
       "irKey": "kwAbstractMarker",
@@ -4628,7 +4628,7 @@
     },
     {
       "kind": "_kw_accessor_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwAccessorMarker",
       "factoryName": "kwAccessorMarker",
       "irKey": "kwAccessorMarker",
@@ -4641,7 +4641,7 @@
     },
     {
       "kind": "_kw_async_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwAsyncMarker",
       "factoryName": "kwAsyncMarker",
       "irKey": "kwAsyncMarker",
@@ -4654,7 +4654,7 @@
     },
     {
       "kind": "_kw_await_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwAwaitMarker",
       "factoryName": "kwAwaitMarker",
       "irKey": "kwAwaitMarker",
@@ -4667,7 +4667,7 @@
     },
     {
       "kind": "_kw_const_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwConstMarker",
       "factoryName": "kwConstMarker",
       "irKey": "kwConstMarker",
@@ -4680,7 +4680,7 @@
     },
     {
       "kind": "_kw_declare_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwDeclareMarker",
       "factoryName": "kwDeclareMarker",
       "irKey": "kwDeclareMarker",
@@ -4693,7 +4693,7 @@
     },
     {
       "kind": "_kw_static_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwStaticMarker",
       "factoryName": "kwStaticMarker",
       "irKey": "kwStaticMarker",
@@ -4706,7 +4706,7 @@
     },
     {
       "kind": "_kw_using_marker",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KwUsingMarker",
       "factoryName": "kwUsingMarker",
       "irKey": "kwUsingMarker",
@@ -4749,7 +4749,7 @@
     },
     {
       "kind": "_newline",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Newline",
       "irKey": "newline",
       "hidden": true,
@@ -4912,7 +4912,7 @@
     },
     {
       "kind": "_space",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Space",
       "irKey": "space",
       "hidden": true,
@@ -4953,7 +4953,7 @@
     },
     {
       "kind": "_tight",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Tight",
       "irKey": "tight",
       "hidden": true,
@@ -5641,7 +5641,7 @@
     },
     {
       "kind": "abstract_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AbstractKeyword",
       "irKey": "abstractKeyword",
       "hidden": true,
@@ -5898,7 +5898,7 @@
     },
     {
       "kind": "accessor_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AccessorKeyword",
       "irKey": "accessorKeyword",
       "hidden": true,
@@ -6176,7 +6176,7 @@
     },
     {
       "kind": "amp",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Amp",
       "irKey": "amp",
       "hidden": true,
@@ -6187,7 +6187,7 @@
     },
     {
       "kind": "amp_amp",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "AmpAmp",
       "irKey": "ampAmp",
       "hidden": true,
@@ -6198,7 +6198,7 @@
     },
     {
       "kind": "amp_amp_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "AmpAmpEq",
       "irKey": "ampAmpEq",
       "hidden": true,
@@ -6209,7 +6209,7 @@
     },
     {
       "kind": "amp_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "AmpEq",
       "irKey": "ampEq",
       "hidden": true,
@@ -6220,7 +6220,7 @@
     },
     {
       "kind": "any_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AnyKeyword",
       "irKey": "anyKeyword",
       "hidden": true,
@@ -6640,7 +6640,7 @@
     },
     {
       "kind": "as_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AsKeyword",
       "irKey": "asKeyword",
       "hidden": true,
@@ -6652,7 +6652,7 @@
     },
     {
       "kind": "assert_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AssertKeyword",
       "irKey": "assertKeyword",
       "hidden": true,
@@ -6758,7 +6758,7 @@
     },
     {
       "kind": "asserts_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AssertsKeyword",
       "irKey": "assertsKeyword",
       "hidden": true,
@@ -6908,7 +6908,7 @@
     },
     {
       "kind": "async_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AsyncKeyword",
       "irKey": "asyncKeyword",
       "hidden": true,
@@ -6920,7 +6920,7 @@
     },
     {
       "kind": "at",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "At",
       "irKey": "at",
       "hidden": true,
@@ -7128,7 +7128,7 @@
     },
     {
       "kind": "await_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "AwaitKeyword",
       "irKey": "awaitKeyword",
       "hidden": true,
@@ -7140,7 +7140,7 @@
     },
     {
       "kind": "bang",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Bang",
       "irKey": "bang",
       "hidden": true,
@@ -7151,7 +7151,7 @@
     },
     {
       "kind": "bang_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "BangEq",
       "irKey": "bangEq",
       "hidden": true,
@@ -7162,7 +7162,7 @@
     },
     {
       "kind": "bang_eq_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "BangEqEq",
       "irKey": "bangEqEq",
       "hidden": true,
@@ -7478,7 +7478,7 @@
     },
     {
       "kind": "boolean_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "BooleanKeyword",
       "irKey": "booleanKeyword",
       "hidden": true,
@@ -7490,7 +7490,7 @@
     },
     {
       "kind": "bquote",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Bquote",
       "irKey": "bquote",
       "hidden": true,
@@ -7501,7 +7501,7 @@
     },
     {
       "kind": "break_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "BreakKeyword",
       "irKey": "breakKeyword",
       "hidden": true,
@@ -7965,7 +7965,7 @@
     },
     {
       "kind": "caret",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Caret",
       "irKey": "caret",
       "hidden": true,
@@ -7976,7 +7976,7 @@
     },
     {
       "kind": "caret_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "CaretEq",
       "irKey": "caretEq",
       "hidden": true,
@@ -7987,7 +7987,7 @@
     },
     {
       "kind": "case_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "CaseKeyword",
       "irKey": "caseKeyword",
       "hidden": true,
@@ -8132,7 +8132,7 @@
     },
     {
       "kind": "catch_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "CatchKeyword",
       "irKey": "catchKeyword",
       "hidden": true,
@@ -8814,7 +8814,7 @@
     },
     {
       "kind": "class_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ClassKeyword",
       "irKey": "classKeyword",
       "hidden": true,
@@ -8881,7 +8881,7 @@
     },
     {
       "kind": "colon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Colon",
       "irKey": "colon",
       "hidden": true,
@@ -8892,7 +8892,7 @@
     },
     {
       "kind": "comma",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Comma",
       "irKey": "comma",
       "hidden": true,
@@ -9095,7 +9095,7 @@
     },
     {
       "kind": "const_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ConstKeyword",
       "irKey": "constKeyword",
       "hidden": true,
@@ -9360,7 +9360,7 @@
     },
     {
       "kind": "continue_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ContinueKeyword",
       "irKey": "continueKeyword",
       "hidden": true,
@@ -9433,7 +9433,7 @@
     },
     {
       "kind": "dash",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Dash",
       "irKey": "dash",
       "hidden": true,
@@ -9444,7 +9444,7 @@
     },
     {
       "kind": "dash_dash",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "DashDash",
       "irKey": "dashDash",
       "hidden": true,
@@ -9455,7 +9455,7 @@
     },
     {
       "kind": "dash_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "DashEq",
       "irKey": "dashEq",
       "hidden": true,
@@ -9466,7 +9466,7 @@
     },
     {
       "kind": "dash_qmark_colon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "DashQmarkColon",
       "irKey": "dashQmarkColon",
       "hidden": true,
@@ -9477,7 +9477,7 @@
     },
     {
       "kind": "debugger_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "DebuggerKeyword",
       "irKey": "debuggerKeyword",
       "hidden": true,
@@ -9556,7 +9556,7 @@
     },
     {
       "kind": "declare_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "DeclareKeyword",
       "irKey": "declareKeyword",
       "hidden": true,
@@ -9827,7 +9827,7 @@
     },
     {
       "kind": "default_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "DefaultKeyword",
       "irKey": "defaultKeyword",
       "hidden": true,
@@ -9918,7 +9918,7 @@
     },
     {
       "kind": "delete_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "DeleteKeyword",
       "irKey": "deleteKeyword",
       "hidden": true,
@@ -9930,7 +9930,7 @@
     },
     {
       "kind": "do_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "DoKeyword",
       "irKey": "doKeyword",
       "hidden": true,
@@ -10024,7 +10024,7 @@
     },
     {
       "kind": "dollar_lbrace",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "DollarLbrace",
       "irKey": "dollarLbrace",
       "hidden": true,
@@ -10035,7 +10035,7 @@
     },
     {
       "kind": "dot",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Dot",
       "irKey": "dot",
       "hidden": true,
@@ -10046,7 +10046,7 @@
     },
     {
       "kind": "dot_dot_dot",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "DotDotDot",
       "irKey": "dotDotDot",
       "hidden": true,
@@ -10057,7 +10057,7 @@
     },
     {
       "kind": "dquote",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Dquote",
       "irKey": "dquote",
       "hidden": true,
@@ -10144,7 +10144,7 @@
     },
     {
       "kind": "else_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ElseKeyword",
       "irKey": "elseKeyword",
       "hidden": true,
@@ -10156,7 +10156,7 @@
     },
     {
       "kind": "empty_statement",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "EmptyStatement",
       "factoryName": "emptyStatement",
       "irKey": "emptyStatement",
@@ -10502,7 +10502,7 @@
     },
     {
       "kind": "enum_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "EnumKeyword",
       "irKey": "enumKeyword",
       "hidden": true,
@@ -10514,7 +10514,7 @@
     },
     {
       "kind": "eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Eq",
       "irKey": "eq",
       "hidden": true,
@@ -10525,7 +10525,7 @@
     },
     {
       "kind": "eq_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "EqEq",
       "irKey": "eqEq",
       "hidden": true,
@@ -10536,7 +10536,7 @@
     },
     {
       "kind": "eq_eq_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "EqEqEq",
       "irKey": "eqEqEq",
       "hidden": true,
@@ -10547,7 +10547,7 @@
     },
     {
       "kind": "eq_gt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "EqGt",
       "irKey": "eqGt",
       "hidden": true,
@@ -10568,7 +10568,7 @@
     },
     {
       "kind": "existential_type",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "ExistentialType",
       "factoryName": "existentialType",
       "irKey": "existentialType",
@@ -10620,7 +10620,7 @@
     },
     {
       "kind": "export_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ExportKeyword",
       "irKey": "exportKeyword",
       "hidden": true,
@@ -11580,7 +11580,7 @@
     },
     {
       "kind": "extends_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ExtendsKeyword",
       "irKey": "extendsKeyword",
       "hidden": true,
@@ -11640,7 +11640,7 @@
     },
     {
       "kind": "false",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "False",
       "factoryName": "false_",
       "irKey": "false",
@@ -11691,7 +11691,7 @@
     },
     {
       "kind": "finally_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "FinallyKeyword",
       "irKey": "finallyKeyword",
       "hidden": true,
@@ -12217,7 +12217,7 @@
     },
     {
       "kind": "for_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ForKeyword",
       "irKey": "forKeyword",
       "hidden": true,
@@ -12443,7 +12443,7 @@
     },
     {
       "kind": "from_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "FromKeyword",
       "irKey": "fromKeyword",
       "hidden": true,
@@ -12782,7 +12782,7 @@
     },
     {
       "kind": "function_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "FunctionKeyword",
       "irKey": "functionKeyword",
       "hidden": true,
@@ -13439,7 +13439,7 @@
     },
     {
       "kind": "get_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "GetKeyword",
       "irKey": "getKeyword",
       "hidden": true,
@@ -13451,7 +13451,7 @@
     },
     {
       "kind": "global_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "GlobalKeyword",
       "irKey": "globalKeyword",
       "hidden": true,
@@ -13463,7 +13463,7 @@
     },
     {
       "kind": "gt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Gt",
       "irKey": "gt",
       "hidden": true,
@@ -13474,7 +13474,7 @@
     },
     {
       "kind": "gt_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "GtEq",
       "irKey": "gtEq",
       "hidden": true,
@@ -13485,7 +13485,7 @@
     },
     {
       "kind": "gt_gt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "GtGt",
       "irKey": "gtGt",
       "hidden": true,
@@ -13496,7 +13496,7 @@
     },
     {
       "kind": "gt_gt_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "GtGtEq",
       "irKey": "gtGtEq",
       "hidden": true,
@@ -13507,7 +13507,7 @@
     },
     {
       "kind": "gt_gt_gt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "GtGtGt",
       "irKey": "gtGtGt",
       "hidden": true,
@@ -13518,7 +13518,7 @@
     },
     {
       "kind": "gt_gt_gt_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "GtGtGtEq",
       "irKey": "gtGtGtEq",
       "hidden": true,
@@ -13557,7 +13557,7 @@
     },
     {
       "kind": "if_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "IfKeyword",
       "irKey": "ifKeyword",
       "hidden": true,
@@ -13679,7 +13679,7 @@
     },
     {
       "kind": "implements_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ImplementsKeyword",
       "irKey": "implementsKeyword",
       "hidden": true,
@@ -13691,7 +13691,7 @@
     },
     {
       "kind": "import",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "Import",
       "factoryName": "import_",
       "irKey": "import",
@@ -14038,7 +14038,7 @@
     },
     {
       "kind": "import_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ImportKeyword",
       "irKey": "importKeyword",
       "hidden": true,
@@ -14502,7 +14502,7 @@
     },
     {
       "kind": "in_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "InKeyword",
       "irKey": "inKeyword",
       "hidden": true,
@@ -14881,7 +14881,7 @@
     },
     {
       "kind": "infer_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "InferKeyword",
       "irKey": "inferKeyword",
       "hidden": true,
@@ -14948,7 +14948,7 @@
     },
     {
       "kind": "instanceof_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "InstanceofKeyword",
       "irKey": "instanceofKeyword",
       "hidden": true,
@@ -15112,7 +15112,7 @@
     },
     {
       "kind": "interface_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "InterfaceKeyword",
       "irKey": "interfaceKeyword",
       "hidden": true,
@@ -15248,7 +15248,7 @@
     },
     {
       "kind": "is_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "IsKeyword",
       "irKey": "isKeyword",
       "hidden": true,
@@ -15269,7 +15269,7 @@
     },
     {
       "kind": "keyof_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "KeyofKeyword",
       "irKey": "keyofKeyword",
       "hidden": true,
@@ -15336,7 +15336,7 @@
     },
     {
       "kind": "lbrace",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Lbrace",
       "irKey": "lbrace",
       "hidden": true,
@@ -15347,7 +15347,7 @@
     },
     {
       "kind": "lbrace_pipe",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "LbracePipe",
       "irKey": "lbracePipe",
       "hidden": true,
@@ -15358,7 +15358,7 @@
     },
     {
       "kind": "lbrack",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Lbrack",
       "irKey": "lbrack",
       "hidden": true,
@@ -15369,7 +15369,7 @@
     },
     {
       "kind": "let_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "LetKeyword",
       "irKey": "letKeyword",
       "hidden": true,
@@ -15623,7 +15623,7 @@
     },
     {
       "kind": "lparen",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Lparen",
       "irKey": "lparen",
       "hidden": true,
@@ -15634,7 +15634,7 @@
     },
     {
       "kind": "lt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Lt",
       "irKey": "lt",
       "hidden": true,
@@ -15645,7 +15645,7 @@
     },
     {
       "kind": "lt_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "LtEq",
       "irKey": "ltEq",
       "hidden": true,
@@ -15656,7 +15656,7 @@
     },
     {
       "kind": "lt_lt",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "LtLt",
       "irKey": "ltLt",
       "hidden": true,
@@ -15667,7 +15667,7 @@
     },
     {
       "kind": "lt_lt_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "LtLtEq",
       "irKey": "ltLtEq",
       "hidden": true,
@@ -15857,7 +15857,7 @@
     },
     {
       "kind": "meta_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "MetaKeyword",
       "irKey": "metaKeyword",
       "hidden": true,
@@ -15881,7 +15881,7 @@
     },
     {
       "kind": "meta_property_import_meta",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "MetaPropertyImportMeta",
       "factoryName": "metaPropertyImportMeta",
       "irKey": "metaPropertyImportMeta",
@@ -15897,7 +15897,7 @@
     },
     {
       "kind": "meta_property_new_target",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "MetaPropertyNewTarget",
       "factoryName": "metaPropertyNewTarget",
       "irKey": "metaPropertyNewTarget",
@@ -16587,7 +16587,7 @@
     },
     {
       "kind": "module_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ModuleKeyword",
       "irKey": "moduleKeyword",
       "hidden": true,
@@ -16724,7 +16724,7 @@
     },
     {
       "kind": "namespace_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "NamespaceKeyword",
       "irKey": "namespaceKeyword",
       "hidden": true,
@@ -16860,7 +16860,7 @@
     },
     {
       "kind": "never_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "NeverKeyword",
       "irKey": "neverKeyword",
       "hidden": true,
@@ -16948,7 +16948,7 @@
     },
     {
       "kind": "new_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "NewKeyword",
       "irKey": "newKeyword",
       "hidden": true,
@@ -17046,7 +17046,7 @@
     },
     {
       "kind": "null",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "Null",
       "factoryName": "null_",
       "irKey": "null",
@@ -17068,7 +17068,7 @@
     },
     {
       "kind": "number_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "NumberKeyword",
       "irKey": "numberKeyword",
       "hidden": true,
@@ -17204,7 +17204,7 @@
     },
     {
       "kind": "object_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ObjectKeyword",
       "irKey": "objectKeyword",
       "hidden": true,
@@ -17393,7 +17393,7 @@
     },
     {
       "kind": "of_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "OfKeyword",
       "irKey": "ofKeyword",
       "hidden": true,
@@ -17563,7 +17563,7 @@
     },
     {
       "kind": "optional_chain",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "OptionalChain",
       "factoryName": "optionalChain",
       "irKey": "optionalChain",
@@ -17875,7 +17875,7 @@
     },
     {
       "kind": "override_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "OverrideKeyword",
       "irKey": "overrideKeyword",
       "hidden": true,
@@ -17887,7 +17887,7 @@
     },
     {
       "kind": "override_modifier",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "OverrideModifier",
       "factoryName": "overrideModifier",
       "irKey": "overrideModifier",
@@ -18345,7 +18345,7 @@
     },
     {
       "kind": "percent",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Percent",
       "irKey": "percent",
       "hidden": true,
@@ -18356,7 +18356,7 @@
     },
     {
       "kind": "percent_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PercentEq",
       "irKey": "percentEq",
       "hidden": true,
@@ -18367,7 +18367,7 @@
     },
     {
       "kind": "pipe",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Pipe",
       "irKey": "pipe",
       "hidden": true,
@@ -18378,7 +18378,7 @@
     },
     {
       "kind": "pipe_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PipeEq",
       "irKey": "pipeEq",
       "hidden": true,
@@ -18389,7 +18389,7 @@
     },
     {
       "kind": "pipe_pipe",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PipePipe",
       "irKey": "pipePipe",
       "hidden": true,
@@ -18400,7 +18400,7 @@
     },
     {
       "kind": "pipe_pipe_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PipePipeEq",
       "irKey": "pipePipeEq",
       "hidden": true,
@@ -18411,7 +18411,7 @@
     },
     {
       "kind": "pipe_rbrace",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PipeRbrace",
       "irKey": "pipeRbrace",
       "hidden": true,
@@ -18422,7 +18422,7 @@
     },
     {
       "kind": "plus",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Plus",
       "irKey": "plus",
       "hidden": true,
@@ -18433,7 +18433,7 @@
     },
     {
       "kind": "plus_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PlusEq",
       "irKey": "plusEq",
       "hidden": true,
@@ -18444,7 +18444,7 @@
     },
     {
       "kind": "plus_plus",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PlusPlus",
       "irKey": "plusPlus",
       "hidden": true,
@@ -18455,7 +18455,7 @@
     },
     {
       "kind": "plus_qmark_colon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "PlusQmarkColon",
       "irKey": "plusQmarkColon",
       "hidden": true,
@@ -18550,7 +18550,7 @@
     },
     {
       "kind": "private_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "PrivateKeyword",
       "irKey": "privateKeyword",
       "hidden": true,
@@ -18822,7 +18822,7 @@
     },
     {
       "kind": "protected_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ProtectedKeyword",
       "irKey": "protectedKeyword",
       "hidden": true,
@@ -19129,7 +19129,7 @@
     },
     {
       "kind": "public_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "PublicKeyword",
       "irKey": "publicKeyword",
       "hidden": true,
@@ -19141,7 +19141,7 @@
     },
     {
       "kind": "qmark",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Qmark",
       "irKey": "qmark",
       "hidden": true,
@@ -19152,7 +19152,7 @@
     },
     {
       "kind": "qmark_colon",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "QmarkColon",
       "irKey": "qmarkColon",
       "hidden": true,
@@ -19163,7 +19163,7 @@
     },
     {
       "kind": "qmark_dot",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "QmarkDot",
       "irKey": "qmarkDot",
       "hidden": true,
@@ -19174,7 +19174,7 @@
     },
     {
       "kind": "qmark_qmark",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "QmarkQmark",
       "irKey": "qmarkQmark",
       "hidden": true,
@@ -19185,7 +19185,7 @@
     },
     {
       "kind": "qmark_qmark_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "QmarkQmarkEq",
       "irKey": "qmarkQmarkEq",
       "hidden": true,
@@ -19196,7 +19196,7 @@
     },
     {
       "kind": "rbrace",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Rbrace",
       "irKey": "rbrace",
       "hidden": true,
@@ -19207,7 +19207,7 @@
     },
     {
       "kind": "rbrack",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Rbrack",
       "irKey": "rbrack",
       "hidden": true,
@@ -19218,7 +19218,7 @@
     },
     {
       "kind": "readonly_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ReadonlyKeyword",
       "irKey": "readonlyKeyword",
       "hidden": true,
@@ -19383,7 +19383,7 @@
     },
     {
       "kind": "require_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "RequireKeyword",
       "irKey": "requireKeyword",
       "hidden": true,
@@ -19776,7 +19776,7 @@
     },
     {
       "kind": "return_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ReturnKeyword",
       "irKey": "returnKeyword",
       "hidden": true,
@@ -19856,7 +19856,7 @@
     },
     {
       "kind": "rparen",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Rparen",
       "irKey": "rparen",
       "hidden": true,
@@ -19922,7 +19922,7 @@
     },
     {
       "kind": "satisfies_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "SatisfiesKeyword",
       "irKey": "satisfiesKeyword",
       "hidden": true,
@@ -19934,7 +19934,7 @@
     },
     {
       "kind": "semi",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Semi",
       "irKey": "semi",
       "hidden": true,
@@ -19979,7 +19979,7 @@
     },
     {
       "kind": "set_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "SetKeyword",
       "irKey": "setKeyword",
       "hidden": true,
@@ -19991,7 +19991,7 @@
     },
     {
       "kind": "slash",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Slash",
       "irKey": "slash",
       "hidden": true,
@@ -20002,7 +20002,7 @@
     },
     {
       "kind": "slash_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "SlashEq",
       "irKey": "slashEq",
       "hidden": true,
@@ -20099,7 +20099,7 @@
     },
     {
       "kind": "squote",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Squote",
       "irKey": "squote",
       "hidden": true,
@@ -20110,7 +20110,7 @@
     },
     {
       "kind": "star",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Star",
       "irKey": "star",
       "hidden": true,
@@ -20121,7 +20121,7 @@
     },
     {
       "kind": "star_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "StarEq",
       "irKey": "starEq",
       "hidden": true,
@@ -20132,7 +20132,7 @@
     },
     {
       "kind": "star_star",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "StarStar",
       "irKey": "starStar",
       "hidden": true,
@@ -20143,7 +20143,7 @@
     },
     {
       "kind": "star_star_eq",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "StarStarEq",
       "irKey": "starStarEq",
       "hidden": true,
@@ -20239,7 +20239,7 @@
     },
     {
       "kind": "static_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "StaticKeyword",
       "irKey": "staticKeyword",
       "hidden": true,
@@ -20351,7 +20351,7 @@
     },
     {
       "kind": "string_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "StringKeyword",
       "irKey": "stringKeyword",
       "hidden": true,
@@ -20498,7 +20498,7 @@
     },
     {
       "kind": "super",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "Super",
       "factoryName": "super",
       "irKey": "super",
@@ -20648,7 +20648,7 @@
     },
     {
       "kind": "switch_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "SwitchKeyword",
       "irKey": "switchKeyword",
       "hidden": true,
@@ -20715,7 +20715,7 @@
     },
     {
       "kind": "symbol_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "SymbolKeyword",
       "irKey": "symbolKeyword",
       "hidden": true,
@@ -20727,7 +20727,7 @@
     },
     {
       "kind": "target_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "TargetKeyword",
       "irKey": "targetKeyword",
       "hidden": true,
@@ -21083,7 +21083,7 @@
     },
     {
       "kind": "this",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "This",
       "factoryName": "this",
       "irKey": "this",
@@ -21096,7 +21096,7 @@
     },
     {
       "kind": "throw_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "ThrowKeyword",
       "irKey": "throwKeyword",
       "hidden": true,
@@ -21176,7 +21176,7 @@
     },
     {
       "kind": "tilde",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Tilde",
       "irKey": "tilde",
       "hidden": true,
@@ -21187,7 +21187,7 @@
     },
     {
       "kind": "true",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "True",
       "factoryName": "true_",
       "irKey": "true",
@@ -21200,7 +21200,7 @@
     },
     {
       "kind": "try_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "TryKeyword",
       "irKey": "tryKeyword",
       "hidden": true,
@@ -21837,7 +21837,7 @@
     },
     {
       "kind": "type_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "TypeKeyword",
       "irKey": "typeKeyword",
       "hidden": true,
@@ -22195,7 +22195,7 @@
     },
     {
       "kind": "typeof_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "TypeofKeyword",
       "irKey": "typeofKeyword",
       "hidden": true,
@@ -22330,7 +22330,7 @@
     },
     {
       "kind": "undefined",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "Undefined",
       "factoryName": "undefined_",
       "irKey": "undefined",
@@ -22418,7 +22418,7 @@
     },
     {
       "kind": "unique",
-      "modelType": "token",
+      "modelType": "punctuation",
       "typeName": "Unique",
       "irKey": "unique",
       "hidden": true,
@@ -22429,7 +22429,7 @@
     },
     {
       "kind": "unknown_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "UnknownKeyword",
       "irKey": "unknownKeyword",
       "hidden": true,
@@ -22571,7 +22571,7 @@
     },
     {
       "kind": "using_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "UsingKeyword",
       "irKey": "usingKeyword",
       "hidden": true,
@@ -22583,7 +22583,7 @@
     },
     {
       "kind": "var_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "VarKeyword",
       "irKey": "varKeyword",
       "hidden": true,
@@ -22821,7 +22821,7 @@
     },
     {
       "kind": "void_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "VoidKeyword",
       "irKey": "voidKeyword",
       "hidden": true,
@@ -22833,7 +22833,7 @@
     },
     {
       "kind": "while_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "WhileKeyword",
       "irKey": "whileKeyword",
       "hidden": true,
@@ -22900,7 +22900,7 @@
     },
     {
       "kind": "with_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "WithKeyword",
       "irKey": "withKeyword",
       "hidden": true,
@@ -23053,7 +23053,7 @@
     },
     {
       "kind": "yield_keyword",
-      "modelType": "token",
+      "modelType": "keyword",
       "typeName": "YieldKeyword",
       "irKey": "yieldKeyword",
       "hidden": true,

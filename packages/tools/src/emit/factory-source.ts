@@ -345,7 +345,7 @@ function admitsDirectly(kinds: readonly string[], node: Printed, loose: LooseFac
  */
 function buildsNodeData(kind: string, loose: LooseFacts): boolean {
 	const modelType = loose.modelTypes[kind];
-	return modelType !== 'enum' && modelType !== 'token';
+	return modelType !== 'enum' && modelType !== 'keyword' && modelType !== 'punctuation';
 }
 
 function isFlatKind(kind: string, ctx: PrintContext): boolean {
@@ -922,7 +922,7 @@ export async function emitFactorySourceText(
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
-		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'token')),
+		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'keyword' || model.modelTypes[k] === 'punctuation')),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		source,
 		delimiterArmOfId: (id) => {

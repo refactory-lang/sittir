@@ -145,7 +145,7 @@ function emitNonEmptyAssertHelper(): string[] {
 function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && node.modelType === 'token') continue;
+		if (kind.startsWith('_') && isFixedTextLeaf(node)) continue;
 		if (node.modelType !== 'pattern' || !node.pattern) continue;
 		const fn = node.rawFactoryName!;
 		const constName = `_leafRe_${fn}`;
@@ -259,7 +259,8 @@ export namespace factory {
 				result = emitTextFactory(node, 'text: string', 'text', guard, kindEntries, nodeMap);
 				break;
 			}
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
@@ -826,7 +827,8 @@ export function constructorSurface(
 				argOptional: optionalized
 			};
 		}
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			if (!isWordOrVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
@@ -1509,7 +1511,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		this.#preambleLines = lines;
 	}
 
-	emitLeaf(node: AssembledPattern | AssembledKeyword | AssembledEnum): void {
+	emitLeaf(node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {
 		factory.leaf(this.#output, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries);
 	}
 
@@ -1553,7 +1555,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			case 'enum':
 				this.emitLeaf(node);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':

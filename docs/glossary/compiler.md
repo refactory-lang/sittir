@@ -752,7 +752,7 @@ parents.
  * @param typeName - The shared `typeName` string before disambiguation.
  * @remarks
  *   Only renames when a visible sibling actually gets an exported TypeScript declaration.
- *   Token nodes (`modelType === 'token'`) are anonymous structural delimiters that only
+ *   Punctuation nodes (`modelType === 'punctuation'`) are anonymous structural delimiters that only
  *   appear as exported type aliases if they are referenced in a field/child union — many
  *   aren't. If ALL visible siblings are tokens, there is no actual TypeScript collision
  *   and the hidden kind's name is left unchanged.
@@ -899,10 +899,9 @@ parents.
  * to read a slot from. Otherwise a
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
- * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
- * concrete class, `AssembledKeyword` or `AssembledPunctuation`, to construct —
- * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
- * here).
+ * → 'pattern'; a STRING → 'keyword' when its text is word-shaped
+ * (`matchesWordShape` against `opts.wordMatcher`), else 'punctuation'; each
+ * value names the class `assemble()` constructs for it.
  *
  * Otherwise (fielded or multiplicity-bearing): a separated-list shape
  * (`isSeparatedListShape`) → 'list'; a slot-bearing body
@@ -6089,7 +6088,7 @@ collector parameter.
  * for whether emitters (templates, factories, types, IR) should
  * produce output for the kind.
  *
- * - `token` / `multi` modelTypes: never user-facing (structural helpers).
+ * - A hidden `punctuation` leaf is never user-facing (structural helper).
  * - Visible kinds (not `_`-prefixed): user-facing.
  * - Hidden kinds: user-facing only when they're alias sources
  *   (referenced elsewhere by their storage `name`, meaning factories

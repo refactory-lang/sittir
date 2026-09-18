@@ -189,14 +189,15 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries, wordMatcher: wordMatcherRegex }));
 				break;
 			}
-			case 'token': {
+			case 'keyword':
+			case 'punctuation': {
 				if (simplifiedRule.type !== STRING) {
-					throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
+					throw new Error(`[assemble] literal kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 				}
 				const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
 					kind,
-					matchesWordShape(simplifiedRule.value, wordMatcherRegex)
+					modelType === 'keyword'
 						? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
 						: new AssembledPunctuation(kind, simplifiedRule, { hidden: !named, kindEntries })
 				);
@@ -937,7 +938,7 @@ export function classifyNode(
 			case PATTERN:
 				return 'pattern';
 			case STRING:
-				return 'token';
+				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'punctuation';
 		}
 	}
 

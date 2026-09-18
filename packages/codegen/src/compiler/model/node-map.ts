@@ -945,7 +945,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'token' | 'pattern' | 'list';
+export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'keyword' | 'punctuation' | 'pattern' | 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -1708,7 +1708,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 }
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
+	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -1757,7 +1757,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 }
 
 export class AssembledPunctuation extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
+	readonly modelType = 'punctuation' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 

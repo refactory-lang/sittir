@@ -1206,8 +1206,8 @@ flatten and simplify joins use.
 	 * the literal adjacent to the preceding token. Plain string-rule
 	 * tokens and non-immediate `token(...)` wrappers return false.
 	 *
-	 * NOTE: distinct from the `modelType === 'token'` classification —
-	 * an `AssembledPunctuation` exists for every classified token kind whether
+	 * NOTE: distinct from the `keyword` / `punctuation` classification —
+	 * an `AssembledKeyword` or `AssembledPunctuation` exists for every classified literal kind whether
 	 * or not its rule was wrapped in a `TokenRule`. This getter reports
 	 * the wrapper status, not the model classification.
 	 */
@@ -1659,8 +1659,9 @@ flatten and simplify joins use.
  * Split from the Rule<'link'> IR file (now `types/rule.ts`). The classes here
  * represent what an assembled grammar node looks like after the full pipeline has
  * classified and enriched the Rule<'link'> — each subclass corresponds to one
- * ModelType (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
- * `supertype`, `group`, `multi`). `container` was merged into `branch`
+ * ModelType (`envelope`, `branch`, `polymorph`, `supertype`, `enum`, `keyword`,
+ * `punctuation`, `pattern`, `list`), and each value spells its class.
+ * `container` was merged into `branch`
  * (slot-surface distinctions derived from `slotClass`).
  *
  * Organized in place (follow-up — reorg decision 1: a large module is

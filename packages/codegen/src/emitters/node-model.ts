@@ -91,8 +91,8 @@ interface SerializedLeaf extends SerializedNodeBase {
 	text?: string;
 }
 
-interface SerializedToken extends SerializedNodeBase {
-	modelType: 'token';
+interface SerializedFixedText extends SerializedNodeBase {
+	modelType: 'keyword' | 'punctuation';
 	word: boolean;
 	text: string;
 }
@@ -122,7 +122,7 @@ interface SerializedList extends SerializedNodeBase {
 type SerializedNode =
 	| SerializedCompoundNode
 	| SerializedLeaf
-	| SerializedToken
+	| SerializedFixedText
 	| SerializedEnum
 	| SerializedSupertype
 	| SerializedList;
@@ -218,10 +218,11 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				pattern: node.pattern,
 				text: node.fixedLiteralText
 			};
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			return {
 				...base,
-				modelType: 'token',
+				modelType: node.modelType,
 				word: node instanceof AssembledKeyword,
 				text: node.text
 			};

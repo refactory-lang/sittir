@@ -1,4 +1,5 @@
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { tokenNameOfText } from '../compiler/model/render-rules.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -168,7 +169,7 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		};
 	}
 
-	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledEnum): void {}
+	emitLeaf(_node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {}
 
 	emitBranch(_node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList): void {}
 
@@ -674,7 +675,8 @@ function renderTypedKindFn(
 			return renderTypedBranchFn(node, struct, meta, nodeMap, kindIdByKind, plan);
 		}
 		case 'pattern':
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 		case 'enum':
 			return renderTypedLeafFn(node);
 		default:
@@ -1361,14 +1363,14 @@ function anyTransportPrepareArms(
 }
 
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
+	if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
 		return true;
 	}
 	return node.slots.some((slot) => isRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
-	return n.modelType === 'pattern' || n.modelType === 'token' || n.modelType === 'enum';
+	return n.modelType === 'pattern' || isFixedTextLeaf(n) || n.modelType === 'enum';
 }
 
 function boxedInEnum(
@@ -2589,7 +2591,7 @@ function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly Ki
 }
 
 function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
-	if (node.modelType !== 'token') return undefined;
+	if (!isFixedTextLeaf(node)) return undefined;
 	const literal = node.text;
 	if (!literal) return undefined;
 	for (const [, owner] of nodeMap.nodes) {
@@ -2926,7 +2928,7 @@ function renderTransportDataStruct(
 	plan: RenderPlan = EMPTY_PLAN,
 	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
-	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'token';
+	const isLeafNode = node.modelType === 'pattern' || isFixedTextLeaf(node);
 	const lines: string[] = [];
 	const fillFields: string[] = [];
 	if (!isLeafNode) {
@@ -2989,7 +2991,7 @@ function renderTransportDataStruct(
 				);
 			}
 		}
-	} else if (node.modelType === 'pattern' || node.modelType === 'token' || node.modelType === 'enum') {
+	} else if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
 		lines.push(...renderLeafTransportPlainFields());
 	}
 	lines.push('}');
@@ -3130,7 +3132,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType === 'token') {
+	if (isFixedTextLeaf(node)) {
 		const text = node.text || undefined;
 		return text !== undefined && isDepthText(text) ? undefined : text;
 	}

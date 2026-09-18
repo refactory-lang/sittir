@@ -23,7 +23,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Pure-leaf fallback: if an entry has no fields and no children in
  * node-types.json, `render()` returns `node.$text` directly via its
  * text fast-path — no template lookup needed. This covers:
- *   - Cluster A: visible STRING-rule kinds (`token`/`keyword` modelType)
+ *   - Cluster A: visible STRING-rule kinds (`keyword`/`punctuation` modelType)
  *     whose NodeMap path is `"none"` because `classify()` maps those
  *     to `"none"`.
  *   - Cluster B: visible alias targets absent from NodeMap entirely

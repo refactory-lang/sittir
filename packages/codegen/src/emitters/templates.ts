@@ -283,7 +283,8 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): Body | undefined {
 			return emitBranchTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 		case 'enum':
 			return undefined;
 		case 'list':
@@ -1343,7 +1344,8 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 			case 'enum':
 				te.emitLeaf(node);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':

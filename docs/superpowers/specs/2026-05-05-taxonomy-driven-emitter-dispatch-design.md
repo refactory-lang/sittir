@@ -87,7 +87,7 @@ for (const [kind, node] of nodeMap.nodes) {
     case 'pattern':
     case 'keyword':
     case 'enum':
-    case 'token':
+    case 'punctuation':
       factory.leaf(node, ctx);
       from.leaf(node, ctx);
       types.leaf(node, ctx);

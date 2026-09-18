@@ -32,7 +32,8 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				templateEmitter.emitLeaf?.(node);
 				renderModuleEmitter.emitLeaf?.(node);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) {
 					templateEmitter.emitLeaf?.(node);
 					renderModuleEmitter.emitLeaf?.(node);

@@ -541,7 +541,7 @@ sites; a seat with no arm would be a site the renderer never fills.
 #### body
 
 ```text
-// Hidden kinds with `multi` or `token` modelType don't get
+// Hidden kinds with `multi` or `punctuation` modelType don't get
 // exported interfaces (types.ts excludes them from emission).
 // When their typeName was collision-renamed (e.g.,
 // `_expression_statement_tuple` → `_ExpressionStatementTuple`),
@@ -11267,11 +11267,11 @@ omits the key.
 ```
 
 ```text
-// AssembledKeyword (word-shaped tokens — modelType 'token')
+// AssembledKeyword (word-shaped literals — modelType 'keyword')
 ```
 
 ```text
-// AssembledPunctuation (non-word tokens — modelType 'token'; hidden delimiters and visible named literals)
+// AssembledPunctuation (non-word literals — modelType 'punctuation'; hidden delimiters and visible named literals)
 ```
 
 #### body

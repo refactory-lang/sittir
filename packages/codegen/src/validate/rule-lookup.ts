@@ -66,7 +66,8 @@ function classify(node: AssembledNode): RenderKindPath {
 		case 'pattern':
 		case 'enum':
 			return 'text';
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			return isWordOrVisibleTextLeaf(node) ? 'text' : 'none';
 		default:
 			return 'none';

@@ -223,12 +223,9 @@ describe('Assemble — classifyNode', () => {
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
-		// classifyNode itself only reports the shared 'token' modelType; the
-		// keyword/token split is decided downstream in assemble() by
-		// wordMatcher, and surfaces as the constructed node's own class.
 		const normalized = makeNormalized({ true: { type: STRING, value: 'true' } });
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('true');
-		expect(node?.modelType).toBe('token');
+		expect(node?.modelType).toBe('keyword');
 		expect(node).toBeInstanceOf(AssembledKeyword);
 	});
 
@@ -249,9 +246,9 @@ describe('Assemble — classifyNode', () => {
 		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
 	});
 
-	it('classifies visible non-alphanumeric string as token (T027b)', () => {
+	it('classifies visible non-alphanumeric string as punctuation', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', flatten(rule))).toBe('token');
+		expect(classifyNode('arrow', flatten(rule))).toBe('punctuation');
 	});
 
 	it('classifies enum as enum', () => {

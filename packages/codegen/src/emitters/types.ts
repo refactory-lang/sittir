@@ -430,7 +430,8 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 			case 'pattern':
 				leafKinds.push(kind);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isWordOrVisibleTextLeaf(node)) {
 					leafKinds.push(kind);
 					keywordKinds.set(kind, node.text);
@@ -588,7 +589,7 @@ function emitTreeInterfaceDeclarations(
 		const node = nodeMap.nodes.get(kind)!;
 		if (treeEmitted.has(node.typeName)) continue;
 		treeEmitted.add(node.typeName);
-		const isAnon = node.modelType === 'token';
+		const isAnon = isFixedTextLeaf(node);
 		const candidate = isAnon ? `_anonymous_${kind}` : kind;
 		const grammarKey = grammarKeys.has(candidate) ? candidate : null;
 		if (grammarKey && !isAnon) {

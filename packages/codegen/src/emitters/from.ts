@@ -1511,7 +1511,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 		this.#preambleLines = lines;
 	}
 
-	emitLeaf(node: AssembledPattern | AssembledEnum | AssembledKeyword): void {
+	emitLeaf(node: AssembledPattern | AssembledEnum | AssembledKeyword | AssembledPunctuation): void {
 		from.leaf(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 

@@ -273,7 +273,8 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
 				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 				if (isHiddenPunctuationLeaf(node)) break;
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);

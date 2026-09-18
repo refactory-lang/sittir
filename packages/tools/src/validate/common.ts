@@ -1471,7 +1471,7 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	return (kindId) => {
 		const name = kindNameFromId?.(kindId);
 		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
+		return modelType === 'pattern' || modelType === 'keyword' || modelType === 'punctuation' || modelType === 'enum';
 	};
 }
 
@@ -1988,7 +1988,7 @@ function projectArmSlot(
 		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
-	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);
+	if (typeof value === 'number' || modelType === 'keyword' || modelType === 'punctuation') return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
 		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];
