@@ -8,7 +8,7 @@ import {
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
-	AssembledToken,
+	AssembledPunctuation,
 	isNodeRef,
 	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
@@ -365,7 +365,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	];
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	const subtypeRefs = node.subtypes.filter(isNodeRef);
-	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledToken || ref.node instanceof AssembledKeyword)) {
+	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledPunctuation || ref.node instanceof AssembledKeyword)) {
 		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
 	}
 	return [

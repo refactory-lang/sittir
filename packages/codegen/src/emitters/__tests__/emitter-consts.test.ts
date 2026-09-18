@@ -6,7 +6,7 @@ import {
 	AssembledBranch,
 	AssembledPattern,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledEnum,
 	AssembledNonterminal,
 	type AssembledNode
@@ -68,7 +68,7 @@ describe('emitConsts', () => {
 	it('emits KEYWORDS and OPERATORS from token nodes', () => {
 		const nodeMap = makeNodeMap([
 			['fn', new AssembledKeyword('fn', { type: STRING, value: 'fn' })],
-			['+', new AssembledToken('+', { type: STRING, value: '+' })]
+			['+', new AssembledPunctuation('+', { type: STRING, value: '+' })]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
 		expect(output).toContain('KEYWORDS');
@@ -203,7 +203,7 @@ describe('emitConsts', () => {
 		);
 		const nodeMap = makeNodeMap([
 			['source_file', sourceFile],
-			[';', new AssembledToken(';', { type: STRING, value: ';' })]
+			[';', new AssembledPunctuation(';', { type: STRING, value: ';' })]
 		]);
 
 		const output = emitConsts({

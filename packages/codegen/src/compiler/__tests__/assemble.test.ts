@@ -25,9 +25,9 @@ import {
 	AssembledList,
 	AssembledSupertype,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	isVisibleTextLeaf,
-	isHiddenTokenLeaf,
+	isHiddenPunctuationLeaf,
 	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
@@ -242,10 +242,10 @@ describe('Assemble — classifyNode', () => {
 		const visible = nodes.get('optional_chain')!;
 		const hidden = nodes.get('_arrow')!;
 		const word = nodes.get('true')!;
-		expect(visible).toBeInstanceOf(AssembledToken);
-		expect(hidden).toBeInstanceOf(AssembledToken);
+		expect(visible).toBeInstanceOf(AssembledPunctuation);
+		expect(hidden).toBeInstanceOf(AssembledPunctuation);
 		expect([visible, hidden, word].map(isVisibleTextLeaf)).toEqual([true, false, true]);
-		expect([visible, hidden, word].map(isHiddenTokenLeaf)).toEqual([false, true, false]);
+		expect([visible, hidden, word].map(isHiddenPunctuationLeaf)).toEqual([false, true, false]);
 		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
 	});
 
@@ -1093,7 +1093,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 		// The named 'comma' PATTERN rule keeps its own classification -- the
 		// anonymous ',' literal resolving to the same catalog kind name must
-		// not overwrite it with an AssembledToken/Keyword.
+		// not overwrite it with an AssembledPunctuation/Keyword.
 		expect(nodeMap.nodes.get('comma')?.modelType).toBe('pattern');
 	});
 

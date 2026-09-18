@@ -24,7 +24,7 @@ import {
 	AssembledPolymorph,
 	AssembledSupertype,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
@@ -197,7 +197,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledToken);
+		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
@@ -333,7 +333,7 @@ export function childElementType(
 				parts.add(JSON.stringify(storage.kind));
 				continue;
 			}
-			if (storage.kind.startsWith('_') && ref instanceof AssembledToken) {
+			if (storage.kind.startsWith('_') && ref instanceof AssembledPunctuation) {
 				const visible = nodeMap.nodes.get(storage.kind.slice(1));
 				if (visible) ref = visible;
 			}

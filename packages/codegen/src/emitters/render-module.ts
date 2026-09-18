@@ -1,5 +1,5 @@
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -12,7 +12,7 @@ import {
 	AssembledKeyword,
 	AssembledPattern,
 	AssembledSupertype,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledLeaf,
 	AssembledList,
 	deriveUnnamedChildrenCardinality,
@@ -1460,7 +1460,7 @@ function emitAliasUnwrapRecurseArm(
 function aliasLeafTrialOrder(node: AssembledNode): number {
 	if (node instanceof AssembledEnum) return 0;
 	if (isWordOrVisibleTextLeaf(node)) return 1;
-	if (isHiddenTokenLeaf(node)) return 2;
+	if (isHiddenPunctuationLeaf(node)) return 2;
 	if (node instanceof AssembledPattern) return 3;
 	return -1;
 }

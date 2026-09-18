@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -61,7 +61,7 @@ import {
 	AssembledPattern,
 	AssembledEnum,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	isNodeRef,
 	storageKindIdByNameOf,
 	storageKindOfRef
@@ -716,7 +716,7 @@ function classifyKindsForResolver(
 		}
 		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isWordOrVisibleTextLeaf(n)) {
 			leafKinds.push(t);
-		} else if (isHiddenTokenLeaf(n)) {
+		} else if (isHiddenPunctuationLeaf(n)) {
 			tokenKinds.push(t);
 		} else {
 			branchKinds.push(t);

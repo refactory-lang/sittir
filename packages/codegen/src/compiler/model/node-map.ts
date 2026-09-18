@@ -1440,23 +1440,23 @@ export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNo
 	return node;
 }
 
-export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledEnum {
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledEnum {
 	return node.storage === 'kindId';
 }
 
-export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
-export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isFixedTextLeaf(node) && !node.hidden;
 }
 
-export function isHiddenTokenLeaf(node: AssembledNode): node is AssembledToken {
-	return node instanceof AssembledToken && node.hidden;
+export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.hidden;
 }
 
-export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
 }
 
@@ -1752,7 +1752,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule> {
+export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
@@ -1968,7 +1968,7 @@ export type AssembledNode =
 	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword
-	| AssembledToken
+	| AssembledPunctuation
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledList;

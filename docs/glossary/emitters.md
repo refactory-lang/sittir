@@ -11250,7 +11250,7 @@ omits the key.
 ```
 
 ```text
-// AssembledToken (non-word tokens — modelType 'token'; hidden delimiters and visible named literals)
+// AssembledPunctuation (non-word tokens — modelType 'token'; hidden delimiters and visible named literals)
 ```
 
 #### body
@@ -14593,7 +14593,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  slot instead of composing a child factory. Two shapes reach it: a
  *  literal branch of the slot (`op: choice('and', 'or')` yields one per
  *  string), and a reference to a factoryless value kind — an
- *  AssembledKeyword or AssembledToken whose whole body is a fixed literal,
+ *  AssembledKeyword or AssembledPunctuation whose whole body is a fixed literal,
  *  which owns a kind identity but has no factory to call. The arm carries
  *  the value's stamped `storage` and nothing else: its text, and — for a
  *  value that resolved to a kind — that kind and its id. What the emitter
@@ -14936,7 +14936,7 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
 /** The value's stamped storage when it seats text or a kind id, or
  *  `undefined` when it stores a node — a node-storage value composes a
  *  child factory (a NodeArm) and is never a value arm. Factoryless
- *  AssembledKeyword / AssembledToken references arrive here already
+ *  AssembledKeyword / AssembledPunctuation references arrive here already
  *  stamped `kindId` by `classifyValueStorage`; everything else that lacks
  *  a factory — supertypes above all — has no value to seat and stays
  *  skipped by the caller's own test. */

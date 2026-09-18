@@ -170,7 +170,7 @@ parents.
 #### body
 
 ```text
-// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledToken)
+// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledPunctuation)
 // build off the SIMPLIFIED rule: simplify's literal-only fold
 // (`collectFixedLiteral` via `isAllTextRender`) is what produces the
 // STRING body these leaves read. A kind's lexical facts
@@ -332,7 +332,7 @@ parents.
 
 ```text
 // A literal-bodied kind is an `AssembledKeyword` only when its text is
-// word-shaped. Every other literal is an `AssembledToken`, hidden when the
+// word-shaped. Every other literal is an `AssembledPunctuation`, hidden when the
 // kind is anonymous or a `_` rule and visible when it is a named parser kind
 // (a catalog entry that is neither anonymous nor a hidden `_` rule):
 // `unit_expression`, `never_type`, `empty_statement`, `ellipsis`,
@@ -613,7 +613,7 @@ parents.
 
 ```text
 // Same catalog-first resolution `collectAnonymousNodes` keys its
-// minted AssembledKeyword/AssembledToken nodes by — this literal's
+// minted AssembledKeyword/AssembledPunctuation nodes by — this literal's
 // NodeMap key is the catalog row's kind name when one exists (e.g.
 // `$` may dedupe under a sanitized/named catalog entry), not the
 // raw literal text. Returning the raw text here when a resolved
@@ -900,7 +900,7 @@ parents.
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
  * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
- * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
+ * concrete class, `AssembledKeyword` or `AssembledPunctuation`, to construct —
  * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
  * here).
  *
@@ -965,7 +965,7 @@ parents.
 #### body
 
 ```text
-// The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
+// The keyword-vs-token split (AssembledKeyword vs AssembledPunctuation, honouring
 // the grammar's `word` rule via matchesWordShape) happens in assemble()'s
 // own switch on this function's 'token' return value, not here.
 ```
@@ -10824,7 +10824,7 @@ second, id-suffixed fallback.
 
 ```text
 // Resolve through the catalog — the same resolution AssembledKeyword/
-// AssembledToken's own constructor uses to stamp resolvedKind/resolvedKindId
+// AssembledPunctuation's own constructor uses to stamp resolvedKind/resolvedKindId
 // — so the minted node is keyed by the catalog row's kind name, not the
 // literal's raw text: tree-sitter often sanitizes or dedupes anonymous
 // literals under a different name (`,` → `comma`) — keying by raw text mints

@@ -1,5 +1,5 @@
 import type { VariantChild } from './variant-structural.ts';
-import { isHiddenTokenLeaf } from './model/node-map.ts';
+import { isHiddenPunctuationLeaf } from './model/node-map.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -49,7 +49,7 @@ import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
@@ -198,7 +198,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					kind,
 					matchesWordShape(simplifiedRule.value, wordMatcherRegex)
 						? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
-						: new AssembledToken(kind, simplifiedRule, { hidden: !named, kindEntries })
+						: new AssembledPunctuation(kind, simplifiedRule, { hidden: !named, kindEntries })
 				);
 				break;
 			}
@@ -685,7 +685,7 @@ interface _UserFacingCtx {
 
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
-	if (isHiddenTokenLeaf(node)) {
+	if (isHiddenPunctuationLeaf(node)) {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
@@ -724,7 +724,7 @@ function renameCollidingHiddenKinds(
 	typeName: string,
 	diagnostics: AssembleDiagnosticsCollector
 ): void {
-	const hasNonTokenVisible = visible.some((n) => !isHiddenTokenLeaf(n));
+	const hasNonTokenVisible = visible.some((n) => !isHiddenPunctuationLeaf(n));
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
@@ -890,7 +890,7 @@ function collectAnonymousNodes(
 				new AssembledKeyword(catalogEntry.kind, syntheticStringRule, { hidden: true, kindEntries })
 			);
 		} else {
-			nodes.set(catalogEntry.kind, new AssembledToken(catalogEntry.kind, syntheticStringRule, { kindEntries }));
+			nodes.set(catalogEntry.kind, new AssembledPunctuation(catalogEntry.kind, syntheticStringRule, { kindEntries }));
 		}
 	}
 }

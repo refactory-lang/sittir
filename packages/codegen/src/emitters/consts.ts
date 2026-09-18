@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
@@ -7,7 +7,7 @@ import {
 	AssembledPattern,
 	AssembledEnum,
 	AssembledKeyword,
-	AssembledToken
+	AssembledPunctuation
 } from '../compiler/model/node-map.ts';
 import type { GeneratedIdEntry, GeneratedIdTable, GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -45,7 +45,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 		} else if (isWordOrVisibleTextLeaf(node)) {
 			leafKinds.push(kind);
 			keywords.push(kind);
-		} else if (isHiddenTokenLeaf(node)) {
+		} else if (isHiddenPunctuationLeaf(node)) {
 			operators.push(kind);
 		}
 	}

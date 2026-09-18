@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -13,7 +13,7 @@ import type {
 import {
 	AssembledBranch,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledEnum,
 	AssembledSupertype,
 	isNodeRef,
@@ -54,7 +54,7 @@ export function isAuthoredCompound(
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
-export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledPattern | AssembledEnum {
+export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
 	return isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
@@ -88,7 +88,7 @@ export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, str
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!kind.startsWith('_')) continue;
 		if (!node.userFacing) continue;
-		if (node instanceof AssembledToken) continue;
+		if (node instanceof AssembledPunctuation) continue;
 		const visible = kind.replace(/^_+/, '');
 		if (visible.length === 0) continue;
 		if (nodeMap.nodes.has(visible)) continue;
@@ -149,7 +149,7 @@ function _identOrQuoted(name: string): string {
 export function resolveHiddenKeywordLeaf(
 	kindName: string,
 	nodeMap: NodeMap
-): AssembledKeyword | AssembledToken | undefined {
+): AssembledKeyword | AssembledPunctuation | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
 	if (node === undefined) return undefined;
@@ -365,7 +365,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 		for (const member of storage.members) push(member.kind, member.kindId, member.text);
 		return true;
 	};
-	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledToken): boolean => {
+	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledPunctuation): boolean => {
 		const text = node.text;
 		const { kindName, kindId } = keywordRefWireIdentity(value, node);
 		if (kindName === undefined || text === undefined) return false;
@@ -390,7 +390,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			if (!seatMembers(value)) sawNodeArm = true;
 			return;
 		}
-		if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+		if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
 			if (!seatKeyword(value, node)) sawNodeArm = true;
 			return;
 		}
@@ -411,7 +411,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 				if (!seatMembers(value)) verbatim = true;
 				continue;
 			}
-			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+			if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
 				if (!seatKeyword(value, node)) verbatim = true;
 				continue;
 			}
@@ -739,7 +739,7 @@ export function classifyFactoryShape(
 ): FactoryShape | null {
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node))
 		return 'text';
-	if (isHiddenTokenLeaf(node)) return options?.includeTokenText ? 'text' : null;
+	if (isHiddenPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
@@ -795,7 +795,7 @@ export function warnSkippedParserSymbol(
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
-	return kind.startsWith('_') && !(node instanceof AssembledToken);
+	return kind.startsWith('_') && !(node instanceof AssembledPunctuation);
 }
 
 export interface FactoryDispatchContext extends ParserSymbolDispatchContext {
@@ -881,7 +881,7 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	if (isHiddenTokenLeaf(node) || node instanceof AssembledSupertype) return false;
+	if (isHiddenPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
 	return true;
 }
 

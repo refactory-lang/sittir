@@ -460,7 +460,7 @@ the model reaches every value shape and every subtype without further edits.
 	 * Structural getter — replaces the former `markParameterlessKinds`
 	 * fixpoint pass. Two classes of parameterless kinds:
 	 *
-	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledToken`):
+	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledPunctuation`):
 	 *   overridden to return `true` unconditionally (or conditionally for
 	 *   tokens — only `string`-rule tokens are parameterless).
 	 * - **Parameterless compounds** (any `AbstractAssembledCompound` subclass —
@@ -540,7 +540,7 @@ the model reaches every value shape and every subtype without further edits.
 	 * - **Parameterless compound**: factory-call string
 	 *   (e.g. `"breakExpression()"`). Returns the full NodeData.
 	 *
-	 * Overridden by `AssembledKeyword`, `AssembledToken` (constructors set
+	 * Overridden by `AssembledKeyword`, `AssembledPunctuation` (constructors set
 	 * a backing field); compounds derive from `rawFactoryName`.
 	 */
 ```
@@ -1207,7 +1207,7 @@ flatten and simplify joins use.
 	 * tokens and non-immediate `token(...)` wrappers return false.
 	 *
 	 * NOTE: distinct from the `modelType === 'token'` classification —
-	 * an `AssembledToken` exists for every classified token kind whether
+	 * an `AssembledPunctuation` exists for every classified token kind whether
 	 * or not its rule was wrapped in a `TokenRule`. This getter reports
 	 * the wrapper status, not the model classification.
 	 */
@@ -2152,7 +2152,7 @@ from the model instead of recovering them from the subtype's name.
  *  (a choice of leaf-shaped members — a node holding one union slot),
  *  `'supertype'` (`AssembledSupertype`: a collection of subtypes with no
  *  slot; never a polymorph), `'enum'` (closed set of literals),
- *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledToken`
+ *  `'token'` (a single fixed literal — `AssembledKeyword`/`AssembledPunctuation`
  *  share this discriminant, distinguished by their `word` getter), `'pattern'`
  *  (open regex/text-shaped leaf), `'list'` (a repeated element with genuine
  *  per-instance separator variability). A closed
@@ -2234,7 +2234,7 @@ a pass rebuilds.
 	 *
 	 * Rules:
 	 * - Visible kinds (not `_`-prefixed) — always user-facing UNLESS the
-	 *   node is an `AssembledToken` (anonymous single-literal delimiter
+	 *   node is an `AssembledPunctuation` (anonymous single-literal delimiter
 	 *   with no API surface), and even then only when it is a
 	 *   variant-child kind. A hidden tree-sitter-inlined repeat helper is,
 	 *   by construction, `_`-prefixed — it falls out through the
@@ -2442,7 +2442,7 @@ A fixed-text leaf that is not hidden: a visible kind that owns a factory and
 a type. Visibility is the leaf's `hidden` attribute, never its class; the
 class answers only whether the text is word-shaped.
 
-### `packages/codegen/src/compiler/model/node-map.ts::isHiddenTokenLeaf`
+### `packages/codegen/src/compiler/model/node-map.ts::isHiddenPunctuationLeaf`
 
 A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
 Emitters that skip factories and types for delimiters ask this, so a visible
@@ -2452,7 +2452,7 @@ non-word literal is not skipped with them.
 
 A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
 keyword of either visibility, or a visible non-word token. It is the
-complement of `isHiddenTokenLeaf` within the fixed-text leaves.
+complement of `isHiddenPunctuationLeaf` within the fixed-text leaves.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
@@ -2746,13 +2746,13 @@ the rule shape.
  *   - `AssembledPattern` — open text, optionally regex-validated
  *     (e.g. `identifier`, `integer_literal`)
  *   - `AssembledKeyword` — single fixed named string (e.g. `"fn"`)
- *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
+ *   - `AssembledPunctuation` — single fixed anonymous delimiter (e.g. `"{"`)
  *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
  *
  * The base intentionally has no `modelType` of its own — each concrete
  * subclass declares its own discriminant string: `'pattern'` for
  * `AssembledPattern`, `'enum'` for `AssembledEnum`, and `'token'` for
- * BOTH `AssembledKeyword` and `AssembledToken` — a named single literal
+ * BOTH `AssembledKeyword` and `AssembledPunctuation` — a named single literal
  * and an anonymous single literal are not distinguished by modelType,
  * only by the `word` getter (`true` on Keyword, `false` on Token, both
  * overriding the base's `false` default).
@@ -2819,13 +2819,13 @@ the rule shape.
 // stamping) — the literal-text lookup genuinely still fires here.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.resolvedKindId`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.resolvedKindId`
 
 ```text
 /** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.constructor`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.constructor`
 
 A fixed-text leaf whose text is not word-shaped. `hidden` defaults to true
 (an anonymous or `_`-prefixed delimiter); `assemble` passes `hidden: false`
@@ -2837,13 +2837,13 @@ for a named non-word literal kind so it keeps its factory and type.
 // SYNTHESIZED StringRule (never link-stamped) — literal-text lookup.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.parameterless`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.parameterless`
 
 ```text
 // No emitFactory — tokens are always hidden, no factoryName.
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.storage`
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation.storage`
 
 ```text
 /** A token is always fixed text: identity is the value. Whether it is a

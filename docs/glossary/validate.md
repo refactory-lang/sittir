@@ -200,7 +200,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 		   polymorph is an envelope whose sole slot is a union; 'supertype' is
 		   its own model type and dispatches to the subtype's template.
 		   'token' is 'text' for a word-shaped keyword or a visible token (a named
-		   non-word literal) — a hidden `AssembledToken` (an anonymous or
+		   non-word literal) — a hidden `AssembledPunctuation` (an anonymous or
 		   `_`-prefixed delimiter) has no rendered surface of its own. */
 ```
 

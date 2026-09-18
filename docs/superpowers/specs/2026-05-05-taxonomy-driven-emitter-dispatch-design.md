@@ -20,7 +20,7 @@ modelType
 ├── pattern            (AssembledPattern extends AssembledLeaf, was modelType: 'leaf')
 ├── keyword            (AssembledKeyword extends AssembledLeaf)
 ├── enum               (AssembledEnum extends AssembledLeaf)
-├── token              (AssembledToken extends AssembledLeaf)
+├── token              (AssembledPunctuation extends AssembledLeaf)
 ├── branch
 │   ├── singleSlot     (exactly one slot — named OR unnamed, no other slots)
 │   │   ├── singular

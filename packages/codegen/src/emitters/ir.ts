@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
@@ -8,7 +8,7 @@ import {
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPattern,
-	AssembledToken,
+	AssembledPunctuation,
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
@@ -110,7 +110,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (
 				sub instanceof AssembledSupertype ||
 				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted === true) ||
-				isHiddenTokenLeaf(sub)
+				isHiddenPunctuationLeaf(sub)
 			)
 				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
