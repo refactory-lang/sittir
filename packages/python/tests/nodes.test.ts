@@ -2979,8 +2979,7 @@ describe('keyword_pattern sub-factories', () => {
 	});
 	it('true builds the parent', () => {
 		const node = ir.keywordPattern.true({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any]
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBe(TSKindId.True);
@@ -2988,8 +2987,7 @@ describe('keyword_pattern sub-factories', () => {
 	});
 	it('false builds the parent', () => {
 		const node = ir.keywordPattern.false({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ $type: TSKindId.False, $text: 'False', $source: 2, $named: true } as any]
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBe(TSKindId.False);
@@ -2997,8 +2995,7 @@ describe('keyword_pattern sub-factories', () => {
 	});
 	it('none builds the parent', () => {
 		const node = ir.keywordPattern.none({
-			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ $type: TSKindId.None, $text: 'None', $source: 2, $named: true } as any]
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBe(TSKindId.None);

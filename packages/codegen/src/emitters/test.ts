@@ -338,6 +338,7 @@ function subFactoryCallArgs(
 	if (seatsConfigChild(sub, nodeMap)) {
 		return objectFrom([...residualParts, `${sub.slot.configKey}: ${childArgs === '' ? '{}' : childArgs}`]);
 	}
+	if (child.parameterless) return objectFrom(residualParts);
 	const tuple = childArgs === '' ? '[]' : `[${childArgs}]`;
 	return objectFrom([...residualParts, `${sub.slot.configKey}: ${tuple}`]);
 }
