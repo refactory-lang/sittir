@@ -113,6 +113,32 @@ function polymorphNodeMap(): NodeMap {
 	});
 }
 
+function parameterlessArmNodeMap(): NodeMap {
+	return buildNodeMap({
+		root: { type: SYMBOL, name: 'pair' },
+		pair: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'first', content: { type: SYMBOL, name: 'identifier' } },
+				{
+					type: FIELD,
+					name: 'content',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'kw_self' },
+							{ type: SYMBOL, name: 'kw_super' }
+						]
+					}
+				}
+			]
+		},
+		kw_self: { type: STRING, value: 'self' },
+		kw_super: { type: STRING, value: 'super' },
+		identifier: { type: PATTERN, value: '[a-z]+' }
+	});
+}
+
 function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap({
 		grandparent_c: {
@@ -184,6 +210,14 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).toContain(
 			"	plus: { strict: annotated$plus(F.buildAnnotated, 'plus'), coerce: annotated$plus(C.coerceToAnnotated, 'plus') },"
 		);
+	});
+
+	it('stamps a parameterless child into its slot instead of asking the caller for an empty argument tuple', () => {
+		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
+
+		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>");
+		expect(text).toContain('{ ...config, content: _c(child)() }');
+		expect(text).not.toContain('_c(child)(...seated)');
 	});
 
 	it('prints an emit diagnostic for a skipped sub-factory on its own console.warn channel', () => {

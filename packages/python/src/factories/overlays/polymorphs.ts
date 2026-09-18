@@ -3273,22 +3273,16 @@ const keywordPattern$concatenatedString =
 	};
 const keywordPattern$true =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, value: _c(child)() });
 const keywordPattern$false =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, value: _c(child)() });
 const keywordPattern$none =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
-		const { value: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'value'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, value: _c(child)() });
 const keywordPattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -3462,26 +3456,26 @@ export const keywordPattern: typeof B.keywordPattern & {
 	};
 	true: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildTrue> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof C.coerceToTrue> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	false: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildFalse> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof C.coerceToFalse> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	none: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof F.buildNone> }
+			config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & { value: ArgsOf<typeof C.coerceToNone> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'>
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
 	};
 	negative: {
@@ -4028,22 +4022,16 @@ const keyValuePattern$concatenatedString =
 	};
 const keyValuePattern$true =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, key: _c(child)() });
 const keyValuePattern$false =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, key: _c(child)() });
 const keyValuePattern$none =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'key'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, key: _c(child)() });
 const keyValuePattern$negative =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -4205,26 +4193,26 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	};
 	true: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildTrue> }
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToTrue> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	false: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildFalse> }
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToFalse> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	none: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNone> }
+			config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNone> }
+			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
 	};
 	negative: {

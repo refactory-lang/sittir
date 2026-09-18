@@ -14473,6 +14473,21 @@ The strict/coerce expression pair for an arm: a direct child uses its own factor
 A flattened arm through a hoisted child references that child's private
 wiring const under the same `<childKey>.<path>` spelling.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
+
+The method text and parameter type of one sub-factory arm, chosen by what the
+arm supplies. A value arm stamps its literal into the slot. A node arm with no
+residual keys forwards the child's own arguments. A node arm whose child merges
+its keys into the parent's config, or whose child takes a single config
+argument, reads that argument. A node arm whose child is `parameterless` has
+no argument to receive: it takes only the parent's remaining keys and stamps
+`child()` into the slot the way a value arm stamps its literal, so a keyword
+or punctuation arm (`attribute.self`, `rangePattern.withLeft.bare`) is called
+with the parent's config alone. Every other node arm takes the slot's key as
+the child's argument tuple and spreads it. The arity is the model's
+`parameterless` stamp, the fact the factories emitter reads for a zero-argument
+factory; the overlay never re-derives it.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::spliceShape`
 
 The method behind a splice seat. For a config parent: partition the

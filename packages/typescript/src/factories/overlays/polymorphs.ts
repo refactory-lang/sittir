@@ -1710,10 +1710,8 @@ const typePredicate$identifier =
 	};
 const typePredicate$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'name'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, name: _c(child)() });
 export const typePredicate: typeof B.typePredicate & {
 	identifier: {
 		strict: (
@@ -1727,10 +1725,10 @@ export const typePredicate: typeof B.typePredicate & {
 	};
 	this: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'> & { name: ArgsOf<typeof F.buildThis> }
+			config: OmitEach<ArgsOf<typeof F.buildTypePredicate>[0], 'name'>
 		) => ReturnType<typeof F.buildTypePredicate>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'> & { name: ArgsOf<typeof C.coerceToThis> }
+			config: OmitEach<ArgsOf<typeof C.coerceToTypePredicate>[0], 'name'>
 		) => ReturnType<typeof C.coerceToTypePredicate>;
 	};
 } = {
@@ -2750,21 +2748,15 @@ export const arrowFunction: typeof B.arrowFunction & {
 
 const callExpressionCall$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, function: _c(child)() });
 const callExpressionCall: {
 	import: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildCallExpressionCall>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildImport>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildCallExpressionCall>[0], 'function'>
 		) => ReturnType<typeof F.buildCallExpressionCall>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToCallExpressionCall>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToImport>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToCallExpressionCall>[0], 'function'>
 		) => ReturnType<typeof C.coerceToCallExpressionCall>;
 	};
 } = {
@@ -2877,10 +2869,8 @@ const memberExpression$dot =
 		_p<ReturnType<PF>>(parent)({ ...config, separator: value });
 const memberExpression$optionalChain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'separator'> & { separator: ArgsOf<CF> }): ReturnType<PF> => {
-		const { separator: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, separator: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'separator'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, separator: _c(child)() });
 export const memberExpression: typeof B.memberExpression & {
 	dot: {
 		strict: (
@@ -2892,14 +2882,10 @@ export const memberExpression: typeof B.memberExpression & {
 	};
 	optionalChain: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMemberExpression>[0], 'separator'> & {
-				separator: ArgsOf<typeof F.buildOptionalChain>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildMemberExpression>[0], 'separator'>
 		) => ReturnType<typeof F.buildMemberExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMemberExpression>[0], 'separator'> & {
-				separator: ArgsOf<typeof C.coerceToOptionalChain>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToMemberExpression>[0], 'separator'>
 		) => ReturnType<typeof C.coerceToMemberExpression>;
 	};
 } = {
@@ -7207,19 +7193,15 @@ export const typeAliasDeclaration: typeof B.typeAliasDeclaration & {
 
 const requiredParameter$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'pattern'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, pattern: _c(child)() });
 export const requiredParameter: typeof B.requiredParameter & {
 	this: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildRequiredParameter>[0], 'pattern'> & { pattern: ArgsOf<typeof F.buildThis> }
+			config: OmitEach<ArgsOf<typeof F.buildRequiredParameter>[0], 'pattern'>
 		) => ReturnType<typeof F.buildRequiredParameter>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToRequiredParameter>[0], 'pattern'> & {
-				pattern: ArgsOf<typeof C.coerceToThis>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToRequiredParameter>[0], 'pattern'>
 		) => ReturnType<typeof C.coerceToRequiredParameter>;
 	};
 } = {
@@ -7232,19 +7214,15 @@ export const requiredParameter: typeof B.requiredParameter & {
 
 const optionalParameter$this =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'pattern'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, pattern: _c(child)() });
 export const optionalParameter: typeof B.optionalParameter & {
 	this: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildOptionalParameter>[0], 'pattern'> & { pattern: ArgsOf<typeof F.buildThis> }
+			config: OmitEach<ArgsOf<typeof F.buildOptionalParameter>[0], 'pattern'>
 		) => ReturnType<typeof F.buildOptionalParameter>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToOptionalParameter>[0], 'pattern'> & {
-				pattern: ArgsOf<typeof C.coerceToThis>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToOptionalParameter>[0], 'pattern'>
 		) => ReturnType<typeof C.coerceToOptionalParameter>;
 	};
 } = {
@@ -7257,10 +7235,8 @@ export const optionalParameter: typeof B.optionalParameter & {
 
 const typeQueryCallExpressionInTypeAnnotation$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, function: _c(child)() });
 const typeQueryCallExpressionInTypeAnnotation$typeQueryMemberExpressionInTypeAnnotation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & ArgsOf<CF>[0]): ReturnType<PF> => {
@@ -7275,14 +7251,10 @@ const typeQueryCallExpressionInTypeAnnotation$typeQueryMemberExpressionInTypeAnn
 export const typeQueryCallExpressionInTypeAnnotation: typeof B.typeQueryCallExpressionInTypeAnnotation & {
 	import: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildImport>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>[0], 'function'>
 		) => ReturnType<typeof F.buildTypeQueryCallExpressionInTypeAnnotation>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToImport>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>[0], 'function'>
 		) => ReturnType<typeof C.coerceToTypeQueryCallExpressionInTypeAnnotation>;
 	};
 	typeQueryMemberExpressionInTypeAnnotation: {
@@ -7643,10 +7615,8 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 
 const typeQueryCallExpression$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, function: _c(child)() });
 const typeQueryCallExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
@@ -7690,14 +7660,10 @@ const typeQueryCallExpression$typeQuerySubscriptExpression =
 export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 	import: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildImport>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'>
 		) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToImport>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'>
 		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 	};
 	identifier: {
@@ -7804,10 +7770,8 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 
 const typeQueryInstantiationExpression$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
-		const { function: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
-	};
+	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, function: _c(child)() });
 const typeQueryInstantiationExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
@@ -7851,14 +7815,10 @@ const typeQueryInstantiationExpression$typeQuerySubscriptExpression =
 export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationExpression & {
 	import: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-				function: ArgsOf<typeof F.buildImport>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'>
 		) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-				function: ArgsOf<typeof C.coerceToImport>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'>
 		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 	};
 	identifier: {
