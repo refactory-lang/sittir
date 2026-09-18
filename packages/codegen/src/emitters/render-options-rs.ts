@@ -4,7 +4,7 @@ import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
-import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf } from '../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toPascal } from './kind-discriminant.ts';
@@ -13,10 +13,6 @@ import { rustStringLiteral } from './render-body.ts';
 import { rustFieldIdent, rustTypeIdent } from './transport-common.ts';
 import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
 
-/** How firmly a site's table default holds against the mark meeting it at
- *  the same gap: a declared value (a preference or token-default row, a
- *  keyword's word-default, or a value set on the node) outranks a cascaded one (the edge token's face
- *  reaching the kind edge), which outranks the bare fallback. */
 export type SeamStrength = 0 | 1 | 2;
 
 export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
@@ -27,8 +23,13 @@ export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 			return 2;
 		case 'cascade':
 			return 1;
-		default:
+		case 'fallback':
+		case undefined:
 			return 0;
+		default: {
+			const unreachable: never = origin;
+			return unreachable;
+		}
 	}
 }
 
@@ -405,7 +406,43 @@ function resolveTests(plan: RenderOptionsPlan, kindEntries: readonly KindEntryLi
 	return L;
 }
 
-export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string {
+interface EdgeSlotRow {
+	readonly site: number;
+	readonly defaultId: number;
+	readonly strength: SeamStrength;
+}
+
+interface EdgeSiteRow {
+	readonly kind: number;
+	readonly before?: EdgeSlotRow;
+	readonly after?: EdgeSlotRow;
+}
+
+function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
+	const byKind = new Map<number, { before?: EdgeSlotRow; after?: EdgeSlotRow }>();
+	const ambiguous = new Set<number>();
+	plan.spacingSites.forEach((row, site) => {
+		const seam = parseSeamLabel(row.address);
+		if (seam === undefined || seam.token !== row.kind) return;
+		const id = findEntryForKindName(kindEntries, row.kind)?.id;
+		if (id === undefined) return;
+		const edges = byKind.get(id) ?? {};
+		if (edges[seam.side] !== undefined) ambiguous.add(id);
+		byKind.set(id, { ...edges, [seam.side]: { site, defaultId: row.defaultId, strength: row.strength } });
+	});
+	return [...byKind.entries()]
+		.filter(([id]) => !ambiguous.has(id))
+		.sort(([a], [b]) => a - b)
+		.map(([kind, edges]) => ({ kind, ...edges }));
+}
+
+function edgeSlotText(slot: EdgeSlotRow | undefined): string {
+	return slot === undefined
+		? '::sittir_core::options::EdgeSlot::NONE'
+		: `::sittir_core::options::EdgeSlot { site: ${slot.site}, default_arm: ${slot.defaultId}, strength: ${slot.strength} }`;
+}
+
+export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly IdEntry[]): string {
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
@@ -429,6 +466,12 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		'}',
 		''
 	);
+	L.push('/// (kind id, before site, after site) of every kind that owns edge seams, sorted by kind id, so a coordinate meets the seams a rendered node writes.');
+	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
+	for (const e of edgeSitesOf(plan, kindEntries)) {
+		L.push(`    ::sittir_core::options::EdgeSite { kind: ${e.kind}, before: ${edgeSlotText(e.before)}, after: ${edgeSlotText(e.after)} },`);
+	}
+	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
@@ -456,6 +499,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
+	L.push('        edges: EDGE_SITES,');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');

@@ -28892,7 +28892,7 @@ impl ::sittir_core::view::KindOf for EscapeSequenceTransport {
 
 impl ::sittir_core::render::Render for EscapeSequenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -28984,7 +28984,7 @@ impl ::sittir_core::view::KindOf for NotEscapeSequenceTransport {
 
 impl ::sittir_core::render::Render for NotEscapeSequenceTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -34364,7 +34364,7 @@ impl ::sittir_core::view::KindOf for _StringContentTransport {
 
 impl ::sittir_core::render::Render for _StringContentTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -34456,7 +34456,7 @@ impl ::sittir_core::view::KindOf for EscapeInterpolationTransport {
 
 impl ::sittir_core::render::Render for EscapeInterpolationTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
     }
 }
 
@@ -34548,7 +34548,7 @@ impl ::sittir_core::view::KindOf for StringEndTransport {
 
 impl ::sittir_core::render::Render for StringEndTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
     }
 }
 

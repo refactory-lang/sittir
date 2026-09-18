@@ -11,6 +11,12 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
+function immediateClosingDelimiter(original: unknown) {
+	const seqMembers = (original as { members: unknown[] }).members;
+	const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
+	return { ...(original as object), members: [...seqMembers.slice(0, -1), token.immediate(last.value!)] };
+}
+
 const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
@@ -229,6 +235,7 @@ export default grammar(
 				// A space after the substitution's `}` changes the template text. The edge
 				// sits in every string-interior context, so no neighbour immediacy reaches it.
 				template_substitution: { after: preference('tight') },
+				template_type: { after: preference('tight') },
 
 				// Unary `!` is a normal token seam (`! x` compiles fine), and
 				// the undeclared default is space — confirmed via a factory
@@ -689,14 +696,9 @@ export default grammar(
 					})
 				}),
 
-				template_string: ($, original) => {
-					const seqMembers = (original as { members: unknown[] }).members;
-					const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
-					return {
-						...(original as object),
-						members: [...seqMembers.slice(0, -1), token.immediate(last.value!)]
-					};
-				},
+				template_string: ($, original) => immediateClosingDelimiter(original),
+				template_literal_type: ($, original) => immediateClosingDelimiter(original),
+				template_type: ($) => seq(token.immediate('${'), choice($.primary_type, $.infer_type), '}'),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no

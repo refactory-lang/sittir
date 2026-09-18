@@ -4073,7 +4073,7 @@ export function buildLineComment(
 }
 
 export function buildBlockComment(
-	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'
+	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
 ): T.BlockComment.Built {
 	const _content = value;
 	return withMethods(
@@ -4084,7 +4084,8 @@ export function buildBlockComment(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*') => buildBlockComment(value)
+					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) =>
+						buildBlockComment(value)
 				}
 			},
 			{

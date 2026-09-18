@@ -435,11 +435,12 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
-`origin` is the one annotation here that is deliberately NOT allowed to decide
-emitted output, unlike every other field this type carries: it names where a
-seam choice's resolved default arm came from, stamped by
-`render-rules.ts::whitespaceChoice` alongside `default: true` and read back
-only by the template emitter's seam census (`render-rules.ts::originOfSeamChoice`).
+`origin` names where a seam choice's resolved default arm came from, stamped by
+`render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
+an arm or changes a rendered value: it is read back by the template emitter's
+seam census (`render-rules.ts::originOfSeamChoice`) and by
+`render-options-rs.ts::seamStrength`, which turns it into the site's strength,
+how firmly the default holds against the mark meeting it at the same gap.
 It rides in `RuleAnnotations` because that is the existing channel a
 `whitespaceChoice` member already carries per-arm facts on, not because it is
 meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |

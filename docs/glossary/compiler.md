@@ -3749,6 +3749,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 
 The ref's own annotations survive the splice, merged over the body's: a fact stamped on the occurrence (`hoisted` on a variant deposit whose body is a single hidden symbol, `variant`/`variantOf` on an arm) describes the occurrence, not the rule being inlined, and dropping it would silently change how the host classifies.
 
+An external is never inlined: a ref to an external keeps its symbol even when the external carries a renderAs body and is stamped `inline`, so the parent slot still names the external kind instead of the body's pattern.
+
 ### `packages/codegen/src/compiler/link.ts::cyclicInlineTargets`
 
 ```text

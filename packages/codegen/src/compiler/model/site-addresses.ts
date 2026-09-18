@@ -129,10 +129,6 @@ export function matchAddressWith<T extends SiteAddressInput>(
 	return out;
 }
 
-/// Only a grammar-wide (`_`-scope) token face cascades onto a kind edge: a
-/// kind-scoped literal row names the token's interior seam in that kind, and
-/// must not reach the exterior edge of a kind that closes with the same
-/// literal it opened with.
 function isWildcardHead(address: readonly PreferenceSegment[]): boolean {
 	const head = address[0];
 	return head !== undefined && (head.kind === 'wildcard' || (head.kind === 'kind-match' && head.name === '_'));

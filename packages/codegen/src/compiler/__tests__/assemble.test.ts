@@ -30,6 +30,7 @@ import {
 	isHiddenPunctuationLeaf,
 	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
+import { makeNormalized } from './make-normalized.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -40,51 +41,6 @@ import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.
 // applies flattenRules before assembling.
 function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(flatten(rule)).filter((s) => !s.isUnnamed);
-}
-
-function makeNormalized(
-	rules: Record<string, Rule<'link'>>,
-	overrides?: Partial<SimplifiedGrammar>
-): SimplifiedGrammar {
-	const stamped = Object.fromEntries(
-		Object.entries(rules).map(([name, rule]) => [
-			name,
-			rule.hidden === undefined ? { ...rule, hidden: name.startsWith('_') } : rule
-		])
-	);
-	const normalizedRules = flattenRules(stamped);
-	const simplifiedRules = computeSimplifiedRules(
-		new SimplifyCtx({
-			grammar: makeNormalizedGrammar(normalizedRules),
-			diagnostics: new DiagnosticSink()
-		})
-	);
-	// If topLevelAliasBodies are provided, thread them through the same pipeline
-	// so their canonical snapshots are available under the alias kind name.
-	if (overrides?.topLevelAliasBodies) {
-		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
-		const aliasBodiesRender = flattenRules(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(
-			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
-		);
-		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
-			const own = normalizedRules[kind];
-			normalizedRules[kind] = own === undefined ? rule : { ...rule, hidden: own.hidden, inlinedFrom: own.inlinedFrom };
-		}
-		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
-			simplifiedRules[kind] = rule;
-		}
-	}
-	return {
-		name: 'test',
-		normalizedRules,
-		rules: simplifiedRules,
-		supertypes: new Set(),
-		factoryInline: new Set(),
-		word: null,
-		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
-		...overrides
-	};
 }
 
 describe('Assemble — simplifyRule', () => {

@@ -3157,6 +3157,19 @@ function calls `w.adjacent()` before its body. That call is inside the
 trivia-wrapped render function so factory-attached leading trivia still
 seams normally before adjacency applies to the token text itself.
 
+### `packages/codegen/src/emitters/render-module.ts::isImmediateLeaf`
+
+A leaf declared immediate in the grammar. The single predicate both the
+typed render function and the leaf's own `Render` impl read, so a leaf
+rendered as a child and a leaf rendered through its own `Render` agree on
+whether adjacency is marked.
+
+### `packages/codegen/src/emitters/render-module.ts::leafRenderExpr`
+
+The leaf's own `Render` body: its text write, preceded by `w.adjacent()` for
+an immediate leaf. Without the mark, a fragment following an escape sequence
+inside a string is separated by the word-hazard space.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
 The one render function for a kind with a body:
@@ -15212,8 +15225,31 @@ delimiter site.
 `strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
 `SPACING_SITES` row: how firmly the site's table default holds against the
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
-declared (`preference`, `token-default`) is 2, `cascade` is 1, the fallback
+declared (`preference`, `token-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SeamStrength`
+
+How firmly a site's table default holds against the mark meeting it at the
+same gap: a declared value (a preference or token-default row, a keyword's
+word-default, or a value set on the node) outranks a cascaded one (the edge
+token's face reaching the kind edge), which outranks the bare fallback.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
+
+An exhaustive switch over `SeamOrigin | undefined`: `preference`,
+`token-default` and `word-default` are declared (2), `cascade` is 1, and
+`fallback` or no origin is 0. A new origin fails to compile here until it is
+given a strength.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
+
+The per-kind edge table: for each spacing site whose address is a token face
+(`parseSeamLabel(address).token` equals the site's kind), the kind's id and,
+for its before and after edge, the site index, default arm and strength.
+Kinds whose name resolves to more than one id are dropped, and rows are
+sorted by id so the runtime finds a kind by binary search. A source
+coordinate of that kind meets these seams like a rendered node would.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 

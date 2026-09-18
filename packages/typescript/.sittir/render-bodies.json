@@ -7044,16 +7044,8 @@
 			"text": "`"
 		},
 		{
-			"kind": "seam",
-			"field": "bquote_after"
-		},
-		{
 			"kind": "slot",
 			"name": "elements"
-		},
-		{
-			"kind": "seam",
-			"field": "bquote_before"
 		},
 		{
 			"kind": "text",
@@ -7113,10 +7105,6 @@
 		}
 	],
 	"template_type": [
-		{
-			"kind": "seam",
-			"field": "template_type_before"
-		},
 		{
 			"kind": "text",
 			"text": "${"

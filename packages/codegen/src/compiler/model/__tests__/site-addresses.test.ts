@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { addressSites, matchAddress, matchAddressWith, resolveBindings } from '../site-addresses.ts';
+import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
+import { assemble, AssembleCtx } from '../../assemble.ts';
+import { makeNormalized } from '../../__tests__/make-normalized.ts';
+import { supertypeMembersByPublicName } from '../supertype-members.ts';
 import { parsePreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import type { KindEntryLike } from '../../generated-metadata.ts';
 import type { RuleSpacingSite } from '../render-rules.ts';
@@ -24,44 +28,32 @@ describe('a supertype segment matches the sites of its members', () => {
 	});
 });
 
-describe('a kind-scoped declaration on an envelope reaches only its own edge, never a nested envelope’s own members', () => {
-	// Models the rust regression: visibility_modifier_group is-a
-	// visibility_modifier_pub_in_path (its own polymorph arm), and that arm's
-	// OWN union separately admits scoped_identifier. The correct membership
-	// map stops at each envelope's direct arms — it never transitively folds
-	// an arm's own reachable content into its parent's membership.
-	const correctMembers = new Map<string, readonly string[]>([
-		['visibility_modifier_group', ['visibility_modifier_pub_in_path']],
-		['visibility_modifier_pub_in_path', ['scoped_identifier']]
-	]);
-	const buggyMembers = new Map<string, readonly string[]>([
-		['visibility_modifier_group', ['visibility_modifier_pub_in_path', 'scoped_identifier']],
-		['visibility_modifier_pub_in_path', ['scoped_identifier']]
-	]);
-	const sites = addressSites(
-		[
-			{
-				kind: 'visibility_modifier_group',
-				slot: 'x',
-				address: 'x',
-				label: 'x',
-				path: parsePreferencePath('(visibility_modifier_group)/before')
-			},
-			{ kind: 'scoped_identifier', slot: 'x', address: 'x', label: 'x', path: parsePreferencePath('(scoped_identifier)/before') }
-		],
-		[]
+describe('a kind-scoped declaration on a polymorph reaches only its own edge, never a nested polymorph’s own members', () => {
+	const sym = (name: string) => ({ type: SYMBOL, name }) as const;
+	const nodeMap = assemble(
+		AssembleCtx.from(
+			makeNormalized({
+				visibility_modifier_group: { type: CHOICE, members: [sym('visibility_modifier_pub_in_path'), sym('crate')] },
+				visibility_modifier_pub_in_path: { type: CHOICE, members: [sym('scoped_identifier'), sym('identifier')] },
+				crate: { type: STRING, value: 'crate' },
+				scoped_identifier: { type: PATTERN, value: '[a-z]+::[a-z]+' },
+				identifier: { type: PATTERN, value: '[a-z]+' }
+			})
+		)
 	);
+	const members = supertypeMembersByPublicName(nodeMap);
+	const site = (kind: string) => ({ kind, slot: 'x', address: 'x', label: 'x', path: parsePreferencePath(`(${kind})/before`) });
+	const sites = addressSites([site('visibility_modifier_group'), site('scoped_identifier')], []);
 
-	it('with correct membership, hits only its own edge', () => {
-		expect(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, correctMembers).map((s) => s.kind)).toEqual([
-			'visibility_modifier_group'
-		]);
+	it('takes each polymorph’s direct arms as its membership', () => {
+		expect(members.get('visibility_modifier_group')).toEqual(['visibility_modifier_pub_in_path', 'crate']);
+		expect(members.get('visibility_modifier_pub_in_path')).toEqual(['scoped_identifier', 'identifier']);
 	});
 
-	it('with the buggy transitive membership, would also hit the unrelated kind', () => {
-		expect(
-			new Set(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, buggyMembers).map((s) => s.kind))
-		).toEqual(new Set(['visibility_modifier_group', 'scoped_identifier']));
+	it('hits only its own edge', () => {
+		expect(matchAddress(parsePreferencePath('(visibility_modifier_group)/before'), sites, members).map((s) => s.kind)).toEqual([
+			'visibility_modifier_group'
+		]);
 	});
 });
 

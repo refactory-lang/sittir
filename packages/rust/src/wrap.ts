@@ -9981,19 +9981,24 @@ export function wrapLineComment(
 
 export function wrapBlockComment(
 	data: T.BlockComment & {
-		readonly _block_comment_doc_outer?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*';
-		readonly _block_comment_doc_inner?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*';
+		readonly _block_comment_doc_outer?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+		readonly _block_comment_doc_inner?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+		readonly _block_comment_content?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
 	},
 	tree: TreeHandle
 ) {
-	data = _keepModelledSlots(data, ['_content', '_block_comment_doc_outer', '_block_comment_doc_inner']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.BlockComment as const }, _treeEngine(tree));
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_block_comment_doc_outer',
+		'_block_comment_doc_inner',
+		'_block_comment_content'
+	]);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_block_comment_doc_inner', '_block_comment_doc_outer']),
+			..._omitWrapKeys(data, ['_block_comment_content', '_block_comment_doc_inner', '_block_comment_doc_outer']),
 			$type: TSKindId.BlockComment as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._block_comment_doc_outer ?? data._block_comment_doc_inner,
+				data._content ?? data._block_comment_doc_outer ?? data._block_comment_doc_inner ?? data._block_comment_content,
 				'content',
 				false,
 				data.$type,
@@ -10001,7 +10006,10 @@ export function wrapBlockComment(
 			),
 
 			content() {
-				return drillIn<T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*' | undefined>(this._content, tree);
+				return drillIn<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent | undefined>(
+					this._content,
+					tree
+				);
 			},
 			$with: {
 				content: (v: NonNullable<T.BlockComment['_content']>) =>

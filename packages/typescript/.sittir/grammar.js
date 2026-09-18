@@ -5204,6 +5204,11 @@ function refine(original, forms) {
 }
 
 // packages/typescript/grammar.sittir.ts
+function immediateClosingDelimiter(original) {
+  const seqMembers = original.members;
+  const last = seqMembers[seqMembers.length - 1];
+  return { ...original, members: [...seqMembers.slice(0, -1), token.immediate(last.value)] };
+}
 var enrichedBase = enrich(import_grammar.default);
 var grammar_sittir_default = grammar(
   enrichedBase,
@@ -5419,6 +5424,7 @@ var grammar_sittir_default = grammar(
         // A space after the substitution's `}` changes the template text. The edge
         // sits in every string-interior context, so no neighbour immediacy reaches it.
         template_substitution: { after: preference("tight") },
+        template_type: { after: preference("tight") },
         // Unary `!` is a normal token seam (`! x` compiles fine), and
         // the undeclared default is space — confirmed via a factory
         // construction probe (`ir.unaryExpression({operator:'!',...})`
@@ -5811,14 +5817,9 @@ var grammar_sittir_default = grammar(
             };
           })
         }),
-        template_string: ($, original) => {
-          const seqMembers = original.members;
-          const last = seqMembers[seqMembers.length - 1];
-          return {
-            ...original,
-            members: [...seqMembers.slice(0, -1), token.immediate(last.value)]
-          };
-        },
+        template_string: ($, original) => immediateClosingDelimiter(original),
+        template_literal_type: ($, original) => immediateClosingDelimiter(original),
+        template_type: ($) => seq(token.immediate("${"), choice($.primary_type, $.infer_type), "}"),
         // `template_substitution` sits only in string-interior contexts
         // (template_string / template_literal_type elements), where any
         // preceding characters are absorbed into a fragment token — no

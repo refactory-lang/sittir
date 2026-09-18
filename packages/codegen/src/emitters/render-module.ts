@@ -738,11 +738,20 @@ function leafTextWrite(node: AssembledNode, on: string): string {
 	return literalWrite(`&${on}.text`, fixedTextOfKind(node));
 }
 
+function isImmediateLeaf(node: AssembledNode): boolean {
+	return node instanceof AssembledLeaf && node.immediate;
+}
+
+function leafRenderExpr(node: AssembledNode, on: string): string {
+	const write = leafTextWrite(node, on);
+	return isImmediateLeaf(node) ? `{ w.adjacent(); ${write} }` : write;
+}
+
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
 	const body = node instanceof AssembledEnum ? `t.render(w)` : leafTextWrite(node, 't');
-	const adjacent = node instanceof AssembledLeaf && node.immediate ? [`    w.adjacent();`] : [];
+	const adjacent = isImmediateLeaf(node) ? [`    w.adjacent();`] : [];
 	return [
 		`fn ${fnName}(t: &${typeName}, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`,
 		...adjacent,
@@ -3003,7 +3012,7 @@ function renderTransportDataStruct(
 		`    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {`
 	);
 	if (isLeafNode) {
-		lines.push(`        render_with_trivia!(self, w, ${leafTextWrite(node, 'self')})`);
+		lines.push(`        render_with_trivia!(self, w, ${leafRenderExpr(node, 'self')})`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
 		lines.push(`        render_with_trivia!(self, w, ${renderFn}(self, w))`);

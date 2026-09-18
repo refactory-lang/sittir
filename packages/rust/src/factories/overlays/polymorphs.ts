@@ -8905,6 +8905,10 @@ const blockComment$docInner =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$content =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const blockComment: typeof B.blockComment & {
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
@@ -8913,6 +8917,10 @@ export const blockComment: typeof B.blockComment & {
 	docInner: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof C.coerceToBlockComment>;
+	};
+	content: {
+		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof C.coerceToBlockComment>;
 	};
 } = {
 	...B.blockComment,
@@ -8923,6 +8931,10 @@ export const blockComment: typeof B.blockComment & {
 	docInner: {
 		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
 		coerce: blockComment$docInner(C.coerceToBlockComment, C.coerceToBlockCommentDocInner)
+	},
+	content: {
+		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),
+		coerce: blockComment$content(C.coerceToBlockComment, C.coerceToBlockCommentContent)
 	}
 };
 

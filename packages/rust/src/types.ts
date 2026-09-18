@@ -6673,8 +6673,8 @@ export interface LineComment {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | '[^]*';
-	content(): BlockCommentDocOuter | BlockCommentDocInner | '[^]*' | undefined;
+	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent;
+	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
 }
 
 export interface MacroRules {
@@ -17053,15 +17053,15 @@ export namespace BlockComment {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'): T.BlockComment.Built;
+			content(value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent): T.BlockComment.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.BlockComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
-	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*'];
+	export type BuildArgs = [value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent];
 	export type LooseArgs = [
 		value?: LooseValue<
-			T.BlockCommentDocOuter | T.BlockCommentDocInner | '[^]*',
+			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap

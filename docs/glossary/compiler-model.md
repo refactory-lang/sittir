@@ -4032,6 +4032,13 @@ set overlap on the site by construction, so the nesting check ignores
 cascade hits on a token-set site; the one-token edge is the one-element case
 of the same path.
 
+### `packages/codegen/src/compiler/model/site-addresses.ts::isWildcardHead`
+
+Only a grammar-wide (`_`-scope) token face cascades onto a kind edge: a
+kind-scoped literal row names the token's interior seam in that kind, and
+must not reach the exterior edge of a kind that closes with the same
+literal it opened with.
+
 ### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
 
 The direct member names of a union node, or `null` for a node that is not one: a supertype's subtype names, a polymorph parent's symbol arms. The membership predicate `supertypeMembersByPublicName` hands to `buildMembersMap`.
@@ -4039,6 +4046,14 @@ The direct member names of a union node, or `null` for a node that is not one: a
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildMembersMap`
 
 The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members in hidden and visible spellings, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
+
+A polymorph's arms are its own membership, full stop: an "is a"
+relationship. Chasing each arm's own union too would fold a sibling
+grouping's members into this one's ("contains", never "is a"): a polymorph
+grouping is-a its path-carrying arm, but that arm's own union (its `path`
+field's admitted kinds, including `scoped_identifier`) is not also the
+grouping's membership. Only a true supertype's subtype chain expands
+transitively: that is the parser's own "is a" hierarchy.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
 

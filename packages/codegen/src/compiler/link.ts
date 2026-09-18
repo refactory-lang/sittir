@@ -770,8 +770,9 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	const cyclic = cyclicInlineTargets(rules);
+	const externals = new Set(ctx.grammar.externals);
 	const inlineOne = (r: Rule<'link'>): Rule<'link'> => {
-		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
+		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name) || externals.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
 		const { hidden: _sourceKindHidden, ...spliced } = body;

@@ -5288,6 +5288,8 @@ var grammar_sittir_default = grammar(
           '","/before': preference("tight"),
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
+          '_/separator/"."/before': preference("tight"),
+          '_/separator/"."/after': preference("tight"),
           '":"/before': preference("tight"),
           '":"/after': preference("space"),
           '"->"/before': preference("space"),

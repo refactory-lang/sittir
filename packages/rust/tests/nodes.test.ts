@@ -6491,6 +6491,12 @@ describe('block_comment sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentDocInner);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('content builds the parent', () => {
+		const node = ir.blockComment.content('test');
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentContent);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('identifier', () => {
