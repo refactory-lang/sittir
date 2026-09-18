@@ -331,13 +331,14 @@ parents.
 #### body
 
 ```text
-// A literal-bodied kind is a keyword-class leaf (a factory, a type, a
-// union member, an `is` guard) when its text is word-shaped OR the kind is
-// a visible parser kind (a catalog entry that is neither anonymous nor a
-// hidden `_` rule): `unit_expression`, `never_type`, `empty_statement`,
-// `ellipsis`, `wildcard_import`. Only an anonymous punctuation token has no
-// surface of its own (`AssembledToken`). Word shape stays the spacing fact
-// (`AssembledKeyword.word`), not the surface fact.
+// A literal-bodied kind is an `AssembledKeyword` only when its text is
+// word-shaped. Every other literal is an `AssembledToken`, hidden when the
+// kind is anonymous or a `_` rule and visible when it is a named parser kind
+// (a catalog entry that is neither anonymous nor a hidden `_` rule):
+// `unit_expression`, `never_type`, `empty_statement`, `ellipsis`,
+// `wildcard_import`, `optional_chain`. A visible token keeps its factory,
+// type, union membership and `is` guard; visibility is the leaf's `hidden`
+// attribute, and the class answers only whether the text is word-shaped.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`

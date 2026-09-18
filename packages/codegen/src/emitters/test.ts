@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
@@ -116,7 +117,7 @@ export function emitTests(config: EmitTestsConfig): string {
 				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'token':
-				if (node instanceof AssembledKeyword) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+				if (isWordOrVisibleTextLeaf(node)) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				break;
@@ -265,7 +266,7 @@ function childBareCallArgs(
 			return sample === null ? undefined : JSON.stringify(sample);
 		}
 		case 'token':
-			return child instanceof AssembledKeyword
+			return isWordOrVisibleTextLeaf(child)
 				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
 				: undefined;
 		case 'enum': {
@@ -559,7 +560,7 @@ function emitKeywordTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (!(node instanceof AssembledKeyword)) return;
+	if (!isWordOrVisibleTextLeaf(node)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);

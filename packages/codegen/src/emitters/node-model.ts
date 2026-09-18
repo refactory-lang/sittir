@@ -12,6 +12,7 @@ import type {
 	NodeOrTerminal
 } from '../compiler/model/node-map.ts';
 import {
+	AssembledKeyword,
 	AssembledSupertype,
 	isNodeRef,
 	isUnresolvedRef,
@@ -221,7 +222,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 			return {
 				...base,
 				modelType: 'token',
-				word: node.word,
+				word: node instanceof AssembledKeyword,
 				text: node.text
 			};
 		case 'enum':

@@ -24,7 +24,11 @@ import {
 	isMultiple,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword
+	AssembledKeyword,
+	AssembledToken,
+	isVisibleTextLeaf,
+	isHiddenTokenLeaf,
+	isWordOrVisibleTextLeaf
 } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
@@ -226,7 +230,23 @@ describe('Assemble — classifyNode', () => {
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('true');
 		expect(node?.modelType).toBe('token');
 		expect(node).toBeInstanceOf(AssembledKeyword);
-		expect((node as AssembledKeyword).word).toBe(true);
+	});
+
+	it('keeps a visible non-word literal a visible token and a hidden one a hidden token, never a keyword', () => {
+		const normalized = makeNormalized({
+			optional_chain: { type: STRING, value: '?.' },
+			_arrow: { type: STRING, value: '->' },
+			true: { type: STRING, value: 'true' }
+		});
+		const nodes = assemble(AssembleCtx.from(normalized)).nodes;
+		const visible = nodes.get('optional_chain')!;
+		const hidden = nodes.get('_arrow')!;
+		const word = nodes.get('true')!;
+		expect(visible).toBeInstanceOf(AssembledToken);
+		expect(hidden).toBeInstanceOf(AssembledToken);
+		expect([visible, hidden, word].map(isVisibleTextLeaf)).toEqual([true, false, true]);
+		expect([visible, hidden, word].map(isHiddenTokenLeaf)).toEqual([false, true, false]);
+		expect([visible, hidden, word].map(isWordOrVisibleTextLeaf)).toEqual([true, false, true]);
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {

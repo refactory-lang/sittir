@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags,
 	isFixedTextLeaf,
 	isKindIdStored
@@ -430,7 +431,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 				leafKinds.push(kind);
 				break;
 			case 'token':
-				if (node instanceof AssembledKeyword) {
+				if (isWordOrVisibleTextLeaf(node)) {
 					leafKinds.push(kind);
 					keywordKinds.set(kind, node.text);
 				}
@@ -637,7 +638,7 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName, token: n instanceof AssembledToken };
+			return { sub, typeName: n.typeName, token: isHiddenTokenLeaf(n) };
 		});
 		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
@@ -669,12 +670,12 @@ function collectAndEmitTokenTypeAliases(
 	const referencedTokenTypeNames = new Set<string>();
 	for (const t of referenced) {
 		const ref = nodeMap.nodes.get(t);
-		if (ref instanceof AssembledToken) referencedTokenTypeNames.add(ref.typeName);
+		if (ref !== undefined && isHiddenTokenLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
 	}
 
 	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledToken)) continue;
+		if (!isHiddenTokenLeaf(node)) continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;

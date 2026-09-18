@@ -1,4 +1,5 @@
 import type { VariantChild } from './variant-structural.ts';
+import { isHiddenTokenLeaf } from './model/node-map.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -192,13 +193,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				if (simplifiedRule.type !== STRING) {
 					throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 				}
-				const word = matchesWordShape(simplifiedRule.value, wordMatcherRegex);
 				const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
 					kind,
-					word || named
-						? new AssembledKeyword(kind, simplifiedRule, { kindEntries, word })
-						: new AssembledToken(kind, simplifiedRule, { kindEntries })
+					matchesWordShape(simplifiedRule.value, wordMatcherRegex)
+						? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
+						: new AssembledToken(kind, simplifiedRule, { hidden: !named, kindEntries })
 				);
 				break;
 			}
@@ -685,7 +685,7 @@ interface _UserFacingCtx {
 
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
-	if (node instanceof AssembledToken) {
+	if (isHiddenTokenLeaf(node)) {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
@@ -724,7 +724,7 @@ function renameCollidingHiddenKinds(
 	typeName: string,
 	diagnostics: AssembleDiagnosticsCollector
 ): void {
-	const hasNonTokenVisible = visible.some((n) => !(n instanceof AssembledToken));
+	const hasNonTokenVisible = visible.some((n) => !isHiddenTokenLeaf(n));
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;

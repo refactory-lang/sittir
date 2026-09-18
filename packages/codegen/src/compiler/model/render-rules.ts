@@ -452,7 +452,7 @@ function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | u
 function isKeywordText(text: string, config: RenderRulesConfig): boolean {
 	const entry = findEntryForLiteralText(config.kindEntries, text);
 	const node = entry === undefined ? undefined : config.nodeMap.nodes.get(entry.kind);
-	return node instanceof AssembledKeyword && node.word;
+	return node instanceof AssembledKeyword;
 }
 
 function isKeywordSeam(rule: RenderRule, config: RenderRulesConfig): boolean {
@@ -460,7 +460,7 @@ function isKeywordSeam(rule: RenderRule, config: RenderRulesConfig): boolean {
 	if (text !== undefined) return isKeywordText(text, config);
 	const r = bag(rule);
 	const target = r.type === SYMBOL && r.name !== undefined ? config.nodeMap.nodes.get(r.name) : undefined;
-	if (target instanceof AssembledKeyword) return r.fieldName !== undefined && target.word;
+	if (target instanceof AssembledKeyword) return r.fieldName !== undefined;
 	if (target instanceof AssembledEnum) return target.values.length > 0 && target.values.every((value) => isKeywordText(value, config));
 	const texts: string[] = [];
 	return literalLeaves(rule, new Set(), texts, undefined) && texts.every((leaf) => leaf.trim() === '' || isKeywordText(leaf, config));
@@ -533,7 +533,7 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 	const r = bag(rule);
 	if (r.type !== SYMBOL || r.fieldName === undefined || r.name === undefined || config.choiceArmNodes?.has(rule) === true) return undefined;
 	const target = config.nodeMap.nodes.get(r.name);
-	return target instanceof AssembledKeyword && target.word ? r.fieldName.toLowerCase() : undefined;
+	return target instanceof AssembledKeyword ? r.fieldName.toLowerCase() : undefined;
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {

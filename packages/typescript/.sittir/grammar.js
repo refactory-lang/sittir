@@ -5399,6 +5399,8 @@ var grammar_sittir_default = grammar(
           '"++"/after': preference("tight"),
           '"--"/before': preference("tight"),
           '"--"/after': preference("tight"),
+          '"?."/before': preference("tight"),
+          '"?."/after': preference("tight"),
           '"..."/after': preference("tight"),
           '":"/before': preference("tight"),
           '":"/after': preference("space"),

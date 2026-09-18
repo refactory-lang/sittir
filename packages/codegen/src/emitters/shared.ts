@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -53,8 +54,8 @@ export function isAuthoredCompound(
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
-export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
-	return node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
+export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledPattern | AssembledEnum {
+	return isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
@@ -736,9 +737,9 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword)
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node))
 		return 'text';
-	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
+	if (isHiddenTokenLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
@@ -880,7 +881,7 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	if (node instanceof AssembledToken || node instanceof AssembledSupertype) return false;
+	if (isHiddenTokenLeaf(node) || node instanceof AssembledSupertype) return false;
 	return true;
 }
 

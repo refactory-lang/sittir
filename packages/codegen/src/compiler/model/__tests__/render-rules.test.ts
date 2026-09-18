@@ -3,7 +3,7 @@ import { DEDENT_TEXT, INDENT_TEXT } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
 import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
-import { AssembledBranch, AssembledKeyword, AssembledSupertype } from '../node-map.ts';
+import { AssembledBranch, AssembledKeyword, AssembledSupertype, AssembledToken } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 
@@ -260,7 +260,7 @@ describe('seamRenderRules', () => {
 		const rules = { call: seq(str('fn'), sym('name'), str('('), sym('params')) };
 		const originsWith = (word: boolean) => {
 			const config = { nodeMap: nodeMapOf(rules, {}), kindEntries };
-			config.nodeMap.nodes.set('fn', new AssembledKeyword('fn', str('fn') as never, { word }) as never);
+			config.nodeMap.nodes.set('fn', (word ? new AssembledKeyword('fn', str('fn') as never) : new AssembledToken('fn', str('fn') as never, { hidden: false })) as never);
 			const members = membersOf(seamRenderRules(spaceRenderRules(config), config).rules.call!);
 			return { names: memberNames({ members } as never), fn: seamChoiceDefault(members[1]!), lparen: seamChoiceDefault(members[3]!) };
 		};

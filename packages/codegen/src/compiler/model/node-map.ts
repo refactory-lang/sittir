@@ -1448,6 +1448,18 @@ export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword |
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
 
+export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return isFixedTextLeaf(node) && !node.hidden;
+}
+
+export function isHiddenTokenLeaf(node: AssembledNode): node is AssembledToken {
+	return node instanceof AssembledToken && node.hidden;
+}
+
+export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
+}
+
 export interface CompoundOpts {
 	factoryName?: string;
 	irKey?: string;
@@ -1668,9 +1680,6 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 		return 'tokenized' in this.rule && this.rule.tokenized === true;
 	}
 
-	get word(): boolean {
-		return false;
-	}
 }
 
 export class AssembledPattern extends AssembledLeaf<RenderRule> {
@@ -1696,11 +1705,6 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'token' as const;
-	readonly #word: boolean;
-
-	override get word(): boolean {
-		return this.#word;
-	}
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -1712,11 +1716,9 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 			irKey?: string;
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
-			word?: boolean;
 		}
 	) {
 		super(kind, rule, opts);
-		this.#word = opts?.word ?? true;
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
@@ -1755,8 +1757,8 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
-	constructor(kind: string, rule: StringRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
-		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries });
+	constructor(kind: string, rule: StringRule, opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }) {
+		super(kind, rule, { hidden: opts?.hidden ?? true, kindEntries: opts?.kindEntries });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
@@ -1786,7 +1788,7 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: ${!this.hidden} as const }`;
 	}
 }
 
@@ -2208,7 +2210,7 @@ export function patternTrailingEdgeClass(source: string, ctx: { isWordChar: (c: 
 
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return {
 			starts: charEdgeClass(node.text[0], ctx),
 			ends: charEdgeClass(node.text[node.text.length - 1], ctx)
@@ -2280,7 +2282,7 @@ export interface KindEdgeCharSets {
 
 export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCharSets {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return node.text === ''
 			? {}
 			: { starts: new Set([node.text[0]!]), ends: new Set([node.text[node.text.length - 1]!]) };

@@ -1,4 +1,5 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
@@ -273,7 +274,7 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
 			case 'token':
-				if (node instanceof AssembledToken) break;
+				if (isHiddenTokenLeaf(node)) break;
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);

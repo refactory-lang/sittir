@@ -2436,6 +2436,24 @@ a pass rebuilds.
  *  `isFixedTextLeaf`. */
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::isVisibleTextLeaf`
+
+A fixed-text leaf that is not hidden: a visible kind that owns a factory and
+a type. Visibility is the leaf's `hidden` attribute, never its class; the
+class answers only whether the text is word-shaped.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isHiddenTokenLeaf`
+
+A hidden non-word fixed-text leaf: an anonymous or `_`-prefixed delimiter.
+Emitters that skip factories and types for delimiters ask this, so a visible
+non-word literal is not skipped with them.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isWordOrVisibleTextLeaf`
+
+A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
+keyword of either visibility, or a visible non-word token. It is the
+complement of `isHiddenTokenLeaf` within the fixed-text leaves.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
 ```text
@@ -2763,20 +2781,6 @@ the rule shape.
 	 * wrapper's stamp, or an external scanner symbol). */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledLeaf.word`
-
-```text
-/**
-	 * Base default: `false`. The sole discriminant between the two
-	 * `modelType: 'token'` leaves — `AssembledKeyword` overrides this to
-	 * `true` (a named single literal matching the grammar's word shape,
-	 * e.g. `"fn"`), `AssembledToken` leaves it `false` (an anonymous
-	 * single-literal delimiter, e.g. `"{"`). `assemble.ts`'s `classifyNode`
-	 * for a `'token'`-shaped rule picks which class to construct via
-	 * `matchesWordShape`, before either instance exists to ask.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern.fixedLiteralText`
 
 ```text
@@ -2823,6 +2827,10 @@ the rule shape.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.constructor`
 
+A fixed-text leaf whose text is not word-shaped. `hidden` defaults to true
+(an anonymous or `_`-prefixed delimiter); `assemble` passes `hidden: false`
+for a named non-word literal kind so it keeps its factory and type.
+
 #### body
 
 ```text
@@ -2838,7 +2846,11 @@ the rule shape.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledToken.storage`
 
 ```text
-/** A token is always hidden and always fixed text: identity is the value. */
+/** A token is always fixed text: identity is the value. Whether it is a
+ *  visible kind (a named non-word literal such as rust `unit_expression`
+ *  `()` or typescript `optional_chain` `?.`) or a hidden one (an anonymous
+ *  or `_`-prefixed delimiter) is its `hidden` attribute, set at
+ *  construction. */
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.storage`
@@ -3283,15 +3295,6 @@ emission).
  *  this — the class is the surface. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword.word`
-
-```text
-/** Whether the keyword's text is word-shaped (`wordMatcher`) — the spacing
- *  fact, independent of the kind's surface. A named literal kind that is
- *  not a word (rust `unit_expression` `()`, python `ellipsis` `...`) is a
- *  keyword-class leaf with `word: false`. */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::atomEndingAt`
 
 ```text
@@ -3681,9 +3684,10 @@ Whether a member, or any arm of a choice member, is optional.
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordText`
 
 Whether a literal's kind is a keyword the grammar's `word` rule claims: the
-catalog entry's node is an `AssembledKeyword` with `word` set. One
-attribute read on the model, decided at link time; no text is matched
-against a pattern here.
+catalog entry's node is an `AssembledKeyword`. A keyword is a word-shaped
+literal by construction (`assemble` builds one only when the text matches the
+grammar's word matcher), so the class test is the whole answer; no text is
+matched against a pattern here.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isKeywordSeam`
 

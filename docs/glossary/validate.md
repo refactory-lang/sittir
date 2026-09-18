@@ -199,9 +199,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /* 'branch'/'envelope'/'polymorph'/'list' all render via a template — a
 		   polymorph is an envelope whose sole slot is a union; 'supertype' is
 		   its own model type and dispatches to the subtype's template.
-		   'token' is 'text' only for `AssembledKeyword` (a named literal, word
-		   or not) — `AssembledToken` (anonymous) has no rendered surface of its
-		   own. */
+		   'token' is 'text' for a word-shaped keyword or a visible token (a named
+		   non-word literal) — a hidden `AssembledToken` (an anonymous or
+		   `_`-prefixed delimiter) has no rendered surface of its own. */
 ```
 
 ### `packages/codegen/src/validate/node-types-loader.ts::module`

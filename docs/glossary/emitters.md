@@ -11246,11 +11246,11 @@ omits the key.
 ```
 
 ```text
-// AssembledKeyword (alphabetic tokens — modelType 'token', word: true)
+// AssembledKeyword (word-shaped tokens — modelType 'token')
 ```
 
 ```text
-// AssembledToken (non-alphabetic — modelType 'token', word: false)
+// AssembledToken (non-word tokens — modelType 'token'; hidden delimiters and visible named literals)
 ```
 
 #### body

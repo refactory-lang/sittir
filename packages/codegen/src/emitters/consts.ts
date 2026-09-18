@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenTokenLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
@@ -41,10 +42,10 @@ export function emitConsts(config: EmitConstsConfig): string {
 		} else if (node instanceof AssembledEnum) {
 			leafKinds.push(kind);
 			enumEntries.push({ kind, values: node.values });
-		} else if (node instanceof AssembledKeyword) {
+		} else if (isWordOrVisibleTextLeaf(node)) {
 			leafKinds.push(kind);
 			keywords.push(kind);
-		} else if (node instanceof AssembledToken) {
+		} else if (isHiddenTokenLeaf(node)) {
 			operators.push(kind);
 		}
 	}

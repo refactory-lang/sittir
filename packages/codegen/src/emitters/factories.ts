@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	kindDiscriminantExprForId,
@@ -259,7 +260,7 @@ export namespace factory {
 				break;
 			}
 			case 'token':
-				if (node instanceof AssembledKeyword) {
+				if (isWordOrVisibleTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -826,7 +827,7 @@ export function constructorSurface(
 			};
 		}
 		case 'token':
-			if (!(target instanceof AssembledKeyword)) return undefined;
+			if (!isWordOrVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
@@ -1553,7 +1554,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				this.emitLeaf(node);
 				break;
 			case 'token':
-				if (node instanceof AssembledKeyword) this.emitLeaf(node);
+				if (isWordOrVisibleTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

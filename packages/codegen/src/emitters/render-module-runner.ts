@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
@@ -32,7 +33,7 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				renderModuleEmitter.emitLeaf?.(node);
 				break;
 			case 'token':
-				if (node instanceof AssembledKeyword) {
+				if (isWordOrVisibleTextLeaf(node)) {
 					templateEmitter.emitLeaf?.(node);
 					renderModuleEmitter.emitLeaf?.(node);
 				}

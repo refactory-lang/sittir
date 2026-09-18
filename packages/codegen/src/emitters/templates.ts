@@ -9,6 +9,7 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 } from '../types/rule-types.ts'; // @rule-type-consts
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -1331,7 +1332,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				te.emitLeaf(node);
 				break;
 			case 'token':
-				if (node instanceof AssembledKeyword) te.emitLeaf(node);
+				if (isWordOrVisibleTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':
 			case 'envelope':
