@@ -253,10 +253,6 @@ export namespace Declaration {
 			| V.Declaration.Function.Generator<G>
 			| V.Declaration.Function.Signature<G>;
 	}
-	export interface Getter<G extends GrammarContext> extends V.Declaration.Method<G> {
-		readonly kind: 'declaration.getter';
-		readonly accessorKind: 'get';
-	}
 	export interface Interface<G extends GrammarContext> extends V.Declaration<G> {
 		// claimed by t
 		readonly kind: 'declaration.interface';
@@ -343,6 +339,14 @@ export namespace Declaration {
 		}
 		// claimed by p content-derived
 
+		export interface Getter<G extends GrammarContext> extends V.Declaration.Method<G> {
+			readonly kind: 'declaration.method.getter';
+			readonly accessorKind: 'get';
+		}
+		export interface Setter<G extends GrammarContext> extends V.Declaration.Method<G> {
+			readonly kind: 'declaration.method.setter';
+			readonly accessorKind: 'set';
+		}
 		export interface Signature<G extends GrammarContext> extends V.Declaration.Method<G> {
 			// claimed by rt
 			readonly kind: 'declaration.method.signature';
@@ -425,6 +429,8 @@ export namespace Declaration {
 			| V.Declaration.Method<G>
 			| V.Declaration.Method.Class<G>
 			| V.Declaration.Method.Dunder<G>
+			| V.Declaration.Method.Getter<G>
+			| V.Declaration.Method.Setter<G>
 			| V.Declaration.Method.Signature<G>
 			| V.Declaration.Method.Signature.Abstract<G>
 			| V.Declaration.Method.Static<G>;
@@ -533,10 +539,6 @@ export namespace Declaration {
 			| V.Declaration.Parameter.Typed<G>
 			| V.Declaration.Parameter.TypedDefault<G>
 			| V.Declaration.Parameter.Variadic<G>;
-	}
-	export interface Setter<G extends GrammarContext> extends V.Declaration.Method<G> {
-		readonly kind: 'declaration.setter';
-		readonly accessorKind: 'set';
 	}
 	export interface Signature<G extends GrammarContext> extends V.Declaration<G> {
 		readonly kind: 'declaration.signature';
@@ -717,13 +719,14 @@ export namespace Declaration {
 		| V.Declaration.Function<G>
 		| V.Declaration.Function.Generator<G>
 		| V.Declaration.Function.Signature<G>
-		| V.Declaration.Getter<G>
 		| V.Declaration.Interface<G>
 		| V.Declaration.Interface.Trait<G>
 		| V.Declaration.Macro<G>
 		| V.Declaration.Method<G>
 		| V.Declaration.Method.Class<G>
 		| V.Declaration.Method.Dunder<G>
+		| V.Declaration.Method.Getter<G>
+		| V.Declaration.Method.Setter<G>
 		| V.Declaration.Method.Signature<G>
 		| V.Declaration.Method.Signature.Abstract<G>
 		| V.Declaration.Method.Static<G>
@@ -737,7 +740,6 @@ export namespace Declaration {
 		| V.Declaration.Parameter.Typed<G>
 		| V.Declaration.Parameter.TypedDefault<G>
 		| V.Declaration.Parameter.Variadic<G>
-		| V.Declaration.Setter<G>
 		| V.Declaration.Signature.Call<G>
 		| V.Declaration.Signature.Construct<G>
 		| V.Declaration.Signature.Index<G>

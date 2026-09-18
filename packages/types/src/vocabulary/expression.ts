@@ -397,11 +397,11 @@ export namespace Expression {
 			readonly kind: 'expression.binary.identity';
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface Is<G extends GrammarContext> extends V.Expression.Binary<G> {
 				readonly kind: 'expression.binary.identity.is';
 				readonly operators: 'is';
 			}
-			export interface IsNot<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface IsNot<G extends GrammarContext> extends V.Expression.Binary<G> {
 				readonly kind: 'expression.binary.identity.is_not';
 				readonly operators: 'is not';
 			}
@@ -441,7 +441,7 @@ export namespace Expression {
 			readonly kind: 'expression.binary.membership';
 		}
 		export namespace Membership {
-			export interface In<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface In<G extends GrammarContext> extends V.Expression.Binary<G> {
 				readonly kind: 'expression.binary.membership.in';
 				readonly operators: 'in';
 				readonly operator: 'in';
@@ -450,7 +450,7 @@ export namespace Expression {
 				readonly kind: 'expression.binary.membership.instanceof';
 				readonly operator: 'instanceof';
 			}
-			export interface NotIn<G extends GrammarContext> extends V.Expression.Binary.Comparison<G> {
+			export interface NotIn<G extends GrammarContext> extends V.Expression.Binary<G> {
 				readonly kind: 'expression.binary.membership.not_in';
 				readonly operators: 'not in';
 			}

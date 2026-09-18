@@ -241,12 +241,13 @@ export interface BaseContext {
   'declaration.enum.member': Declaration.Enum.Member;   // r
   'declaration.field': Declaration.Field;   // rt
   'declaration.function': Declaration.Function;   // prt
-  'declaration.getter': Declaration.Getter;   // t
   'declaration.interface': Declaration.Interface;   // t
   'declaration.macro': Declaration.Macro;   // r
   'declaration.method': Declaration.Method;   // prt
   'declaration.method.class': Declaration.Method.Class;   // p
   'declaration.method.dunder': Declaration.Method.Dunder;   // p
+  'declaration.method.getter': Declaration.Method.Getter;   // t
+  'declaration.method.setter': Declaration.Method.Setter;   // t
   'declaration.method.static': Declaration.Method.Static;   // pr
   'declaration.method.trait': Declaration.Method.Trait;   // r
   'declaration.module': Declaration.Module;   // r
@@ -258,7 +259,6 @@ export interface BaseContext {
   'declaration.parameter.typed': Declaration.Parameter.Typed;   // p
   'declaration.parameter.typed_default': Declaration.Parameter.TypedDefault;   // p
   'declaration.property': Declaration.Property;   // t
-  'declaration.setter': Declaration.Setter;   // t
   'declaration.struct': Declaration.Struct;   // r
   'declaration.trait': Declaration.Trait;   // r
   'declaration.type_alias': Declaration.TypeAlias;   // rt
@@ -291,7 +291,7 @@ export interface BaseContext {
   'expression.binary.bitwise.and': Expression.Binary.Bitwise.And;   // prt
   'expression.binary.bitwise.or': Expression.Binary.Bitwise.Or;   // prt
   'expression.binary.bitwise.xor': Expression.Binary.Bitwise.Xor;   // prt
-  'expression.binary.comparison': Expression.Binary.Comparison;   // p
+  'expression.binary.comparison': Expression.Binary.Comparison;
   'expression.binary.comparison.equal': Expression.Binary.Comparison.Equal;   // prt
   'expression.binary.comparison.greater': Expression.Binary.Comparison.Greater;   // prt
   'expression.binary.comparison.greater_equal': Expression.Binary.Comparison.GreaterEqual;   // prt

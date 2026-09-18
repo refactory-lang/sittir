@@ -22,13 +22,13 @@ export const method: Declaration.Method<BaseContext> = {
 };
 
 // A getter pins its accessor kind.
-export const getter: Declaration.Getter<BaseContext> = {
-	kind: 'declaration.getter',
+export const getter: Declaration.Method.Getter<BaseContext> = {
+	kind: 'declaration.method.getter',
 	name: { kind: 'identifier' },
 	parameters: [],
 	accessorKind: 'get'
 };
-export const notGetter: Declaration.Getter<BaseContext> = {
+export const notGetter: Declaration.Method.Getter<BaseContext> = {
 	...getter,
 	// @ts-expect-error a getter's accessor kind is 'get'
 	accessorKind: 'set'

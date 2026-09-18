@@ -108,7 +108,7 @@
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or
-(comparison_operator operators: (_)+ @operator) @expression.binary.comparison
+(comparison_operator operators: (_)+ @operator) @expression.binary
 (comparison_operator operators: "==") @expression.binary.comparison.equal
 (comparison_operator operators: "!=") @expression.binary.comparison.not_equal
 (comparison_operator operators: "<") @expression.binary.comparison.less
