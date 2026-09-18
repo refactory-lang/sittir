@@ -25,6 +25,7 @@ export function rebuildFormatLoose() {
 					type: ir.identifier("FormatRecord"),
 				})],
 				returnType: ir.typeAnnotation(TSKindId.StringKeyword),
+
 				body: ir.statementBlock({
 					statements: [ir.lexicalDeclaration({
 						kind: TSKindId.LetKeyword,
@@ -125,7 +126,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia({ leading: ["/** Prepend/append boundary whitespace. */"] }), ir.functionDeclaration({
+		}).$trivia({ leading: [ ir.comment("/** Prepend/append boundary whitespace. */"] }), ir.functionDeclaration({
 			name: "applyTrivia",
 			parameters: [ir.requiredParameter({
 				pattern: "s",
