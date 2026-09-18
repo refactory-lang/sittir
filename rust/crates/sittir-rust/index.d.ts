@@ -183,6 +183,8 @@ export interface AsyncBlockTransport {
   '$_trivia'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _move_marker_before?: number
+  _move_marker_after?: number
   _async_keyword_after?: number
   _async_block_before?: number
   _async_block_after?: number
@@ -322,7 +324,7 @@ export interface BlockCommentDocOuterTransport {
 
 export interface BlockCommentTransport {
   '$_trivia'?: TransportTrivia
-  _content?: SlotValue<BlockCommentContentTransportSlot>
+  _content?: SlotValue<BlockCommentContentTransportSlot, true>
   _star_slash_before?: number
   _slash_star_after?: number
   _block_comment_before?: number
@@ -400,6 +402,11 @@ export interface ClosureExpressionBlockTransport {
   _parameters: SlotValue<ClosureParametersTransport>
   _return_type?: SlotValue<Box<TypeTransport>>
   _body: SlotValue<Box<BlockTransport>>
+  _async_marker_before?: number
+  _async_marker_after?: number
+  _move_marker_before?: number
+  _move_marker_after?: number
+  _static_marker_after?: number
   _dash_gt_before?: number
   _dash_gt_after?: number
   _closure_expression_block_before?: number
@@ -413,6 +420,11 @@ export interface ClosureExpressionExprTransport {
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _parameters: SlotValue<ClosureParametersTransport>
   _body: SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>
+  _async_marker_before?: number
+  _async_marker_after?: number
+  _move_marker_before?: number
+  _move_marker_after?: number
+  _static_marker_after?: number
   _underscore_before?: number
   _closure_expression_expr_before?: number
   _closure_expression_expr_after?: number
@@ -626,6 +638,8 @@ export interface ExternCrateDeclarationTransport {
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
   _name: SlotValue<IdentifierTransport>
   _alias?: SlotValue<IdentifierTransport>
+  _crate_before?: number
+  _crate_after?: number
   _semi_before?: number
   _as_keyword_before?: number
   _as_keyword_after?: number
@@ -726,6 +740,9 @@ export interface FieldPatternNamedTransport {
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
   _pattern: SlotValue<PatternTransport>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
+  _ref_marker_after?: number
   _colon_before?: number
   _colon_after?: number
   _field_pattern_named_before?: number
@@ -737,6 +754,9 @@ export interface FieldPatternShorthandTransport {
   _ref_marker?: SlotValue<KwRefMarkerTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
+  _ref_marker_after?: number
   _field_pattern_shorthand_before?: number
   _field_pattern_shorthand_after?: number
 }
@@ -861,6 +881,8 @@ export interface GenBlockTransport {
   '$_trivia'?: TransportTrivia
   _move_marker?: SlotValue<KwMoveMarkerTransport>
   _body: SlotValue<Box<BlockTransport>>
+  _move_marker_before?: number
+  _move_marker_after?: number
   _gen_keyword_after?: number
   _gen_block_before?: number
   _gen_block_after?: number
@@ -931,6 +953,7 @@ export interface ImplItemBodyTransport {
   _type: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _declaration_list: SlotValue<DeclarationListTransport>
+  _unsafe_marker_after?: number
   _impl_keyword_before?: number
   _impl_keyword_after?: number
   _impl_item_body_before?: number
@@ -961,6 +984,7 @@ export interface ImplItemSemiTransport {
   _trait_clause?: SlotValue<ImplItemSemiTraitClauseTransportSlot>
   _type: SlotValue<TypeTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
+  _unsafe_marker_after?: number
   _semi_before?: number
   _impl_keyword_before?: number
   _impl_keyword_after?: number
@@ -1044,6 +1068,8 @@ export interface LetDeclarationTransport {
   _type?: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
   _alternative?: SlotValue<BlockTransport>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
   _colon_before?: number
   _colon_after?: number
   _semi_before?: number
@@ -1280,6 +1306,7 @@ export interface ModItemInlineTransport {
 export interface MutPatternTransport {
   '$_trivia'?: TransportTrivia
   _pattern: SlotValue<Box<PatternTransport>>
+  _mutable_specifier_after?: number
   _mut_pattern_before?: number
   _mut_pattern_after?: number
 }
@@ -1357,6 +1384,7 @@ export interface ParameterTransport {
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<ParameterNameTransportSlot>
   _type: SlotValue<TypeTransport>
+  _mutable_specifier_after?: number
   _colon_before?: number
   _colon_after?: number
   _parameter_before?: number
@@ -1458,6 +1486,7 @@ export interface RangePatternWithLeftTransport {
   '$_trivia'?: TransportTrivia
   _left: SlotValue<Box<RangePatternWithLeftLeftTransportSlot>>
   _content: SlotValue<Box<RangePatternWithLeftContentTransportSlot>>
+  _dot_dot_before?: number
   _range_pattern_with_left_before?: number
   _range_pattern_with_left_after?: number
 }
@@ -1524,6 +1553,8 @@ export interface ReferencePatternTransport {
   '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern: SlotValue<Box<PatternTransport>>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
   _amp_after?: number
   _reference_pattern_before?: number
   _reference_pattern_after?: number
@@ -1534,6 +1565,8 @@ export interface ReferenceTypeTransport {
   _lifetime?: SlotValue<LifetimeTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _type: SlotValue<Box<TypeTransport>>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
   _amp_after?: number
   _reference_type_before?: number
   _reference_type_after?: number
@@ -1608,7 +1641,10 @@ export interface SelfParameterTransport {
   _reference?: boolean
   _lifetime?: SlotValue<LifetimeTransport>
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
   _reference_after?: number
+  _self_before?: number
   _self_parameter_before?: number
   _self_parameter_after?: number
 }
@@ -1652,6 +1688,10 @@ export interface StaticItemTransport {
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
   _value?: SlotValue<ExpressionTransport>
+  _mutable_specifier_before?: number
+  _mutable_specifier_after?: number
+  _ref_marker_before?: number
+  _ref_marker_after?: number
   _colon_before?: number
   _colon_after?: number
   _semi_before?: number
@@ -1886,6 +1926,8 @@ export interface TraitItemTransport {
   _bounds?: SlotValue<TraitBoundsTransport>
   _where_clause?: SlotValue<WhereClauseTransport>
   _body: SlotValue<DeclarationListTransport>
+  _unsafe_marker_before?: number
+  _unsafe_marker_after?: number
   _trait_keyword_before?: number
   _trait_keyword_after?: number
   _trait_item_before?: number
@@ -2200,6 +2242,7 @@ export interface VariadicParameterTransport {
   '$_trivia'?: TransportTrivia
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _pattern?: SlotValue<PatternTransport>
+  _mutable_specifier_after?: number
   _dot_dot_dot_before?: number
   _colon_before?: number
   _colon_after?: number
@@ -2219,6 +2262,7 @@ export interface VisibilityModifierGroupTransport {
 export interface VisibilityModifierPubInPathTransport {
   '$_trivia'?: TransportTrivia
   _path: SlotValue<VisibilityModifierPubInPathPathTransportSlot>
+  _in_after?: number
   _visibility_modifier_pub_in_path_before?: number
   _visibility_modifier_pub_in_path_after?: number
 }

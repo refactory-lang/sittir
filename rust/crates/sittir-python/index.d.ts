@@ -215,6 +215,8 @@ export interface BooleanOperatorTransport {
   _left: SlotValue<Box<ExpressionTransport>>
   _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<ExpressionTransport>>
+  _operator_before?: number
+  _operator_after?: number
   _boolean_operator_before?: number
   _boolean_operator_after?: number
 }
@@ -617,6 +619,7 @@ export interface ForInClauseTransport {
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
   _comma?: boolean
+  _async_marker_after?: number
   _right_separator_space_before?: number
   _right_separator_space_after?: number
   _comma_before?: number
@@ -643,6 +646,7 @@ export interface ForStatementTransport {
   _right: SlotValue<ForStatementRightTransportSlot>
   _body: SlotValue<SuiteTransport>
   _alternative?: SlotValue<ElseClauseTransport>
+  _async_marker_after?: number
   _colon_before?: number
   _colon_after?: number
   _for_keyword_before?: number
@@ -661,6 +665,7 @@ export interface FunctionDefinitionTransport {
   _parameters: SlotValue<ParametersTransport>
   _return_type?: SlotValue<TypeTransport>
   _body: SlotValue<SuiteTransport>
+  _async_marker_after?: number
   _dash_gt_before?: number
   _dash_gt_after?: number
   _colon_before?: number
@@ -737,6 +742,7 @@ export interface ImportFromStatementTransport {
   '$_trivia'?: TransportTrivia
   _module_name: SlotValue<ImportFromStatementModuleNameTransportSlot>
   _content: SlotValue<ImportFromStatementContentTransportSlot>
+  _star_before?: number
   _from_keyword_after?: number
   _import_keyword_before?: number
   _import_keyword_after?: number
@@ -1403,6 +1409,7 @@ export interface WithStatementTransport {
   _async_marker?: SlotValue<KwAsyncMarkerTransport>
   _with_clause: SlotValue<WithClauseTransport>
   _body: SlotValue<SuiteTransport>
+  _async_marker_after?: number
   _colon_before?: number
   _colon_after?: number
   _with_keyword_before?: number
