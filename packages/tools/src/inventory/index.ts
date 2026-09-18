@@ -8,11 +8,12 @@ import { type Derivation, type GrammarInput, derive } from './derive.ts';
 import { renderIndexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
+export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
 export const INVENTORY_GRAMMARS = ['python', 'typescript', 'rust'] as const;
 
 export interface BindingsInventoryOptions {
 	readonly grammars?: readonly string[];
-	readonly emit?: string;
+	readonly emit?: string | true;
 	readonly check?: boolean;
 	readonly members?: boolean;
 }
@@ -117,8 +118,9 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	process.stdout.write(`${summarize(d)}\n`);
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
 	if (opts.emit !== undefined) {
-		const written = emitVocabulary(d, opts.emit);
-		process.stdout.write(`emitted ${written.length} files into ${opts.emit}\n`);
+		const outDir = opts.emit === true ? VOCABULARY_DIR : opts.emit;
+		const written = emitVocabulary(d, outDir);
+		process.stdout.write(`emitted ${written.length} files into ${outDir}\n`);
 	}
 	if (d.cycles.length > 0) code = 1;
 	return code;

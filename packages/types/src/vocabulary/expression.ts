@@ -294,6 +294,9 @@ export namespace Expression {
 			| 'and'
 			| 'in'
 			| 'instanceof'
+			| 'is'
+			| 'is not'
+			| 'not in'
 			| 'or'
 			| '|'
 			| '||';
@@ -374,32 +377,26 @@ export namespace Expression {
 		export namespace Comparison {
 			export interface Equal<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.equal';
-				readonly operators: '==';
 				readonly operator: '==';
 			}
 			export interface Greater<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.greater';
-				readonly operators: '>';
 				readonly operator: '>';
 			}
 			export interface GreaterEqual<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.greater_equal';
-				readonly operators: '>=';
 				readonly operator: '>=';
 			}
 			export interface Less<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.less';
-				readonly operators: '<';
 				readonly operator: '<';
 			}
 			export interface LessEqual<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.less_equal';
-				readonly operators: '<=';
 				readonly operator: '<=';
 			}
 			export interface NotEqual<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.comparison.not_equal';
-				readonly operators: '!=';
 				readonly operator: '!=';
 			}
 			export interface StrictEqual<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
@@ -426,11 +423,11 @@ export namespace Expression {
 		export namespace Identity {
 			export interface Is<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.identity.is';
-				readonly operators: 'is';
+				readonly operator: 'is';
 			}
 			export interface IsNot<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.identity.is_not';
-				readonly operators: 'is not';
+				readonly operator: 'is not';
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Expression.Binary.Identity.Is<G>
@@ -470,7 +467,6 @@ export namespace Expression {
 		export namespace Membership {
 			export interface In<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.membership.in';
-				readonly operators: 'in';
 				readonly operator: 'in';
 			}
 			export interface Instanceof<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
@@ -479,7 +475,7 @@ export namespace Expression {
 			}
 			export interface NotIn<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 				readonly kind: 'expression.binary.membership.not_in';
-				readonly operators: 'not in';
+				readonly operator: 'not in';
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Expression.Binary.Membership.In<G>

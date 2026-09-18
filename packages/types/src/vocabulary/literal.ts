@@ -145,13 +145,13 @@ export namespace Literal {
 		export interface Raw<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by pr
 			readonly kind: 'literal.string.raw';
-			readonly rawStringLiteralEnd?: V.Unmapped<'rust:raw_string_literal_end'>;
+			readonly rawStringLiteralEnd: V.Unmapped<'rust:raw_string_literal_end'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_end>
-			readonly rawStringLiteralStart?: V.Unmapped<'rust:raw_string_literal_start'>;
+			readonly rawStringLiteralStart: V.Unmapped<'rust:raw_string_literal_start'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_start>
-			readonly stringContent?: V.Unmapped<'rust:raw_string_literal_content'>;
+			readonly stringContent: V.Unmapped<'rust:raw_string_literal_content'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_content>
 		}

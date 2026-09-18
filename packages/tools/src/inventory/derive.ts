@@ -218,6 +218,56 @@ function collect(
 	return { claims, renames, deep, containers };
 }
 
+function memberNameOf(renames: ReadonlyMap<string, string>, raw: string): string {
+	const bare = raw.replace(/_$/, '');
+	const renamed = renames.get(bare) ?? renames.get(snake(bare)) ?? [...renames].find(([k]) => snake(k) === bare)?.[1];
+	return camel(renamed ?? bare.replace(/(?:Marker|Modifier)$/, ''));
+}
+
+const KEY_SEPARATOR = '\u0000';
+
+function inclusionKey(grammar: string, kind: string): string {
+	return `${grammar}${KEY_SEPARATOR}${kind}`;
+}
+
+export function inclusionCycles(inclusion: ReadonlyMap<string, ReadonlySet<string>>): string[] {
+	const grammarOf = (key: string): string => key.slice(0, key.indexOf(KEY_SEPARATOR));
+	const edges = (key: string): string[] =>
+		[...(inclusion.get(key) ?? [])].map((to) => inclusionKey(grammarOf(key), to)).filter((to) => inclusion.has(to));
+	const index = new Map<string, number>();
+	const low = new Map<string, number>();
+	const stack: string[] = [];
+	const onStack = new Set<string>();
+	const cycles: string[] = [];
+	let counter = 0;
+	const visit = (key: string): void => {
+		index.set(key, counter);
+		low.set(key, counter);
+		counter += 1;
+		stack.push(key);
+		onStack.add(key);
+		for (const to of edges(key)) {
+			if (!index.has(to)) {
+				visit(to);
+				low.set(key, Math.min(low.get(key)!, low.get(to)!));
+			} else if (onStack.has(to)) low.set(key, Math.min(low.get(key)!, index.get(to)!));
+		}
+		if (low.get(key) !== index.get(key)) return;
+		const component: string[] = [];
+		for (let member = stack.pop()!; ; member = stack.pop()!) {
+			onStack.delete(member);
+			component.push(member);
+			if (member === key) break;
+		}
+		if (component.length < 2) return;
+		const grammar = grammarOf(key);
+		const kinds = component.map((m) => m.slice(grammar.length + 1)).sort();
+		cycles.push(`${grammar}: ${kinds.join(' <-> ')}`);
+	};
+	for (const key of inclusion.keys()) if (!index.has(key)) visit(key);
+	return cycles.sort();
+}
+
 export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const allvocab = new Set<string>();
 	const contentDerived = new Map<string, Set<string>>();
@@ -240,7 +290,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const derivedSuper = new Map<string, readonly string[] | null>();
 	const inclusion = new Map<string, Set<string>>();
 	const supertypeKind = (input: GrammarInput, sk: string, seen: readonly string[]): readonly string[] | null => {
-		const memoKey = `${input.grammar} ${sk}`;
+		const memoKey = inclusionKey(input.grammar, sk);
 		const memo = derivedSuper.get(memoKey);
 		if (memo !== undefined) return memo;
 		const subtypes = modelNode(input.model, sk)?.subtypes ?? [];
@@ -313,7 +363,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 					input.grammar
 				);
 				if (claim.predicate) continue;
-				const literals = Object.entries(claim.fieldLiterals);
+				const rn = c.renames.get(gk) ?? new Map<string, string>();
+					const literals = Object.entries(claim.fieldLiterals).map(([f, t]): [string, string] => [memberNameOf(rn, f), t]);
 				if (literals.length > 0) {
 					const parent = vocabOf(input.grammar).get(gk);
 					if (parent !== undefined && parent !== claim.vocab) {
@@ -329,14 +380,9 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 				if (!node) continue;
 				const deep = c.deep.get(gk) ?? [];
 				const via = new Set(deep.flatMap((d) => [...d.via]));
-				const rn = c.renames.get(gk) ?? new Map<string, string>();
 				for (const slot of node.slots) {
 					if (slot.kinds.some((k) => via.has(k))) continue;
-					const raw = slot.propertyName;
-					const bare = raw.replace(/_$/, '');
-					const renamed = rn.get(bare) ?? rn.get(snake(bare)) ?? [...rn].find(([k]) => snake(k) === bare)?.[1];
-					const cm = camel(renamed ?? bare.replace(/(?:Marker|Modifier)$/, ''));
-					const f = memberOf(claim.vocab, cm);
+					const f = memberOf(claim.vocab, memberNameOf(rn, slot.propertyName));
 					for (const t of slotTokens(input, slot)) f.kinds.add(t);
 					f.optional ||= !slot.required;
 					f.multiple ||= slot.multiple;
@@ -414,11 +460,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const parts = v.split('.');
 		for (let i = 1; i < parts.length; i += 1) prefixes.add(parts.slice(0, i).join('.'));
 	}
-	const cycles: string[] = [];
-	for (const [key, bs] of inclusion) {
-		const [g, a] = key.split(' ');
-		for (const b of bs) if (a !== undefined && inclusion.get(`${g} ${b}`)?.has(a)) cycles.push(`${g}: ${a} <-> ${b}`);
-	}
+	const cycles = inclusionCycles(inclusion);
 	const unmapped = new Map<string, number>();
 	for (const m of members.values())
 		for (const f of m.values())
@@ -453,9 +495,13 @@ export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts>
 	const merged = new Map<string, MemberFacts>();
 	if (d.refinements.has(v)) return merged;
 	const superset = (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean => [...b].every((x) => a.has(x));
+	const plainClaimers = (o: string): Set<string> => {
+		const derivedIn = d.contentDerived.get(o) ?? new Set<string>();
+		return new Set([...(d.claimers.get(o) ?? [])].filter((g) => !derivedIn.has(g)));
+	};
 	const requiredIn = (o: string, cm: string): boolean => {
 		const own = d.members.get(o)?.get(cm);
-		return own !== undefined && !own.optional && superset(own.grammars, d.claimers.get(o) ?? new Set());
+		return own !== undefined && !own.optional && superset(own.grammars, plainClaimers(o));
 	};
 	const carriers = d.members.has(v) ? [v] : claimedBeneath(d, v);
 	if (carriers.length === 0) return merged;
@@ -478,7 +524,7 @@ export function levelMembers(d: Derivation, v: string): Map<string, MemberFacts>
 			for (const t of r.literals.get(snake(cm)) ?? r.literals.get(cm) ?? []) m.kinds.add(`text:${t}`);
 			for (const g of d.claimers.get(o) ?? []) m.grammars.add(g);
 		}
-		m.optional = !beneath.every((o) => requiredIn(o, cm));
+		m.optional = !beneath.filter((o) => plainClaimers(o).size > 0).every((o) => requiredIn(o, cm));
 		merged.set(cm, m);
 	}
 	return merged;

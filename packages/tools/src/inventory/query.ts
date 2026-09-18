@@ -11,6 +11,8 @@ export interface PatternNode {
 	quantifier: '' | '?' | '*' | '+';
 }
 
+const COMMENT_OR_STRING = /"(?:[^"\\]|\\.)*"|;[^\n]*/g;
+
 const TOKENS = /"(?:[^"\\]|\\.)*"|\(|\)|\[|\]|@[\w.]+|#[\w?!]+|[\w.]+:|[\w.]+|[*+?!.]/g;
 
 function node(kind: string | null): PatternNode {
@@ -27,7 +29,7 @@ function node(kind: string | null): PatternNode {
 }
 
 export function parseQuery(text: string): PatternNode[] {
-	const stripped = text.replace(/;[^\n]*/g, '');
+	const stripped = text.replace(COMMENT_OR_STRING, (m) => (m.startsWith('"') ? m : ''));
 	const tokens = stripped.match(TOKENS) ?? [];
 	let i = 0;
 	const top: PatternNode[] = [];
@@ -51,7 +53,10 @@ export function parseQuery(text: string): PatternNode[] {
 			}
 			if (t.startsWith('#')) {
 				let j = i + 1;
-				while (tokens[j] !== ')') j += 1;
+				while (tokens[j] !== ')') {
+					if (tokens[j] === undefined) throw new Error('query parse: unterminated predicate');
+					j += 1;
+				}
 				n.predicates.push(tokens.slice(i, j));
 				i = j;
 				continue;
@@ -76,6 +81,7 @@ export function parseQuery(text: string): PatternNode[] {
 			if (t === '[') {
 				i += 1;
 				while (tokens[i] !== ']') {
+					if (tokens[i] === undefined) throw new Error('query parse: unterminated alternation');
 					if (tokens[i] === '(') {
 						n.children.push(readNode());
 						continue;

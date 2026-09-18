@@ -14,24 +14,34 @@ export const fn: Declaration.Function<BaseContext> = {
 	parameters: []
 };
 
-// A method without an accessor kind is a plain method.
+// A method without an accessor is a plain method, and every method has a name and parameters.
 export const method: Declaration.Method<BaseContext> = {
 	kind: 'declaration.method',
 	name: { kind: 'identifier' },
 	parameters: []
 };
+// @ts-expect-error a method supplies its name
+export const nameless: Declaration.Method<BaseContext> = {
+	kind: 'declaration.method',
+	parameters: []
+};
+// @ts-expect-error a method supplies its parameters
+export const parameterless: Declaration.Method<BaseContext> = {
+	kind: 'declaration.method',
+	name: { kind: 'identifier' }
+};
 
-// A getter pins its accessor kind.
+// A getter pins the converged accessor member.
 export const getter: Declaration.Method.Getter<BaseContext> = {
 	kind: 'declaration.method.getter',
 	name: { kind: 'identifier' },
 	parameters: [],
-	accessorKind: 'get'
+	accessor: 'get'
 };
 export const notGetter: Declaration.Method.Getter<BaseContext> = {
 	...getter,
-	// @ts-expect-error a getter's accessor kind is 'get'
-	accessorKind: 'set'
+	// @ts-expect-error a getter's accessor is 'get'
+	accessor: 'set'
 };
 
 // A call carries no operator; a binary expression carries no arguments.
@@ -57,24 +67,29 @@ export const notAdd: Expression.Binary.Arithmetic.Add<BaseContext> = {
 	operator: '-'
 };
 
-// A refinement inherits what it does not pin: an increment still needs its operand.
-// @ts-expect-error an increment supplies its operand
-export const operandless: Expression.Update.Increment<BaseContext> = {
-	kind: 'expression.update.increment',
-	operator: '++'
+// Every comparison pins the one converged operator member.
+export const equal: Expression.Binary.Comparison.Equal<BaseContext> = {
+	kind: 'expression.binary.comparison.equal',
+	left: { kind: 'identifier' },
+	right: { kind: 'identifier' },
+	operator: '=='
+};
+export const notEqual: Expression.Binary.Comparison.Equal<BaseContext> = {
+	...equal,
+	// @ts-expect-error the equality refinement pins '=='
+	operator: '!='
 };
 
-// A trait is an interface with more: the refinement is assignable to its parent, and a plain interface has no unsafe marker to pin.
+// A trait is an interface with more: a refinement carries its own kind and the members its parent lacks.
 export const trait: Declaration.Interface.Trait<BaseContext> = {
 	kind: 'declaration.interface.trait',
 	name: { kind: 'identifier' },
 	body: [],
 	unsafe: true
 };
-export const asInterface: Declaration.Interface<BaseContext> = trait;
 
 // The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on kind.
-export function nameOf(d: Declaration.Kinds<BaseContext>): unknown {
+export function nameOf(d: Declaration.Any<BaseContext>): unknown {
 	if (d.kind === 'declaration.function') return d.parameters;
 	return d.kind;
 }

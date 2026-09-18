@@ -52,9 +52,9 @@ export namespace Declaration {
 	export interface Constant<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by pr
 		readonly kind: 'declaration.constant';
-		readonly name?: G['identifier'];
+		readonly name: G['identifier'];
 		// r only
-		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 		// r only
 		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// r only
@@ -292,7 +292,7 @@ export namespace Declaration {
 	export interface Method<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration<G>>> {
 		// claimed by prt
 		readonly kind: 'declaration.method';
-		readonly accessorKind?: '*' | 'get' | 'set';
+		readonly accessor?: '*' | 'get' | 'set';
 		// t only
 		readonly async?: boolean;
 		readonly body?: V.Unmapped<'python:suite'> | V.Statement.Block<G>;
@@ -307,12 +307,12 @@ export namespace Declaration {
 		// rt only
 		readonly generator?: boolean;
 		// t only
-		readonly name?: G['identifier'] | G['literal'];
+		readonly name: G['identifier'] | G['literal'];
 		readonly optional?: boolean;
 		// t only
 		readonly override?: boolean;
 		// t only
-		readonly parameters?: V.Declaration.Parameter<G>[];
+		readonly parameters: V.Declaration.Parameter<G>[];
 		readonly readonly?: boolean;
 		// t only
 		readonly returnType?:
@@ -345,16 +345,16 @@ export namespace Declaration {
 
 		export interface Getter<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Method<G>>> {
 			readonly kind: 'declaration.method.getter';
-			readonly accessorKind: 'get';
+			readonly accessor: 'get';
 		}
 		export interface Setter<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Method<G>>> {
 			readonly kind: 'declaration.method.setter';
-			readonly accessorKind: 'set';
+			readonly accessor: 'set';
 		}
 		export interface Signature<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Method<G>>> {
 			// claimed by rt
 			readonly kind: 'declaration.method.signature';
-			readonly accessorKind?: '*' | 'get' | 'set';
+			readonly accessor?: '*' | 'get' | 'set';
 			// t only
 			readonly async?: boolean;
 			// t only
@@ -408,7 +408,7 @@ export namespace Declaration {
 			readonly kind: 'declaration.method.static';
 			readonly async?: boolean;
 			// r only
-			readonly body?: V.Statement.Block<G>;
+			readonly body: V.Statement.Block<G>;
 			// r only
 			readonly const?: boolean;
 			// r only
@@ -416,9 +416,9 @@ export namespace Declaration {
 			// r only
 			readonly extern?: V.Modifier.Extern<G>;
 			// r only
-			readonly name?: G['identifier'];
+			readonly name: G['identifier'];
 			// r only
-			readonly parameters?: V.Declaration.Parameter<G>[];
+			readonly parameters: V.Declaration.Parameter<G>[];
 			// r only
 			readonly returnType?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 			// r only

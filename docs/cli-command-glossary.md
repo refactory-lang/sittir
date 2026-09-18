@@ -275,13 +275,13 @@ pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches [options]
 
 ### `tool bindings-inventory`
 
-Compile the bindings, derive the vocabulary they imply, and draft the base interface tree for comparison
+Compile the bindings, derive the vocabulary they imply, and emit the base interface tree
 
 **Options**
 
 - `--check` — Compile every bindings.scm against its parser and report totality diagnostics
 - `--members` — Print member names and kinds per shared kind
-- `--emit <dir>` — Draft the vocabulary tree into a directory (never over the authored tree)
+- `--emit [dir]` — Emit the vocabulary tree into a directory (default: packages/types/src/vocabulary, the checked-in tree)
 
 **Example**
 

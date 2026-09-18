@@ -1,14 +1,14 @@
 # Base vocabulary — derived draft
 
-**Status:** review draft, derived. Companion to the bindings spec
-(`sittir-role-interfaces-scm-spec.md`, to become the bindings spec).
+**Status:** review draft, derived. Companion to the bindings design
+(`2026-09-13-bindings-and-vocabulary-design.md`).
 **Derived from:** `packages/<grammar>/bindings.scm` and each grammar package's
 slot model, by `sittir tool bindings-inventory` (`packages/tools/src/inventory/`), which
-also drafts the base interface files that are authored under `packages/types/src/vocabulary/`
+also emits the base interface files under `packages/types/src/vocabulary/`
 (one file per top-level namespace, an interface merged with a namespace at
 every level, an interface alone at a leaf, and `context.ts` holding the
-`GrammarContext` typemap keyed by top-level namespace). Regenerated, never
-hand-edited; the script is the seed of `sittir tool bindings-inventory`.
+`GrammarContext` typemap keyed by top-level namespace). Regenerated with
+`sittir tool bindings-inventory --emit`, never hand-edited.
 Review happens on the emitted files and this draft; every correction is made
 in a bindings file, not here.
 
@@ -22,8 +22,12 @@ in a bindings file, not here.
 - Each namespace holds one type per kind, generic over the grammar context
   `G`. Members come from the slot models of the claiming grammars, unioned:
   a member is optional when any grammar leaves it optional, a list when any
-  grammar holds a list; a member only some claimers carry is marked
-  (`// t only`). Member types are `G['<kind>']` where the admitted grammar
+  grammar holds a list; a member only some claimers carry is optional and
+  marked (`// t only`). A level's member is required only when the level's
+  own claim carries it required in every grammar that claims the level and
+  every claimed child kind beneath it does too; a child claimed only by
+  content predicates declares no members of its own, inherits the level's,
+  and so neither relaxes a member nor counts as a grammar that lacks it. Member types are `G['<kind>']` where the admitted grammar
   kind is claimed, `'text'` where the slot holds a token, `boolean` where it
   holds a presence marker.
 - A refinement is written as its parent with the literal the binding fixes:

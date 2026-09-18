@@ -78,8 +78,15 @@ describe('deriveVocabulary', () => {
 		const fn = levelMembers(d, 'declaration.function');
 		expect(fn.get('name')?.optional).toBe(false);
 		expect(fn.get('parameters')?.optional).toBe(false);
-		expect(levelMembers(d, 'expression.update').get('content')?.optional).toBe(false);
-		expect(levelMembers(d, 'declaration.method').get('accessorKind')?.optional).toBe(true);
+		const method = levelMembers(d, 'declaration.method');
+		expect(method.get('name')?.optional).toBe(false);
+		expect(method.get('parameters')?.optional).toBe(false);
+		expect(method.get('accessor')?.optional).toBe(true);
+	});
+	it('names a refinement literal by the converged member, not the grammar field', () => {
+		const equal = d.refinements.get('expression.binary.comparison.equal');
+		expect([...(equal?.literals.keys() ?? [])]).toEqual(['operator']);
+		expect([...(d.refinements.get('declaration.method.getter')?.literals.keys() ?? [])]).toEqual(['accessor']);
 	});
 	it('assigns a container pattern captures to the kinds its element admits', () => {
 		expect(levelMembers(d, 'declaration.class').get('decorators')?.grammars.has('python')).toBe(true);
