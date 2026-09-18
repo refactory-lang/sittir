@@ -45,7 +45,7 @@ kind), deep members (a capture nested inside a container child of the claimed
 node, such as the class heritage clauses, which replaces the container slot),
 token captures (boolean members) and container patterns (`@element`);
 resolve each grammar kind to its claim, or through its supertype's subtypes
-with full-coverage admission, or to an `<grammar:kind>` placeholder; build the
+through its supertype when at least half of its subtypes resolve (a whole namespace is admitted only when every claimed kind in it is covered), or to an `<grammar:kind>` placeholder; build the
 members of every claimed kind from its slots, renamed by the captures and
 otherwise by the marker and modifier names rules; fold field-literal claims
 into refinements, each literal named by the kind's converged member (a capture on the
