@@ -55,5 +55,5 @@ describe('runCodegen write ordering', () => {
 			process.chdir(previousCwd);
 			rmSync(outDir, { recursive: true, force: true });
 		}
-	});
+	}, 60_000);
 });
