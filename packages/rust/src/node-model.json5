@@ -4011,6 +4011,7 @@
       "modelType": "branch",
       "typeName": "AttributedArgument",
       "factoryName": "_attributedArgument",
+      "coerceName": "coerceToAttributedArgument",
       "irKey": "attributedArgument",
       "hidden": false,
       "annotations": {
@@ -4070,6 +4071,7 @@
       "modelType": "branch",
       "typeName": "AttributedEnumVariant",
       "factoryName": "_attributedEnumVariant",
+      "coerceName": "coerceToAttributedEnumVariant",
       "irKey": "attributedEnumVariant",
       "hidden": false,
       "annotations": {
@@ -4129,6 +4131,7 @@
       "modelType": "branch",
       "typeName": "AttributedFieldDeclaration",
       "factoryName": "_attributedFieldDeclaration",
+      "coerceName": "coerceToAttributedFieldDeclaration",
       "irKey": "attributedFieldDeclaration",
       "hidden": false,
       "annotations": {
@@ -4188,6 +4191,7 @@
       "modelType": "branch",
       "typeName": "AttributedOrderedField",
       "factoryName": "_attributedOrderedField",
+      "coerceName": "coerceToAttributedOrderedField",
       "irKey": "attributedOrderedField",
       "hidden": false,
       "annotations": {
@@ -4268,6 +4272,7 @@
       "modelType": "branch",
       "typeName": "AttributedParameter",
       "factoryName": "_attributedParameter",
+      "coerceName": "coerceToAttributedParameter",
       "irKey": "attributedParameter",
       "hidden": false,
       "annotations": {
@@ -4354,6 +4359,7 @@
       "modelType": "branch",
       "typeName": "AttributedTypeParameter",
       "factoryName": "_attributedTypeParameter",
+      "coerceName": "coerceToAttributedTypeParameter",
       "irKey": "attributedTypeParameter",
       "hidden": false,
       "annotations": {
@@ -4444,6 +4450,7 @@
       "modelType": "pattern",
       "typeName": "BlockCommentContent",
       "factoryName": "blockCommentContent",
+      "coerceName": "coerceToBlockCommentContent",
       "irKey": "blockCommentContent",
       "hidden": false,
       "pattern": "[^]*",
@@ -4589,6 +4596,7 @@
       "modelType": "pattern",
       "typeName": "ErrorSentinel",
       "factoryName": "errorSentinel",
+      "coerceName": "coerceToErrorSentinel",
       "irKey": "errorSentinel",
       "hidden": false
     },
@@ -4729,6 +4737,7 @@
       "modelType": "pattern",
       "typeName": "FieldIdentifier",
       "factoryName": "fieldIdentifier",
+      "coerceName": "coerceToFieldIdentifier",
       "irKey": "fieldIdentifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
@@ -4739,6 +4748,7 @@
       "modelType": "keyword",
       "typeName": "ImplItemUnsafeMarker",
       "factoryName": "implItemUnsafeMarker",
+      "coerceName": "coerceToImplItemUnsafeMarker",
       "irKey": "implItemUnsafeMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4781,6 +4791,7 @@
       "modelType": "keyword",
       "typeName": "KwAsync",
       "factoryName": "kwAsync",
+      "coerceName": "coerceToKwAsync",
       "irKey": "kwAsync",
       "hidden": false,
       "isParameterless": true,
@@ -4793,6 +4804,7 @@
       "modelType": "keyword",
       "typeName": "KwAsyncMarker",
       "factoryName": "kwAsyncMarker",
+      "coerceName": "coerceToKwAsyncMarker",
       "irKey": "kwAsyncMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4805,6 +4817,7 @@
       "modelType": "keyword",
       "typeName": "KwConst",
       "factoryName": "kwConst",
+      "coerceName": "coerceToKwConst",
       "irKey": "kwConst",
       "hidden": false,
       "isParameterless": true,
@@ -4817,6 +4830,7 @@
       "modelType": "keyword",
       "typeName": "KwDefault",
       "factoryName": "kwDefault",
+      "coerceName": "coerceToKwDefault",
       "irKey": "kwDefault",
       "hidden": false,
       "isParameterless": true,
@@ -4829,6 +4843,7 @@
       "modelType": "keyword",
       "typeName": "KwMoveMarker",
       "factoryName": "kwMoveMarker",
+      "coerceName": "coerceToKwMoveMarker",
       "irKey": "kwMoveMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4841,6 +4856,7 @@
       "modelType": "keyword",
       "typeName": "KwRefMarker",
       "factoryName": "kwRefMarker",
+      "coerceName": "coerceToKwRefMarker",
       "irKey": "kwRefMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4853,6 +4869,7 @@
       "modelType": "keyword",
       "typeName": "KwStaticMarker",
       "factoryName": "kwStaticMarker",
+      "coerceName": "coerceToKwStaticMarker",
       "irKey": "kwStaticMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4865,6 +4882,7 @@
       "modelType": "keyword",
       "typeName": "KwUnsafe",
       "factoryName": "kwUnsafe",
+      "coerceName": "coerceToKwUnsafe",
       "irKey": "kwUnsafe",
       "hidden": false,
       "isParameterless": true,
@@ -4877,6 +4895,7 @@
       "modelType": "keyword",
       "typeName": "KwUnsafeMarker",
       "factoryName": "kwUnsafeMarker",
+      "coerceName": "coerceToKwUnsafeMarker",
       "irKey": "kwUnsafeMarker",
       "hidden": false,
       "isParameterless": true,
@@ -4889,6 +4908,7 @@
       "modelType": "branch",
       "typeName": "LetChain",
       "factoryName": "letChain",
+      "coerceName": "coerceToLetChain",
       "irKey": "letChain",
       "hidden": false,
       "slots": [
@@ -4965,6 +4985,7 @@
       "modelType": "pattern",
       "typeName": "LineDocContent",
       "factoryName": "lineDocContent",
+      "coerceName": "coerceToLineDocContent",
       "irKey": "lineDocContent",
       "hidden": false,
       "pattern": ".*",
@@ -5009,6 +5030,7 @@
       "modelType": "branch",
       "typeName": "MatchBlockArms",
       "factoryName": "_matchBlockArms",
+      "coerceName": "coerceToMatchBlockArms",
       "irKey": "matchBlockArms",
       "hidden": false,
       "annotations": {
@@ -5224,6 +5246,7 @@
       "modelType": "pattern",
       "typeName": "RawStringLiteralEnd",
       "factoryName": "rawStringLiteralEnd",
+      "coerceName": "coerceToRawStringLiteralEnd",
       "irKey": "rawStringLiteralEnd",
       "hidden": false,
       "factoryShape": "text"
@@ -5233,6 +5256,7 @@
       "modelType": "pattern",
       "typeName": "RawStringLiteralStart",
       "factoryName": "rawStringLiteralStart",
+      "coerceName": "coerceToRawStringLiteralStart",
       "irKey": "rawStringLiteralStart",
       "hidden": false,
       "factoryShape": "text"
@@ -5298,6 +5322,7 @@
       "modelType": "pattern",
       "typeName": "StringLiteralOpen",
       "factoryName": "stringLiteralOpen",
+      "coerceName": "coerceToStringLiteralOpen",
       "irKey": "stringLiteralOpen",
       "hidden": false,
       "pattern": "[bc]?\"",
@@ -5443,6 +5468,7 @@
       "modelType": "list",
       "typeName": "TupleExpressionElements",
       "factoryName": "tupleExpressionElements",
+      "coerceName": "coerceToTupleExpressionElements",
       "irKey": "tupleExpressionElements",
       "hidden": false,
       "nonEmpty": true,
@@ -5520,6 +5546,7 @@
       "modelType": "list",
       "typeName": "TupleTypeElements",
       "factoryName": "tupleTypeElements",
+      "coerceName": "coerceToTupleTypeElements",
       "irKey": "tupleTypeElements",
       "hidden": false,
       "nonEmpty": true,
@@ -5589,6 +5616,7 @@
       "modelType": "branch",
       "typeName": "TypeArgument",
       "factoryName": "_typeArgument",
+      "coerceName": "coerceToTypeArgument",
       "irKey": "typeArgument",
       "hidden": false,
       "annotations": {
@@ -5676,6 +5704,7 @@
       "modelType": "pattern",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
+      "coerceName": "coerceToTypeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
@@ -5722,6 +5751,7 @@
       "modelType": "keyword",
       "typeName": "WildcardPattern",
       "factoryName": "wildcardPattern",
+      "coerceName": "coerceToWildcardPattern",
       "irKey": "wildcardPattern",
       "hidden": false,
       "isParameterless": true,
@@ -5734,6 +5764,7 @@
       "modelType": "branch",
       "typeName": "AbstractType",
       "factoryName": "abstractType",
+      "coerceName": "coerceToAbstractType",
       "irKey": "abstractType",
       "hidden": false,
       "slots": [
@@ -5861,6 +5892,7 @@
       "modelType": "envelope",
       "typeName": "Arguments",
       "factoryName": "arguments_",
+      "coerceName": "coerceToArguments",
       "irKey": "arguments",
       "hidden": false,
       "slots": [
@@ -5900,6 +5932,7 @@
       "modelType": "list",
       "typeName": "ArgumentsElements",
       "factoryName": "argumentsElements",
+      "coerceName": "coerceToArgumentsElements",
       "irKey": "argumentsElements",
       "hidden": false,
       "annotations": {
@@ -5944,6 +5977,7 @@
       "modelType": "branch",
       "typeName": "ArrayExpressionList",
       "factoryName": "arrayExpressionList",
+      "coerceName": "coerceToArrayExpressionList",
       "irKey": "arrayExpressionList",
       "hidden": false,
       "annotations": {
@@ -6007,6 +6041,7 @@
       "modelType": "branch",
       "typeName": "ArrayExpressionSemi",
       "factoryName": "arrayExpressionSemi",
+      "coerceName": "coerceToArrayExpressionSemi",
       "irKey": "arrayExpressionSemi",
       "hidden": false,
       "annotations": {
@@ -6087,6 +6122,7 @@
       "modelType": "branch",
       "typeName": "ArrayType",
       "factoryName": "arrayType",
+      "coerceName": "coerceToArrayType",
       "irKey": "arrayType",
       "hidden": false,
       "slots": [
@@ -6153,6 +6189,7 @@
       "modelType": "branch",
       "typeName": "AssignmentExpression",
       "factoryName": "assignmentExpression",
+      "coerceName": "coerceToAssignmentExpression",
       "irKey": "assignmentExpression",
       "hidden": false,
       "slots": [
@@ -6208,6 +6245,7 @@
       "modelType": "branch",
       "typeName": "AssociatedType",
       "factoryName": "associatedType",
+      "coerceName": "coerceToAssociatedType",
       "irKey": "associatedType",
       "hidden": false,
       "slots": [
@@ -6305,6 +6343,7 @@
       "modelType": "branch",
       "typeName": "AsyncBlock",
       "factoryName": "asyncBlock",
+      "coerceName": "coerceToAsyncBlock",
       "irKey": "asyncBlock",
       "hidden": false,
       "slots": [
@@ -6381,6 +6420,7 @@
       "modelType": "branch",
       "typeName": "Attribute",
       "factoryName": "attribute",
+      "coerceName": "coerceToAttribute",
       "irKey": "attribute",
       "hidden": false,
       "slots": [
@@ -6476,6 +6516,7 @@
       "modelType": "polymorph",
       "typeName": "AttributeInput",
       "factoryName": "attributeInput",
+      "coerceName": "coerceToAttributeInput",
       "irKey": "attributeInput",
       "hidden": false,
       "annotations": {
@@ -6535,6 +6576,7 @@
       "modelType": "envelope",
       "typeName": "AttributeItem",
       "factoryName": "attributeItem",
+      "coerceName": "coerceToAttributeItem",
       "irKey": "attributeItem",
       "hidden": false,
       "slots": [
@@ -6573,6 +6615,7 @@
       "modelType": "envelope",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
+      "coerceName": "coerceToAwaitExpression",
       "irKey": "awaitExpression",
       "hidden": false,
       "slots": [
@@ -6695,6 +6738,7 @@
       "modelType": "envelope",
       "typeName": "BaseFieldInitializer",
       "factoryName": "baseFieldInitializer",
+      "coerceName": "coerceToBaseFieldInitializer",
       "irKey": "baseFieldInitializer",
       "hidden": false,
       "slots": [
@@ -6786,6 +6830,7 @@
       "modelType": "branch",
       "typeName": "BinaryExpression",
       "factoryName": "binaryExpression",
+      "coerceName": "coerceToBinaryExpression",
       "irKey": "binaryExpression",
       "hidden": false,
       "slots": [
@@ -6962,6 +7007,7 @@
       "modelType": "branch",
       "typeName": "Block",
       "factoryName": "block",
+      "coerceName": "coerceToBlock",
       "irKey": "block",
       "hidden": false,
       "slots": [
@@ -7045,6 +7091,7 @@
       "modelType": "polymorph",
       "typeName": "BlockComment",
       "factoryName": "blockComment",
+      "coerceName": "coerceToBlockComment",
       "irKey": "blockComment",
       "hidden": false,
       "slots": [
@@ -7110,6 +7157,7 @@
       "modelType": "envelope",
       "typeName": "BlockCommentDocInner",
       "factoryName": "blockCommentDocInner",
+      "coerceName": "coerceToBlockCommentDocInner",
       "irKey": "blockCommentDocInner",
       "hidden": false,
       "annotations": {
@@ -7152,6 +7200,7 @@
       "modelType": "envelope",
       "typeName": "BlockCommentDocOuter",
       "factoryName": "blockCommentDocOuter",
+      "coerceName": "coerceToBlockCommentDocOuter",
       "irKey": "blockCommentDocOuter",
       "hidden": false,
       "annotations": {
@@ -7229,6 +7278,7 @@
       "modelType": "branch",
       "typeName": "BoundedType",
       "factoryName": "boundedType",
+      "coerceName": "coerceToBoundedType",
       "irKey": "boundedType",
       "hidden": false,
       "slots": [
@@ -7312,6 +7362,7 @@
       "modelType": "polymorph",
       "typeName": "BracketedType",
       "factoryName": "bracketedType",
+      "coerceName": "coerceToBracketedType",
       "irKey": "bracketedType",
       "hidden": false,
       "slots": [
@@ -7376,6 +7427,7 @@
       "modelType": "branch",
       "typeName": "BreakExpression",
       "factoryName": "breakExpression",
+      "coerceName": "coerceToBreakExpression",
       "irKey": "breakExpression",
       "hidden": false,
       "slots": [
@@ -7442,6 +7494,7 @@
       "modelType": "branch",
       "typeName": "CallExpression",
       "factoryName": "callExpression",
+      "coerceName": "coerceToCallExpression",
       "irKey": "callExpression",
       "hidden": false,
       "slots": [
@@ -7763,6 +7816,7 @@
       "modelType": "branch",
       "typeName": "CapturedPattern",
       "factoryName": "capturedPattern",
+      "coerceName": "coerceToCapturedPattern",
       "irKey": "capturedPattern",
       "hidden": false,
       "slots": [
@@ -7849,6 +7903,7 @@
       "modelType": "pattern",
       "typeName": "CharLiteral",
       "factoryName": "charLiteral",
+      "coerceName": "coerceToCharLiteral",
       "irKey": "charLiteral",
       "hidden": false,
       "leafPattern": "/^(?:(?:b)?'(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?')$/u",
@@ -7871,6 +7926,7 @@
       "modelType": "branch",
       "typeName": "ClosureExpressionBlock",
       "factoryName": "closureExpressionBlock",
+      "coerceName": "coerceToClosureExpressionBlock",
       "irKey": "closureExpressionBlock",
       "hidden": false,
       "annotations": {
@@ -8014,6 +8070,7 @@
       "modelType": "branch",
       "typeName": "ClosureExpressionExpr",
       "factoryName": "closureExpressionExpr",
+      "coerceName": "coerceToClosureExpressionExpr",
       "irKey": "closureExpressionExpr",
       "hidden": false,
       "annotations": {
@@ -8142,6 +8199,7 @@
       "modelType": "envelope",
       "typeName": "ClosureParameters",
       "factoryName": "closureParameters",
+      "coerceName": "coerceToClosureParameters",
       "irKey": "closureParameters",
       "hidden": false,
       "slots": [
@@ -8213,6 +8271,7 @@
       "modelType": "branch",
       "typeName": "CompoundAssignmentExpr",
       "factoryName": "compoundAssignmentExpr",
+      "coerceName": "coerceToCompoundAssignmentExpr",
       "irKey": "compoundAssignmentExpr",
       "hidden": false,
       "slots": [
@@ -8289,6 +8348,7 @@
       "modelType": "envelope",
       "typeName": "ConstBlock",
       "factoryName": "constBlock",
+      "coerceName": "coerceToConstBlock",
       "irKey": "constBlock",
       "hidden": false,
       "slots": [
@@ -8327,6 +8387,7 @@
       "modelType": "branch",
       "typeName": "ConstItem",
       "factoryName": "constItem",
+      "coerceName": "coerceToConstItem",
       "irKey": "constItem",
       "hidden": false,
       "slots": [
@@ -8435,6 +8496,7 @@
       "modelType": "branch",
       "typeName": "ConstParameter",
       "factoryName": "constParameter",
+      "coerceName": "coerceToConstParameter",
       "irKey": "constParameter",
       "hidden": false,
       "slots": [
@@ -8532,6 +8594,7 @@
       "modelType": "envelope",
       "typeName": "ContinueExpression",
       "factoryName": "continueExpression",
+      "coerceName": "coerceToContinueExpression",
       "irKey": "continueExpression",
       "hidden": false,
       "slots": [
@@ -8582,6 +8645,7 @@
       "modelType": "keyword",
       "typeName": "Crate",
       "factoryName": "crate",
+      "coerceName": "coerceToCrate",
       "irKey": "crate",
       "hidden": false,
       "isParameterless": true,
@@ -8624,6 +8688,7 @@
       "modelType": "envelope",
       "typeName": "DeclarationList",
       "factoryName": "declarationList",
+      "coerceName": "coerceToDeclarationList",
       "irKey": "declarationList",
       "hidden": false,
       "slots": [
@@ -8682,6 +8747,7 @@
       "modelType": "envelope",
       "typeName": "DelimTokenTreeBrace",
       "factoryName": "delimTokenTreeBrace",
+      "coerceName": "coerceToDelimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
       "hidden": false,
       "annotations": {
@@ -8733,6 +8799,7 @@
       "modelType": "envelope",
       "typeName": "DelimTokenTreeBracket",
       "factoryName": "delimTokenTreeBracket",
+      "coerceName": "coerceToDelimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
       "hidden": false,
       "annotations": {
@@ -8784,6 +8851,7 @@
       "modelType": "envelope",
       "typeName": "DelimTokenTreeParen",
       "factoryName": "delimTokenTreeParen",
+      "coerceName": "coerceToDelimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
       "hidden": false,
       "annotations": {
@@ -8906,6 +8974,7 @@
       "modelType": "polymorph",
       "typeName": "DynamicType",
       "factoryName": "dynamicType",
+      "coerceName": "coerceToDynamicType",
       "irKey": "dynamicType",
       "hidden": false,
       "slots": [
@@ -8997,6 +9066,7 @@
       "modelType": "polymorph",
       "typeName": "ElseClause",
       "factoryName": "elseClause",
+      "coerceName": "coerceToElseClause",
       "irKey": "elseClause",
       "hidden": false,
       "slots": [
@@ -9053,6 +9123,7 @@
       "modelType": "punctuation",
       "typeName": "EmptyStatement",
       "factoryName": "emptyStatement",
+      "coerceName": "coerceToEmptyStatement",
       "irKey": "emptyStatement",
       "hidden": false,
       "isParameterless": true,
@@ -9065,6 +9136,7 @@
       "modelType": "branch",
       "typeName": "EnumItem",
       "factoryName": "enumItem",
+      "coerceName": "coerceToEnumItem",
       "irKey": "enumItem",
       "hidden": false,
       "slots": [
@@ -9194,6 +9266,7 @@
       "modelType": "branch",
       "typeName": "EnumVariant",
       "factoryName": "enumVariant",
+      "coerceName": "coerceToEnumVariant",
       "irKey": "enumVariant",
       "hidden": false,
       "slots": [
@@ -9299,6 +9372,7 @@
       "modelType": "envelope",
       "typeName": "EnumVariantList",
       "factoryName": "enumVariantList",
+      "coerceName": "coerceToEnumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
       "slots": [
@@ -9338,6 +9412,7 @@
       "modelType": "list",
       "typeName": "EnumVariantListElements",
       "factoryName": "enumVariantListElements",
+      "coerceName": "coerceToEnumVariantListElements",
       "irKey": "enumVariantListElements",
       "hidden": false,
       "annotations": {
@@ -9400,6 +9475,7 @@
       "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
+      "coerceName": "coerceToEscapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
       "leafPattern": "/^(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))$/u",
@@ -9432,6 +9508,7 @@
       "modelType": "polymorph",
       "typeName": "ExpressionStatement",
       "factoryName": "expressionStatement",
+      "coerceName": "coerceToExpressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
       "slots": [
@@ -9607,6 +9684,7 @@
       "modelType": "envelope",
       "typeName": "ExpressionStatementWithSemi",
       "factoryName": "expressionStatementWithSemi",
+      "coerceName": "coerceToExpressionStatementWithSemi",
       "irKey": "expressionStatementWithSemi",
       "hidden": false,
       "annotations": {
@@ -9702,6 +9780,7 @@
       "modelType": "branch",
       "typeName": "ExternCrateDeclaration",
       "factoryName": "externCrateDeclaration",
+      "coerceName": "coerceToExternCrateDeclaration",
       "irKey": "externCrateDeclaration",
       "hidden": false,
       "slots": [
@@ -9789,6 +9868,7 @@
       "modelType": "envelope",
       "typeName": "ExternModifier",
       "factoryName": "externModifier",
+      "coerceName": "coerceToExternModifier",
       "irKey": "externModifier",
       "hidden": false,
       "slots": [
@@ -9860,6 +9940,7 @@
       "modelType": "branch",
       "typeName": "FieldDeclaration",
       "factoryName": "fieldDeclaration",
+      "coerceName": "coerceToFieldDeclaration",
       "irKey": "fieldDeclaration",
       "hidden": false,
       "slots": [
@@ -9936,6 +10017,7 @@
       "modelType": "envelope",
       "typeName": "FieldDeclarationList",
       "factoryName": "fieldDeclarationList",
+      "coerceName": "coerceToFieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
       "slots": [
@@ -9975,6 +10057,7 @@
       "modelType": "list",
       "typeName": "FieldDeclarationListElements",
       "factoryName": "fieldDeclarationListElements",
+      "coerceName": "coerceToFieldDeclarationListElements",
       "irKey": "fieldDeclarationListElements",
       "hidden": false,
       "annotations": {
@@ -10007,6 +10090,7 @@
       "modelType": "branch",
       "typeName": "FieldExpression",
       "factoryName": "fieldExpression",
+      "coerceName": "coerceToFieldExpression",
       "irKey": "fieldExpression",
       "hidden": false,
       "slots": [
@@ -10069,6 +10153,7 @@
       "modelType": "branch",
       "typeName": "FieldInitializer",
       "factoryName": "fieldInitializer",
+      "coerceName": "coerceToFieldInitializer",
       "irKey": "fieldInitializer",
       "hidden": false,
       "slots": [
@@ -10152,6 +10237,7 @@
       "modelType": "envelope",
       "typeName": "FieldInitializerList",
       "factoryName": "fieldInitializerList",
+      "coerceName": "coerceToFieldInitializerList",
       "irKey": "fieldInitializerList",
       "hidden": false,
       "slots": [
@@ -10248,6 +10334,7 @@
       "modelType": "list",
       "typeName": "FieldInitializerListElements",
       "factoryName": "fieldInitializerListElements",
+      "coerceName": "coerceToFieldInitializerListElements",
       "irKey": "fieldInitializerListElements",
       "hidden": false,
       "annotations": {
@@ -10345,6 +10432,7 @@
       "modelType": "branch",
       "typeName": "FieldPatternNamed",
       "factoryName": "fieldPatternNamed",
+      "coerceName": "coerceToFieldPatternNamed",
       "irKey": "fieldPatternNamed",
       "hidden": false,
       "annotations": {
@@ -10446,6 +10534,7 @@
       "modelType": "branch",
       "typeName": "FieldPatternShorthand",
       "factoryName": "fieldPatternShorthand",
+      "coerceName": "coerceToFieldPatternShorthand",
       "irKey": "fieldPatternShorthand",
       "hidden": false,
       "annotations": {
@@ -10526,6 +10615,7 @@
       "modelType": "pattern",
       "typeName": "FloatLiteral",
       "factoryName": "floatLiteral",
+      "coerceName": "coerceToFloatLiteral",
       "irKey": "floatLiteral",
       "hidden": false,
       "factoryShape": "text"
@@ -10546,6 +10636,7 @@
       "modelType": "branch",
       "typeName": "ForExpression",
       "factoryName": "forExpression",
+      "coerceName": "coerceToForExpression",
       "irKey": "forExpression",
       "hidden": false,
       "slots": [
@@ -10654,6 +10745,7 @@
       "modelType": "envelope",
       "typeName": "ForLifetimes",
       "factoryName": "forLifetimes",
+      "coerceName": "coerceToForLifetimes",
       "irKey": "forLifetimes",
       "hidden": false,
       "slots": [
@@ -10706,6 +10798,7 @@
       "modelType": "branch",
       "typeName": "ForeignModItemBody",
       "factoryName": "foreignModItemBody",
+      "coerceName": "coerceToForeignModItemBody",
       "irKey": "foreignModItemBody",
       "hidden": false,
       "annotations": {
@@ -10786,6 +10879,7 @@
       "modelType": "branch",
       "typeName": "ForeignModItemSemi",
       "factoryName": "foreignModItemSemi",
+      "coerceName": "coerceToForeignModItemSemi",
       "irKey": "foreignModItemSemi",
       "hidden": false,
       "annotations": {
@@ -10871,6 +10965,7 @@
       "modelType": "branch",
       "typeName": "FunctionItem",
       "factoryName": "functionItem",
+      "coerceName": "coerceToFunctionItem",
       "irKey": "functionItem",
       "hidden": false,
       "slots": [
@@ -11059,6 +11154,7 @@
       "modelType": "envelope",
       "typeName": "FunctionModifiers",
       "factoryName": "functionModifiers",
+      "coerceName": "coerceToFunctionModifiers",
       "irKey": "functionModifiers",
       "hidden": false,
       "slots": [
@@ -11121,6 +11217,7 @@
       "modelType": "branch",
       "typeName": "FunctionSignatureItem",
       "factoryName": "functionSignatureItem",
+      "coerceName": "coerceToFunctionSignatureItem",
       "irKey": "functionSignatureItem",
       "hidden": false,
       "slots": [
@@ -11288,6 +11385,7 @@
       "modelType": "branch",
       "typeName": "FunctionType",
       "factoryName": "functionType",
+      "coerceName": "coerceToFunctionType",
       "irKey": "functionType",
       "hidden": false,
       "slots": [
@@ -11403,6 +11501,7 @@
       "modelType": "envelope",
       "typeName": "FunctionTypeFnForm",
       "factoryName": "functionTypeFnForm",
+      "coerceName": "coerceToFunctionTypeFnForm",
       "irKey": "functionTypeFnForm",
       "hidden": false,
       "annotations": {
@@ -11445,6 +11544,7 @@
       "modelType": "polymorph",
       "typeName": "FunctionTypeTraitForm",
       "factoryName": "functionTypeTraitForm",
+      "coerceName": "coerceToFunctionTypeTraitForm",
       "irKey": "functionTypeTraitForm",
       "hidden": false,
       "annotations": {
@@ -11494,6 +11594,7 @@
       "modelType": "branch",
       "typeName": "GenBlock",
       "factoryName": "genBlock",
+      "coerceName": "coerceToGenBlock",
       "irKey": "genBlock",
       "hidden": false,
       "slots": [
@@ -11560,6 +11661,7 @@
       "modelType": "branch",
       "typeName": "GenericFunction",
       "factoryName": "genericFunction",
+      "coerceName": "coerceToGenericFunction",
       "irKey": "genericFunction",
       "hidden": false,
       "slots": [
@@ -11629,6 +11731,7 @@
       "modelType": "branch",
       "typeName": "GenericPattern",
       "factoryName": "genericPattern",
+      "coerceName": "coerceToGenericPattern",
       "irKey": "genericPattern",
       "hidden": false,
       "slots": [
@@ -11691,6 +11794,7 @@
       "modelType": "branch",
       "typeName": "GenericType",
       "factoryName": "genericType",
+      "coerceName": "coerceToGenericType",
       "irKey": "genericType",
       "hidden": false,
       "slots": [
@@ -11759,6 +11863,7 @@
       "modelType": "branch",
       "typeName": "GenericTypeWithTurbofish",
       "factoryName": "genericTypeWithTurbofish",
+      "coerceName": "coerceToGenericTypeWithTurbofish",
       "irKey": "genericTypeWithTurbofish",
       "hidden": false,
       "slots": [
@@ -11861,6 +11966,7 @@
       "modelType": "branch",
       "typeName": "HigherRankedTraitBound",
       "factoryName": "higherRankedTraitBound",
+      "coerceName": "coerceToHigherRankedTraitBound",
       "irKey": "higherRankedTraitBound",
       "hidden": false,
       "slots": [
@@ -11982,6 +12088,7 @@
       "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
+      "coerceName": "coerceToIdentifier",
       "irKey": "identifier",
       "hidden": false,
       "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
@@ -11993,6 +12100,7 @@
       "modelType": "branch",
       "typeName": "IfExpression",
       "factoryName": "ifExpression",
+      "coerceName": "coerceToIfExpression",
       "irKey": "ifExpression",
       "hidden": false,
       "slots": [
@@ -12106,6 +12214,7 @@
       "modelType": "branch",
       "typeName": "ImplItemBody",
       "factoryName": "implItemBody",
+      "coerceName": "coerceToImplItemBody",
       "irKey": "implItemBody",
       "hidden": false,
       "annotations": {
@@ -12269,6 +12378,7 @@
       "modelType": "polymorph",
       "typeName": "ImplItemNegativeClause",
       "factoryName": "implItemNegativeClause",
+      "coerceName": "coerceToImplItemNegativeClause",
       "irKey": "implItemNegativeClause",
       "hidden": false,
       "annotations": {
@@ -12326,6 +12436,7 @@
       "modelType": "polymorph",
       "typeName": "ImplItemPositiveClause",
       "factoryName": "implItemPositiveClause",
+      "coerceName": "coerceToImplItemPositiveClause",
       "irKey": "implItemPositiveClause",
       "hidden": false,
       "annotations": {
@@ -12383,6 +12494,7 @@
       "modelType": "branch",
       "typeName": "ImplItemSemi",
       "factoryName": "implItemSemi",
+      "coerceName": "coerceToImplItemSemi",
       "irKey": "implItemSemi",
       "hidden": false,
       "annotations": {
@@ -12547,6 +12659,7 @@
       "modelType": "branch",
       "typeName": "IndexExpression",
       "factoryName": "indexExpression",
+      "coerceName": "coerceToIndexExpression",
       "irKey": "indexExpression",
       "hidden": false,
       "slots": [
@@ -12602,6 +12715,7 @@
       "modelType": "envelope",
       "typeName": "InnerAttributeItem",
       "factoryName": "innerAttributeItem",
+      "coerceName": "coerceToInnerAttributeItem",
       "irKey": "innerAttributeItem",
       "hidden": false,
       "slots": [
@@ -12640,6 +12754,7 @@
       "modelType": "pattern",
       "typeName": "IntegerLiteral",
       "factoryName": "integerLiteral",
+      "coerceName": "coerceToIntegerLiteral",
       "irKey": "integerLiteral",
       "hidden": false,
       "leafPattern": "/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u",
@@ -12672,6 +12787,7 @@
       "modelType": "envelope",
       "typeName": "Label",
       "factoryName": "label",
+      "coerceName": "coerceToLabel",
       "irKey": "label",
       "hidden": false,
       "slots": [
@@ -12710,6 +12826,7 @@
       "modelType": "branch",
       "typeName": "LastMatchArm",
       "factoryName": "lastMatchArm",
+      "coerceName": "coerceToLastMatchArm",
       "irKey": "lastMatchArm",
       "hidden": false,
       "slots": [
@@ -12832,6 +12949,7 @@
       "modelType": "branch",
       "typeName": "LetCondition",
       "factoryName": "letCondition",
+      "coerceName": "coerceToLetCondition",
       "irKey": "letCondition",
       "hidden": false,
       "slots": [
@@ -12887,6 +13005,7 @@
       "modelType": "branch",
       "typeName": "LetDeclaration",
       "factoryName": "letDeclaration",
+      "coerceName": "coerceToLetDeclaration",
       "irKey": "letDeclaration",
       "hidden": false,
       "slots": [
@@ -13016,6 +13135,7 @@
       "modelType": "envelope",
       "typeName": "Lifetime",
       "factoryName": "lifetime",
+      "coerceName": "coerceToLifetime",
       "irKey": "lifetime",
       "hidden": false,
       "slots": [
@@ -13065,6 +13185,7 @@
       "modelType": "branch",
       "typeName": "LifetimeParameter",
       "factoryName": "lifetimeParameter",
+      "coerceName": "coerceToLifetimeParameter",
       "irKey": "lifetimeParameter",
       "hidden": false,
       "slots": [
@@ -13120,6 +13241,7 @@
       "modelType": "list",
       "typeName": "Lifetimes",
       "factoryName": "lifetimes",
+      "coerceName": "coerceToLifetimes",
       "irKey": "lifetimes",
       "hidden": false,
       "annotations": {
@@ -13147,6 +13269,7 @@
       "modelType": "polymorph",
       "typeName": "LineComment",
       "factoryName": "lineComment",
+      "coerceName": "coerceToLineComment",
       "irKey": "lineComment",
       "hidden": false,
       "slots": [
@@ -13231,6 +13354,7 @@
       "modelType": "pattern",
       "typeName": "LineCommentContent",
       "factoryName": "lineCommentContent",
+      "coerceName": "coerceToLineCommentContent",
       "irKey": "lineCommentContent",
       "hidden": false,
       "annotations": {
@@ -13245,6 +13369,7 @@
       "modelType": "envelope",
       "typeName": "LineCommentDocInner",
       "factoryName": "lineCommentDocInner",
+      "coerceName": "coerceToLineCommentDocInner",
       "irKey": "lineCommentDocInner",
       "hidden": false,
       "annotations": {
@@ -13287,6 +13412,7 @@
       "modelType": "envelope",
       "typeName": "LineCommentDocOuter",
       "factoryName": "lineCommentDocOuter",
+      "coerceName": "coerceToLineCommentDocOuter",
       "irKey": "lineCommentDocOuter",
       "hidden": false,
       "annotations": {
@@ -13329,6 +13455,7 @@
       "modelType": "pattern",
       "typeName": "LineCommentRegularDslash",
       "factoryName": "lineCommentRegularDslash",
+      "coerceName": "coerceToLineCommentRegularDslash",
       "irKey": "lineCommentRegularDslash",
       "hidden": false,
       "annotations": {
@@ -13353,6 +13480,7 @@
       "modelType": "branch",
       "typeName": "LoopExpression",
       "factoryName": "loopExpression",
+      "coerceName": "coerceToLoopExpression",
       "irKey": "loopExpression",
       "hidden": false,
       "slots": [
@@ -13482,6 +13610,7 @@
       "modelType": "branch",
       "typeName": "MacroDefinitionBrace",
       "factoryName": "macroDefinitionBrace",
+      "coerceName": "coerceToMacroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
       "hidden": false,
       "annotations": {
@@ -13545,6 +13674,7 @@
       "modelType": "branch",
       "typeName": "MacroDefinitionBracket",
       "factoryName": "macroDefinitionBracket",
+      "coerceName": "coerceToMacroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
       "hidden": false,
       "annotations": {
@@ -13608,6 +13738,7 @@
       "modelType": "branch",
       "typeName": "MacroDefinitionParen",
       "factoryName": "macroDefinitionParen",
+      "coerceName": "coerceToMacroDefinitionParen",
       "irKey": "macroDefinitionParen",
       "hidden": false,
       "annotations": {
@@ -13671,6 +13802,7 @@
       "modelType": "branch",
       "typeName": "MacroInvocation",
       "factoryName": "macroInvocation",
+      "coerceName": "coerceToMacroInvocation",
       "irKey": "macroInvocation",
       "hidden": false,
       "slots": [
@@ -13733,6 +13865,7 @@
       "modelType": "branch",
       "typeName": "MacroRule",
       "factoryName": "macroRule",
+      "coerceName": "coerceToMacroRule",
       "irKey": "macroRule",
       "hidden": false,
       "slots": [
@@ -13788,6 +13921,7 @@
       "modelType": "list",
       "typeName": "MacroRules",
       "factoryName": "macroRules",
+      "coerceName": "coerceToMacroRules",
       "irKey": "macroRules",
       "hidden": false,
       "annotations": {
@@ -13836,6 +13970,7 @@
       "modelType": "branch",
       "typeName": "MatchArmBlockEnding",
       "factoryName": "matchArmBlockEnding",
+      "coerceName": "coerceToMatchArmBlockEnding",
       "irKey": "matchArmBlockEnding",
       "hidden": false,
       "annotations": {
@@ -13993,6 +14128,7 @@
       "modelType": "branch",
       "typeName": "MatchArmWithComma",
       "factoryName": "matchArmWithComma",
+      "coerceName": "coerceToMatchArmWithComma",
       "irKey": "matchArmWithComma",
       "hidden": false,
       "annotations": {
@@ -14080,6 +14216,7 @@
       "modelType": "envelope",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
+      "coerceName": "coerceToMatchBlock",
       "irKey": "matchBlock",
       "hidden": false,
       "slots": [
@@ -14122,6 +14259,7 @@
       "modelType": "branch",
       "typeName": "MatchExpression",
       "factoryName": "matchExpression",
+      "coerceName": "coerceToMatchExpression",
       "irKey": "matchExpression",
       "hidden": false,
       "slots": [
@@ -14188,6 +14326,7 @@
       "modelType": "branch",
       "typeName": "MatchPattern",
       "factoryName": "matchPattern",
+      "coerceName": "coerceToMatchPattern",
       "irKey": "matchPattern",
       "hidden": false,
       "slots": [
@@ -14268,6 +14407,7 @@
       "modelType": "pattern",
       "typeName": "Metavariable",
       "factoryName": "metavariable",
+      "coerceName": "coerceToMetavariable",
       "irKey": "metavariable",
       "hidden": false,
       "pattern": "\\$[a-zA-Z_]\\w*",
@@ -14291,6 +14431,7 @@
       "modelType": "branch",
       "typeName": "ModItemExternal",
       "factoryName": "modItemExternal",
+      "coerceName": "coerceToModItemExternal",
       "irKey": "modItemExternal",
       "hidden": false,
       "annotations": {
@@ -14350,6 +14491,7 @@
       "modelType": "branch",
       "typeName": "ModItemInline",
       "factoryName": "modItemInline",
+      "coerceName": "coerceToModItemInline",
       "irKey": "modItemInline",
       "hidden": false,
       "annotations": {
@@ -14452,6 +14594,7 @@
       "modelType": "envelope",
       "typeName": "MutPattern",
       "factoryName": "mutPattern",
+      "coerceName": "coerceToMutPattern",
       "irKey": "mutPattern",
       "hidden": false,
       "slots": [
@@ -14519,6 +14662,7 @@
       "modelType": "keyword",
       "typeName": "MutableSpecifier",
       "factoryName": "mutableSpecifier",
+      "coerceName": "coerceToMutableSpecifier",
       "irKey": "mutableSpecifier",
       "hidden": false,
       "isParameterless": true,
@@ -14531,6 +14675,7 @@
       "modelType": "polymorph",
       "typeName": "NegativeLiteral",
       "factoryName": "negativeLiteral",
+      "coerceName": "coerceToNegativeLiteral",
       "irKey": "negativeLiteral",
       "hidden": false,
       "slots": [
@@ -14576,6 +14721,7 @@
       "modelType": "punctuation",
       "typeName": "NeverType",
       "factoryName": "neverType",
+      "coerceName": "coerceToNeverType",
       "irKey": "neverType",
       "hidden": false,
       "isParameterless": true,
@@ -14625,6 +14771,7 @@
       "modelType": "branch",
       "typeName": "OrPatternBinary",
       "factoryName": "orPatternBinary",
+      "coerceName": "coerceToOrPatternBinary",
       "irKey": "orPatternBinary",
       "hidden": false,
       "annotations": {
@@ -14684,6 +14831,7 @@
       "modelType": "envelope",
       "typeName": "OrPatternPrefix",
       "factoryName": "orPatternPrefix",
+      "coerceName": "coerceToOrPatternPrefix",
       "irKey": "orPatternPrefix",
       "hidden": false,
       "annotations": {
@@ -14755,6 +14903,7 @@
       "modelType": "envelope",
       "typeName": "OrderedFieldDeclarationList",
       "factoryName": "orderedFieldDeclarationList",
+      "coerceName": "coerceToOrderedFieldDeclarationList",
       "irKey": "orderedFieldDeclarationList",
       "hidden": false,
       "slots": [
@@ -14794,6 +14943,7 @@
       "modelType": "list",
       "typeName": "OrderedFieldDeclarationListElements",
       "factoryName": "orderedFieldDeclarationListElements",
+      "coerceName": "coerceToOrderedFieldDeclarationListElements",
       "irKey": "orderedFieldDeclarationListElements",
       "hidden": false,
       "annotations": {
@@ -14826,6 +14976,7 @@
       "modelType": "branch",
       "typeName": "Parameter",
       "factoryName": "parameter",
+      "coerceName": "coerceToParameter",
       "irKey": "parameter",
       "hidden": false,
       "slots": [
@@ -14909,6 +15060,7 @@
       "modelType": "envelope",
       "typeName": "Parameters",
       "factoryName": "parameters",
+      "coerceName": "coerceToParameters",
       "irKey": "parameters",
       "hidden": false,
       "slots": [
@@ -14948,6 +15100,7 @@
       "modelType": "list",
       "typeName": "ParametersElements",
       "factoryName": "parametersElements",
+      "coerceName": "coerceToParametersElements",
       "irKey": "parametersElements",
       "hidden": false,
       "annotations": {
@@ -14980,6 +15133,7 @@
       "modelType": "envelope",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
+      "coerceName": "coerceToParenthesizedExpression",
       "irKey": "parenthesizedExpression",
       "hidden": false,
       "slots": [
@@ -15104,6 +15258,7 @@
       "modelType": "list",
       "typeName": "Patterns",
       "factoryName": "patterns",
+      "coerceName": "coerceToPatterns",
       "irKey": "patterns",
       "hidden": false,
       "annotations": {
@@ -15242,6 +15397,7 @@
       "modelType": "envelope",
       "typeName": "PointerTypeConst",
       "factoryName": "pointerTypeConst",
+      "coerceName": "coerceToPointerTypeConst",
       "irKey": "pointerTypeConst",
       "hidden": false,
       "annotations": {
@@ -15302,6 +15458,7 @@
       "modelType": "envelope",
       "typeName": "PointerTypeMut",
       "factoryName": "pointerTypeMut",
+      "coerceName": "coerceToPointerTypeMut",
       "irKey": "pointerTypeMut",
       "hidden": false,
       "annotations": {
@@ -15393,6 +15550,7 @@
       "modelType": "branch",
       "typeName": "QualifiedType",
       "factoryName": "qualifiedType",
+      "coerceName": "coerceToQualifiedType",
       "irKey": "qualifiedType",
       "hidden": false,
       "slots": [
@@ -15448,6 +15606,7 @@
       "modelType": "polymorph",
       "typeName": "RangeExpression",
       "factoryName": "rangeExpression",
+      "coerceName": "coerceToRangeExpression",
       "irKey": "rangeExpression",
       "hidden": false,
       "slots": [
@@ -15577,6 +15736,7 @@
       "modelType": "branch",
       "typeName": "RangeExpressionBinary",
       "factoryName": "rangeExpressionBinary",
+      "coerceName": "coerceToRangeExpressionBinary",
       "irKey": "rangeExpressionBinary",
       "hidden": false,
       "annotations": {
@@ -15667,6 +15827,7 @@
       "modelType": "envelope",
       "typeName": "RangeExpressionPostfix",
       "factoryName": "rangeExpressionPostfix",
+      "coerceName": "coerceToRangeExpressionPostfix",
       "irKey": "rangeExpressionPostfix",
       "hidden": false,
       "annotations": {
@@ -15762,6 +15923,7 @@
       "modelType": "envelope",
       "typeName": "RangeExpressionPrefix",
       "factoryName": "rangeExpressionPrefix",
+      "coerceName": "coerceToRangeExpressionPrefix",
       "irKey": "rangeExpressionPrefix",
       "hidden": false,
       "annotations": {
@@ -15869,6 +16031,7 @@
       "modelType": "branch",
       "typeName": "RangePatternPrefix",
       "factoryName": "rangePatternPrefix",
+      "coerceName": "coerceToRangePatternPrefix",
       "irKey": "rangePatternPrefix",
       "hidden": false,
       "annotations": {
@@ -15974,6 +16137,7 @@
       "modelType": "branch",
       "typeName": "RangePatternWithLeft",
       "factoryName": "rangePatternWithLeft",
+      "coerceName": "coerceToRangePatternWithLeft",
       "irKey": "rangePatternWithLeft",
       "hidden": false,
       "annotations": {
@@ -16092,6 +16256,7 @@
       "modelType": "punctuation",
       "typeName": "RangePatternWithLeftBare",
       "factoryName": "rangePatternWithLeftBare",
+      "coerceName": "coerceToRangePatternWithLeftBare",
       "irKey": "rangePatternWithLeftBare",
       "hidden": false,
       "annotations": {
@@ -16107,6 +16272,7 @@
       "modelType": "branch",
       "typeName": "RangePatternWithLeftWithRight",
       "factoryName": "rangePatternWithLeftWithRight",
+      "coerceName": "coerceToRangePatternWithLeftWithRight",
       "irKey": "rangePatternWithLeftWithRight",
       "hidden": false,
       "annotations": {
@@ -16229,6 +16395,7 @@
       "modelType": "branch",
       "typeName": "RawStringLiteral",
       "factoryName": "rawStringLiteral",
+      "coerceName": "coerceToRawStringLiteral",
       "irKey": "rawStringLiteral",
       "hidden": false,
       "slots": [
@@ -16305,6 +16472,7 @@
       "modelType": "pattern",
       "typeName": "RawStringLiteralContent",
       "factoryName": "rawStringLiteralContent",
+      "coerceName": "coerceToRawStringLiteralContent",
       "irKey": "rawStringLiteralContent",
       "hidden": false,
       "factoryShape": "text"
@@ -16345,6 +16513,7 @@
       "modelType": "envelope",
       "typeName": "RefPattern",
       "factoryName": "refPattern",
+      "coerceName": "coerceToRefPattern",
       "irKey": "refPattern",
       "hidden": false,
       "slots": [
@@ -16426,6 +16595,7 @@
       "modelType": "envelope",
       "typeName": "ReferenceExpressionBare",
       "factoryName": "referenceExpressionBare",
+      "coerceName": "coerceToReferenceExpressionBare",
       "irKey": "referenceExpressionBare",
       "hidden": false,
       "annotations": {
@@ -16521,6 +16691,7 @@
       "modelType": "envelope",
       "typeName": "ReferenceExpressionMut",
       "factoryName": "referenceExpressionMut",
+      "coerceName": "coerceToReferenceExpressionMut",
       "irKey": "referenceExpressionMut",
       "hidden": false,
       "annotations": {
@@ -16616,6 +16787,7 @@
       "modelType": "envelope",
       "typeName": "ReferenceExpressionRawConst",
       "factoryName": "referenceExpressionRawConst",
+      "coerceName": "coerceToReferenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
       "hidden": false,
       "annotations": {
@@ -16711,6 +16883,7 @@
       "modelType": "envelope",
       "typeName": "ReferenceExpressionRawMut",
       "factoryName": "referenceExpressionRawMut",
+      "coerceName": "coerceToReferenceExpressionRawMut",
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "annotations": {
@@ -16806,6 +16979,7 @@
       "modelType": "branch",
       "typeName": "ReferencePattern",
       "factoryName": "referencePattern",
+      "coerceName": "coerceToReferencePattern",
       "irKey": "referencePattern",
       "hidden": false,
       "slots": [
@@ -16861,6 +17035,7 @@
       "modelType": "branch",
       "typeName": "ReferenceType",
       "factoryName": "referenceType",
+      "coerceName": "coerceToReferenceType",
       "irKey": "referenceType",
       "hidden": false,
       "slots": [
@@ -16937,6 +17112,7 @@
       "modelType": "punctuation",
       "typeName": "RemainingFieldPattern",
       "factoryName": "remainingFieldPattern",
+      "coerceName": "coerceToRemainingFieldPattern",
       "irKey": "remainingFieldPattern",
       "hidden": false,
       "isParameterless": true,
@@ -16949,6 +17125,7 @@
       "modelType": "envelope",
       "typeName": "RemovedTraitBound",
       "factoryName": "removedTraitBound",
+      "coerceName": "coerceToRemovedTraitBound",
       "irKey": "removedTraitBound",
       "hidden": false,
       "slots": [
@@ -17005,6 +17182,7 @@
       "modelType": "envelope",
       "typeName": "ReturnExpression",
       "factoryName": "returnExpression",
+      "coerceName": "coerceToReturnExpression",
       "irKey": "returnExpression",
       "hidden": false,
       "slots": [
@@ -17117,6 +17295,7 @@
       "modelType": "branch",
       "typeName": "ScopedIdentifier",
       "factoryName": "scopedIdentifier",
+      "coerceName": "coerceToScopedIdentifier",
       "irKey": "scopedIdentifier",
       "hidden": false,
       "slots": [
@@ -17228,6 +17407,7 @@
       "modelType": "branch",
       "typeName": "ScopedTypeIdentifier",
       "factoryName": "scopedTypeIdentifier",
+      "coerceName": "coerceToScopedTypeIdentifier",
       "irKey": "scopedTypeIdentifier",
       "hidden": false,
       "slots": [
@@ -17339,6 +17519,7 @@
       "modelType": "branch",
       "typeName": "ScopedTypeIdentifierInExpressionPosition",
       "factoryName": "scopedTypeIdentifierInExpressionPosition",
+      "coerceName": "coerceToScopedTypeIdentifierInExpressionPosition",
       "irKey": "scopedTypeIdentifierInExpressionPosition",
       "hidden": false,
       "slots": [
@@ -17436,6 +17617,7 @@
       "modelType": "branch",
       "typeName": "ScopedUseList",
       "factoryName": "scopedUseList",
+      "coerceName": "coerceToScopedUseList",
       "irKey": "scopedUseList",
       "hidden": false,
       "slots": [
@@ -17526,6 +17708,7 @@
       "modelType": "keyword",
       "typeName": "Self",
       "factoryName": "self",
+      "coerceName": "coerceToSelf",
       "irKey": "self",
       "hidden": false,
       "isParameterless": true,
@@ -17538,6 +17721,7 @@
       "modelType": "branch",
       "typeName": "SelfParameter",
       "factoryName": "selfParameter",
+      "coerceName": "coerceToSelfParameter",
       "irKey": "selfParameter",
       "hidden": false,
       "slots": [
@@ -17622,6 +17806,7 @@
       "modelType": "pattern",
       "typeName": "Shebang",
       "factoryName": "shebang",
+      "coerceName": "coerceToShebang",
       "irKey": "shebang",
       "hidden": false,
       "pattern": "#![\\r\\f\\t\\v ]*([^\\[\\n].*)?\\n",
@@ -17633,6 +17818,7 @@
       "modelType": "branch",
       "typeName": "ShorthandFieldInitializer",
       "factoryName": "shorthandFieldInitializer",
+      "coerceName": "coerceToShorthandFieldInitializer",
       "irKey": "shorthandFieldInitializer",
       "hidden": false,
       "slots": [
@@ -17728,6 +17914,7 @@
       "modelType": "envelope",
       "typeName": "SlicePattern",
       "factoryName": "slicePattern",
+      "coerceName": "coerceToSlicePattern",
       "irKey": "slicePattern",
       "hidden": false,
       "slots": [
@@ -17796,6 +17983,7 @@
       "modelType": "branch",
       "typeName": "SourceFile",
       "factoryName": "sourceFile",
+      "coerceName": "coerceToSourceFile",
       "irKey": "sourceFile",
       "hidden": false,
       "slots": [
@@ -17898,6 +18086,7 @@
       "modelType": "branch",
       "typeName": "StaticItem",
       "factoryName": "staticItem",
+      "coerceName": "coerceToStaticItem",
       "irKey": "staticItem",
       "hidden": false,
       "slots": [
@@ -18070,6 +18259,7 @@
       "modelType": "pattern",
       "typeName": "StringContent",
       "factoryName": "stringContent",
+      "coerceName": "coerceToStringContent",
       "irKey": "stringContent",
       "hidden": false,
       "factoryShape": "text"
@@ -18079,6 +18269,7 @@
       "modelType": "branch",
       "typeName": "StringLiteral",
       "factoryName": "stringLiteral",
+      "coerceName": "coerceToStringLiteral",
       "irKey": "stringLiteral",
       "hidden": false,
       "slots": [
@@ -18141,6 +18332,7 @@
       "modelType": "branch",
       "typeName": "StructExpression",
       "factoryName": "structExpression",
+      "coerceName": "coerceToStructExpression",
       "irKey": "structExpression",
       "hidden": false,
       "slots": [
@@ -18223,6 +18415,7 @@
       "modelType": "branch",
       "typeName": "StructItemBrace",
       "factoryName": "structItemBrace",
+      "coerceName": "coerceToStructItemBrace",
       "irKey": "structItemBrace",
       "hidden": false,
       "annotations": {
@@ -18345,6 +18538,7 @@
       "modelType": "branch",
       "typeName": "StructItemTuple",
       "factoryName": "structItemTuple",
+      "coerceName": "coerceToStructItemTuple",
       "irKey": "structItemTuple",
       "hidden": false,
       "annotations": {
@@ -18467,6 +18661,7 @@
       "modelType": "branch",
       "typeName": "StructItemUnit",
       "factoryName": "structItemUnit",
+      "coerceName": "coerceToStructItemUnit",
       "irKey": "structItemUnit",
       "hidden": false,
       "annotations": {
@@ -18558,6 +18753,7 @@
       "modelType": "branch",
       "typeName": "StructPattern",
       "factoryName": "structPattern",
+      "coerceName": "coerceToStructPattern",
       "irKey": "structPattern",
       "hidden": false,
       "slots": [
@@ -18624,6 +18820,7 @@
       "modelType": "list",
       "typeName": "StructPatternElements",
       "factoryName": "structPatternElements",
+      "coerceName": "coerceToStructPatternElements",
       "irKey": "structPatternElements",
       "hidden": false,
       "annotations": {
@@ -18653,6 +18850,7 @@
       "modelType": "keyword",
       "typeName": "Super",
       "factoryName": "super",
+      "coerceName": "coerceToSuper",
       "irKey": "super",
       "hidden": false,
       "isParameterless": true,
@@ -18665,6 +18863,7 @@
       "modelType": "branch",
       "typeName": "TokenBindingPattern",
       "factoryName": "tokenBindingPattern",
+      "coerceName": "coerceToTokenBindingPattern",
       "irKey": "tokenBindingPattern",
       "hidden": false,
       "slots": [
@@ -18720,6 +18919,7 @@
       "modelType": "branch",
       "typeName": "TokenRepetition",
       "factoryName": "tokenRepetition",
+      "coerceName": "coerceToTokenRepetition",
       "irKey": "tokenRepetition",
       "hidden": false,
       "slots": [
@@ -18824,6 +19024,7 @@
       "modelType": "branch",
       "typeName": "TokenRepetitionPattern",
       "factoryName": "tokenRepetitionPattern",
+      "coerceName": "coerceToTokenRepetitionPattern",
       "irKey": "tokenRepetitionPattern",
       "hidden": false,
       "slots": [
@@ -18935,6 +19136,7 @@
       "modelType": "polymorph",
       "typeName": "TokenTree",
       "factoryName": "tokenTree",
+      "coerceName": "coerceToTokenTree",
       "irKey": "tokenTree",
       "hidden": false,
       "slots": [
@@ -19003,6 +19205,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreeBrace",
       "factoryName": "tokenTreeBrace",
+      "coerceName": "coerceToTokenTreeBrace",
       "irKey": "tokenTreeBrace",
       "hidden": false,
       "annotations": {
@@ -19062,6 +19265,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreeBracket",
       "factoryName": "tokenTreeBracket",
+      "coerceName": "coerceToTokenTreeBracket",
       "irKey": "tokenTreeBracket",
       "hidden": false,
       "annotations": {
@@ -19121,6 +19325,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreeParen",
       "factoryName": "tokenTreeParen",
+      "coerceName": "coerceToTokenTreeParen",
       "irKey": "tokenTreeParen",
       "hidden": false,
       "annotations": {
@@ -19193,6 +19398,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreePatternBrace",
       "factoryName": "tokenTreePatternBrace",
+      "coerceName": "coerceToTokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
       "hidden": false,
       "annotations": {
@@ -19259,6 +19465,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreePatternBracket",
       "factoryName": "tokenTreePatternBracket",
+      "coerceName": "coerceToTokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
       "hidden": false,
       "annotations": {
@@ -19325,6 +19532,7 @@
       "modelType": "envelope",
       "typeName": "TokenTreePatternParen",
       "factoryName": "tokenTreePatternParen",
+      "coerceName": "coerceToTokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
       "hidden": false,
       "annotations": {
@@ -19391,6 +19599,7 @@
       "modelType": "envelope",
       "typeName": "TraitBounds",
       "factoryName": "traitBounds",
+      "coerceName": "coerceToTraitBounds",
       "irKey": "traitBounds",
       "hidden": false,
       "slots": [
@@ -19439,6 +19648,7 @@
       "modelType": "branch",
       "typeName": "TraitItem",
       "factoryName": "traitItem",
+      "coerceName": "coerceToTraitItem",
       "irKey": "traitItem",
       "hidden": false,
       "slots": [
@@ -19621,6 +19831,7 @@
       "modelType": "envelope",
       "typeName": "TryBlock",
       "factoryName": "tryBlock",
+      "coerceName": "coerceToTryBlock",
       "irKey": "tryBlock",
       "hidden": false,
       "slots": [
@@ -19659,6 +19870,7 @@
       "modelType": "envelope",
       "typeName": "TryExpression",
       "factoryName": "tryExpression",
+      "coerceName": "coerceToTryExpression",
       "irKey": "tryExpression",
       "hidden": false,
       "slots": [
@@ -19772,6 +19984,7 @@
       "modelType": "branch",
       "typeName": "TupleExpression",
       "factoryName": "tupleExpression",
+      "coerceName": "coerceToTupleExpression",
       "irKey": "tupleExpression",
       "hidden": false,
       "slots": [
@@ -19827,6 +20040,7 @@
       "modelType": "envelope",
       "typeName": "TuplePattern",
       "factoryName": "tuplePattern",
+      "coerceName": "coerceToTuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
       "slots": [
@@ -19895,6 +20109,7 @@
       "modelType": "list",
       "typeName": "TuplePatternElements",
       "factoryName": "tuplePatternElements",
+      "coerceName": "coerceToTuplePatternElements",
       "irKey": "tuplePatternElements",
       "hidden": false,
       "annotations": {
@@ -19952,6 +20167,7 @@
       "modelType": "branch",
       "typeName": "TupleStructPattern",
       "factoryName": "tupleStructPattern",
+      "coerceName": "coerceToTupleStructPattern",
       "irKey": "tupleStructPattern",
       "hidden": false,
       "slots": [
@@ -20025,6 +20241,7 @@
       "modelType": "envelope",
       "typeName": "TupleType",
       "factoryName": "tupleType",
+      "coerceName": "coerceToTupleType",
       "irKey": "tupleType",
       "hidden": false,
       "slots": [
@@ -20093,6 +20310,7 @@
       "modelType": "envelope",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
+      "coerceName": "coerceToTypeArguments",
       "irKey": "typeArguments",
       "hidden": false,
       "slots": [
@@ -20132,6 +20350,7 @@
       "modelType": "list",
       "typeName": "TypeArgumentsElements",
       "factoryName": "typeArgumentsElements",
+      "coerceName": "coerceToTypeArgumentsElements",
       "irKey": "typeArgumentsElements",
       "hidden": false,
       "annotations": {
@@ -20164,6 +20383,7 @@
       "modelType": "branch",
       "typeName": "TypeBinding",
       "factoryName": "typeBinding",
+      "coerceName": "coerceToTypeBinding",
       "irKey": "typeBinding",
       "hidden": false,
       "slots": [
@@ -20240,6 +20460,7 @@
       "modelType": "branch",
       "typeName": "TypeCastExpression",
       "factoryName": "typeCastExpression",
+      "coerceName": "coerceToTypeCastExpression",
       "irKey": "typeCastExpression",
       "hidden": false,
       "slots": [
@@ -20295,6 +20516,7 @@
       "modelType": "branch",
       "typeName": "TypeItem",
       "factoryName": "typeItem",
+      "coerceName": "coerceToTypeItem",
       "irKey": "typeItem",
       "hidden": false,
       "slots": [
@@ -20445,6 +20667,7 @@
       "modelType": "branch",
       "typeName": "TypeParameter",
       "factoryName": "typeParameter",
+      "coerceName": "coerceToTypeParameter",
       "irKey": "typeParameter",
       "hidden": false,
       "slots": [
@@ -20521,6 +20744,7 @@
       "modelType": "envelope",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
+      "coerceName": "coerceToTypeParameters",
       "irKey": "typeParameters",
       "hidden": false,
       "slots": [
@@ -20560,6 +20784,7 @@
       "modelType": "list",
       "typeName": "TypeParametersElements",
       "factoryName": "typeParametersElements",
+      "coerceName": "coerceToTypeParametersElements",
       "irKey": "typeParametersElements",
       "hidden": false,
       "annotations": {
@@ -20647,6 +20872,7 @@
       "modelType": "branch",
       "typeName": "UnaryExpression",
       "factoryName": "unaryExpression",
+      "coerceName": "coerceToUnaryExpression",
       "irKey": "unaryExpression",
       "hidden": false,
       "slots": [
@@ -20723,6 +20949,7 @@
       "modelType": "branch",
       "typeName": "UnionItem",
       "factoryName": "unionItem",
+      "coerceName": "coerceToUnionItem",
       "irKey": "unionItem",
       "hidden": false,
       "slots": [
@@ -20852,6 +21079,7 @@
       "modelType": "punctuation",
       "typeName": "UnitExpression",
       "factoryName": "unitExpression",
+      "coerceName": "coerceToUnitExpression",
       "irKey": "unitExpression",
       "hidden": false,
       "isParameterless": true,
@@ -20864,6 +21092,7 @@
       "modelType": "punctuation",
       "typeName": "UnitType",
       "factoryName": "unitType",
+      "coerceName": "coerceToUnitType",
       "irKey": "unitType",
       "hidden": false,
       "isParameterless": true,
@@ -20876,6 +21105,7 @@
       "modelType": "envelope",
       "typeName": "UnsafeBlock",
       "factoryName": "unsafeBlock",
+      "coerceName": "coerceToUnsafeBlock",
       "irKey": "unsafeBlock",
       "hidden": false,
       "slots": [
@@ -20925,6 +21155,7 @@
       "modelType": "branch",
       "typeName": "UseAsClause",
       "factoryName": "useAsClause",
+      "coerceName": "coerceToUseAsClause",
       "irKey": "useAsClause",
       "hidden": false,
       "slots": [
@@ -21015,6 +21246,7 @@
       "modelType": "envelope",
       "typeName": "UseBounds",
       "factoryName": "useBounds",
+      "coerceName": "coerceToUseBounds",
       "irKey": "useBounds",
       "hidden": false,
       "slots": [
@@ -21055,6 +21287,7 @@
       "modelType": "list",
       "typeName": "UseBoundsElements",
       "factoryName": "useBoundsElements",
+      "coerceName": "coerceToUseBoundsElements",
       "irKey": "useBoundsElements",
       "hidden": false,
       "annotations": {
@@ -21083,6 +21316,7 @@
       "modelType": "list",
       "typeName": "UseClauses",
       "factoryName": "useClauses",
+      "coerceName": "coerceToUseClauses",
       "irKey": "useClauses",
       "hidden": false,
       "annotations": {
@@ -21129,6 +21363,7 @@
       "modelType": "branch",
       "typeName": "UseDeclaration",
       "factoryName": "useDeclaration",
+      "coerceName": "coerceToUseDeclaration",
       "irKey": "useDeclaration",
       "hidden": false,
       "slots": [
@@ -21258,6 +21493,7 @@
       "modelType": "envelope",
       "typeName": "UseList",
       "factoryName": "useList",
+      "coerceName": "coerceToUseList",
       "irKey": "useList",
       "hidden": false,
       "slots": [
@@ -21307,6 +21543,7 @@
       "modelType": "envelope",
       "typeName": "UseWildcard",
       "factoryName": "useWildcard",
+      "coerceName": "coerceToUseWildcard",
       "irKey": "useWildcard",
       "hidden": false,
       "slots": [
@@ -21351,6 +21588,7 @@
       "modelType": "polymorph",
       "typeName": "UseWildcardGroup",
       "factoryName": "useWildcardGroup",
+      "coerceName": "coerceToUseWildcardGroup",
       "irKey": "useWildcardGroup",
       "hidden": false,
       "slots": [
@@ -21439,6 +21677,7 @@
       "modelType": "branch",
       "typeName": "VariadicParameter",
       "factoryName": "variadicParameter",
+      "coerceName": "coerceToVariadicParameter",
       "irKey": "variadicParameter",
       "hidden": false,
       "slots": [
@@ -21505,6 +21744,7 @@
       "modelType": "polymorph",
       "typeName": "VisibilityModifier",
       "factoryName": "visibilityModifier",
+      "coerceName": "coerceToVisibilityModifier",
       "irKey": "visibilityModifier",
       "hidden": false,
       "slots": [
@@ -21563,6 +21803,7 @@
       "modelType": "polymorph",
       "typeName": "VisibilityModifierGroup",
       "factoryName": "visibilityModifierGroup",
+      "coerceName": "coerceToVisibilityModifierGroup",
       "irKey": "visibilityModifierGroup",
       "hidden": false,
       "slots": [
@@ -21633,6 +21874,7 @@
       "modelType": "envelope",
       "typeName": "VisibilityModifierPub",
       "factoryName": "visibilityModifierPub",
+      "coerceName": "coerceToVisibilityModifierPub",
       "irKey": "visibilityModifierPub",
       "hidden": false,
       "annotations": {
@@ -21682,6 +21924,7 @@
       "modelType": "polymorph",
       "typeName": "VisibilityModifierPubInPath",
       "factoryName": "visibilityModifierPubInPath",
+      "coerceName": "coerceToVisibilityModifierPubInPath",
       "irKey": "visibilityModifierPubInPath",
       "hidden": false,
       "annotations": {
@@ -21763,6 +22006,7 @@
       "modelType": "envelope",
       "typeName": "WhereClause",
       "factoryName": "whereClause",
+      "coerceName": "coerceToWhereClause",
       "irKey": "whereClause",
       "hidden": false,
       "slots": [
@@ -21813,6 +22057,7 @@
       "modelType": "branch",
       "typeName": "WherePredicate",
       "factoryName": "wherePredicate",
+      "coerceName": "coerceToWherePredicate",
       "irKey": "wherePredicate",
       "hidden": false,
       "slots": [
@@ -21931,6 +22176,7 @@
       "modelType": "list",
       "typeName": "WherePredicates",
       "factoryName": "wherePredicates",
+      "coerceName": "coerceToWherePredicates",
       "irKey": "wherePredicates",
       "hidden": false,
       "annotations": {
@@ -21957,6 +22203,7 @@
       "modelType": "branch",
       "typeName": "WhileExpression",
       "factoryName": "whileExpression",
+      "coerceName": "coerceToWhileExpression",
       "irKey": "whileExpression",
       "hidden": false,
       "slots": [
@@ -22058,6 +22305,7 @@
       "modelType": "envelope",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
+      "coerceName": "coerceToYieldExpression",
       "irKey": "yieldExpression",
       "hidden": false,
       "slots": [

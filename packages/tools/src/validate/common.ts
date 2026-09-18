@@ -1062,6 +1062,7 @@ export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
 
 export interface LoadedNodeModel {
 	readonly irKeys: Record<string, string>;
+	readonly coerceNames: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
@@ -1090,6 +1091,7 @@ interface ParsedNodeModel {
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
+		coerceName?: string;
 		modelType?: string;
 		annotations?: { readonly hoisted?: true };
 		slots?: ReadonlyArray<{
@@ -1118,6 +1120,7 @@ interface ParsedNodeModel {
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	irKeys: {},
+	coerceNames: {},
 	modelTypes: {},
 	leafPatterns: {},
 	hoistedKinds: new Set(),
@@ -1168,6 +1171,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	if (raw === undefined) return EMPTY_NODE_MODEL;
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const irKeys: Record<string, string> = {};
+	const coerceNames: Record<string, string> = {};
 	const modelTypes: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
@@ -1188,6 +1192,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const listDefaults: Record<string, string> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
+		if (node.coerceName !== undefined) coerceNames[node.kind] = node.coerceName;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
@@ -1217,6 +1222,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	}
 	return {
 		irKeys,
+		coerceNames,
 		modelTypes,
 		leafPatterns,
 		hoistedKinds,

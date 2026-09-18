@@ -94,3 +94,7 @@ A single-slot kind's argument in both spellings: the strict form is what the
 argument is when the wrapper is dropped and it lands on the parent's slot,
 where the parent's rules decide its spelling afresh; the loose form is its
 spelling inside the wrapper's own call.
+
+### `packages/tools/src/emit/factory-source.ts::leafBuilderPath`
+
+The callable that builds a text leaf on the strict surface. A visible leaf kind is built through its `ir` entry; a hidden one has no `ir` entry, so it is built through the coercer its own kind emits (the node model's `coerceName`), which the generated module imports by name.
