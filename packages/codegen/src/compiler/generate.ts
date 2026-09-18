@@ -59,6 +59,7 @@ export interface GenerateConfig {
 	strict?: boolean;
 	emitRenderModule?: boolean;
 	compilation?: Compilation;
+	allowDiagnostics?: ReadonlySet<string>;
 }
 
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
@@ -85,7 +86,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
 		const inlineKinds = new Set(inlineKindsArray ?? []);
 
-		assertCompilation(compilation);
+		assertCompilation(compilation, { allowDiagnostics: cfg.allowDiagnostics });
 
 		const compilerWarnings = compilation.diagnostics
 			.all()

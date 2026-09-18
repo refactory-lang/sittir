@@ -9,6 +9,7 @@ import {
 	type NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
 import { flatten } from '../../compiler/flatten.ts';
+import { canDefaultToEmpty } from '../shared.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
@@ -67,5 +68,21 @@ describe('an optional sibling slot does not block a required forwarding slot fro
 		const emitted = emitFactories({ grammar: 'synth', nodeMap });
 		expect(emitted).toContain('function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {})');
 		expect(emitted).toContain('config.body ?? buildBlock()');
+	});
+});
+
+describe('a required field targeting a node with an optional sibling slot defaults to that node', () => {
+	const nodeMap = makeNodeMap();
+	const asyncBlock = nodeMap.nodes.get('async_block')!;
+	const field = new AssembledNonterminal({
+		values: [{ node: asyncBlock, storageKindId: 2, multiplicity: 'single' }],
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
+		sourceRuleIds: [],
+		fieldName: 'outer'
+	});
+
+	it('canDefaultToEmpty answers with the target factory', () => {
+		expect(canDefaultToEmpty(field, nodeMap)).toBe('buildAsyncBlock');
 	});
 });

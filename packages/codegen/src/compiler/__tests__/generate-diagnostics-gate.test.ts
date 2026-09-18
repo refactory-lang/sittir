@@ -38,4 +38,18 @@ describe('generate() rejects a grammar the preflight rejects, on its own', () =>
 		const { GrammarDiagnosticError } = await import('../diagnostics/grammar-diagnostics.ts');
 		await expect(generate({ grammar: 'rust', outputDir: 'unused' })).rejects.toThrow(GrammarDiagnosticError);
 	});
+
+	it('does not raise it for a code the caller allows', async () => {
+		const { generate } = await import('../generate.ts');
+		const { GrammarDiagnosticError } = await import('../diagnostics/grammar-diagnostics.ts');
+		const outcome = await generate({
+			grammar: 'rust',
+			outputDir: 'unused',
+			allowDiagnostics: new Set(['parsekind-noninjective'])
+		}).then(
+			() => undefined,
+			(error: unknown) => error
+		);
+		expect(outcome).not.toBeInstanceOf(GrammarDiagnosticError);
+	});
 });

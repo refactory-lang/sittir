@@ -1744,8 +1744,6 @@ it must survive across two separate top-level calls in one compile
 reads it back out after `assemble()` runs), so its owner is
 `collectGrammarDiagnosticsForGrammar` itself, threaded down through
 `NormalizeCtx.slotGroupingCollector` → `SimplifyCtx.slotGroupingCollector`.
-```rn)
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembleWarning`

@@ -101,7 +101,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	injectedDiagnostics?: readonly GrammarDiagnostic[];
 	compilation?: Compilation;
 	confirm?: (blocked: readonly GrammarDiagnostic[]) => Promise<boolean>;
-}): Promise<void> {
+}): Promise<ReadonlySet<string>> {
 	let diagnostics: readonly GrammarDiagnostic[];
 	if (input.injectedDiagnostics !== undefined) {
 		diagnostics = input.injectedDiagnostics;
@@ -123,7 +123,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
 	}
 
-	if (blocked.length === 0) return;
+	if (blocked.length === 0) return input.allowDiagnostics;
 
 	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
 
@@ -134,6 +134,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	if (!proceed) {
 		throw new GrammarDiagnosticError(blocked);
 	}
+	return new Set([...input.allowDiagnostics, ...blocked.map((d) => d.code)]);
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
@@ -198,7 +199,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		generatedIdTables: await loadGeneratedIdTables(grammar)
 	});
 
-	await runGrammarDiagnosticsPreflight({
+	const allowDiagnostics = await runGrammarDiagnosticsPreflight({
 		grammar,
 		allowDiagnostics: new Set(opts.allowDiagnostics ?? []),
 		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY),
@@ -210,7 +211,8 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 		grammar,
 		outputDir,
 		emitRenderModule: all,
-		compilation
+		compilation,
+		allowDiagnostics
 	});
 
 	if (result.slotGroupingDiagnostics.length > 0) {

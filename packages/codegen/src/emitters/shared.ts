@@ -715,11 +715,6 @@ export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap)
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	// A list envelope's own list target defaults exactly where
-	// `argumentOptional` already says a zero-argument call is legal for it —
-	// a separated list's own `argumentOptional` is unconditionally true
-	// (constructible with no elements), independent of whether the
-	// grammar's `repeat` is a `repeat1`.
 	if (targetNode instanceof AssembledList) {
 		return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
 	}
@@ -732,13 +727,8 @@ export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap)
 		return null;
 	}
 
-	if (!(targetNode instanceof AbstractAssembledCompound)) {
-		return null;
-	}
-	const targetFields = targetNode.slots;
-	const hasBlockingField = targetFields.some((f) => isRequired(f));
-	if (hasBlockingField) return null;
-	return targetNode.rawFactoryName;
+	if (!(targetNode instanceof AbstractAssembledCompound)) return null;
+	return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
 }
 
 export function classifyFactoryShape(
