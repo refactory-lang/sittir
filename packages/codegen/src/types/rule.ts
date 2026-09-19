@@ -36,6 +36,7 @@ export type RuleAnnotations = {
 	readonly default?: true;
 	readonly preference?: string;
 	readonly hoisted?: true;
+	readonly spliced?: true;
 	readonly origin?: SeamOrigin;
 	readonly edgeTokens?: readonly string[];
 };

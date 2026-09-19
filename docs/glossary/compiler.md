@@ -8017,6 +8017,10 @@ source, one derivation.
 // node (literal, kindId, hidden, …) are kept by spreading the node first.
 ```
 
+#### field annotations
+
+A `FIELD` wrapper's annotations move onto the rule the field name lands on (`withKindFacts`), so a stamp written at a field position (`splice()`, `group()`) survives into the normalized and simplified rule instead of being dropped with the wrapper.
+
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
 ```text

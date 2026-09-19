@@ -305,7 +305,7 @@ packages (`tsc --noEmit` clean) and against rust at runtime: a numeric
 `TSKindId.StructPattern` and its string spelling now build byte-identical
 output through `ir.matchArm.withComma`.
 
-### L2 — List options are honoured only in first argument position — outside the contract
+### L2 — List options are honoured only in first argument position — RESOLVED
 
 **Intended.** The options object is first so the elements stay a rest
 parameter and a spread, and it is optional because the grammar's `options:`
@@ -326,6 +326,12 @@ ir.enumVariantList.strict(variantA, { delimiter: Delimiter.Trailing })  // type 
 
 Affects rust, typescript, python.
 
+The loose list coercer and the seated overlay type their parameters the same way,
+`[first?: element | options, ...rest: element[]]`, so the options object is
+accepted first on the loose surface as on the strict one and a trailing one is a
+type error. The loose printer no longer needs an options overload that did not
+exist: `ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, …)` type-checks.
+
 ### L3 — A two-branch list slot takes no array — RESOLVED
 
 Where a slot accepts either of two list kinds, the coercer resolves neither from
@@ -335,9 +341,14 @@ two-list slot with no declared default stays an error, and the fix is to
 declare the default in the grammar, not to pick one.
 
 ```ts
-ir.enumVariant({ name: 'V', body: [ir.fieldDeclaration({ … })] })              // rejected
-ir.enumVariant({ name: 'V', body: ir.fieldDeclarationList.strict(…) })         // → "V{a:u32}"
+ir.enumVariant({ name: 'V', body: [ir.fieldDeclaration({ … })] })              // → "V{a:u32}"
+ir.enumVariant({ name: 'V', body: ir.fieldDeclaration({ … }) })                // → "V{a:u32}"
 ```
+
+A single element goes through the bare-accept tables: a list admits its content
+slot's kinds and those of a transparent wrapper it holds, so a `field_declaration`
+is an element of `field_declaration_list` even though the list's own content is
+`_attributed_field_declaration`.
 
 Affected rust (`enum_variant.body`: `field_declaration_list |
 ordered_field_declaration_list`). `arm.default` is now declared on the
@@ -347,7 +358,7 @@ parenthesized, ordered-tuple form stays reachable by building it explicitly.
 Combined with L6's array-to-envelope fix, `ir.enumVariant({ name, body: [...] })`
 now builds the field list correctly.
 
-### L4 — A single-slot wrapper must be spelled by hand — rule 5
+### L4 — A visible wrapper must be spelled by hand — RESOLVED by seating
 
 Where a slot holds a wrapper whose own required slot admits the value, the
 coercer takes no bare inner value. The condition is the wrapper's `forwarded`
@@ -355,13 +366,21 @@ factory shape (the classification behind the strict factory's target
 overload), not a coincidence of field names.
 
 ```ts
-ir.matchArm({ pattern: { kind: 'struct_pattern', … } })              // rejected
-ir.matchArm({ pattern: { pattern: { kind: 'struct_pattern', … } } }) // → "T{a}=>{}"
+ir.matchArm.withComma({ pattern: { kind: 'struct_pattern', … } })              // → "T{a}=>{},"
+ir.matchArm.withComma({ pattern: { pattern: { kind: 'struct_pattern', … } } })   // still builds
 ```
 
 Affects rust (`match_arm.pattern` → `match_pattern`).
 
-**Investigated, not yet fixed.** `forwardedTargetKind(match_pattern, nodeMap)`
+**Resolved.** `splice()` at the `pattern` field of `match_arm` and `last_match_arm`
+(`packages/rust/grammar.sittir.ts`) declares `match_pattern` spliced onto its parent:
+the reference carries `annotations.spliced`, the seat is recorded as `splice` in
+`node-model.json5` on `last_match_arm`, `match_arm_with_comma` and
+`match_arm_block_ending`, and the seated overlay passes a value that is already the
+wrapper (built, or a config of its own keys) through untouched. Wrapping a bare value in a single-slot wrapper stays limited
+to wrappers whose factory shape is `forwarded`.
+
+The investigation that led there, kept for the reasoning: `forwardedTargetKind(match_pattern, nodeMap)`
 returns `null` empirically (verified directly against the compiled node map):
 `match_pattern`'s sole field `pattern` targets `_pattern`, a hidden
 `AssembledSupertype` with ~19 subtypes and no `rawFactoryName` of its own, so
@@ -383,7 +402,7 @@ design decision.
 **Direction.** Neither. This is a seating question, not a coercion one: the
 wrapper is spliced onto `match_arm` (and `last_match_arm`) so its keys are
 the parent's, and the value at `pattern` resolves against `_pattern` by
-rule 3. Rule 5 stays limited to genuinely `forwarded` single-slot wrappers.
+rule 3. Wrapping a bare value in a single-slot wrapper stays limited to `forwarded` wrappers.
 Design: `docs/superpowers/specs/2026-09-17-factory-ergonomics-minor.md`, item 1.
 
 ### L5 — Whole-alternative arms need their form named — intended, outside the contract

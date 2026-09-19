@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -2074,9 +2075,13 @@ export function buildComment(text: string): T.Comment.Built {
 }
 
 export function buildTemplateString(
-	...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]
+	...children: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]
 ): T.TemplateString.Built {
-	const _elements = children;
+	const _elements = admitHiddenText<NonNullable<T.TemplateString['_elements']>>(
+		children,
+		[['_template_chars', _leafRe_buildTemplateChars, buildTemplateChars]],
+		'TemplateString.elements'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2085,7 +2090,7 @@ export function buildTemplateString(
 				$named: true as const,
 				_elements,
 				$with: {
-					elements: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) =>
+					elements: (...vs: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]) =>
 						buildTemplateString(...vs)
 				}
 			},
@@ -4100,9 +4105,13 @@ export function buildTemplateType(value: T.PrimaryType | T.InferType): T.Templat
 }
 
 export function buildTemplateLiteralType(
-	...children: (T.TemplateChars | T.TemplateType)[]
+	...children: ((T.TemplateChars | T.TemplateType) | string)[]
 ): T.TemplateLiteralType.Built {
-	const _elements = children;
+	const _elements = admitHiddenText<NonNullable<T.TemplateLiteralType['_elements']>>(
+		children,
+		[['_template_chars', _leafRe_buildTemplateChars, buildTemplateChars]],
+		'TemplateLiteralType.elements'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4110,7 +4119,7 @@ export function buildTemplateLiteralType(
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { elements: (...vs: (T.TemplateChars | T.TemplateType)[]) => buildTemplateLiteralType(...vs) }
+				$with: { elements: (...vs: ((T.TemplateChars | T.TemplateType) | string)[]) => buildTemplateLiteralType(...vs) }
 			},
 			{
 				elements: () => _elements

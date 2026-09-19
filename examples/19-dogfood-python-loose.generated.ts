@@ -36,7 +36,7 @@ export function rebuildPython4spaceLoose() {
 			})))),
 		}), ir.functionDefinition({
 			name: "greet",
-			parameters: [ir.identifier("self")],
+			parameters: ir.identifier("self"),
 			returnType: "str",
 			body: ir.block(ir.simpleStatementsElements(ir.returnStatement(ir.string({
 				stringStart: "f\"",
@@ -60,7 +60,7 @@ export function rebuildPython4spaceLoose() {
 		})],
 		returnType: ir.genericType({
 			name: "Optional",
-			typeParameter: [ir.type("User")],
+			typeParameter: ir.type("User"),
 		}),
 		body: ir.block(ir.forStatement({
 			left: "user",

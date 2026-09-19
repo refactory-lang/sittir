@@ -9,6 +9,7 @@ import {
 	storageKindOfRef,
 	type AssembledNode,
 	type AssembledNonterminal,
+	type NodeBackedRef,
 	type NodeOrTerminal,
 	type TextValueStorage,
 	isTextStorage
@@ -421,6 +422,10 @@ function subFactoriesInternal(
 	return result;
 }
 
+function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): boolean {
+	return group?.annotations?.hoisted === true || value.spliced === true;
+}
+
 export interface SpliceSeat {
 	readonly slot: AssembledNonterminal;
 	readonly group: AssembledNode;
@@ -437,7 +442,7 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		if (!isNodeRef(value)) continue;
 		if (isChoiceGroup(node, value, nodeMap, DEFAULT_IS_EMITTED, new Set())) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
-		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
+		if (!(group instanceof AbstractAssembledCompound) || !isHoistedAt(value, group)) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
@@ -521,7 +526,7 @@ export function seatOf(
 ): Seat | undefined {
 	if (source === undefined || !isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-	if (child === undefined || child.annotations?.hoisted !== true) return undefined;
+	if (child === undefined || !isHoistedAt(value, child)) return undefined;
 	const text = textStorageOf(value, nodeMap)?.text;
 	const arm = source.subs.find(
 		(e) =>

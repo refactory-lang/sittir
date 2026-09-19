@@ -66,7 +66,6 @@ interface SerializedNodeBase {
 	modelType: string;
 	typeName: string;
 	factoryName?: string;
-	coerceName?: string;
 	irKey?: string;
 	hidden: boolean;
 	annotations?: RuleAnnotations;
@@ -197,7 +196,6 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		modelType: node.modelType,
 		typeName: node.typeName,
 		factoryName: node.factoryName,
-		coerceName: node.fromFunctionName,
 		irKey: node.irKey,
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),

@@ -13,7 +13,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Typed facade over @sittir/common/utils with grammar-local narrowing helpers');
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
 	);
 	if (triviaTypeNames.length > 0) {
 		lines.push(`import type { ${triviaTypeNames.join(', ')}, NamespaceMap } from './types.js';`);
@@ -57,7 +57,7 @@ function emitAttachProps(): string[] {
 		'  return { strict, coerce };',
 		'}',
 		'',
-		'export type { ArgsOf, FlavorPair, Hoisted, OmitEach };',
+		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };',
 		'',
 		'type AnyFlavorFn = (...args: never[]) => unknown;',
 		'',
@@ -170,6 +170,32 @@ function emitNodeGuards(): string[] {
 
 function emitTransportHelpers(): string[] {
 	return [
+		'export type HiddenLeafBuilder = readonly [',
+		'  kind: string,',
+		'  pattern: RegExp | undefined,',
+		'  build: (text: string) => unknown,',
+		'];',
+		'',
+		'export function admitHiddenText<T = unknown>(',
+		'  value: unknown,',
+		'  leaves: readonly HiddenLeafBuilder[],',
+		'  where: string,',
+		'): T {',
+		'  if (Array.isArray(value)) return value.map((item) => admitHiddenText(item, leaves, where)) as T;',
+		"  if (typeof value !== 'string') return value as T;",
+		'  const hit =',
+		'    leaves.length === 1',
+		'      ? leaves[0]',
+		'      : (leaves.find(([, pattern]) => pattern?.test(value) === true) ??',
+		'        leaves.find(([, pattern]) => pattern === undefined));',
+		'  if (hit === undefined) {',
+		'    throw new Error(',
+		'      `${where}: ${JSON.stringify(value)} matches none of [${leaves.map(([kind]) => kind).join(", ")}]`,',
+		'    );',
+		'  }',
+		'  return hit[2](value) as T;',
+		'}',
+		'',
 		'export function coerceMixedEnumStorage<T = unknown>(',
 		'  value: unknown,',
 		'  byText: readonly (readonly [string, number])[] = []',

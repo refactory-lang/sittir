@@ -72,7 +72,7 @@ export function rebuildSpliceLoose() {
 				name: "Display",
 			}),
 			type: "SpliceError",
-			declarationList: [ir.functionItem({
+			declarationList: ir.functionItem({
 				name: "fmt",
 				parameters: [ir.selfParameter({
 					reference: true,
@@ -88,7 +88,7 @@ export function rebuildSpliceLoose() {
 								}),
 								name: "Formatter",
 							}),
-							typeArguments: [ir.lifetime("_")],
+							typeArguments: ir.lifetime("_"),
 						}),
 					}),
 				})],
@@ -104,18 +104,16 @@ export function rebuildSpliceLoose() {
 						value: TSKindId.Self,
 						body: ir.matchBlock({
 							lastArm: ir.lastMatchArm({
-								pattern: ir.matchPattern({
-									pattern: ir.structPattern({
-										type: ir.scopedTypeIdentifier({
-											path: "SpliceError",
-											name: "NonCharBoundary",
-										}),
-										fields: [ir.fieldPattern.shorthand({
-											name: "start",
-										}), ir.fieldPattern.shorthand({
-											name: "end",
-										})],
+								pattern: ir.structPattern({
+									type: ir.scopedTypeIdentifier({
+										path: "SpliceError",
+										name: "NonCharBoundary",
 									}),
+									fields: [ir.fieldPattern.shorthand({
+										name: "start",
+									}), ir.fieldPattern.shorthand({
+										name: "end",
+									})],
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
@@ -127,18 +125,16 @@ export function rebuildSpliceLoose() {
 								comma: true,
 							}),
 							matchArm: [ir.matchArm.blockEnding({
-								pattern: ir.matchPattern({
-									pattern: ir.structPattern({
-										type: ir.scopedTypeIdentifier({
-											path: "SpliceError",
-											name: "InvalidRange",
-										}),
-										fields: [ir.fieldPattern.shorthand({
-											name: "start",
-										}), ir.fieldPattern.shorthand({
-											name: "end",
-										})],
+								pattern: ir.structPattern({
+									type: ir.scopedTypeIdentifier({
+										path: "SpliceError",
+										name: "InvalidRange",
 									}),
+									fields: [ir.fieldPattern.shorthand({
+										name: "start",
+									}), ir.fieldPattern.shorthand({
+										name: "end",
+									})],
 								}),
 								value: ir.block({
 									trailingExpression: ir.macroInvocation({
@@ -150,18 +146,16 @@ export function rebuildSpliceLoose() {
 									}),
 								}),
 							}), ir.matchArm.withComma({
-								pattern: ir.matchPattern({
-									pattern: ir.structPattern({
-										type: ir.scopedTypeIdentifier({
-											path: "SpliceError",
-											name: "OutOfBounds",
-										}),
-										fields: [ir.fieldPattern.shorthand({
-											name: "end",
-										}), ir.fieldPattern.shorthand({
-											name: "source_len",
-										})],
+								pattern: ir.structPattern({
+									type: ir.scopedTypeIdentifier({
+										path: "SpliceError",
+										name: "OutOfBounds",
 									}),
+									fields: [ir.fieldPattern.shorthand({
+										name: "end",
+									}), ir.fieldPattern.shorthand({
+										name: "source_len",
+									})],
 								}),
 								value: ir.macroInvocation({
 									macro: "write",
@@ -174,7 +168,7 @@ export function rebuildSpliceLoose() {
 						}),
 					})],
 				}),
-			})],
+			}),
 		}), ir.implItem.body.positiveClause({
 			traitClause: ir.scopedTypeIdentifier({
 				path: ir.scopedIdentifier({
@@ -198,7 +192,7 @@ export function rebuildSpliceLoose() {
 				name: "edits",
 				type: ir.genericType({
 					type: "Vec",
-					typeArguments: [ir.identifier("Edit")],
+					typeArguments: ir.identifier("Edit"),
 				}),
 			})],
 			returnType: ir.genericType({

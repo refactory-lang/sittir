@@ -16,7 +16,8 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword,
-	KindEnum
+	KindEnum,
+	HiddenLeaf
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -4084,7 +4085,7 @@ export type AugmentedAssignmentOperator =
 	| TSKindId.PipeEq;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
-export type _StringContent = Terminal<TSKindId._StringContent, string>;
+export type _StringContent = HiddenLeaf<Terminal<TSKindId._StringContent, string>>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
@@ -9002,18 +9003,18 @@ export namespace StringContent {
 		readonly $named: true;
 		readonly $with: {
 			contents(
-				...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+				...vs: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 			): T.StringContent.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
 	export type BuildArgs = [
-		...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+		...children: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent,
+			(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap

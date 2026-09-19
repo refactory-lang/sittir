@@ -5962,6 +5962,9 @@
           "content": {
             "type": "SYMBOL",
             "name": "match_pattern"
+          },
+          "annotations": {
+            "spliced": true
           }
         },
         {
@@ -12073,6 +12076,9 @@
             "content": {
               "type": "SYMBOL",
               "name": "match_pattern"
+            },
+            "annotations": {
+              "spliced": true
             }
           },
           {
@@ -12137,6 +12143,9 @@
             "content": {
               "type": "SYMBOL",
               "name": "match_pattern"
+            },
+            "annotations": {
+              "spliced": true
             }
           },
           {

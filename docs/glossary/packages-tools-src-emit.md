@@ -74,6 +74,10 @@ can reach admits exactly one pattern kind. A config-shaped node with a flat
 the slot has one branch kind, keyed `kind: TSKindId.<Member>` otherwise. A
 node carrying trivia keeps its call, since only a call takes `$trivia`.
 
+#### one element
+
+A list envelope with default options prints as its bare element when it holds exactly one element that prints as a call or text, and as the array otherwise. An element that prints as an object or an array keeps the array, since an object at a list slot is one element's config and an array is the elements.
+
 ### `packages/tools/src/emit/factory-source.ts::solePatternKind`
 
 The runtime's leaf registry carries no patterns: a bare string resolves to
@@ -94,7 +98,3 @@ A single-slot kind's argument in both spellings: the strict form is what the
 argument is when the wrapper is dropped and it lands on the parent's slot,
 where the parent's rules decide its spelling afresh; the loose form is its
 spelling inside the wrapper's own call.
-
-### `packages/tools/src/emit/factory-source.ts::leafBuilderPath`
-
-The callable that builds a text leaf on the strict surface. A visible leaf kind is built through its `ir` entry; a hidden one has no `ir` entry, so it is built through the coercer its own kind emits (the node model's `coerceName`), which the generated module imports by name.

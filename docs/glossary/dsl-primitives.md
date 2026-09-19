@@ -593,3 +593,6 @@ keys, the render-rules seam detection, and the site collection.
  *  spelled that way. */
 ```
 
+### `packages/codegen/src/dsl/primitives/splice.ts::splice`
+
+Marks a position in a rule's patches as a visible wrapper spliced onto its parent: the wrapper stays a node of its own kind in the tree and on the surface, and the parent's config takes the wrapper's keys in its place. `splice()` is the only way a reference to a visible kind becomes a splice seat.

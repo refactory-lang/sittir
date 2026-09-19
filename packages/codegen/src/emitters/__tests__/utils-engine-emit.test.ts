@@ -31,16 +31,16 @@ describe('utils engine facade emission', () => {
 		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
 
-	it('imports ArgsOf, FlavorPair, Hoisted, and OmitEach from @sittir/types rather than redeclaring them', () => {
+	it('imports ArgsOf, ElementsOf, FlavorPair, Hoisted, and OmitEach from @sittir/types rather than redeclaring them', () => {
 		// ArgsOf's own shape (union-of-overloads, single-param unwrapping) is
 		// tested at the type level in packages/types/tests/function-utils.test-d.ts,
 		// against the one definition every grammar package now shares.
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain(
-			"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
+			"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
 		);
-		expect(contents).toContain('export type { ArgsOf, FlavorPair, Hoisted, OmitEach };');
+		expect(contents).toContain('export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };');
 		expect(contents).not.toContain('export type ArgsOf<F> = F extends {');
 		expect(contents).not.toContain('export type Hoisted<B> = B extends {');
 	});

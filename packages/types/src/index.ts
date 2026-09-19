@@ -117,6 +117,29 @@ type IsKindEnum<T> = T extends { readonly __kindEnum__?: unknown } ? true : fals
 type KindEnumText<T> = T extends { readonly __kindEnum__?: infer V } ? V : never;
 
 /**
+ * HiddenLeaf<T> — brands a hidden text leaf (a pattern kind with no `ir`
+ * entry of its own) so a strict factory input admits its text: the parent's
+ * factory builds the leaf, the way the loose surface does for any leaf.
+ */
+export type HiddenLeaf<T> = T & { readonly __hiddenLeaf__?: true };
+
+/** @internal — true when T carries the HiddenLeaf brand key. */
+type IsHiddenLeaf<T> = '__hiddenLeaf__' extends keyof T ? true : false;
+
+/** @internal — a hidden leaf element also admits its text. */
+type AdmitHiddenText<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? E | string : E) : never;
+
+/** @internal — {@link AdmitHiddenText} through a slot's array wrapper. */
+type AdmitHiddenSlot<S> = S extends readonly unknown[]
+	? true extends AnyHiddenLeaf<S[number]>
+		? readonly AdmitHiddenText<S[number]>[]
+		: S
+	: AdmitHiddenText<S>;
+
+/** @internal — distributes {@link IsHiddenLeaf} over a union. */
+type AnyHiddenLeaf<E> = E extends unknown ? IsHiddenLeaf<E> : never;
+
+/**
  * Terminal node shape — shared by every leaf, keyword, and enum.
  * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
  * derived kinds, string literal for evaluate-synthesized enum kinds
@@ -148,6 +171,18 @@ export type ArgsOf<F> = F extends {
 	? A | B | C | D
 	: F extends (...args: readonly (infer E)[]) => unknown
 		? E[]
+		: never;
+
+/**
+ * ElementsOf<F> — the union of every positional argument type a factory
+ * accepts, read from its own rest parameter. Unlike {@link ArgsOf} it keeps a
+ * rest parameter that is a union of tuples (a non-empty list that also takes
+ * an options object first).
+ */
+export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown[]) => unknown
+	? A[number]
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
@@ -667,7 +702,7 @@ type WidenLooseFieldValue<
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: C } : {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitHiddenSlot<C> } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
@@ -758,7 +793,7 @@ export type ConfigOf<T> = T extends unknown
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-							: FieldInputType<T, K>;
+							: AdmitHiddenSlot<FieldInputType<T, K>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
