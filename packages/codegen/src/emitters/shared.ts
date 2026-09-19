@@ -340,6 +340,7 @@ export interface EnumArms {
 	readonly texts: readonly string[];
 	readonly sawNodeArm: boolean;
 	readonly verbatim: boolean;
+	readonly ownSymbolIds: readonly number[];
 }
 
 export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumArms {
@@ -348,6 +349,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
 	const visitedSupertypes = new Set<string>();
+	const ownSymbolIds: number[] = [];
 	let sawNodeArm = false;
 	let verbatim = false;
 	const push = (kind: string, id: number | undefined, text: string): void => {
@@ -360,10 +362,12 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			texts.push(text);
 		}
 	};
-	const seatMembers = (value: NodeBackedRef): boolean => {
+	const seatMembers = (value: NodeBackedRef, enumNode: AssembledEnum): boolean => {
 		const storage = valueStorageOf(value, nodeMap);
 		if (storage?.via !== 'kindId' || isTextStorage(storage) || storage.members.length === 0) return false;
 		for (const member of storage.members) push(member.kind, member.kindId, member.text);
+		const own = value.storageKindId;
+		if (!enumNode.hidden && own !== undefined && !ownSymbolIds.includes(own)) ownSymbolIds.push(own);
 		return true;
 	};
 	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledPunctuation): boolean => {
@@ -388,7 +392,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			return;
 		}
 		if (node instanceof AssembledEnum) {
-			if (!seatMembers(value)) sawNodeArm = true;
+			if (!seatMembers(value, node)) sawNodeArm = true;
 			return;
 		}
 		if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
@@ -409,7 +413,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 		if (isNodeRef(value)) {
 			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
 			if (node instanceof AssembledEnum) {
-				if (!seatMembers(value)) verbatim = true;
+				if (!seatMembers(value, node)) verbatim = true;
 				continue;
 			}
 			if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
@@ -436,7 +440,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			texts.push(value.value);
 		}
 	}
-	return { arms, texts, sawNodeArm, verbatim };
+	return { arms, texts, sawNodeArm, verbatim, ownSymbolIds };
 }
 
 function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
@@ -522,6 +526,10 @@ export function kindEnumTextIdPairs(
 		out.push([arm.text, id]);
 	}
 	return out;
+}
+
+export function kindEnumOwnSymbolIds(field: AssembledNonterminal, nodeMap: NodeMap): readonly number[] {
+	return enumArmsOf(field, nodeMap).ownSymbolIds;
 }
 
 export function kindEnumAltIdPairs(

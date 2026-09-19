@@ -22902,16 +22902,7 @@
             }
           },
           "_type": 41,
-          "_value": {
-            "$type": 320,
-            "$source": 0,
-            "$named": true,
-            "$text": "false",
-            "$span": {
-              "start": 76,
-              "end": 81
-            }
-          },
+          "_value": 121,
           "$other": [
             {
               "$type": 63,
@@ -22975,16 +22966,7 @@
             }
           },
           "_type": 41,
-          "_value": {
-            "$type": 320,
-            "$source": 0,
-            "$named": true,
-            "$text": "false",
-            "$span": {
-              "start": 100,
-              "end": 105
-            }
-          },
+          "_value": 121,
           "$other": [
             {
               "$type": 63,
@@ -23517,16 +23499,7 @@
         }
       },
       "_type": 41,
-      "_value": {
-        "$type": 320,
-        "$source": 0,
-        "$named": true,
-        "$text": "false",
-        "$span": {
-          "start": 76,
-          "end": 81
-        }
-      },
+      "_value": 121,
       "$other": [
         {
           "$type": 63,
@@ -23607,16 +23580,7 @@
         }
       },
       "_type": 41,
-      "_value": {
-        "$type": 320,
-        "$source": 0,
-        "$named": true,
-        "$text": "false",
-        "$span": {
-          "start": 100,
-          "end": 105
-        }
-      },
+      "_value": 121,
       "$other": [
         {
           "$type": 63,
@@ -85358,16 +85322,7 @@
               "$type": 261,
               "$source": 0,
               "$named": true,
-              "_expression": {
-                "$type": 320,
-                "$source": 0,
-                "$named": true,
-                "$text": "false",
-                "$span": {
-                  "start": 82,
-                  "end": 87
-                }
-              },
+              "_expression": 121,
               "$other": [
                 {
                   "$type": 97,
@@ -88728,16 +88683,7 @@
           "$type": 261,
           "$source": 0,
           "$named": true,
-          "_expression": {
-            "$type": 320,
-            "$source": 0,
-            "$named": true,
-            "$text": "false",
-            "$span": {
-              "start": 82,
-              "end": 87
-            }
-          },
+          "_expression": 121,
           "$other": [
             {
               "$type": 97,
@@ -91108,16 +91054,7 @@
         "$type": 261,
         "$source": 0,
         "$named": true,
-        "_expression": {
-          "$type": 320,
-          "$source": 0,
-          "$named": true,
-          "$text": "false",
-          "$span": {
-            "start": 82,
-            "end": 87
-          }
-        },
+        "_expression": 121,
         "$other": [
           {
             "$type": 97,
@@ -91199,16 +91136,7 @@
       "$type": 261,
       "$source": 0,
       "$named": true,
-      "_expression": {
-        "$type": 320,
-        "$source": 0,
-        "$named": true,
-        "$text": "false",
-        "$span": {
-          "start": 82,
-          "end": 87
-        }
-      },
+      "_expression": 121,
       "$other": [
         {
           "$type": 97,
@@ -126423,16 +126351,7 @@
                           "end": 20
                         }
                       },
-                      "_right": {
-                        "$type": 320,
-                        "$source": 0,
-                        "$named": true,
-                        "$text": "true",
-                        "$span": {
-                          "start": 23,
-                          "end": 27
-                        }
-                      },
+                      "_right": 120,
                       "$other": [
                         {
                           "$type": 56,
@@ -126576,16 +126495,7 @@
                     "end": 20
                   }
                 },
-                "_right": {
-                  "$type": 320,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "true",
-                  "$span": {
-                    "start": 23,
-                    "end": 27
-                  }
-                },
+                "_right": 120,
                 "$other": [
                   {
                     "$type": 56,
@@ -126739,16 +126649,7 @@
                   "end": 20
                 }
               },
-              "_right": {
-                "$type": 320,
-                "$source": 0,
-                "$named": true,
-                "$text": "true",
-                "$span": {
-                  "start": 23,
-                  "end": 27
-                }
-              },
+              "_right": 120,
               "$other": [
                 {
                   "$type": 56,
@@ -126835,16 +126736,7 @@
           "end": 20
         }
       },
-      "_right": {
-        "$type": 320,
-        "$source": 0,
-        "$named": true,
-        "$text": "true",
-        "$span": {
-          "start": 23,
-          "end": 27
-        }
-      },
+      "_right": 120,
       "$other": [
         {
           "$type": 56,
@@ -127054,16 +126946,7 @@
                                   }
                                 }
                               ],
-                              "_expression": {
-                                "$type": 320,
-                                "$source": 0,
-                                "$named": true,
-                                "$text": "true",
-                                "$span": {
-                                  "start": 60,
-                                  "end": 64
-                                }
-                              }
+                              "_expression": 120
                             },
                             "$other": [
                               {
@@ -127368,16 +127251,7 @@
                             }
                           }
                         ],
-                        "_expression": {
-                          "$type": 320,
-                          "$source": 0,
-                          "$named": true,
-                          "$text": "true",
-                          "$span": {
-                            "start": 60,
-                            "end": 64
-                          }
-                        }
+                        "_expression": 120
                       },
                       "$other": [
                         {
@@ -127639,16 +127513,7 @@
                     }
                   }
                 ],
-                "_expression": {
-                  "$type": 320,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "true",
-                  "$span": {
-                    "start": 60,
-                    "end": 64
-                  }
-                }
+                "_expression": 120
               },
               "$other": [
                 {
@@ -127867,16 +127732,7 @@
                           }
                         }
                       ],
-                      "_expression": {
-                        "$type": 320,
-                        "$source": 0,
-                        "$named": true,
-                        "$text": "true",
-                        "$span": {
-                          "start": 60,
-                          "end": 64
-                        }
-                      }
+                      "_expression": 120
                     },
                     "$other": [
                       {
@@ -128080,16 +127936,7 @@
                   }
                 }
               ],
-              "_expression": {
-                "$type": 320,
-                "$source": 0,
-                "$named": true,
-                "$text": "true",
-                "$span": {
-                  "start": 60,
-                  "end": 64
-                }
-              }
+              "_expression": 120
             },
             "$other": [
               {
@@ -128223,16 +128070,7 @@
           }
         }
       ],
-      "_expression": {
-        "$type": 320,
-        "$source": 0,
-        "$named": true,
-        "$text": "true",
-        "$span": {
-          "start": 60,
-          "end": 64
-        }
-      }
+      "_expression": 120
     },
     "expectedOutput": "break true"
   },
@@ -154505,16 +154343,7 @@
             "$type": 385,
             "$source": 0,
             "$named": true,
-            "_expression": {
-              "$type": 320,
-              "$source": 0,
-              "$named": true,
-              "$text": "true",
-              "$span": {
-                "start": 0,
-                "end": 4
-              }
-            },
+            "_expression": 120,
             "$other": [
               {
                 "$type": 2,
@@ -154537,16 +154366,7 @@
             "$type": 385,
             "$source": 0,
             "$named": true,
-            "_expression": {
-              "$type": 320,
-              "$source": 0,
-              "$named": true,
-              "$text": "false",
-              "$span": {
-                "start": 6,
-                "end": 11
-              }
-            },
+            "_expression": 121,
             "$other": [
               {
                 "$type": 2,
@@ -168720,16 +168540,7 @@
                       }
                     }
                   },
-                  "_value": {
-                    "$type": 320,
-                    "$source": 0,
-                    "$named": true,
-                    "$text": "false",
-                    "$span": {
-                      "start": 259,
-                      "end": 264
-                    }
-                  },
+                  "_value": 121,
                   "_comma": true,
                   "$other": [
                     {
@@ -168952,16 +168763,7 @@
                         ]
                       }
                     },
-                    "_value": {
-                      "$type": 320,
-                      "$source": 0,
-                      "$named": true,
-                      "$text": "true",
-                      "$span": {
-                        "start": 246,
-                        "end": 250
-                      }
-                    },
+                    "_value": 120,
                     "$other": [
                       {
                         "$type": 3,
@@ -170167,16 +169969,7 @@
                 }
               }
             },
-            "_value": {
-              "$type": 320,
-              "$source": 0,
-              "$named": true,
-              "$text": "false",
-              "$span": {
-                "start": 259,
-                "end": 264
-              }
-            },
+            "_value": 121,
             "_comma": true,
             "$other": [
               {
@@ -170399,16 +170192,7 @@
                   ]
                 }
               },
-              "_value": {
-                "$type": 320,
-                "$source": 0,
-                "$named": true,
-                "$text": "true",
-                "$span": {
-                  "start": 246,
-                  "end": 250
-                }
-              },
+              "_value": 120,
               "$other": [
                 {
                   "$type": 3,

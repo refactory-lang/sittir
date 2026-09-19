@@ -361,11 +361,12 @@ function projectKindEnumStorage<T>(
 function projectMixedEnumStorage<T>(
 	value: T,
 	textIds?: Readonly<Record<string, number>>,
-	altIds?: Readonly<Record<number, number>>
+	altIds?: Readonly<Record<number, number>>,
+	ownSymbols?: readonly number[]
 ): T {
 	if (!value) return value;
 	if (Array.isArray(value))
-		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds)) as unknown as T;
+		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;
 	const entry = value as unknown as _NodeData;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
@@ -376,6 +377,10 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[entry.$type];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;
+		if (ownSymbols?.includes(entry.$type) && typeof entry.$text === 'string') {
+			const memberId = textIds?.[entry.$text];
+			if (typeof memberId === 'number') return memberId as unknown as T;
+		}
 	}
 	return value;
 }
@@ -2413,7 +2418,9 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 				tree,
@@ -2614,7 +2621,9 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 			_separator: normalizeSingularWrapSlot(data._separator, 'separator', false, data.$type, {
 				tree,
@@ -3156,7 +3165,9 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			visibilityModifier() {
@@ -3411,7 +3422,9 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			visibilityModifier() {
@@ -3517,7 +3530,9 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			visibilityModifier() {
@@ -4503,7 +4518,9 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121 }
+				{ true: 120, false: 121 },
+				undefined,
+				[320]
 			),
 
 			name() {
@@ -4655,7 +4672,9 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 			_type: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._type, 'type', false, data.$type, {
@@ -4692,7 +4711,9 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 				tree,
@@ -5091,7 +5112,9 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			mutableSpecifier() {
@@ -5134,7 +5157,9 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 					slotName: 'name',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136, self: 129 }
+				{ true: 120, false: 121, '..': 308, _: 136, self: 129 },
+				undefined,
+				[320]
 			),
 			_type: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
@@ -5611,7 +5636,9 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 					slotName: 'length',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			element() {
@@ -7003,7 +7030,9 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 					slotName: 'operand',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			operator() {
@@ -7037,7 +7066,9 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -7109,7 +7140,9 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -7167,7 +7200,9 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			left() {
@@ -7206,7 +7241,9 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -7215,7 +7252,9 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			left() {
@@ -7251,7 +7290,9 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -7282,7 +7323,9 @@ export function wrapCompoundAssignmentExpr(data: T.CompoundAssignmentExpr, tree:
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			left() {
@@ -7321,7 +7364,9 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_type: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
@@ -7383,7 +7428,9 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			expression() {
@@ -7412,7 +7459,9 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			expression() {
@@ -7443,7 +7492,9 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 					slotName: 'function',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129, '()': 268 }
+				{ true: 120, false: 121, self: 129, '()': 268 },
+				undefined,
+				[320]
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', true, data.$type, {
 				tree,
@@ -7579,7 +7630,9 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			expression() {
@@ -7761,7 +7814,9 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			attributeItems() {
@@ -7800,7 +7855,9 @@ export function wrapBaseFieldInitializer(data: T.BaseFieldInitializer, tree: Tre
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -7829,7 +7886,9 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_consequence: normalizeSingularWrapSlot(data._consequence, 'consequence', true, data.$type, {
 				tree,
@@ -7880,7 +7939,9 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
@@ -7889,7 +7950,9 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			pattern() {
@@ -7922,7 +7985,9 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.AmpAmp]), false, 'right', {
@@ -7931,7 +7996,9 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			left() {
@@ -8185,7 +8252,9 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 				tree,
@@ -8292,7 +8361,9 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_comma: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
@@ -8345,7 +8416,9 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 			_condition: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._condition, 'condition', false, data.$type, {
@@ -8354,7 +8427,9 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			pattern() {
@@ -8394,7 +8469,9 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle) {
 					slotName: 'condition',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 				tree,
@@ -8480,7 +8557,9 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 			_value: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
@@ -8489,7 +8568,9 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 				tree,
@@ -8590,7 +8671,9 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 					slotName: 'parameters',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			parameters() {
@@ -8862,7 +8945,9 @@ export function wrapBreakExpression(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 				),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			label() {
@@ -8922,7 +9007,9 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle) {
 					slotName: 'object',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_index: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._index, 'index', true, data.$type, {
@@ -8931,7 +9018,9 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle) {
 					slotName: 'index',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			object() {
@@ -8965,7 +9054,9 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			expression() {
@@ -8994,7 +9085,9 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_field: normalizeSingularWrapSlot(data._field, 'field', true, data.$type, {
 				tree,
@@ -9177,7 +9270,9 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 					slotName: 'trailing_expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			label() {
@@ -9527,7 +9622,9 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			pattern() {
@@ -9584,7 +9681,9 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			pattern() {
@@ -9618,7 +9717,9 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle) {
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			name() {
@@ -9661,7 +9762,9 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			mutableSpecifier() {
@@ -10949,7 +11052,9 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 					slotName: 'element',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_length: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._length, 'length', true, data.$type, {
@@ -10958,7 +11063,9 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 					slotName: 'length',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			attributes() {
@@ -11035,7 +11142,9 @@ export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', false, data.$type, {
 				tree,
@@ -11225,7 +11334,9 @@ export function wrapClosureExpressionExpr(data: T.ClosureExpressionExpr, tree: T
 					slotName: 'body',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129, _: 136 }
+				{ true: 120, false: 121, self: 129, _: 136 },
+				undefined,
+				[320]
 			),
 
 			staticMarker() {
@@ -11274,7 +11385,9 @@ export function wrapReferenceExpressionRawConst(data: T.ReferenceExpressionRawCo
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -11303,7 +11416,9 @@ export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut,
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -11332,7 +11447,9 @@ export function wrapReferenceExpressionMut(data: T.ReferenceExpressionMut, tree:
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -11361,7 +11478,9 @@ export function wrapReferenceExpressionBare(data: T.ReferenceExpressionBare, tre
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			value() {
@@ -11906,7 +12025,9 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle) {
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -11915,7 +12036,9 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			left() {
@@ -11948,7 +12071,9 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle) {
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			right() {
@@ -12074,7 +12199,9 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					slotName: 'start',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
@@ -12093,7 +12220,9 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					slotName: 'end',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			start() {
@@ -12132,7 +12261,9 @@ export function wrapRangeExpressionPostfix(data: T.RangeExpressionPostfix, tree:
 					slotName: 'start',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			start() {
@@ -12161,7 +12292,9 @@ export function wrapRangeExpressionPrefix(data: T.RangeExpressionPrefix, tree: T
 					slotName: 'end',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			end() {
@@ -12190,7 +12323,9 @@ export function wrapExpressionStatementWithSemi(data: T.ExpressionStatementWithS
 					slotName: 'expression',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			expression() {
@@ -12318,7 +12453,9 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			attributes() {
@@ -12625,7 +12762,9 @@ export function wrapTokenTreePatternParen(data: T.TokenTreePatternParen, tree: T
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokenPatterns() {
@@ -12765,7 +12904,9 @@ export function wrapTokenTreePatternBracket(data: T.TokenTreePatternBracket, tre
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokenPatterns() {
@@ -12905,7 +13046,9 @@ export function wrapTokenTreePatternBrace(data: T.TokenTreePatternBrace, tree: T
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokenPatterns() {
@@ -13045,7 +13188,9 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle) {
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokens() {
@@ -13177,7 +13322,9 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokens() {
@@ -13309,7 +13456,9 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle) {
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			tokens() {
@@ -13443,7 +13592,9 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			delimTokens() {
@@ -13575,7 +13726,9 @@ export function wrapDelimTokenTreeBracket(data: T.DelimTokenTreeBracket, tree: T
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			delimTokens() {
@@ -13707,7 +13860,9 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 					use: 64,
 					where: 58,
 					while: 103
-				}
+				},
+				undefined,
+				[320, 354, 355]
 			),
 
 			delimTokens() {
@@ -13817,7 +13972,9 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, '..': 308, _: 136 }
+				{ true: 120, false: 121, '..': 308, _: 136 },
+				undefined,
+				[320]
 			),
 
 			refMarker() {
@@ -13990,7 +14147,9 @@ export function wrapRangePatternPrefix(
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129, super: 130, crate: 131 }
+				{ true: 120, false: 121, self: 129, super: 130, crate: 131 },
+				undefined,
+				[320]
 			),
 
 			content() {
@@ -14055,7 +14214,9 @@ export function wrapRangePatternWithLeftWithRight(
 					slotName: 'right',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129, super: 130, crate: 131 }
+				{ true: 120, false: 121, self: 129, super: 130, crate: 131 },
+				undefined,
+				[320]
 			),
 
 			content() {
@@ -14110,7 +14271,9 @@ export function wrapRangePatternWithLeft(
 					slotName: 'left',
 					span: (data as _NodeData).$span
 				}),
-				{ true: 120, false: 121, self: 129, super: 130, crate: 131 }
+				{ true: 120, false: 121, self: 129, super: 130, crate: 131 },
+				undefined,
+				[320]
 			),
 			_content: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(
@@ -14866,7 +15029,9 @@ export function wrapAttributedArgument(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 				),
-				{ true: 120, false: 121, self: 129 }
+				{ true: 120, false: 121, self: 129 },
+				undefined,
+				[320]
 			),
 
 			attributeItems() {
@@ -15113,7 +15278,9 @@ export function wrapTypeArgument(
 					char: 43,
 					true: 120,
 					false: 121
-				}
+				},
+				undefined,
+				[320]
 			),
 			_trait_bounds: normalizeSingularWrapSlot(data._trait_bounds, 'trait_bounds', false, data.$type, {
 				tree,

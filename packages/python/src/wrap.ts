@@ -361,11 +361,12 @@ function projectKindEnumStorage<T>(
 function projectMixedEnumStorage<T>(
 	value: T,
 	textIds?: Readonly<Record<string, number>>,
-	altIds?: Readonly<Record<number, number>>
+	altIds?: Readonly<Record<number, number>>,
+	ownSymbols?: readonly number[]
 ): T {
 	if (!value) return value;
 	if (Array.isArray(value))
-		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds)) as unknown as T;
+		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;
 	const entry = value as unknown as _NodeData;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
@@ -376,6 +377,10 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[entry.$type];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;
+		if (ownSymbols?.includes(entry.$type) && typeof entry.$text === 'string') {
+			const memberId = textIds?.[entry.$text];
+			if (typeof memberId === 'number') return memberId as unknown as T;
+		}
 	}
 	return value;
 }

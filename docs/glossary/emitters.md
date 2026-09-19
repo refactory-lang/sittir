@@ -9328,6 +9328,15 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  */
 ```
 
+#### own symbol
+
+```text
+Seating an enum arm also records the enum's own parser symbol (`ownSymbolIds`): the reference's stamped storage
+symbol, for an enum that is not hidden. A parse surfaces such an enum as one node of that symbol carrying the member
+text (`{ $type: 346, $text: 'object' }`), not as the member's own id, so the symbol is what identifies a read enum
+leaf. A hidden enum is never issued by the parser and records nothing.
+```
+
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
 One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all fixed-text members (directly or through a supertype) classifies `kindEnum` (whole-slot id storage); a slot mixing those with node arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with no resolved members, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
@@ -13194,6 +13203,15 @@ candidate list.
 // text. Text survives only as the fallback for unstamped members.
 ```
 
+#### own symbol
+
+```text
+A mixed slot whose arms include an enum with its own parser symbol passes those symbols as the fourth argument of
+`projectMixedEnumStorage`; the projection folds a read node of such a symbol onto the member id its text names, so the
+transport sees the one identity the slot's enum carries. A pure enum slot needs none: `projectKindEnumStorage`
+folds by text unconditionally.
+```
+
 ### `packages/codegen/src/emitters/wrap.ts::SAFE_IDENT_KEY`
 
 ```text
@@ -16012,4 +16030,11 @@ A text leaf is called through its raw builder; a lexed kind through its hoisted 
 
 ```text
 A sample that satisfies the slot pattern, so the generated construction tests pass the per-slot guard.
+```
+
+### `packages/codegen/src/emitters/shared.ts::kindEnumOwnSymbolIds`
+
+```text
+The own parser symbols of the visible enum arms of a slot, in seating order (`enumArmsOf`.ownSymbolIds). Guards the
+text fold of `projectMixedEnumStorage` so an identifier that happens to be spelled like a member is never taken for one.
 ```

@@ -33,6 +33,7 @@ import {
 	canonicalSeparatedListField,
 	kindEnumTextIdPairs,
 	kindEnumAltIdPairs,
+	kindEnumOwnSymbolIds,
 	fieldTypeComponents,
 	collectConcreteStorageKeys,
 	expandToConcreteParseKinds,
@@ -139,6 +140,7 @@ interface ResolveSlotDrillConfig {
 	readonly reclaimKindIdsExpr?: string;
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
 	readonly kindEnumAltIdPairs?: readonly (readonly [number, number])[];
+	readonly kindEnumOwnSymbolIds?: readonly number[];
 	readonly forceUnknownElement?: boolean;
 	readonly separatorIdsExpr?: string;
 	readonly elided?: boolean;
@@ -216,10 +218,15 @@ function resolveSlotDrillExprs(
 		};
 	}
 	if (storageInfo?.kind === 'mixedEnum') {
+		const ownSymbolsExpr =
+			config.kindEnumOwnSymbolIds && config.kindEnumOwnSymbolIds.length > 0
+				? `[${config.kindEnumOwnSymbolIds.join(', ')}]`
+				: undefined;
+		const mixedArgs = ownSymbolsExpr
+			? `, ${textIdMapExpr ?? 'undefined'}, ${altIdMapExpr ?? 'undefined'}, ${ownSymbolsExpr}`
+			: projectionArgs;
 		return {
-			storeExpr: projectionArgs
-				? `projectMixedEnumStorage(${normalizedStoreExpr}${projectionArgs})`
-				: normalizedStoreExpr,
+			storeExpr: mixedArgs ? `projectMixedEnumStorage(${normalizedStoreExpr}${mixedArgs})` : normalizedStoreExpr,
 			accessorBody: resolveSlotAccessorBody(
 				slot,
 				slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
@@ -637,6 +644,7 @@ function emitFieldStorageLines(
 				storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum'
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
+			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
 			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
 			elided
 		});
@@ -1319,9 +1327,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesProjectMixedEnum
 				? [
-						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>): T {',
+						'function projectMixedEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>, altIds?: Readonly<Record<number, number>>, ownSymbols?: readonly number[]): T {',
 						'  if (!value) return value;',
-						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds, altIds)) as unknown as T;',
+						'  if (Array.isArray(value)) return value.map(entry => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  if (typeof value === "string") {',
 						'    const mappedId = textIds?.[value];',
@@ -1332,6 +1340,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    const folded = altIds?.[entry.$type];',
 						'    if (folded !== undefined) return folded as unknown as T;',
 						'    if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;',
+						'    if (ownSymbols?.includes(entry.$type) && typeof entry.$text === "string") {',
+						'      const memberId = textIds?.[entry.$text];',
+						'      if (typeof memberId === "number") return memberId as unknown as T;',
+						'    }',
 						'  }',
 						'  return value;',
 						'}'
