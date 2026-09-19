@@ -690,11 +690,6 @@ export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | un
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
 }
 
-/**
- * A lexed kind whose interior has a REQUIRED fixed member (a quote, a sigil, a
- * comment opener): its text differs from its content, so a bare string never
- * names it. An optional affix does not count: content may equal the whole text.
- */
 export function isAffixedLeaf(node: AssembledNode | undefined): boolean {
 	if (node === undefined || lexedContentSlot(node) === undefined) return false;
 	const rule = (node as AbstractAssembledCompound).renderRule;

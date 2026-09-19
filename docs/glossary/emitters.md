@@ -16016,6 +16016,14 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 The sole required text slot of a lexed kind, or undefined. It is the slot a bare loose value stands for.
 ```
 
+### `packages/codegen/src/emitters/shared.ts::isAffixedLeaf`
+
+```text
+A lexed kind whose interior has a required fixed member (a quote, a sigil, a comment opener): its text differs
+from its content, so a bare string is never matched against it. An optional affix does not count, because the
+content may then equal the whole text (rust integer_literal). See "affixed leaves" under buildLeafRegistryEntries.
+```
+
 ### `packages/codegen/src/emitters/render-body.ts::adjacentInto`
 
 ```text
