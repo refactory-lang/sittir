@@ -377,8 +377,8 @@ Affects rust (`match_arm.pattern` → `match_pattern`).
 the reference carries `annotations.spliced`, the seat is recorded as `splice` in
 `node-model.json5` on `last_match_arm`, `match_arm_with_comma` and
 `match_arm_block_ending`, and the seated overlay passes a value that is already the
-wrapper (built, or a config of its own keys) through untouched. Rule 5 stays limited
-to genuinely `forwarded` single-slot wrappers.
+wrapper (built, or a config of its own keys) through untouched. Wrapping a bare value in a single-slot wrapper stays limited
+to wrappers whose factory shape is `forwarded`.
 
 The investigation that led there, kept for the reasoning: `forwardedTargetKind(match_pattern, nodeMap)`
 returns `null` empirically (verified directly against the compiled node map):
@@ -402,7 +402,7 @@ design decision.
 **Direction.** Neither. This is a seating question, not a coercion one: the
 wrapper is spliced onto `match_arm` (and `last_match_arm`) so its keys are
 the parent's, and the value at `pattern` resolves against `_pattern` by
-rule 3. Rule 5 stays limited to genuinely `forwarded` single-slot wrappers.
+rule 3. Wrapping a bare value in a single-slot wrapper stays limited to `forwarded` wrappers.
 Design: `docs/superpowers/specs/2026-09-17-factory-ergonomics-minor.md`, item 1.
 
 ### L5 — Whole-alternative arms need their form named — intended, outside the contract

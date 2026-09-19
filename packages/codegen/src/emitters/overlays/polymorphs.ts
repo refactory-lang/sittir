@@ -7,7 +7,8 @@ import {
 	isValidIdent,
 	resolveDirectFactorySlot,
 	resolveFieldStorageInfo,
-	classifyFactoryShape
+	classifyFactoryShape,
+	listRestParamType
 } from '../shared.ts';
 import { listHasOptions, valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
@@ -347,10 +348,10 @@ function composeSeats(
 	const p = parentRefs(wireSet.node, wires.coerceEmitted);
 	const spread = seats.some((seat) => seat.spread);
 	let strictExpr = p.strict;
-	let strictParam = spread ? `ArgsOf<typeof ${p.strict}>[number]` : `ArgsOf<typeof ${p.strict}>[0]`;
+	let strictParam = spread ? `ElementsOf<typeof ${p.strict}>` : `ArgsOf<typeof ${p.strict}>[0]`;
 	let strictParams = '';
 	let coerceExpr = p.coerce;
-	let coerceParam = p.coerce ? (spread ? `ArgsOf<typeof ${p.coerce}>[number]` : `ArgsOf<typeof ${p.coerce}>[0]`) : undefined;
+	let coerceParam = p.coerce ? (spread ? `ElementsOf<typeof ${p.coerce}>` : `ArgsOf<typeof ${p.coerce}>[0]`) : undefined;
 	let coerceParams = '';
 	const inner = (params: string): string => params.slice(params.indexOf(': ') + 2, -1);
 	for (const seat of seats) {
@@ -656,7 +657,7 @@ function elementsShape(
 	groupKeys: readonly string[],
 	m: string,
 	spread: boolean,
-	listOptions: boolean
+	list: { readonly nonEmpty: boolean; readonly options: boolean } | undefined
 ): SeatShape {
 	if (spread) {
 		return {
@@ -667,10 +668,12 @@ function elementsShape(
 				`		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? ${CALL_C}(e) : e)));`,
 				`};`
 			],
-			paramFor: (p, c) =>
-				listOptions
-					? `(...args: [first?: ListElement<${p}> | ListOptionsOf<${p}> | ArgsOf<typeof ${c}>[0], ...rest: (ListElement<${p}> | ArgsOf<typeof ${c}>[0])[]])`
-					: `(...args: ReadonlyArray<${p} | ArgsOf<typeof ${c}>[0]>)`,
+			paramFor: (p, c) => {
+				const child = `ArgsOf<typeof ${c}>[0]`;
+				if (list === undefined) return `(...args: ReadonlyArray<${p} | ${child}>)`;
+				const element = list.options ? `(ListElement<${p}> | ${child})` : `(${p} | ${child})`;
+				return `(...args: ${listRestParamType(list.nonEmpty, element, list.options ? `ListOptionsOf<${p}>` : undefined)})`;
+			},
 			spread: true
 		};
 	}
@@ -754,7 +757,7 @@ function seatEmission(
 					configKeysOf(seat.group),
 					m,
 					parent instanceof AssembledList || classifyFactoryShape(parent, nodeMap) === 'spread',
-					parent instanceof AssembledList && listHasOptions(parent)
+					parent instanceof AssembledList ? { nonEmpty: parent.nonEmpty, options: listHasOptions(parent) } : undefined
 				);
 	return {
 		method: s.method,
@@ -981,7 +984,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const extraImports = [
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
-		"import type { ArgsOf, OmitEach } from '../../utils.js';",
+		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach } from '../../utils.js';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
 	];
 	const anchor = blocks.indexOf(ERASED_HELPERS[ERASED_HELPERS.length - 3]!);

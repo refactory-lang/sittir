@@ -7,6 +7,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
+import { listRestParamType } from '../shared.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -455,5 +456,17 @@ describe('a visible wrapper declared spliced seats on its parent', () => {
 		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
 		expect(out).toMatch(/= arm\$splice\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
 		expect(out).toContain("import { TSKindId } from '../../types.js';");
+	});
+});
+
+describe('a list takes its rest parameter by cardinality and options', () => {
+	it('requires an element from a non-empty list and puts the options object first', () => {
+		expect(listRestParamType(true, 'E', undefined)).toBe('[first: E, ...rest: E[]]');
+		expect(listRestParamType(true, 'E', 'O')).toBe('[first: E, ...rest: E[]] | [options: O, first: E, ...rest: E[]]');
+	});
+
+	it('lets an empty-capable list take nothing, or only its options', () => {
+		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
+		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
 	});
 });

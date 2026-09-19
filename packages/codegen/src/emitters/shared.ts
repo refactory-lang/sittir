@@ -595,6 +595,14 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
+export function listRestParamType(nonEmpty: boolean, element: string, options: string | undefined): string {
+	if (nonEmpty) {
+		const elements = `[first: ${element}, ...rest: ${element}[]]`;
+		return options === undefined ? elements : `${elements} | [options: ${options}, first: ${element}, ...rest: ${element}[]]`;
+	}
+	return options === undefined ? `readonly ${element}[]` : `[first?: ${element} | ${options}, ...rest: ${element}[]]`;
+}
+
 export function transparentContentKindNames(kinds: readonly string[], nodeMap: NodeMap): string[] {
 	if (kinds.length !== 1) return [...kinds];
 	const content = transparentWrapperContentSlot(kinds[0]!, nodeMap);

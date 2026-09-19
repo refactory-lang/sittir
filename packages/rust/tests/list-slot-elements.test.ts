@@ -54,4 +54,20 @@ describe('a list slot takes its elements bare, one or many', () => {
 		expect(accepts('field_declaration_list_elements')).toContain('field_declaration');
 		expect(accepts('field_declaration_list')).toContain('field_declaration');
 	});
+
+	it('requires an element from a non-empty list, with or without options', () => {
+		const empty = () =>
+			// @ts-expect-error a non-empty list takes at least one element
+			ir.fieldDeclarationListElements();
+		const optionsOnly = () =>
+			// @ts-expect-error options alone are not an element
+			ir.fieldDeclarationListElements({ delimiter: Delimiter.None });
+		const strictEmpty = () =>
+			// @ts-expect-error the strict wrapper takes at least one element as well
+			ir.fieldDeclarationListElements.strict();
+		expect([empty, optionsOnly, strictEmpty]).toHaveLength(3);
+		expect(ir.fieldDeclarationListElements(field()).$render()).toBe('a: i32,');
+		expect(ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
+		expect(ir.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
+	});
 });

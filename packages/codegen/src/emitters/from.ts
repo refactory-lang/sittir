@@ -43,6 +43,7 @@ import {
 	stringConstructibleTexts,
 	wordConstructibleText,
 	isAuthoredCompound,
+	listRestParamType,
 	transparentContentKindNames
 } from './shared.ts';
 import {
@@ -419,7 +420,8 @@ function emitRestParamFromResolver(
 	unwrapConfigKey: string | undefined,
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
 	childrenTypeAnnotation = '',
-	optionsType?: string
+	optionsType?: string,
+	nonEmpty = false
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
@@ -437,10 +439,7 @@ function emitRestParamFromResolver(
 				];
 	const paramType = `${tName}.Loose | LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 	const returnType = factoryReturnTypeExpr(factory);
-	const inputType =
-		optionsType === undefined
-			? `readonly (${paramType})[]`
-			: `[first?: ${paramType} | ${optionsType}, ...rest: (${paramType})[]]`;
+	const inputType = listRestParamType(nonEmpty, `(${paramType})`, optionsType);
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	if (!hasNumericDiscriminant) {
 		return [
@@ -653,7 +652,8 @@ function emitSeparatedListFrom(
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions ? buildOptionsPreservingCall(varExpr) : `${factory}(${spreadElements(varExpr)})`,
 		': readonly unknown[]',
-		separatedListSurface(node, nodeMap, kindEntries).optionsType
+		separatedListSurface(node, nodeMap, kindEntries).optionsType,
+		node.nonEmpty
 	);
 }
 

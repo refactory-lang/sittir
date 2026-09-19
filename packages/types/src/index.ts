@@ -173,6 +173,18 @@ export type ArgsOf<F> = F extends {
 		? E[]
 		: never;
 
+/**
+ * ElementsOf<F> — the union of every positional argument type a factory
+ * accepts, read from its own rest parameter. Unlike {@link ArgsOf} it keeps a
+ * rest parameter that is a union of tuples (a non-empty list that also takes
+ * an options object first).
+ */
+export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown[]) => unknown
+	? A[number]
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E
+		: never;
+
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
 /** Pairs a kind's strict builder with its loose coercer under one bundle entry. */

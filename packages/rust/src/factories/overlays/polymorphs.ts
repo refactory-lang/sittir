@@ -2,7 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
-import type { ArgsOf, OmitEach } from '../../utils.js';
+import type { ArgsOf, ElementsOf, OmitEach } from '../../utils.js';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
 
@@ -6124,31 +6124,47 @@ const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF 
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const argumentsElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildArgumentsElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildArgumentsElements>[number]>
-			| ArgsOf<typeof F.buildAttributedArgument>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildArgumentsElements>[number]>
-			| ArgsOf<typeof F.buildAttributedArgument>[0]
-		)[]
-	]
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
 	F.buildArgumentsElements,
 	F.buildAttributedArgument
 );
 const argumentsElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedArgument>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
 	C.coerceToArgumentsElements,
 	C.coerceToAttributedArgument
@@ -9034,31 +9050,51 @@ const enumVariantListElements$element = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const enumVariantListElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildEnumVariantListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildEnumVariantListElements> = enumVariantListElements$element(
 	F.buildEnumVariantListElements,
 	F.buildAttributedEnumVariant
 );
 const enumVariantListElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToEnumVariantListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToEnumVariantListElements> = enumVariantListElements$element(
 	C.coerceToEnumVariantListElements,
 	C.coerceToAttributedEnumVariant
@@ -9088,31 +9124,51 @@ const fieldDeclarationListElements$element = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const fieldDeclarationListElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildFieldDeclarationListElements> = fieldDeclarationListElements$element(
 	F.buildFieldDeclarationListElements,
 	F.buildAttributedFieldDeclaration
 );
 const fieldDeclarationListElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToFieldDeclarationListElements> = fieldDeclarationListElements$element(
 	C.coerceToFieldDeclarationListElements,
 	C.coerceToAttributedFieldDeclaration
@@ -9142,31 +9198,51 @@ const orderedFieldDeclarationListElements$element = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const orderedFieldDeclarationListElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedOrderedField>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof F.buildAttributedOrderedField>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
 	F.buildOrderedFieldDeclarationListElements,
 	F.buildAttributedOrderedField
 );
 const orderedFieldDeclarationListElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
 	C.coerceToOrderedFieldDeclarationListElements,
 	C.coerceToAttributedOrderedField
@@ -9425,31 +9501,51 @@ const typeParametersElements$element = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const typeParametersElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildTypeParametersElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildTypeParametersElements>[number]>
-			| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildTypeParametersElements>[number]>
-			| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildTypeParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildTypeParametersElements> = typeParametersElements$element(
 	F.buildTypeParametersElements,
 	F.buildAttributedTypeParameter
 );
 const typeParametersElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToTypeParametersElements> = typeParametersElements$element(
 	C.coerceToTypeParametersElements,
 	C.coerceToAttributedTypeParameter
@@ -9591,31 +9687,47 @@ const parametersElements$element = <PF extends (...args: never[]) => unknown, CF
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const parametersElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildParametersElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildParametersElements>[number]>
-			| ArgsOf<typeof F.buildAttributedParameter>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildParametersElements>[number]>
-			| ArgsOf<typeof F.buildAttributedParameter>[0]
-		)[]
-	]
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildParametersElements>>,
+				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildParametersElements> = parametersElements$element(
 	F.buildParametersElements,
 	F.buildAttributedParameter
 );
 const parametersElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToParametersElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToParametersElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedParameter>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToParametersElements>[number]>
-			| ArgsOf<typeof C.coerceToAttributedParameter>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToParametersElements> = parametersElements$element(
 	C.coerceToParametersElements,
 	C.coerceToAttributedParameter
@@ -9717,31 +9829,47 @@ const typeArgumentsElements$element = <
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const typeArgumentsElements$seated: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
-			| ArgsOf<typeof F.buildTypeArgument>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
-			| ArgsOf<typeof F.buildTypeArgument>[0]
-		)[]
-	]
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
+					| ArgsOf<typeof F.buildTypeArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildTypeArgumentsElements>>,
+				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
+					| ArgsOf<typeof F.buildTypeArgument>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof F.buildTypeArgumentsElements> = typeArgumentsElements$element(
 	F.buildTypeArgumentsElements,
 	F.buildTypeArgument
 );
 const typeArgumentsElements$seatedCoerce: (
-	...args: [
-		first?:
-			| ListElement<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
-			| ListOptionsOf<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
-			| ArgsOf<typeof C.coerceToTypeArgument>[0],
-		...rest: (
-			| ListElement<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
-			| ArgsOf<typeof C.coerceToTypeArgument>[0]
-		)[]
-	]
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeArgumentsElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0]
+				)[]
+		  ]
 ) => ReturnType<typeof C.coerceToTypeArgumentsElements> = typeArgumentsElements$element(
 	C.coerceToTypeArgumentsElements,
 	C.coerceToTypeArgument

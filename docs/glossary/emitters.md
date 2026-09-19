@@ -1602,7 +1602,7 @@ so no kind-to-text table is needed here.
 
 #### options-first list coercer
 
-A separated list that has options (`separator` or `delimiter`) types its rest parameter as the tuple `[first?: Loose | LooseValue<element> | Options, ...rest: (Loose | LooseValue<element>)[]]`: the options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
+A separated list types its rest parameter with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
 
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
@@ -14568,7 +14568,7 @@ type admits the parent's own input or the group's config per element.
 
 #### list options
 
-A spread seat on a list that has options types its parameter as `[first?: ListElement<P> | ListOptionsOf<P> | Child, ...rest: (ListElement<P> | Child)[]]`. `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position.
+A spread seat on a list types its parameter with `listRestParamType`, from the same cardinality and options as the coercer, over the element `(P | Child)` (`ListElement<P> | Child` when the list has options). `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position, and a non-empty list requires an element. The parent's element union is read with `ElementsOf`, which keeps a rest parameter that is a union of tuples.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
@@ -15861,3 +15861,7 @@ The kinds a list admits at its content slot: the slot's own kinds and, when ther
 ### `packages/codegen/src/emitters/factories.ts::listHasOptions`
 
 Whether a separated list's builder takes an options object: a separator kind to choose, or a leading or trailing delimiter the caller may set. The coercer signature, the list's own options type, and the overlay's list parameter all read it.
+
+### `packages/codegen/src/emitters/shared.ts::listRestParamType`
+
+The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call.

@@ -2,7 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
-import type { ArgsOf, OmitEach } from '../../utils.js';
+import type { ArgsOf, ElementsOf, OmitEach } from '../../utils.js';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
 
@@ -3150,12 +3150,10 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const unionPattern$seated: (
-	...args: ReadonlyArray<ArgsOf<typeof F.buildUnionPattern>[number] | ArgsOf<typeof F.buildSimplePatternNegative>[0]>
+	...args: ReadonlyArray<ElementsOf<typeof F.buildUnionPattern> | ArgsOf<typeof F.buildSimplePatternNegative>[0]>
 ) => ReturnType<typeof F.buildUnionPattern> = unionPattern$patterns(F.buildUnionPattern, F.buildSimplePatternNegative);
 const unionPattern$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToUnionPattern>[number] | ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
-	>
+	...args: ReadonlyArray<ElementsOf<typeof C.coerceToUnionPattern> | ArgsOf<typeof C.coerceToSimplePatternNegative>[0]>
 ) => ReturnType<typeof C.coerceToUnionPattern> = unionPattern$patterns(
 	C.coerceToUnionPattern,
 	C.coerceToSimplePatternNegative

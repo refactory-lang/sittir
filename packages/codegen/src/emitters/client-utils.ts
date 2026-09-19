@@ -13,7 +13,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('// Typed facade over @sittir/common/utils with grammar-local narrowing helpers');
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, ElementsOf, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
 	);
 	if (triviaTypeNames.length > 0) {
 		lines.push(`import type { ${triviaTypeNames.join(', ')}, NamespaceMap } from './types.js';`);
@@ -57,7 +57,7 @@ function emitAttachProps(): string[] {
 		'  return { strict, coerce };',
 		'}',
 		'',
-		'export type { ArgsOf, FlavorPair, Hoisted, OmitEach };',
+		'export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };',
 		'',
 		'type AnyFlavorFn = (...args: never[]) => unknown;',
 		'',
