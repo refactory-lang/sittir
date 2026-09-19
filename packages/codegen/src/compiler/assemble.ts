@@ -1,4 +1,5 @@
 import type { VariantChild } from './variant-structural.ts';
+import { isHiddenPunctuationLeaf } from './model/node-map.ts';
 import { computeFieldStorageInfo, compareOrdinal } from '../emitters/shared.ts';
 import {
 	CHOICE,
@@ -48,7 +49,7 @@ import {
 	AbstractAssembledCompound,
 	AssembledPattern,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledEnum,
 	AssembledSupertype,
 	AssembledList,
@@ -75,6 +76,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
+	readonly leafTextPatterns: ReadonlyMap<string, string>;
 	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	readonly assembleDiagnostics = new AssembleDiagnosticsCollector();
 	private readonly _nodes: Map<string, AssembledNode>;
@@ -84,6 +86,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
+			leafTextPatterns?: ReadonlyMap<string, string>;
 			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
@@ -92,6 +95,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.kindEntries = init.kindEntries;
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
+		this.leafTextPatterns = init.leafTextPatterns ?? new Map();
 		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
@@ -120,6 +124,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
 			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
+			leafTextPatterns: normalized.leafTextPatterns,
 			grammarJsonAliasMap
 		});
 	}
@@ -185,20 +190,24 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				break;
 			}
 			case 'pattern': {
-				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, { kindEntries, wordMatcher: wordMatcherRegex }));
+				nodes.set(kind, new AssembledPattern(kind, simplifiedRule, {
+						kindEntries,
+						wordMatcher: wordMatcherRegex,
+						textPattern: normalized.leafTextPatterns?.get(kind)
+					}));
 				break;
 			}
-			case 'token': {
+			case 'keyword':
+			case 'punctuation': {
 				if (simplifiedRule.type !== STRING) {
-					throw new Error(`[assemble] token kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
+					throw new Error(`[assemble] literal kind '${kind}' must be a single literal; found ${simplifiedRule.type}`);
 				}
-				const word = matchesWordShape(simplifiedRule.value, wordMatcherRegex);
 				const named = !kind.startsWith('_') && findEntryForKindName(kindEntries, kind)?.anon !== true;
 				nodes.set(
 					kind,
-					word || named
-						? new AssembledKeyword(kind, simplifiedRule, { kindEntries, word })
-						: new AssembledToken(kind, simplifiedRule, { kindEntries })
+					modelType === 'keyword'
+						? new AssembledKeyword(kind, simplifiedRule, { kindEntries })
+						: new AssembledPunctuation(kind, simplifiedRule, { hidden: !named, kindEntries })
 				);
 				break;
 			}
@@ -685,7 +694,7 @@ interface _UserFacingCtx {
 
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
-	if (node instanceof AssembledToken) {
+	if (isHiddenPunctuationLeaf(node)) {
 		node.userFacing = ctx.variantChildKinds.has(kind);
 		return;
 	}
@@ -724,7 +733,7 @@ function renameCollidingHiddenKinds(
 	typeName: string,
 	diagnostics: AssembleDiagnosticsCollector
 ): void {
-	const hasNonTokenVisible = visible.some((n) => !(n instanceof AssembledToken));
+	const hasNonTokenVisible = visible.some((n) => !isHiddenPunctuationLeaf(n));
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
 		const newType = `_${typeName}`;
@@ -890,7 +899,7 @@ function collectAnonymousNodes(
 				new AssembledKeyword(catalogEntry.kind, syntheticStringRule, { hidden: true, kindEntries })
 			);
 		} else {
-			nodes.set(catalogEntry.kind, new AssembledToken(catalogEntry.kind, syntheticStringRule, { kindEntries }));
+			nodes.set(catalogEntry.kind, new AssembledPunctuation(catalogEntry.kind, syntheticStringRule, { kindEntries }));
 		}
 	}
 }
@@ -937,7 +946,7 @@ export function classifyNode(
 			case PATTERN:
 				return 'pattern';
 			case STRING:
-				return 'token';
+				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'punctuation';
 		}
 	}
 

@@ -5,9 +5,6 @@
   "export_statement_default_declaration": 1,
   "function_declaration": 1,
   "internal_module": 1,
-  "lexical_declaration": 2,
-  "program": 6,
-  "statement_block": 1,
-  "string": 2,
-  "variable_declarator_plain": 2
+  "program": 5,
+  "statement_block": 1
 }

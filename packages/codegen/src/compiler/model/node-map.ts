@@ -682,14 +682,6 @@ export function deriveSlots(rule: SimplifiedRule, ctx?: DeriveCtx): readonly Ass
 	return _deriveSlotsInternal(rule, ctx);
 }
 
-const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
-function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
-	if (!DBG_KINDID_FALLBACK) return;
-	process.stderr.write(
-		`[DBG_KINDID_FALLBACK] ${hit.site}: literal/name lookup resolved an id for '${hit.name}' with no stamp present\n`
-	);
-}
-
 function findKindEntryById(lookup: {
 	entries: readonly GeneratedKindEntry[];
 	id: number;
@@ -735,7 +727,6 @@ export function deriveValuesForRule(
 					];
 				}
 				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(literal)', name: rule.literal });
 				return [
 					{
 						value: rule.literal,
@@ -763,9 +754,7 @@ export function deriveValuesForRule(
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			const parseEntry =
 				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
-			if (entry !== undefined || parseEntry !== undefined)
-				noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
-			return [
+						return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
 					storageKindId: entry?.id,
@@ -789,7 +778,6 @@ export function deriveValuesForRule(
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -817,7 +805,6 @@ export function deriveValuesForRule(
 				];
 			}
 			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'STRING/PATTERN', name: rule.value });
 			const rk = entry?.kind;
 			return [
 				{
@@ -958,7 +945,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'token' | 'pattern' | 'list';
+export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'keyword' | 'punctuation' | 'pattern' | 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -1453,12 +1440,28 @@ export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNo
 	return node;
 }
 
-export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledEnum {
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledEnum {
 	return node.storage === 'kindId';
 }
 
-export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
+}
+
+export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return isFixedTextLeaf(node) && !node.hidden;
+}
+
+export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && !node.hidden;
+}
+
+export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.hidden;
+}
+
+export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
 }
 
 export interface CompoundOpts {
@@ -1681,9 +1684,6 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 		return 'tokenized' in this.rule && this.rule.tokenized === true;
 	}
 
-	get word(): boolean {
-		return false;
-	}
 }
 
 export class AssembledPattern extends AssembledLeaf<RenderRule> {
@@ -1692,13 +1692,26 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[]; wordMatcher?: RegExp }
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			kindEntries?: readonly GeneratedKindEntry[];
+			wordMatcher?: RegExp;
+			textPattern?: string;
+		}
 	) {
 		super(kind, rule, opts);
+		this.#textPattern = opts?.textPattern;
 	}
+
+	readonly #textPattern: string | undefined;
 
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
+	}
+
+	get textPattern(): string | undefined {
+		return this.#textPattern ?? this.pattern;
 	}
 
 	get fixedLiteralText(): string | undefined {
@@ -1708,12 +1721,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 }
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
-	readonly #word: boolean;
-
-	override get word(): boolean {
-		return this.#word;
-	}
+	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -1725,17 +1733,14 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 			irKey?: string;
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
-			word?: boolean;
 		}
 	) {
 		super(kind, rule, opts);
-		this.#word = opts?.word ?? true;
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -1764,19 +1769,18 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
+export class AssembledPunctuation extends AssembledLeaf<StringRule> {
+	readonly modelType = 'punctuation' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
-	constructor(kind: string, rule: StringRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
-		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries });
+	constructor(kind: string, rule: StringRule, opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }) {
+		super(kind, rule, { hidden: opts?.hidden ?? true, kindEntries: opts?.kindEntries });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -1801,7 +1805,7 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: ${!this.hidden} as const }`;
 	}
 }
 
@@ -1981,7 +1985,7 @@ export type AssembledNode =
 	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword
-	| AssembledToken
+	| AssembledPunctuation
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledList;
@@ -2005,31 +2009,45 @@ export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolea
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
 }
 
-interface LeftmostWalkCtx {
+export interface LeftmostWalkCtx {
 	readonly rules: Record<string, RenderRule>;
 	readonly visiting: Set<string>;
 }
 
-function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+function coreLeftmostImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (isNullableMultiplicity(rule)) return false;
 	if (rule.immediate === true) return true;
 	switch (rule.type) {
 		case 'SEQ':
-			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
+			return rule.members.length > 0 && coreLeftmostImmediate(rule.members[0], ctx);
 		case 'CHOICE':
 			return (
 				rule.members.length > 0 &&
-				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
+				rule.members.every((m) => coreLeftmostImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
 			ctx.visiting.add(rule.name);
-			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
+			return coreLeftmostImmediate(ctx.rules[rule.name], ctx);
 		}
 		default:
 			return false;
 	}
+}
+
+export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	if (!rule) return false;
+	if (isNullableMultiplicity(rule)) return false;
+	return coreLeftmostImmediate(rule, ctx);
+}
+
+export function isBoundaryLeftImmediate(members: readonly RenderRule[], fromIndex: number, ctx: LeftmostWalkCtx): boolean {
+	for (let i = fromIndex; i < members.length; i++) {
+		const member = members[i]!;
+		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
+		if (!isNullableMultiplicity(member)) return true;
+	}
+	return false;
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
@@ -2209,7 +2227,7 @@ export function patternTrailingEdgeClass(source: string, ctx: { isWordChar: (c: 
 
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return {
 			starts: charEdgeClass(node.text[0], ctx),
 			ends: charEdgeClass(node.text[node.text.length - 1], ctx)
@@ -2281,7 +2299,7 @@ export interface KindEdgeCharSets {
 
 export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCharSets {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return node.text === ''
 			? {}
 			: { starts: new Set([node.text[0]!]), ends: new Set([node.text[node.text.length - 1]!]) };

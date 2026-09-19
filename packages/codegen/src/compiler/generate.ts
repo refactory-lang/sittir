@@ -117,8 +117,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			emitRenderModule: cfg.emitRenderModule,
 			expectTestFailures: raw.expectTestFailures,
 			options: raw.options,
-			visibleExternals: raw.visibleExternals
+			visibleExternals: raw.visibleExternals,
+			diagnostics: compilation.diagnostics
 		});
+
+		assertCompilation(compilation);
 
 		const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap, generatedIdTables });
 

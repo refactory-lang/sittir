@@ -23,7 +23,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Pure-leaf fallback: if an entry has no fields and no children in
  * node-types.json, `render()` returns `node.$text` directly via its
  * text fast-path — no template lookup needed. This covers:
- *   - Cluster A: visible STRING-rule kinds (`token`/`keyword` modelType)
+ *   - Cluster A: visible STRING-rule kinds (`keyword`/`punctuation` modelType)
  *     whose NodeMap path is `"none"` because `classify()` maps those
  *     to `"none"`.
  *   - Cluster B: visible alias targets absent from NodeMap entirely
@@ -199,9 +199,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /* 'branch'/'envelope'/'polymorph'/'list' all render via a template — a
 		   polymorph is an envelope whose sole slot is a union; 'supertype' is
 		   its own model type and dispatches to the subtype's template.
-		   'token' is 'text' only for `AssembledKeyword` (a named literal, word
-		   or not) — `AssembledToken` (anonymous) has no rendered surface of its
-		   own. */
+		   'token' is 'text' for a word-shaped keyword or a visible token (a named
+		   non-word literal) — a hidden `AssembledPunctuation` (an anonymous or
+		   `_`-prefixed delimiter) has no rendered surface of its own. */
 ```
 
 ### `packages/codegen/src/validate/node-types-loader.ts::module`

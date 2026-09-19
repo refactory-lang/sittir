@@ -59,24 +59,6 @@ export class NormalizeCtx extends BaseCtx<'link'> {
 	}
 }
 
-function dbgChoiceId(label: string, rules: Record<string, Rule<'link'>>): void {
-	const target = process.env.DBG_ID_LOSS;
-	if (!target) return;
-	const r = rules[target];
-	if (!r) return;
-	const find = (x: Rule<'link'>): string | undefined => {
-		if (x.type === CHOICE) return (x as { id?: string }).id ?? '<NONE>';
-		const xs = x as { members?: readonly Rule<'link'>[]; content?: Rule<'link'> };
-		for (const m of xs.members ?? []) {
-			const g = find(m);
-			if (g) return g;
-		}
-		if (xs.content) return find(xs.content);
-		return undefined;
-	};
-	process.stderr.write(`[DBG_ID] ${label}: choice id=${find(r) ?? '<no-choice>'}\n`);
-}
-
 export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): Set<string> {
 	const refcount = new Map<string, number>();
 	const twinned = new Set<string>();
@@ -234,22 +216,16 @@ function applyNormalizationPasses(
 		return out;
 	};
 	let rules = rebuildEach(linkRules, (rule) => collapseWrappers(rule, ctx));
-	dbgChoiceId('after collapseWrappers#1', rules);
 	rules = rebuildEach(rules, (rule) => fanOutSeqChoices(rule, ctx));
-	dbgChoiceId('after fanOutSeqChoices', rules);
 	rules = rebuildEach(rules, (rule) => factorChoiceBranches(rule, ctx));
-	dbgChoiceId('after factorChoiceBranches', rules);
 	rules = rebuildEach(rules, (rule) => dedupeSeqMembers(rule, ctx));
-	dbgChoiceId('after dedupeSeqMembers', rules);
 	const before = rules;
 	rules = inlineSingleUseHidden(rules, ctx, preserveKinds);
 	for (const name of Object.keys(rules)) {
 		const source = before[name];
 		if (source !== undefined) rules[name] = withKindFacts(rules[name]!, source);
 	}
-	dbgChoiceId('after inlineSingleUseHidden', rules);
 	rules = rebuildEach(rules, (rule) => collapseWrappers(rule, ctx));
-	dbgChoiceId('after collapseWrappers#2', rules);
 	return rules;
 }
 
@@ -286,6 +262,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		leafTextPatterns: linked.leafTextPatterns,
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
@@ -349,6 +326,7 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
+		leafTextPatterns: linked.leafTextPatterns,
 		terminalAliasWireIds: linked.terminalAliasWireIds,
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,

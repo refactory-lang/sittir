@@ -131,7 +131,7 @@ All 10 subclasses declare their accepted Rule subset:
 - `AssembledPolymorph extends AssembledNodeBase<PolymorphRule>`
 - `AssembledLeaf extends AssembledNodeBase<PatternRule>`
 - `AssembledKeyword extends AssembledNodeBase<StringRule>`
-- `AssembledToken extends AssembledNodeBase<TokenRule>`
+- `AssembledPunctuation extends AssembledNodeBase<TokenRule>`
 - `AssembledEnum extends AssembledNodeBase<EnumRule>`
 - `AssembledSupertype extends AssembledNodeBase<SupertypeRule>`
 - `AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule>`

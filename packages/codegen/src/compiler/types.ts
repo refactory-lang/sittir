@@ -174,6 +174,7 @@ export interface LinkedGrammar {
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
@@ -202,6 +203,7 @@ export interface NormalizedGrammar {
 	readonly derivations: DerivationLog;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
@@ -213,6 +215,7 @@ export interface SimplifiedGrammar {
 	readonly name: string;
 	readonly aliasedHiddenKinds?: Map<string, string>;
 	readonly topLevelAliasBodies?: Map<string, Rule<'link'>>;
+	readonly leafTextPatterns?: ReadonlyMap<string, string>;
 	readonly parentAliasedKinds?: ReadonlySet<string>;
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;

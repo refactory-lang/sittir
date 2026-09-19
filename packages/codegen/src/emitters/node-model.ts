@@ -25,7 +25,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
-import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
+import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { bareAcceptClosure } from './from.ts';
 import { declaredDelimiterDefault } from './factories.ts';
@@ -66,6 +66,7 @@ interface SerializedNodeBase {
 	modelType: string;
 	typeName: string;
 	factoryName?: string;
+	coerceName?: string;
 	irKey?: string;
 	hidden: boolean;
 	annotations?: RuleAnnotations;
@@ -87,12 +88,12 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
+	leafPattern?: string;
 	text?: string;
 }
 
-interface SerializedToken extends SerializedNodeBase {
-	modelType: 'token';
-	word: boolean;
+interface SerializedFixedText extends SerializedNodeBase {
+	modelType: 'keyword' | 'punctuation';
 	text: string;
 }
 
@@ -121,7 +122,7 @@ interface SerializedList extends SerializedNodeBase {
 type SerializedNode =
 	| SerializedCompoundNode
 	| SerializedLeaf
-	| SerializedToken
+	| SerializedFixedText
 	| SerializedEnum
 	| SerializedSupertype
 	| SerializedList;
@@ -196,6 +197,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		modelType: node.modelType,
 		typeName: node.typeName,
 		factoryName: node.factoryName,
+		coerceName: node.fromFunctionName,
 		irKey: node.irKey,
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
@@ -215,13 +217,14 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				...base,
 				modelType: 'pattern',
 				pattern: node.pattern,
+				leafPattern: anchoredLeafRegexLiteral(node.kind, node.textPattern),
 				text: node.fixedLiteralText
 			};
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			return {
 				...base,
-				modelType: 'token',
-				word: node.word,
+				modelType: node.modelType,
 				text: node.text
 			};
 		case 'enum':

@@ -208,7 +208,7 @@ and is never re-interpreted.
 | 1 | string | a text leaf | the slot admits leaf kinds; matched by the leaf's own pattern |
 | ~~2~~ | ~~string / number / boolean~~ | ~~a keyword or enum member~~ | **retired** — a bare scalar is never guessed into a keyword or enum member; name the kind (rule 3) instead |
 | 3 | plain object | a kind's config | the kind is `kind:` (grammar name or `TSKindId`), else the slot's only kind, else an error |
-| 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element |
+| 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element. An empty array (or empty spread) at an **optional** list slot is the slot absent: no elements node is built and the presence gate renders nothing (`ir.arguments([])` and `f()` render `()`); at a **required** list slot the list factory's non-empty guard throws, naming the slot |
 | 5 | kind-identified value (node data or a `kind:` object) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses |
 | 6 | bare non-object (string / number / boolean / array) | the field's declared `arm.default` | the slot has one candidate or declares a default; else an error |
 | 7 | omission | nothing | whatever strict lets you omit; all slots omittable ⇒ callable with no argument |

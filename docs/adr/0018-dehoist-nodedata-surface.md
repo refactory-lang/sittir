@@ -81,7 +81,7 @@ const fn = {
 - `AssembledLeaf` base for non-branch kinds with subtypes:
   - `AssembledPattern` (open text, optional regex)
   - `AssembledKeyword` (single fixed named string)
-  - `AssembledToken` (single fixed anonymous string)
+  - `AssembledPunctuation` (single fixed anonymous string)
   - `AssembledEnum` (closed set of literals)
 - `AssembledPolymorph` (absorbs `AssembledGroup` as inline form property)
 - `AssembledSupertype` stays

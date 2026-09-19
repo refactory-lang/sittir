@@ -39,7 +39,8 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 function isConcreteTransportNode(node: AssembledNode): boolean {
 	switch (node.modelType) {
 		case 'pattern':
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 		case 'enum':
 		case 'list':
 		case 'branch':

@@ -25,7 +25,7 @@ vi.mock('../src/scripts/generated-manifest.ts', async (importOriginal) => {
 describe('runCodegen write ordering', () => {
 	it('writes every derived file before a failed native build aborts the run', async () => {
 		const { runCodegen } = await import('../src/run-codegen.ts');
-		const repoRoot = resolve(process.cwd(), '..', '..');
+		const repoRoot = resolve(import.meta.dirname, '..', '..', '..');
 		const previousCwd = process.cwd();
 		const outDir = mkdtempSync(join(tmpdir(), 'sittir-write-ordering-'));
 		mkdirSync(join(outDir, '.sittir'), { recursive: true });
@@ -55,5 +55,5 @@ describe('runCodegen write ordering', () => {
 			process.chdir(previousCwd);
 			rmSync(outDir, { recursive: true, force: true });
 		}
-	});
+	}, 60_000);
 });

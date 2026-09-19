@@ -13,7 +13,7 @@ An enum-of-literals kind — `token_tree_punctuation` (`+ | - | , | …`),
 typescript's `predefined_type` and `_reserved_identifier`, every
 `_<kind>_operator` — is a set of literal tokens. Its type is a union of the
 tokens' kind ids and nothing else. The model does not say so: `KindStorage`
-is `'kindId'` only for `AssembledKeyword` and `AssembledToken`, and an
+is `'kindId'` only for `AssembledKeyword` and `AssembledPunctuation`, and an
 `AssembledEnum` is `'node'`. Everything downstream follows that stamp, so an
 enum leaf is a node with a `Terminal<…>` type, a text factory
 (`buildTokenTreePunctuation(',')`), a coercer, and a `$text`-carrying wire

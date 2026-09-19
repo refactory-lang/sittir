@@ -1062,7 +1062,9 @@ export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
 
 export interface LoadedNodeModel {
 	readonly irKeys: Record<string, string>;
+	readonly coerceNames: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
+	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
@@ -1089,6 +1091,7 @@ interface ParsedNodeModel {
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
+		coerceName?: string;
 		modelType?: string;
 		annotations?: { readonly hoisted?: true };
 		slots?: ReadonlyArray<{
@@ -1107,6 +1110,7 @@ interface ParsedNodeModel {
 		bareAccepts?: readonly string[];
 		forwardsTo?: string;
 		defaultDelimiter?: string;
+		leafPattern?: string;
 	}>;
 	factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	fieldAliasMap?: Record<string, Record<string, string>>;
@@ -1116,7 +1120,9 @@ interface ParsedNodeModel {
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	irKeys: {},
+	coerceNames: {},
 	modelTypes: {},
+	leafPatterns: {},
 	hoistedKinds: new Set(),
 	seats: {},
 	slotKinds: {},
@@ -1155,12 +1161,19 @@ export function readNodeModelFile(grammar: string): string | undefined {
 	}
 }
 
+function regexOfLiteral(literal: string): RegExp {
+	const end = literal.lastIndexOf('/');
+	return new RegExp(literal.slice(1, end), literal.slice(end + 1));
+}
+
 export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const raw = readNodeModelFile(grammar);
 	if (raw === undefined) return EMPTY_NODE_MODEL;
 	const model = JSON.parse(raw) as ParsedNodeModel;
 	const irKeys: Record<string, string> = {};
+	const coerceNames: Record<string, string> = {};
 	const modelTypes: Record<string, string> = {};
+	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
 	const seats: SeatTable = {};
 	const seatAt = (kind: string, slot: string, seat: Seat): void => {
@@ -1179,7 +1192,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const listDefaults: Record<string, string> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
+		if (node.coerceName !== undefined) coerceNames[node.kind] = node.coerceName;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
+		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.annotations?.hoisted === true) hoistedKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		if (node.slots !== undefined) {
@@ -1207,7 +1222,9 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	}
 	return {
 		irKeys,
+		coerceNames,
 		modelTypes,
+		leafPatterns,
 		hoistedKinds,
 		seats,
 		slotKinds,
@@ -1471,7 +1488,7 @@ export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) 
 	return (kindId) => {
 		const name = kindNameFromId?.(kindId);
 		const modelType = name === undefined ? undefined : modelTypes[name];
-		return modelType === 'pattern' || modelType === 'token' || modelType === 'keyword' || modelType === 'enum';
+		return modelType === 'pattern' || modelType === 'keyword' || modelType === 'punctuation' || modelType === 'enum';
 	};
 }
 
@@ -1988,7 +2005,7 @@ function projectArmSlot(
 		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
-	if (typeof value === 'number' || modelType === 'token') return setRoute(seat.mount, undefined);
+	if (typeof value === 'number' || modelType === 'keyword' || modelType === 'punctuation') return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
 		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];

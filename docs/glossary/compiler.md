@@ -170,7 +170,7 @@ parents.
 #### body
 
 ```text
-// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledToken)
+// Leaf constructors (AssembledPattern/AssembledKeyword/AssembledPunctuation)
 // build off the SIMPLIFIED rule: simplify's literal-only fold
 // (`collectFixedLiteral` via `isAllTextRender`) is what produces the
 // STRING body these leaves read. A kind's lexical facts
@@ -331,13 +331,14 @@ parents.
 #### body
 
 ```text
-// A literal-bodied kind is a keyword-class leaf (a factory, a type, a
-// union member, an `is` guard) when its text is word-shaped OR the kind is
-// a visible parser kind (a catalog entry that is neither anonymous nor a
-// hidden `_` rule): `unit_expression`, `never_type`, `empty_statement`,
-// `ellipsis`, `wildcard_import`. Only an anonymous punctuation token has no
-// surface of its own (`AssembledToken`). Word shape stays the spacing fact
-// (`AssembledKeyword.word`), not the surface fact.
+// A literal-bodied kind is an `AssembledKeyword` only when its text is
+// word-shaped. Every other literal is an `AssembledPunctuation`, hidden when the
+// kind is anonymous or a `_` rule and visible when it is a named parser kind
+// (a catalog entry that is neither anonymous nor a hidden `_` rule):
+// `unit_expression`, `never_type`, `empty_statement`, `ellipsis`,
+// `wildcard_import`, `optional_chain`. A visible token keeps its factory,
+// type, union membership and `is` guard; visibility is the leaf's `hidden`
+// attribute, and the class answers only whether the text is word-shaped.
 ```
 
 ### `packages/codegen/src/compiler/assemble.ts::resolveSupertypeSubtypes`
@@ -612,7 +613,7 @@ parents.
 
 ```text
 // Same catalog-first resolution `collectAnonymousNodes` keys its
-// minted AssembledKeyword/AssembledToken nodes by — this literal's
+// minted AssembledKeyword/AssembledPunctuation nodes by — this literal's
 // NodeMap key is the catalog row's kind name when one exists (e.g.
 // `$` may dedupe under a sanitized/named catalog entry), not the
 // raw literal text. Returning the raw text here when a resolved
@@ -751,7 +752,7 @@ parents.
  * @param typeName - The shared `typeName` string before disambiguation.
  * @remarks
  *   Only renames when a visible sibling actually gets an exported TypeScript declaration.
- *   Token nodes (`modelType === 'token'`) are anonymous structural delimiters that only
+ *   Punctuation nodes (`modelType === 'punctuation'`) are anonymous structural delimiters that only
  *   appear as exported type aliases if they are referenced in a field/child union — many
  *   aren't. If ALL visible siblings are tokens, there is no actual TypeScript collision
  *   and the hidden kind's name is left unchanged.
@@ -898,10 +899,9 @@ parents.
  * to read a slot from. Otherwise a
  * fielded/multiplicity-free body dispatches structurally: an enum
  * choice (`isEnumChoiceRule`) → 'enum'; a SUPERTYPE → 'polymorph'; a PATTERN
- * → 'pattern'; a STRING → 'token' (the keyword-vs-token split — which
- * concrete class, `AssembledKeyword` or `AssembledToken`, to construct —
- * happens later in `assemble()`'s own switch, via `matchesWordShape`, not
- * here).
+ * → 'pattern'; a STRING → 'keyword' when its text is word-shaped
+ * (`matchesWordShape` against `opts.wordMatcher`), else 'punctuation'; each
+ * value names the class `assemble()` constructs for it.
  *
  * Otherwise (fielded or multiplicity-bearing): a separated-list shape
  * (`isSeparatedListShape`) → 'list'; a slot-bearing body
@@ -964,7 +964,7 @@ parents.
 #### body
 
 ```text
-// The keyword-vs-token split (AssembledKeyword vs AssembledToken, honouring
+// The keyword-vs-token split (AssembledKeyword vs AssembledPunctuation, honouring
 // the grammar's `word` rule via matchesWordShape) happens in assemble()'s
 // own switch on this function's 'token' return value, not here.
 ```
@@ -3551,6 +3551,10 @@ fallback an unstamped list reports.
 // ---------------------------------------------------------------------------
 ```
 
+### `packages/codegen/src/compiler/link.ts::collectLeafTextPatterns`
+
+The whole-text regex of every linked rule that composes to one (`composeTokenText`, following symbol references through the linked rules), keyed by kind. It reads the linked rules because later phases drop a token's literal affixes (a comment's `//`, a character literal's quotes) from the model rule; the map is carried on the linked, normalized and simplified grammar to assembly, which stamps it on each pattern node.
+
 ### `packages/codegen/src/compiler/link.ts::stripResolvedRoleRules`
 
 ```text
@@ -3748,6 +3752,8 @@ Deletes hidden rules that nothing references after inlining, except alias bodies
 ```
 
 The ref's own annotations survive the splice, merged over the body's: a fact stamped on the occurrence (`hoisted` on a variant deposit whose body is a single hidden symbol, `variant`/`variantOf` on an arm) describes the occurrence, not the rule being inlined, and dropping it would silently change how the host classifies.
+
+An external is never inlined: a ref to an external keeps its symbol even when the external carries a renderAs body and is stamped `inline`, so the parent slot still names the external kind instead of the body's pattern.
 
 ### `packages/codegen/src/compiler/link.ts::cyclicInlineTargets`
 
@@ -6088,7 +6094,7 @@ collector parameter.
  * for whether emitters (templates, factories, types, IR) should
  * produce output for the kind.
  *
- * - `token` / `multi` modelTypes: never user-facing (structural helpers).
+ * - A hidden `punctuation` leaf is never user-facing (structural helper).
  * - Visible kinds (not `_`-prefixed): user-facing.
  * - Hidden kinds: user-facing only when they're alias sources
  *   (referenced elsewhere by their storage `name`, meaning factories
@@ -10823,7 +10829,7 @@ second, id-suffixed fallback.
 
 ```text
 // Resolve through the catalog — the same resolution AssembledKeyword/
-// AssembledToken's own constructor uses to stamp resolvedKind/resolvedKindId
+// AssembledPunctuation's own constructor uses to stamp resolvedKind/resolvedKindId
 // — so the minted node is keyed by the catalog row's kind name, not the
 // literal's raw text: tree-sitter often sanitizes or dedupes anonymous
 // literals under a different name (`,` → `comma`) — keying by raw text mints
@@ -10950,37 +10956,6 @@ second, id-suffixed fallback.
 
 ```text
 /** Inline-decision set (kinds emitters skip / normalize preserves). */
-```
-
-### `packages/codegen/src/compiler/normalize.ts::dbgChoiceId`
-
-```text
-/**
- * Run the full ordered pipeline of non-lossy normalization passes over the
- * raw rule map from the linked grammar.
- *
- * @param linkRules - The rule map produced by the Link phase.
- * @returns A new rule map after all normalization passes have been applied.
- * @remarks
- * Order matters: collapse wrappers first (smallest trees → cleaner
- * downstream), then fan-out (expose nested choices), then factor (pull
- * common prefixes/suffixes), then dedupe adjacent duplicates, then inline
- * single-use hidden helpers, then re-collapse to flatten any degenerate
- * wrappers introduced by the previous passes.
- *
- * Polymorph classification lives in Link (variant()-driven, with
- * suggestion-only heuristic detection). This pipeline is simplification
- * only — it MUST NOT silently classify rules as polymorphs because
- * tree-sitter's parser-generator doesn't see these mutations and the parse
- * tree wouldn't match the typed surface. Heuristic candidates that need
- * promotion are recorded in the derivation log; the user authors variant() in
- * grammar.sittir.ts to make them explicit.
- */
-```
-
-```text
-// DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
-// after each normalization pass, to pinpoint where a rule id gets dropped.
 ```
 
 ### `packages/codegen/src/compiler/normalize.ts::normalizeGrammar`

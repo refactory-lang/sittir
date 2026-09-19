@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	kindDiscriminantExprForId,
@@ -23,7 +24,7 @@ import {
 	AssembledPolymorph,
 	AssembledSupertype,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	type TextValueStorage,
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
@@ -37,6 +38,7 @@ import {
 } from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
 import {
+	anchoredLeafRegexLiteral,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -133,7 +135,6 @@ function emitNonEmptyAssertHelper(): string[] {
 		'  arr: readonly T[],',
 		'  label: string,',
 		'): asserts arr is readonly [T, ...(readonly T[])] {',
-		"  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;",
 		'  if (arr.length === 0) {',
 		'    throw new Error(`${label}: requires at least one element`);',
 		'  }',
@@ -144,30 +145,11 @@ function emitNonEmptyAssertHelper(): string[] {
 function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && node.modelType === 'token') continue;
-		if (node.modelType !== 'pattern' || !node.pattern) continue;
-		const fn = node.rawFactoryName!;
-		const constName = `_leafRe_${fn}`;
-		const cleaned = stripUselessEscapes(node.pattern);
-		const fullPattern = `^(?:${cleaned})$`;
-		let flag: 'u' | '' = 'u';
-		try {
-			new RegExp(fullPattern, 'u');
-		} catch {
-			try {
-				new RegExp(fullPattern);
-				flag = '';
-			} catch (e) {
-				throw new Error(
-					`factories emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
-						`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(fullPattern)}. ` +
-						`Cause: ${(e as Error).message}. ` +
-						`Either fix the grammar or add the kind to an emitter exception list.`
-				);
-			}
-		}
-		const escapedForLiteral = cleaned.replace(/\//g, '\\/');
-		const literal = flag === 'u' ? `/${`^(?:${escapedForLiteral})`}/u` : `/${`^(?:${escapedForLiteral})`}/`;
+		if (kind.startsWith('_') && isFixedTextLeaf(node)) continue;
+		if (node.modelType !== 'pattern') continue;
+		const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
+		if (literal === undefined) continue;
+		const constName = `_leafRe_${node.rawFactoryName!}`;
 		leafReConsts.set(kind, constName);
 		lines.push(`const ${constName} = ${literal};`);
 	}
@@ -196,7 +178,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledToken);
+		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
@@ -258,8 +240,9 @@ export namespace factory {
 				result = emitTextFactory(node, 'text: string', 'text', guard, kindEntries, nodeMap);
 				break;
 			}
-			case 'token':
-				if (node instanceof AssembledKeyword) {
+			case 'keyword':
+			case 'punctuation':
+				if (isWordOrVisibleTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -294,11 +277,11 @@ function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, strin
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
 		guards.push(
-			`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
+			`if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
 		);
 	}
 	guards.unshift(
-		`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
+		`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
 	);
 	return guards;
 }
@@ -332,7 +315,7 @@ export function childElementType(
 				parts.add(JSON.stringify(storage.kind));
 				continue;
 			}
-			if (storage.kind.startsWith('_') && ref instanceof AssembledToken) {
+			if (storage.kind.startsWith('_') && ref instanceof AssembledPunctuation) {
 				const visible = nodeMap.nodes.get(storage.kind.slice(1));
 				if (visible) ref = visible;
 			}
@@ -825,8 +808,9 @@ export function constructorSurface(
 				argOptional: optionalized
 			};
 		}
-		case 'token':
-			if (!(target instanceof AssembledKeyword)) return undefined;
+		case 'keyword':
+		case 'punctuation':
+			if (!isWordOrVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
@@ -1395,51 +1379,6 @@ function emitTextFactory(
 	return body.join('\n');
 }
 
-function stripUselessEscapes(pattern: string): string {
-	let out = '';
-	let i = 0;
-	let inClass = false;
-	while (i < pattern.length) {
-		const c = pattern[i];
-		if (!inClass) {
-			if (c === '[') inClass = true;
-			out += c;
-			i++;
-			continue;
-		}
-		if (c === ']') {
-			inClass = false;
-			out += c;
-			i++;
-			continue;
-		}
-		if (c === '\\' && i + 1 < pattern.length) {
-			const next = pattern[i + 1];
-			if (next === '[') {
-				out += '[';
-				i += 2;
-				continue;
-			}
-			if (next === '-' && pattern[i + 2] === ']') {
-				out += '-';
-				i += 2;
-				continue;
-			}
-			out += c + next;
-			i += 2;
-			continue;
-		}
-		out += c;
-		i++;
-	}
-	try {
-		new RegExp(out, 'u');
-	} catch {
-		return pattern;
-	}
-	return out;
-}
-
 interface MapEntry {
 	kind: string;
 	factory: string;
@@ -1508,7 +1447,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		this.#preambleLines = lines;
 	}
 
-	emitLeaf(node: AssembledPattern | AssembledKeyword | AssembledEnum): void {
+	emitLeaf(node: AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum): void {
 		factory.leaf(this.#output, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries);
 	}
 
@@ -1552,8 +1491,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			case 'enum':
 				this.emitLeaf(node);
 				break;
-			case 'token':
-				if (node instanceof AssembledKeyword) this.emitLeaf(node);
+			case 'keyword':
+			case 'punctuation':
+				if (isWordOrVisibleTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

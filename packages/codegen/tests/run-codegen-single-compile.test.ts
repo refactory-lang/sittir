@@ -36,7 +36,7 @@ vi.mock('../src/scripts/generated-manifest.ts', async (importOriginal) => {
 describe('runCodegen calls evaluate() exactly once per generation', () => {
 	it('compiles rust once for the preflight and for emission combined', async () => {
 		const { runCodegen } = await import('../src/run-codegen.ts');
-		const repoRoot = resolve(process.cwd(), '..', '..');
+		const repoRoot = resolve(import.meta.dirname, '..', '..', '..');
 		const previousCwd = process.cwd();
 		const outDir = mkdtempSync(join(tmpdir(), 'sittir-single-compile-'));
 		mkdirSync(join(outDir, '.sittir'), { recursive: true });

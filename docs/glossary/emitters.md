@@ -202,49 +202,9 @@ read the third pass's rules.
 
 ### `packages/codegen/src/emitters/factories.ts::buildLeafReConsts`
 
-```text
-/**
- * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
- *
- * @param nodeMap - The assembled node map to scan for leaf nodes with patterns.
- * @param lines - Output line buffer; `const _leafRe_<name> = /.../` declarations
- *   are appended here as a side effect.
- * @returns Map from kind string to the emitted constant name (e.g. `_leafRe_identifier`).
- * @throws When a leaf pattern does not compile as a JavaScript `RegExp` under either
- *   the `'u'` flag or no flag.
- * @remarks
- *   RegExp constants are hoisted to module scope so they are compiled once at load
- *   time rather than per-call. For each patterned leaf, the `'u'` flag is tried
- *   first (needed for `\p{...}` property escapes), then no-flag. The constant name
- *   is `_leafRe_<camelKind>`; the leaf factory references it instead of the previous
- *   inline try/catch block.
- */
-```
+The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
-#### body
-
-```text
-// Token modelType hidden kinds (e.g. `_range_pattern_left_bare` = '..') have
-// no standalone factory — skip their regex consts. Non-token hidden kinds
-// (groups, branches) get fragment factories and may carry patterns.
-```
-
-#### body
-
-```text
-// Compile at codegen time to pick the flag. If NEITHER flag
-// compiles the grammar has a pattern we can't turn into a runtime
-// regex — surface this loudly instead of silently dropping the
-// validation guard (which would let the factory accept any string
-// for this leaf kind, bypassing grammar constraints).
-```
-
-#### body
-
-```text
-// Prefer a regex literal when the pattern has no unescaped `/`
-// (which would break the literal delimiter). Escape `/` if present.
-```
+The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
 ### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
 
@@ -541,7 +501,7 @@ sites; a seat with no arm would be a site the renderer never fills.
 #### body
 
 ```text
-// Hidden kinds with `multi` or `token` modelType don't get
+// Hidden kinds with `multi` or `punctuation` modelType don't get
 // exported interfaces (types.ts excludes them from emission).
 // When their typeName was collision-renamed (e.g.,
 // `_expression_statement_tuple` → `_ExpressionStatementTuple`),
@@ -1080,7 +1040,7 @@ config form. Group seating is emitted in one place.
 (`declaredSeparatorDefault`), so a built node always carries its token,
 as it always carries its delimiter.
 
-### `packages/codegen/src/emitters/factories.ts::stripUselessEscapes`
+### `packages/codegen/src/emitters/shared.ts::stripUselessEscapes`
 
 ```text
 /**
@@ -1140,6 +1100,12 @@ as it always carries its delimiter.
 // something — fall back to the original (which we know compiled;
 // otherwise this function wouldn't have been called).
 ```
+
+An escaped character outside a class is copied whole, so an escaped `[` (a literal bracket in a composed token pattern) does not open a class. Inside a class it also drops the escape from a character that is literal there (`+ . * ? ( ) { } | $ /`), keeping `\\`, `\]`, `\^` and `\-` and every escape that changes meaning.
+
+### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegexLiteral`
+
+The one derivation of a text leaf's whole-text guard: the kind's `textPattern` with useless escapes stripped, wrapped as `^(?:…)$`, compiled (flag `u` first, then none) and returned as a regex literal built from the compiled regex's own `source`. It returns `undefined` for a kind with no pattern and stops codegen naming the kind when the pattern compiles under neither flag. The factory guards (`buildLeafReConsts`) and the loose coercer's leaf registry both consume it, so a bare string is routed to the kind whose guard it satisfies.
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -1977,6 +1943,8 @@ so no kind-to-text table is needed here.
 // (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
 ```
 
+A single branch kind at an optional slot resolves through `_resolveOneBranch(value, kind, alt, true)`: the trailing flag marks the slot optional, so an empty array is the slot absent (`undefined`) instead of an elements node the non-empty guard would reject. A required slot passes no flag.
+
 ### `packages/codegen/src/emitters/from.ts::altKindDiscriminants`
 
 ```text
@@ -2064,6 +2032,8 @@ so no kind-to-text table is needed here.
  * @returns Array of registry entry source strings to push into the `_leafRegistry` literal.
  */
 ```
+
+A pattern leaf's entry carries `pattern:` (`anchoredLeafRegexLiteral`) when its kind has one, so `_resolveLeafString` picks the leaf kind whose guard the text satisfies rather than the first leaf kind a slot admits; only a kind with no derivable pattern is a last-resort match.
 
 ```text
 // ---------------------------------------------------------------------------
@@ -2343,6 +2313,8 @@ lifted into that arm.
 // overloaded signature's Parameters<> resolves to the
 // options-leading overload, not the rest tuple).
 ```
+
+`_wrapOptionalSoleKinds` names the direct wrapper kinds whose sole slot is optional. `_wrapArray` given an empty array for one of them builds the wrapper with no children rather than an empty inner elements node, which is the same optional-slot rule applied through the wrapper (`arguments: []` on a call).
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
 
@@ -3157,6 +3129,19 @@ function calls `w.adjacent()` before its body. That call is inside the
 trivia-wrapped render function so factory-attached leading trivia still
 seams normally before adjacency applies to the token text itself.
 
+### `packages/codegen/src/emitters/render-module.ts::isImmediateLeaf`
+
+A leaf declared immediate in the grammar. The single predicate both the
+typed render function and the leaf's own `Render` impl read, so a leaf
+rendered as a child and a leaf rendered through its own `Render` agree on
+whether adjacency is marked.
+
+### `packages/codegen/src/emitters/render-module.ts::leafRenderExpr`
+
+The leaf's own `Render` body: its text write, preceded by `w.adjacent()` for
+an immediate leaf. Without the mark, a fragment following an escape sequence
+inside a string is separated by the word-hazard space.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderTypedBranchFn`
 
 The one render function for a kind with a body:
@@ -3659,6 +3644,15 @@ is bounded by the supertype's subtype count, not the grammar.
 // Symmetric — named and unnamed slots both flow through `consider`.
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::literalArmSeamSites`
+
+The seam sites of the owner kind that a per-slot enum's literal arm carries,
+keyed by variant. A site belongs to an arm when its token equals
+`tokenNameOfText` of the arm's literal text, the same derivation the seam pass
+used to mint it, so an arm that is a kind reference to punctuation (the
+`optional_chain` arm of `member_expression`'s `dot` slot) finds the `?.` sites
+named for its text rather than for its kind name.
+
 ### `packages/codegen/src/emitters/render-module.ts::emitPerSlotChildEnum`
 
 ```text
@@ -3804,6 +3798,16 @@ is bounded by the supertype's subtype count, not the grammar.
 // their kind.
 ```
 
+
+A literal arm whose token has seam sites under the owner kind (a
+statement's `;` terminator, `semi_before`) carries `LiteralSeams` as its
+payload: `literalArmSeamSites` finds the owner's `before` and `after` site
+constants in the render plan, `prepareEnumImpl`'s `fill` hook seats them
+from `ctx.options.spacing`, and `literalSeamedArm` writes them around the
+literal. The choice's seams sit inside the arm in the render rule, and the
+template collapses the choice to one slot, so the enum is where they are
+written; the parent never sees them. Literal arms with no such site stay
+unit variants.
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
 ```text
@@ -5181,6 +5185,23 @@ A Rust string literal for body text: quotes, backslashes, line breaks and
 tabs escaped, and every control character and writer mark (U+FDD0 and up)
 written as `\u{…}` so the marks never sit raw in generated source.
 
+### `packages/codegen/src/emitters/render-body.ts::gateOptionalSlotSeams`
+
+Moves the seams a slot owns inside its presence gate. The seam pass mints
+`<slot>_before` and `<slot>_after` beside an optional slot's member, and the
+template emits them as siblings of the slot's gate, so an absent slot still
+wrote its sites and a declared `tight` on an absent `comma` outranked the
+neighbour's space. A gate qualifies when it has one arm, no fallback and no
+kinds test, and its body is exactly the slot the arm tests; the seam before
+it and the seam after it are folded into the arm only when their fields are
+that slot's own. Every other seam stays where it is. `TemplateEmitter` applies
+it once to each kind's finished body, before the slot-preservation checks.
+A slot's own seams are named by the slot and by the token it renders when
+its only values are visible punctuation kinds (`seamNamesOf`, supplied by the
+caller), so an optional `?.` reference folds `qmark_dot_before` and
+`qmark_dot_after` into its presence gate and an absent chain marker leaves no
+site behind.
+
 ### `packages/codegen/src/emitters/render-body.ts::liftGates`
 
 Moves presence gates out of a body and onto the views. A gate that only
@@ -5205,6 +5226,12 @@ its seam payload, `w.dedent()`, `w.token_seam(...)`) — see
 `printStatements`'s payload rule for how a following literal's leading
 whitespace becomes that call's argument. A residual gate chain is an
 `if … else if … else` block over the views' `is_present`.
+
+A `seam` node prints as `w.site_with(node.<field>.unwrap_or(0),
+options::site_strength(<SITE const>, …))`: the printer's `site(name)` names
+the `options::SITE_*` constant for the field, so the writer receives the
+strength beside the arm. `render-module.ts` supplies it from the public kind
+name and the field, the same spelling `render-options-rs.ts` emits.
 
 ### `packages/codegen/src/emitters/render-body.ts::printStatements`
 
@@ -8286,8 +8313,9 @@ name on the wire, `rustName` the Rust struct field, `rustType` its type.
 
 ```text
 /**
-	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
-	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
+	 * The kind currently being emitted, threaded by `emitOne` so the seam
+	 * census and the emitter's diagnostics can attribute a boundary or a lookup
+	 * to its owning kind.
 	 */
 ```
 
@@ -9997,6 +10025,26 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * decide) — the writer's true residue. `runtime-derivable` survives only
  * for list interiors (`staticListInterior`), where baking is still
  * blocked on trailing-trivia edges.
+ *
+ * `origin` is a census-only fact, orthogonal to `resolution`: it names
+ * where the boundary's governing seam arm(s) came from, not how the
+ * boundary bakes. `preference` means a kind- or supertype-scoped
+ * `options:` declaration reached the seam; `token-default` means only a
+ * grammar-wide `_`-scope declaration did; `fallback` means neither did —
+ * the boundary has no `whitespaceChoice` neighbor at all (not
+ * token-adjacent, so no declaration could ever reach it), or its
+ * neighbor's default arm carries no stamped origin (a separator gap's
+ * `whitespaceChoice`, built from `DefaultResolver.resolveSeparator`,
+ * which does not track origin — separator gaps are outside this
+ * mechanism). When a boundary sits between two independently-resolved
+ * seam faces (a token's `after` face and the next token's `before`
+ * face), the record reports the more specific of the two
+ * (`preference` > `token-default` > `fallback`) — the same specificity
+ * order `resolveBindings` already uses to pick a winning declaration.
+ * Never re-derived from address text here or anywhere the record is
+ * read; it is read off the `origin` annotation
+ * `render-rules.ts::whitespaceChoice` stamps on the seam's resolved
+ * default-arm member, via `render-rules.ts::originOfSeamChoice`.
  */
 ```
 
@@ -10004,8 +10052,16 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 
 ```text
 /** Per-grammar census of template-boundary seam resolutions — the
- *  static-seam-resolution spec's residue report. */
+ *  static-seam-resolution spec's residue report. `preferenceOrigin`,
+ *  `tokenDefaultOrigin` and `fallbackOrigin` count `boundaries` by
+ *  `SeamBoundaryRecord.origin` — the token-defaults design's measure of
+ *  how many boundaries a `_`-scope declaration would still need to
+ *  reach. */
 ```
+
+`cascadeOrigin` counts the boundaries whose seam took its arm from the edge
+token's grammar-wide face (origin `cascade`), beside the preference,
+token-default and fallback counts.
 
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
 
@@ -10066,21 +10122,6 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // these instead of unknown element edges. Optional for hand-built ctx.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::SlotLookupMiss`
-
-```text
-// ---------------------------------------------------------------------------
-// DIAGNOSTIC: slotByRuleId-miss inventory (env-gated via `DBG_SLOT_MISS=1`).
-//
-// Records every rule where the primary O(1) `slotByRuleId.get(rule.id)` lookup
-// FAILED (no id, or id not registered), plus whether a name-based fallback
-// recovered it. `recoveredBy: 'none'` is the bug class — the emitter then falls
-// back to the arm/symbol name (e.g. choice `parameter` instead of slot
-// `content`), producing a `.jinja` var with no matching transport field.
-// Surfaces the rule-ID-not-preserved gap so it can be fixed at the source.
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/emitters/templates.ts::GENERATED_HEADER`
 
 ```text
@@ -10091,6 +10132,13 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // break between this header and the body. See core/render.ts for the
 // top-level `.trim()` that handles the outermost render.
 ```
+
+### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.slotSeamNames`
+
+The seam names a slot owns on a node: the slot's own name, plus the token of
+each value that is a visible punctuation kind, through
+`punctuationTokenOfNode`. It is the `seamNamesOf` argument the emitter passes
+to `gateOptionalSlotSeams`.
 
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.constructor`
 
@@ -10200,7 +10248,7 @@ the edge of what the seam sits beside.
 
 ```text
 // currentKind always populated — the seam census attributes every
-// boundary to its owning kind (was DBG_SLOT_MISS-gated).
+// boundary to its owning kind.
 ```
 
 #### body
@@ -11204,11 +11252,11 @@ omits the key.
 ```
 
 ```text
-// AssembledKeyword (alphabetic tokens — modelType 'token', word: true)
+// AssembledKeyword (word-shaped literals — modelType 'keyword')
 ```
 
 ```text
-// AssembledToken (non-alphabetic — modelType 'token', word: false)
+// AssembledPunctuation (non-word literals — modelType 'punctuation'; hidden delimiters and visible named literals)
 ```
 
 #### body
@@ -13922,30 +13970,6 @@ enum's `Verbatim` arm and its render helper's, so the two cannot disagree.
 	 *  when it's reached only via `alias($.kind, $.parseName)` at this position. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::DBG_KINDID_FASTPATH`
-
-```text
-// ---------------------------------------------------------------------------
-// Fast-path coverage (env-gated via `DBG_KINDID_FASTPATH=1`): tallies how
-// often `resolveLiteralKindId`/`resolveAcceptedTransportIds` are satisfied by
-// their link-time mint-stamp fast path versus falling through to the
-// name/text derivation chains. The fallback chains stay load-bearing (not
-// every kind routes through the catalog yet) — this is measurement only.
-// ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/emitters/render-module.ts::registerKindIdFastPathDump`
-
-#### body
-
-```text
-// `process.stderr.write` isn't guaranteed to flush from an `exit`
-// listener when stderr is an async pipe (as in CI) — Node only
-// permits synchronous work during `exit`, so a buffered async write
-// can be silently truncated or dropped. `writeSync` bypasses the
-// stream's buffering entirely.
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::resolveAcceptedTransportIds`
 
 ```text
@@ -14434,6 +14458,21 @@ The strict/coerce expression pair for an arm: a direct child uses its own factor
 A flattened arm through a hoisted child references that child's private
 wiring const under the same `<childKey>.<path>` spelling.
 
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
+
+The method text and parameter type of one sub-factory arm, chosen by what the
+arm supplies. A value arm stamps its literal into the slot. A node arm with no
+residual keys forwards the child's own arguments. A node arm whose child merges
+its keys into the parent's config, or whose child takes a single config
+argument, reads that argument. A node arm whose child is `parameterless` has
+no argument to receive: it takes only the parent's remaining keys and stamps
+`child()` into the slot the way a value arm stamps its literal, so a keyword
+or punctuation arm (`attribute.self`, `rangePattern.withLeft.bare`) is called
+with the parent's config alone. Every other node arm takes the slot's key as
+the child's argument tuple and spreads it. The arity is the model's
+`parameterless` stamp, the fact the factories emitter reads for a zero-argument
+factory; the overlay never re-derives it.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::spliceShape`
 
 The method behind a splice seat. For a config parent: partition the
@@ -14575,7 +14614,7 @@ Static wiring for refine forms over bundles: for each kind with refine forms, sp
  *  slot instead of composing a child factory. Two shapes reach it: a
  *  literal branch of the slot (`op: choice('and', 'or')` yields one per
  *  string), and a reference to a factoryless value kind — an
- *  AssembledKeyword or AssembledToken whose whole body is a fixed literal,
+ *  AssembledKeyword or AssembledPunctuation whose whole body is a fixed literal,
  *  which owns a kind identity but has no factory to call. The arm carries
  *  the value's stamped `storage` and nothing else: its text, and — for a
  *  value that resolved to a kind — that kind and its id. What the emitter
@@ -14918,7 +14957,7 @@ with two pure literal enum slots (`import_statement`: the `type` modifier and
 /** The value's stamped storage when it seats text or a kind id, or
  *  `undefined` when it stores a node — a node-storage value composes a
  *  child factory (a NodeArm) and is never a value arm. Factoryless
- *  AssembledKeyword / AssembledToken references arrive here already
+ *  AssembledKeyword / AssembledPunctuation references arrive here already
  *  stamped `kindId` by `classifyValueStorage`; everything else that lacks
  *  a factory — supertypes above all — has no value to seat and stays
  *  skipped by the caller's own test. */
@@ -15155,6 +15194,35 @@ and `defaultText` (the default token's text) for the render's fallback
 arm. It has no `side` and registers no top-level label, like the
 delimiter site.
 
+`strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
+`SPACING_SITES` row: how firmly the site's table default holds against the
+mark meeting it at the same gap. `seamStrength` maps the site's origin —
+declared (`preference`, `token-default`, `word-default`) is 2, `cascade` is 1, the fallback
+is 0; separator sites are declared.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SeamStrength`
+
+How firmly a site's table default holds against the mark meeting it at the
+same gap: a declared value (a preference or token-default row, a keyword's
+word-default, or a value set on the node) outranks a cascaded one (the edge
+token's face reaching the kind edge), which outranks the bare fallback.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
+
+An exhaustive switch over `SeamOrigin | undefined`: `preference`,
+`token-default` and `word-default` are declared (2), `cascade` is 1, and
+`fallback` or no origin is 0. A new origin fails to compile here until it is
+given a strength.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
+
+The per-kind edge table: for each spacing site whose address is a token face
+(`parseSeamLabel(address).token` equals the site's kind), the kind's id and,
+for its before and after edge, the site index, default arm and strength.
+Kinds whose name resolves to more than one id are dropped, and rows are
+sorted by id so the runtime finds a kind by binary search. A source
+coordinate of that kind meets these seams like a rendered node would.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite`
 
 ```text
@@ -15198,6 +15266,13 @@ A `source: 'separator'` site becomes a spacing-table row under its kind
 (`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
 default's token text is stamped on the row as `defaultText` here, where
 the kind catalog is in hand, so the render emitter never re-derives it.
+
+The emitted `site_strength(site, arm)` returns the row's strength when `arm`
+is the row's default and `SEAM_DECLARED` otherwise, so a value set on the
+node counts as declared. A value set explicitly to the default of a
+cascaded site is indistinguishable from the default and takes the cascade
+tier; the read-side inference that will set such values records
+explicitness when it lands.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 

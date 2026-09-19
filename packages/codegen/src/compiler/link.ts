@@ -18,6 +18,7 @@ import {
 import type {
 	AliasRule,
 	Rule,
+	RuleId,
 	SymbolRef,
 	FieldRule,
 	SupertypeRule,
@@ -72,6 +73,7 @@ import { rootRuleName } from '../util/reachable-rules.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveVariantChildren, isAliasMintedRef } from './variant-structural.ts';
 import {
+	composeTokenText,
 	deriveComplexAliasTargetHidden,
 	isEnumChoiceRule,
 	isHiddenKind,
@@ -277,12 +279,22 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		derivations,
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
+		leafTextPatterns: collectLeafTextPatterns(rules),
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
 		variantChildren: variantChildren.size > 0 ? variantChildren : undefined
 	};
+}
+
+function collectLeafTextPatterns(rules: Record<string, Rule<'link'>>): ReadonlyMap<string, string> {
+	const out = new Map<string, string>();
+	for (const [kind, rule] of Object.entries(rules)) {
+		const pattern = composeTokenText(rule, (name) => rules[name]);
+		if (pattern !== undefined) out.set(kind, pattern);
+	}
+	return out;
 }
 
 function buildExternalRolesMap(rawExternalRoles: Map<string, ExternalRole> | undefined): Map<string, ExternalRole> {
@@ -769,8 +781,9 @@ function pruneUnreachableRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx
 
 function inlineReferences(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	const cyclic = cyclicInlineTargets(rules);
+	const externals = new Set(ctx.grammar.externals);
 	const inlineOne = (r: Rule<'link'>): Rule<'link'> => {
-		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name)) return r;
+		if (r.type !== SYMBOL || r.inline !== true || cyclic.has(r.name) || externals.has(r.name)) return r;
 		const body = rules[r.name];
 		if (body === undefined) return r;
 		const { hidden: _sourceKindHidden, ...spliced } = body;
@@ -2117,25 +2130,32 @@ function clone<T>(value: T): T {
 	return JSON.parse(JSON.stringify(value)) as T;
 }
 
+interface RenderAsLiteralStamp {
+	readonly value: string;
+	readonly immediate: boolean;
+}
+
 export function stampStaticRenderAs(
 	rules: Record<string, Rule<'link'>>,
 	renderAs: Record<string, Rule<'link'>>
 ): Record<string, Rule<'link'>> {
-	const renderStamps: Record<string, string> = {};
+	const renderStamps: Record<string, RenderAsLiteralStamp> = {};
 	const blankStamps = new Set<string>();
 	for (const [sym, body] of Object.entries(renderAs)) {
-		if (body.type === STRING) renderStamps[sym] = body.value;
-		else if (isBlankRule(body)) blankStamps.add(sym);
+		if (body.type === STRING) renderStamps[sym] = { value: body.value, immediate: false };
+		else if (body.type === TOKEN && body.content.type === STRING) {
+			renderStamps[sym] = { value: body.content.value, immediate: body.immediate };
+		} else if (isBlankRule(body)) blankStamps.add(sym);
 	}
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
-	const symToLit: Record<string, string> = { ...renderStamps };
+	const symToLit: Record<string, RenderAsLiteralStamp> = { ...renderStamps };
 	for (const [sym, body] of Object.entries(rules)) {
 		if (sym in symToLit) continue;
 		if (body.type !== STRING) continue;
-		for (const [renderKey, lit] of Object.entries(renderStamps)) {
-			if (sym.endsWith(renderKey) && body.value === lit) {
-				symToLit[sym] = lit;
+		for (const [renderKey, stamp] of Object.entries(renderStamps)) {
+			if (sym.endsWith(renderKey) && body.value === stamp.value) {
+				symToLit[sym] = stamp;
 				break;
 			}
 		}
@@ -2152,15 +2172,20 @@ export function stampStaticRenderAs(
 function isBlankRule(rule: Rule<'link'>): boolean {
 	return (rule.type === CHOICE && rule.members.length === 0) || (rule.type === SEQ && rule.members.length === 0);
 }
+function literalRuleForStamp(stamp: RenderAsLiteralStamp, id: RuleId | undefined): Rule<'link'> {
+	return stamp.immediate
+		? withId({ type: TOKEN, content: { type: STRING, value: stamp.value }, immediate: true }, id)
+		: withId({ type: STRING, value: stamp.value }, id);
+}
 function rewriteRuleForStamp(
 	rule: Rule<'link'>,
-	symToLit: Record<string, string>,
+	symToLit: Record<string, RenderAsLiteralStamp>,
 	blankStamps: ReadonlySet<string>
 ): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL: {
-			const lit = symToLit[rule.name];
-			if (lit !== undefined) return withId({ type: STRING, value: lit }, rule.id);
+			const stamp = symToLit[rule.name];
+			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id);
 			if (blankStamps.has(rule.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			return rule;
 		}
@@ -2168,8 +2193,8 @@ function rewriteRuleForStamp(
 		case FIELD: {
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
-				const lit = symToLit[inner.name];
-				if (lit !== undefined) return withId({ type: STRING, value: lit }, rule.id ?? inner.id);
+				const stamp = symToLit[inner.name];
+				if (stamp !== undefined) return literalRuleForStamp(stamp, rule.id ?? inner.id);
 				if (blankStamps.has(inner.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };

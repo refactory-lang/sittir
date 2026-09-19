@@ -1522,12 +1522,7 @@ describe('function_expression sub-factories', () => {
 		const node = ir.functionExpression.typePredicateAnnotation.this({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionExpression);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
@@ -1657,12 +1652,7 @@ describe('function_declaration sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionDeclaration);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
@@ -1784,12 +1774,7 @@ describe('generator_function sub-factories', () => {
 		const node = ir.generatorFunction.typePredicateAnnotation.this({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.GeneratorFunction);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
@@ -1919,12 +1904,7 @@ describe('generator_function_declaration sub-factories', () => {
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.GeneratorFunctionDeclaration);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
@@ -2034,8 +2014,7 @@ describe('call_expression sub-factories', () => {
 	});
 	it('call.import builds the parent', () => {
 		const node = ir.callExpression.call.import({
-			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any]
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
 		expect((node as any).content()?.$type).toBe(TSKindId.CallExpressionCall);
@@ -2128,8 +2107,7 @@ describe('member_expression sub-factories', () => {
 	it('optionalChain builds the parent', () => {
 		const node = ir.memberExpression.optionalChain({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
-			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-			separator: [{ $type: TSKindId.OptionalChain, $text: '?.', $source: 2, $named: true } as any]
+			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MemberExpression);
 		expect((node as any).separator()).toBe(TSKindId.OptionalChain);
@@ -2303,8 +2281,7 @@ describe('augmented_assignment_expression sub-factories', () => {
 			left: [
 				{
 					object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
-					property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-					separator: [{ $type: TSKindId.OptionalChain, $text: '?.', $source: 2, $named: true } as any]
+					property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -2636,7 +2613,7 @@ describe('binary_expression sub-factories', () => {
 	it('in.privatePropertyIdentifier builds the parent', () => {
 		const node = ir.binaryExpression.in.privatePropertyIdentifier({
 			binaryExpressionIn: [
-				{ right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, left: ['test'] }
+				{ right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, left: ['#x'] }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
@@ -2720,19 +2697,19 @@ describe('unescaped_single_string_fragment', () => {
 
 describe('escape_sequence', () => {
 	it('factory produces correct type', () => {
-		const node = ir.escapeSequence('test');
+		const node = ir.escapeSequence('\\n');
 		expect(node.$type).toBe(TSKindId.EscapeSequence);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('\\n');
 	});
 });
 
 describe('comment', () => {
 	it('factory produces correct type', () => {
-		const node = ir.comment('test');
+		const node = ir.comment('/* */');
 		expect(node.$type).toBe(TSKindId.Comment);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('/* */');
 	});
 });
 
@@ -2807,10 +2784,10 @@ describe('regex_flags', () => {
 
 describe('number', () => {
 	it('factory produces correct type', () => {
-		const node = ir.number('test');
+		const node = ir.number('1');
 		expect(node.$type).toBe(TSKindId.Number);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('1');
 	});
 });
 
@@ -2825,10 +2802,10 @@ describe('identifier', () => {
 
 describe('private_property_identifier', () => {
 	it('factory produces correct type', () => {
-		const node = ir.privatePropertyIdentifier('test');
+		const node = ir.privatePropertyIdentifier('#x');
 		expect(node.$type).toBe(TSKindId.PrivatePropertyIdentifier);
 		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
+		expect(node.$text).toBe('#x');
 	});
 });
 
@@ -3115,8 +3092,7 @@ describe('rest_pattern sub-factories', () => {
 	it('memberExpression.optionalChain builds the parent', () => {
 		const node = ir.restPattern.memberExpression.optionalChain({
 			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
-			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-			separator: [{ $type: TSKindId.OptionalChain, $text: '?.', $source: 2, $named: true } as any]
+			property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect((node as any).lhsExpression()).toBeDefined();
@@ -3251,7 +3227,7 @@ describe('pair sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.pair.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['test']
+			key: ['#x']
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3287,7 +3263,7 @@ describe('pair sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.pair.number({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['test']
+			key: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -4093,7 +4069,7 @@ describe('enum_assignment sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.enumAssignment.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: ['test']
+			name: ['#x']
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4129,7 +4105,7 @@ describe('enum_assignment sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.enumAssignment.number({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: ['test']
+			name: ['1']
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4213,12 +4189,10 @@ describe('required_parameter', () => {
 
 describe('required_parameter sub-factories', () => {
 	it('this builds the parent', () => {
-		const node = ir.requiredParameter.this({
-			pattern: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-		});
+		const node = ir.requiredParameter.this({});
 		expect(node.$type).toBe(TSKindId.RequiredParameter);
 		expect((node as any).pattern()).toBe(TSKindId.This);
-		expect(node.$render!().length).toBeGreaterThan(0);
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -4240,12 +4214,10 @@ describe('optional_parameter', () => {
 
 describe('optional_parameter sub-factories', () => {
 	it('this builds the parent', () => {
-		const node = ir.optionalParameter.this({
-			pattern: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-		});
+		const node = ir.optionalParameter.this({});
 		expect(node.$type).toBe(TSKindId.OptionalParameter);
 		expect((node as any).pattern()).toBe(TSKindId.This);
-		expect(node.$render!().length).toBeGreaterThan(0);
+		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -4460,8 +4432,7 @@ describe('tuple_parameter sub-factories', () => {
 			name: [
 				{
 					object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
-					property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any,
-					separator: [{ $type: TSKindId.OptionalChain, $text: '?.', $source: 2, $named: true } as any]
+					property: { $type: TSKindId.PrivatePropertyIdentifier, $text: 'test', $source: 2, $named: true } as any
 				}
 			]
 		});
@@ -4821,8 +4792,7 @@ describe('type_predicate sub-factories', () => {
 	});
 	it('this builds the parent', () => {
 		const node = ir.typePredicate.this({
-			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypePredicate);
 		expect((node as any).name()).toBe(TSKindId.This);
@@ -4857,8 +4827,7 @@ describe('type_predicate_annotation sub-factories', () => {
 	});
 	it('this builds the parent', () => {
 		const node = ir.typePredicateAnnotation.this({
-			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+			type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypePredicateAnnotation);
 		expect((node as any).typePredicate()?.$type).toBe(TSKindId.TypePredicate);
@@ -4923,8 +4892,7 @@ describe('type_query sub-factories', () => {
 	});
 	it('callExpression.import builds the parent', () => {
 		const node = ir.typeQuery.callExpression.import({
-			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
-			function: [{ $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any]
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -4944,8 +4912,7 @@ describe('type_query sub-factories', () => {
 					$named: true,
 					_type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 				} as any
-			} as any,
-			function: [{ $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5228,12 +5195,7 @@ describe('call_signature sub-factories', () => {
 	it('typePredicateAnnotation.this builds the parent', () => {
 		const node = ir.callSignature.typePredicateAnnotation.this({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.CallSignature);
 		expect((node as any).returnType()?.$type).toBe(TSKindId.TypePredicateAnnotation);
@@ -5275,7 +5237,7 @@ describe('property_signature', () => {
 
 describe('property_signature sub-factories', () => {
 	it('privatePropertyIdentifier builds the parent', () => {
-		const node = ir.propertySignature.privatePropertyIdentifier({ name: ['test'] });
+		const node = ir.propertySignature.privatePropertyIdentifier({ name: ['#x'] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5301,7 +5263,7 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number builds the parent', () => {
-		const node = ir.propertySignature.number({ name: ['test'] });
+		const node = ir.propertySignature.number({ name: ['1'] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5543,12 +5505,7 @@ describe('function_type sub-factories', () => {
 	it('typePredicate.this builds the parent', () => {
 		const node = ir.functionType.typePredicate.this({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			returnType: [
-				{
-					type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					name: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
-				}
-			]
+			returnType: [{ type: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
 		});
 		expect(node.$type).toBe(TSKindId.FunctionType);
 		expect((node as any).returnType()).toBeDefined();

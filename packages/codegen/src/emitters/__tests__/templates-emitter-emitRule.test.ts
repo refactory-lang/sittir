@@ -212,10 +212,7 @@ describe('emitRule — seq', () => {
 		expect(shown(rule, makeCtx())).toBe('fn⟨adjacent⟩⟨tokenSeam " "⟩main');
 	});
 
-	it('recurses into nested seqs, inserting a word-boundary space between adjacent word literals', () => {
-		// Bug 6 fix: consecutive seq members that would merge into a single
-		// lexeme at render time ('a' + 'b' -> 'ab', a different token) get a
-		// space inserted between them, per the grammar's wordMatcher.
+	it('recurses into nested seqs, defaulting every undeclared literal seam to a space', () => {
 		const rule: SeqRule = {
 			type: SEQ,
 			members: [
@@ -230,14 +227,10 @@ describe('emitRule — seq', () => {
 				{ type: STRING, value: ')' }
 			]
 		};
-		expect(shown(rule, makeCtx())).toBe('(a b)');
+		expect(shown(rule, makeCtx())).toBe('( a b )');
 	});
 
-	it('inserts a space at a static merge-hazard punctuation seam, and only there', () => {
-		// Mirrors the SpacingWriter's pair rule at emit time: askama fuses
-		// adjacent template literals into one write, so a static '..' + '=>'
-		// seam is invisible to the runtime writer and would re-lex as '..='
-		// plus a dangling '>'. A pair in no token ('!' + '[') stays tight.
+	it('defaults a static literal seam to a space whether or not it is a merge hazard', () => {
 		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
 		const hazard: SeqRule = {
 			type: SEQ,
@@ -254,7 +247,7 @@ describe('emitRule — seq', () => {
 				{ type: STRING, value: '[' }
 			]
 		};
-		expect(shown(benign, hazardCtx)).toBe('![');
+		expect(shown(benign, hazardCtx)).toBe('! [');
 	});
 });
 
@@ -679,7 +672,7 @@ describe('emitRule — token seams', () => {
 		const hazardCtx = makeCtx({ isLiteralMergePair: (l: string, r: string) => l === '.' && r === '=' });
 		const group = { type: SEQ, members: [seamChoice('eq_before'), { type: STRING, value: '=>' }, { type: STRING, value: 'x' }], staticSeamBefore: 'spaced' } as unknown as SeqRule;
 		const rule = { type: SEQ, members: [{ type: STRING, value: '..' }, group] } as unknown as SeqRule;
-		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=>x');
+		expect(shown(rule, hazardCtx)).toBe('..⟨seam eq_before⟩=> x');
 	});
 
 	it('never picks a seam choice as the conditional key of an optional seq', () => {

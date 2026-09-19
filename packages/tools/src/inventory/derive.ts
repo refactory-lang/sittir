@@ -331,7 +331,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		if (direct !== undefined) return [direct];
 		const node = modelNode(input.model, k);
 		if (node?.modelType === 'enum') return node.enumValues.map((v) => `text:${v}`);
-		if (node?.modelType === 'token') return [`literal:${k}`];
+		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return [`literal:${k}`];
 		if (node && node.subtypes.length > 0) {
 			const parts = supertypeKind(input, k, []);
 			if (parts) return parts;

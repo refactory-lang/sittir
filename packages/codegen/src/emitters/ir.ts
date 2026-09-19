@@ -1,13 +1,12 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,
-	AssembledKeyword,
-	AssembledPattern,
-	AssembledToken,
+	AssembledPattern
 } from '../compiler/model/node-map.ts';
 import { isValidIdent, irNamespacesChildFactory, compareOrdinal } from './shared.ts';
 import { isHiddenKind } from '../dsl/rule-patterns.ts';
@@ -109,7 +108,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (
 				sub instanceof AssembledSupertype ||
 				(sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted === true) ||
-				sub instanceof AssembledToken
+				isHiddenPunctuationLeaf(sub)
 			)
 				continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
@@ -122,7 +121,7 @@ export function emitIr(config: EmitIrConfig): string {
 				const ref = bundleRef(sub);
 				memberEntries.push(`  ${memberKey}: ${ref},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof ${ref};`);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
+			} else if (isWordOrVisibleTextLeaf(sub) || sub instanceof AssembledPattern) {
 				if (!sub.rawFactoryName) continue;
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
 				memberTypeEntries.push(`  readonly ${memberKey}: typeof F.${sub.rawFactoryName};`);
@@ -164,7 +163,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (!isValidIdent(node.irKey)) continue;
 		const isStructuralFactory =
 			(node instanceof AbstractAssembledCompound && node.annotations?.hoisted !== true) || node instanceof AssembledList;
-		const isLeafFactoryNode = node instanceof AssembledKeyword || node instanceof AssembledPattern;
+		const isLeafFactoryNode = isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern;
 		if (!isStructuralFactory && !isLeafFactoryNode) {
 			continue;
 		}
@@ -187,7 +186,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if ((sub instanceof AbstractAssembledCompound && sub.annotations?.hoisted !== true) || sub instanceof AssembledList) {
 				if (!sub.fromFunctionName) continue;
 				bundle = bundleRef(sub);
-			} else if (sub instanceof AssembledKeyword || sub instanceof AssembledPattern) {
+			} else if (isWordOrVisibleTextLeaf(sub) || sub instanceof AssembledPattern) {
 				if (!sub.rawFactoryName) continue;
 				bundle = `F.${sub.rawFactoryName}`;
 			} else {
@@ -216,7 +215,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledKeyword) || !isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (!isWordOrVisibleTextLeaf(node) || !isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -266,7 +265,7 @@ function isFlatLeafOrKeyword(
 	kindEntries: ReturnType<typeof collectKindEntries> | undefined
 ): boolean {
 	if (!node.userFacing || node.factoryInline) return false;
-	if (node instanceof AssembledKeyword ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
+	if (isWordOrVisibleTextLeaf(node) ? isHiddenKind(kind) : !(node instanceof AssembledPattern)) return false;
 	if (!node.irKey || !node.rawFactoryName || !isValidIdent(node.irKey) || node.irKey.startsWith('_')) return false;
 	return !kindEntries || hasCatalogEntry(kindEntries, kind);
 }
@@ -347,7 +346,7 @@ function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeM
 }
 
 function isLeafFactory(node: AssembledNode): boolean {
-	return (node instanceof AssembledPattern || node instanceof AssembledKeyword) && node.rawFactoryName !== undefined;
+	return (node instanceof AssembledPattern || isWordOrVisibleTextLeaf(node)) && node.rawFactoryName !== undefined;
 }
 
 function returnTypeExpr(node: AssembledNode): string {
@@ -380,7 +379,7 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
-	const leafNode = nodes.find((n) => isLeafFactory(n) && !(n instanceof AssembledKeyword));
+	const leafNode = nodes.find((n) => isLeafFactory(n) && !isWordOrVisibleTextLeaf(n));
 	if (leafNode) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
 		fns.push(`    return F.${leafNode.rawFactoryName}(value ? 'true' : 'false');`);

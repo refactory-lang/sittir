@@ -15,16 +15,27 @@ import {
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
 	if (arr.length === 0) {
 		throw new Error(`${label}: requires at least one element`);
 	}
 }
 
-const _leafRe_buildHashBangLine = /^(?:#!.*)/u;
-const _leafRe_buildUnescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
-const _leafRe_buildUnescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
-const _leafRe_buildRegexFlags = /^(?:[a-z]+)/u;
+const _leafRe_buildHashBangLine = /^(?:(?:#!.*))$/u;
+const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
+const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
+const _leafRe_buildEscapeSequence = /^(?:(?:\\[^]))$/u;
+const _leafRe_buildComment = /^(?:(?:\/\/(?:[^\r\n\u2028\u2029]*)|\/\*(?:[^*]*\*+([^/*][^*]*\*+)*)\/))$/u;
+const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
+const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
+const _leafRe_buildNumber =
+	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*))n))$/u;
+const _leafRe_buildIdentifier =
+	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildPrivatePropertyIdentifier =
+	/^(?:#(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildTypeIdentifier =
+	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
 
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = config.hashBangLine;
@@ -53,10 +64,8 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 }
 
 export function buildHashBangLine(text: string): T.HashBangLine.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`hash_bang_line: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildHashBangLine.test(text))
-		throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`);
+	if (!_leafRe_buildHashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.HashBangLine as const,
@@ -2007,13 +2016,8 @@ export function buildString(value: T.StringDouble | T.StringSingle): T.String.Bu
 }
 
 export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDoubleStringFragment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
-	if (
-		typeof process !== 'undefined' &&
-		process.env.SITTIR_DEBUG &&
-		!_leafRe_buildUnescapedDoubleStringFragment.test(text)
-	)
+	if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
+	if (!_leafRe_buildUnescapedDoubleStringFragment.test(text))
 		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -2027,13 +2031,8 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 }
 
 export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSingleStringFragment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
-	if (
-		typeof process !== 'undefined' &&
-		process.env.SITTIR_DEBUG &&
-		!_leafRe_buildUnescapedSingleStringFragment.test(text)
-	)
+	if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
+	if (!_leafRe_buildUnescapedSingleStringFragment.test(text))
 		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -2047,8 +2046,8 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 }
 
 export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_sequence: text must be non-empty`);
+	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.EscapeSequence as const,
@@ -2061,8 +2060,8 @@ export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
 }
 
 export function buildComment(text: string): T.Comment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`comment: text must be non-empty`);
+	if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+	if (!_leafRe_buildComment.test(text)) throw new Error(`comment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Comment as const,
@@ -2145,8 +2144,8 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Built {
 }
 
 export function buildRegexPattern(text: string): T.RegexPattern.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`regex_pattern: text must be non-empty`);
+	if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
+	if (!_leafRe_buildRegexPattern.test(text)) throw new Error(`regex_pattern: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RegexPattern as const,
@@ -2159,10 +2158,8 @@ export function buildRegexPattern(text: string): T.RegexPattern.Built {
 }
 
 export function buildRegexFlags(text: string): T.RegexFlags.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`regex_flags: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildRegexFlags.test(text))
-		throw new Error(`regex_flags: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`);
+	if (!_leafRe_buildRegexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RegexFlags as const,
@@ -2175,8 +2172,8 @@ export function buildRegexFlags(text: string): T.RegexFlags.Built {
 }
 
 export function buildNumber(text: string): T.Number.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`number: text must be non-empty`);
+	if (text.length === 0) throw new Error(`number: text must be non-empty`);
+	if (!_leafRe_buildNumber.test(text)) throw new Error(`number: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Number as const,
@@ -2189,8 +2186,8 @@ export function buildNumber(text: string): T.Number.Built {
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Identifier as const,
@@ -2203,8 +2200,9 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 }
 
 export function buildPrivatePropertyIdentifier(text: string): T.PrivatePropertyIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`private_property_identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
+	if (!_leafRe_buildPrivatePropertyIdentifier.test(text))
+		throw new Error(`private_property_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.PrivatePropertyIdentifier as const,
@@ -5211,8 +5209,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 }
 
 export function buildTypeIdentifier(text: string): T.TypeIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_type_identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_type_identifier: text must be non-empty`);
+	if (!_leafRe_buildTypeIdentifier.test(text))
+		throw new Error(`_type_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TypeIdentifier as const,
@@ -7143,8 +7142,8 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 }
 
 export function buildTemplateChars(text: string): T.TemplateChars.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_template_chars: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
+	if (!_leafRe_buildTemplateChars.test(text)) throw new Error(`_template_chars: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TemplateChars as const,
@@ -7157,8 +7156,7 @@ export function buildTemplateChars(text: string): T.TemplateChars.Built {
 }
 
 export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_ternary_qmark: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.TernaryQmark as const,
@@ -7171,8 +7169,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
 }
 
 export function buildHtmlComment(text: string): T.HtmlComment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`html_comment: text must be non-empty`);
+	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.HtmlComment as const,
@@ -7185,8 +7182,7 @@ export function buildHtmlComment(text: string): T.HtmlComment.Built {
 }
 
 export function buildJsxText(text: string): T.JsxText.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`jsx_text: text must be non-empty`);
+	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.JsxText as const,
@@ -7199,8 +7195,7 @@ export function buildJsxText(text: string): T.JsxText.Built {
 }
 
 export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`__error_recovery: text must be non-empty`);
+	if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.ErrorRecovery as const,

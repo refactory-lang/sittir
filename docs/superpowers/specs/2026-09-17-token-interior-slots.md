@@ -188,3 +188,114 @@ design.
 - A regex engine in the native crates; the multi-slot row waits for a grammar
   that needs it.
 - Typing trivia entries as comment nodes.
+
+## Amendments
+
+### Three shapes, kept distinct
+
+The design covers leaves the parser emits as one childless node, and it
+takes their interior structure from exactly one place per shape:
+
+| shape | parse node | where the interior comes from | examples |
+| --- | --- | --- | --- |
+| `token(…)` / `token.immediate(…)` over a rule | one node, no children | the rule's own members: strings are template text, patterns are slots, `optional(string)` is a flag, a choice is forms | typescript `comment`, `private_property_identifier`; rust `char_literal`; every `escape_sequence`; python `comment` |
+| bare pattern | one node, no children | named groups the author draws in the regex; a pattern with no group has no interior and stays whole-text | rust `metavariable`, `shebang`; typescript `hash_bang_line` |
+| structured rule with external pieces | a node with children | the parse tree itself; `renderAs` gives an external a body because the parser has none | rust `line_comment`, `block_comment` |
+
+The first two are the subject of this design and share one read rule: the
+node is stored whole and projected lazily. The third is the existing
+compound path and is not changed; it is listed only because it is what the
+first two come to resemble. Whole-text leaves — `identifier`, numbers,
+string fragments — are the first two shapes with no interior, and nothing
+about them changes.
+
+### The model type follows the interior
+
+A token wrapper is not a class. Today `classifyNode` reaches a
+content-bearing token through `classifyTerminalFallback`, where any all-text
+shape becomes `pattern`; that is how typescript `comment` and `identifier`
+and rust `char_literal` are `pattern` leaves with no pattern on the node,
+and why their factories carry no regex. Under this design the classifier
+reads the interior as if the wrapper were absent, and the wrapper stamps
+one attribute on whatever class results: the kind is lexed and read as one
+text, and every seam inside it is immediate.
+
+| interior | model type | as it would be unwrapped |
+| --- | --- | --- |
+| one pattern | `pattern` | `identifier`, `number` |
+| one string | `keyword` or `punctuation` by word shape | `_automatic_semicolon` |
+| a choice of strings | `enum` | rust `mutable_specifier` |
+| strings and patterns in a sequence | the compound class the sequence yields, its string members immediate faces, its pattern members slots | `char_literal`, `private_property_identifier`, python `comment` |
+| a choice of such sequences | the compound with forms, one per arm | typescript `comment` |
+
+Consumers follow the class, not the wrapper: the factory, types, guard,
+render body and lazy projection of a token-wrapped compound are those of a
+compound whose leaves are immediate. A bare pattern with named groups is the
+fourth row with the groups as its pattern members.
+
+### The read side does not drill
+
+A token is one parse node with no children; the typescript parser gives
+`// hello` and `/* block */` as childless `comment` nodes spanning the
+markers. The reader therefore stores a token whole: `$text` is the token's
+text, the node is a coordinate, and no projection runs on read. This
+supersedes "`$text` of a read leaf is its content" above.
+
+The interior rule shapes the construction side only. A factory-built node
+holds the slots and no `$text`; the renderer takes the coordinate's span
+when `$text` is present and the interior template, with immediate faces on
+the string members, when it is not. Both spellings render the same bytes,
+so the parse gates do not move.
+
+The projection is lazy. Every consumer that needs a read node's slots —
+the wrap accessor, `nodeToConfig`, `materializeWrappedNodeData`, the
+strict-rebuild emitter — obtains them by matching `$text` against the
+interior rule at that point: the affix strip for a literals-around-one-slot
+token, the arm pick for a choice. Nothing runs for a node nobody asks. A
+read node and a built node still satisfy one shape, because the accessors
+answer the same questions on both; the difference is where the answer is
+stored.
+
+### Slot names come from the ordinary derivation
+
+An interior member is named exactly as it would be outside the token: a
+`field()` names its slot, and an unnamed member takes the name the
+derivation gives any bare member of a sequence. No token-specific naming
+rule exists; "content" above is what that derivation happens to yield for a
+single bare pattern, not a rule of its own.
+
+### Census, verified against `grammar.json`
+
+No token in any of the three grammars has a non-terminal underneath: every
+`token(…)` / `token.immediate(…)` interior is strings and patterns only
+(22 rules: rust 6, typescript 11, python 5). Of these, the interiors that
+mix a string marker with a pattern, and so gain structure, are:
+
+| grammar | kind | interior |
+| --- | --- | --- |
+| typescript | `comment` | `//` + pattern, or `/*` + pattern + `/` |
+| typescript | `private_property_identifier` | `#` + pattern |
+| typescript | `regex_pattern` | bracket and escape forms around patterns |
+| typescript, rust, python | `escape_sequence` | `\` + one of several patterns |
+| python | `comment` | `#` + pattern |
+| rust | `char_literal` | optional `b`, `'`, escape or pattern, `'` |
+| rust | `integer_literal` | pattern + optional suffix string |
+
+A bare pattern rule is a lexer token too — one childless node — so the same
+read rule holds, and its structure comes from a named group in the regex
+rather than from token members:
+
+| grammar | kind | parse rule | authored structure |
+| --- | --- | --- | --- |
+| rust | `metavariable` | `/\$[a-zA-Z_]\w*/` | `/\$(?<name>[a-zA-Z_]\w*)/` |
+| rust | `shebang` | `/#![\r\f\t\v ]*([^\[\n].*)?\n/` | `/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/` |
+| typescript | `hash_bang_line` | `/#!.*/` | `/#!(?<content>.*)/` |
+
+The rest (identifiers, numbers, string fragments, regex flags) are lexical
+shape with no marker and stay whole-text. Rust's own comments are not
+tokens: `line_comment` and `block_comment` are sequences of a marker string
+and scanner externals in the upstream grammar, so the parser already emits
+their pieces as children and the reader fills their slots from the tree;
+`renderAs` there gives the externals a body, and nothing re-parses a token.
+They are the shape the token-wrapped comments now take, not a precedent
+for the reader.
