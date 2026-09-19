@@ -2590,6 +2590,22 @@
         "nonEmpty": false
       }
     },
+    "integer_literal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suffix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "string_literal": {
       "string_open": {
         "unnamed": false,
@@ -2629,6 +2645,31 @@
         "nonEmpty": false
       }
     },
+    "char_literal": {
+      "b": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "line_comment": {
       "content": {
         "unnamed": false,
@@ -2656,6 +2697,24 @@
           "_block_comment_doc_inner",
           "_block_comment_content"
         ]
+      }
+    },
+    "shebang": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "metavariable": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "macro_rules": {
@@ -7956,13 +8015,81 @@
     },
     {
       "kind": "char_literal",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "CharLiteral",
       "factoryName": "charLiteral",
       "irKey": "charLiteral",
       "hidden": false,
-      "leafPattern": "/^(?:(?:b)?'(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?')$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "b",
+          "propertyName": "b",
+          "paramName": "b",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "b"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "flag": "b",
+            "text": "b"
+          },
+          {
+            "lit": "'"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?"
+          },
+          {
+            "lit": "'"
+          }
+        ],
+        "regex": "^(?<b>b)?'(?<content>(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?)'$",
+        "slots": [
+          {
+            "name": "b",
+            "configKey": "b",
+            "flag": true
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "b",
+        "content"
+      ]
     },
     {
       "kind": "closure_expression",
@@ -9509,13 +9636,51 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
-      "leafPattern": "/^(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "expr_2021_keyword",
@@ -12751,13 +12916,169 @@
     },
     {
       "kind": "integer_literal",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "IntegerLiteral",
       "factoryName": "integerLiteral",
       "irKey": "integerLiteral",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "suffix",
+          "propertyName": "suffix",
+          "paramName": "suffix",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u8",
+              "parseKind": "u8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i8",
+              "parseKind": "i8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u16",
+              "parseKind": "u16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i16",
+              "parseKind": "i16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u32",
+              "parseKind": "u32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i32",
+              "parseKind": "i32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u64",
+              "parseKind": "u64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i64",
+              "parseKind": "i64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u128",
+              "parseKind": "u128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i128",
+              "parseKind": "i128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "isize",
+              "parseKind": "isize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "usize",
+              "parseKind": "usize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f32",
+              "parseKind": "f32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f64",
+              "parseKind": "f64_keyword"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))"
+          },
+          {
+            "enum": "suffix",
+            "values": [
+              "u8",
+              "i8",
+              "u16",
+              "i16",
+              "u32",
+              "i32",
+              "u64",
+              "i64",
+              "u128",
+              "i128",
+              "isize",
+              "usize",
+              "f32",
+              "f64"
+            ],
+            "optional": true
+          }
+        ],
+        "regex": "^(?<content>(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+)))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          },
+          {
+            "name": "suffix",
+            "configKey": "suffix"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "suffix"
+      ]
     },
     {
       "kind": "isize_keyword",
@@ -14391,14 +14712,51 @@
     },
     {
       "kind": "metavariable",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "Metavariable",
       "factoryName": "metavariable",
       "irKey": "metavariable",
       "hidden": false,
-      "pattern": "\\$[a-zA-Z_]\\w*",
-      "leafPattern": "/^(?:(?:\\$[a-zA-Z_]\\w*))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "$"
+          },
+          {
+            "slot": "name",
+            "pattern": "[a-zA-Z_]\\w*"
+          }
+        ],
+        "regex": "^\\$(?<name>[a-zA-Z_]\\w*)$",
+        "slots": [
+          {
+            "name": "name",
+            "configKey": "name"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "name"
+      ]
     },
     {
       "kind": "mod_item",
@@ -17831,14 +18189,54 @@
     },
     {
       "kind": "shebang",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "Shebang",
       "factoryName": "shebang",
       "irKey": "shebang",
       "hidden": false,
-      "pattern": "#![\\r\\f\\t\\v ]*([^\\[\\n].*)?\\n",
-      "leafPattern": "/^(?:(?:#![\\r\\f\\t\\v ]*([^[\\n].*)?\\n))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "#!"
+          },
+          {
+            "slot": "content",
+            "pattern": "[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?"
+          },
+          {
+            "lit": "\n"
+          }
+        ],
+        "regex": "^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "shorthand_field_initializer",
@@ -18983,13 +19381,12 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "verbatim",
           "kinds": [],
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "[^+*?]+"
+              "multiplicity": "optional"
             }
           ]
         },
@@ -19094,13 +19491,12 @@
           "required": false,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "boolean",
+          "storage": "verbatim",
           "kinds": [],
           "values": [
             {
               "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "[^+*?]+"
+              "multiplicity": "optional"
             }
           ]
         },

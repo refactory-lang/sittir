@@ -32,8 +32,8 @@ export const synonym = {
 			}
 		}
 	),
-	comment(text: string): ReturnType<typeof F.buildComment> {
-		return F.buildComment(text);
+	comment(text: string): ReturnType<typeof F.comment> {
+		return F.comment(text);
 	},
 	type(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -432,8 +432,10 @@ export const ir: {
 	readonly string: typeof F.string;
 	readonly stringContent: typeof F.stringContent;
 	readonly interpolation: typeof F.interpolation;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
+	readonly comment: typeof F.comment;
 	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
 	readonly subjects: typeof F.subjects;
 	readonly casePatterns: typeof F.casePatterns;
@@ -472,12 +474,10 @@ export const ir: {
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly importPrefix: typeof F.buildImportPrefix;
-	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly integer: typeof F.buildInteger;
 	readonly float: typeof F.buildFloat;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly comment: typeof F.buildComment;
 	readonly lineContinuation: typeof F.buildLineContinuation;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
@@ -648,8 +648,10 @@ export const ir: {
 	string: F.string,
 	stringContent: F.stringContent,
 	interpolation: F.interpolation,
+	escapeSequence: F.escapeSequence,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
+	comment: F.comment,
 	simpleStatementsElements: F.simpleStatementsElements,
 	subjects: F.subjects,
 	casePatterns: F.casePatterns,
@@ -692,12 +694,10 @@ export const ir: {
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
-	escapeSequence: F.buildEscapeSequence,
 	typeConversion: F.buildTypeConversion,
 	integer: F.buildInteger,
 	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	comment: F.buildComment,
 	lineContinuation: F.buildLineContinuation,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,

@@ -8021,6 +8021,14 @@ source, one derivation.
 
 A `FIELD` wrapper's annotations move onto the rule the field name lands on (`withKindFacts`), so a stamp written at a field position (`splice()`, `group()`) survives into the normalized and simplified rule instead of being dropped with the wrapper.
 
+#### token interior
+
+```text
+A STRING that already carries `nonterminal: true` keeps it: a presence flag inside a token interior is a slot-
+promoted literal, and simplify re-flattens rules that were already flattened, so the builder must not overwrite
+the stamp with the terminal default.
+```
+
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
 ```text
@@ -9260,6 +9268,15 @@ carried through a side channel.
 
 ```text
 // Validate refine() forms against the linked rule tree.
+```
+
+#### token interior
+
+```text
+Token interiors are structured here, after `renderAs` is stamped and before groups seat: `structureTokenInterior`
+rewrites every `token(seq(...))` whose members mix literal text with a pattern, and every bare pattern that draws
+a named group, into a seq of literals and FIELD-named slots. A structured token keeps its kind, its kindId and its
+parser rule; only the sittir-side rule the model reads changes.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::stampAliasTargetId`
@@ -11145,3 +11162,23 @@ Measured against all three real grammars (rust, typescript, python), every
 caller converges in at most 3 passes — well under its cap in every case.
 ```
 
+
+### `packages/codegen/src/compiler/token-interior.ts::structureTokenInterior`
+
+```text
+The token-interior pass. A `token(seq(...))` becomes structured only when its members mix literal text with
+at least one slot that contains a pattern: a plain string is template text, `optional(string)` is a presence
+flag named by its text, a choice of strings is an enum slot (`prefix` before the content, `suffix` after it),
+and any other member run is one text slot named `content` whose pattern is the composed pattern of the run.
+A token with no literal member, or whose only non-literal members have no pattern, stays whole-text.
+A bare pattern that draws named groups becomes a lexed seq of literal runs and group slots; a pattern with no
+group stays whole-text, and a group beside non-literal top-level regex is an error.
+```
+
+### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
+
+```text
+Splits a pattern into literal runs and named groups. Escapes of punctuation and the control escapes
+`\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group
+at the top level means the pattern is not a template around slots.
+```

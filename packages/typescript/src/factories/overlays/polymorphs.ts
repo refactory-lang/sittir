@@ -3373,20 +3373,20 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 
 const binaryExpressionIn$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) });
 	};
 const binaryExpressionIn: {
 	privatePropertyIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildBinaryExpressionIn>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildPrivatePropertyIdentifier>;
+				left: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof F.buildBinaryExpressionIn>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpressionIn>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>;
+				left: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof C.coerceToBinaryExpressionIn>;
 	};
@@ -6316,9 +6316,9 @@ export const methodDefinition: typeof B.methodDefinition & {
 
 const pair$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const pair$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6353,11 +6353,13 @@ const pair$computedPropertyName =
 export const pair: typeof B.pair & {
 	privatePropertyIdentifier: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildPrivatePropertyIdentifier> }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+			}
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>;
+				key: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof C.coerceToPair>;
 	};
@@ -7025,9 +7027,9 @@ export const nestedTypeIdentifier: typeof B.nestedTypeIdentifier & {
 
 const enumAssignment$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
 const enumAssignment$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7063,12 +7065,12 @@ export const enumAssignment: typeof B.enumAssignment & {
 	privatePropertyIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>;
+				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>;
+				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
@@ -8348,9 +8350,9 @@ export const callSignature: typeof B.callSignature & {
 
 const propertySignature$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
 const propertySignature$string =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8386,12 +8388,12 @@ export const propertySignature: typeof B.propertySignature & {
 	privatePropertyIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>;
+				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>;
+				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
 			}
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
@@ -9686,6 +9688,14 @@ export const updateExpression: {
 } = {
 	postfix: { strict: F.buildUpdateExpressionPostfix, coerce: C.coerceToUpdateExpressionPostfix },
 	prefix: { strict: F.buildUpdateExpressionPrefix, coerce: C.coerceToUpdateExpressionPrefix }
+};
+
+export const comment: {
+	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
+	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
+} = {
+	line: { strict: F.buildCommentLine, coerce: C.coerceToCommentLine },
+	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
 };
 
 export const metaProperty: {

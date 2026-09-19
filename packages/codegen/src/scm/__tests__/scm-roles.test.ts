@@ -202,7 +202,7 @@ describe('ir.synonym.* canonical factories — Rust', () => {
 	it('synonym.number(42) produces integer_literal', async () => {
 		const { synonym } = await loadSynonyms(RUST_IR);
 		const node = synonym.number(42);
-		expect(node.$text).toBe('42');
+		expect(node.$render()).toBe('42');
 	});
 
 	it('synonym.number(3.14) produces float_literal', async () => {
@@ -254,10 +254,10 @@ describe('ir.synonym.* canonical factories — TypeScript', () => {
 		expect(node.$text).toBe('42');
 	});
 
-	it('synonym.comment("// hello") produces comment', async () => {
+	it('synonym.comment(" hello") produces a line comment', async () => {
 		const { synonym } = await loadSynonyms(TS_IR);
-		const node = synonym.comment('// hello');
-		expect(node.$text).toBe('// hello');
+		const node = synonym.comment(' hello');
+		expect(node.$render()).toBe('// hello');
 	});
 
 	it('synonym.type("String") produces type_identifier', async () => {
@@ -300,8 +300,8 @@ describe('ir.synonym.* canonical factories — Python', () => {
 
 	it('synonym.comment("# hello") produces comment', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
-		const node = synonym.comment('# hello');
-		expect(node.$text).toBe('# hello');
+		const node = synonym.comment(' hello');
+		expect(node.$render()).toBe('# hello');
 	});
 
 	it('synonym.type("str") produces identifier', async () => {

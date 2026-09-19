@@ -21,22 +21,24 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildHashBangLine = /^(?:(?:#!.*))$/u;
 const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
 const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
-const _leafRe_buildEscapeSequence = /^(?:(?:\\[^]))$/u;
-const _leafRe_buildComment = /^(?:(?:\/\/(?:[^\r\n\u2028\u2029]*)|\/\*(?:[^*]*\*+([^/*][^*]*\*+)*)\/))$/u;
 const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
 const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
 const _leafRe_buildNumber =
 	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*))n))$/u;
 const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _leafRe_buildPrivatePropertyIdentifier =
-	/^(?:#(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTypeIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
+const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
+const _slotRe_buildEscapeSequence_content =
+	/^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:[\r?][\n\u2028\u2029])))$/u;
+const _slotRe_buildPrivatePropertyIdentifier_content =
+	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
+const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
 
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = config.hashBangLine;
@@ -64,16 +66,25 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 	);
 }
 
-export function buildHashBangLine(text: string): T.HashBangLine.Built {
-	if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`);
-	if (!_leafRe_buildHashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
+export function buildHashBangLine(value: string): T.HashBangLine.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildHashBangLine_content.test(_content))
+		throw new Error(`hash_bang_line.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.HashBangLine as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.HashBangLine as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildHashBangLine(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2046,30 +2057,25 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 	);
 }
 
-export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
-	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
+export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
+		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.EscapeSequence as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildComment(text: string): T.Comment.Built {
-	if (text.length === 0) throw new Error(`comment: text must be non-empty`);
-	if (!_leafRe_buildComment.test(text)) throw new Error(`comment: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Comment as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequence as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequence(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2204,17 +2210,25 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 	);
 }
 
-export function buildPrivatePropertyIdentifier(text: string): T.PrivatePropertyIdentifier.Built {
-	if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
-	if (!_leafRe_buildPrivatePropertyIdentifier.test(text))
-		throw new Error(`private_property_identifier: text does not match pattern: ${text}`);
+export function buildPrivatePropertyIdentifier(value: string): T.PrivatePropertyIdentifier.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildPrivatePropertyIdentifier_content.test(_content))
+		throw new Error(`private_property_identifier.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.PrivatePropertyIdentifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.PrivatePropertyIdentifier as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildPrivatePropertyIdentifier(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -5986,6 +6000,52 @@ export function buildExportStatementEqualsExport(
 	);
 }
 
+export function buildCommentLine(value: string): T.CommentLine.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildCommentLine_content.test(_content))
+		throw new Error(`comment_line.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CommentLine as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildCommentLine(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCommentBlock(value: string): T.CommentBlock.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildCommentBlock_content.test(_content))
+		throw new Error(`comment_block.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CommentBlock as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildCommentBlock(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.BinaryExpressionIn.Built {
 	const _left = coerceMixedEnumStorage<NonNullable<T.BinaryExpressionIn['_left']>>(config.left, []);
 	const _right = coerceMixedEnumStorage<NonNullable<T.BinaryExpressionIn['_right']>>(config.right, []);
@@ -7218,7 +7278,7 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
 
 export type FluentKindMap = {
 	program: T.Program.Built;
-	hash_bang_line: T.HashBangLine;
+	hash_bang_line: T.HashBangLine.Built;
 	namespace_export: T.NamespaceExport.Built;
 	export_clause: T.ExportClause.Built;
 	export_specifier: T.ExportSpecifier.Built;
@@ -7286,8 +7346,7 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	unescaped_double_string_fragment: T.UnescapedDoubleStringFragment;
 	unescaped_single_string_fragment: T.UnescapedSingleStringFragment;
-	escape_sequence: T.EscapeSequence;
-	comment: T.Comment;
+	escape_sequence: T.EscapeSequence.Built;
 	template_string: T.TemplateString.Built;
 	template_substitution: T.TemplateSubstitution.Built;
 	regex: T.Regex.Built;
@@ -7295,7 +7354,7 @@ export type FluentKindMap = {
 	regex_flags: T.RegexFlags;
 	number: T.Number;
 	identifier: T.Identifier;
-	private_property_identifier: T.PrivatePropertyIdentifier;
+	private_property_identifier: T.PrivatePropertyIdentifier.Built;
 	this: T.This;
 	super: T.Super;
 	true: T.True;
@@ -7407,6 +7466,8 @@ export type FluentKindMap = {
 	export_statement_namespace_export: T.ExportStatementNamespaceExport.Built;
 	export_statement_type_export: T.ExportStatementTypeExport.Built;
 	export_statement_equals_export: T.ExportStatementEqualsExport.Built;
+	comment_line: T.CommentLine.Built;
+	comment_block: T.CommentBlock.Built;
 	binary_expression_in: T.BinaryExpressionIn.Built;
 	class_body_method: T.ClassBodyMethod.Built;
 	class_body_method_sig: T.ClassBodyMethodSig.Built;
@@ -7520,7 +7581,6 @@ export const _factoryMap = {
 	unescaped_double_string_fragment: buildUnescapedDoubleStringFragment,
 	unescaped_single_string_fragment: buildUnescapedSingleStringFragment,
 	escape_sequence: buildEscapeSequence,
-	comment: buildComment,
 	template_string: buildTemplateString,
 	template_substitution: buildTemplateSubstitution,
 	regex: buildRegex,
@@ -7640,6 +7700,8 @@ export const _factoryMap = {
 	export_statement_namespace_export: buildExportStatementNamespaceExport,
 	export_statement_type_export: buildExportStatementTypeExport,
 	export_statement_equals_export: buildExportStatementEqualsExport,
+	comment_line: buildCommentLine,
+	comment_block: buildCommentBlock,
 	binary_expression_in: buildBinaryExpressionIn,
 	class_body_method: buildClassBodyMethod,
 	class_body_method_sig: buildClassBodyMethodSig,

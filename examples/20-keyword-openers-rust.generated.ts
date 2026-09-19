@@ -40,17 +40,27 @@ export function rebuildKeywordOpenersRust() {
 				statements: [ir.letDeclaration.strict({
 					pattern: ir.identifier("x"),
 					value: ir.tupleExpression.strict({
-						tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral("1"), ir.integerLiteral("2")),
+						tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral.strict({
+							content: "1",
+						}), ir.integerLiteral.strict({
+							content: "2",
+						})),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("y"),
 					value: ir.arrayExpression.list.strict({
 						argumentsElements: [{ delimiter: Delimiter.None }, {
-							expression: ir.integerLiteral("1"),
+							expression: ir.integerLiteral.strict({
+								content: "1",
+							}),
 						}, {
-							expression: ir.integerLiteral("2"),
+							expression: ir.integerLiteral.strict({
+								content: "2",
+							}),
 						}, {
-							expression: ir.integerLiteral("3"),
+							expression: ir.integerLiteral.strict({
+								content: "3",
+							}),
 						}],
 					}),
 				}), ir.expressionStatement.strict(ir.ifExpression.strict({
@@ -63,19 +73,29 @@ export function rebuildKeywordOpenersRust() {
 							arguments: ir.arguments.strict(),
 						}),
 						operator: TSKindId.Gt,
-						right: ir.integerLiteral("1"),
+						right: ir.integerLiteral.strict({
+							content: "1",
+						}),
 					})),
 					consequence: ir.block.strict({
 						statements: [ir.expressionStatement.withSemi.strict(ir.returnExpression.strict(ir.tupleExpression.strict({
-							tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral("1"), ir.integerLiteral("2")),
+							tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral.strict({
+								content: "1",
+							}), ir.integerLiteral.strict({
+								content: "2",
+							})),
 						})))],
 					}),
 				})), ir.expressionStatement.strict(ir.forExpression.strict({
 					pattern: ir.tuplePattern.strict({ delimiter: Delimiter.None }, ir.identifier("i"), ir.identifier("v")),
 					value: ir.parenthesizedExpression.strict(ir.rangeExpression.binary.strict({
-						start: ir.integerLiteral("0"),
+						start: ir.integerLiteral.strict({
+							content: "0",
+						}),
 						operator: TSKindId.DotDot,
-						end: ir.integerLiteral("3"),
+						end: ir.integerLiteral.strict({
+							content: "3",
+						}),
 					})),
 					body: ir.block.strict({
 						statements: [ir.letDeclaration.strict({
@@ -89,7 +109,9 @@ export function rebuildKeywordOpenersRust() {
 						statements: [ir.expressionStatement.withSemi.strict(ir.callExpression.strict({
 							function: ir.breakExpression.strict({}),
 							arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
-								expression: ir.integerLiteral("1"),
+								expression: ir.integerLiteral.strict({
+									content: "1",
+								}),
 							})),
 						}))],
 					}),
@@ -103,7 +125,11 @@ export function rebuildKeywordOpenersRust() {
 					pattern: ir.identifier("m"),
 					value: ir.macroInvocation.strict({
 						macro: ir.identifier("vec"),
-						arguments: ir.delimTokenTree.bracket.strict(ir.integerLiteral("1"), TSKindId.Comma, ir.integerLiteral("2")),
+						arguments: ir.delimTokenTree.bracket.strict(ir.integerLiteral.strict({
+							content: "1",
+						}), TSKindId.Comma, ir.integerLiteral.strict({
+							content: "2",
+						})),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("c"),
@@ -115,16 +141,24 @@ export function rebuildKeywordOpenersRust() {
 					pattern: ir.identifier("t"),
 					type: ir.tupleType.strict(ir.tupleTypeElements.strict({ delimiter: Delimiter.None }, ir.identifier("Foo"), ir.identifier("Foo"))),
 					value: ir.tupleExpression.strict({
-						tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral("1"), ir.integerLiteral("2")),
+						tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral.strict({
+							content: "1",
+						}), ir.integerLiteral.strict({
+							content: "2",
+						})),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("u"),
-					value: ir.referenceExpression.bare.strict(ir.parenthesizedExpression.strict(ir.integerLiteral("1"))),
+					value: ir.referenceExpression.bare.strict(ir.parenthesizedExpression.strict(ir.integerLiteral.strict({
+						content: "1",
+					}))),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("v"),
 					value: ir.unaryExpression.strict({
 						operator: TSKindId.Dash,
-						operand: ir.parenthesizedExpression.strict(ir.integerLiteral("1")),
+						operand: ir.parenthesizedExpression.strict(ir.integerLiteral.strict({
+							content: "1",
+						})),
 					}),
 				}), ir.letDeclaration.strict({
 					pattern: ir.identifier("n"),
@@ -137,7 +171,11 @@ export function rebuildKeywordOpenersRust() {
 					function: ir.identifier("Some"),
 					arguments: ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, {
 						expression: ir.tupleExpression.strict({
-							tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral("1"), ir.integerLiteral("2")),
+							tupleExpressionElements: ir.tupleExpressionElements.strict({ delimiter: Delimiter.None }, ir.integerLiteral.strict({
+								content: "1",
+							}), ir.integerLiteral.strict({
+								content: "2",
+							})),
 						}),
 					})),
 				}),

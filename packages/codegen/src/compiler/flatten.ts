@@ -74,7 +74,7 @@ function construct(node: Input): Output {
 		case TOKEN:
 			return node.immediate ? b.token.immediate(rebuild(node.content)) : b.token(rebuild(node.content));
 		case STRING:
-			return { ...node, ...b.string(node.value) };
+			return { ...node, ...b.string(node.value), ...(node.nonterminal === true ? { nonterminal: true } : {}) };
 		case INDENT:
 			return { ...node, ...b.indent() };
 		case DEDENT:

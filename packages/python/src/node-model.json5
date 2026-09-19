@@ -2004,6 +2004,15 @@
         "nonEmpty": false
       }
     },
+    "escape_sequence": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "format_specifier": {
       "content": {
         "unnamed": false,
@@ -2018,6 +2027,15 @@
     },
     "await": {
       "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comment": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -5862,14 +5880,51 @@
     },
     {
       "kind": "comment",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "Comment",
       "factoryName": "comment",
       "irKey": "comment",
       "hidden": false,
-      "pattern": ".*",
-      "leafPattern": "/^(?:#(?:.*))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "#"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:.*)"
+          }
+        ],
+        "regex": "^#(?<content>(?:.*))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "comparison_operator",
@@ -7284,13 +7339,51 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
-      "leafPattern": "/^(?:\\\\(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\}))"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "except_clause",

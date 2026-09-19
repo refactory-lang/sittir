@@ -108,11 +108,11 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 });
 
 describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
-	// A leaf node is one that holds $text, e.g. integer_literal
-	const leaf = ir.integerLiteral('42');
+	// A leaf node is one that holds $text, e.g. identifier
+	const leaf = ir.identifier('x42');
 
 	it('leaf: $text is present and equals the input', () => {
-		expect((leaf as unknown as Record<string, unknown>)['$text']).toBe('42');
+		expect((leaf as unknown as Record<string, unknown>)['$text']).toBe('x42');
 	});
 
 	it('leaf: no _<name> keys (no fields)', () => {
@@ -245,7 +245,7 @@ describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () 
 	const nodes = [
 		ir.function({ name: 'f', parameters: [], body: minimalBlock } as any),
 		ir.declarationList(),
-		ir.integerLiteral('1')
+		ir.identifier('x1')
 	];
 
 	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))('SC-001: %s has no $fields key', (_label, n) => {

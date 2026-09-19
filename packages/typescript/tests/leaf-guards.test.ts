@@ -4,15 +4,14 @@ import { ir } from '../src/index.ts';
 describe('typescript text-leaf factories always run their guard', () => {
 	it('builds text that matches the whole token', () => {
 		expect(() => ir.identifier('abc')).not.toThrow();
-		expect(() => ir.comment('// hello')).not.toThrow();
-		expect(() => ir.comment('/* hello */')).not.toThrow();
-		expect(() => ir.privatePropertyIdentifier('#x')).not.toThrow();
+		expect(ir.comment.line(' hello').$render!()).toBe('// hello');
+		expect(ir.comment.block(' hello ').$render!()).toBe('/* hello */');
+		expect(ir.privatePropertyIdentifier('x').$render!()).toBe('#x');
 		expect(() => ir.number('1_000')).not.toThrow();
 	});
 
 	it('rejects empty text', () => {
 		expect(() => ir.identifier('')).toThrow(/non-empty/);
-		expect(() => ir.comment('')).toThrow(/non-empty/);
 	});
 
 	it('anchors the pattern: a valid prefix followed by more text is rejected', () => {
@@ -25,9 +24,12 @@ describe('typescript text-leaf factories always run their guard', () => {
 		expect(() => ir.identifier('1x')).toThrow(/does not match/);
 	});
 
-	it('requires the affixes a token always carries', () => {
-		expect(() => ir.comment('hello')).toThrow(/does not match/);
-		expect(() => ir.comment('/* unterminated')).toThrow(/does not match/);
-		expect(() => ir.privatePropertyIdentifier('x')).toThrow(/does not match/);
+	it('requires the content a structured comment can lex', () => {
+		expect(() => ir.comment.block(' unterminated */ ')).toThrow(/comment_block.content: text does not match/);
+	});
+
+	it('takes the content of a structured token and never its affixes', () => {
+		expect(() => ir.privatePropertyIdentifier('#x')).toThrow(/private_property_identifier.content: text does not match/);
+		expect(ir.escapeSequence('n').$render!()).toBe('\\n');
 	});
 });

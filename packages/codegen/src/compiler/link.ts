@@ -65,6 +65,7 @@ import type {
 	LinkedRefineForm,
 	NarrowedField
 } from './types.ts';
+import { structureTokenInterior } from './token-interior.ts';
 import { loadGrammarJsonInlineList } from './inline-sets.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
@@ -196,6 +197,8 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		}
 		Object.assign(rules, stamped);
 	}
+
+	structureTokenInterior(rules);
 
 	const groupsConfig = raw.groups ?? {};
 	if (Object.keys(groupsConfig).length > 0) {

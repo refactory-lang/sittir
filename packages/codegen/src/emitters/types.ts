@@ -70,8 +70,8 @@ import {
 	stringConstructibleTexts,
 	classifyFromEmission,
 	fromBareInput,
+	bareValueSlot,
 	scalarLeafKinds,
-	resolveDirectFactorySlot,
 	canonicalSeparatedListField,
 	enumMemberDiscriminant
 } from './shared.ts';
@@ -723,7 +723,7 @@ function coercerRowArgs(
 	const bare = (() => {
 		switch (fromBareInput(node, nodeMap)) {
 			case 'value':
-				return JSON.stringify(resolveDirectFactorySlot(node, nodeMap)!.storageName);
+				return JSON.stringify(bareValueSlot(node, nodeMap)!.storageName);
 			case 'elements':
 				return JSON.stringify(canonicalSeparatedListField(node as AssembledList).storageName);
 			case null:

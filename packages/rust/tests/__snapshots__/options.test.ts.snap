@@ -48,7 +48,6 @@ export type AddressRoot =
 	| 'break_expression'
 	| 'call_expression'
 	| 'captured_pattern'
-	| 'char_literal'
 	| 'closure_expression_block'
 	| 'closure_expression_expr'
 	| 'closure_parameters'
@@ -103,7 +102,6 @@ export type AddressRoot =
 	| 'impl_item_semi'
 	| 'index_expression'
 	| 'inner_attribute_item'
-	| 'integer_literal'
 	| 'label'
 	| 'last_match_arm'
 	| 'let_chain'
@@ -399,8 +397,6 @@ export interface AddressBranch {
 	readonly call_expression: 'after' | 'before';
 	readonly captured_pattern: 'after' | 'at' | 'before';
 	readonly 'captured_pattern/at': 'after' | 'before';
-	readonly char_literal: 'squote';
-	readonly 'char_literal/squote': 'after' | 'before';
 	readonly closure_expression_block: 'after' | 'async_marker' | 'before' | 'dash_gt' | 'move_marker' | 'static_marker';
 	readonly 'closure_expression_block/async_marker': 'after' | 'before';
 	readonly 'closure_expression_block/dash_gt': 'after' | 'before';
@@ -747,35 +743,6 @@ export interface AddressBranch {
 	readonly 'inner_attribute_item/lbrack': 'after' | 'before';
 	readonly 'inner_attribute_item/pound': 'after';
 	readonly 'inner_attribute_item/rbrack': 'before';
-	readonly integer_literal:
-		| 'f32_keyword'
-		| 'f64_keyword'
-		| 'i128_keyword'
-		| 'i16_keyword'
-		| 'i32_keyword'
-		| 'i64_keyword'
-		| 'i8_keyword'
-		| 'isize_keyword'
-		| 'u128_keyword'
-		| 'u16_keyword'
-		| 'u32_keyword'
-		| 'u64_keyword'
-		| 'u8_keyword'
-		| 'usize_keyword';
-	readonly 'integer_literal/f32_keyword': 'before';
-	readonly 'integer_literal/f64_keyword': 'before';
-	readonly 'integer_literal/i128_keyword': 'before';
-	readonly 'integer_literal/i16_keyword': 'before';
-	readonly 'integer_literal/i32_keyword': 'before';
-	readonly 'integer_literal/i64_keyword': 'before';
-	readonly 'integer_literal/i8_keyword': 'before';
-	readonly 'integer_literal/isize_keyword': 'before';
-	readonly 'integer_literal/u128_keyword': 'before';
-	readonly 'integer_literal/u16_keyword': 'before';
-	readonly 'integer_literal/u32_keyword': 'before';
-	readonly 'integer_literal/u64_keyword': 'before';
-	readonly 'integer_literal/u8_keyword': 'before';
-	readonly 'integer_literal/usize_keyword': 'before';
 	readonly label: 'after' | 'before' | 'squote';
 	readonly 'label/squote': 'after';
 	readonly last_match_arm: 'after' | 'attributes' | 'before' | 'comma' | 'eq_gt';
@@ -2096,8 +2063,6 @@ export interface AddressLeaf {
 	readonly 'captured_pattern/at/after': WhitespaceArm;
 	readonly 'captured_pattern/at/before': WhitespaceArm;
 	readonly 'captured_pattern/before': WhitespaceArm;
-	readonly 'char_literal/squote/after': WhitespaceArm;
-	readonly 'char_literal/squote/before': WhitespaceArm;
 	readonly 'closure_expression_block/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/before': WhitespaceArm;
@@ -2454,20 +2419,6 @@ export interface AddressLeaf {
 	readonly 'inner_attribute_item/lbrack/before': WhitespaceArm;
 	readonly 'inner_attribute_item/pound/after': WhitespaceArm;
 	readonly 'inner_attribute_item/rbrack/before': WhitespaceArm;
-	readonly 'integer_literal/f32_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/f64_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/i128_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/i16_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/i32_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/i64_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/i8_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/isize_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/u128_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/u16_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/u32_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/u64_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/u8_keyword/before': WhitespaceArm;
-	readonly 'integer_literal/usize_keyword/before': WhitespaceArm;
 	readonly 'label/after': WhitespaceArm;
 	readonly 'label/before': WhitespaceArm;
 	readonly 'label/squote/after': WhitespaceArm;

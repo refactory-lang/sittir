@@ -322,6 +322,11 @@ export interface CollectionElementsTransport {
   _element_separator_space_after?: number
 }
 
+export interface CommentTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
 export interface ComparisonOperatorComparatorTransport {
   '$_trivia'?: TransportTrivia
   _operators: SlotValue<Box<AnyTransport>>
@@ -522,6 +527,11 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: Options
+}
+
+export interface EscapeSequenceTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
 }
 
 export interface ExceptClauseExceptionAsTransport {

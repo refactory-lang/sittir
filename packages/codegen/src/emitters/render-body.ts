@@ -169,6 +169,22 @@ export function opensAsTag(node: BodyNode): boolean {
 	return opensAsExpression(node) || node.kind === 'if';
 }
 
+export function adjacentInto(body: Body): Body {
+	return body.flatMap((node): Body =>
+		node.kind === 'if'
+			? [
+					{
+						...node,
+						arms: node.arms.map((arm) => ({ ...arm, body: adjacentInto(arm.body) })),
+						fallback: node.fallback === undefined ? undefined : adjacentInto(node.fallback)
+					}
+				]
+			: node.kind === 'slot' || node.kind === 'seam' || node.kind === 'tokenSeam'
+				? [{ kind: 'adjacent' }, node]
+				: [node]
+	);
+}
+
 export function isExpression(body: Body): boolean {
 	return body.length > 0 && opensAsExpression(body[0]!) && opensAsExpression(body[body.length - 1]!);
 }

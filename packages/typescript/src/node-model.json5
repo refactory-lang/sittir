@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 428,
+  "nodeCount": 430,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -19,6 +19,7 @@
     "_statement_identifier",
     "_tuple_type_member",
     "_whitespace",
+    "comment",
     "declaration",
     "export_statement",
     "export_statement_default",
@@ -128,6 +129,8 @@
     }
   },
   "variantRoutes": {
+    "comment_block": "comment.block",
+    "comment_line": "comment.line",
     "export_statement_default": "exportStatement.default",
     "export_statement_default_declaration": "exportStatement.default.declaration",
     "export_statement_default_from": "exportStatement.default.from",
@@ -455,6 +458,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "hash_bang_line": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1642,6 +1654,15 @@
         ]
       }
     },
+    "escape_sequence": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "template_string": {
       "elements": {
         "unnamed": false,
@@ -1672,6 +1693,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "private_property_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3659,6 +3689,24 @@
         "nonEmpty": false
       },
       "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comment_line": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comment_block": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -8863,13 +8911,122 @@
     },
     {
       "kind": "comment",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Comment",
-      "factoryName": "comment",
       "irKey": "comment",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "comment_block",
+        "comment_line"
+      ]
+    },
+    {
+      "kind": "comment_block",
+      "modelType": "branch",
+      "typeName": "CommentBlock",
+      "factoryName": "commentBlock",
+      "irKey": "commentBlock",
       "hidden": false,
-      "leafPattern": "/^(?:(?:\\/\\/(?:[^\\r\\n\\u2028\\u2029]*)|\\/\\*(?:[^*]*\\*+([^/*][^*]*\\*+)*)\\/))$/u",
-      "factoryShape": "text"
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "comment_block",
+      "interior": {
+        "entries": [
+          {
+            "lit": "/*"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:([^*]|\\*+[^*\\/])*\\**)"
+          },
+          {
+            "lit": "*/"
+          }
+        ],
+        "regex": "^/\\*(?<content>(?:([^*]|\\*+[^*\\/])*\\**))\\*/$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "comment_line",
+      "modelType": "branch",
+      "typeName": "CommentLine",
+      "factoryName": "commentLine",
+      "irKey": "commentLine",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "comment_line",
+      "interior": {
+        "entries": [
+          {
+            "lit": "//"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[^\\r\\n\\u2028\\u2029]*)"
+          }
+        ],
+        "regex": "^//(?<content>(?:[^\\r\\n\\u2028\\u2029]*))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "computed_property_name",
@@ -10497,14 +10654,51 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
-      "pattern": "\\\\[^]",
-      "leafPattern": "/^(?:(?:\\\\[^]))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029]))"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:[\\r?][\\n\\u2028\\u2029])))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "existential_type",
@@ -13461,14 +13655,51 @@
     },
     {
       "kind": "hash_bang_line",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "HashBangLine",
       "factoryName": "hashBangLine",
       "irKey": "hashBangLine",
       "hidden": false,
-      "pattern": "#!.*",
-      "leafPattern": "/^(?:(?:#!.*))$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "#!"
+          },
+          {
+            "slot": "content",
+            "pattern": ".*"
+          }
+        ],
+        "regex": "^#!(?<content>.*)$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "html_comment",
@@ -18452,13 +18683,51 @@
     },
     {
       "kind": "private_property_identifier",
-      "modelType": "pattern",
+      "modelType": "branch",
       "typeName": "PrivatePropertyIdentifier",
       "factoryName": "privatePropertyIdentifier",
       "irKey": "privatePropertyIdentifier",
       "hidden": false,
-      "leafPattern": "/^(?:#(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u",
-      "factoryShape": "text"
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "interior": {
+        "entries": [
+          {
+            "lit": "#"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*"
+          }
+        ],
+        "regex": "^#(?<content>(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "program",

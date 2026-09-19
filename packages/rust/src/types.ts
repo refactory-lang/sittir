@@ -3285,6 +3285,9 @@ export interface SourceFile {
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
 	};
+	readonly __looseHints__?: {
+		readonly shebang?: readonly string[];
+	};
 	shebang(): Shebang | undefined;
 	statements(): readonly (ExpressionStatement | DeclarationStatement)[];
 }
@@ -3368,6 +3371,9 @@ export interface TokenBindingPattern {
 			| TSKindId.VisKeyword
 		>;
 	};
+	readonly __looseHints__?: {
+		readonly name: readonly string[];
+	};
 	name(): Metavariable;
 	type(): number;
 }
@@ -3381,7 +3387,7 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| _NonSpecialToken
 	)[];
-	readonly _separator?: boolean;
+	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly token_patterns?: readonly (
@@ -3587,7 +3593,6 @@ export interface TokenRepetitionPattern {
 			| Metavariable
 			| _NonSpecialToken
 		)[];
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	tokenPatterns(): readonly (
@@ -3597,7 +3602,7 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| _NonSpecialToken
 	)[];
-	separator(): boolean | undefined;
+	separator(): string | undefined;
 	operator(): number;
 }
 
@@ -3610,7 +3615,7 @@ export interface TokenTree {
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
 	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	readonly _separator?: boolean;
+	readonly _separator?: string;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly tokens?: readonly (
@@ -3815,11 +3820,10 @@ export interface TokenRepetition {
 			| Metavariable
 			| _NonSpecialToken
 		)[];
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | _NonSpecialToken)[];
-	separator(): boolean | undefined;
+	separator(): string | undefined;
 	operator(): number;
 }
 
@@ -6648,6 +6652,33 @@ export interface NegativeLiteral {
 	value(): IntegerLiteral | FloatLiteral;
 }
 
+export interface IntegerLiteral {
+	readonly $type: TSKindId.IntegerLiteral;
+	readonly _content: string;
+	readonly _suffix?: number;
+	readonly __inputHints__?: {
+		readonly suffix?: KindEnum<
+			'u8' | 'i8' | 'u16' | 'i16' | 'u32' | 'i32' | 'u64' | 'i64' | 'u128' | 'i128' | 'isize' | 'usize' | 'f32' | 'f64',
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+		>;
+	};
+	content(): string;
+	suffix(): number | undefined;
+}
+
 export interface StringLiteral {
 	readonly $type: TSKindId.StringLiteral;
 	readonly _string_open: StringLiteralOpen;
@@ -6666,6 +6697,23 @@ export interface RawStringLiteral {
 	rawStringLiteralEnd(): RawStringLiteralEnd;
 }
 
+export interface CharLiteral {
+	readonly $type: TSKindId.CharLiteral;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface EscapeSequence {
+	readonly $type: TSKindId.EscapeSequence;
+	readonly _content: string;
+	content(): string;
+}
+
 export interface LineComment {
 	readonly $type: TSKindId.LineComment;
 	readonly _content: LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
@@ -6676,6 +6724,18 @@ export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
 	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent;
 	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
+}
+
+export interface Shebang {
+	readonly $type: TSKindId.Shebang;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface Metavariable {
+	readonly $type: TSKindId.Metavariable;
+	readonly _name: string;
+	name(): string;
 }
 
 export interface MacroRules {
@@ -9929,18 +9989,13 @@ export type NeverType = TSKindId.NeverType;
 export type MutableSpecifier = TSKindId.MutableSpecifier;
 export type UnitExpression = TSKindId.UnitExpression;
 export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
-export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
-export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
-export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type BooleanLiteral = TSKindId.TrueKeyword | TSKindId.FalseKeyword;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type Shebang = Terminal<TSKindId.Shebang, string>;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type FieldIdentifier = Terminal<TSKindId.FieldIdentifier, string>;
 export type Self = TSKindId.Self;
 export type Super = TSKindId.Super;
 export type Crate = TSKindId.Crate;
-export type Metavariable = Terminal<TSKindId.Metavariable, string>;
 export type PrimitiveType =
 	| TSKindId.U8Keyword
 	| TSKindId.I8Keyword
@@ -10196,10 +10251,15 @@ export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
 export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
+export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
+export interface CharLiteralTree extends TreeNode<'char_literal'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface LineCommentTree extends TreeNode<'line_comment'> {}
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
+export interface ShebangTree extends TreeNode<'shebang'> {}
+export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface MacroRulesTree extends TreeNode<'macro_rules'> {}
 export interface EnumVariantListElementsTree extends TreeNode<'enum_variant_list_elements'> {}
 export interface FieldDeclarationListElementsTree extends TreeNode<'field_declaration_list_elements'> {}
@@ -10322,12 +10382,8 @@ export interface UnitExpressionTree extends AnyTreeNode {
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
-export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
-export interface CharLiteralTree extends TreeNode<'char_literal'> {}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface ShebangTree extends TreeNode<'shebang'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode {
 	readonly type: '_reserved_identifier';
 }
@@ -10346,7 +10402,6 @@ export interface SuperTree extends AnyTreeNode {
 export interface CrateTree extends AnyTreeNode {
 	readonly type: 'crate';
 }
-export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends AnyTreeNode {
 	readonly type: '_primitive_type';
 }
@@ -11481,10 +11536,15 @@ export type RustNode =
 	| CapturedPattern
 	| ReferencePattern
 	| NegativeLiteral
+	| IntegerLiteral
 	| StringLiteral
 	| RawStringLiteral
+	| CharLiteral
+	| EscapeSequence
 	| LineComment
 	| BlockComment
+	| Shebang
+	| Metavariable
 	| MacroRules
 	| EnumVariantListElements
 	| FieldDeclarationListElements
@@ -11691,10 +11751,15 @@ export interface KindMap {
 	captured_pattern: CapturedPattern;
 	reference_pattern: ReferencePattern;
 	negative_literal: NegativeLiteral;
+	integer_literal: IntegerLiteral;
 	string_literal: StringLiteral;
 	raw_string_literal: RawStringLiteral;
+	char_literal: CharLiteral;
+	escape_sequence: EscapeSequence;
 	line_comment: LineComment;
 	block_comment: BlockComment;
+	shebang: Shebang;
+	metavariable: Metavariable;
 	macro_rules: MacroRules;
 	enum_variant_list_elements: EnumVariantListElements;
 	field_declaration_list_elements: FieldDeclarationListElements;
@@ -11785,18 +11850,13 @@ export interface KindMap {
 	mutable_specifier: MutableSpecifier;
 	unit_expression: UnitExpression;
 	remaining_field_pattern: RemainingFieldPattern;
-	integer_literal: IntegerLiteral;
-	char_literal: CharLiteral;
-	escape_sequence: EscapeSequence;
 	boolean_literal: BooleanLiteral;
 	identifier: Identifier;
-	shebang: Shebang;
 	_type_identifier: TypeIdentifier;
 	_field_identifier: FieldIdentifier;
 	self: Self;
 	super: Super;
 	crate: Crate;
-	metavariable: Metavariable;
 	_primitive_type: PrimitiveType;
 	_kw_ref_marker: KwRefMarker;
 	_kw_unsafe_marker: KwUnsafeMarker;
@@ -13158,6 +13218,17 @@ export interface NegativeLiteralNs extends NodeNs<
 	'value',
 	'negative_literal'
 > {}
+export interface IntegerLiteralNs extends NodeNs<
+	IntegerLiteral,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteral.Built,
+	IntegerLiteral.BuildArgs,
+	IntegerLiteral.LooseArgs,
+	'content',
+	'integer_literal'
+> {}
 export interface StringLiteralNs extends NodeNs<
 	StringLiteral,
 	LeafScalarMap,
@@ -13180,6 +13251,28 @@ export interface RawStringLiteralNs extends NodeNs<
 	never,
 	'raw_string_literal'
 > {}
+export interface CharLiteralNs extends NodeNs<
+	CharLiteral,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteral.Built,
+	CharLiteral.BuildArgs,
+	CharLiteral.LooseArgs,
+	'content',
+	'char_literal'
+> {}
+export interface EscapeSequenceNs extends NodeNs<
+	EscapeSequence,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequence.Built,
+	EscapeSequence.BuildArgs,
+	EscapeSequence.LooseArgs,
+	'content',
+	'escape_sequence'
+> {}
 export interface LineCommentNs extends NodeNs<
 	LineComment,
 	LeafScalarMap,
@@ -13201,6 +13294,28 @@ export interface BlockCommentNs extends NodeNs<
 	BlockComment.LooseArgs,
 	'content',
 	'block_comment'
+> {}
+export interface ShebangNs extends NodeNs<
+	Shebang,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Shebang.Built,
+	Shebang.BuildArgs,
+	Shebang.LooseArgs,
+	'content',
+	'shebang'
+> {}
+export interface MetavariableNs extends NodeNs<
+	Metavariable,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Metavariable.Built,
+	Metavariable.BuildArgs,
+	Metavariable.LooseArgs,
+	'name',
+	'metavariable'
 > {}
 export interface MacroRulesNs extends NodeNs<
 	MacroRules,
@@ -14186,29 +14301,7 @@ export interface RangePatternWithLeftBareNs extends KeywordNs<
 	RangePatternWithLeftBareTree,
 	'range_pattern_with_left_bare'
 > {}
-export interface IntegerLiteralNs extends LeafNs<
-	IntegerLiteral,
-	string,
-	IntegerLiteral.Built,
-	IntegerLiteralTree,
-	'integer_literal'
-> {}
-export interface CharLiteralNs extends LeafNs<
-	CharLiteral,
-	string,
-	CharLiteral.Built,
-	CharLiteralTree,
-	'char_literal'
-> {}
-export interface EscapeSequenceNs extends LeafNs<
-	EscapeSequence,
-	string,
-	EscapeSequence.Built,
-	EscapeSequenceTree,
-	'escape_sequence'
-> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
-export interface ShebangNs extends LeafNs<Shebang, string, Shebang.Built, ShebangTree, 'shebang'> {}
 export interface TypeIdentifierNs extends LeafNs<
 	TypeIdentifier,
 	string,
@@ -14222,13 +14315,6 @@ export interface FieldIdentifierNs extends LeafNs<
 	FieldIdentifier.Built,
 	FieldIdentifierTree,
 	'_field_identifier'
-> {}
-export interface MetavariableNs extends LeafNs<
-	Metavariable,
-	string,
-	Metavariable.Built,
-	MetavariableTree,
-	'metavariable'
 > {}
 export interface StringLiteralOpenNs extends LeafNs<
 	StringLiteralOpen,
@@ -14430,10 +14516,15 @@ export interface NamespaceMap {
 	[TSKindId.CapturedPattern]: CapturedPatternNs;
 	[TSKindId.ReferencePattern]: ReferencePatternNs;
 	[TSKindId.NegativeLiteral]: NegativeLiteralNs;
+	[TSKindId.IntegerLiteral]: IntegerLiteralNs;
 	[TSKindId.StringLiteral]: StringLiteralNs;
 	[TSKindId.RawStringLiteral]: RawStringLiteralNs;
+	[TSKindId.CharLiteral]: CharLiteralNs;
+	[TSKindId.EscapeSequence]: EscapeSequenceNs;
 	[TSKindId.LineComment]: LineCommentNs;
 	[TSKindId.BlockComment]: BlockCommentNs;
+	[TSKindId.Shebang]: ShebangNs;
+	[TSKindId.Metavariable]: MetavariableNs;
 	[TSKindId.MacroRules]: MacroRulesNs;
 	[TSKindId.EnumVariantListElements]: EnumVariantListElementsNs;
 	[TSKindId.FieldDeclarationListElements]: FieldDeclarationListElementsNs;
@@ -14538,14 +14629,9 @@ export interface NamespaceMap {
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
-	[TSKindId.IntegerLiteral]: IntegerLiteralNs;
-	[TSKindId.CharLiteral]: CharLiteralNs;
-	[TSKindId.EscapeSequence]: EscapeSequenceNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.Shebang]: ShebangNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
-	[TSKindId.Metavariable]: MetavariableNs;
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
 	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
 	[TSKindId.LineCommentContent]: LineCommentContentNs;
@@ -14699,7 +14785,7 @@ export namespace TokenRepetitionPattern {
 			tokenPatterns(
 				value?: NonNullable<T.TokenRepetitionPattern.Config>['tokenPatterns']
 			): T.TokenRepetitionPattern.Built;
-			separator(value?: NonNullable<T.TokenRepetitionPattern.Config>['separator']): T.TokenRepetitionPattern.Built;
+			separator(value?: string): T.TokenRepetitionPattern.Built;
 			operator(value: NonNullable<T.TokenRepetitionPattern.Config>['operator']): T.TokenRepetitionPattern.Built;
 		};
 	}
@@ -14744,7 +14830,7 @@ export namespace TokenRepetition {
 		readonly $named: true;
 		readonly $with: {
 			tokens(value?: NonNullable<T.TokenRepetition.Config>['tokens']): T.TokenRepetition.Built;
-			separator(value?: NonNullable<T.TokenRepetition.Config>['separator']): T.TokenRepetition.Built;
+			separator(value?: string): T.TokenRepetition.Built;
 			operator(value: NonNullable<T.TokenRepetition.Config>['operator']): T.TokenRepetition.Built;
 		};
 	}
@@ -16982,6 +17068,25 @@ export namespace NegativeLiteral {
 	export type Tree = TreeFor<TSKindId.NegativeLiteral>;
 	export type Kind = 'negative_literal';
 }
+export namespace IntegerLiteral {
+	export type Config = ConfigFor<TSKindId.IntegerLiteral>;
+	export interface Built extends T.IntegerLiteral, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.IntegerLiteral.Built;
+			suffix(value?: NonNullable<T.IntegerLiteral.Config>['suffix']): T.IntegerLiteral.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.IntegerLiteral>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteral>;
+	export type BuildArgs = [config: ConfigOf<T.IntegerLiteral>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.IntegerLiteral, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IntegerLiteral
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteral>;
+	export type Kind = 'integer_literal';
+}
 export namespace StringLiteral {
 	export type Config = ConfigFor<TSKindId.StringLiteral>;
 	export interface Built extends T.StringLiteral, NodeMethodsOf {
@@ -17020,6 +17125,41 @@ export namespace RawStringLiteral {
 	];
 	export type Tree = TreeFor<TSKindId.RawStringLiteral>;
 	export type Kind = 'raw_string_literal';
+}
+export namespace CharLiteral {
+	export type Config = ConfigFor<TSKindId.CharLiteral>;
+	export interface Built extends T.CharLiteral, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteral.Config>['b']): T.CharLiteral.Built;
+			content(value: string): T.CharLiteral.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteral>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteral>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteral>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.CharLiteral, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CharLiteral
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteral>;
+	export type Kind = 'char_literal';
+}
+export namespace EscapeSequence {
+	export type Config = ConfigFor<TSKindId.EscapeSequence>;
+	export interface Built extends T.EscapeSequence, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequence.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequence>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequence>;
+	export type Kind = 'escape_sequence';
 }
 export namespace LineComment {
 	export type Config = ConfigFor<TSKindId.LineComment>;
@@ -17072,6 +17212,38 @@ export namespace BlockComment {
 	];
 	export type Tree = TreeFor<TSKindId.BlockComment>;
 	export type Kind = 'block_comment';
+}
+export namespace Shebang {
+	export type Config = ConfigFor<TSKindId.Shebang>;
+	export interface Built extends T.Shebang, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.Shebang.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.Shebang>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Shebang>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.Shebang>;
+	export type Kind = 'shebang';
+}
+export namespace Metavariable {
+	export type Config = ConfigFor<TSKindId.Metavariable>;
+	export interface Built extends T.Metavariable, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			name(value: string): T.Metavariable.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.Metavariable>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Metavariable>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.Metavariable>;
+	export type Kind = 'metavariable';
 }
 export namespace MacroRules {
 	export type Config = ConfigFor<TSKindId.MacroRules>;
@@ -19254,51 +19426,6 @@ export namespace RangePatternWithLeftBare {
 	export type Tree = RangePatternWithLeftBareNs['Tree'];
 	export type Kind = 'range_pattern_with_left_bare';
 }
-export namespace IntegerLiteral {
-	export type Config = IntegerLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.IntegerLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = IntegerLiteralNs['Loose'];
-	export type LooseConfig = IntegerLiteralNs['LooseConfig'];
-	export type BuildArgs = IntegerLiteralNs['BuildArgs'];
-	export type LooseArgs = IntegerLiteralNs['LooseArgs'];
-	export type Tree = IntegerLiteralNs['Tree'];
-	export type Kind = 'integer_literal';
-}
-export namespace CharLiteral {
-	export type Config = CharLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.CharLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CharLiteralNs['Loose'];
-	export type LooseConfig = CharLiteralNs['LooseConfig'];
-	export type BuildArgs = CharLiteralNs['BuildArgs'];
-	export type LooseArgs = CharLiteralNs['LooseArgs'];
-	export type Tree = CharLiteralNs['Tree'];
-	export type Kind = 'char_literal';
-}
-export namespace EscapeSequence {
-	export type Config = EscapeSequenceNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.EscapeSequence;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = EscapeSequenceNs['Loose'];
-	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
-	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
-	export type LooseArgs = EscapeSequenceNs['LooseArgs'];
-	export type Tree = EscapeSequenceNs['Tree'];
-	export type Kind = 'escape_sequence';
-}
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19313,21 +19440,6 @@ export namespace Identifier {
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Tree = IdentifierNs['Tree'];
 	export type Kind = 'identifier';
-}
-export namespace Shebang {
-	export type Config = ShebangNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Shebang;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = ShebangNs['Loose'];
-	export type LooseConfig = ShebangNs['LooseConfig'];
-	export type BuildArgs = ShebangNs['BuildArgs'];
-	export type LooseArgs = ShebangNs['LooseArgs'];
-	export type Tree = ShebangNs['Tree'];
-	export type Kind = 'shebang';
 }
 export namespace TypeIdentifier {
 	export type Config = TypeIdentifierNs['Config'];
@@ -19358,21 +19470,6 @@ export namespace FieldIdentifier {
 	export type LooseArgs = FieldIdentifierNs['LooseArgs'];
 	export type Tree = FieldIdentifierNs['Tree'];
 	export type Kind = '_field_identifier';
-}
-export namespace Metavariable {
-	export type Config = MetavariableNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Metavariable;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = MetavariableNs['Loose'];
-	export type LooseConfig = MetavariableNs['LooseConfig'];
-	export type BuildArgs = MetavariableNs['BuildArgs'];
-	export type LooseArgs = MetavariableNs['LooseArgs'];
-	export type Tree = MetavariableNs['Tree'];
-	export type Kind = 'metavariable';
 }
 export namespace StringLiteralOpen {
 	export type Config = StringLiteralOpenNs['Config'];

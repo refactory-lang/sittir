@@ -59,12 +59,14 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly variantArms?: readonly string[];
 
 	readonly annotations?: RuleAnnotations;
+
+	readonly nonterminal?: boolean;
+
+	readonly lexed?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
-			readonly nonterminal?: boolean;
-
 			readonly separator?: RuleSeparator<Rule<Phase>>;
 
 			readonly optionalElement?: boolean;

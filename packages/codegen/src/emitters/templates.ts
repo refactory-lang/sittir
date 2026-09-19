@@ -43,7 +43,7 @@ import { classifyTemplateEmission, literalMergePairs, wordCharAsciiTable } from 
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { flanksOf, isSeamChoice, punctuationTokenOfNode, seamChoiceDefault, seamPartOf, spacedSeparatorOf, type RenderRules } from '../compiler/model/render-rules.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
-import { ADJACENT, DEDENT as DEDENT_BODY, DYNAMIC_EDGE, EMPTY, INDENT as INDENT_BODY, MARKER_EDGE, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, gateOptionalSlotSeams, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
+import { ADJACENT, adjacentInto, DEDENT as DEDENT_BODY, DYNAMIC_EDGE, EMPTY, INDENT as INDENT_BODY, MARKER_EDGE, SPACE, branches, concat, edgeChar, equalBodies, equalNodes, gate, gateOptionalSlotSeams, isExpression, isPlainText, mentions, opensAsTag, refersTo, duplicateSlots, literalBody, seam, slot as slotRef, text, weight, type Body } from './render-body.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -94,6 +94,7 @@ export interface EmitCtx {
 	readonly mergePairLeftChars?: ReadonlySet<string>;
 	readonly mergePairRightChars?: ReadonlySet<string>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
+	readonly lexedTop?: RenderRule;
 	readonly currentKind?: string;
 	readonly diagnostics?: DiagnosticSink;
 }
@@ -299,8 +300,13 @@ export function emitBranchTemplate(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph | AssembledList,
 	ctx: EmitCtx
 ): Body {
-	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: ownerSlotsFor(node) };
-	return emitRule(ctx.rules[node.kind] ?? node.renderRule, ctxWithSlots);
+	const top = ctx.rules[node.kind] ?? node.renderRule;
+	const ctxWithSlots: EmitCtx = {
+		...ctx,
+		ownerSlots: ownerSlotsFor(node),
+		...(node instanceof AbstractAssembledCompound && node.lexedInterior ? { lexedTop: top } : {})
+	};
+	return emitRule(top, ctxWithSlots);
 }
 
 interface SeqBoundaryClassification {
@@ -446,6 +452,13 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 					body = body.slice(0, cut);
 					const l = edgeChar(body, 'ends');
 					const r = edgeChar(segment, 'starts');
+					if (rule === ctx.lexedTop) {
+						recordSeam(l, r, 'static-glued', 'fallback');
+						body = concat(body, seams, adjacentInto(segment));
+						seams = EMPTY;
+						lastRealPartIdx = rightPartIdx;
+						continue;
+					}
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
 					if (stamped !== undefined) {
 						const spaced = stamped === 'spaced';

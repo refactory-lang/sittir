@@ -157,6 +157,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly storageKindId?: number;
 	storage?: ValueStorage;
 	readonly value?: string;
+	readonly pattern?: string;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 	readonly parseKind?: UnresolvedRef;
@@ -190,6 +191,10 @@ export function isNodeRef(v: NodeOrTerminal): v is NodeBackedRef {
 
 export function isTerminalValue(v: NodeOrTerminal): v is NodeRef & { value: string } {
 	return v.value !== undefined;
+}
+
+export function isPatternValue(v: NodeOrTerminal): v is NodeRef & { pattern: string } {
+	return v.pattern !== undefined;
 }
 
 const EMPTY_SEEN: ReadonlySet<string> = new Set();
@@ -792,6 +797,9 @@ export function deriveValuesForRule(
 		case STRING:
 		case PATTERN: {
 			const armFacts = armFactsOf(rule);
+			if (rule.type === PATTERN && rule.fieldName !== undefined) {
+				return [{ pattern: rule.value, ...armFacts, multiplicity }];
+			}
 			if (rule.resolvedKindId !== undefined) {
 				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
 				const rk = entry?.kind;
@@ -1577,6 +1585,10 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		if (lead === undefined || lead.type !== STRING) return undefined;
 		if (!this._slots.every((f) => !isRequired(f))) return undefined;
 		return lead.value;
+	}
+
+	get lexedInterior(): boolean {
+		return this.renderRule.tokenized === true || this.renderRule.lexed === true;
 	}
 
 	get separator(): string | undefined {

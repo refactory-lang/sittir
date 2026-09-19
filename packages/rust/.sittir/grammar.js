@@ -567,6 +567,12 @@ function reconstructWrapper(rule, newContent) {
   if (t === "REPEAT" || t === "REPEAT1") {
     return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
+  if (t === "TOKEN") return carryOverProperties(rule, nativeRequired("token")(newContent));
+  if (t === "IMMEDIATE_TOKEN") {
+    const immediate = nativeRequired("token").immediate;
+    if (typeof immediate !== "function") throw new Error("transform: native token.immediate not available");
+    return carryOverProperties(rule, immediate(newContent));
+  }
   if (isFieldType(t)) {
     if (isFieldType(newContent.type)) return newContent;
     const name = rule.name;
@@ -729,6 +735,14 @@ function isSplicePlaceholder(v) {
 }
 function splice() {
   return { __sittirPlaceholder: "splice" };
+}
+
+// packages/codegen/src/dsl/primitives/regex.ts
+function isRegexPlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "regex";
+}
+function regex(pattern) {
+  return { __sittirPlaceholder: "regex", source: pattern.source };
 }
 
 // packages/codegen/src/dsl/rule-metadata.ts
@@ -3746,7 +3760,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -3768,9 +3782,29 @@ function applyPathPatches(original, patches) {
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
   if (variantEntries.length > 0) {
-    rule = applyVariantPatches(rule, variantEntries);
+    rule = applyVariantPatches(hoistTokenChoiceForVariants(rule, variantEntries), variantEntries);
   }
   return rule;
+}
+function isStringLedSeq(arm2) {
+  const a = arm2;
+  return a.type === "SEQ" && Array.isArray(a.members) && a.members[0]?.type === "STRING";
+}
+function hoistTokenChoiceForVariants(rule, variantEntries) {
+  const wrapper = rule;
+  if (wrapper.type !== "TOKEN" && wrapper.type !== "IMMEDIATE_TOKEN") return rule;
+  const choice2 = wrapper.content;
+  if (choice2?.type !== "CHOICE" || !Array.isArray(choice2.members)) return rule;
+  const arms = choice2.members;
+  const named = variantEntries.map(([key]) => parsePath(key));
+  if (!named.every((segs) => segs.length === 1 && segs[0].kind === "index")) return rule;
+  const offending = arms.findIndex((arm2) => !isStringLedSeq(arm2));
+  if (offending >= 0) {
+    throw new Error(
+      `variant() on the arms of a token choice: arm ${offending} of '${wireGetCurrentRuleKind() ?? "(unknown)"}' is not a seq led by a string`
+    );
+  }
+  return { ...choice2, members: arms.map((arm2) => ({ ...wrapper, content: arm2 })) };
 }
 function assertChoiceArmPath(rule, key, segments) {
   applyPath(rule, segments.slice(0, -1), (parent) => {
@@ -4132,6 +4166,12 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isSplicePlaceholder(patch)) {
     return withAnnotations(originalMember, { spliced: true });
+  }
+  if (isRegexPlaceholder(patch)) {
+    if (originalMember.type !== "PATTERN") {
+      throw new Error(`regex(): the patched member is a '${originalMember.type}', not a pattern`);
+    }
+    return { ...originalMember, value: patch.source };
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -5364,6 +5404,8 @@ var grammar_sittir_default = grammar(
         }
       },
       patches: {
+        metavariable: { ".": regex(/\$(?<name>[a-zA-Z_]\w*)/) },
+        shebang: { ".": regex(/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/) },
         // See docs/rust-grammar-sittir-glossary.md::use_wildcard
         use_wildcard: {
           "0/0/0": field2("path")

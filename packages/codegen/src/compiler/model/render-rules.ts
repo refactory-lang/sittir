@@ -717,8 +717,13 @@ function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig,
 	return { ...(rule as object), members } as unknown as RenderRule;
 }
 
+function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
+	const node = nodeMap.nodes.get(kind);
+	return node instanceof AbstractAssembledCompound && node.lexedInterior;
+}
+
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
-	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound)) return false;
+	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
 	return kind === publicKindName(kind) || !nodeMap.nodes.has(publicKindName(kind));
 }
 
@@ -767,7 +772,7 @@ export function seamRenderRules(
 			}
 			const kindConfig: RenderRulesConfig = { ...immediateConfig, choiceArmNodes: choiceArmNodesOf(rule) };
 			const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, kindConfig, resolver, seams);
-			const seamed = visit(walker.map(rule, visit));
+			const seamed = isLexedKind(kind, config.nodeMap) ? rule : visit(walker.map(rule, visit));
 			out[kind] = ownsKindEdges(kind, config.nodeMap) ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
 		}
 		return { rules: out };
