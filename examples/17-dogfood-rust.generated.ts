@@ -64,13 +64,13 @@ export function rebuildSpliceGenerated() {
 				}).$trivia({ leading: ["/// `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"] }),
 			}).$trivia({ leading: ["/// `end_pos < start_pos` — the edit range is reversed.\n"] })),
 		}), ir.implItem.body.positiveClause.strict({
-			traitClause: [ir.scopedTypeIdentifier.strict({
+			traitClause: ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("fmt"),
 				}),
 				name: ir.identifier("Display"),
-			})],
+			}),
 			type: ir.identifier("SpliceError"),
 			declarationList: ir.declarationList.strict(ir.functionItem.strict({
 				name: ir.identifier("fmt"),
@@ -110,69 +110,63 @@ export function rebuildSpliceGenerated() {
 						value: TSKindId.Self,
 						body: ir.matchBlock.strict({
 							lastArm: ir.lastMatchArm.strict({
-								pattern: ir.matchPattern.strict({
-									pattern: ir.structPattern.strict({
-										type: ir.scopedTypeIdentifier.strict({
-											path: ir.identifier("SpliceError"),
-											name: ir.identifier("NonCharBoundary"),
-										}),
-										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("start"),
-										}), ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("end"),
-										})],
+								pattern: ir.structPattern.strict({
+									type: ir.scopedTypeIdentifier.strict({
+										path: ir.identifier("SpliceError"),
+										name: ir.identifier("NonCharBoundary"),
 									}),
+									fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("start"),
+									}), ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("end"),
+									})],
 								}),
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-										stringOpen: ir.stringLiteralOpen("\""),
+										stringOpen: "\"",
 										elements: [ir.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									})),
 								}),
 								comma: true,
 							}),
 							matchArm: [ir.matchArm.blockEnding.strict({
-								pattern: ir.matchPattern.strict({
-									pattern: ir.structPattern.strict({
-										type: ir.scopedTypeIdentifier.strict({
-											path: ir.identifier("SpliceError"),
-											name: ir.identifier("InvalidRange"),
-										}),
-										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("start"),
-										}), ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("end"),
-										})],
+								pattern: ir.structPattern.strict({
+									type: ir.scopedTypeIdentifier.strict({
+										path: ir.identifier("SpliceError"),
+										name: ir.identifier("InvalidRange"),
 									}),
+									fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("start"),
+									}), ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("end"),
+									})],
 								}),
 								value: ir.block.strict({
 									trailingExpression: ir.macroInvocation.strict({
 										macro: ir.identifier("write"),
 										arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-											stringOpen: ir.stringLiteralOpen("\""),
+											stringOpen: "\"",
 											elements: [ir.stringContent("invalid edit range: start={start}, end={end}")],
 										})),
 									}),
 								}),
 							}), ir.matchArm.withComma.strict({
-								pattern: ir.matchPattern.strict({
-									pattern: ir.structPattern.strict({
-										type: ir.scopedTypeIdentifier.strict({
-											path: ir.identifier("SpliceError"),
-											name: ir.identifier("OutOfBounds"),
-										}),
-										fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("end"),
-										}), ir.fieldPattern.shorthand.strict({
-											name: ir.identifier("source_len"),
-										})],
+								pattern: ir.structPattern.strict({
+									type: ir.scopedTypeIdentifier.strict({
+										path: ir.identifier("SpliceError"),
+										name: ir.identifier("OutOfBounds"),
 									}),
+									fields: [{ delimiter: Delimiter.None }, ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("end"),
+									}), ir.fieldPattern.shorthand.strict({
+										name: ir.identifier("source_len"),
+									})],
 								}),
 								value: ir.macroInvocation.strict({
 									macro: ir.identifier("write"),
 									arguments: ir.delimTokenTree.paren.strict(ir.identifier("f"), TSKindId.Comma, ir.stringLiteral.strict({
-										stringOpen: ir.stringLiteralOpen("\""),
+										stringOpen: "\"",
 										elements: [ir.stringContent("edit out of bounds: end={end} > source length={source_len}")],
 									})),
 								}),
@@ -182,13 +176,13 @@ export function rebuildSpliceGenerated() {
 				}),
 			})),
 		}), ir.implItem.body.positiveClause.strict({
-			traitClause: [ir.scopedTypeIdentifier.strict({
+			traitClause: ir.scopedTypeIdentifier.strict({
 				path: ir.scopedIdentifier.strict({
 					path: ir.identifier("std"),
 					name: ir.identifier("error"),
 				}),
 				name: ir.identifier("Error"),
-			})],
+			}),
 			type: ir.identifier("SpliceError"),
 			declarationList: ir.declarationList.strict(),
 		}), ir.functionItem.strict({

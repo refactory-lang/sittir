@@ -9,6 +9,7 @@ import {
 	storageKindOfRef,
 	type AssembledNode,
 	type AssembledNonterminal,
+	type NodeBackedRef,
 	type NodeOrTerminal,
 	type TextValueStorage,
 	isTextStorage
@@ -421,6 +422,10 @@ function subFactoriesInternal(
 	return result;
 }
 
+function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): boolean {
+	return group?.annotations?.hoisted === true || value.spliced === true;
+}
+
 export interface SpliceSeat {
 	readonly slot: AssembledNonterminal;
 	readonly group: AssembledNode;
@@ -437,7 +442,7 @@ export function spliceSeatOf(node: AssembledNode, nodeMap: NodeMap): SpliceSeat 
 		if (!isNodeRef(value)) continue;
 		if (isChoiceGroup(node, value, nodeMap, DEFAULT_IS_EMITTED, new Set())) continue;
 		const group = nodeMap.nodes.get(storageKindOfRef(value.node));
-		if (!(group instanceof AbstractAssembledCompound) || group.annotations?.hoisted !== true) continue;
+		if (!(group instanceof AbstractAssembledCompound) || !isHoistedAt(value, group)) continue;
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
@@ -521,7 +526,7 @@ export function seatOf(
 ): Seat | undefined {
 	if (source === undefined || !isNodeRef(value)) return undefined;
 	const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-	if (child === undefined || child.annotations?.hoisted !== true) return undefined;
+	if (child === undefined || !isHoistedAt(value, child)) return undefined;
 	const text = textStorageOf(value, nodeMap)?.text;
 	const arm = source.subs.find(
 		(e) =>
@@ -547,13 +552,43 @@ export function seatOf(
 	return undefined;
 }
 
+/**
+ * True when the forwarded target itself accepts a `repeat`-sourced spread
+ * (chasing through a chain of forwards, since a forward can target another
+ * forward). Mirrors the `targetOverloads` wrapper in factories.ts: every
+ * forwarded factory re-exposes its target's own constructor surface as
+ * extra overloads, so a node forwarding to a `'spread'` target inherits
+ * that target's variadic overload (the `buildSuiteBlock`-style "bare
+ * `Block` or `...children`" pair) even though its own slot is single-valued.
+ */
+function forwardsToSpreadTarget(node: AssembledNode, nodeMap: NodeMap): boolean {
+	const targetKind = forwardedTargetKind(node, nodeMap);
+	if (targetKind === null) return false;
+	const target = nodeMap.nodes.get(targetKind);
+	if (target === undefined) return false;
+	const targetShape = classifyFactoryShape(target, nodeMap);
+	if (targetShape === 'spread') return true;
+	return targetShape === 'forwarded' && forwardsToSpreadTarget(target, nodeMap);
+}
+
+/**
+ * True when the child's own factory takes the seated value as ONE argument
+ * — a config object (`'config'`), a thin single-positional-param wrapper
+ * (`'direct'`), or one forwarded to another kind's own single-value factory
+ * (`'forwarded'`, provided that target isn't itself variadic —
+ * `forwardsToSpreadTarget`). `'spread'` (a `repeat`-sourced slot) and
+ * `'elements'` (a separated list) are the only genuinely multi-valued
+ * shapes here: `ArgsOf<CF>[0]` on a union of overload tuples would collapse
+ * a variadic arm into a bare element type, so those (and forwards that
+ * chase down to one) keep spreading a whole argument list instead of
+ * seating bare.
+ */
 export function seatsConfigChild(sub: SubFactory, nodeMap: NodeMap): boolean {
-	return (
-		sub.arm.via === 'node' &&
-		sub.arm.path.length === 0 &&
-		!sub.merges &&
-		classifyFactoryShape(sub.arm.child, nodeMap) === 'config'
-	);
+	if (sub.arm.via !== 'node' || sub.arm.path.length !== 0 || sub.merges) return false;
+	const child = sub.arm.child;
+	const shape = classifyFactoryShape(child, nodeMap);
+	if (shape === 'config' || shape === 'direct') return true;
+	return shape === 'forwarded' && !forwardsToSpreadTarget(child, nodeMap);
 }
 
 export function configKeysOf(node: AssembledNode): readonly string[] {

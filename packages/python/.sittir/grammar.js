@@ -4468,6 +4468,11 @@ function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
+// packages/codegen/src/dsl/primitives/splice.ts
+function isSplicePlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "splice";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
 function withVariantAnnotation(rule, variantName, parentKind, arm2) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
@@ -4490,7 +4495,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4873,6 +4878,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
+  }
+  if (isSplicePlaceholder(patch)) {
+    return withAnnotations(originalMember, { spliced: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
@@ -5275,10 +5283,22 @@ var grammar_sittir_default = grammar(
           "statements:/(decorated_definition)/after": preference("double_newline")
         },
         _: {
+          '"("/before': preference("tight"),
+          '"("/after': preference("tight"),
+          '")"/before': preference("tight"),
+          '"["/before': preference("tight"),
+          '"["/after': preference("tight"),
+          '"]"/before': preference("tight"),
+          '"{"/after': preference("tight"),
+          '"}"/before': preference("tight"),
+          '"."/before': preference("tight"),
+          '"."/after': preference("tight"),
+          '","/before': preference("tight"),
           '_/separator/","/before': preference("tight"),
           '_/separator/";"/before': preference("tight"),
           '_/separator/"."/before': preference("tight"),
           '_/separator/"."/after': preference("tight"),
+          '":"/before': preference("tight"),
           '":"/after': preference("space"),
           '"->"/before': preference("space"),
           '"->"/after': preference("space"),
@@ -5288,7 +5308,6 @@ var grammar_sittir_default = grammar(
           '":="/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          "operators:/before": preference("space"),
           "operators:/after": preference("space")
         },
         keyword_argument: { '"="/before': preference("tight"), '"="/after': preference("tight") },
@@ -5296,10 +5315,11 @@ var grammar_sittir_default = grammar(
         slice: { '":"/before': preference("tight"), '":"/after': preference("tight") },
         splat_pattern: { "operator:/after": preference("tight") },
         splat_type: { "operator:/after": preference("tight") },
+        interpolation: { before: preference("tight"), after: preference("tight") },
+        comprehension_clauses: { "content:/separator": preference("space") },
         _bindings: {
           "block/statements:/separator": "gap/separator",
           "comparison_operator/comparators:/separator": "gap/separator",
-          "comprehension_clauses/content:/separator": "gap/separator",
           "concatenated_string/string:/separator": "gap/separator",
           "decorated_definition/decorator:/separator": "gap/separator",
           "if_statement/alternative:/separator": "gap/separator",

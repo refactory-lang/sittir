@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -15,19 +16,27 @@ import {
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
 	if (arr.length === 0) {
 		throw new Error(`${label}: requires at least one element`);
 	}
 }
 
-const _leafRe_buildIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_buildShebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
-const _leafRe_buildTypeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_buildFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_buildMetavariable = /^(?:\$[a-zA-Z_]\w*)/u;
-const _leafRe_buildStringLiteralOpen = /^(?:[bc]?")/u;
-const _leafRe_buildLineCommentContent = /^(?:.*)/u;
+const _leafRe_buildIntegerLiteral =
+	/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u;
+const _leafRe_buildCharLiteral =
+	/^(?:(?:b)?'(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\'])))?')$/u;
+const _leafRe_buildEscapeSequence =
+	/^(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u;
+const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+const _leafRe_buildShebang = /^(?:(?:#![\r\f\t\v ]*([^[\n].*)?\n))$/u;
+const _leafRe_buildTypeIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+const _leafRe_buildFieldIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+const _leafRe_buildMetavariable = /^(?:(?:\$[a-zA-Z_]\w*))$/u;
+const _leafRe_buildStringLiteralOpen = /^(?:(?:[bc]?"))$/u;
+const _leafRe_buildLineCommentRegularDslash = /^(?:(?:\/\/)(?:.*))$/u;
+const _leafRe_buildLineCommentContent = /^(?:(?:.*))$/u;
+const _leafRe_buildLineDocContent = /^(?:(?:.*))$/u;
+const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Built {
 	const _shebang = config.shebang;
@@ -396,7 +405,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -434,7 +443,7 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildEnumVariantList();
 	return withMethods(
 		withAccessors(
 			{
@@ -826,10 +835,10 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionItem['_return_type']>>(config.returnType, []);
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -878,7 +887,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionSignatureItem['_return_type']>>(
 		config.returnType,
 		[]
@@ -1023,7 +1032,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		['str', TSKindId.StrKeyword] as const,
 		['char', TSKindId.CharKeyword] as const
 	]);
-	const _bounds = config.bounds;
+	const _bounds = config.bounds ?? buildTraitBounds();
 	return withMethods(
 		withAccessors(
 			{
@@ -1054,7 +1063,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
 	const _type_parameters = config.typeParameters;
 	const _bounds = config.bounds;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -1401,13 +1410,13 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 	);
 }
 
-export function buildScopedUseList(config: T.ScopedUseList.Config): T.ScopedUseList.Built {
+export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Built {
 	const _path = coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
 		['self', TSKindId.Self] as const,
 		['super', TSKindId.Super] as const,
 		['crate', TSKindId.Crate] as const
 	]);
-	const _list = config.list;
+	const _list = config.list ?? buildUseList();
 	return withMethods(
 		withAccessors(
 			{
@@ -1907,7 +1916,7 @@ function _buildForLifetimes(value: T.Lifetimes): T.ForLifetimes.Built {
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Built {
 	const _for_lifetimes = config.forLifetimes;
 	const _content = config.content;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType, []);
 	return withMethods(
 		withAccessors(
@@ -2703,7 +2712,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		['self', TSKindId.Self] as const,
 		['()', TSKindId.UnitExpression] as const
 	]);
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -2822,7 +2831,7 @@ export function buildUnitExpression(): TSKindId.UnitExpression {
 
 export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Built {
 	const _name = config.name;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldInitializerList();
 	return withMethods(
 		withAccessors(
 			{
@@ -2973,7 +2982,7 @@ export function buildBaseFieldInitializer(value: T.Expression): T.BaseFieldIniti
 
 export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression.Built {
 	const _condition = coerceMixedEnumStorage<NonNullable<T.IfExpression['_condition']>>(config.condition, []);
-	const _consequence = config.consequence;
+	const _consequence = config.consequence ?? buildBlock();
 	const _alternative = config.alternative;
 	return withMethods(
 		withAccessors(
@@ -3075,7 +3084,7 @@ export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.B
 
 export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Built {
 	const _value = coerceMixedEnumStorage<NonNullable<T.MatchExpression['_value']>>(config.value, []);
-	const _body = config.body;
+	const _body = config.body ?? buildMatchBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3184,7 +3193,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileExpression.Built {
 	const _label = config.label;
 	const _condition = coerceMixedEnumStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition, []);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3211,9 +3220,9 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 	);
 }
 
-export function buildLoopExpression(config: T.LoopExpression.Config): T.LoopExpression.Built {
+export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {}): T.LoopExpression.Built {
 	const _label = config.label;
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3240,7 +3249,7 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 	const _label = config.label;
 	const _pattern = coerceMixedEnumStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern, []);
 	const _value = coerceMixedEnumStorage<NonNullable<T.ForExpression['_value']>>(config.value, []);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3540,9 +3549,9 @@ function _buildUnsafeBlock(value: T.Block): T.UnsafeBlock.Built {
 	);
 }
 
-export function buildAsyncBlock(config: T.AsyncBlock.Config): T.AsyncBlock.Built {
+export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Built {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3566,9 +3575,9 @@ export function buildAsyncBlock(config: T.AsyncBlock.Config): T.AsyncBlock.Built
 	);
 }
 
-export function buildGenBlock(config: T.GenBlock.Config): T.GenBlock.Built {
+export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Built {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -3946,8 +3955,8 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 }
 
 export function buildIntegerLiteral(text: string): T.IntegerLiteral.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`integer_literal: text must be non-empty`);
+	if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
+	if (!_leafRe_buildIntegerLiteral.test(text)) throw new Error(`integer_literal: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.IntegerLiteral as const,
@@ -3960,7 +3969,11 @@ export function buildIntegerLiteral(text: string): T.IntegerLiteral.Built {
 }
 
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Built {
-	const _string_open = config.stringOpen;
+	const _string_open = admitHiddenText<NonNullable<T.StringLiteral['_string_open']>>(
+		config.stringOpen,
+		[['_string_literal_open', _leafRe_buildStringLiteralOpen, buildStringLiteralOpen]],
+		'StringLiteral.stringOpen'
+	);
 	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
@@ -3971,7 +3984,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				_string_open,
 				_elements,
 				$with: {
-					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral({ ...config, stringOpen: value }),
+					stringOpen: (value: T.StringLiteralOpen | string) => buildStringLiteral({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
 						buildStringLiteral({ ...config, elements: values })
 				}
@@ -3986,9 +3999,17 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 }
 
 export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawStringLiteral.Built {
-	const _raw_string_literal_start = config.rawStringLiteralStart;
+	const _raw_string_literal_start = admitHiddenText<NonNullable<T.RawStringLiteral['_raw_string_literal_start']>>(
+		config.rawStringLiteralStart,
+		[['_raw_string_literal_start', undefined, buildRawStringLiteralStart]],
+		'RawStringLiteral.rawStringLiteralStart'
+	);
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = admitHiddenText<NonNullable<T.RawStringLiteral['_raw_string_literal_end']>>(
+		config.rawStringLiteralEnd,
+		[['_raw_string_literal_end', undefined, buildRawStringLiteralEnd]],
+		'RawStringLiteral.rawStringLiteralEnd'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3999,11 +4020,11 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 				_string_content,
 				_raw_string_literal_end,
 				$with: {
-					rawStringLiteralStart: (value: T.RawStringLiteralStart) =>
+					rawStringLiteralStart: (value: T.RawStringLiteralStart | string) =>
 						buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
 					stringContent: (value: T.RawStringLiteralContent) =>
 						buildRawStringLiteral({ ...config, stringContent: value }),
-					rawStringLiteralEnd: (value: T.RawStringLiteralEnd) =>
+					rawStringLiteralEnd: (value: T.RawStringLiteralEnd | string) =>
 						buildRawStringLiteral({ ...config, rawStringLiteralEnd: value })
 				}
 			},
@@ -4018,8 +4039,8 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 }
 
 export function buildCharLiteral(text: string): T.CharLiteral.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`char_literal: text must be non-empty`);
+	if (text.length === 0) throw new Error(`char_literal: text must be non-empty`);
+	if (!_leafRe_buildCharLiteral.test(text)) throw new Error(`char_literal: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.CharLiteral as const,
@@ -4032,8 +4053,8 @@ export function buildCharLiteral(text: string): T.CharLiteral.Built {
 }
 
 export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_sequence: text must be non-empty`);
+	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.EscapeSequence as const,
@@ -4071,9 +4092,13 @@ export function buildLineComment(
 }
 
 export function buildBlockComment(
-	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
+	value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string
 ): T.BlockComment.Built {
-	const _content = value;
+	const _content = admitHiddenText<NonNullable<T.BlockComment['_content']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockComment.content'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4082,7 +4107,7 @@ export function buildBlockComment(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) =>
+					content: (value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string) =>
 						buildBlockComment(value)
 				}
 			},
@@ -4095,10 +4120,8 @@ export function buildBlockComment(
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildIdentifier.test(text))
-		throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Identifier as const,
@@ -4111,10 +4134,8 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 }
 
 export function buildShebang(text: string): T.Shebang.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`shebang: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildShebang.test(text))
-		throw new Error(`shebang: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`shebang: text must be non-empty`);
+	if (!_leafRe_buildShebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Shebang as const,
@@ -4127,9 +4148,8 @@ export function buildShebang(text: string): T.Shebang.Built {
 }
 
 export function buildTypeIdentifier(text: string): T.TypeIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_type_identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildTypeIdentifier.test(text))
+	if (text.length === 0) throw new Error(`_type_identifier: text must be non-empty`);
+	if (!_leafRe_buildTypeIdentifier.test(text))
 		throw new Error(`_type_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -4143,9 +4163,8 @@ export function buildTypeIdentifier(text: string): T.TypeIdentifier.Built {
 }
 
 export function buildFieldIdentifier(text: string): T.FieldIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_field_identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildFieldIdentifier.test(text))
+	if (text.length === 0) throw new Error(`_field_identifier: text must be non-empty`);
+	if (!_leafRe_buildFieldIdentifier.test(text))
 		throw new Error(`_field_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -4171,10 +4190,8 @@ export function buildCrate(): TSKindId.Crate {
 }
 
 export function buildMetavariable(text: string): T.Metavariable.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`metavariable: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildMetavariable.test(text))
-		throw new Error(`metavariable: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`metavariable: text must be non-empty`);
+	if (!_leafRe_buildMetavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Metavariable as const,
@@ -5293,9 +5310,8 @@ function _buildTupleExpressionElements(
 }
 
 export function buildStringLiteralOpen(text: string): T.StringLiteralOpen.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_string_literal_open: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringLiteralOpen.test(text))
+	if (text.length === 0) throw new Error(`_string_literal_open: text must be non-empty`);
+	if (!_leafRe_buildStringLiteralOpen.test(text))
 		throw new Error(`_string_literal_open: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -5397,12 +5413,12 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildClosureParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionBlock['_return_type']>>(
 		config.returnType,
 		[]
 	);
-	const _body = config.body;
+	const _body = config.body ?? buildBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -5445,7 +5461,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildClosureParameters();
 	const _body = coerceMixedEnumStorage<NonNullable<T.ClosureExpressionExpr['_body']>>(config.body, [
 		['_', TSKindId.Underscore] as const
 	]);
@@ -5620,7 +5636,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	const _trait_clause = config.traitClause;
 	const _type = coerceMixedEnumStorage<NonNullable<T.ImplItemBody['_type']>>(config.type, []);
 	const _where_clause = config.whereClause;
-	const _declaration_list = config.declarationList;
+	const _declaration_list = config.declarationList ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -5867,7 +5883,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Built {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
-	const _body = config.body;
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6083,9 +6099,9 @@ export function buildExpressionStatementWithSemi(value: T.Expression): T.Express
 	);
 }
 
-export function buildForeignModItemSemi(config: T.ForeignModItemSemi.Config): T.ForeignModItemSemi.Built {
+export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Built {
 	const _visibility_modifier = config.visibilityModifier;
-	const _extern_modifier = config.externModifier;
+	const _extern_modifier = config.externModifier ?? buildExternModifier();
 	return withMethods(
 		withAccessors(
 			{
@@ -6111,8 +6127,8 @@ export function buildForeignModItemSemi(config: T.ForeignModItemSemi.Config): T.
 
 export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Built {
 	const _visibility_modifier = config.visibilityModifier;
-	const _extern_modifier = config.externModifier;
-	const _body = config.body;
+	const _extern_modifier = config.externModifier ?? buildExternModifier();
+	const _body = config.body ?? buildDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6214,8 +6230,9 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 }
 
 export function buildLineCommentRegularDslash(text: string): T.LineCommentRegularDslash.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`line_comment_regular_dslash: text must be non-empty`);
+	if (text.length === 0) throw new Error(`line_comment_regular_dslash: text must be non-empty`);
+	if (!_leafRe_buildLineCommentRegularDslash.test(text))
+		throw new Error(`line_comment_regular_dslash: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.LineCommentRegularDslash as const,
@@ -6227,11 +6244,13 @@ export function buildLineCommentRegularDslash(text: string): T.LineCommentRegula
 	);
 }
 
-export function buildLineCommentDocOuter(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(
+	value: T.LineDocContent | string
+): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocOuter(args[0] as T.LineDocContent);
+		return _buildLineCommentDocOuter(args[0] as T.LineDocContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6239,11 +6258,17 @@ export function buildLineCommentDocOuter(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
 	return prebuilt
-		? _buildLineCommentDocOuter(args[0] as T.LineDocContent)
-		: _buildLineCommentDocOuter((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocOuter(args[0] as T.LineDocContent | string)
+		: _buildLineCommentDocOuter(
+				(buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent | string
+			);
 }
-function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOuter.Built {
-	const _doc = value;
+function _buildLineCommentDocOuter(value: T.LineDocContent | string): T.LineCommentDocOuter.Built {
+	const _doc = admitHiddenText<NonNullable<T.LineCommentDocOuter['_doc']>>(
+		value,
+		[['_line_doc_content', _leafRe_buildLineDocContent, buildLineDocContent]],
+		'LineCommentDocOuter.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6252,7 +6277,7 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocOuter(value)
+					doc: (value: T.LineDocContent | string) => buildLineCommentDocOuter(value)
 				}
 			},
 			{
@@ -6263,11 +6288,13 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 	);
 }
 
-export function buildLineCommentDocInner(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(
+	value: T.LineDocContent | string
+): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocInner(args[0] as T.LineDocContent);
+		return _buildLineCommentDocInner(args[0] as T.LineDocContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6275,11 +6302,17 @@ export function buildLineCommentDocInner(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
 	return prebuilt
-		? _buildLineCommentDocInner(args[0] as T.LineDocContent)
-		: _buildLineCommentDocInner((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocInner(args[0] as T.LineDocContent | string)
+		: _buildLineCommentDocInner(
+				(buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent | string
+			);
 }
-function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInner.Built {
-	const _doc = value;
+function _buildLineCommentDocInner(value: T.LineDocContent | string): T.LineCommentDocInner.Built {
+	const _doc = admitHiddenText<NonNullable<T.LineCommentDocInner['_doc']>>(
+		value,
+		[['_line_doc_content', _leafRe_buildLineDocContent, buildLineDocContent]],
+		'LineCommentDocInner.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6288,7 +6321,7 @@ function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInn
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocInner(value)
+					doc: (value: T.LineDocContent | string) => buildLineCommentDocInner(value)
 				}
 			},
 			{
@@ -6300,9 +6333,7 @@ function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInn
 }
 
 export function buildLineCommentContent(text: string): T.LineCommentContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`line_comment_content: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildLineCommentContent.test(text))
+	if (!_leafRe_buildLineCommentContent.test(text))
 		throw new Error(`line_comment_content: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -6315,11 +6346,13 @@ export function buildLineCommentContent(text: string): T.LineCommentContent.Buil
 	);
 }
 
-export function buildBlockCommentDocOuter(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocOuter>;
+export function buildBlockCommentDocOuter(
+	value?: T.BlockCommentContent | string
+): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent);
+		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6327,13 +6360,17 @@ export function buildBlockCommentDocOuter(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
 	return prebuilt
-		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent)
+		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent | string)
 		: _buildBlockCommentDocOuter(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent | string
 			);
 }
-function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockCommentDocOuter.Built {
-	const _doc = value;
+function _buildBlockCommentDocOuter(value?: T.BlockCommentContent | string): T.BlockCommentDocOuter.Built {
+	const _doc = admitHiddenText<NonNullable<T.BlockCommentDocOuter['_doc']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockCommentDocOuter.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6342,7 +6379,7 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocOuter(value)
+					doc: (value?: T.BlockCommentContent | string) => buildBlockCommentDocOuter(value)
 				}
 			},
 			{
@@ -6353,11 +6390,13 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 	);
 }
 
-export function buildBlockCommentDocInner(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocInner>;
+export function buildBlockCommentDocInner(
+	value?: T.BlockCommentContent | string
+): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent);
+		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6365,13 +6404,17 @@ export function buildBlockCommentDocInner(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
 	return prebuilt
-		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent)
+		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent | string)
 		: _buildBlockCommentDocInner(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent | string
 			);
 }
-function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockCommentDocInner.Built {
-	const _doc = value;
+function _buildBlockCommentDocInner(value?: T.BlockCommentContent | string): T.BlockCommentDocInner.Built {
+	const _doc = admitHiddenText<NonNullable<T.BlockCommentDocInner['_doc']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockCommentDocInner.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6380,7 +6423,7 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocInner(value)
+					doc: (value?: T.BlockCommentContent | string) => buildBlockCommentDocInner(value)
 				}
 			},
 			{
@@ -6901,7 +6944,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _body = config.body;
+	const _body = config.body ?? buildFieldDeclarationList();
 	return withMethods(
 		withAccessors(
 			{
@@ -6938,7 +6981,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _body = config.body;
+	const _body = config.body ?? buildOrderedFieldDeclarationList();
 	const _where_clause = config.whereClause;
 	return withMethods(
 		withAccessors(
@@ -7224,9 +7267,36 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	);
 }
 
+export function buildLineDocContent(text: string): T.LineDocContent.Built {
+	if (!_leafRe_buildLineDocContent.test(text))
+		throw new Error(`_line_doc_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.LineDocContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildBlockCommentContent(text: string): T.BlockCommentContent.Built {
+	if (!_leafRe_buildBlockCommentContent.test(text))
+		throw new Error(`_block_comment_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.BlockCommentContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildStringContent(text: string): T.StringContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`string_content: text must be non-empty`);
+	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.StringContent as const,
@@ -7239,8 +7309,7 @@ export function buildStringContent(text: string): T.StringContent.Built {
 }
 
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_raw_string_literal_start: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_raw_string_literal_start: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralStart as const,
@@ -7253,8 +7322,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 }
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`raw_string_literal_content: text must be non-empty`);
+	if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralContent as const,
@@ -7267,8 +7335,7 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 }
 
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_raw_string_literal_end: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_raw_string_literal_end: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralEnd as const,
@@ -7281,8 +7348,7 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bu
 }
 
 export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`float_literal: text must be non-empty`);
+	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.FloatLiteral as const,
@@ -7294,37 +7360,8 @@ export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
 	);
 }
 
-export function buildBlockCommentContent(text: string): T.BlockCommentContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_block_comment_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.BlockCommentContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildLineDocContent(text: string): T.LineDocContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_line_doc_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.LineDocContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_error_sentinel: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.ErrorSentinel as const,
@@ -7566,13 +7603,13 @@ export type FluentKindMap = {
 	_attributed_ordered_field: T.AttributedOrderedField.Built;
 	_type_argument: T.TypeArgument.Built;
 	_match_block_arms: T.MatchBlockArms.Built;
+	_line_doc_content: T.LineDocContent;
+	_block_comment_content: T.BlockCommentContent;
 	string_content: T.StringContent;
 	_raw_string_literal_start: T.RawStringLiteralStart;
 	raw_string_literal_content: T.RawStringLiteralContent;
 	_raw_string_literal_end: T.RawStringLiteralEnd;
 	float_literal: T.FloatLiteral;
-	_block_comment_content: T.BlockCommentContent;
-	_line_doc_content: T.LineDocContent;
 	_error_sentinel: T.ErrorSentinel;
 };
 
@@ -7806,13 +7843,13 @@ export const _factoryMap = {
 	_attributed_ordered_field: buildAttributedOrderedField,
 	_type_argument: buildTypeArgument,
 	_match_block_arms: buildMatchBlockArms,
+	_line_doc_content: buildLineDocContent,
+	_block_comment_content: buildBlockCommentContent,
 	string_content: buildStringContent,
 	_raw_string_literal_start: buildRawStringLiteralStart,
 	raw_string_literal_content: buildRawStringLiteralContent,
 	_raw_string_literal_end: buildRawStringLiteralEnd,
 	float_literal: buildFloatLiteral,
-	_block_comment_content: buildBlockCommentContent,
-	_line_doc_content: buildLineDocContent,
 	_error_sentinel: buildErrorSentinel
 } as const;
 export type _FactoryMap = typeof _factoryMap;

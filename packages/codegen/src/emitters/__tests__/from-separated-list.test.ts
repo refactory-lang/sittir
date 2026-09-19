@@ -121,4 +121,46 @@ describe('from emitter — separatedList', () => {
 			/case "member_list": return \(F\.buildMemberList as \(\.\.\.args: unknown\[\]\) => unknown\)\(\.\.\.children\);/
 		);
 	});
+
+	it('requires an element from a non-empty list, with the options object first when it has one', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
+		expect(emitted).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: \[first: [^]*?\.\.\.rest: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, first: /
+		);
+		expect(emitted).not.toContain('first?:');
+	});
+
+	it('lets an empty-capable list with options take the options object as its only argument', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'array',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
+		expect(emitted).toMatch(/export function coerceToMemberList\(\.\.\.input: \[first\?: [^]*\{ delimiter\?: [^}]*\}, \.\.\.rest: /);
+	});
+
+	it('types a non-empty list with no options as at least one element, and an empty-capable one as any number', () => {
+		const rule = (multiplicity: 'array' | 'nonEmptyArray'): SeparatedListElementRule => ({
+			type: SYMBOL,
+			name: 'member',
+			multiplicity,
+			separator: { value: { type: STRING, value: ',' } }
+		});
+		expect(emit(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: \[first: /
+		);
+		expect(emit(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: readonly/
+		);
+	});
 });

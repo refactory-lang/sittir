@@ -486,6 +486,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // orchestrator's post-generate validation.
 ```
 
+### `packages/codegen/src/run-codegen.ts::withInternalCodegenRun`
+
+```text
+Sets `SITTIR_INTERNAL_CODEGEN_RUN=1` for the duration of `fn`, restoring (or
+deleting) the prior value in `finally` — reentrant, so a call nested inside
+another (`runFullRegen` calling `runCodegen`) restores the outer call's
+value rather than clearing the flag out from under it.
+```
+
+### `packages/codegen/src/run-codegen.ts::runCodegenInternal`
+
+```text
+Writes every TS-side derived artifact (grammar/engine/types/factories/wrap/
+consts/index, render-bodies.json, seam-census.json, `node-model.json5`,
+`nodes.test.ts`, `vitest.config.ts`) BEFORE the Rust render module block
+that triggers the native N-API build and `cargo check --workspace` — both
+of which `throw` on failure and abort the rest of the function. Writing the
+TS-side set first means a native-build failure still leaves a complete,
+internally-consistent regen of everything that doesn't depend on the
+native toolchain, rather than a partial one where some derived files are
+fresh and others are stuck at the previous run's content.
+`writeManifestForGrammar` stays the last write in the function regardless —
+on a thrown native-build error it's simply never reached, leaving the prior
+run's manifest in place rather than one that claims a native build that
+didn't happen.
+```
+
 ### `packages/codegen/src/polymorph-variant.ts::PolymorphVariantDescriptor`
 
 ```text
@@ -538,12 +565,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Output directory for generated TS files (e.g. packages/rust/src). */
-```
-
-### `packages/codegen/src/run-codegen.ts::nodes`
-
-```text
-/** Specific node kinds to generate (mutually exclusive with `all`). */
 ```
 
 ### `packages/codegen/src/run-codegen.ts::all`

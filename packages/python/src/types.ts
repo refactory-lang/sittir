@@ -16,7 +16,8 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword,
-	KindEnum
+	KindEnum,
+	HiddenLeaf
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -101,7 +102,7 @@ export type LeafStringMap = {
 	[TSKindId.IsKeyword]: 'is';
 };
 
-export const enum TSKindId {
+export enum TSKindId {
 	Identifier = 1,
 	ImportKeyword = 2,
 	Dot = 3,
@@ -1921,7 +1922,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 
 /** Separated-list optional-flank bitflag — the wire's `_delimiter` key
  *  and the list factories' `delimiter` option. */
-export const enum Delimiter {
+export enum Delimiter {
 	None = 0,
 	Leading = 1,
 	Trailing = 2,
@@ -1929,7 +1930,7 @@ export const enum Delimiter {
 }
 
 // Scoped enums per supertype
-export const enum StatementKind {
+export enum StatementKind {
 	SimpleStatements = '_simple_statements',
 	CompoundStatement = '_compound_statement',
 	IfStatement = 'if_statement',
@@ -1943,7 +1944,7 @@ export const enum StatementKind {
 	MatchStatement = 'match_statement'
 }
 
-export const enum SimpleStatementKind {
+export enum SimpleStatementKind {
 	FutureImportStatement = 'future_import_statement',
 	ImportStatement = 'import_statement',
 	ImportFromStatement = 'import_from_statement',
@@ -1962,16 +1963,16 @@ export const enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
-export const enum NamedExpressionLhsKind {
+export enum NamedExpressionLhsKind {
 	Identifier = 'identifier'
 }
 
-export const enum ExpressionsKind {
+export enum ExpressionsKind {
 	Expression = 'expression',
 	ExpressionList = 'expression_list'
 }
 
-export const enum CompoundStatementKind {
+export enum CompoundStatementKind {
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
 	WhileStatement = 'while_statement',
@@ -1983,18 +1984,18 @@ export const enum CompoundStatementKind {
 	MatchStatement = 'match_statement'
 }
 
-export const enum WithClauseKind {
+export enum WithClauseKind {
 	WithClauseBare = 'with_clause_bare',
 	WithClauseParen = 'with_clause_paren'
 }
 
-export const enum SuiteKind {
+export enum SuiteKind {
 	SuiteInline = 'suite_inline',
 	SuiteBlock = 'suite_block',
 	SuiteEmpty = 'suite_empty'
 }
 
-export const enum SimplePatternKind {
+export enum SimplePatternKind {
 	ClassPattern = 'class_pattern',
 	SplatPattern = 'splat_pattern',
 	UnionPattern = 'union_pattern',
@@ -2012,7 +2013,7 @@ export const enum SimplePatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum ParameterKind {
+export enum ParameterKind {
 	Identifier = 'identifier',
 	TypedParameter = 'typed_parameter',
 	DefaultParameter = 'default_parameter',
@@ -2024,7 +2025,7 @@ export const enum ParameterKind {
 	DictionarySplatPattern = 'dictionary_splat_pattern'
 }
 
-export const enum PatternKind {
+export enum PatternKind {
 	Identifier = 'identifier',
 	Subscript = 'subscript',
 	Attribute = 'attribute',
@@ -2033,12 +2034,12 @@ export const enum PatternKind {
 	ListPattern = 'list_pattern'
 }
 
-export const enum ExpressionWithinForInClauseKind {
+export enum ExpressionWithinForInClauseKind {
 	Expression = 'expression',
 	LambdaWithinForInClause = 'lambda_within_for_in_clause'
 }
 
-export const enum ExpressionKind {
+export enum ExpressionKind {
 	ComparisonOperator = 'comparison_operator',
 	NotOperator = 'not_operator',
 	BooleanOperator = 'boolean_operator',
@@ -2049,7 +2050,7 @@ export const enum ExpressionKind {
 	AsPattern = 'as_pattern'
 }
 
-export const enum PrimaryExpressionKind {
+export enum PrimaryExpressionKind {
 	Await = 'await',
 	BinaryOperator = 'binary_operator',
 	Identifier = 'identifier',
@@ -2077,18 +2078,18 @@ export const enum PrimaryExpressionKind {
 	ListSplatPattern = 'list_splat_pattern'
 }
 
-export const enum AssignmentKind {
+export enum AssignmentKind {
 	AssignmentEq = 'assignment_eq',
 	AssignmentType = 'assignment_type',
 	AssignmentTyped = 'assignment_typed'
 }
 
-export const enum LeftHandSideKind {
+export enum LeftHandSideKind {
 	Pattern = 'pattern',
 	PatternList = 'pattern_list'
 }
 
-export const enum RightHandSideKind {
+export enum RightHandSideKind {
 	Expression = 'expression',
 	ExpressionList = 'expression_list',
 	Assignment = 'assignment',
@@ -2097,18 +2098,18 @@ export const enum RightHandSideKind {
 	Yield = 'yield'
 }
 
-export const enum FExpressionKind {
+export enum FExpressionKind {
 	Expression = 'expression',
 	ExpressionList = 'expression_list',
 	PatternList = 'pattern_list',
 	Yield = 'yield'
 }
 
-export const enum KeywordIdentifierKind {
+export enum KeywordIdentifierKind {
 	Identifier = 'identifier'
 }
 
-export const enum WhitespaceKind {
+export enum WhitespaceKind {
 	Tight = '_tight',
 	Space = '_space',
 	Newline = '_newline',
@@ -4084,7 +4085,7 @@ export type AugmentedAssignmentOperator =
 	| TSKindId.PipeEq;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
-export type _StringContent = Terminal<TSKindId._StringContent, string>;
+export type _StringContent = HiddenLeaf<Terminal<TSKindId._StringContent, string>>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
@@ -9002,18 +9003,18 @@ export namespace StringContent {
 		readonly $named: true;
 		readonly $with: {
 			contents(
-				...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+				...vs: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 			): T.StringContent.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
 	export type BuildArgs = [
-		...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+		...children: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent,
+			(T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap

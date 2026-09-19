@@ -75,8 +75,8 @@ describe('seats', () => {
 		const header = model.nodes.find((n) => n.kind === 'header')!;
 		const content = (header as { slots: { name: string; values: { seat?: unknown }[] }[] }).slots.find((s) => s.name === 'content')!;
 		expect(content.values.map((v) => v.seat)).toEqual([
-			{ kind: '_header_lhs', shape: 'arm', mount: 'lhs' },
-			{ kind: '_header_kind', shape: 'arm', mount: 'kind' }
+			{ kind: '_header_lhs', shape: 'arm', mount: 'lhs', seated: true },
+			{ kind: '_header_kind', shape: 'arm', mount: 'kind', seated: true }
 		]);
 		const clause = buildNodeModel(clauseNodeMap()).nodes.find((n) => n.kind === 'clause')! as {
 			slots: { values: { seat?: unknown }[] }[];

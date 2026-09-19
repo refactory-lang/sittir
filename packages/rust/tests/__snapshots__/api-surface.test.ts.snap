@@ -60,6 +60,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "_TOKEN_KEYWORDSS": "array",
   "_TOKEN_TREE_PUNCTUATIONS": "array",
   "_fromMap": "object",
+  "admitHiddenText": "function",
   "applyEdits": "function",
   "assert": "object",
   "attachProps": "function",

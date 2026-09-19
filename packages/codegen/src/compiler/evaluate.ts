@@ -1097,14 +1097,25 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 }
 
-export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	const g = globalThis as Record<string, unknown>;
-	const savedGlobals = saveAndInjectDslGlobals(g);
+let evaluateMutex: Promise<void> = Promise.resolve();
 
+export async function evaluate(entryPath: string): Promise<RawGrammar> {
+	let release!: () => void;
+	const previous = evaluateMutex;
+	evaluateMutex = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	await previous;
 	try {
-		return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+		const g = globalThis as Record<string, unknown>;
+		const savedGlobals = saveAndInjectDslGlobals(g);
+		try {
+			return canonicalizeRawGrammar(await importAndExtractGrammar(entryPath));
+		} finally {
+			restoreSavedGlobals(g, savedGlobals);
+		}
 	} finally {
-		restoreSavedGlobals(g, savedGlobals);
+		release();
 	}
 }
 

@@ -9,11 +9,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 // The generated rebuild is loaded by a computed path so tsc does not follow
 // it: its type errors are counted under examples/generated-typecheck-ceiling.json,
 // and vitest runs it regardless.
-const rebuildFormatGenerated = async (): Promise<{ $render(): string }> => {
-	const absolute = fileURLToPath(new URL('../../../examples/18-dogfood-typescript.generated.ts', import.meta.url));
+const generatedRebuild = (file: string, exportName: string) => async (): Promise<{ $render(): string }> => {
+	const absolute = fileURLToPath(new URL(`../../../examples/${file}`, import.meta.url));
 	const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
-	return mod.rebuildFormatGenerated!();
+	return mod[exportName]!();
 };
+const rebuildFormatGenerated = generatedRebuild('18-dogfood-typescript.generated.ts', 'rebuildFormatGenerated');
+const rebuildFormatLoose = generatedRebuild('18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose');
 import {
 	rebuildFormatStrict,
 	formatBoundaryStrict,
@@ -76,5 +78,17 @@ describe('examples/18 generated rebuild (format.ts)', () => {
 	});
 	it('re-parses to the same tree as the real file', async () => {
 		expect(dogfoodContract(createEngine(), await rebuildFormatGenerated(), target).reparsesEqual).toBe(true);
+	});
+});
+
+// The loose rebuild: the same file through the bundle calls, with every
+// coercion the loose contract admits spelled bare.
+describe('examples/18 loose rebuild (format.ts)', () => {
+	const target = new URL('../../common/src/format.ts', import.meta.url).pathname;
+	it('renders', async () => {
+		expect((await rebuildFormatLoose()).$render()).toContain('function applyFormat');
+	});
+	it('re-parses to the same tree as the real file', async () => {
+		expect(dogfoodContract(createEngine(), await rebuildFormatLoose(), target).reparsesEqual).toBe(true);
 	});
 });

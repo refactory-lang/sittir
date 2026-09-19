@@ -52,7 +52,7 @@ const seats: SeatTable = {
 };
 
 function surfaceWith(entries: IrSurface['entries']): IrSurface {
-	return { entries, seats, modelTypes: { tok: 'token' } };
+	return { entries, seats, modelTypes: { tok: 'keyword' } };
 }
 
 const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}) };

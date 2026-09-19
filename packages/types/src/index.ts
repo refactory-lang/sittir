@@ -117,6 +117,29 @@ type IsKindEnum<T> = T extends { readonly __kindEnum__?: unknown } ? true : fals
 type KindEnumText<T> = T extends { readonly __kindEnum__?: infer V } ? V : never;
 
 /**
+ * HiddenLeaf<T> — brands a hidden text leaf (a pattern kind with no `ir`
+ * entry of its own) so a strict factory input admits its text: the parent's
+ * factory builds the leaf, the way the loose surface does for any leaf.
+ */
+export type HiddenLeaf<T> = T & { readonly __hiddenLeaf__?: true };
+
+/** @internal — true when T carries the HiddenLeaf brand key. */
+type IsHiddenLeaf<T> = '__hiddenLeaf__' extends keyof T ? true : false;
+
+/** @internal — a hidden leaf element also admits its text. */
+type AdmitHiddenText<E> = E extends unknown ? (IsHiddenLeaf<E> extends true ? E | string : E) : never;
+
+/** @internal — {@link AdmitHiddenText} through a slot's array wrapper. */
+type AdmitHiddenSlot<S> = S extends readonly unknown[]
+	? true extends AnyHiddenLeaf<S[number]>
+		? readonly AdmitHiddenText<S[number]>[]
+		: S
+	: AdmitHiddenText<S>;
+
+/** @internal — distributes {@link IsHiddenLeaf} over a union. */
+type AnyHiddenLeaf<E> = E extends unknown ? IsHiddenLeaf<E> : never;
+
+/**
  * Terminal node shape — shared by every leaf, keyword, and enum.
  * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
  * derived kinds, string literal for evaluate-synthesized enum kinds
@@ -127,6 +150,65 @@ export interface Terminal<ID extends number | string = number, V extends string 
 	readonly $type: ID;
 	readonly $text: V;
 }
+
+/**
+ * ArgsOf<F> — the loose argument TUPLE a generated factory or sub-factory
+ * accepts, derived from F's own call signature(s) rather than re-declared.
+ * Always array-shaped, deliberately: `(...args: ArgsOf<CF>)` and
+ * `ArgsOf<CF>[0]` are both load-bearing call shapes across the generated
+ * sub-factory overlay, the former spreading a whole argument list into the
+ * child, the latter reading its first (and possibly only) positional
+ * argument out. A 4-way overload intersection (the codegen sub-factory
+ * ceiling) unions every declared overload's argument tuple; a plain
+ * rest-parameter function yields the element type as an array.
+ */
+export type ArgsOf<F> = F extends {
+	(...a: infer A): unknown;
+	(...b: infer B): unknown;
+	(...c: infer C): unknown;
+	(...d: infer D): unknown;
+}
+	? A | B | C | D
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
+/**
+ * ElementsOf<F> — the union of every positional argument type a factory
+ * accepts, read from its own rest parameter. Unlike {@link ArgsOf} it keeps a
+ * rest parameter that is a union of tuples (a non-empty list that also takes
+ * an options object first).
+ */
+export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown[]) => unknown
+	? A[number]
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E
+		: never;
+
+export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+/** Pairs a kind's strict builder with its loose coercer under one bundle entry. */
+export interface FlavorPair<S, C> {
+	readonly strict: S;
+	readonly coerce: C;
+}
+
+/** @internal — any factory or coercer function, for Hoisted's own bounds. */
+type AnyFlavorFn = (...args: never[]) => unknown;
+
+/**
+ * Hoisted<B> — the type of `hoistRoutes(b)`: a `FlavorPair` (or a tree of
+ * them, nested under sub-factory keys) collapses into one callable per pair,
+ * the coerce flavor preferred over strict when both are present, with every
+ * sibling key still reachable on it.
+ */
+export type Hoisted<B> = B extends { coerce: infer C }
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+	: B extends { strict: infer S }
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+		: B extends Record<string, unknown>
+			? { [K in keyof B]: Hoisted<B[K]> }
+			: B;
 
 // ---------------------------------------------------------------------------
 // Grammar primitives
@@ -620,7 +702,7 @@ type WidenLooseFieldValue<
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: C } : {};
+type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitHiddenSlot<C> } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
@@ -711,7 +793,7 @@ export type ConfigOf<T> = T extends unknown
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-							: FieldInputType<T, K>;
+							: AdmitHiddenSlot<FieldInputType<T, K>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config

@@ -40,6 +40,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "_AUGMENTED_ASSIGNMENT_OPERATORS": "array",
   "_UNARY_OPERATOR_OPERATORS": "array",
   "_fromMap": "object",
+  "admitHiddenText": "function",
   "applyEdits": "function",
   "assert": "object",
   "attachProps": "function",

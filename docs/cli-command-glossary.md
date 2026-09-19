@@ -17,7 +17,6 @@ Generate typed factories, templates, and native bindings from a grammar
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
 - `-o, --output <dir>` — Output directory
-- `-n, --nodes <list>` — Comma-separated node kinds to generate
 - `-a, --all` — Generate TS + native render-module artifacts (full chain)
 - `--tests-dir <dir>` — Output directory for test files
 - `--transpile` — Transpile grammar.sittir.ts → .sittir/grammar.js
@@ -69,6 +68,10 @@ Factory-render-parse error bucketing (top-8 buckets)
 **Arguments**
 
 - `grammars…` (optional) — Grammars to validate; defaults to all
+
+**Options**
+
+- `--surface <surface>` — Factory surface to build through: raw builders or the ir bindings — choices: `raw` | `ir` (default: `raw`)
 
 **Example**
 
@@ -270,6 +273,22 @@ Diagnostic for read-render-parse AST gaps
 pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches [options]
 ```
 
+### `tool bindings-inventory`
+
+Compile the bindings, derive the vocabulary they imply, and emit the base interface tree
+
+**Options**
+
+- `--check` — Compile every bindings.scm against its parser and report totality diagnostics
+- `--members` — Print member names and kinds per shared kind
+- `--emit [dir]` — Emit the vocabulary tree into a directory (default: packages/types/src/vocabulary, the checked-in tree)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory [options]
+```
+
 ### `tool emit-factory-source`
 
 Print the strict factory source that rebuilds a source file
@@ -280,6 +299,8 @@ Print the strict factory source that rebuilds a source file
 - `-f, --file <path>` — Source file to rebuild
 - `-e, --export <name>` — Exported function name (default: rebuild<Basename>)
 - `-o, --out <path>` — Write the module here instead of stdout
+- `-s, --surface <strict|loose>` — Construction surface to spell: strict calls, or the loose contract (default: `strict`)
+- `-n, --nested <calls|configs>` — On the loose surface, nested compounds as builder calls or config objects (default: `calls`)
 
 **Example**
 

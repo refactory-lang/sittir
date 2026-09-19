@@ -4467,6 +4467,11 @@ function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
+// packages/codegen/src/dsl/primitives/splice.ts
+function isSplicePlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "splice";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
 function withVariantAnnotation(rule, variantName, parentKind, arm2) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
@@ -4489,7 +4494,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4873,6 +4878,9 @@ function resolvePatch(patch, originalMember, precStack) {
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
   }
+  if (isSplicePlaceholder(patch)) {
+    return withAnnotations(originalMember, { spliced: true });
+  }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();
     if (!parentKind) {
@@ -5204,6 +5212,11 @@ function refine(original, forms) {
 }
 
 // packages/typescript/grammar.sittir.ts
+function immediateClosingDelimiter(original) {
+  const seqMembers = original.members;
+  const last = seqMembers[seqMembers.length - 1];
+  return { ...original, members: [...seqMembers.slice(0, -1), token.immediate(last.value)] };
+}
 var enrichedBase = enrich(import_grammar.default);
 var grammar_sittir_default = grammar(
   enrichedBase,
@@ -5379,7 +5392,30 @@ var grammar_sittir_default = grammar(
           "decorator:/separator": preference("tight"),
           "decorator:/(_)/after": preference("newline"),
           "decorator:/end": preference("newline"),
-          '_/separator/","/before': preference("tight"),
+          '"("/before': preference("tight"),
+          '"("/after': preference("tight"),
+          '")"/before': preference("tight"),
+          '"["/before': preference("tight"),
+          '"["/after': preference("tight"),
+          '"]"/before': preference("tight"),
+          '"{"/after': preference("tight"),
+          '"}"/before': preference("tight"),
+          '"${"/after': preference("tight"),
+          '"<"/before': preference("tight"),
+          '"<"/after': preference("tight"),
+          '">"/before': preference("tight"),
+          '"."/before': preference("tight"),
+          '"."/after': preference("tight"),
+          '","/before': preference("tight"),
+          '";"/before': preference("tight"),
+          '"++"/before': preference("tight"),
+          '"++"/after': preference("tight"),
+          '"--"/before': preference("tight"),
+          '"--"/after': preference("tight"),
+          '"?."/before': preference("tight"),
+          '"?."/after': preference("tight"),
+          '"..."/after': preference("tight"),
+          '":"/before': preference("tight"),
           '":"/after': preference("space"),
           '"="/before': preference("space"),
           '"="/after': preference("space"),
@@ -5391,17 +5427,19 @@ var grammar_sittir_default = grammar(
           '"&"/after': preference("space"),
           "operator:/before": preference("space"),
           "operator:/after": preference("space"),
-          '"from"/after': preference("space"),
-          '"if"/after': preference("space"),
-          '"while"/after': preference("space"),
-          '"for"/after': preference("space"),
-          '"return"/before': preference("space"),
-          '"return"/after': preference("space"),
-          '"switch"/after': preference("space"),
-          '"catch"/after': preference("space"),
-          '"var"/after': preference("space"),
-          "kind:/after": preference("space")
+          '_/separator/","/before': preference("tight")
         },
+        // A space after the substitution's `}` changes the template text. The edge
+        // sits in every string-interior context, so no neighbour immediacy reaches it.
+        template_substitution: { after: preference("tight") },
+        template_type: { after: preference("tight") },
+        // Unary `!` is a normal token seam (`! x` compiles fine), and
+        // the undeclared default is space — confirmed via a factory
+        // construction probe (`ir.unaryExpression({operator:'!',...})`
+        // renders "! y", not "!y"; read-render of parsed `!y` masks
+        // this because unedited content slices verbatim source bytes
+        // rather than consulting this site at all).
+        unary_expression_operator: { '"!"/after': preference("tight") },
         object_type_content: {
           "content:/separator/before": preference("tight"),
           "content:/separator/after": preference("newline"),
@@ -5775,6 +5813,21 @@ var grammar_sittir_default = grammar(
       },
       rules: {
         _whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
+        string: ($, original) => ({
+          ...original,
+          members: original.members.map((arm2) => {
+            const seqMembers = arm2.members;
+            const last = seqMembers[seqMembers.length - 1];
+            if (last.type !== "STRING") return arm2;
+            return {
+              ...arm2,
+              members: [...seqMembers.slice(0, -1), token.immediate(last.value)]
+            };
+          })
+        }),
+        template_string: ($, original) => immediateClosingDelimiter(original),
+        template_literal_type: ($, original) => immediateClosingDelimiter(original),
+        template_type: ($) => seq(token.immediate("${"), choice($.primary_type, $.infer_type), "}"),
         // `template_substitution` sits only in string-interior contexts
         // (template_string / template_literal_type elements), where any
         // preceding characters are absorbed into a fragment token — no
@@ -5887,7 +5940,11 @@ var grammar_sittir_default = grammar(
           );
           return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
         }
-      }
+      },
+      renderAs: (_$) => ({
+        _template_chars: token.immediate(/[^`\\$]+/),
+        escape_sequence: token.immediate(/\\[^]/)
+      })
     },
     enrichedBase
   )

@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { DelimiterFlags,
 	isFixedTextLeaf,
 	isKindIdStored
@@ -46,8 +47,6 @@ import type {
 } from '../compiler/model/node-map.ts';
 import {
 	AssembledList,
-	AssembledKeyword,
-	AssembledToken,
 	AssembledEnum,
 	fixedTextOfKind,
 	snakeToCamel
@@ -81,6 +80,7 @@ import {
 	builtTypeSurfaceOf,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
+	hiddenTextLeafKinds,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
@@ -174,7 +174,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			const enumName = typeName + 'Kind';
 			if (emittedKindEnums.has(enumName)) continue;
 			emittedKindEnums.add(enumName);
-			lines.push(`export const enum ${enumName} {`);
+			lines.push(`export enum ${enumName} {`);
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
 				const subNode = nodeMap.nodes.get(sub);
@@ -362,6 +362,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
+	const usesHiddenLeaf = /\bHiddenLeaf\b/.test(body);
 	const usesKeywordNs = /\bKeywordNs\b/.test(body);
 	const usesLeafNs = /\bLeafNs\b/.test(body);
 	const importedNames = [
@@ -380,7 +381,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'NonEmptyArray',
 		'BooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
-		...(usesKindEnum ? ['KindEnum'] : [])
+		...(usesKindEnum ? ['KindEnum'] : []),
+		...(usesHiddenLeaf ? ['HiddenLeaf'] : [])
 	];
 	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
 
@@ -429,8 +431,9 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 			case 'pattern':
 				leafKinds.push(kind);
 				break;
-			case 'token':
-				if (node instanceof AssembledKeyword) {
+			case 'keyword':
+			case 'punctuation':
+				if (isWordOrVisibleTextLeaf(node)) {
 					leafKinds.push(kind);
 					keywordKinds.set(kind, node.text);
 				}
@@ -454,7 +457,7 @@ export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 function emitDelimiterEnum(lines: string[]): void {
 	lines.push("/** Separated-list optional-flank bitflag — the wire's `_delimiter` key");
 	lines.push(" *  and the list factories' `delimiter` option. */");
-	lines.push('export const enum Delimiter {');
+	lines.push('export enum Delimiter {');
 	for (const [member, value] of Object.entries(DelimiterFlags)) {
 		lines.push(`  ${toPascal(member)} = ${value},`);
 	}
@@ -463,7 +466,7 @@ function emitDelimiterEnum(lines: string[]): void {
 }
 
 function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nodeMap: NodeMap): void {
-	lines.push('export const enum TSKindId {');
+	lines.push('export enum TSKindId {');
 	for (const entry of entries) {
 		lines.push(`  ${entry.member} = ${entry.id},`);
 	}
@@ -547,6 +550,7 @@ function emitLeafTerminalAliases(
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
+	const hiddenLeafKinds = hiddenTextLeafKinds(nodeMap);
 	lines.push('// Leaf node types');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind)!;
@@ -563,9 +567,8 @@ function emitLeafTerminalAliases(
 			continue;
 		}
 
-		lines.push(
-			`export type ${node.typeName} = Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>;`
-		);
+		const terminal = `Terminal<${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}, ${leafTextType(node)}>`;
+		lines.push(`export type ${node.typeName} = ${hiddenLeafKinds.has(kind) ? `HiddenLeaf<${terminal}>` : terminal};`);
 	}
 	lines.push('');
 }
@@ -587,7 +590,7 @@ function emitTreeInterfaceDeclarations(
 		const node = nodeMap.nodes.get(kind)!;
 		if (treeEmitted.has(node.typeName)) continue;
 		treeEmitted.add(node.typeName);
-		const isAnon = node.modelType === 'token';
+		const isAnon = isFixedTextLeaf(node);
 		const candidate = isAnon ? `_anonymous_${kind}` : kind;
 		const grammarKey = grammarKeys.has(candidate) ? candidate : null;
 		if (grammarKey && !isAnon) {
@@ -637,7 +640,7 @@ function emitSupertypeUnionDeclarations(
 			if (!n) {
 				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
-			return { sub, typeName: n.typeName, token: n instanceof AssembledToken };
+			return { sub, typeName: n.typeName, token: isHiddenPunctuationLeaf(n) };
 		});
 		const members = resolvedSubs.filter((r) => r.token || generatedTypes.has(r.typeName)).map((r) => r.typeName);
 		if (members.length === 0) {
@@ -669,12 +672,12 @@ function collectAndEmitTokenTypeAliases(
 	const referencedTokenTypeNames = new Set<string>();
 	for (const t of referenced) {
 		const ref = nodeMap.nodes.get(t);
-		if (ref instanceof AssembledToken) referencedTokenTypeNames.add(ref.typeName);
+		if (ref !== undefined && isHiddenPunctuationLeaf(ref)) referencedTokenTypeNames.add(ref.typeName);
 	}
 
 	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledToken)) continue;
+		if (!isHiddenPunctuationLeaf(node)) continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
 		if (!/^[A-Za-z_$][\w$]*$/.test(node.typeName)) continue;
 		if (generatedTypes.has(node.typeName)) continue;

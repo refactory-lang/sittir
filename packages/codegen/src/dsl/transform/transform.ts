@@ -21,6 +21,7 @@ import { isArmDefault } from '../primitives/arm.ts';
 import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
+import { isSplicePlaceholder, type SplicePlaceholder } from '../primitives/splice.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
@@ -79,7 +80,8 @@ export type PatchValue =
 	| VariantPlaceholder
 	| ArmDefaultPlaceholder
 	| PreferencePlaceholder
-	| GroupPlaceholder;
+	| GroupPlaceholder
+	| SplicePlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -88,7 +90,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -570,6 +572,9 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	}
 	if (isGroupPlaceholder(patch)) {
 		return withAnnotations(originalMember, { hoisted: true });
+	}
+	if (isSplicePlaceholder(patch)) {
+		return withAnnotations(originalMember, { spliced: true });
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();

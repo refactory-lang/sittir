@@ -8,25 +8,33 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
 	if (arr.length === 0) {
 		throw new Error(`${label}: requires at least one element`);
 	}
 }
 
-const _leafRe_buildTypeConversion = /^(?:![a-z])/u;
-const _leafRe_buildIdentifier = /^(?:[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_buildComment = /^(?:.*)/u;
-const _leafRe_buildStringStart = /^(?:[a-zA-Z]*["']+)/u;
-const _leafRe_build_StringContent = /^(?:[^"'\\{}\n]+)/u;
-const _leafRe_buildEscapeInterpolation = /^(?:\{\{|\}\})/u;
-const _leafRe_buildStringEnd = /^(?:["']+)/u;
+const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
+const _leafRe_buildEscapeSequence =
+	/^(?:\\(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u;
+const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
+const _leafRe_buildInteger =
+	/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u;
+const _leafRe_buildFloat =
+	/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u;
+const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+const _leafRe_buildComment = /^(?:#(?:.*))$/u;
+const _leafRe_buildLineContinuation = /^(?:\\(?:(?:\r)?\n|\0))$/u;
+const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
+const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
+const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
+const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
 
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
 	const _statements = children;
@@ -134,8 +142,8 @@ function _buildImportStatement(value: T.ImportList): T.ImportStatement.Built {
 }
 
 export function buildImportPrefix(text: string): T.ImportPrefix.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`import_prefix: text must be non-empty`);
+	if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
+	if (!_leafRe_buildImportPrefix.test(text)) throw new Error(`import_prefix: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.ImportPrefix as const,
@@ -274,7 +282,7 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Built {
-	const _name = config.name;
+	const _name = config.name ?? buildDottedName();
 	const _alias = config.alias;
 	return withMethods(
 		withAccessors(
@@ -860,7 +868,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildParameters();
 	const _return_type = config.returnType;
 	const _body = config.body;
 	return withMethods(
@@ -1630,7 +1638,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Built {
-	const _name = config.name;
+	const _name = config.name ?? buildDottedName();
 	const _arguments = config.arguments;
 	return withMethods(
 		withAccessors(
@@ -2807,7 +2815,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Built {
 
 export function buildListComprehension(config: T.ListComprehension.Config): T.ListComprehension.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.ListComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2836,7 +2844,7 @@ export function buildDictionaryComprehension(
 	config: T.DictionaryComprehension.Config
 ): T.DictionaryComprehension.Built {
 	const _body = config.body;
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2862,7 +2870,7 @@ export function buildDictionaryComprehension(
 
 export function buildSetComprehension(config: T.SetComprehension.Config): T.SetComprehension.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.SetComprehension['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -2889,7 +2897,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 
 export function buildGeneratorExpression(config: T.GeneratorExpression.Config): T.GeneratorExpression.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.GeneratorExpression['_body']>>(config.body, []);
-	const _comprehension_clauses = config.comprehensionClauses;
+	const _comprehension_clauses = config.comprehensionClauses ?? buildComprehensionClauses();
 	return withMethods(
 		withAccessors(
 			{
@@ -3132,9 +3140,13 @@ export function buildString(config: T.String.Config): T.String.Built {
 }
 
 export function buildStringContent(
-	...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+	...children: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 ): T.StringContent.Built {
-	const _content = children;
+	const _content = admitHiddenText<NonNullable<T.StringContent['_content']>>(
+		children,
+		[['_string_content', _leafRe_build_StringContent, build_StringContent]],
+		'StringContent.content'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3144,7 +3156,10 @@ export function buildStringContent(
 				_content,
 				$with: {
 					contents: (
-						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+						...vs: (
+							| (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)
+							| string
+						)[]
 					) => buildStringContent(...vs)
 				}
 			},
@@ -3192,8 +3207,8 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 }
 
 export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_sequence: text must be non-empty`);
+	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.EscapeSequence as const,
@@ -3225,10 +3240,8 @@ export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation
 }
 
 export function buildTypeConversion(text: string): T.TypeConversion.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`type_conversion: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildTypeConversion.test(text))
-		throw new Error(`type_conversion: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
+	if (!_leafRe_buildTypeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TypeConversion as const,
@@ -3241,8 +3254,8 @@ export function buildTypeConversion(text: string): T.TypeConversion.Built {
 }
 
 export function buildInteger(text: string): T.Integer.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`integer: text must be non-empty`);
+	if (text.length === 0) throw new Error(`integer: text must be non-empty`);
+	if (!_leafRe_buildInteger.test(text)) throw new Error(`integer: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Integer as const,
@@ -3255,8 +3268,8 @@ export function buildInteger(text: string): T.Integer.Built {
 }
 
 export function buildFloat(text: string): T.Float.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`float: text must be non-empty`);
+	if (text.length === 0) throw new Error(`float: text must be non-empty`);
+	if (!_leafRe_buildFloat.test(text)) throw new Error(`float: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Float as const,
@@ -3269,10 +3282,8 @@ export function buildFloat(text: string): T.Float.Built {
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildIdentifier.test(text))
-		throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Identifier as const,
@@ -3318,10 +3329,8 @@ export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
 }
 
 export function buildComment(text: string): T.Comment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`comment: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildComment.test(text))
-		throw new Error(`comment: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+	if (!_leafRe_buildComment.test(text)) throw new Error(`comment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Comment as const,
@@ -3334,8 +3343,9 @@ export function buildComment(text: string): T.Comment.Built {
 }
 
 export function buildLineContinuation(text: string): T.LineContinuation.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`line_continuation: text must be non-empty`);
+	if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
+	if (!_leafRe_buildLineContinuation.test(text))
+		throw new Error(`line_continuation: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.LineContinuation as const,
@@ -4810,10 +4820,8 @@ export function buildYieldFromClause(value: T.Expression): T.YieldFromClause.Bui
 }
 
 export function buildStringStart(text: string): T.StringStart.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`string_start: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringStart.test(text))
-		throw new Error(`string_start: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
+	if (!_leafRe_buildStringStart.test(text)) throw new Error(`string_start: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.StringStart as const,
@@ -4826,10 +4834,8 @@ export function buildStringStart(text: string): T.StringStart.Built {
 }
 
 export function build_StringContent(text: string): T._StringContent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_string_content: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_build_StringContent.test(text))
-		throw new Error(`_string_content: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
+	if (!_leafRe_build_StringContent.test(text)) throw new Error(`_string_content: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId._StringContent as const,
@@ -4842,9 +4848,8 @@ export function build_StringContent(text: string): T._StringContent.Built {
 }
 
 export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_interpolation: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildEscapeInterpolation.test(text))
+	if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
+	if (!_leafRe_buildEscapeInterpolation.test(text))
 		throw new Error(`escape_interpolation: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -4858,10 +4863,8 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bu
 }
 
 export function buildStringEnd(text: string): T.StringEnd.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`string_end: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildStringEnd.test(text))
-		throw new Error(`string_end: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
+	if (!_leafRe_buildStringEnd.test(text)) throw new Error(`string_end: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.StringEnd as const,
@@ -4874,8 +4877,7 @@ export function buildStringEnd(text: string): T.StringEnd.Built {
 }
 
 export function buildIndent(text: string): T.Indent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_indent: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.Indent as const,
@@ -4888,8 +4890,7 @@ export function buildIndent(text: string): T.Indent.Built {
 }
 
 export function buildDedent(text: string): T.Dedent.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_dedent: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_dedent: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.Dedent as const,

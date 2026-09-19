@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -12,7 +13,7 @@ import type {
 import {
 	AssembledBranch,
 	AssembledKeyword,
-	AssembledToken,
+	AssembledPunctuation,
 	AssembledEnum,
 	AssembledSupertype,
 	isNodeRef,
@@ -53,8 +54,8 @@ export function isAuthoredCompound(
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
-export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPattern | AssembledEnum {
-	return node instanceof AssembledKeyword || node instanceof AssembledPattern || node instanceof AssembledEnum;
+export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
+	return isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
@@ -87,7 +88,7 @@ export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, str
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!kind.startsWith('_')) continue;
 		if (!node.userFacing) continue;
-		if (node instanceof AssembledToken) continue;
+		if (node instanceof AssembledPunctuation) continue;
 		const visible = kind.replace(/^_+/, '');
 		if (visible.length === 0) continue;
 		if (nodeMap.nodes.has(visible)) continue;
@@ -137,6 +138,10 @@ export function isValidIdent(s: string): boolean {
 	return IDENT_RE.test(s);
 }
 
+export function compareOrdinal(a: string, b: string): number {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
 function _identOrQuoted(name: string): string {
 	return IDENT_RE.test(name) ? name : JSON.stringify(name);
 }
@@ -144,7 +149,7 @@ function _identOrQuoted(name: string): string {
 export function resolveHiddenKeywordLeaf(
 	kindName: string,
 	nodeMap: NodeMap
-): AssembledKeyword | AssembledToken | undefined {
+): AssembledKeyword | AssembledPunctuation | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
 	if (node === undefined) return undefined;
@@ -360,7 +365,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 		for (const member of storage.members) push(member.kind, member.kindId, member.text);
 		return true;
 	};
-	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledToken): boolean => {
+	const seatKeyword = (value: NodeBackedRef, node: AssembledKeyword | AssembledPunctuation): boolean => {
 		const text = node.text;
 		const { kindName, kindId } = keywordRefWireIdentity(value, node);
 		if (kindName === undefined || text === undefined) return false;
@@ -385,7 +390,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 			if (!seatMembers(value)) sawNodeArm = true;
 			return;
 		}
-		if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+		if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
 			if (!seatKeyword(value, node)) sawNodeArm = true;
 			return;
 		}
@@ -406,7 +411,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 				if (!seatMembers(value)) verbatim = true;
 				continue;
 			}
-			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+			if (node instanceof AssembledKeyword || node instanceof AssembledPunctuation) {
 				if (!seatKeyword(value, node)) verbatim = true;
 				continue;
 			}
@@ -590,6 +595,20 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
+export function listRestParamType(nonEmpty: boolean, element: string, options: string | undefined): string {
+	if (nonEmpty) {
+		const elements = `[first: ${element}, ...rest: ${element}[]]`;
+		return options === undefined ? elements : `${elements} | [options: ${options}, first: ${element}, ...rest: ${element}[]]`;
+	}
+	return options === undefined ? `readonly ${element}[]` : `[first?: ${element} | ${options}, ...rest: ${element}[]]`;
+}
+
+export function transparentContentKindNames(kinds: readonly string[], nodeMap: NodeMap): string[] {
+	if (kinds.length !== 1) return [...kinds];
+	const content = transparentWrapperContentSlot(kinds[0]!, nodeMap);
+	return content === undefined ? [...kinds] : [...kinds, ...slotKindNames(content)];
+}
+
 export function resolveSingleFieldFactorySlot(
 	node: AssembledNode,
 	_nodeMap: NodeMap
@@ -695,14 +714,46 @@ export function soleSlotFacts(node: AssembledNode, _nodeMap: NodeMap): SoleSlotF
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
+/**
+ * The target factory to call with no arguments when a required field is
+ * omitted — shared by both surfaces: the strict raw factory (a required
+ * config key with nothing to read) and the loose coercer (`canDirectFactoryCall`
+ * and the config-object path alike). `null` when the field must be supplied.
+ */
+export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
+	if (!isRequired(field)) return null;
+	if (isHiddenInfraSlot(field, nodeMap)) return null;
+	const kinds = slotKindNames(field);
+	if (kinds.length !== 1) return null;
+	const targetKind = kinds[0]!;
+	const targetNode = nodeMap.nodes.get(targetKind);
+	if (!targetNode) return null;
+	if (!targetNode.rawFactoryName) return null;
+
+	if (targetNode instanceof AssembledList) {
+		return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
+	}
+
+	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
+	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
+		const facts = soleSlotFacts(branchTarget, nodeMap);
+		if (!facts) return null;
+		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
+		return null;
+	}
+
+	if (!(targetNode instanceof AbstractAssembledCompound)) return null;
+	return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
+}
+
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || node instanceof AssembledKeyword)
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node))
 		return 'text';
-	if (node instanceof AssembledToken) return options?.includeTokenText ? 'text' : null;
+	if (isHiddenPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
@@ -758,7 +809,7 @@ export function warnSkippedParserSymbol(
 }
 
 function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
-	return kind.startsWith('_') && !(node instanceof AssembledToken);
+	return kind.startsWith('_') && !(node instanceof AssembledPunctuation);
 }
 
 export interface FactoryDispatchContext extends ParserSymbolDispatchContext {
@@ -844,7 +895,7 @@ export function emitsPlainBuiltAlias(kind: string, node: AssembledNode, context:
 
 export function emitsBuildArgsAlias(kind: string, node: AssembledNode, context: FactoryDispatchContext): boolean {
 	if (classifyFactoryEmission(kind, node, context) !== 'emit') return false;
-	if (node instanceof AssembledToken || node instanceof AssembledSupertype) return false;
+	if (isHiddenPunctuationLeaf(node) || node instanceof AssembledSupertype) return false;
 	return true;
 }
 
@@ -964,4 +1015,87 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 				.map((v) => v.separator as string)
 		)
 	];
+}
+
+const LITERAL_IN_CLASS = '+.*?(){}|$/';
+
+export function stripUselessEscapes(pattern: string): string {
+	let out = '';
+	let i = 0;
+	let inClass = false;
+	while (i < pattern.length) {
+		const c = pattern[i];
+		if (!inClass) {
+			if (c === '\\' && i + 1 < pattern.length) {
+				out += c + pattern[i + 1];
+				i += 2;
+				continue;
+			}
+			if (c === '[') inClass = true;
+			out += c;
+			i++;
+			continue;
+		}
+		if (c === ']') {
+			inClass = false;
+			out += c;
+			i++;
+			continue;
+		}
+		if (c === '\\' && i + 1 < pattern.length) {
+			const next = pattern[i + 1];
+			if (next === '[') {
+				out += '[';
+				i += 2;
+				continue;
+			}
+			if (next !== undefined && LITERAL_IN_CLASS.includes(next)) {
+				out += next;
+				i += 2;
+				continue;
+			}
+			if (next === '-' && pattern[i + 2] === ']') {
+				out += '-';
+				i += 2;
+				continue;
+			}
+			out += c + next;
+			i += 2;
+			continue;
+		}
+		out += c;
+		i++;
+	}
+	try {
+		new RegExp(out, 'u');
+	} catch {
+		return pattern;
+	}
+	return out;
+}
+
+export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
+	if (!textPattern) return undefined;
+	const anchored = `^(?:${stripUselessEscapes(textPattern)})$`;
+	let regex: RegExp;
+	try {
+		regex = new RegExp(anchored, 'u');
+	} catch {
+		try {
+			regex = new RegExp(anchored);
+		} catch (e) {
+			throw new Error(
+				`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
+					`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(anchored)}. ` +
+					`Cause: ${(e as Error).message}. ` +
+					`Either fix the grammar or add the kind to an emitter exception list.`
+			);
+		}
+	}
+	return regex;
+}
+
+export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
+	const regex = anchoredLeafRegex(kind, textPattern);
+	return regex === undefined ? undefined : `/${regex.source}/${regex.flags}`;
 }

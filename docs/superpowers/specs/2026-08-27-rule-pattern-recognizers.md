@@ -165,7 +165,7 @@ Land after the wrapper-deletion builder PR is green, in three gated steps:
    PREC cases are the sites that need `tokenized`, `aliasedFrom` and
    `prec` as builder-stamped facts rather than push-down; the
    wrapper-deletion TOKEN case (left structural because `collect-slots`'
-   `AssembledToken` still reads the wrapper node) is wired here.
+   `AssembledPunctuation` still reads the wrapper node) is wired here.
 3. **Separator possession into `seq`** — the section above; the lift
    functions relocate into recognizers, `fuseHeadRepeatLists` goes with
    them.

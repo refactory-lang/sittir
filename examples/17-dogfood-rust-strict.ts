@@ -121,7 +121,7 @@ function writeCall(format: string) {
 
 export function displayImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'fmt'), 'Display')],
+		traitClause: scopedTy(ns('std', 'fmt'), 'Display'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(
 				ir.statement.function.strict({
@@ -171,7 +171,7 @@ export function displayImplStrict() {
 /** `impl std::error::Error for SpliceError {}` */
 export function errorImplStrict() {
 	return ir.statement.impl.body.positiveClause.strict({
-		traitClause: [scopedTy(ns('std', 'error'), 'Error')],
+		traitClause: scopedTy(ns('std', 'error'), 'Error'),
 		type: id('SpliceError'),
 		declarationList: ir.declarationList.strict(),
 	});

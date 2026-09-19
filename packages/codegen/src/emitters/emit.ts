@@ -1,9 +1,10 @@
 import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import type { DiagnosticSink } from '../types/diagnostics.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../compiler/model/render-rules.ts';
 import type { Rule as EvaluatedRule } from '../types/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { AssembledToken } from '../compiler/model/node-map.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
@@ -53,6 +54,7 @@ export interface EmitAllConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 	options?: OptionsConfig;
 	visibleExternals?: Readonly<Record<string, EvaluatedRule<'evaluate'>>>;
+	diagnostics?: DiagnosticSink;
 }
 
 export interface EmitAllResult {
@@ -95,7 +97,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		emitRenderModule,
 		expectTestFailures,
 		options: optionsBlock,
-		visibleExternals
+		visibleExternals,
+		diagnostics
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
@@ -145,7 +148,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kindEntries && renderRules && sitePreferences
 			? addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock)
 			: undefined;
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, diagnostics });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -269,8 +272,9 @@ function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDisp
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
 				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
-			case 'token':
-				if (node instanceof AssembledToken) break;
+			case 'keyword':
+			case 'punctuation':
+				if (isHiddenPunctuationLeaf(node)) break;
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);

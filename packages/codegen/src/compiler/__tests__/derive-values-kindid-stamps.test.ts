@@ -17,7 +17,7 @@
 
 import { CHOICE, PATTERN, STRING, SUPERTYPE, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import { AssembledKeyword, AssembledToken, deriveValuesForRule, type DeriveCtx } from '../model/node-map.ts';
+import { AssembledKeyword, AssembledPunctuation, deriveValuesForRule, type DeriveCtx } from '../model/node-map.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import type { Rule, StringRule } from '../../types/rule.ts';
 
@@ -162,7 +162,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 	});
 });
 
-describe('AssembledKeyword / AssembledToken — construction-time id stamp', () => {
+describe('AssembledKeyword / AssembledPunctuation — construction-time id stamp', () => {
 	it('AssembledKeyword reads resolvedKindId from the stamp, not the catalog', () => {
 		// Catalog resolves 'type' to the ANON twin id 3 — the stamp deliberately disagrees.
 		const rule: StringRule = { type: STRING, value: 'type', resolvedKindId: 999 };
@@ -173,9 +173,9 @@ describe('AssembledKeyword / AssembledToken — construction-time id stamp', () 
 		expect(node.resolvedKind).toBeUndefined();
 	});
 
-	it('AssembledToken reads resolvedKindId from the stamp, not the catalog', () => {
+	it('AssembledPunctuation reads resolvedKindId from the stamp, not the catalog', () => {
 		const rule: StringRule = { type: STRING, value: 'type', resolvedKindId: 999 };
-		const node = new AssembledToken('type', rule as unknown as StringRule<'link'>, { kindEntries });
+		const node = new AssembledPunctuation('type', rule as unknown as StringRule<'link'>, { kindEntries });
 		expect(node.resolvedKindId).toBe(999);
 		expect(node.resolvedKind).toBeUndefined();
 	});

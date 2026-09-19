@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, splice, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -83,11 +83,42 @@ export default grammar(
 				},
 
 				_: {
-					'_/separator/","/before': preference('tight'),
-					'_/separator/";"/before': preference('tight'),
 					'_/separator/"+"/before': preference('space'),
 					'_/separator/"+"/after': preference('space'),
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'".."/before': preference('tight'),
+					'".."/after': preference('tight'),
+					'"..="/before': preference('tight'),
+					'"..="/after': preference('tight'),
+					'"..."/before': preference('tight'),
+					'"..."/after': preference('tight'),
+					'","/before': preference('tight'),
+					'_/separator/","/before': preference('tight'),
+					'_/separator/";"/before': preference('tight'),
+					'";"/before': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
+					'"::"/before': preference('tight'),
+					'"::"/after': preference('tight'),
+					'"<"/before': preference('tight'),
+					'"<"/after': preference('tight'),
+					'">"/before': preference('tight'),
+					'"!"/before': preference('tight'),
+					'"!"/after': preference('tight'),
+					'"&"/after': preference('tight'),
+					'"#"/after': preference('tight'),
+					'"$"/after': preference('tight'),
+					'"\'"/before': preference('tight'),
+					'"\'"/after': preference('tight'),
 					'"->"/before': preference('space'),
 					'"->"/after': preference('space'),
 					'"="/before': preference('space'),
@@ -95,26 +126,21 @@ export default grammar(
 					'"=>"/before': preference('space'),
 					'"=>"/after': preference('space'),
 					'operator:/before': preference('space'),
-					'operator:/after': preference('space'),
-					'"if"/after': preference('space'),
-					'"in"/after': preference('space')
+					'operator:/after': preference('space')
 				},
+
+				struct_pattern: { '"{"/before': preference('tight') },
+				macro_invocation: { '"!"/after': preference('tight') },
+				visibility_modifier_pub: { '"pub"/after': preference('tight') },
+				self_parameter: { 'reference:/after': preference('tight') },
+				variadic_parameter: { '"..."/before': preference('space') },
+				closure_parameters: { '"|"/after': preference('tight'), '"|"/before': preference('tight'), after: preference('space') },
 
 				source_file: {
 					'statements:/separator': preference('tight'),
 					'statements:/(_)/after': preference('blankline'),
 					'statements:/(attribute_item)/after': preference('newline')
 				},
-
-				delim_token_tree_brace: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_bracket: { 'delim_tokens:/separator': preference('tight') },
-				delim_token_tree_paren: { 'delim_tokens:/separator': preference('tight') },
-				token_tree_brace: { 'tokens:/separator': preference('tight') },
-				token_tree_bracket: { 'tokens:/separator': preference('tight') },
-				token_tree_paren: { 'tokens:/separator': preference('tight') },
-				token_tree_pattern_brace: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_bracket: { 'token_patterns:/separator': preference('tight') },
-				token_tree_pattern_paren: { 'token_patterns:/separator': preference('tight') },
 
 				block: { before: preference('space'), 'statements:/end': preference('newline') },
 				match_block: { before: preference('space') },
@@ -130,8 +156,9 @@ export default grammar(
 
 				range_expression_binary: { 'operator:/before': preference('tight'), 'operator:/after': preference('tight') },
 				range_expression_prefix: { 'operator:/after': preference('tight') },
+				range_expression_postfix: { 'operator:/before': preference('tight') },
 				unary_expression: { 'operator:/after': preference('tight') },
-				token_tree_punctuation: { '","/after': preference('space') },
+				token_tree_punctuation: { '","/after': preference('space'), '"..."/before': preference('space'), '"..."/after': preference('space') },
 
 				_bindings: {
 					'block/"{"/after': 'body/before',
@@ -207,6 +234,7 @@ export default grammar(
 				},
 				last_match_arm: {
 					'0': field('attributes'),
+					'1': splice(),
 					'4/0': field('comma')
 				},
 
@@ -236,6 +264,11 @@ export default grammar(
 				},
 
 				closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
+
+				// A braced, named-field body (`{ x: i32 }`) is what a bare array of
+				// field configs means; the parenthesized, ordered-tuple body stays
+				// reachable by building it explicitly.
+				enum_variant: { '2/0/0/0': arm.default },
 
 				reference_expression: { '1/0/0': variant('raw_const'), '1/0/1': variant('raw_mut'), '1/0/2': variant('mut') },
 
@@ -400,7 +433,7 @@ export default grammar(
 					'2/1': variant('body')
 				},
 
-				match_arm: [{ 0: field('attributes') }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
+				match_arm: [{ 0: field('attributes'), 1: splice() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
 				// `///` and `//!` reach this choice as separate arms: their
 				// outer/inner marker fields are alternatives, which enrich
@@ -661,9 +694,11 @@ export default grammar(
 					)
 			},
 			renderAs: (_$) => ({
-				_inner_line_doc_comment_marker: string('!'),
-				_outer_block_doc_comment_marker: string('*'),
-				_inner_block_doc_comment_marker: string('!')
+				_inner_line_doc_comment_marker: token.immediate('!'),
+				_outer_block_doc_comment_marker: token.immediate('*'),
+				_inner_block_doc_comment_marker: token.immediate('!'),
+				_line_doc_content: token.immediate(/.*/),
+				_block_comment_content: token.immediate(/[^]*/)
 			})
 		},
 		enrichedBase

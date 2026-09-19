@@ -25,3 +25,76 @@ so this must mirror `KindEntryLike` exactly, not just `symbolName`/`anon`.
 ### `packages/tools/src/emit/factory-source.ts::mountPrinter`
 
 The printer for a form reached through a parent's mount route (`ir.<parent>.<mount>.strict(...)`): each argument is printed as a seated config when it is an object and as a direct value otherwise. Arguments are printed only up to the last one that is defined, so a form whose optional slot the source left empty prints as `strict()` rather than `strict(undefined)` — the spelling the form's own surface admits.
+
+### `packages/tools/src/emit/factory-source.ts::LooseFacts`
+
+The stamped facts the loose spelling reads, all from `node-model.json5`
+through `loadNodeModel`: `modelTypes` (which kinds are pattern leaves and
+which are compounds), `subtypes` (to expand a slot's supertypes the way the
+coercer's resolver tables are built), `slotDefaults` (the `arm.default`
+kind per slot), `bareAccepts` (what each single-slot wrapper or list admits
+bare, transitively), `forwardsTo`, `listDefaults` (the delimiter a list
+stamps when none is given) and `hoistedKinds`. `nested` is the caller's
+choice for a nested compound: its builder call, or a config object.
+
+### `packages/tools/src/emit/factory-source.ts::PrintedFacts`
+
+What a printed node was made from, kept beside its source so the slot it
+lands in can spell it looser: a text leaf's `text`, a single-slot wrapper's
+`inner` value (in its strict spelling, since a dropped wrapper hands it to
+the parent's slot), a list's `elements` with the options bag it was given,
+and a config-shaped node's printed `config` object.
+
+### `packages/tools/src/emit/factory-source.ts::callSpelling`
+
+The strict flavor is named (`.strict`); the loose flavor is the bundle's
+own call, and every mount and variant route is callable the same way, so
+nothing ever spells `.coerce`.
+
+### `packages/tools/src/emit/factory-source.ts::loosenAt`
+
+Applies the loose rules to what a slot holds once the strict wrapping has
+run: a `multiple` slot per element, since the runtime resolves each element
+on its own. Without loose facts, or at a slot the model does not declare,
+the value passes unchanged.
+
+### `packages/tools/src/emit/factory-source.ts::loosenValue`
+
+The loosest spelling of a printed node at a slot, in the order the runtime
+resolves a value. A single-slot wrapper is dropped when its inner value is
+not admitted directly and exactly one arm of the slot admits it bare — and
+that arm is the wrapper itself, or the runtime would build a different
+wrapper. A list envelope with default options is its bare array when the
+slot's one branch kind, or its declared default arm, is the envelope (or a
+direct wrapper whose sole slot is the envelope, which the runtime unwraps
+the same way). A text leaf is its bare string when the slot admits exactly
+one pattern kind, or when the one branch kind (or default) that a string
+can reach admits exactly one pattern kind. A config-shaped node with a flat
+`ir` key prints as its config object under `nested: 'configs'`: keyless when
+the slot has one branch kind, keyed `kind: TSKindId.<Member>` otherwise. A
+node carrying trivia keeps its call, since only a call takes `$trivia`.
+
+#### one element
+
+A list envelope with default options prints as its bare element when it holds exactly one element that prints as a call or text, and as the array otherwise. An element that prints as an object or an array keeps the array, since an object at a list slot is one element's config and an array is the elements.
+
+### `packages/tools/src/emit/factory-source.ts::solePatternKind`
+
+The runtime's leaf registry carries no patterns: a bare string resolves to
+the FIRST pattern kind among a slot's leaf kinds whatever the text. A slot
+with exactly one pattern kind is therefore the only one where a bare
+string builds the leaf the strict spelling names.
+
+### `packages/tools/src/emit/factory-source.ts::listOptionsAreDefault`
+
+Whether a list's options bag restates what the factory stamps on its own:
+no separator, and either no delimiter or the list's `defaultDelimiter`. Such
+a bag is dropped from the loose call, and the list may then print as a bare
+array.
+
+### `packages/tools/src/emit/factory-source.ts::placeDirectArg`
+
+A single-slot kind's argument in both spellings: the strict form is what the
+argument is when the wrapper is dropped and it lands on the parent's slot,
+where the parent's rules decide its spelling afresh; the loose form is its
+spelling inside the wrapper's own call.

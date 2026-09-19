@@ -1,11 +1,12 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { RenderRules } from '../compiler/model/render-rules.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 import { RenderModuleEmitter } from './render-module.ts';
 import { TemplateEmitter } from './templates.ts';
-import { AssembledKeyword, AssembledSupertype } from '../compiler/model/node-map.ts';
+import { AssembledSupertype } from '../compiler/model/node-map.ts';
 
 export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
@@ -31,8 +32,9 @@ export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): Re
 				templateEmitter.emitLeaf?.(node);
 				renderModuleEmitter.emitLeaf?.(node);
 				break;
-			case 'token':
-				if (node instanceof AssembledKeyword) {
+			case 'keyword':
+			case 'punctuation':
+				if (isWordOrVisibleTextLeaf(node)) {
 					templateEmitter.emitLeaf?.(node);
 					renderModuleEmitter.emitLeaf?.(node);
 				}

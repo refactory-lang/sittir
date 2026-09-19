@@ -206,6 +206,9 @@ importers:
       '@sittir/types':
         specifier: workspace:*
         version: link:../types
+      '@sittir/typescript':
+        specifier: workspace:*
+        version: link:../typescript
     devDependencies:
       '@types/node':
         specifier: ^25.6.0

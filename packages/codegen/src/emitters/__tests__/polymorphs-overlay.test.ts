@@ -7,6 +7,7 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { emitPolymorphsOverlay } from '../overlays/polymorphs.ts';
+import { listRestParamType } from '../shared.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -113,6 +114,32 @@ function polymorphNodeMap(): NodeMap {
 	});
 }
 
+function parameterlessArmNodeMap(): NodeMap {
+	return buildNodeMap({
+		root: { type: SYMBOL, name: 'pair' },
+		pair: {
+			type: SEQ,
+			members: [
+				{ type: FIELD, name: 'first', content: { type: SYMBOL, name: 'identifier' } },
+				{
+					type: FIELD,
+					name: 'content',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: SYMBOL, name: 'kw_self' },
+							{ type: SYMBOL, name: 'kw_super' }
+						]
+					}
+				}
+			]
+		},
+		kw_self: { type: STRING, value: 'self' },
+		kw_super: { type: STRING, value: 'super' },
+		identifier: { type: PATTERN, value: '[a-z]+' }
+	});
+}
+
 function ambiguousNodeMap(): NodeMap {
 	return buildNodeMap({
 		grandparent_c: {
@@ -184,6 +211,14 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).toContain(
 			"	plus: { strict: annotated$plus(F.buildAnnotated, 'plus'), coerce: annotated$plus(C.coerceToAnnotated, 'plus') },"
 		);
+	});
+
+	it('stamps a parameterless child into its slot instead of asking the caller for an empty argument tuple', () => {
+		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
+
+		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>");
+		expect(text).toContain('{ ...config, content: _c(child)() }');
+		expect(text).not.toContain('_c(child)(...seated)');
 	});
 
 	it('prints an emit diagnostic for a skipped sub-factory on its own console.warn channel', () => {
@@ -381,5 +416,57 @@ describe('a mount route carries the seats of its own parent', () => {
 		expect(out).toContain('const clause$seated');
 		expect(out).toContain('clause$block(clause$seated,');
 		expect(out).not.toContain('clause$block(F.buildClause,');
+	});
+});
+
+describe('a visible wrapper declared spliced seats on its parent', () => {
+	const wrapperGrammar = (): NodeMap =>
+		buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'match' }, { type: SYMBOL, name: 'arm' }] },
+			arm: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'pattern',
+						content: { type: SYMBOL, name: 'wrapper' },
+						annotations: { spliced: true }
+					},
+					{ type: STRING, value: '=>' },
+					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[a-z]+' } }
+				]
+			},
+			wrapper: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: OPTIONAL, content: { type: FIELD, name: 'condition', content: { type: PATTERN, value: '[a-z]+' } } }
+				]
+			}
+		});
+
+	it('passes a value that is already the wrapper through and builds anything else into it', () => {
+		const out = emitPolymorphsOverlay({
+			nodeMap: wrapperGrammar(),
+			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
+		});
+		expect(out).toContain('const arm$splice =');
+		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
+		expect(out).toContain('const own = _o(config)["pattern"];');
+		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
+		expect(out).toMatch(/= arm\$splice\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toContain("import { TSKindId } from '../../types.js';");
+	});
+});
+
+describe('a list takes its rest parameter by cardinality and options', () => {
+	it('requires an element from a non-empty list and puts the options object first', () => {
+		expect(listRestParamType(true, 'E', undefined)).toBe('[first: E, ...rest: E[]]');
+		expect(listRestParamType(true, 'E', 'O')).toBe('[first: E, ...rest: E[]] | [options: O, first: E, ...rest: E[]]');
+	});
+
+	it('lets an empty-capable list take nothing, or only its options', () => {
+		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
+		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
 	});
 });

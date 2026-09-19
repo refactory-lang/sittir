@@ -113,7 +113,7 @@ describe('planRenderOptions', () => {
 			';'
 		]);
 		const addresses = deriveAddressTables([...sites, site], entries, kindIdArmType(entries as never), (() => []) as never);
-		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", 20, &[14, 20]),');
+		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", 20, &[14, 20], 2),');
 	});
 
 	it('an arm without a kind id fails loudly', () => {
@@ -156,7 +156,7 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
 		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 2;');
-		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169]),');
+		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169], 0),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');

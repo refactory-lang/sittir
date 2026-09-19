@@ -24,7 +24,14 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// the sink re-resolves at write time against the same table.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         match self {
-            SlotValue::Coord(coord) => coord.resolve(ctx.sources).map(|_| ()),
+            SlotValue::Coord(coord) => {
+                coord.resolve(ctx.sources)?;
+                coord.edges = ctx
+                    .sources
+                    .kind_of(coord)
+                    .and_then(|kind| ctx.options.edge_arms(kind));
+                Ok(())
+            }
             SlotValue::Transport(t) => t.prepare(ctx),
         }
     }

@@ -24,13 +24,14 @@ import { runFullRegen, runCodegen, runStandaloneSteps } from '@sittir/codegen/ru
 import { emitParityFixtures } from '@sittir/tools';
 
 describe('gen command', () => {
-	it('registers a single gen command with --grammar/--all/--output/--nodes', () => {
+	it('registers a single gen command with --grammar/--all/--output', () => {
 		const program = new Command();
 		gen.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'gen')!;
 		expect(cmd).toBeDefined();
 		const longs = cmd.options.map((o) => o.long);
-		expect(longs).toEqual(expect.arrayContaining(['--grammar', '--all', '--output', '--nodes']));
+		expect(longs).toEqual(expect.arrayContaining(['--grammar', '--all', '--output']));
+		expect(longs).not.toContain('--nodes');
 	});
 	it('routes --all to runFullRegen with mapped opts', async () => {
 		vi.clearAllMocks();
@@ -43,15 +44,15 @@ describe('gen command', () => {
 		expect(vi.mocked(runCodegen)).not.toHaveBeenCalled();
 		expect(vi.mocked(emitParityFixtures)).toHaveBeenCalledWith('rust');
 	});
-	it('routes --nodes (no --all) to runCodegen', async () => {
+	it('routes plain --grammar/--output (no --all) to runCodegen', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		gen.register(program);
-		await program.parseAsync(['gen', '--grammar', 'rust', '--nodes', 'struct_item', '--output', 'packages/rust/src'], {
+		await program.parseAsync(['gen', '--grammar', 'rust', '--output', 'packages/rust/src'], {
 			from: 'user'
 		});
 		expect(vi.mocked(runCodegen)).toHaveBeenCalledWith(
-			expect.objectContaining({ grammar: 'rust', nodes: ['struct_item'], outputDir: 'packages/rust/src' })
+			expect.objectContaining({ grammar: 'rust', outputDir: 'packages/rust/src' })
 		);
 		expect(vi.mocked(runFullRegen)).not.toHaveBeenCalled();
 	});
@@ -80,7 +81,7 @@ describe('gen command', () => {
 		// binary to run against — the action must skip it, not emit stale.
 		expect(vi.mocked(emitParityFixtures)).not.toHaveBeenCalled();
 	});
-	it('runs standalone --transpile with only --grammar (no --output/--nodes/--all)', async () => {
+	it('runs standalone --transpile with only --grammar (no --output/--all)', async () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		gen.register(program);

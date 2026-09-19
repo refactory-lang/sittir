@@ -3,6 +3,8 @@ import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '.
 import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { flatten } from './flatten.ts';
+import { runToFixpoint } from './fixpoint.ts';
+import { DedupedCollector } from './model/node-map.ts';
 import type { AttributeBuilder } from '../dsl/builders.ts';
 import { withAttrsFrom, withKindFacts, sharedArmAttrs, absorbIds, structuralKey } from '../dsl/rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
@@ -14,17 +16,20 @@ export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly builder: AttributeBuilder;
 	readonly inlineKinds: ReadonlySet<string>;
 	readonly polymorphSkipExtra?: ReadonlySet<string>;
+	readonly slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
 	constructor(
 		init: BaseCtxInit<'normalize'> & {
 			builder?: AttributeBuilder;
 			inlineKinds?: ReadonlySet<string>;
 			polymorphSkipExtra?: ReadonlySet<string>;
+			slotGroupingCollector?: DedupedCollector<SlotGroupingDiagnostic>;
 		}
 	) {
 		super(init);
 		this.builder = init.builder ?? attributeBuilder;
 		this.inlineKinds = init.inlineKinds ?? new Set();
 		this.polymorphSkipExtra = init.polymorphSkipExtra;
+		this.slotGroupingCollector = init.slotGroupingCollector;
 	}
 
 	get rules(): Record<string, RenderRule> {
@@ -193,28 +198,10 @@ export function assertUniversalShapeRule(rule: SimplifiedRule, kind: string): vo
 	}
 }
 
-const _slotGroupingDiagnostics: SlotGroupingDiagnostic[] = [];
-const _slotGroupingSeen = new Set<string>();
-
 const slotGroupingKey = (rec: SlotGroupingDiagnostic): string => `${rec.ownerKind} ${rec.code}`;
 
-function recordSlotGroupingDiagnostic(rec: SlotGroupingDiagnostic): boolean {
-	const key = slotGroupingKey(rec);
-	if (_slotGroupingSeen.has(key)) return false;
-	_slotGroupingSeen.add(key);
-	_slotGroupingDiagnostics.push(rec);
-	return true;
-}
-
-export function resetSlotGroupingDiagnostics(): void {
-	_slotGroupingDiagnostics.length = 0;
-	_slotGroupingSeen.clear();
-}
-
-export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
-	const out = [..._slotGroupingDiagnostics];
-	resetSlotGroupingDiagnostics();
-	return out;
+export function makeSlotGroupingCollector(): DedupedCollector<SlotGroupingDiagnostic> {
+	return new DedupedCollector<SlotGroupingDiagnostic>(slotGroupingKey);
 }
 
 export function makeDefaultCtx(): SimplifyCtx {
@@ -298,7 +285,7 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 
 	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds, polymorphSkipExtra);
 	for (const rec of slotDiagnostics) {
-		const isNew = recordSlotGroupingDiagnostic(rec);
+		const isNew = ctx.slotGroupingCollector?.record(rec) ?? false;
 		if (isNew && ctx?.diagnostics) {
 			ctx.diagnostics.info({
 				code: rec.code,
@@ -318,16 +305,18 @@ function simplifyToFixpoint(
 	rules: Readonly<Record<string, RenderRule>>
 ): RenderRule {
 	const ictx: InlineRefsCtx = { rules, inlineKinds: ctx?.inlineKinds };
-	const MAX_ITERS = 16;
 	let current = rule;
-	for (let i = 0; i < MAX_ITERS; i++) {
-		const next = simplifyRule(inlineRefs(current, ictx), ctx);
-		if (rulesStructurallyEqual(current, next)) return next;
-		current = next;
-	}
-	console.warn(
-		`[simplify] simplifyToFixpoint: ${MAX_ITERS} iterations reached without convergence — returning last iteration`
-	);
+	runToFixpoint({
+		name: 'simplify.simplifyToFixpoint',
+		cap: 16,
+		diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+		step: () => {
+			const next = simplifyRule(inlineRefs(current, ictx), ctx);
+			const changed = !rulesStructurallyEqual(current, next);
+			current = next;
+			return changed;
+		}
+	});
 	return current;
 }
 
