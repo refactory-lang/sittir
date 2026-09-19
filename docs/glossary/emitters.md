@@ -15985,8 +15985,11 @@ The rest parameter of a separated list's loose coercer and seated overlay, from 
 The slot structure of a lexed kind, derived once from its render rule and its slots: an ordered list of
 literal, flag, enum and slot entries, the anchored regex with one named group per slot, and the config key of
 each slot. `node-model.json5`, `TOKEN_INTERIORS`, the wrap projection, the leaf registry and the per-slot
-guards all read this; nothing re-derives it. An optional member that the neighbouring slot pattern could
-absorb is a compile-time error naming the kind and the two members.
+guards all read this; nothing re-derives it. Slots are matched left to right, each greedy (the regex's own
+semantics, the lexer's longest match over the whole token). A lexed kind whose render rule is not a sequence, or
+whose member is neither template text nor a slot, is a compile-time error naming the kind and the member. An
+optional literal followed by a literal it cannot be told apart from at their first differing character is a
+compile-time error naming both.
 ```
 
 ### `packages/codegen/src/emitters/consts.ts::emitTokenInteriors`

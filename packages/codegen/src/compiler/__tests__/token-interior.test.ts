@@ -26,6 +26,21 @@ describe('structureTokenInterior — token(seq(…))', () => {
 		expect(members[1]).toMatchObject({ type: FIELD, name: 'content', content: { type: PATTERN } });
 	});
 
+	it('finds a pattern under an authored field and keeps that field name as the slot name', () => {
+		const members = membersOf(
+			structured(token(seq(str('#'), { type: FIELD, name: 'name', content: pat('[a-z]+') } as LinkRule)))
+		);
+		expect(members[0]).toMatchObject({ type: STRING, value: '#' });
+		expect(members[1]).toMatchObject({ type: FIELD, name: 'name', content: { type: PATTERN } });
+	});
+
+	it('keeps an authored field beside a plain pattern run as its own slot', () => {
+		const members = membersOf(
+			structured(token(seq(str('#'), pat('[0-9]'), { type: FIELD, name: 'tail', content: pat('[a-z]') } as LinkRule)))
+		);
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual([undefined, 'content', 'tail']);
+	});
+
 	it('makes an optional string a presence flag named by its text', () => {
 		const members = membersOf(
 			structured(token(seq({ type: OPTIONAL, content: str('b') } as LinkRule, str("'"), pat('[a-z]'), str("'"))))

@@ -31,10 +31,15 @@ function containsPattern(rule: LinkRule): boolean {
 		case CHOICE:
 			return rule.members.some(containsPattern);
 		case OPTIONAL:
+		case FIELD:
 			return containsPattern(rule.content);
 		default:
 			return false;
 	}
+}
+
+function isField(rule: LinkRule): rule is LinkRule & { type: typeof FIELD } {
+	return rule.type === FIELD;
 }
 
 function memberClass(rule: LinkRule): Member {
@@ -75,7 +80,9 @@ function structureSeq(
 	const classes = seq.members.map(memberClass);
 	if (!seq.members.some((m, i) => classes[i] === 'slot' && containsPattern(m))) return undefined;
 	if (!classes.some((c) => c === 'template' || c === 'flag' || c === 'enum')) return undefined;
-	const slotCount = classes.filter((c, i) => c === 'slot' && classes[i - 1] !== 'slot').length;
+	const slotCount = classes.filter(
+		(c, i) => c === 'slot' && !isField(seq.members[i]!) && (classes[i - 1] !== 'slot' || isField(seq.members[i - 1]!))
+	).length;
 	const out: LinkRule[] = [];
 	let slotSeen = false;
 	for (let i = 0; i < seq.members.length; ) {
@@ -97,12 +104,17 @@ function structureSeq(
 			i += 1;
 			continue;
 		}
-		let end = i;
-		while (end < seq.members.length && classes[end] === 'slot') end += 1;
+		let end = i + 1;
+		if (!isField(member)) {
+			while (end < seq.members.length && classes[end] === 'slot' && !isField(seq.members[end]!)) end += 1;
+		}
 		const run = seq.members.slice(i, end);
-		const composed = composeTokenText({ ...seq, members: run } as LinkRule, lookup);
+		const composed = composeTokenText(
+			isField(member) ? (member.content as LinkRule) : ({ ...seq, members: run } as LinkRule),
+			lookup
+		);
 		if (composed === undefined) return undefined;
-		const name = slotCount === 1 || !slotSeen ? CONTENT_SLOT : `${CONTENT_SLOT}${out.length}`;
+		const name = isField(member) ? member.name : slotCount === 1 || !slotSeen ? CONTENT_SLOT : `${CONTENT_SLOT}${out.length}`;
 		out.push(fieldOf(name, { type: PATTERN, value: composed, id: run[0]!.id } as LinkRule, run[0]!.id));
 		slotSeen = true;
 		i = end;

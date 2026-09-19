@@ -31,10 +31,15 @@ function attrsOf(rule: RenderRule): { readonly fieldName?: string; readonly valu
 	return rule as never;
 }
 
-function optionalTexts(entry: InteriorEntry): readonly string[] {
+function literalTexts(entry: InteriorEntry): readonly string[] {
+	if ('lit' in entry) return [entry.lit];
 	if ('flag' in entry) return [entry.text];
-	if ('enum' in entry && entry.optional) return entry.values;
+	if ('enum' in entry) return entry.values;
 	return [];
+}
+
+function isOptionalLiteral(entry: InteriorEntry): boolean {
+	return 'flag' in entry || ('enum' in entry && entry.optional);
 }
 
 function memberName(entry: InteriorEntry): string {
@@ -46,41 +51,42 @@ function memberName(entry: InteriorEntry): string {
 export function assertUnambiguous(kind: string, entries: readonly InteriorEntry[]): void {
 	entries.forEach((entry, i) => {
 		const next = entries[i + 1];
-		const prev = entries[i - 1];
-		for (const text of optionalTexts(entry)) {
-			if (next !== undefined && 'slot' in next && new RegExp('^(?:' + next.pattern + ')', 'su').test(text)) {
-				throw new Error(
-					`token interior: '${kind}' is ambiguous — ${memberName(entry)} (${JSON.stringify(text)}) is also a prefix of what ${memberName(next)} accepts`
-				);
-			}
-			if (prev !== undefined && 'slot' in prev && new RegExp('^(?:' + prev.pattern + ')$', 'su').test(text)) {
-				throw new Error(
-					`token interior: '${kind}' is ambiguous — ${memberName(entry)} (${JSON.stringify(text)}) is also all that ${memberName(prev)} accepts`
-				);
+		if (next === undefined || !isOptionalLiteral(entry)) return;
+		for (const present of literalTexts(entry)) {
+			for (const following of literalTexts(next)) {
+				if (following.startsWith(present) || present.startsWith(following)) {
+					throw new Error(
+						`token interior: '${kind}' is ambiguous — ${memberName(entry)} (${JSON.stringify(present)}) and ${memberName(next)} (${JSON.stringify(following)}) are not distinguishable at their first differing character`
+					);
+				}
 			}
 		}
 	});
 }
 
+function unsupported(kind: string, why: string): never {
+	throw new Error(`token interior: '${kind}' is a lexed kind but ${why}`);
+}
+
 export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
 	const rule = node.renderRule;
-	if (rule.type !== SEQ) return undefined;
+	if (rule.type !== SEQ) unsupported(node.kind, `its render rule is a ${rule.type}, not a sequence of literals and slots`);
 	const entries: InteriorEntry[] = [];
 	for (const member of rule.members) {
 		const { fieldName, value } = attrsOf(member);
 		if (fieldName === undefined) {
-			if (member.type !== STRING || value === undefined) return undefined;
+			if (member.type !== STRING || value === undefined) unsupported(node.kind, `member of type ${member.type} is neither template text nor a slot`);
 			entries.push({ lit: value });
 			continue;
 		}
 		const slot = node.slots.find((s) => s.name === fieldName);
-		if (slot === undefined) return undefined;
+		if (slot === undefined) unsupported(node.kind, `member '${fieldName}' names no slot of the kind`);
 		if (member.type === PATTERN && value !== undefined) entries.push({ slot: slot.name, pattern: value });
 		else if (member.type === STRING && value !== undefined) entries.push({ flag: slot.name, text: value });
 		else if (member.type === CHOICE) {
 			entries.push({ enum: slot.name, values: [...new Set(slotLiteralValues(slot))], optional: !isRequired(slot) });
-		} else return undefined;
+		} else unsupported(node.kind, `member '${fieldName}' of type ${member.type} is not a pattern, a literal or an enum of literals`);
 	}
 	assertUnambiguous(node.kind, entries);
 	const configKeyOf = (name: string): string => node.slots.find((s) => s.name === name)!.configKey;

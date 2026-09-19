@@ -11175,6 +11175,13 @@ A bare pattern that draws named groups becomes a lexed seq of literal runs and g
 group stays whole-text, and a group beside non-literal top-level regex is an error.
 ```
 
+#### authored field
+
+```text
+A pattern under an authored `field(name, ...)` inside the token counts toward the gate and keeps that name as its slot name;
+it is its own slot and never merges with a neighbouring pattern run.
+```
+
 ### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
 
 ```text

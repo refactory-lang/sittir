@@ -77,7 +77,7 @@ shape). Anything else is a compile-time diagnostic.
 | --- | --- | --- |
 | token → literals only | nothing stored; the text is fixed | `_automatic_semicolon`, doc-comment markers (`renderAs`) |
 | token → literals around one slot | strip prefix and suffix, store content | `char_literal`, `shebang`, `#name`, `escape_sequence`, python `comment` |
-| token → literals and several slots | anchored match of the model rule's patterns | rust `integer_literal` (content and an optional suffix enum) |
+| token → literals and several slots | anchored match of the model rule's patterns, slots left to right, each greedy | rust `integer_literal` (content and an optional suffix enum) |
 | compound → text | store the whole span | `raw_string_literal` (the hybrid kind of the text-content design) |
 | compound → compound, same slots | none; a render-only difference | separator and seam spacing, already derived rather than authored |
 
@@ -85,6 +85,15 @@ The second row needs no regex engine on the native side: the affixes are
 literals of known length. The third row is one anchored expression with a named group per slot,
 serialized once (`interiorOf`) and matched by `projectInterior` in the wrap
 layer; the native crates keep the token whole and carry no regex dependency.
+
+The match is the regex's own: slots take their text left to right, each greedy, which
+is the longest match the lexer applies to the whole token. Rust `1u8` is content
+`1` and suffix `u8`; `0x1f32` is content `0x1f32` and no suffix, because the hex
+digits take `1f32` before a suffix can, as rustc reads it. Every split of a token
+re-renders to the same bytes, so byte-identity never depends on the split; only the
+accessor value does, and greedy is its definition. The compile-time diagnostic is
+for the one case a reader cannot decide: an optional literal followed by a literal
+that the two cannot be told apart at their first differing character.
 
 ## Two transports, one fact
 
