@@ -13708,6 +13708,8 @@
       "factoryName": "htmlComment",
       "irKey": "htmlComment",
       "hidden": false,
+      "pattern": "<!--[\\s\\S]*?-->",
+      "leafPattern": "/^(?:(?:<!--[\\s\\S]*?-->))$/u",
       "factoryShape": "text"
     },
     {
@@ -15421,6 +15423,8 @@
       "factoryName": "jsxText",
       "irKey": "jsxText",
       "hidden": false,
+      "pattern": "[^{}<>]+",
+      "leafPattern": "/^(?:(?:[^{}<>]+))$/u",
       "factoryShape": "text"
     },
     {

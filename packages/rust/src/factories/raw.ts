@@ -27,6 +27,10 @@ const _leafRe_buildFieldIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Conti
 const _leafRe_buildStringLiteralOpen = /^(?:(?:[bc]?"))$/u;
 const _leafRe_buildLineCommentRegularDslash = /^(?:(?:\/\/)(?:.*))$/u;
 const _leafRe_buildLineCommentContent = /^(?:(?:.*))$/u;
+const _leafRe_buildFloatLiteral =
+	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
+const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
+const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
 const _leafRe_buildLineDocContent = /^(?:(?:.*))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
 const _slotRe_buildIntegerLiteral_content =
@@ -7334,6 +7338,48 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	);
 }
 
+export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
+	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
+	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.FloatLiteral as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildStringContent(text: string): T.StringContent.Built {
+	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
+	if (!_leafRe_buildStringContent.test(text)) throw new Error(`string_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
+	if (!_leafRe_buildRawStringLiteralContent.test(text))
+		throw new Error(`raw_string_literal_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.RawStringLiteralContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildLineDocContent(text: string): T.LineDocContent.Built {
 	if (!_leafRe_buildLineDocContent.test(text))
 		throw new Error(`_line_doc_content: text does not match pattern: ${text}`);
@@ -7362,19 +7408,6 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bu
 	);
 }
 
-export function buildStringContent(text: string): T.StringContent.Built {
-	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.StringContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Built {
 	if (text.length === 0) throw new Error(`_raw_string_literal_start: text must be non-empty`);
 	return withMethods(
@@ -7388,37 +7421,11 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	);
 }
 
-export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
-	if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
 	if (text.length === 0) throw new Error(`_raw_string_literal_end: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralEnd as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
-	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.FloatLiteral as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7670,13 +7677,13 @@ export type FluentKindMap = {
 	_attributed_ordered_field: T.AttributedOrderedField.Built;
 	_type_argument: T.TypeArgument.Built;
 	_match_block_arms: T.MatchBlockArms.Built;
+	float_literal: T.FloatLiteral;
+	string_content: T.StringContent;
+	raw_string_literal_content: T.RawStringLiteralContent;
 	_line_doc_content: T.LineDocContent;
 	_block_comment_content: T.BlockCommentContent;
-	string_content: T.StringContent;
 	_raw_string_literal_start: T.RawStringLiteralStart;
-	raw_string_literal_content: T.RawStringLiteralContent;
 	_raw_string_literal_end: T.RawStringLiteralEnd;
-	float_literal: T.FloatLiteral;
 	_error_sentinel: T.ErrorSentinel;
 };
 
@@ -7910,13 +7917,13 @@ export const _factoryMap = {
 	_attributed_ordered_field: buildAttributedOrderedField,
 	_type_argument: buildTypeArgument,
 	_match_block_arms: buildMatchBlockArms,
+	float_literal: buildFloatLiteral,
+	string_content: buildStringContent,
+	raw_string_literal_content: buildRawStringLiteralContent,
 	_line_doc_content: buildLineDocContent,
 	_block_comment_content: buildBlockCommentContent,
-	string_content: buildStringContent,
 	_raw_string_literal_start: buildRawStringLiteralStart,
-	raw_string_literal_content: buildRawStringLiteralContent,
 	_raw_string_literal_end: buildRawStringLiteralEnd,
-	float_literal: buildFloatLiteral,
 	_error_sentinel: buildErrorSentinel
 } as const;
 export type _FactoryMap = typeof _factoryMap;

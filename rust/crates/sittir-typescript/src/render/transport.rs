@@ -323,6 +323,8 @@ pub enum AnyTransport {
     ForHeaderLhs(ForHeaderLhsTransport),
     ForHeaderVarKind(ForHeaderVarKindTransport),
     ForHeaderLetConstKind(ForHeaderLetConstKindTransport),
+    HtmlComment(HtmlCommentTransport),
+    JsxText(JsxTextTransport),
     TemplateChars(TemplateCharsTransport),
     AutomaticSemicolon(AutomaticSemicolonTransport),
     FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
@@ -333,8 +335,6 @@ pub enum AnyTransport {
     Indent(IndentTransport),
     Dedent(DedentTransport),
     TernaryQmark(TernaryQmarkTransport),
-    HtmlComment(HtmlCommentTransport),
-    JsxText(JsxTextTransport),
     ErrorRecovery(ErrorRecoveryTransport),
     Star(StarTransport),
     AsKeyword(AsKeywordTransport),
@@ -832,6 +832,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ForHeaderLhs(t) => t.prepare(ctx),
             AnyTransport::ForHeaderVarKind(t) => t.prepare(ctx),
             AnyTransport::ForHeaderLetConstKind(t) => t.prepare(ctx),
+            AnyTransport::HtmlComment(t) => t.prepare(ctx),
+            AnyTransport::JsxText(t) => t.prepare(ctx),
             AnyTransport::TemplateChars(t) => t.prepare(ctx),
             AnyTransport::AutomaticSemicolon(t) => t.prepare(ctx),
             AnyTransport::FunctionSignatureAutomaticSemicolon(t) => t.prepare(ctx),
@@ -842,8 +844,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Indent(t) => t.prepare(ctx),
             AnyTransport::Dedent(t) => t.prepare(ctx),
             AnyTransport::TernaryQmark(t) => t.prepare(ctx),
-            AnyTransport::HtmlComment(t) => t.prepare(ctx),
-            AnyTransport::JsxText(t) => t.prepare(ctx),
             AnyTransport::ErrorRecovery(t) => t.prepare(ctx),
             AnyTransport::Star(t) => t.prepare(ctx),
             AnyTransport::AsKeyword(t) => t.prepare(ctx),
@@ -2068,6 +2068,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 423 => Ok(AnyTransport::ForHeaderLetConstKind(
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: html_comment (HTML_COMMENT)
+                166 => Ok(AnyTransport::HtmlComment(
+                    HtmlCommentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: jsx_text (JSX_TEXT)
+                167 => Ok(AnyTransport::JsxText(
+                    JsxTextTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _template_chars (_TEMPLATE_CHARS)
                 164 => Ok(AnyTransport::TemplateChars(
                     TemplateCharsTransport::from_napi_value(env, napi_val)?
@@ -2107,14 +2115,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _ternary_qmark (_TERNARY_QMARK)
                 165 => Ok(AnyTransport::TernaryQmark(
                     TernaryQmarkTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: html_comment (HTML_COMMENT)
-                166 => Ok(AnyTransport::HtmlComment(
-                    HtmlCommentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: jsx_text (JSX_TEXT)
-                167 => Ok(AnyTransport::JsxText(
-                    JsxTextTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: __error_recovery (__ERROR_RECOVERY)
                 169 => Ok(AnyTransport::ErrorRecovery(
@@ -70508,6 +70508,190 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderLetConstKindTransport
 }
 
 #[derive(Debug, Clone)]
+pub struct HtmlCommentTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for HtmlCommentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for HtmlCommentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for HtmlCommentTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for HtmlCommentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<HtmlCommentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        HtmlCommentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<HtmlCommentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        HtmlCommentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct JsxTextTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for JsxTextTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for JsxTextTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for JsxTextTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for JsxTextTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxTextTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        JsxTextTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxTextTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        JsxTextTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct TemplateCharsTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -71459,190 +71643,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TernaryQmarkTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         TernaryQmarkTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct HtmlCommentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for HtmlCommentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(166)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for HtmlCommentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for HtmlCommentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for HtmlCommentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for HtmlCommentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<HtmlCommentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        HtmlCommentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<HtmlCommentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        HtmlCommentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct JsxTextTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for JsxTextTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(167)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for JsxTextTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for JsxTextTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxTextTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxTextTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxTextTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxTextTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxTextTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxTextTransport::to_napi_value(env, *val)
     }
 }
 
@@ -88427,6 +88427,14 @@ fn render_for_header_let_const_kind(node: &ForHeaderLetConstKindTransport, w: &m
     Ok(())
 }
 
+fn render_html_comment(t: &HtmlCommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_jsx_text(t: &JsxTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
 fn render_template_chars(t: &TemplateCharsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.adjacent();
     w.text(&t.text)
@@ -88465,14 +88473,6 @@ fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderS
 }
 
 fn render_ternary_qmark(t: &TernaryQmarkTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_html_comment(t: &HtmlCommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_jsx_text(t: &JsxTextTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -89524,6 +89524,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ForHeaderLhs(inner) => inner.kind_in(kinds),
             Self::ForHeaderVarKind(inner) => inner.kind_in(kinds),
             Self::ForHeaderLetConstKind(inner) => inner.kind_in(kinds),
+            Self::HtmlComment(inner) => inner.kind_in(kinds),
+            Self::JsxText(inner) => inner.kind_in(kinds),
             Self::TemplateChars(inner) => inner.kind_in(kinds),
             Self::AutomaticSemicolon(inner) => inner.kind_in(kinds),
             Self::FunctionSignatureAutomaticSemicolon(inner) => inner.kind_in(kinds),
@@ -89534,8 +89536,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Indent(inner) => inner.kind_in(kinds),
             Self::Dedent(inner) => inner.kind_in(kinds),
             Self::TernaryQmark(inner) => inner.kind_in(kinds),
-            Self::HtmlComment(inner) => inner.kind_in(kinds),
-            Self::JsxText(inner) => inner.kind_in(kinds),
             Self::ErrorRecovery(inner) => inner.kind_in(kinds),
             Self::Star(inner) => inner.kind_in(kinds),
             Self::AsKeyword(inner) => inner.kind_in(kinds),
@@ -89929,6 +89929,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ForHeaderLhs(t) => t.render(w),
             AnyTransport::ForHeaderVarKind(t) => t.render(w),
             AnyTransport::ForHeaderLetConstKind(t) => t.render(w),
+            AnyTransport::HtmlComment(t) => t.render(w),
+            AnyTransport::JsxText(t) => t.render(w),
             AnyTransport::TemplateChars(t) => t.render(w),
             AnyTransport::AutomaticSemicolon(t) => t.render(w),
             AnyTransport::FunctionSignatureAutomaticSemicolon(t) => t.render(w),
@@ -89939,8 +89941,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Indent(t) => t.render(w),
             AnyTransport::Dedent(t) => t.render(w),
             AnyTransport::TernaryQmark(t) => t.render(w),
-            AnyTransport::HtmlComment(t) => t.render(w),
-            AnyTransport::JsxText(t) => t.render(w),
             AnyTransport::ErrorRecovery(t) => t.render(w),
             AnyTransport::Star(t) => t.render(w),
             AnyTransport::AsKeyword(t) => t.render(w),

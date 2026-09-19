@@ -47,7 +47,8 @@ import {
 	wordConstructibleText,
 	isAuthoredCompound,
 	listRestParamType,
-	transparentContentKindNames
+	transparentContentKindNames,
+	isAffixedLeaf
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -508,7 +509,8 @@ function emitRepeatedChildrenFrom(
 function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
 	const expanded = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot));
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
-	return leafKinds.length > 0 && branchKinds.length === 0 ? `${elementType} | string` : elementType;
+	const admitsText = leafKinds.length === 1 || leafKinds.some((kind) => !isAffixedLeaf(nodeMap.nodes.get(kind)));
+	return admitsText && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }
 
 function emitSingularChildrenFrom(
@@ -904,6 +906,10 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
+		} else if (isAffixedLeaf(node)) {
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { factory: (content: string) => _resolveByKind(${JSON.stringify(kind)}, content) },`
+			);
 		} else if (interiorOf(node) !== undefined) {
 			const interior = interiorOf(node)!;
 			const shape = classifyFactoryShape(node, nodeMap);
@@ -914,9 +920,10 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			);
 		} else if (node instanceof AssembledPattern) {
 			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { ${literal === undefined ? '' : `pattern: ${literal}, `}factory: ${factory} },`
-			);
+			if (literal === undefined) {
+				throw new Error(`leaf registry: '${kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`);
+			}
+			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: ${factory} },`);
 		}
 	}
 	return registryEntries;
@@ -1053,9 +1060,13 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
-	lines.push('  if (typeof v === "string" && leafKinds.length > 0) {');
-	lines.push('    const leaf = _resolveLeafString(v, leafKinds);');
+	lines.push('  if (typeof v === "string") {');
+	lines.push('    const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);');
 	lines.push('    if (leaf !== undefined) return leaf as T;');
+	lines.push('    if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);');
+	lines.push('    if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {');
+	lines.push("      throw new Error(`_resolveOne: a bare string never picks among affixed leaves [${leafKinds.join(', ')}]; build one with its own factory`);");
+	lines.push('    }');
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
 	lines.push('    const bk = _KEYWORD_BRANCH_BY_TEXT[v];');
@@ -1298,6 +1309,8 @@ function emitResolverHelpers(
 	lines.push('const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {');
 	for (const entry of registryEntries) lines.push(entry);
 	lines.push('};');
+	const affixed = [...nodeMap.nodes].filter(([, node]) => isAffixedLeaf(node)).map(([kind]) => kind);
+	lines.push(`const _AFFIXED_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(affixed)});`);
 	lines.push('');
 
 	lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
@@ -1306,10 +1319,6 @@ function emitResolverHelpers(
 	lines.push('    if (!entry) continue;');
 	lines.push('    if (entry.values && entry.values.includes(v)) return entry.factory(v);');
 	lines.push('    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);');
-	lines.push('  }');
-	lines.push('  for (const kind of kinds) {');
-	lines.push('    const entry = _leafRegistry[kind];');
-	lines.push('    if (entry && !entry.values && !entry.pattern) return entry.factory(v);');
 	lines.push('  }');
 	lines.push('  return undefined;');
 	lines.push('}');

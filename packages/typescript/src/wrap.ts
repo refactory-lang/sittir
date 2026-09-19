@@ -16576,10 +16576,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
-	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
-	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
 	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
+	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
+	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
 	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const })
 };
 
@@ -16856,10 +16856,10 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForHeaderLhs]: ReturnType<typeof wrapForHeaderLhs>;
 	[TSKindId.ForHeaderVarKind]: ReturnType<typeof wrapForHeaderVarKind>;
 	[TSKindId.ForHeaderLetConstKind]: ReturnType<typeof wrapForHeaderLetConstKind>;
-	[TSKindId.TemplateChars]: _NodeData & { readonly $type: TSKindId.TemplateChars };
-	[TSKindId.TernaryQmark]: _NodeData & { readonly $type: TSKindId.TernaryQmark };
 	[TSKindId.HtmlComment]: _NodeData & { readonly $type: TSKindId.HtmlComment };
 	[TSKindId.JsxText]: _NodeData & { readonly $type: TSKindId.JsxText };
+	[TSKindId.TemplateChars]: _NodeData & { readonly $type: TSKindId.TemplateChars };
+	[TSKindId.TernaryQmark]: _NodeData & { readonly $type: TSKindId.TernaryQmark };
 	[TSKindId.ErrorRecovery]: _NodeData & { readonly $type: TSKindId.ErrorRecovery };
 }
 

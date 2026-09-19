@@ -11726,10 +11726,10 @@ export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
-export type TemplateChars = HiddenLeaf<Terminal<TSKindId.TemplateChars, string>>;
-export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
+export type TemplateChars = HiddenLeaf<Terminal<TSKindId.TemplateChars, string>>;
+export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type TypeKeyword = TSKindId.TypeKeyword;
 
@@ -12061,15 +12061,15 @@ export interface MetaPropertyNewTargetTree extends AnyTreeNode {
 export interface MetaPropertyImportMetaTree extends AnyTreeNode {
 	readonly type: 'meta_property_import_meta';
 }
+export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
+export interface JsxTextTree extends AnyTreeNode {
+	readonly type: 'jsx_text';
+}
 export interface TemplateCharsTree extends AnyTreeNode {
 	readonly type: '_template_chars';
 }
 export interface TernaryQmarkTree extends AnyTreeNode {
 	readonly type: '_ternary_qmark';
-}
-export interface HtmlCommentTree extends TreeNode<'html_comment'> {}
-export interface JsxTextTree extends AnyTreeNode {
-	readonly type: 'jsx_text';
 }
 export interface ErrorRecoveryTree extends AnyTreeNode {
 	readonly type: '__error_recovery';
@@ -13158,10 +13158,10 @@ export interface KindMap {
 	_operator: Operator;
 	meta_property_new_target: MetaPropertyNewTarget;
 	meta_property_import_meta: MetaPropertyImportMeta;
-	_template_chars: TemplateChars;
-	_ternary_qmark: TernaryQmark;
 	html_comment: HtmlComment;
 	jsx_text: JsxText;
+	_template_chars: TemplateChars;
+	_ternary_qmark: TernaryQmark;
 	__error_recovery: ErrorRecovery;
 	type_keyword: TypeKeyword;
 }
@@ -15551,6 +15551,14 @@ export interface TypeIdentifierNs extends LeafNs<
 	TypeIdentifierTree,
 	'_type_identifier'
 > {}
+export interface HtmlCommentNs extends LeafNs<
+	HtmlComment,
+	string,
+	HtmlComment.Built,
+	HtmlCommentTree,
+	'html_comment'
+> {}
+export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, JsxTextTree, 'jsx_text'> {}
 export interface TemplateCharsNs extends LeafNs<
 	TemplateChars,
 	string,
@@ -15565,14 +15573,6 @@ export interface TernaryQmarkNs extends LeafNs<
 	TernaryQmarkTree,
 	'_ternary_qmark'
 > {}
-export interface HtmlCommentNs extends LeafNs<
-	HtmlComment,
-	string,
-	HtmlComment.Built,
-	HtmlCommentTree,
-	'html_comment'
-> {}
-export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, JsxTextTree, 'jsx_text'> {}
 export interface ErrorRecoveryNs extends LeafNs<
 	ErrorRecovery,
 	string,
@@ -15817,10 +15817,10 @@ export interface NamespaceMap {
 	[TSKindId.Number]: NumberNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId.TemplateChars]: TemplateCharsNs;
-	[TSKindId.TernaryQmark]: TernaryQmarkNs;
 	[TSKindId.HtmlComment]: HtmlCommentNs;
 	[TSKindId.JsxText]: JsxTextNs;
+	[TSKindId.TemplateChars]: TemplateCharsNs;
+	[TSKindId.TernaryQmark]: TernaryQmarkNs;
 	[TSKindId.ErrorRecovery]: ErrorRecoveryNs;
 }
 
@@ -20812,36 +20812,6 @@ export namespace TypeIdentifier {
 	export type Tree = TypeIdentifierNs['Tree'];
 	export type Kind = '_type_identifier';
 }
-export namespace TemplateChars {
-	export type Config = TemplateCharsNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.TemplateChars;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = TemplateCharsNs['Loose'];
-	export type LooseConfig = TemplateCharsNs['LooseConfig'];
-	export type BuildArgs = TemplateCharsNs['BuildArgs'];
-	export type LooseArgs = TemplateCharsNs['LooseArgs'];
-	export type Tree = TemplateCharsNs['Tree'];
-	export type Kind = '_template_chars';
-}
-export namespace TernaryQmark {
-	export type Config = TernaryQmarkNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.TernaryQmark;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = TernaryQmarkNs['Loose'];
-	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
-	export type BuildArgs = TernaryQmarkNs['BuildArgs'];
-	export type LooseArgs = TernaryQmarkNs['LooseArgs'];
-	export type Tree = TernaryQmarkNs['Tree'];
-	export type Kind = '_ternary_qmark';
-}
 export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -20871,6 +20841,36 @@ export namespace JsxText {
 	export type LooseArgs = JsxTextNs['LooseArgs'];
 	export type Tree = JsxTextNs['Tree'];
 	export type Kind = 'jsx_text';
+}
+export namespace TemplateChars {
+	export type Config = TemplateCharsNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.TemplateChars;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = TemplateCharsNs['Loose'];
+	export type LooseConfig = TemplateCharsNs['LooseConfig'];
+	export type BuildArgs = TemplateCharsNs['BuildArgs'];
+	export type LooseArgs = TemplateCharsNs['LooseArgs'];
+	export type Tree = TemplateCharsNs['Tree'];
+	export type Kind = '_template_chars';
+}
+export namespace TernaryQmark {
+	export type Config = TernaryQmarkNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.TernaryQmark;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = TernaryQmarkNs['Loose'];
+	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
+	export type BuildArgs = TernaryQmarkNs['BuildArgs'];
+	export type LooseArgs = TernaryQmarkNs['LooseArgs'];
+	export type Tree = TernaryQmarkNs['Tree'];
+	export type Kind = '_ternary_qmark';
 }
 export namespace ErrorRecovery {
 	export type Config = ErrorRecoveryNs['Config'];

@@ -601,9 +601,9 @@ export const ir: {
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
 	readonly number: typeof F.buildNumber;
-	readonly templateChars: typeof F.buildTemplateChars;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
+	readonly templateChars: typeof F.buildTemplateChars;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
 	readonly ambient: typeof F.ambientDeclaration;
 	readonly as: typeof F.asExpression;
@@ -893,9 +893,9 @@ export const ir: {
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
 	number: F.buildNumber,
-	templateChars: F.buildTemplateChars,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
+	templateChars: F.buildTemplateChars,
 
 	// Supertype-stripped short aliases
 	abstractClass: F.abstractClassDeclaration,

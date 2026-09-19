@@ -31,6 +31,8 @@ const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTypeIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
+const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
 const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
 const _slotRe_buildHashBangLine_content = /^(?:.*)$/u;
 const _slotRe_buildEscapeSequence_content =
@@ -7210,6 +7212,34 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 	);
 }
 
+export function buildHtmlComment(text: string): T.HtmlComment.Built {
+	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
+	if (!_leafRe_buildHtmlComment.test(text)) throw new Error(`html_comment: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.HtmlComment as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildJsxText(text: string): T.JsxText.Built {
+	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
+	if (!_leafRe_buildJsxText.test(text)) throw new Error(`jsx_text: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.JsxText as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildTemplateChars(text: string): T.TemplateChars.Built {
 	if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
 	if (!_leafRe_buildTemplateChars.test(text)) throw new Error(`_template_chars: text does not match pattern: ${text}`);
@@ -7229,32 +7259,6 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
 	return withMethods(
 		{
 			$type: TSKindId.TernaryQmark as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildHtmlComment(text: string): T.HtmlComment.Built {
-	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.HtmlComment as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildJsxText(text: string): T.JsxText.Built {
-	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.JsxText as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7503,10 +7507,10 @@ export type FluentKindMap = {
 	for_header_lhs: T.ForHeaderLhs.Built;
 	for_header_var_kind: T.ForHeaderVarKind.Built;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Built;
-	_template_chars: T.TemplateChars;
-	_ternary_qmark: T.TernaryQmark;
 	html_comment: T.HtmlComment;
 	jsx_text: T.JsxText;
+	_template_chars: T.TemplateChars;
+	_ternary_qmark: T.TernaryQmark;
 	__error_recovery: T.ErrorRecovery;
 };
 
@@ -7737,10 +7741,10 @@ export const _factoryMap = {
 	for_header_lhs: buildForHeaderLhs,
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
-	_template_chars: buildTemplateChars,
-	_ternary_qmark: buildTernaryQmark,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
+	_template_chars: buildTemplateChars,
+	_ternary_qmark: buildTernaryQmark,
 	__error_recovery: buildErrorRecovery
 } as const;
 export type _FactoryMap = typeof _factoryMap;

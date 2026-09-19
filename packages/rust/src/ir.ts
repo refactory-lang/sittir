@@ -833,13 +833,13 @@ export const ir: {
 	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
 	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
 	readonly lineCommentContent: typeof F.buildLineCommentContent;
+	readonly floatLiteral: typeof F.buildFloatLiteral;
+	readonly stringContent: typeof F.buildStringContent;
+	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
 	readonly lineDocContent: typeof F.buildLineDocContent;
 	readonly blockCommentContent: typeof F.buildBlockCommentContent;
-	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
-	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
 	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
-	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly abstract: typeof F.abstractType;
 	readonly array: typeof F.arrayType;
 	readonly as: typeof F.useAsClause;
@@ -1107,13 +1107,13 @@ export const ir: {
 	stringLiteralOpen: F.buildStringLiteralOpen,
 	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
 	lineCommentContent: F.buildLineCommentContent,
+	floatLiteral: F.buildFloatLiteral,
+	stringContent: F.buildStringContent,
+	rawStringLiteralContent: F.buildRawStringLiteralContent,
 	lineDocContent: F.buildLineDocContent,
 	blockCommentContent: F.buildBlockCommentContent,
-	stringContent: F.buildStringContent,
 	rawStringLiteralStart: F.buildRawStringLiteralStart,
-	rawStringLiteralContent: F.buildRawStringLiteralContent,
 	rawStringLiteralEnd: F.buildRawStringLiteralEnd,
-	floatLiteral: F.buildFloatLiteral,
 
 	// Supertype-stripped short aliases
 	abstract: F.abstractType,

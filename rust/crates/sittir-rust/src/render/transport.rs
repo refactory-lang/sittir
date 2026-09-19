@@ -330,6 +330,9 @@ pub enum AnyTransport {
     AttributedOrderedField(AttributedOrderedFieldTransport),
     TypeArgument(TypeArgumentTransport),
     MatchBlockArms(MatchBlockArmsTransport),
+    FloatLiteral(FloatLiteralTransport),
+    StringContent(StringContentTransport),
+    RawStringLiteralContent(RawStringLiteralContentTransport),
     OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
     LineDocContent(LineDocContentTransport),
@@ -340,11 +343,8 @@ pub enum AnyTransport {
     Blankline(BlanklineTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
-    StringContent(StringContentTransport),
     RawStringLiteralStart(RawStringLiteralStartTransport),
-    RawStringLiteralContent(RawStringLiteralContentTransport),
     RawStringLiteralEnd(RawStringLiteralEndTransport),
-    FloatLiteral(FloatLiteralTransport),
     ErrorSentinel(ErrorSentinelTransport),
     Semi(SemiTransport),
     EqGt(EqGtTransport),
@@ -817,6 +817,9 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::AttributedOrderedField(t) => t.prepare(ctx),
             AnyTransport::TypeArgument(t) => t.prepare(ctx),
             AnyTransport::MatchBlockArms(t) => t.prepare(ctx),
+            AnyTransport::FloatLiteral(t) => t.prepare(ctx),
+            AnyTransport::StringContent(t) => t.prepare(ctx),
+            AnyTransport::RawStringLiteralContent(t) => t.prepare(ctx),
             AnyTransport::OuterBlockDocCommentMarker(t) => t.prepare(ctx),
             AnyTransport::InnerBlockDocCommentMarker(t) => t.prepare(ctx),
             AnyTransport::LineDocContent(t) => t.prepare(ctx),
@@ -827,11 +830,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Blankline(t) => t.prepare(ctx),
             AnyTransport::Indent(t) => t.prepare(ctx),
             AnyTransport::Dedent(t) => t.prepare(ctx),
-            AnyTransport::StringContent(t) => t.prepare(ctx),
             AnyTransport::RawStringLiteralStart(t) => t.prepare(ctx),
-            AnyTransport::RawStringLiteralContent(t) => t.prepare(ctx),
             AnyTransport::RawStringLiteralEnd(t) => t.prepare(ctx),
-            AnyTransport::FloatLiteral(t) => t.prepare(ctx),
             AnyTransport::ErrorSentinel(t) => t.prepare(ctx),
             AnyTransport::Semi(t) => t.prepare(ctx),
             AnyTransport::EqGt(t) => t.prepare(ctx),
@@ -2056,6 +2056,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 423 => Ok(AnyTransport::MatchBlockArms(
                     MatchBlockArmsTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: float_literal (FLOAT_LITERAL)
+                151 => Ok(AnyTransport::FloatLiteral(
+                    FloatLiteralTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: string_content (STRING_CONTENT)
+                147 => Ok(AnyTransport::StringContent(
+                    StringContentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: raw_string_literal_content (RAW_STRING_LITERAL_CONTENT)
+                149 => Ok(AnyTransport::RawStringLiteralContent(
+                    RawStringLiteralContentTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
                 152 => Ok(AnyTransport::OuterBlockDocCommentMarker(
                     OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
@@ -2096,25 +2108,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 162 => Ok(AnyTransport::Dedent(
                     DedentTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: string_content (STRING_CONTENT)
-                147 => Ok(AnyTransport::StringContent(
-                    StringContentTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _raw_string_literal_start (_RAW_STRING_LITERAL_START)
                 148 => Ok(AnyTransport::RawStringLiteralStart(
                     RawStringLiteralStartTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: raw_string_literal_content (RAW_STRING_LITERAL_CONTENT)
-                149 => Ok(AnyTransport::RawStringLiteralContent(
-                    RawStringLiteralContentTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _raw_string_literal_end (_RAW_STRING_LITERAL_END)
                 150 => Ok(AnyTransport::RawStringLiteralEnd(
                     RawStringLiteralEndTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: float_literal (FLOAT_LITERAL)
-                151 => Ok(AnyTransport::FloatLiteral(
-                    FloatLiteralTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _error_sentinel (_ERROR_SENTINEL)
                 156 => Ok(AnyTransport::ErrorSentinel(
@@ -65128,6 +65128,282 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchBlockArmsTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct FloatLiteralTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for FloatLiteralTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FloatLiteralTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FloatLiteralTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FloatLiteralTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FloatLiteralTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FloatLiteralTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatLiteralTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FloatLiteralTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct StringContentTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StringContentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringContentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StringContentTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StringContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StringContentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StringContentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StringContentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RawStringLiteralContentTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for RawStringLiteralContentTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for RawStringLiteralContentTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for RawStringLiteralContentTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_default()
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_default();
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralContentTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RawStringLiteralContentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        RawStringLiteralContentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RawStringLiteralContentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        RawStringLiteralContentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct OuterBlockDocCommentMarkerTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -66058,98 +66334,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct StringContentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for StringContentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(147)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for StringContentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StringContentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StringContentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StringContentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StringContentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StringContentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StringContentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct RawStringLiteralStartTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -66242,98 +66426,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RawStringLiteralStartTransport
 }
 
 #[derive(Debug, Clone)]
-pub struct RawStringLiteralContentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for RawStringLiteralContentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(149)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for RawStringLiteralContentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for RawStringLiteralContentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralContentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<RawStringLiteralContentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        RawStringLiteralContentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<RawStringLiteralContentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        RawStringLiteralContentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct RawStringLiteralEndTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -66422,98 +66514,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RawStringLiteralEndTransport> 
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         RawStringLiteralEndTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct FloatLiteralTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for FloatLiteralTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(151)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for FloatLiteralTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for FloatLiteralTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatLiteralTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FloatLiteralTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        FloatLiteralTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatLiteralTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        FloatLiteralTransport::to_napi_value(env, *val)
     }
 }
 
@@ -82165,6 +82165,18 @@ fn render_match_block_arms(node: &MatchBlockArmsTransport, w: &mut dyn ::sittir_
     Ok(())
 }
 
+fn render_float_literal(t: &FloatLiteralTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_string_content(t: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
 fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.adjacent();
     w.text(&t.text)
@@ -82209,23 +82221,11 @@ fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderS
     { w.dedent("\n"); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
 
-fn render_string_content(t: &StringContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
 fn render_raw_string_literal_start(t: &RawStringLiteralStartTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
-fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
 fn render_raw_string_literal_end(t: &RawStringLiteralEndTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_float_literal(t: &FloatLiteralTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -83265,6 +83265,9 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::AttributedOrderedField(inner) => inner.kind_in(kinds),
             Self::TypeArgument(inner) => inner.kind_in(kinds),
             Self::MatchBlockArms(inner) => inner.kind_in(kinds),
+            Self::FloatLiteral(inner) => inner.kind_in(kinds),
+            Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::RawStringLiteralContent(inner) => inner.kind_in(kinds),
             Self::OuterBlockDocCommentMarker(inner) => inner.kind_in(kinds),
             Self::InnerBlockDocCommentMarker(inner) => inner.kind_in(kinds),
             Self::LineDocContent(inner) => inner.kind_in(kinds),
@@ -83275,11 +83278,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Blankline(inner) => inner.kind_in(kinds),
             Self::Indent(inner) => inner.kind_in(kinds),
             Self::Dedent(inner) => inner.kind_in(kinds),
-            Self::StringContent(inner) => inner.kind_in(kinds),
             Self::RawStringLiteralStart(inner) => inner.kind_in(kinds),
-            Self::RawStringLiteralContent(inner) => inner.kind_in(kinds),
             Self::RawStringLiteralEnd(inner) => inner.kind_in(kinds),
-            Self::FloatLiteral(inner) => inner.kind_in(kinds),
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::Semi(inner) => inner.kind_in(kinds),
             Self::EqGt(inner) => inner.kind_in(kinds),
@@ -83667,6 +83667,9 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::AttributedOrderedField(t) => t.render(w),
             AnyTransport::TypeArgument(t) => t.render(w),
             AnyTransport::MatchBlockArms(t) => t.render(w),
+            AnyTransport::FloatLiteral(t) => t.render(w),
+            AnyTransport::StringContent(t) => t.render(w),
+            AnyTransport::RawStringLiteralContent(t) => t.render(w),
             AnyTransport::OuterBlockDocCommentMarker(t) => t.render(w),
             AnyTransport::InnerBlockDocCommentMarker(t) => t.render(w),
             AnyTransport::LineDocContent(t) => t.render(w),
@@ -83677,11 +83680,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Blankline(t) => t.render(w),
             AnyTransport::Indent(t) => t.render(w),
             AnyTransport::Dedent(t) => t.render(w),
-            AnyTransport::StringContent(t) => t.render(w),
             AnyTransport::RawStringLiteralStart(t) => t.render(w),
-            AnyTransport::RawStringLiteralContent(t) => t.render(w),
             AnyTransport::RawStringLiteralEnd(t) => t.render(w),
-            AnyTransport::FloatLiteral(t) => t.render(w),
             AnyTransport::ErrorSentinel(t) => t.render(w),
             AnyTransport::Semi(t) => t.render(w),
             AnyTransport::EqGt(t) => t.render(w),

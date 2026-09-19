@@ -15735,13 +15735,13 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.AttributedOrderedField]: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	[TSKindId.TypeArgument]: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
 	[TSKindId.MatchBlockArms]: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
+	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
+	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
+	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
 	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
 	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
-	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
 	[TSKindId.RawStringLiteralStart]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
-	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
-	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const })
 };
 
@@ -16018,13 +16018,13 @@ interface _WrapReturnByKindId {
 	[TSKindId.AttributedOrderedField]: ReturnType<typeof wrapAttributedOrderedField>;
 	[TSKindId.TypeArgument]: ReturnType<typeof wrapTypeArgument>;
 	[TSKindId.MatchBlockArms]: ReturnType<typeof wrapMatchBlockArms>;
+	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
+	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
+	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
 	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
 	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
-	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
 	[TSKindId.RawStringLiteralStart]: _NodeData & { readonly $type: TSKindId.RawStringLiteralStart };
-	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
-	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };
 }
 

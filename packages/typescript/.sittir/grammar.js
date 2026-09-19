@@ -5994,6 +5994,8 @@ var grammar_sittir_default = grammar(
         }
       },
       renderAs: (_$) => ({
+        html_comment: /<!--[\s\S]*?-->/,
+        jsx_text: /[^{}<>]+/,
         _template_chars: token.immediate(/[^`\\$]+/)
       })
     },

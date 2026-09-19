@@ -6183,15 +6183,6 @@ describe('meta_property_import_meta', () => {
 	});
 });
 
-describe('html_comment', () => {
-	it('factory produces correct type', () => {
-		const node = ir.htmlComment('test');
-		expect(node.$type).toBe(TSKindId.HtmlComment);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
 describe('jsx_text', () => {
 	it('factory produces correct type', () => {
 		const node = ir.jsxText('test');

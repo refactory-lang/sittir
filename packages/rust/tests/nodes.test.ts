@@ -1568,7 +1568,7 @@ describe('const_parameter sub-factories', () => {
 		const node = ir.constParameter.negativeLiteral.floatLiteral({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
-			value: ['test']
+			value: ['1.0']
 		});
 		expect(node.$type).toBe(TSKindId.ConstParameter);
 		expect((node as any).value()).toBeDefined();
@@ -6541,7 +6541,7 @@ describe('negative_literal sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatLiteral builds the parent', () => {
-		const node = ir.negativeLiteral.floatLiteral('test');
+		const node = ir.negativeLiteral.floatLiteral('1.0');
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
 		expect((node as any).value()?.$type).toBe(TSKindId.FloatLiteral);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -8556,6 +8556,15 @@ describe('range_pattern_with_left sub-factories', () => {
 	});
 });
 
+describe('float_literal', () => {
+	it('factory produces correct type', () => {
+		const node = ir.floatLiteral('1.0');
+		expect(node.$type).toBe(TSKindId.FloatLiteral);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('1.0');
+	});
+});
+
 describe('string_content', () => {
 	it('factory produces correct type', () => {
 		const node = ir.stringContent('test');
@@ -8569,15 +8578,6 @@ describe('raw_string_literal_content', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rawStringLiteralContent('test');
 		expect(node.$type).toBe(TSKindId.RawStringLiteralContent);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
-	});
-});
-
-describe('float_literal', () => {
-	it('factory produces correct type', () => {
-		const node = ir.floatLiteral('test');
-		expect(node.$type).toBe(TSKindId.FloatLiteral);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');
 	});

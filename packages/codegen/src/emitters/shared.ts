@@ -1,3 +1,4 @@
+import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
@@ -687,6 +688,20 @@ export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | un
 	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
 	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
 	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
+}
+
+/**
+ * A lexed kind whose interior has a REQUIRED fixed member (a quote, a sigil, a
+ * comment opener): its text differs from its content, so a bare string never
+ * names it. An optional affix does not count: content may equal the whole text.
+ */
+export function isAffixedLeaf(node: AssembledNode | undefined): boolean {
+	if (node === undefined || lexedContentSlot(node) === undefined) return false;
+	const rule = (node as AbstractAssembledCompound).renderRule;
+	return (
+		rule.type === SEQ &&
+		rule.members.some((member) => member.type === STRING && member.fieldName === undefined)
+	);
 }
 
 export function bareValueSlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {

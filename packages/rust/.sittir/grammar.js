@@ -5835,6 +5835,9 @@ var grammar_sittir_default = grammar(
         )
       },
       renderAs: (_$) => ({
+        float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,
+        string_content: /[^"\\]+/,
+        raw_string_literal_content: /[\s\S]*/,
         _inner_line_doc_comment_marker: token.immediate("!"),
         _outer_block_doc_comment_marker: token.immediate("*"),
         _inner_block_doc_comment_marker: token.immediate("!"),

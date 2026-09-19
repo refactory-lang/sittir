@@ -2097,6 +2097,18 @@ values (`lexedConfig`) before calling the raw builder, so a bare token spelling 
 number scalar) still resolves to the kind.
 ```
 
+#### affixed leaves
+
+```text
+An affixed leaf (`isAffixedLeaf`: a lexed kind with a required fixed member) has a content row and no pattern: its text
+differs from its content, so a bare string is never matched against it. Where the slot offers a choice, the kind must be
+supplied (`ir.charLiteral('a')`); where the slot admits exactly one leaf, a bare string is that leaf's content and goes
+through the kind's own coercer, as the strict surface admits a hidden leaf's text. The emitted `_AFFIXED_KINDS` set names
+them; `_resolveOne` throws when a choice consists only of affixed leaves. An unaffixed lexed kind (rust `integer_literal`)
+keeps its whole-text pattern row, and a visible external scanner token authors its shape in `renderAs` so every
+factory-bearing pattern leaf has one; a leaf with a factory and no pattern is an emitter error, never a last resort.
+```
+
 ### `packages/codegen/src/emitters/from.ts::emitResolveByKindHelper`
 
 ```text

@@ -10807,6 +10807,8 @@
       "factoryName": "floatLiteral",
       "irKey": "floatLiteral",
       "hidden": false,
+      "pattern": "[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?",
+      "leafPattern": "/^(?:(?:[0-9][0-9_]*(?:\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u",
       "factoryShape": "text"
     },
     {
@@ -16877,6 +16879,8 @@
       "factoryName": "rawStringLiteralContent",
       "irKey": "rawStringLiteralContent",
       "hidden": false,
+      "pattern": "[\\s\\S]*",
+      "leafPattern": "/^(?:(?:[\\s\\S]*))$/u",
       "factoryShape": "text"
     },
     {
@@ -18682,6 +18686,8 @@
       "factoryName": "stringContent",
       "irKey": "stringContent",
       "hidden": false,
+      "pattern": "[^\"\\\\]+",
+      "leafPattern": "/^(?:(?:[^\"\\\\]+))$/u",
       "factoryShape": "text"
     },
     {

@@ -10116,13 +10116,13 @@ export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
+export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
+export type StringContent = Terminal<TSKindId.StringContent, string>;
+export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type LineDocContent = HiddenLeaf<Terminal<TSKindId.LineDocContent, string>>;
 export type BlockCommentContent = HiddenLeaf<Terminal<TSKindId.BlockCommentContent, string>>;
-export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralStart = HiddenLeaf<Terminal<TSKindId.RawStringLiteralStart, string>>;
-export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type RawStringLiteralEnd = HiddenLeaf<Terminal<TSKindId.RawStringLiteralEnd, string>>;
-export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 
 // Tree types
@@ -10455,23 +10455,23 @@ export interface LineCommentContentTree extends TreeNode<'line_comment_content'>
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
 }
+export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
+export interface StringContentTree extends TreeNode<'string_content'> {}
+export interface RawStringLiteralContentTree extends AnyTreeNode {
+	readonly type: 'raw_string_literal_content';
+}
 export interface LineDocContentTree extends AnyTreeNode {
 	readonly type: '_line_doc_content';
 }
 export interface BlockCommentContentTree extends AnyTreeNode {
 	readonly type: '_block_comment_content';
 }
-export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralStartTree extends AnyTreeNode {
 	readonly type: '_raw_string_literal_start';
-}
-export interface RawStringLiteralContentTree extends AnyTreeNode {
-	readonly type: 'raw_string_literal_content';
 }
 export interface RawStringLiteralEndTree extends AnyTreeNode {
 	readonly type: '_raw_string_literal_end';
 }
-export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
 }
@@ -11876,13 +11876,13 @@ export interface KindMap {
 	line_comment_regular_dslash: LineCommentRegularDslash;
 	line_comment_content: LineCommentContent;
 	range_pattern_with_left_bare: RangePatternWithLeftBare;
+	float_literal: FloatLiteral;
+	string_content: StringContent;
+	raw_string_literal_content: RawStringLiteralContent;
 	_line_doc_content: LineDocContent;
 	_block_comment_content: BlockCommentContent;
-	string_content: StringContent;
 	_raw_string_literal_start: RawStringLiteralStart;
-	raw_string_literal_content: RawStringLiteralContent;
 	_raw_string_literal_end: RawStringLiteralEnd;
-	float_literal: FloatLiteral;
 	_error_sentinel: ErrorSentinel;
 }
 
@@ -14337,6 +14337,27 @@ export interface LineCommentContentNs extends LeafNs<
 	LineCommentContentTree,
 	'line_comment_content'
 > {}
+export interface FloatLiteralNs extends LeafNs<
+	FloatLiteral,
+	string,
+	FloatLiteral.Built,
+	FloatLiteralTree,
+	'float_literal'
+> {}
+export interface StringContentNs extends LeafNs<
+	StringContent,
+	string,
+	StringContent.Built,
+	StringContentTree,
+	'string_content'
+> {}
+export interface RawStringLiteralContentNs extends LeafNs<
+	RawStringLiteralContent,
+	string,
+	RawStringLiteralContent.Built,
+	RawStringLiteralContentTree,
+	'raw_string_literal_content'
+> {}
 export interface LineDocContentNs extends LeafNs<
 	LineDocContent,
 	string,
@@ -14351,13 +14372,6 @@ export interface BlockCommentContentNs extends LeafNs<
 	BlockCommentContentTree,
 	'_block_comment_content'
 > {}
-export interface StringContentNs extends LeafNs<
-	StringContent,
-	string,
-	StringContent.Built,
-	StringContentTree,
-	'string_content'
-> {}
 export interface RawStringLiteralStartNs extends LeafNs<
 	RawStringLiteralStart,
 	string,
@@ -14365,26 +14379,12 @@ export interface RawStringLiteralStartNs extends LeafNs<
 	RawStringLiteralStartTree,
 	'_raw_string_literal_start'
 > {}
-export interface RawStringLiteralContentNs extends LeafNs<
-	RawStringLiteralContent,
-	string,
-	RawStringLiteralContent.Built,
-	RawStringLiteralContentTree,
-	'raw_string_literal_content'
-> {}
 export interface RawStringLiteralEndNs extends LeafNs<
 	RawStringLiteralEnd,
 	string,
 	RawStringLiteralEnd.Built,
 	RawStringLiteralEndTree,
 	'_raw_string_literal_end'
-> {}
-export interface FloatLiteralNs extends LeafNs<
-	FloatLiteral,
-	string,
-	FloatLiteral.Built,
-	FloatLiteralTree,
-	'float_literal'
 > {}
 export interface ErrorSentinelNs extends LeafNs<
 	ErrorSentinel,
@@ -14635,13 +14635,13 @@ export interface NamespaceMap {
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
 	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
 	[TSKindId.LineCommentContent]: LineCommentContentNs;
+	[TSKindId.FloatLiteral]: FloatLiteralNs;
+	[TSKindId.StringContent]: StringContentNs;
+	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.LineDocContent]: LineDocContentNs;
 	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
-	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
-	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
-	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
 }
 
@@ -19516,6 +19516,51 @@ export namespace LineCommentContent {
 	export type Tree = LineCommentContentNs['Tree'];
 	export type Kind = 'line_comment_content';
 }
+export namespace FloatLiteral {
+	export type Config = FloatLiteralNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.FloatLiteral;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = FloatLiteralNs['Loose'];
+	export type LooseConfig = FloatLiteralNs['LooseConfig'];
+	export type BuildArgs = FloatLiteralNs['BuildArgs'];
+	export type LooseArgs = FloatLiteralNs['LooseArgs'];
+	export type Tree = FloatLiteralNs['Tree'];
+	export type Kind = 'float_literal';
+}
+export namespace StringContent {
+	export type Config = StringContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.StringContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = StringContentNs['Loose'];
+	export type LooseConfig = StringContentNs['LooseConfig'];
+	export type BuildArgs = StringContentNs['BuildArgs'];
+	export type LooseArgs = StringContentNs['LooseArgs'];
+	export type Tree = StringContentNs['Tree'];
+	export type Kind = 'string_content';
+}
+export namespace RawStringLiteralContent {
+	export type Config = RawStringLiteralContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.RawStringLiteralContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = RawStringLiteralContentNs['Loose'];
+	export type LooseConfig = RawStringLiteralContentNs['LooseConfig'];
+	export type BuildArgs = RawStringLiteralContentNs['BuildArgs'];
+	export type LooseArgs = RawStringLiteralContentNs['LooseArgs'];
+	export type Tree = RawStringLiteralContentNs['Tree'];
+	export type Kind = 'raw_string_literal_content';
+}
 export namespace LineDocContent {
 	export type Config = LineDocContentNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19546,21 +19591,6 @@ export namespace BlockCommentContent {
 	export type Tree = BlockCommentContentNs['Tree'];
 	export type Kind = '_block_comment_content';
 }
-export namespace StringContent {
-	export type Config = StringContentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.StringContent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = StringContentNs['Loose'];
-	export type LooseConfig = StringContentNs['LooseConfig'];
-	export type BuildArgs = StringContentNs['BuildArgs'];
-	export type LooseArgs = StringContentNs['LooseArgs'];
-	export type Tree = StringContentNs['Tree'];
-	export type Kind = 'string_content';
-}
 export namespace RawStringLiteralStart {
 	export type Config = RawStringLiteralStartNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19576,21 +19606,6 @@ export namespace RawStringLiteralStart {
 	export type Tree = RawStringLiteralStartNs['Tree'];
 	export type Kind = '_raw_string_literal_start';
 }
-export namespace RawStringLiteralContent {
-	export type Config = RawStringLiteralContentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.RawStringLiteralContent;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = RawStringLiteralContentNs['Loose'];
-	export type LooseConfig = RawStringLiteralContentNs['LooseConfig'];
-	export type BuildArgs = RawStringLiteralContentNs['BuildArgs'];
-	export type LooseArgs = RawStringLiteralContentNs['LooseArgs'];
-	export type Tree = RawStringLiteralContentNs['Tree'];
-	export type Kind = 'raw_string_literal_content';
-}
 export namespace RawStringLiteralEnd {
 	export type Config = RawStringLiteralEndNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19605,21 +19620,6 @@ export namespace RawStringLiteralEnd {
 	export type LooseArgs = RawStringLiteralEndNs['LooseArgs'];
 	export type Tree = RawStringLiteralEndNs['Tree'];
 	export type Kind = '_raw_string_literal_end';
-}
-export namespace FloatLiteral {
-	export type Config = FloatLiteralNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FloatLiteral;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FloatLiteralNs['Loose'];
-	export type LooseConfig = FloatLiteralNs['LooseConfig'];
-	export type BuildArgs = FloatLiteralNs['BuildArgs'];
-	export type LooseArgs = FloatLiteralNs['LooseArgs'];
-	export type Tree = FloatLiteralNs['Tree'];
-	export type Kind = 'float_literal';
 }
 export namespace ErrorSentinel {
 	export type Config = ErrorSentinelNs['Config'];

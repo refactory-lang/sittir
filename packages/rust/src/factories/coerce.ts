@@ -239,13 +239,13 @@ export const _fromMap = {
 	_attributed_ordered_field: coerceToAttributedOrderedField,
 	_type_argument: coerceToTypeArgument,
 	_match_block_arms: coerceToMatchBlockArms,
+	float_literal: coerceToFloatLiteral,
+	string_content: coerceToStringContent,
+	raw_string_literal_content: coerceToRawStringLiteralContent,
 	_line_doc_content: coerceToLineDocContent,
 	_block_comment_content: coerceToBlockCommentContent,
-	string_content: coerceToStringContent,
 	_raw_string_literal_start: coerceToRawStringLiteralStart,
-	raw_string_literal_content: coerceToRawStringLiteralContent,
-	_raw_string_literal_end: coerceToRawStringLiteralEnd,
-	float_literal: coerceToFloatLiteral
+	_raw_string_literal_end: coerceToRawStringLiteralEnd
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -267,39 +267,25 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (text: string) =>
 			F.buildIntegerLiteral(lexedConfig(text, TOKEN_INTERIORS['integer_literal'], 'integer_literal') as never)
 	},
-	char_literal: {
-		pattern: new RegExp(TOKEN_INTERIORS['char_literal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildCharLiteral(lexedConfig(text, TOKEN_INTERIORS['char_literal'], 'char_literal') as never)
-	},
-	escape_sequence: {
-		pattern: new RegExp(TOKEN_INTERIORS['escape_sequence'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildEscapeSequence(
-				lexedConfig(text, TOKEN_INTERIORS['escape_sequence'], 'escape_sequence')['content'] as never
-			)
-	},
+	char_literal: { factory: (content: string) => _resolveByKind('char_literal', content) },
+	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
 	identifier: { pattern: /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
-	shebang: {
-		pattern: new RegExp(TOKEN_INTERIORS['shebang'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildShebang(lexedConfig(text, TOKEN_INTERIORS['shebang'], 'shebang')['content'] as never)
-	},
+	shebang: { factory: (content: string) => _resolveByKind('shebang', content) },
 	self: { values: ['self'], factory: () => F.buildSelf() },
 	super: { values: ['super'], factory: () => F.buildSuper() },
 	crate: { values: ['crate'], factory: () => F.buildCrate() },
-	metavariable: {
-		pattern: new RegExp(TOKEN_INTERIORS['metavariable'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildMetavariable(lexedConfig(text, TOKEN_INTERIORS['metavariable'], 'metavariable')['name'] as never)
-	},
+	metavariable: { factory: (content: string) => _resolveByKind('metavariable', content) },
 	line_comment_regular_dslash: { pattern: /^(?:(?:\/\/)(?:.*))$/u, factory: F.buildLineCommentRegularDslash },
 	line_comment_content: { pattern: /^(?:(?:.*))$/u, factory: F.buildLineCommentContent },
 	range_pattern_with_left_bare: { values: ['..'], factory: () => F.buildRangePatternWithLeftBare() },
-	string_content: { factory: F.buildStringContent },
-	raw_string_literal_content: { factory: F.buildRawStringLiteralContent },
-	float_literal: { factory: F.buildFloatLiteral }
+	float_literal: {
+		pattern: /^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u,
+		factory: F.buildFloatLiteral
+	},
+	string_content: { pattern: /^(?:(?:[^"\\]+))$/u, factory: F.buildStringContent },
+	raw_string_literal_content: { pattern: /^(?:(?:[\s\S]*))$/u, factory: F.buildRawStringLiteralContent }
 };
+const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['char_literal', 'escape_sequence', 'shebang', 'metavariable']);
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
 	for (const kind of kinds) {
@@ -307,10 +293,6 @@ function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | 
 		if (!entry) continue;
 		if (entry.values && entry.values.includes(v)) return entry.factory(v);
 		if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
-	}
-	for (const kind of kinds) {
-		const entry = _leafRegistry[kind];
-		if (entry && !entry.values && !entry.pattern) return entry.factory(v);
 	}
 	return undefined;
 }
@@ -686,9 +668,15 @@ function _resolveOne<T>(
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
-	if (typeof v === 'string' && leafKinds.length > 0) {
-		const leaf = _resolveLeafString(v, leafKinds);
+	if (typeof v === 'string') {
+		const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);
 		if (leaf !== undefined) return leaf as T;
+		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
+		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
+			throw new Error(
+				`_resolveOne: a bare string never picks among affixed leaves [${leafKinds.join(', ')}]; build one with its own factory`
+			);
+		}
 	}
 	if (typeof v === 'string') {
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
@@ -8929,6 +8917,23 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 	});
 }
 
+export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
+	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
+}
+
+export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<typeof F.buildStringContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContent>;
+	return F.buildStringContent(input as Parameters<typeof F.buildStringContent>[0]);
+}
+
+export function coerceToRawStringLiteralContent(
+	input: T.RawStringLiteralContent.Loose
+): ReturnType<typeof F.buildRawStringLiteralContent> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralContent>;
+	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
+}
+
 export function coerceToLineDocContent(input: T.LineDocContent.Loose): ReturnType<typeof F.buildLineDocContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineDocContent>;
 	return F.buildLineDocContent(input as Parameters<typeof F.buildLineDocContent>[0]);
@@ -8941,11 +8946,6 @@ export function coerceToBlockCommentContent(
 	return F.buildBlockCommentContent(input as Parameters<typeof F.buildBlockCommentContent>[0]);
 }
 
-export function coerceToStringContent(input: T.StringContent.Loose): ReturnType<typeof F.buildStringContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContent>;
-	return F.buildStringContent(input as Parameters<typeof F.buildStringContent>[0]);
-}
-
 export function coerceToRawStringLiteralStart(
 	input: T.RawStringLiteralStart.Loose
 ): ReturnType<typeof F.buildRawStringLiteralStart> {
@@ -8953,21 +8953,9 @@ export function coerceToRawStringLiteralStart(
 	return F.buildRawStringLiteralStart(input as Parameters<typeof F.buildRawStringLiteralStart>[0]);
 }
 
-export function coerceToRawStringLiteralContent(
-	input: T.RawStringLiteralContent.Loose
-): ReturnType<typeof F.buildRawStringLiteralContent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralContent>;
-	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
-}
-
 export function coerceToRawStringLiteralEnd(
 	input: T.RawStringLiteralEnd.Loose
 ): ReturnType<typeof F.buildRawStringLiteralEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralEnd>;
 	return F.buildRawStringLiteralEnd(input as Parameters<typeof F.buildRawStringLiteralEnd>[0]);
-}
-
-export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
-	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
 }
