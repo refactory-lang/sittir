@@ -54760,6 +54760,11 @@
                             "$type": 99,
                             "$source": 0,
                             "$named": true,
+                            "$text": "#bar",
+                            "$span": {
+                              "start": 32,
+                              "end": 36
+                            },
                             "_content": "bar"
                           },
                           "$slotOrder": [
@@ -55056,6 +55061,11 @@
                         "$type": 99,
                         "$source": 0,
                         "$named": true,
+                        "$text": "#bar",
+                        "$span": {
+                          "start": 32,
+                          "end": 36
+                        },
                         "_content": "bar"
                       },
                       "$slotOrder": [
@@ -55336,6 +55346,11 @@
                       "$type": 99,
                       "$source": 0,
                       "$named": true,
+                      "$text": "#bar",
+                      "$span": {
+                        "start": 32,
+                        "end": 36
+                      },
                       "_content": "bar"
                     },
                     "$slotOrder": [
@@ -55587,6 +55602,11 @@
                 "$type": 99,
                 "$source": 0,
                 "$named": true,
+                "$text": "#bar",
+                "$span": {
+                  "start": 32,
+                  "end": 36
+                },
                 "_content": "bar"
               },
               "$slotOrder": [
@@ -55796,6 +55816,11 @@
             "$type": 99,
             "$source": 0,
             "$named": true,
+            "$text": "#bar",
+            "$span": {
+              "start": 32,
+              "end": 36
+            },
             "_content": "bar"
           },
           "$slotOrder": [
@@ -55938,6 +55963,11 @@
           "$type": 99,
           "$source": 0,
           "$named": true,
+          "$text": "#bar",
+          "$span": {
+            "start": 32,
+            "end": 36
+          },
           "_content": "bar"
         },
         "$slotOrder": [
@@ -56001,6 +56031,11 @@
         "$type": 99,
         "$source": 0,
         "$named": true,
+        "$text": "#bar",
+        "$span": {
+          "start": 32,
+          "end": 36
+        },
         "_content": "bar"
       },
       "$slotOrder": [
@@ -86067,6 +86102,11 @@
                       "$type": 91,
                       "$source": 0,
                       "$named": true,
+                      "$text": "\\n",
+                      "$span": {
+                        "start": 12,
+                        "end": 14
+                      },
                       "_content": "n"
                     },
                     {
@@ -86083,6 +86123,11 @@
                       "$type": 91,
                       "$source": 0,
                       "$named": true,
+                      "$text": "\\t",
+                      "$span": {
+                        "start": 15,
+                        "end": 17
+                      },
                       "_content": "t"
                     },
                     {
@@ -86188,6 +86233,11 @@
                       "$type": 91,
                       "$source": 0,
                       "$named": true,
+                      "$text": "\\'",
+                      "$span": {
+                        "start": 34,
+                        "end": 36
+                      },
                       "_content": "'"
                     },
                     {
@@ -86204,6 +86254,11 @@
                       "$type": 91,
                       "$source": 0,
                       "$named": true,
+                      "$text": "\\t",
+                      "$span": {
+                        "start": 37,
+                        "end": 39
+                      },
                       "_content": "t"
                     },
                     {
@@ -86328,6 +86383,11 @@
                   "$type": 91,
                   "$source": 0,
                   "$named": true,
+                  "$text": "\\n",
+                  "$span": {
+                    "start": 12,
+                    "end": 14
+                  },
                   "_content": "n"
                 },
                 {
@@ -86344,6 +86404,11 @@
                   "$type": 91,
                   "$source": 0,
                   "$named": true,
+                  "$text": "\\t",
+                  "$span": {
+                    "start": 15,
+                    "end": 17
+                  },
                   "_content": "t"
                 },
                 {
@@ -86466,6 +86531,11 @@
                   "$type": 91,
                   "$source": 0,
                   "$named": true,
+                  "$text": "\\'",
+                  "$span": {
+                    "start": 34,
+                    "end": 36
+                  },
                   "_content": "'"
                 },
                 {
@@ -86482,6 +86552,11 @@
                   "$type": 91,
                   "$source": 0,
                   "$named": true,
+                  "$text": "\\t",
+                  "$span": {
+                    "start": 37,
+                    "end": 39
+                  },
                   "_content": "t"
                 },
                 {
@@ -86598,6 +86673,11 @@
               "$type": 91,
               "$source": 0,
               "$named": true,
+              "$text": "\\n",
+              "$span": {
+                "start": 12,
+                "end": 14
+              },
               "_content": "n"
             },
             {
@@ -86614,6 +86694,11 @@
               "$type": 91,
               "$source": 0,
               "$named": true,
+              "$text": "\\t",
+              "$span": {
+                "start": 15,
+                "end": 17
+              },
               "_content": "t"
             },
             {
@@ -86722,6 +86807,11 @@
               "$type": 91,
               "$source": 0,
               "$named": true,
+              "$text": "\\'",
+              "$span": {
+                "start": 34,
+                "end": 36
+              },
               "_content": "'"
             },
             {
@@ -86738,6 +86828,11 @@
               "$type": 91,
               "$source": 0,
               "$named": true,
+              "$text": "\\t",
+              "$span": {
+                "start": 37,
+                "end": 39
+              },
               "_content": "t"
             },
             {
@@ -86832,6 +86927,11 @@
             "$type": 91,
             "$source": 0,
             "$named": true,
+            "$text": "\\n",
+            "$span": {
+              "start": 12,
+              "end": 14
+            },
             "_content": "n"
           },
           {
@@ -86848,6 +86948,11 @@
             "$type": 91,
             "$source": 0,
             "$named": true,
+            "$text": "\\t",
+            "$span": {
+              "start": 15,
+              "end": 17
+            },
             "_content": "t"
           },
           {
@@ -86925,6 +87030,11 @@
             "$type": 91,
             "$source": 0,
             "$named": true,
+            "$text": "\\'",
+            "$span": {
+              "start": 34,
+              "end": 36
+            },
             "_content": "'"
           },
           {
@@ -86941,6 +87051,11 @@
             "$type": 91,
             "$source": 0,
             "$named": true,
+            "$text": "\\t",
+            "$span": {
+              "start": 37,
+              "end": 39
+            },
             "_content": "t"
           },
           {
@@ -87086,6 +87201,11 @@
                     "$type": 91,
                     "$source": 0,
                     "$named": true,
+                    "$text": "\\n",
+                    "$span": {
+                      "start": 21,
+                      "end": 23
+                    },
                     "_content": "n"
                   },
                   {
@@ -87289,6 +87409,11 @@
                 "$type": 91,
                 "$source": 0,
                 "$named": true,
+                "$text": "\\n",
+                "$span": {
+                  "start": 21,
+                  "end": 23
+                },
                 "_content": "n"
               },
               {
@@ -87484,6 +87609,11 @@
             "$type": 91,
             "$source": 0,
             "$named": true,
+            "$text": "\\n",
+            "$span": {
+              "start": 21,
+              "end": 23
+            },
             "_content": "n"
           },
           {
@@ -87657,6 +87787,11 @@
           "$type": 91,
           "$source": 0,
           "$named": true,
+          "$text": "\\n",
+          "$span": {
+            "start": 21,
+            "end": 23
+          },
           "_content": "n"
         },
         {
