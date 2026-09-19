@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -3968,7 +3969,11 @@ export function buildIntegerLiteral(text: string): T.IntegerLiteral.Built {
 }
 
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Built {
-	const _string_open = config.stringOpen;
+	const _string_open = admitHiddenText<NonNullable<T.StringLiteral['_string_open']>>(
+		config.stringOpen,
+		[['_string_literal_open', _leafRe_buildStringLiteralOpen, buildStringLiteralOpen]],
+		'StringLiteral.stringOpen'
+	);
 	const _elements = config.elements ?? [];
 	return withMethods(
 		withAccessors(
@@ -3979,7 +3984,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				_string_open,
 				_elements,
 				$with: {
-					stringOpen: (value: T.StringLiteralOpen) => buildStringLiteral({ ...config, stringOpen: value }),
+					stringOpen: (value: T.StringLiteralOpen | string) => buildStringLiteral({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
 						buildStringLiteral({ ...config, elements: values })
 				}
@@ -3994,9 +3999,17 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 }
 
 export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawStringLiteral.Built {
-	const _raw_string_literal_start = config.rawStringLiteralStart;
+	const _raw_string_literal_start = admitHiddenText<NonNullable<T.RawStringLiteral['_raw_string_literal_start']>>(
+		config.rawStringLiteralStart,
+		[['_raw_string_literal_start', undefined, buildRawStringLiteralStart]],
+		'RawStringLiteral.rawStringLiteralStart'
+	);
 	const _string_content = config.stringContent;
-	const _raw_string_literal_end = config.rawStringLiteralEnd;
+	const _raw_string_literal_end = admitHiddenText<NonNullable<T.RawStringLiteral['_raw_string_literal_end']>>(
+		config.rawStringLiteralEnd,
+		[['_raw_string_literal_end', undefined, buildRawStringLiteralEnd]],
+		'RawStringLiteral.rawStringLiteralEnd'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4007,11 +4020,11 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 				_string_content,
 				_raw_string_literal_end,
 				$with: {
-					rawStringLiteralStart: (value: T.RawStringLiteralStart) =>
+					rawStringLiteralStart: (value: T.RawStringLiteralStart | string) =>
 						buildRawStringLiteral({ ...config, rawStringLiteralStart: value }),
 					stringContent: (value: T.RawStringLiteralContent) =>
 						buildRawStringLiteral({ ...config, stringContent: value }),
-					rawStringLiteralEnd: (value: T.RawStringLiteralEnd) =>
+					rawStringLiteralEnd: (value: T.RawStringLiteralEnd | string) =>
 						buildRawStringLiteral({ ...config, rawStringLiteralEnd: value })
 				}
 			},
@@ -4079,9 +4092,13 @@ export function buildLineComment(
 }
 
 export function buildBlockComment(
-	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
+	value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string
 ): T.BlockComment.Built {
-	const _content = value;
+	const _content = admitHiddenText<NonNullable<T.BlockComment['_content']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockComment.content'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4090,7 +4107,7 @@ export function buildBlockComment(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) =>
+					content: (value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string) =>
 						buildBlockComment(value)
 				}
 			},
@@ -6227,11 +6244,13 @@ export function buildLineCommentRegularDslash(text: string): T.LineCommentRegula
 	);
 }
 
-export function buildLineCommentDocOuter(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(
+	value: T.LineDocContent | string
+): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocOuter(args[0] as T.LineDocContent);
+		return _buildLineCommentDocOuter(args[0] as T.LineDocContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6239,11 +6258,17 @@ export function buildLineCommentDocOuter(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
 	return prebuilt
-		? _buildLineCommentDocOuter(args[0] as T.LineDocContent)
-		: _buildLineCommentDocOuter((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocOuter(args[0] as T.LineDocContent | string)
+		: _buildLineCommentDocOuter(
+				(buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent | string
+			);
 }
-function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOuter.Built {
-	const _doc = value;
+function _buildLineCommentDocOuter(value: T.LineDocContent | string): T.LineCommentDocOuter.Built {
+	const _doc = admitHiddenText<NonNullable<T.LineCommentDocOuter['_doc']>>(
+		value,
+		[['_line_doc_content', _leafRe_buildLineDocContent, buildLineDocContent]],
+		'LineCommentDocOuter.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6252,7 +6277,7 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocOuter(value)
+					doc: (value: T.LineDocContent | string) => buildLineCommentDocOuter(value)
 				}
 			},
 			{
@@ -6263,11 +6288,13 @@ function _buildLineCommentDocOuter(value: T.LineDocContent): T.LineCommentDocOut
 	);
 }
 
-export function buildLineCommentDocInner(value: T.LineDocContent): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(
+	value: T.LineDocContent | string
+): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildLineCommentDocInner(args[0] as T.LineDocContent);
+		return _buildLineCommentDocInner(args[0] as T.LineDocContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6275,11 +6302,17 @@ export function buildLineCommentDocInner(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.LineDocContent as const);
 	return prebuilt
-		? _buildLineCommentDocInner(args[0] as T.LineDocContent)
-		: _buildLineCommentDocInner((buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent);
+		? _buildLineCommentDocInner(args[0] as T.LineDocContent | string)
+		: _buildLineCommentDocInner(
+				(buildLineDocContent as (...a: unknown[]) => unknown)(...args) as T.LineDocContent | string
+			);
 }
-function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInner.Built {
-	const _doc = value;
+function _buildLineCommentDocInner(value: T.LineDocContent | string): T.LineCommentDocInner.Built {
+	const _doc = admitHiddenText<NonNullable<T.LineCommentDocInner['_doc']>>(
+		value,
+		[['_line_doc_content', _leafRe_buildLineDocContent, buildLineDocContent]],
+		'LineCommentDocInner.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6288,7 +6321,7 @@ function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInn
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value: T.LineDocContent) => buildLineCommentDocInner(value)
+					doc: (value: T.LineDocContent | string) => buildLineCommentDocInner(value)
 				}
 			},
 			{
@@ -6300,7 +6333,6 @@ function _buildLineCommentDocInner(value: T.LineDocContent): T.LineCommentDocInn
 }
 
 export function buildLineCommentContent(text: string): T.LineCommentContent.Built {
-	if (text.length === 0) throw new Error(`line_comment_content: text must be non-empty`);
 	if (!_leafRe_buildLineCommentContent.test(text))
 		throw new Error(`line_comment_content: text does not match pattern: ${text}`);
 	return withMethods(
@@ -6314,11 +6346,13 @@ export function buildLineCommentContent(text: string): T.LineCommentContent.Buil
 	);
 }
 
-export function buildBlockCommentDocOuter(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocOuter>;
+export function buildBlockCommentDocOuter(
+	value?: T.BlockCommentContent | string
+): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent);
+		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6326,13 +6360,17 @@ export function buildBlockCommentDocOuter(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
 	return prebuilt
-		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent)
+		? _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent | string)
 		: _buildBlockCommentDocOuter(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent | string
 			);
 }
-function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockCommentDocOuter.Built {
-	const _doc = value;
+function _buildBlockCommentDocOuter(value?: T.BlockCommentContent | string): T.BlockCommentDocOuter.Built {
+	const _doc = admitHiddenText<NonNullable<T.BlockCommentDocOuter['_doc']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockCommentDocOuter.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6341,7 +6379,7 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocOuter(value)
+					doc: (value?: T.BlockCommentContent | string) => buildBlockCommentDocOuter(value)
 				}
 			},
 			{
@@ -6352,11 +6390,13 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 	);
 }
 
-export function buildBlockCommentDocInner(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocInner>;
+export function buildBlockCommentDocInner(
+	value?: T.BlockCommentContent | string
+): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
-		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent);
+		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent | string);
 	}
 	const prebuilt =
 		args.length === 1 &&
@@ -6364,13 +6404,17 @@ export function buildBlockCommentDocInner(...args: unknown[]) {
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockCommentContent as const);
 	return prebuilt
-		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent)
+		? _buildBlockCommentDocInner(args[0] as T.BlockCommentContent | string)
 		: _buildBlockCommentDocInner(
-				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
+				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent | string
 			);
 }
-function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockCommentDocInner.Built {
-	const _doc = value;
+function _buildBlockCommentDocInner(value?: T.BlockCommentContent | string): T.BlockCommentDocInner.Built {
+	const _doc = admitHiddenText<NonNullable<T.BlockCommentDocInner['_doc']>>(
+		value,
+		[['_block_comment_content', _leafRe_buildBlockCommentContent, buildBlockCommentContent]],
+		'BlockCommentDocInner.doc'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6379,7 +6423,7 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 				$named: true as const,
 				_doc,
 				$with: {
-					doc: (value?: T.BlockCommentContent) => buildBlockCommentDocInner(value)
+					doc: (value?: T.BlockCommentContent | string) => buildBlockCommentDocInner(value)
 				}
 			},
 			{
@@ -7224,7 +7268,6 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 }
 
 export function buildLineDocContent(text: string): T.LineDocContent.Built {
-	if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
 	if (!_leafRe_buildLineDocContent.test(text))
 		throw new Error(`_line_doc_content: text does not match pattern: ${text}`);
 	return withMethods(
@@ -7239,7 +7282,6 @@ export function buildLineDocContent(text: string): T.LineDocContent.Built {
 }
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Built {
-	if (text.length === 0) throw new Error(`_block_comment_content: text must be non-empty`);
 	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${text}`);
 	return withMethods(

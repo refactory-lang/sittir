@@ -2630,7 +2630,6 @@
       "modelType": "list",
       "typeName": "CollectionElements",
       "factoryName": "collectionElements",
-      "coerceName": "coerceToCollectionElements",
       "irKey": "collectionElements",
       "hidden": false,
       "nonEmpty": true,
@@ -2697,7 +2696,6 @@
       "modelType": "branch",
       "typeName": "ComparisonOperatorComparator",
       "factoryName": "_comparisonOperatorComparator",
-      "coerceName": "coerceToComparisonOperatorComparator",
       "irKey": "comparisonOperatorComparator",
       "hidden": false,
       "annotations": {
@@ -2834,7 +2832,6 @@
       "modelType": "pattern",
       "typeName": "Dedent",
       "factoryName": "dedent",
-      "coerceName": "coerceToDedent",
       "irKey": "dedent",
       "hidden": false
     },
@@ -2891,7 +2888,6 @@
       "modelType": "list",
       "typeName": "ImportList",
       "factoryName": "importList",
-      "coerceName": "coerceToImportList",
       "irKey": "importList",
       "hidden": false,
       "nonEmpty": true,
@@ -2917,7 +2913,6 @@
       "modelType": "pattern",
       "typeName": "Indent",
       "factoryName": "indent",
-      "coerceName": "coerceToIndent",
       "irKey": "indent",
       "hidden": false
     },
@@ -2926,7 +2921,6 @@
       "modelType": "branch",
       "typeName": "KeyValuePattern",
       "factoryName": "keyValuePattern",
-      "coerceName": "coerceToKeyValuePattern",
       "irKey": "keyValuePattern",
       "hidden": false,
       "slots": [
@@ -3085,7 +3079,6 @@
       "modelType": "keyword",
       "typeName": "KwAsyncMarker",
       "factoryName": "kwAsyncMarker",
-      "coerceName": "coerceToKwAsyncMarker",
       "irKey": "kwAsyncMarker",
       "hidden": false,
       "isParameterless": true,
@@ -3110,7 +3103,6 @@
       "modelType": "polymorph",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
-      "coerceName": "coerceToMatchBlock",
       "irKey": "matchBlock",
       "hidden": false,
       "slots": [
@@ -3192,7 +3184,6 @@
       "modelType": "list",
       "typeName": "_Parameters",
       "factoryName": "_parameters",
-      "coerceName": "coerceTo_Parameters",
       "irKey": "_parameters",
       "hidden": false,
       "nonEmpty": true,
@@ -3228,7 +3219,6 @@
       "modelType": "envelope",
       "typeName": "ParenthesizedImportList",
       "factoryName": "parenthesizedImportList",
-      "coerceName": "coerceToParenthesizedImportList",
       "irKey": "parenthesizedImportList",
       "hidden": false,
       "slots": [
@@ -3269,7 +3259,6 @@
       "modelType": "list",
       "typeName": "Patterns",
       "factoryName": "patterns",
-      "coerceName": "coerceToPatterns",
       "irKey": "patterns",
       "hidden": false,
       "nonEmpty": true,
@@ -3299,7 +3288,6 @@
       "modelType": "list",
       "typeName": "PrintArguments",
       "factoryName": "printArguments",
-      "coerceName": "coerceToPrintArguments",
       "irKey": "printArguments",
       "hidden": false,
       "nonEmpty": true,
@@ -3363,7 +3351,6 @@
       "modelType": "list",
       "typeName": "PrintChevronArguments",
       "factoryName": "printChevronArguments",
-      "coerceName": "coerceToPrintChevronArguments",
       "irKey": "printChevronArguments",
       "hidden": false,
       "nonEmpty": true,
@@ -3494,7 +3481,6 @@
       "modelType": "envelope",
       "typeName": "SimpleStatements",
       "factoryName": "simpleStatements",
-      "coerceName": "coerceToSimpleStatements",
       "irKey": "simpleStatements",
       "hidden": false,
       "slots": [
@@ -3633,7 +3619,6 @@
       "modelType": "pattern",
       "typeName": "_StringContent",
       "factoryName": "_stringContent",
-      "coerceName": "coerceTo_StringContent",
       "irKey": "_stringContent",
       "hidden": false,
       "pattern": "[^\"'\\\\{}\\n]+",
@@ -3697,7 +3682,6 @@
       "modelType": "keyword",
       "typeName": "WildcardPattern",
       "factoryName": "wildcardPattern",
-      "coerceName": "coerceToWildcardPattern",
       "irKey": "wildcardPattern",
       "hidden": false,
       "isParameterless": true,
@@ -3710,7 +3694,6 @@
       "modelType": "envelope",
       "typeName": "YieldFromClause",
       "factoryName": "_yieldFromClause",
-      "coerceName": "coerceToYieldFromClause",
       "irKey": "yieldFromClause",
       "hidden": false,
       "annotations": {
@@ -3792,7 +3775,6 @@
       "modelType": "branch",
       "typeName": "AliasedImport",
       "factoryName": "aliasedImport",
-      "coerceName": "coerceToAliasedImport",
       "irKey": "aliasedImport",
       "hidden": false,
       "slots": [
@@ -3879,7 +3861,6 @@
       "modelType": "envelope",
       "typeName": "ArgumentList",
       "factoryName": "argumentList",
-      "coerceName": "coerceToArgumentList",
       "irKey": "argumentList",
       "hidden": false,
       "slots": [
@@ -3960,7 +3941,6 @@
       "modelType": "list",
       "typeName": "ArgumentListElements",
       "factoryName": "argumentListElements",
-      "coerceName": "coerceToArgumentListElements",
       "irKey": "argumentListElements",
       "hidden": false,
       "annotations": {
@@ -4043,7 +4023,6 @@
       "modelType": "branch",
       "typeName": "AsPattern",
       "factoryName": "asPattern",
-      "coerceName": "coerceToAsPattern",
       "irKey": "asPattern",
       "hidden": false,
       "slots": [
@@ -4110,7 +4089,6 @@
       "modelType": "envelope",
       "typeName": "AssertStatement",
       "factoryName": "assertStatement",
-      "coerceName": "coerceToAssertStatement",
       "irKey": "assertStatement",
       "hidden": false,
       "slots": [
@@ -4158,7 +4136,6 @@
       "modelType": "branch",
       "typeName": "AssignmentEq",
       "factoryName": "assignmentEq",
-      "coerceName": "coerceToAssignmentEq",
       "irKey": "assignmentEq",
       "hidden": false,
       "annotations": {
@@ -4260,7 +4237,6 @@
       "modelType": "branch",
       "typeName": "AssignmentType",
       "factoryName": "assignmentType",
-      "coerceName": "coerceToAssignmentType",
       "irKey": "assignmentType",
       "hidden": false,
       "annotations": {
@@ -4327,7 +4303,6 @@
       "modelType": "branch",
       "typeName": "AssignmentTyped",
       "factoryName": "assignmentTyped",
-      "coerceName": "coerceToAssignmentTyped",
       "irKey": "assignmentTyped",
       "hidden": false,
       "annotations": {
@@ -4481,7 +4456,6 @@
       "modelType": "branch",
       "typeName": "Attribute",
       "factoryName": "attribute",
-      "coerceName": "coerceToAttribute",
       "irKey": "attribute",
       "hidden": false,
       "slots": [
@@ -4537,7 +4511,6 @@
       "modelType": "branch",
       "typeName": "AugmentedAssignment",
       "factoryName": "augmentedAssignment",
-      "coerceName": "coerceToAugmentedAssignment",
       "irKey": "augmentedAssignment",
       "hidden": false,
       "slots": [
@@ -4656,7 +4629,6 @@
       "modelType": "envelope",
       "typeName": "Await",
       "factoryName": "await_",
-      "coerceName": "coerceToAwait",
       "irKey": "await",
       "hidden": false,
       "slots": [
@@ -4755,7 +4727,6 @@
       "modelType": "branch",
       "typeName": "BinaryOperator",
       "factoryName": "binaryOperator",
-      "coerceName": "coerceToBinaryOperator",
       "irKey": "binaryOperator",
       "hidden": false,
       "slots": [
@@ -4902,7 +4873,6 @@
       "modelType": "envelope",
       "typeName": "Block",
       "factoryName": "block",
-      "coerceName": "coerceToBlock",
       "irKey": "block",
       "hidden": false,
       "slots": [
@@ -4944,7 +4914,6 @@
       "modelType": "branch",
       "typeName": "BooleanOperator",
       "factoryName": "booleanOperator",
-      "coerceName": "coerceToBooleanOperator",
       "irKey": "booleanOperator",
       "hidden": false,
       "slots": [
@@ -5036,7 +5005,6 @@
       "modelType": "keyword",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "coerceName": "coerceToBreakStatement",
       "irKey": "breakStatement",
       "hidden": false,
       "isParameterless": true,
@@ -5059,7 +5027,6 @@
       "modelType": "branch",
       "typeName": "Call",
       "factoryName": "call",
-      "coerceName": "coerceToCall",
       "irKey": "call",
       "hidden": false,
       "slots": [
@@ -5142,7 +5109,6 @@
       "modelType": "branch",
       "typeName": "CaseAsPattern",
       "factoryName": "caseAsPattern",
-      "coerceName": "coerceToCaseAsPattern",
       "irKey": "caseAsPattern",
       "hidden": false,
       "slots": [
@@ -5198,7 +5164,6 @@
       "modelType": "branch",
       "typeName": "CaseClause",
       "factoryName": "caseClause",
-      "coerceName": "coerceToCaseClause",
       "irKey": "caseClause",
       "hidden": false,
       "slots": [
@@ -5290,7 +5255,6 @@
       "modelType": "envelope",
       "typeName": "CaseListPattern",
       "factoryName": "caseListPattern",
-      "coerceName": "coerceToCaseListPattern",
       "irKey": "caseListPattern",
       "hidden": false,
       "slots": [
@@ -5349,7 +5313,6 @@
       "modelType": "polymorph",
       "typeName": "CasePattern",
       "factoryName": "casePattern",
-      "coerceName": "coerceToCasePattern",
       "irKey": "casePattern",
       "hidden": false,
       "slots": [
@@ -5524,7 +5487,6 @@
       "modelType": "list",
       "typeName": "CasePatterns",
       "factoryName": "casePatterns",
-      "coerceName": "coerceToCasePatterns",
       "irKey": "casePatterns",
       "hidden": false,
       "annotations": {
@@ -5571,7 +5533,6 @@
       "modelType": "envelope",
       "typeName": "CaseTuplePattern",
       "factoryName": "caseTuplePattern",
-      "coerceName": "coerceToCaseTuplePattern",
       "irKey": "caseTuplePattern",
       "hidden": false,
       "slots": [
@@ -5630,7 +5591,6 @@
       "modelType": "envelope",
       "typeName": "Chevron",
       "factoryName": "chevron",
-      "coerceName": "coerceToChevron",
       "irKey": "chevron",
       "hidden": false,
       "slots": [
@@ -5708,7 +5668,6 @@
       "modelType": "branch",
       "typeName": "ClassDefinition",
       "factoryName": "classDefinition",
-      "coerceName": "coerceToClassDefinition",
       "irKey": "classDefinition",
       "hidden": false,
       "slots": [
@@ -5817,7 +5776,6 @@
       "modelType": "branch",
       "typeName": "ClassPattern",
       "factoryName": "classPattern",
-      "coerceName": "coerceToClassPattern",
       "irKey": "classPattern",
       "hidden": false,
       "slots": [
@@ -5907,7 +5865,6 @@
       "modelType": "pattern",
       "typeName": "Comment",
       "factoryName": "comment",
-      "coerceName": "coerceToComment",
       "irKey": "comment",
       "hidden": false,
       "pattern": ".*",
@@ -5919,7 +5876,6 @@
       "modelType": "branch",
       "typeName": "ComparisonOperator",
       "factoryName": "comparisonOperator",
-      "coerceName": "coerceToComparisonOperator",
       "irKey": "comparisonOperator",
       "hidden": false,
       "slots": [
@@ -5979,7 +5935,6 @@
       "modelType": "branch",
       "typeName": "ComplexPattern",
       "factoryName": "complexPattern",
-      "coerceName": "coerceToComplexPattern",
       "irKey": "complexPattern",
       "hidden": false,
       "slots": [
@@ -6093,7 +6048,6 @@
       "modelType": "envelope",
       "typeName": "ComprehensionClauses",
       "factoryName": "comprehensionClauses",
-      "coerceName": "coerceToComprehensionClauses",
       "irKey": "comprehensionClauses",
       "hidden": false,
       "slots": [
@@ -6135,7 +6089,6 @@
       "modelType": "envelope",
       "typeName": "ConcatenatedString",
       "factoryName": "concatenatedString",
-      "coerceName": "coerceToConcatenatedString",
       "irKey": "concatenatedString",
       "hidden": false,
       "slots": [
@@ -6170,7 +6123,6 @@
       "modelType": "branch",
       "typeName": "ConditionalExpression",
       "factoryName": "conditionalExpression",
-      "coerceName": "coerceToConditionalExpression",
       "irKey": "conditionalExpression",
       "hidden": false,
       "slots": [
@@ -6247,7 +6199,6 @@
       "modelType": "branch",
       "typeName": "ConstrainedType",
       "factoryName": "constrainedType",
-      "coerceName": "coerceToConstrainedType",
       "irKey": "constrainedType",
       "hidden": false,
       "slots": [
@@ -6314,7 +6265,6 @@
       "modelType": "keyword",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "coerceName": "coerceToContinueStatement",
       "irKey": "continueStatement",
       "hidden": false,
       "isParameterless": true,
@@ -6357,7 +6307,6 @@
       "modelType": "branch",
       "typeName": "DecoratedDefinition",
       "factoryName": "decoratedDefinition",
-      "coerceName": "coerceToDecoratedDefinition",
       "irKey": "decoratedDefinition",
       "hidden": false,
       "slots": [
@@ -6420,7 +6369,6 @@
       "modelType": "envelope",
       "typeName": "Decorator",
       "factoryName": "decorator",
-      "coerceName": "coerceToDecorator",
       "irKey": "decorator",
       "hidden": false,
       "slots": [
@@ -6509,7 +6457,6 @@
       "modelType": "branch",
       "typeName": "DefaultParameter",
       "factoryName": "defaultParameter",
-      "coerceName": "coerceToDefaultParameter",
       "irKey": "defaultParameter",
       "hidden": false,
       "slots": [
@@ -6583,7 +6530,6 @@
       "modelType": "polymorph",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
-      "coerceName": "coerceToDeleteStatement",
       "irKey": "deleteStatement",
       "hidden": false,
       "slots": [
@@ -6668,7 +6614,6 @@
       "modelType": "envelope",
       "typeName": "DictPattern",
       "factoryName": "dictPattern",
-      "coerceName": "coerceToDictPattern",
       "irKey": "dictPattern",
       "hidden": false,
       "slots": [
@@ -6709,7 +6654,6 @@
       "modelType": "list",
       "typeName": "DictPatternElements",
       "factoryName": "dictPatternElements",
-      "coerceName": "coerceToDictPatternElements",
       "irKey": "dictPatternElements",
       "hidden": false,
       "annotations": {
@@ -6738,7 +6682,6 @@
       "modelType": "envelope",
       "typeName": "Dictionary",
       "factoryName": "dictionary",
-      "coerceName": "coerceToDictionary",
       "irKey": "dictionary",
       "hidden": false,
       "slots": [
@@ -6817,7 +6760,6 @@
       "modelType": "branch",
       "typeName": "DictionaryComprehension",
       "factoryName": "dictionaryComprehension",
-      "coerceName": "coerceToDictionaryComprehension",
       "irKey": "dictionaryComprehension",
       "hidden": false,
       "slots": [
@@ -6873,7 +6815,6 @@
       "modelType": "list",
       "typeName": "DictionaryElements",
       "factoryName": "dictionaryElements",
-      "coerceName": "coerceToDictionaryElements",
       "irKey": "dictionaryElements",
       "hidden": false,
       "annotations": {
@@ -6941,7 +6882,6 @@
       "modelType": "envelope",
       "typeName": "DictionarySplat",
       "factoryName": "dictionarySplat",
-      "coerceName": "coerceToDictionarySplat",
       "irKey": "dictionarySplat",
       "hidden": false,
       "slots": [
@@ -7019,7 +6959,6 @@
       "modelType": "polymorph",
       "typeName": "DictionarySplatPattern",
       "factoryName": "dictionarySplatPattern",
-      "coerceName": "coerceToDictionarySplatPattern",
       "irKey": "dictionarySplatPattern",
       "hidden": false,
       "slots": [
@@ -7083,7 +7022,6 @@
       "modelType": "envelope",
       "typeName": "DottedName",
       "factoryName": "dottedName",
-      "coerceName": "coerceToDottedName",
       "irKey": "dottedName",
       "hidden": false,
       "slots": [
@@ -7118,7 +7056,6 @@
       "modelType": "branch",
       "typeName": "ElifClause",
       "factoryName": "elifClause",
-      "coerceName": "coerceToElifClause",
       "irKey": "elifClause",
       "hidden": false,
       "slots": [
@@ -7185,7 +7122,6 @@
       "modelType": "punctuation",
       "typeName": "Ellipsis",
       "factoryName": "ellipsis",
-      "coerceName": "coerceToEllipsis",
       "irKey": "ellipsis",
       "hidden": false,
       "isParameterless": true,
@@ -7198,7 +7134,6 @@
       "modelType": "envelope",
       "typeName": "ElseClause",
       "factoryName": "elseClause",
-      "coerceName": "coerceToElseClause",
       "irKey": "elseClause",
       "hidden": false,
       "slots": [
@@ -7341,7 +7276,6 @@
       "modelType": "pattern",
       "typeName": "EscapeInterpolation",
       "factoryName": "escapeInterpolation",
-      "coerceName": "coerceToEscapeInterpolation",
       "irKey": "escapeInterpolation",
       "hidden": false,
       "pattern": "\\{\\{|\\}\\}",
@@ -7353,7 +7287,6 @@
       "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
-      "coerceName": "coerceToEscapeSequence",
       "irKey": "escapeSequence",
       "hidden": false,
       "leafPattern": "/^(?:\\\\(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$/u",
@@ -7364,7 +7297,6 @@
       "modelType": "branch",
       "typeName": "ExceptClause",
       "factoryName": "exceptClause",
-      "coerceName": "coerceToExceptClause",
       "irKey": "exceptClause",
       "hidden": false,
       "slots": [
@@ -7445,7 +7377,6 @@
       "modelType": "polymorph",
       "typeName": "ExceptClauseException",
       "factoryName": "exceptClauseException",
-      "coerceName": "coerceToExceptClauseException",
       "irKey": "exceptClauseException",
       "hidden": false,
       "annotations": {
@@ -7500,7 +7431,6 @@
       "modelType": "branch",
       "typeName": "ExceptClauseExceptionAs",
       "factoryName": "exceptClauseExceptionAs",
-      "coerceName": "coerceToExceptClauseExceptionAs",
       "irKey": "exceptClauseExceptionAs",
       "hidden": false,
       "slots": [
@@ -7556,7 +7486,6 @@
       "modelType": "envelope",
       "typeName": "ExceptClauseExceptionList",
       "factoryName": "exceptClauseExceptionList",
-      "coerceName": "coerceToExceptClauseExceptionList",
       "irKey": "exceptClauseExceptionList",
       "hidden": false,
       "annotations": {
@@ -7617,7 +7546,6 @@
       "modelType": "branch",
       "typeName": "ExecStatement",
       "factoryName": "execStatement",
-      "coerceName": "coerceToExecStatement",
       "irKey": "execStatement",
       "hidden": false,
       "slots": [
@@ -7698,7 +7626,6 @@
       "modelType": "branch",
       "typeName": "ExpressionList",
       "factoryName": "expressionList",
-      "coerceName": "coerceToExpressionList",
       "irKey": "expressionList",
       "hidden": false,
       "slots": [
@@ -7765,7 +7692,6 @@
       "modelType": "list",
       "typeName": "ExpressionListExpressions",
       "factoryName": "expressionListExpressions",
-      "coerceName": "coerceToExpressionListExpressions",
       "irKey": "expressionListExpressions",
       "hidden": false,
       "annotations": {
@@ -7832,7 +7758,6 @@
       "modelType": "polymorph",
       "typeName": "ExpressionStatement",
       "factoryName": "expressionStatement",
-      "coerceName": "coerceToExpressionStatement",
       "irKey": "expressionStatement",
       "hidden": false,
       "slots": [
@@ -7948,7 +7873,6 @@
       "modelType": "list",
       "typeName": "ExpressionStatementTuple",
       "factoryName": "expressionStatementTuple",
-      "coerceName": "coerceToExpressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": false,
       "annotations": {
@@ -8015,7 +7939,6 @@
       "modelType": "keyword",
       "typeName": "False",
       "factoryName": "false_",
-      "coerceName": "coerceToFalse",
       "irKey": "false",
       "hidden": false,
       "isParameterless": true,
@@ -8028,7 +7951,6 @@
       "modelType": "envelope",
       "typeName": "FinallyClause",
       "factoryName": "finallyClause",
-      "coerceName": "coerceToFinallyClause",
       "irKey": "finallyClause",
       "hidden": false,
       "slots": [
@@ -8151,7 +8073,6 @@
       "modelType": "pattern",
       "typeName": "Float",
       "factoryName": "float",
-      "coerceName": "coerceToFloat",
       "irKey": "float",
       "hidden": false,
       "leafPattern": "/^(?:(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u",
@@ -8162,7 +8083,6 @@
       "modelType": "branch",
       "typeName": "ForInClause",
       "factoryName": "forInClause",
-      "coerceName": "coerceToForInClause",
       "irKey": "forInClause",
       "hidden": false,
       "slots": [
@@ -8283,7 +8203,6 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "coerceName": "coerceToForStatement",
       "irKey": "forStatement",
       "hidden": false,
       "slots": [
@@ -8416,7 +8335,6 @@
       "modelType": "envelope",
       "typeName": "FormatSpecifier",
       "factoryName": "formatSpecifier",
-      "coerceName": "coerceToFormatSpecifier",
       "irKey": "formatSpecifier",
       "hidden": false,
       "slots": [
@@ -8467,7 +8385,6 @@
       "modelType": "branch",
       "typeName": "FunctionDefinition",
       "factoryName": "functionDefinition",
-      "coerceName": "coerceToFunctionDefinition",
       "irKey": "functionDefinition",
       "hidden": false,
       "slots": [
@@ -8607,7 +8524,6 @@
       "modelType": "polymorph",
       "typeName": "FutureImportStatement",
       "factoryName": "futureImportStatement",
-      "coerceName": "coerceToFutureImportStatement",
       "irKey": "futureImportStatement",
       "hidden": false,
       "slots": [
@@ -8655,7 +8571,6 @@
       "modelType": "branch",
       "typeName": "GeneratorExpression",
       "factoryName": "generatorExpression",
-      "coerceName": "coerceToGeneratorExpression",
       "irKey": "generatorExpression",
       "hidden": false,
       "slots": [
@@ -8711,7 +8626,6 @@
       "modelType": "branch",
       "typeName": "GenericType",
       "factoryName": "genericType",
-      "coerceName": "coerceToGenericType",
       "irKey": "genericType",
       "hidden": false,
       "slots": [
@@ -8784,7 +8698,6 @@
       "modelType": "envelope",
       "typeName": "GlobalStatement",
       "factoryName": "globalStatement",
-      "coerceName": "coerceToGlobalStatement",
       "irKey": "globalStatement",
       "hidden": false,
       "slots": [
@@ -8859,7 +8772,6 @@
       "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
-      "coerceName": "coerceToIdentifier",
       "irKey": "identifier",
       "hidden": false,
       "pattern": "[_\\p{XID_Start}][_\\p{XID_Continue}]*",
@@ -8871,7 +8783,6 @@
       "modelType": "envelope",
       "typeName": "IfClause",
       "factoryName": "ifClause",
-      "coerceName": "coerceToIfClause",
       "irKey": "ifClause",
       "hidden": false,
       "slots": [
@@ -8960,7 +8871,6 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "coerceName": "coerceToIfStatement",
       "irKey": "ifStatement",
       "hidden": false,
       "slots": [
@@ -9044,7 +8954,6 @@
       "modelType": "branch",
       "typeName": "ImportFromStatement",
       "factoryName": "importFromStatement",
-      "coerceName": "coerceToImportFromStatement",
       "irKey": "importFromStatement",
       "hidden": false,
       "slots": [
@@ -9132,7 +9041,6 @@
       "modelType": "pattern",
       "typeName": "ImportPrefix",
       "factoryName": "importPrefix",
-      "coerceName": "coerceToImportPrefix",
       "irKey": "importPrefix",
       "hidden": false,
       "leafPattern": "/^(?:(?:\\.)+)$/u",
@@ -9143,7 +9051,6 @@
       "modelType": "envelope",
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
-      "coerceName": "coerceToImportStatement",
       "irKey": "importStatement",
       "hidden": false,
       "slots": [
@@ -9195,7 +9102,6 @@
       "modelType": "pattern",
       "typeName": "Integer",
       "factoryName": "integer",
-      "coerceName": "coerceToInteger",
       "irKey": "integer",
       "hidden": false,
       "leafPattern": "/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u",
@@ -9206,7 +9112,6 @@
       "modelType": "branch",
       "typeName": "Interpolation",
       "factoryName": "interpolation",
-      "coerceName": "coerceToInterpolation",
       "irKey": "interpolation",
       "hidden": false,
       "slots": [
@@ -9334,7 +9239,6 @@
       "modelType": "branch",
       "typeName": "KeywordArgument",
       "factoryName": "keywordArgument",
-      "coerceName": "coerceToKeywordArgument",
       "irKey": "keywordArgument",
       "hidden": false,
       "slots": [
@@ -9401,7 +9305,6 @@
       "modelType": "branch",
       "typeName": "KeywordPattern",
       "factoryName": "keywordPattern",
-      "coerceName": "coerceToKeywordPattern",
       "irKey": "keywordPattern",
       "hidden": false,
       "slots": [
@@ -9560,7 +9463,6 @@
       "modelType": "punctuation",
       "typeName": "KeywordSeparator",
       "factoryName": "keywordSeparator",
-      "coerceName": "coerceToKeywordSeparator",
       "irKey": "keywordSeparator",
       "hidden": false,
       "isParameterless": true,
@@ -9573,7 +9475,6 @@
       "modelType": "branch",
       "typeName": "Lambda",
       "factoryName": "lambda",
-      "coerceName": "coerceToLambda",
       "irKey": "lambda",
       "hidden": false,
       "slots": [
@@ -9640,7 +9541,6 @@
       "modelType": "envelope",
       "typeName": "LambdaParameters",
       "factoryName": "lambdaParameters",
-      "coerceName": "coerceToLambdaParameters",
       "irKey": "lambdaParameters",
       "hidden": false,
       "slots": [
@@ -9692,7 +9592,6 @@
       "modelType": "branch",
       "typeName": "LambdaWithinForInClause",
       "factoryName": "lambdaWithinForInClause",
-      "coerceName": "coerceToLambdaWithinForInClause",
       "irKey": "lambdaWithinForInClause",
       "hidden": false,
       "slots": [
@@ -9775,7 +9674,6 @@
       "modelType": "pattern",
       "typeName": "LineContinuation",
       "factoryName": "lineContinuation",
-      "coerceName": "coerceToLineContinuation",
       "irKey": "lineContinuation",
       "hidden": false,
       "leafPattern": "/^(?:\\\\(?:(?:\\r)?\\n|\\0))$/u",
@@ -9786,7 +9684,6 @@
       "modelType": "envelope",
       "typeName": "List",
       "factoryName": "list",
-      "coerceName": "coerceToList",
       "irKey": "list",
       "hidden": false,
       "slots": [
@@ -9865,7 +9762,6 @@
       "modelType": "branch",
       "typeName": "ListComprehension",
       "factoryName": "listComprehension",
-      "coerceName": "coerceToListComprehension",
       "irKey": "listComprehension",
       "hidden": false,
       "slots": [
@@ -9921,7 +9817,6 @@
       "modelType": "envelope",
       "typeName": "ListPattern",
       "factoryName": "listPattern",
-      "coerceName": "coerceToListPattern",
       "irKey": "listPattern",
       "hidden": false,
       "slots": [
@@ -9966,7 +9861,6 @@
       "modelType": "list",
       "typeName": "ListPatternCasePatterns",
       "factoryName": "listPatternCasePatterns",
-      "coerceName": "coerceToListPatternCasePatterns",
       "irKey": "listPatternCasePatterns",
       "hidden": false,
       "annotations": {
@@ -10013,7 +9907,6 @@
       "modelType": "envelope",
       "typeName": "ListSplat",
       "factoryName": "listSplat",
-      "coerceName": "coerceToListSplat",
       "irKey": "listSplat",
       "hidden": false,
       "slots": [
@@ -10091,7 +9984,6 @@
       "modelType": "polymorph",
       "typeName": "ListSplatPattern",
       "factoryName": "listSplatPattern",
-      "coerceName": "coerceToListSplatPattern",
       "irKey": "listSplatPattern",
       "hidden": false,
       "slots": [
@@ -10205,7 +10097,6 @@
       "modelType": "envelope",
       "typeName": "MatchBlockBlock",
       "factoryName": "matchBlockBlock",
-      "coerceName": "coerceToMatchBlockBlock",
       "irKey": "matchBlockBlock",
       "hidden": false,
       "annotations": {
@@ -10255,7 +10146,6 @@
       "modelType": "branch",
       "typeName": "MatchStatement",
       "factoryName": "matchStatement",
-      "coerceName": "coerceToMatchStatement",
       "irKey": "matchStatement",
       "hidden": false,
       "slots": [
@@ -10315,7 +10205,6 @@
       "modelType": "branch",
       "typeName": "MemberType",
       "factoryName": "memberType",
-      "coerceName": "coerceToMemberType",
       "irKey": "memberType",
       "hidden": false,
       "slots": [
@@ -10371,7 +10260,6 @@
       "modelType": "envelope",
       "typeName": "Module",
       "factoryName": "module",
-      "coerceName": "coerceToModule",
       "irKey": "module",
       "hidden": false,
       "slots": [
@@ -10413,7 +10301,6 @@
       "modelType": "branch",
       "typeName": "NamedExpression",
       "factoryName": "namedExpression",
-      "coerceName": "coerceToNamedExpression",
       "irKey": "namedExpression",
       "hidden": false,
       "slots": [
@@ -10469,7 +10356,6 @@
       "modelType": "keyword",
       "typeName": "None",
       "factoryName": "none",
-      "coerceName": "coerceToNone",
       "irKey": "none",
       "hidden": false,
       "isParameterless": true,
@@ -10493,7 +10379,6 @@
       "modelType": "envelope",
       "typeName": "NonlocalStatement",
       "factoryName": "nonlocalStatement",
-      "coerceName": "coerceToNonlocalStatement",
       "irKey": "nonlocalStatement",
       "hidden": false,
       "slots": [
@@ -10539,7 +10424,6 @@
       "modelType": "envelope",
       "typeName": "NotOperator",
       "factoryName": "notOperator",
-      "coerceName": "coerceToNotOperator",
       "irKey": "notOperator",
       "hidden": false,
       "slots": [
@@ -10628,7 +10512,6 @@
       "modelType": "branch",
       "typeName": "Pair",
       "factoryName": "pair",
-      "coerceName": "coerceToPair",
       "irKey": "pair",
       "hidden": false,
       "slots": [
@@ -10703,7 +10586,6 @@
       "modelType": "envelope",
       "typeName": "Parameters",
       "factoryName": "parameters",
-      "coerceName": "coerceToParameters",
       "irKey": "parameters",
       "hidden": false,
       "slots": [
@@ -10755,7 +10637,6 @@
       "modelType": "polymorph",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
-      "coerceName": "coerceToParenthesizedExpression",
       "irKey": "parenthesizedExpression",
       "hidden": false,
       "slots": [
@@ -10847,7 +10728,6 @@
       "modelType": "polymorph",
       "typeName": "ParenthesizedListSplat",
       "factoryName": "parenthesizedListSplat",
-      "coerceName": "coerceToParenthesizedListSplat",
       "irKey": "parenthesizedListSplat",
       "hidden": false,
       "slots": [
@@ -10943,7 +10823,6 @@
       "modelType": "keyword",
       "typeName": "PassStatement",
       "factoryName": "passStatement",
-      "coerceName": "coerceToPassStatement",
       "irKey": "passStatement",
       "hidden": false,
       "isParameterless": true,
@@ -10972,7 +10851,6 @@
       "modelType": "branch",
       "typeName": "PatternList",
       "factoryName": "patternList",
-      "coerceName": "coerceToPatternList",
       "irKey": "patternList",
       "hidden": false,
       "slots": [
@@ -11039,7 +10917,6 @@
       "modelType": "list",
       "typeName": "PatternListPatterns",
       "factoryName": "patternListPatterns",
-      "coerceName": "coerceToPatternListPatterns",
       "irKey": "patternListPatterns",
       "hidden": false,
       "annotations": {
@@ -11132,7 +11009,6 @@
       "modelType": "punctuation",
       "typeName": "PositionalSeparator",
       "factoryName": "positionalSeparator",
-      "coerceName": "coerceToPositionalSeparator",
       "irKey": "positionalSeparator",
       "hidden": false,
       "isParameterless": true,
@@ -11191,7 +11067,6 @@
       "modelType": "polymorph",
       "typeName": "PrintStatement",
       "factoryName": "printStatement",
-      "coerceName": "coerceToPrintStatement",
       "irKey": "printStatement",
       "hidden": false,
       "slots": [
@@ -11279,7 +11154,6 @@
       "modelType": "branch",
       "typeName": "PrintStatementChevron",
       "factoryName": "printStatementChevron",
-      "coerceName": "coerceToPrintStatementChevron",
       "irKey": "printStatementChevron",
       "hidden": false,
       "slots": [
@@ -11341,7 +11215,6 @@
       "modelType": "envelope",
       "typeName": "PrintStatementPlain",
       "factoryName": "printStatementPlain",
-      "coerceName": "coerceToPrintStatementPlain",
       "irKey": "printStatementPlain",
       "hidden": false,
       "slots": [
@@ -11432,7 +11305,6 @@
       "modelType": "branch",
       "typeName": "RaiseStatement",
       "factoryName": "raiseStatement",
-      "coerceName": "coerceToRaiseStatement",
       "irKey": "raiseStatement",
       "hidden": false,
       "slots": [
@@ -11515,7 +11387,6 @@
       "modelType": "branch",
       "typeName": "RelativeImport",
       "factoryName": "relativeImport",
-      "coerceName": "coerceToRelativeImport",
       "irKey": "relativeImport",
       "hidden": false,
       "slots": [
@@ -11582,7 +11453,6 @@
       "modelType": "polymorph",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "coerceName": "coerceToReturnStatement",
       "irKey": "returnStatement",
       "hidden": false,
       "slots": [
@@ -11677,7 +11547,6 @@
       "modelType": "envelope",
       "typeName": "Set",
       "factoryName": "set",
-      "coerceName": "coerceToSet",
       "irKey": "set",
       "hidden": false,
       "slots": [
@@ -11756,7 +11625,6 @@
       "modelType": "branch",
       "typeName": "SetComprehension",
       "factoryName": "setComprehension",
-      "coerceName": "coerceToSetComprehension",
       "irKey": "setComprehension",
       "hidden": false,
       "slots": [
@@ -11812,7 +11680,6 @@
       "modelType": "branch",
       "typeName": "SimplePatternNegative",
       "factoryName": "simplePatternNegative",
-      "coerceName": "coerceToSimplePatternNegative",
       "irKey": "simplePatternNegative",
       "hidden": false,
       "annotations": {
@@ -11877,7 +11744,6 @@
       "modelType": "list",
       "typeName": "SimpleStatementsElements",
       "factoryName": "simpleStatementsElements",
-      "coerceName": "coerceToSimpleStatementsElements",
       "irKey": "simpleStatementsElements",
       "hidden": false,
       "annotations": {
@@ -12012,7 +11878,6 @@
       "modelType": "branch",
       "typeName": "Slice",
       "factoryName": "slice",
-      "coerceName": "coerceToSlice",
       "irKey": "slice",
       "hidden": false,
       "slots": [
@@ -12093,7 +11958,6 @@
       "modelType": "envelope",
       "typeName": "SliceGroup",
       "factoryName": "sliceGroup",
-      "coerceName": "coerceToSliceGroup",
       "irKey": "sliceGroup",
       "hidden": false,
       "annotations": {
@@ -12175,7 +12039,6 @@
       "modelType": "branch",
       "typeName": "SplatPattern",
       "factoryName": "splatPattern",
-      "coerceName": "coerceToSplatPattern",
       "irKey": "splatPattern",
       "hidden": false,
       "slots": [
@@ -12241,7 +12104,6 @@
       "modelType": "branch",
       "typeName": "SplatType",
       "factoryName": "splatType",
-      "coerceName": "coerceToSplatType",
       "irKey": "splatType",
       "hidden": false,
       "slots": [
@@ -12341,7 +12203,6 @@
       "modelType": "branch",
       "typeName": "String",
       "factoryName": "string",
-      "coerceName": "coerceToString",
       "irKey": "string",
       "hidden": false,
       "slots": [
@@ -12425,7 +12286,6 @@
       "modelType": "envelope",
       "typeName": "StringContent",
       "factoryName": "stringContent",
-      "coerceName": "coerceToStringContent",
       "irKey": "stringContent",
       "hidden": false,
       "slots": [
@@ -12481,7 +12341,6 @@
       "modelType": "pattern",
       "typeName": "StringEnd",
       "factoryName": "stringEnd",
-      "coerceName": "coerceToStringEnd",
       "irKey": "stringEnd",
       "hidden": false,
       "pattern": "[\"']+",
@@ -12493,7 +12352,6 @@
       "modelType": "pattern",
       "typeName": "StringStart",
       "factoryName": "stringStart",
-      "coerceName": "coerceToStringStart",
       "irKey": "stringStart",
       "hidden": false,
       "pattern": "[a-zA-Z]*[\"']+",
@@ -12505,7 +12363,6 @@
       "modelType": "list",
       "typeName": "Subjects",
       "factoryName": "subjects",
-      "coerceName": "coerceToSubjects",
       "irKey": "subjects",
       "hidden": false,
       "annotations": {
@@ -12572,7 +12429,6 @@
       "modelType": "branch",
       "typeName": "Subscript",
       "factoryName": "subscript",
-      "coerceName": "coerceToSubscript",
       "irKey": "subscript",
       "hidden": false,
       "slots": [
@@ -12632,7 +12488,6 @@
       "modelType": "list",
       "typeName": "Subscripts",
       "factoryName": "subscripts",
-      "coerceName": "coerceToSubscripts",
       "irKey": "subscripts",
       "hidden": false,
       "annotations": {
@@ -12701,7 +12556,6 @@
       "modelType": "envelope",
       "typeName": "SuiteBlock",
       "factoryName": "suiteBlock",
-      "coerceName": "coerceToSuiteBlock",
       "irKey": "suiteBlock",
       "hidden": false,
       "annotations": {
@@ -12744,7 +12598,6 @@
       "modelType": "envelope",
       "typeName": "SuiteEmpty",
       "factoryName": "suiteEmpty",
-      "coerceName": "coerceToSuiteEmpty",
       "irKey": "suiteEmpty",
       "hidden": false,
       "annotations": {
@@ -12786,7 +12639,6 @@
       "modelType": "envelope",
       "typeName": "SuiteInline",
       "factoryName": "suiteInline",
-      "coerceName": "coerceToSuiteInline",
       "irKey": "suiteInline",
       "hidden": false,
       "annotations": {
@@ -12908,7 +12760,6 @@
       "modelType": "keyword",
       "typeName": "True",
       "factoryName": "true_",
-      "coerceName": "coerceToTrue",
       "irKey": "true",
       "hidden": false,
       "isParameterless": true,
@@ -12932,7 +12783,6 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "coerceName": "coerceToTryStatement",
       "irKey": "tryStatement",
       "hidden": false,
       "slots": [
@@ -13030,7 +12880,6 @@
       "modelType": "envelope",
       "typeName": "Tuple",
       "factoryName": "tuple",
-      "coerceName": "coerceToTuple",
       "irKey": "tuple",
       "hidden": false,
       "slots": [
@@ -13109,7 +12958,6 @@
       "modelType": "envelope",
       "typeName": "TuplePattern",
       "factoryName": "tuplePattern",
-      "coerceName": "coerceToTuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
       "slots": [
@@ -13154,7 +13002,6 @@
       "modelType": "polymorph",
       "typeName": "Type",
       "factoryName": "type",
-      "coerceName": "coerceToType",
       "irKey": "type",
       "hidden": false,
       "slots": [
@@ -13272,7 +13119,6 @@
       "modelType": "branch",
       "typeName": "TypeAliasStatement",
       "factoryName": "typeAliasStatement",
-      "coerceName": "coerceToTypeAliasStatement",
       "irKey": "typeAliasStatement",
       "hidden": false,
       "slots": [
@@ -13328,7 +13174,6 @@
       "modelType": "pattern",
       "typeName": "TypeConversion",
       "factoryName": "typeConversion",
-      "coerceName": "coerceToTypeConversion",
       "irKey": "typeConversion",
       "hidden": false,
       "pattern": "![a-z]",
@@ -13351,7 +13196,6 @@
       "modelType": "envelope",
       "typeName": "TypeParameter",
       "factoryName": "typeParameter",
-      "coerceName": "coerceToTypeParameter",
       "irKey": "typeParameter",
       "hidden": false,
       "slots": [
@@ -13437,7 +13281,6 @@
       "modelType": "branch",
       "typeName": "TypedDefaultParameter",
       "factoryName": "typedDefaultParameter",
-      "coerceName": "coerceToTypedDefaultParameter",
       "irKey": "typedDefaultParameter",
       "hidden": false,
       "slots": [
@@ -13514,7 +13357,6 @@
       "modelType": "branch",
       "typeName": "TypedParameter",
       "factoryName": "typedParameter",
-      "coerceName": "coerceToTypedParameter",
       "irKey": "typedParameter",
       "hidden": false,
       "slots": [
@@ -13584,7 +13426,6 @@
       "modelType": "list",
       "typeName": "Types",
       "factoryName": "types",
-      "coerceName": "coerceToTypes",
       "irKey": "types",
       "hidden": false,
       "annotations": {
@@ -13657,7 +13498,6 @@
       "modelType": "branch",
       "typeName": "UnaryOperator",
       "factoryName": "unaryOperator",
-      "coerceName": "coerceToUnaryOperator",
       "irKey": "unaryOperator",
       "hidden": false,
       "slots": [
@@ -13724,7 +13564,6 @@
       "modelType": "envelope",
       "typeName": "UnionPattern",
       "factoryName": "unionPattern",
-      "coerceName": "coerceToUnionPattern",
       "irKey": "unionPattern",
       "hidden": false,
       "slots": [
@@ -13861,7 +13700,6 @@
       "modelType": "branch",
       "typeName": "UnionType",
       "factoryName": "unionType",
-      "coerceName": "coerceToUnionType",
       "irKey": "unionType",
       "hidden": false,
       "slots": [
@@ -13928,7 +13766,6 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "coerceName": "coerceToWhileStatement",
       "irKey": "whileStatement",
       "hidden": false,
       "slots": [
@@ -14005,7 +13842,6 @@
       "modelType": "punctuation",
       "typeName": "WildcardImport",
       "factoryName": "wildcardImport",
-      "coerceName": "coerceToWildcardImport",
       "irKey": "wildcardImport",
       "hidden": false,
       "isParameterless": true,
@@ -14030,7 +13866,6 @@
       "modelType": "list",
       "typeName": "WithClauseBare",
       "factoryName": "withClauseBare",
-      "coerceName": "coerceToWithClauseBare",
       "irKey": "withClauseBare",
       "hidden": false,
       "annotations": {
@@ -14098,7 +13933,6 @@
       "modelType": "envelope",
       "typeName": "WithClauseParen",
       "factoryName": "withClauseParen",
-      "coerceName": "coerceToWithClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
       "annotations": {
@@ -14183,7 +14017,6 @@
       "modelType": "list",
       "typeName": "WithClauseWithItems",
       "factoryName": "withClauseWithItems",
-      "coerceName": "coerceToWithClauseWithItems",
       "irKey": "withClauseWithItems",
       "hidden": false,
       "annotations": {
@@ -14251,7 +14084,6 @@
       "modelType": "envelope",
       "typeName": "WithItem",
       "factoryName": "withItem",
-      "coerceName": "coerceToWithItem",
       "irKey": "withItem",
       "hidden": false,
       "slots": [
@@ -14340,7 +14172,6 @@
       "modelType": "branch",
       "typeName": "WithStatement",
       "factoryName": "withStatement",
-      "coerceName": "coerceToWithStatement",
       "irKey": "withStatement",
       "hidden": false,
       "slots": [
@@ -14417,7 +14248,6 @@
       "modelType": "polymorph",
       "typeName": "Yield",
       "factoryName": "yield_",
-      "coerceName": "coerceToYield",
       "irKey": "yield",
       "hidden": false,
       "slots": [

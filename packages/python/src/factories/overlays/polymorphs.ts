@@ -3146,7 +3146,7 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'sign' || key === 'content');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const unionPattern$seated: (

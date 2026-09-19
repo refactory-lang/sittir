@@ -100,31 +100,31 @@ export function spliceErrorEnum() {
 			ir
 				.enumVariant({
 					name: 'InvalidRange',
-					// GAP B: a two-branch list slot (`field_declaration_list |
-					// ordered_field_declaration_list`) takes no array through the
-					// coercer; only the strict variadic list builder does.
-					body: ir.fieldDeclarationList.strict(
+					// A list slot takes its elements bare: a two-branch slot
+					// (`field_declaration_list | ordered_field_declaration_list`) takes
+					// an array of them, or one element on its own.
+					body: [
 						ir.fieldDeclaration({ name: 'start', type: 'u32' }),
 						ir.fieldDeclaration({ name: 'end', type: 'u32' })
-					),
+					],
 				})
 				.$trivia({ leading: [ir.lineComment.docOuter(' `end_pos < start_pos` — the edit range is reversed.')] }),
 			ir
 				.enumVariant({
 					name: 'OutOfBounds',
-					body: ir.fieldDeclarationList.strict(
+					body: [
 						ir.fieldDeclaration({ name: 'end', type: 'u32' }),
 						ir.fieldDeclaration({ name: 'source_len', type: 'usize' })
-					),
+					],
 				})
 				.$trivia({ leading: [ir.lineComment.docOuter(' `end_pos > source.len()` — edit reaches past end of source.')] }),
 			ir
 				.enumVariant({
 					name: 'NonCharBoundary',
-					body: ir.fieldDeclarationList.strict(
+					body: [
 						ir.fieldDeclaration({ name: 'start', type: 'u32' }),
 						ir.fieldDeclaration({ name: 'end', type: 'u32' })
-					),
+					],
 				})
 				.$trivia({ leading: [ir.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.")] })
 		),
@@ -180,15 +180,12 @@ export function displayImpl() {
 						body: ir.matchBlock.strict({
 							matchArm: [
 								ir.matchArm.blockEnding({
-									// GAP B: `match_arm.pattern` is a `match_pattern` whose own
-									// required slot is also called `pattern`, and the coercer
-									// takes no bare pattern for it — every arm spells the wrapper.
+									// `match_pattern` is spliced onto its arm: the arm takes the
+									// pattern itself, and `condition` beside it when there is a guard.
 									pattern: {
-										pattern: {
-											kind: 'struct_pattern',
-											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'InvalidRange' },
-											fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
-										},
+										kind: 'struct_pattern',
+										type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'InvalidRange' },
+										fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
 									},
 									// CLOSED (were two GAP A rows): both shapes build today.
 									// `ir.delimTokenTree.paren({ delimTokens: ['f', ',', '"{}"'] })`
@@ -201,22 +198,18 @@ export function displayImpl() {
 								}),
 								ir.matchArm.blockEnding({
 									pattern: {
-										pattern: {
-											kind: 'struct_pattern',
-											type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'OutOfBounds' },
-											fields: [ir.fieldPattern.shorthand({ name: 'end' }), ir.fieldPattern.shorthand({ name: 'source_len' })],
-										},
+										kind: 'struct_pattern',
+										type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'OutOfBounds' },
+										fields: [ir.fieldPattern.shorthand({ name: 'end' }), ir.fieldPattern.shorthand({ name: 'source_len' })],
 									},
 									value: ir.block.strict(),
 								}),
 							],
 							lastArm: ir.lastMatchArm({
 								pattern: {
-									pattern: {
-										kind: 'struct_pattern',
-										type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'NonCharBoundary' },
-										fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
-									},
+									kind: 'struct_pattern',
+									type: { kind: 'scoped_type_identifier', path: 'SpliceError', name: 'NonCharBoundary' },
+									fields: [ir.fieldPattern.shorthand({ name: 'start' }), ir.fieldPattern.shorthand({ name: 'end' })],
 								},
 								value: ir.block.strict(),
 							}),

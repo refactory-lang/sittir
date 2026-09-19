@@ -16,7 +16,8 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword,
-	KindEnum
+	KindEnum,
+	HiddenLeaf
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -11686,7 +11687,7 @@ export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
-export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
+export type TemplateChars = HiddenLeaf<Terminal<TSKindId.TemplateChars, string>>;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
@@ -17058,15 +17059,17 @@ export namespace TemplateString {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): T.TemplateString.Built;
+			elements(
+				...vs: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]
+			): T.TemplateString.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateString>;
-	export type BuildArgs = [...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]];
+	export type BuildArgs = [...children: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string)[]];
 	export type LooseArgs = [
 		...children: LooseValue<
-			T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
+			(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution) | string,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -18374,14 +18377,19 @@ export namespace TemplateLiteralType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.TemplateType)[]): T.TemplateLiteralType.Built;
+			elements(...vs: ((T.TemplateChars | T.TemplateType) | string)[]): T.TemplateLiteralType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateLiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateLiteralType>;
-	export type BuildArgs = [...children: (T.TemplateChars | T.TemplateType)[]];
+	export type BuildArgs = [...children: ((T.TemplateChars | T.TemplateType) | string)[]];
 	export type LooseArgs = [
-		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: LooseValue<
+			(T.TemplateChars | T.TemplateType) | string,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.TemplateLiteralType>;
 	export type Kind = 'template_literal_type';

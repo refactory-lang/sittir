@@ -68,7 +68,7 @@ function construct(node: Input): Output {
 		case REPEAT1:
 			return b.repeat1(withSeparator(rebuild(node.content), node.separator));
 		case FIELD:
-			return b.field(node.name, rebuild(node.content));
+			return withKindFacts(b.field(node.name, rebuild(node.content)), node);
 		case ALIAS:
 			return b.alias(rebuild(node.content), node.named ? { ...b.symbol(node.value), kindId: node.kindId } : node.value);
 		case TOKEN:

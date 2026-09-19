@@ -19,6 +19,12 @@ const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 // merges or partitions a config.
 const _o = (config: unknown) => config as Record<string, unknown>;
 const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
+type ListOptions = { readonly separator?: unknown; readonly delimiter?: unknown };
+type ListElement<P> = Exclude<P, ListOptions>;
+type ListOptionsOf<P> = Extract<P, ListOptions>;
+// A spliced group is present as a whole or absent as a whole: the second
+// overload forbids every one of its keys.
+type NoneOf<T> = { [K in keyof T]?: never };
 const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '$type' in v;
 
 const letChain$letChain =
@@ -6114,19 +6120,35 @@ const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF 
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const argumentsElements$seated: (
-	...args: ReadonlyArray<ArgsOf<typeof F.buildArgumentsElements>[number] | ArgsOf<typeof F.buildAttributedArgument>[0]>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildArgumentsElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildArgumentsElements>[number]>
+			| ArgsOf<typeof F.buildAttributedArgument>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildArgumentsElements>[number]>
+			| ArgsOf<typeof F.buildAttributedArgument>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
 	F.buildArgumentsElements,
 	F.buildAttributedArgument
 );
 const argumentsElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToArgumentsElements>[number] | ArgsOf<typeof C.coerceToAttributedArgument>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToArgumentsElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
 	C.coerceToArgumentsElements,
 	C.coerceToAttributedArgument
@@ -8386,6 +8408,64 @@ export const matchPattern: typeof B.matchPattern & {
 	}
 };
 
+const lastMatchArm$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+		parent: PF,
+		child: CF,
+		wrapperId: number
+	) =>
+	(
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const own = _o(config)['pattern'];
+		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
+			const spelled =
+				'$type' in own
+					? (own as { $type?: unknown }).$type === wrapperId
+					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
+			if (spelled) return _p<ReturnType<PF>>(parent)(config);
+		}
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'pattern' || key === 'condition') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, pattern: _c(child)(inner) } : rest);
+	};
+const lastMatchArm$seated: (
+	config:
+		| ArgsOf<typeof F.buildLastMatchArm>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof F.buildLastMatchArm>[0]>, 'pattern'> &
+				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
+) => ReturnType<typeof F.buildLastMatchArm> = lastMatchArm$splice(
+	F.buildLastMatchArm,
+	F.buildMatchPattern,
+	TSKindId.MatchPattern
+);
+const lastMatchArm$seatedCoerce: (
+	config:
+		| ArgsOf<typeof C.coerceToLastMatchArm>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToLastMatchArm>[0]>, 'pattern'> &
+				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
+) => ReturnType<typeof C.coerceToLastMatchArm> = lastMatchArm$splice(
+	C.coerceToLastMatchArm,
+	C.coerceToMatchPattern,
+	TSKindId.MatchPattern
+);
+export const lastMatchArm: typeof B.lastMatchArm & {
+	strict: typeof lastMatchArm$seated;
+	coerce: typeof lastMatchArm$seatedCoerce;
+} = {
+	...B.lastMatchArm,
+	strict: lastMatchArm$seated,
+	coerce: lastMatchArm$seatedCoerce
+};
+
 const genericPattern$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
@@ -8950,21 +9030,35 @@ const enumVariantListElements$element = <
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'enumVariant');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const enumVariantListElements$seated: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof F.buildEnumVariantListElements>[number] | ArgsOf<typeof F.buildAttributedEnumVariant>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildEnumVariantListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildEnumVariantListElements> = enumVariantListElements$element(
 	F.buildEnumVariantListElements,
 	F.buildAttributedEnumVariant
 );
 const enumVariantListElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToEnumVariantListElements>[number] | ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToEnumVariantListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToEnumVariantListElements> = enumVariantListElements$element(
 	C.coerceToEnumVariantListElements,
 	C.coerceToAttributedEnumVariant
@@ -8990,22 +9084,35 @@ const fieldDeclarationListElements$element = <
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'fieldDeclaration');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const fieldDeclarationListElements$seated: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof F.buildFieldDeclarationListElements>[number] | ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildFieldDeclarationListElements> = fieldDeclarationListElements$element(
 	F.buildFieldDeclarationListElements,
 	F.buildAttributedFieldDeclaration
 );
 const fieldDeclarationListElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		| ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]
-		| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToFieldDeclarationListElements> = fieldDeclarationListElements$element(
 	C.coerceToFieldDeclarationListElements,
 	C.coerceToAttributedFieldDeclaration
@@ -9031,22 +9138,35 @@ const orderedFieldDeclarationListElements$element = <
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'visibilityModifier' || key === 'type');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const orderedFieldDeclarationListElements$seated: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number] | ArgsOf<typeof F.buildAttributedOrderedField>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedOrderedField>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildOrderedFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
 	F.buildOrderedFieldDeclarationListElements,
 	F.buildAttributedOrderedField
 );
 const orderedFieldDeclarationListElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		| ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]
-		| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToOrderedFieldDeclarationListElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
 	C.coerceToOrderedFieldDeclarationListElements,
 	C.coerceToAttributedOrderedField
@@ -9301,21 +9421,35 @@ const typeParametersElements$element = <
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const typeParametersElements$seated: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof F.buildTypeParametersElements>[number] | ArgsOf<typeof F.buildAttributedTypeParameter>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildTypeParametersElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildTypeParametersElements>[number]>
+			| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildTypeParametersElements>[number]>
+			| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildTypeParametersElements> = typeParametersElements$element(
 	F.buildTypeParametersElements,
 	F.buildAttributedTypeParameter
 );
 const typeParametersElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToTypeParametersElements>[number] | ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToTypeParametersElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToTypeParametersElements> = typeParametersElements$element(
 	C.coerceToTypeParametersElements,
 	C.coerceToAttributedTypeParameter
@@ -9453,21 +9587,35 @@ const parametersElements$element = <PF extends (...args: never[]) => unknown, CF
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const parametersElements$seated: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof F.buildParametersElements>[number] | ArgsOf<typeof F.buildAttributedParameter>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildParametersElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildParametersElements>[number]>
+			| ArgsOf<typeof F.buildAttributedParameter>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildParametersElements>[number]>
+			| ArgsOf<typeof F.buildAttributedParameter>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildParametersElements> = parametersElements$element(
 	F.buildParametersElements,
 	F.buildAttributedParameter
 );
 const parametersElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToParametersElements>[number] | ArgsOf<typeof C.coerceToAttributedParameter>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToParametersElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToParametersElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedParameter>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToParametersElements>[number]>
+			| ArgsOf<typeof C.coerceToAttributedParameter>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToParametersElements> = parametersElements$element(
 	C.coerceToParametersElements,
 	C.coerceToAttributedParameter
@@ -9565,19 +9713,35 @@ const typeArgumentsElements$element = <
 		e !== null &&
 		!('$type' in e) &&
 		Object.keys(e).every((key) => key === 'content' || key === 'traitBounds');
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0]>): ReturnType<PF> =>
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
 const typeArgumentsElements$seated: (
-	...args: ReadonlyArray<ArgsOf<typeof F.buildTypeArgumentsElements>[number] | ArgsOf<typeof F.buildTypeArgument>[0]>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
+			| ArgsOf<typeof F.buildTypeArgument>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof F.buildTypeArgumentsElements>[number]>
+			| ArgsOf<typeof F.buildTypeArgument>[0]
+		)[]
+	]
 ) => ReturnType<typeof F.buildTypeArgumentsElements> = typeArgumentsElements$element(
 	F.buildTypeArgumentsElements,
 	F.buildTypeArgument
 );
 const typeArgumentsElements$seatedCoerce: (
-	...args: ReadonlyArray<
-		ArgsOf<typeof C.coerceToTypeArgumentsElements>[number] | ArgsOf<typeof C.coerceToTypeArgument>[0]
-	>
+	...args: [
+		first?:
+			| ListElement<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
+			| ListOptionsOf<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
+			| ArgsOf<typeof C.coerceToTypeArgument>[0],
+		...rest: (
+			| ListElement<ArgsOf<typeof C.coerceToTypeArgumentsElements>[number]>
+			| ArgsOf<typeof C.coerceToTypeArgument>[0]
+		)[]
+	]
 ) => ReturnType<typeof C.coerceToTypeArgumentsElements> = typeArgumentsElements$element(
 	C.coerceToTypeArgumentsElements,
 	C.coerceToTypeArgument
@@ -11277,6 +11441,112 @@ const implItemSemi: {
 	}
 };
 
+const matchArmWithComma$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+		parent: PF,
+		child: CF,
+		wrapperId: number
+	) =>
+	(
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const own = _o(config)['pattern'];
+		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
+			const spelled =
+				'$type' in own
+					? (own as { $type?: unknown }).$type === wrapperId
+					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
+			if (spelled) return _p<ReturnType<PF>>(parent)(config);
+		}
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'pattern' || key === 'condition') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, pattern: _c(child)(inner) } : rest);
+	};
+const matchArmWithComma$seated: (
+	config:
+		| ArgsOf<typeof F.buildMatchArmWithComma>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmWithComma>[0]>, 'pattern'> &
+				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
+) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$splice(
+	F.buildMatchArmWithComma,
+	F.buildMatchPattern,
+	TSKindId.MatchPattern
+);
+const matchArmWithComma$seatedCoerce: (
+	config:
+		| ArgsOf<typeof C.coerceToMatchArmWithComma>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmWithComma>[0]>, 'pattern'> &
+				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
+) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$splice(
+	C.coerceToMatchArmWithComma,
+	C.coerceToMatchPattern,
+	TSKindId.MatchPattern
+);
+const matchArmWithComma: {
+	strict: typeof matchArmWithComma$seated;
+	coerce: typeof matchArmWithComma$seatedCoerce;
+} = {
+	strict: matchArmWithComma$seated,
+	coerce: matchArmWithComma$seatedCoerce
+};
+
+const matchArmBlockEnding$splice =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+		parent: PF,
+		child: CF,
+		wrapperId: number
+	) =>
+	(
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))
+	): ReturnType<PF> => {
+		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		const own = _o(config)['pattern'];
+		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {
+			const spelled =
+				'$type' in own
+					? (own as { $type?: unknown }).$type === wrapperId
+					: !('kind' in own) && Object.keys(own).every((key) => key === 'pattern' || key === 'condition');
+			if (spelled) return _p<ReturnType<PF>>(parent)(config);
+		}
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		let seated = false;
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'pattern' || key === 'condition') {
+				inner[key] = value;
+				seated = seated || value !== undefined;
+			} else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, pattern: _c(child)(inner) } : rest);
+	};
+const matchArmBlockEnding$seated: (
+	config:
+		| ArgsOf<typeof F.buildMatchArmBlockEnding>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmBlockEnding>[0]>, 'pattern'> &
+				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
+) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$splice(
+	F.buildMatchArmBlockEnding,
+	F.buildMatchPattern,
+	TSKindId.MatchPattern
+);
+const matchArmBlockEnding$seatedCoerce: (
+	config:
+		| ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]
+		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]>, 'pattern'> &
+				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
+) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$splice(
+	C.coerceToMatchArmBlockEnding,
+	C.coerceToMatchPattern,
+	TSKindId.MatchPattern
+);
 const matchArmBlockEnding$unsafeBlock =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -11405,237 +11675,242 @@ const matchArmBlockEnding$constBlock =
 const matchArmBlockEnding: {
 	unsafeBlock: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildUnsafeBlock>[0];
 			}
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToUnsafeBlock>[0];
 			}
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	asyncBlock: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildAsyncBlock>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildAsyncBlock>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> &
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
 				ArgsOf<typeof C.coerceToAsyncBlock>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	genBlock: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildGenBlock>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildGenBlock>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof C.coerceToGenBlock>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
+				ArgsOf<typeof C.coerceToGenBlock>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	tryBlock: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildTryBlock>[0];
 			}
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToTryBlock>[0];
 			}
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	block: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildBlock>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildBlock>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof C.coerceToBlock>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & ArgsOf<typeof C.coerceToBlock>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	ifExpression: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildIfExpression>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildIfExpression>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> &
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
 				ArgsOf<typeof C.coerceToIfExpression>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		letCondition: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 					value: ArgsOf<typeof ifExpression.letCondition.strict>;
 				}
-			) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seated>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 					value: ArgsOf<typeof ifExpression.letCondition.coerce>;
 				}
-			) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		};
 		letChain: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 					value: ArgsOf<typeof ifExpression.letChain.strict>;
 				}
-			) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seated>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 					value: ArgsOf<typeof ifExpression.letChain.coerce>;
 				}
-			) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		};
 	};
 	matchExpression: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildMatchExpression>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildMatchExpression>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> &
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
 				ArgsOf<typeof C.coerceToMatchExpression>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	whileExpression: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildWhileExpression>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildWhileExpression>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> &
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
 				ArgsOf<typeof C.coerceToWhileExpression>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		letCondition: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 					value: ArgsOf<typeof whileExpression.letCondition.strict>;
 				}
-			) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seated>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 					value: ArgsOf<typeof whileExpression.letCondition.coerce>;
 				}
-			) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		};
 		letChain: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 					value: ArgsOf<typeof whileExpression.letChain.strict>;
 				}
-			) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seated>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+				config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 					value: ArgsOf<typeof whileExpression.letChain.coerce>;
 				}
-			) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+			) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 		};
 	};
 	loopExpression: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & ArgsOf<typeof F.buildLoopExpression>[0]
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & ArgsOf<typeof F.buildLoopExpression>[0]
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> &
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> &
 				ArgsOf<typeof C.coerceToLoopExpression>[0]
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	forExpression: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildForExpression>[0];
 			}
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToForExpression>[0];
 			}
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
 	constBlock: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seated>[0], 'value'> & {
 				value: ArgsOf<typeof F.buildConstBlock>[0];
 			}
-		) => ReturnType<typeof F.buildMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seated>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0], 'value'> & {
+			config: OmitEach<ArgsOf<typeof matchArmBlockEnding$seatedCoerce>[0], 'value'> & {
 				value: ArgsOf<typeof C.coerceToConstBlock>[0];
 			}
-		) => ReturnType<typeof C.coerceToMatchArmBlockEnding>;
+		) => ReturnType<typeof matchArmBlockEnding$seatedCoerce>;
 	};
+	strict: typeof matchArmBlockEnding$seated;
+	coerce: typeof matchArmBlockEnding$seatedCoerce;
 } = {
 	unsafeBlock: {
-		strict: matchArmBlockEnding$unsafeBlock(F.buildMatchArmBlockEnding, F.buildUnsafeBlock),
-		coerce: matchArmBlockEnding$unsafeBlock(C.coerceToMatchArmBlockEnding, C.coerceToUnsafeBlock)
+		strict: matchArmBlockEnding$unsafeBlock(matchArmBlockEnding$seated, F.buildUnsafeBlock),
+		coerce: matchArmBlockEnding$unsafeBlock(matchArmBlockEnding$seatedCoerce, C.coerceToUnsafeBlock)
 	},
 	asyncBlock: {
-		strict: matchArmBlockEnding$asyncBlock(F.buildMatchArmBlockEnding, F.buildAsyncBlock),
-		coerce: matchArmBlockEnding$asyncBlock(C.coerceToMatchArmBlockEnding, C.coerceToAsyncBlock)
+		strict: matchArmBlockEnding$asyncBlock(matchArmBlockEnding$seated, F.buildAsyncBlock),
+		coerce: matchArmBlockEnding$asyncBlock(matchArmBlockEnding$seatedCoerce, C.coerceToAsyncBlock)
 	},
 	genBlock: {
-		strict: matchArmBlockEnding$genBlock(F.buildMatchArmBlockEnding, F.buildGenBlock),
-		coerce: matchArmBlockEnding$genBlock(C.coerceToMatchArmBlockEnding, C.coerceToGenBlock)
+		strict: matchArmBlockEnding$genBlock(matchArmBlockEnding$seated, F.buildGenBlock),
+		coerce: matchArmBlockEnding$genBlock(matchArmBlockEnding$seatedCoerce, C.coerceToGenBlock)
 	},
 	tryBlock: {
-		strict: matchArmBlockEnding$tryBlock(F.buildMatchArmBlockEnding, F.buildTryBlock),
-		coerce: matchArmBlockEnding$tryBlock(C.coerceToMatchArmBlockEnding, C.coerceToTryBlock)
+		strict: matchArmBlockEnding$tryBlock(matchArmBlockEnding$seated, F.buildTryBlock),
+		coerce: matchArmBlockEnding$tryBlock(matchArmBlockEnding$seatedCoerce, C.coerceToTryBlock)
 	},
 	block: {
-		strict: matchArmBlockEnding$block(F.buildMatchArmBlockEnding, F.buildBlock),
-		coerce: matchArmBlockEnding$block(C.coerceToMatchArmBlockEnding, C.coerceToBlock)
+		strict: matchArmBlockEnding$block(matchArmBlockEnding$seated, F.buildBlock),
+		coerce: matchArmBlockEnding$block(matchArmBlockEnding$seatedCoerce, C.coerceToBlock)
 	},
 	ifExpression: {
-		strict: matchArmBlockEnding$ifExpression(F.buildMatchArmBlockEnding, F.buildIfExpression),
-		coerce: matchArmBlockEnding$ifExpression(C.coerceToMatchArmBlockEnding, C.coerceToIfExpression),
+		strict: matchArmBlockEnding$ifExpression(matchArmBlockEnding$seated, F.buildIfExpression),
+		coerce: matchArmBlockEnding$ifExpression(matchArmBlockEnding$seatedCoerce, C.coerceToIfExpression),
 		letCondition: {
 			strict: matchArmBlockEnding$ifExpressionLetCondition(
-				F.buildMatchArmBlockEnding,
+				matchArmBlockEnding$seated,
 				ifExpression.letCondition.strict
 			),
 			coerce: matchArmBlockEnding$ifExpressionLetCondition(
-				C.coerceToMatchArmBlockEnding,
+				matchArmBlockEnding$seatedCoerce,
 				ifExpression.letCondition.coerce
 			)
 		},
 		letChain: {
-			strict: matchArmBlockEnding$ifExpressionLetChain(F.buildMatchArmBlockEnding, ifExpression.letChain.strict),
-			coerce: matchArmBlockEnding$ifExpressionLetChain(C.coerceToMatchArmBlockEnding, ifExpression.letChain.coerce)
+			strict: matchArmBlockEnding$ifExpressionLetChain(matchArmBlockEnding$seated, ifExpression.letChain.strict),
+			coerce: matchArmBlockEnding$ifExpressionLetChain(matchArmBlockEnding$seatedCoerce, ifExpression.letChain.coerce)
 		}
 	},
 	matchExpression: {
-		strict: matchArmBlockEnding$matchExpression(F.buildMatchArmBlockEnding, F.buildMatchExpression),
-		coerce: matchArmBlockEnding$matchExpression(C.coerceToMatchArmBlockEnding, C.coerceToMatchExpression)
+		strict: matchArmBlockEnding$matchExpression(matchArmBlockEnding$seated, F.buildMatchExpression),
+		coerce: matchArmBlockEnding$matchExpression(matchArmBlockEnding$seatedCoerce, C.coerceToMatchExpression)
 	},
 	whileExpression: {
-		strict: matchArmBlockEnding$whileExpression(F.buildMatchArmBlockEnding, F.buildWhileExpression),
-		coerce: matchArmBlockEnding$whileExpression(C.coerceToMatchArmBlockEnding, C.coerceToWhileExpression),
+		strict: matchArmBlockEnding$whileExpression(matchArmBlockEnding$seated, F.buildWhileExpression),
+		coerce: matchArmBlockEnding$whileExpression(matchArmBlockEnding$seatedCoerce, C.coerceToWhileExpression),
 		letCondition: {
 			strict: matchArmBlockEnding$whileExpressionLetCondition(
-				F.buildMatchArmBlockEnding,
+				matchArmBlockEnding$seated,
 				whileExpression.letCondition.strict
 			),
 			coerce: matchArmBlockEnding$whileExpressionLetCondition(
-				C.coerceToMatchArmBlockEnding,
+				matchArmBlockEnding$seatedCoerce,
 				whileExpression.letCondition.coerce
 			)
 		},
 		letChain: {
-			strict: matchArmBlockEnding$whileExpressionLetChain(F.buildMatchArmBlockEnding, whileExpression.letChain.strict),
+			strict: matchArmBlockEnding$whileExpressionLetChain(matchArmBlockEnding$seated, whileExpression.letChain.strict),
 			coerce: matchArmBlockEnding$whileExpressionLetChain(
-				C.coerceToMatchArmBlockEnding,
+				matchArmBlockEnding$seatedCoerce,
 				whileExpression.letChain.coerce
 			)
 		}
 	},
 	loopExpression: {
-		strict: matchArmBlockEnding$loopExpression(F.buildMatchArmBlockEnding, F.buildLoopExpression),
-		coerce: matchArmBlockEnding$loopExpression(C.coerceToMatchArmBlockEnding, C.coerceToLoopExpression)
+		strict: matchArmBlockEnding$loopExpression(matchArmBlockEnding$seated, F.buildLoopExpression),
+		coerce: matchArmBlockEnding$loopExpression(matchArmBlockEnding$seatedCoerce, C.coerceToLoopExpression)
 	},
 	forExpression: {
-		strict: matchArmBlockEnding$forExpression(F.buildMatchArmBlockEnding, F.buildForExpression),
-		coerce: matchArmBlockEnding$forExpression(C.coerceToMatchArmBlockEnding, C.coerceToForExpression)
+		strict: matchArmBlockEnding$forExpression(matchArmBlockEnding$seated, F.buildForExpression),
+		coerce: matchArmBlockEnding$forExpression(matchArmBlockEnding$seatedCoerce, C.coerceToForExpression)
 	},
 	constBlock: {
-		strict: matchArmBlockEnding$constBlock(F.buildMatchArmBlockEnding, F.buildConstBlock),
-		coerce: matchArmBlockEnding$constBlock(C.coerceToMatchArmBlockEnding, C.coerceToConstBlock)
-	}
+		strict: matchArmBlockEnding$constBlock(matchArmBlockEnding$seated, F.buildConstBlock),
+		coerce: matchArmBlockEnding$constBlock(matchArmBlockEnding$seatedCoerce, C.coerceToConstBlock)
+	},
+	strict: matchArmBlockEnding$seated,
+	coerce: matchArmBlockEnding$seatedCoerce
 };
 
 const macroDefinitionParen$macroRules = <
@@ -12081,14 +12356,11 @@ export const arrayExpression: {
 };
 
 export const matchArm: {
-	readonly withComma: { strict: typeof F.buildMatchArmWithComma; coerce: typeof C.coerceToMatchArmWithComma };
-	readonly blockEnding: {
-		strict: typeof F.buildMatchArmBlockEnding;
-		coerce: typeof C.coerceToMatchArmBlockEnding;
-	} & typeof matchArmBlockEnding;
+	readonly withComma: typeof matchArmWithComma;
+	readonly blockEnding: typeof matchArmBlockEnding;
 } = {
-	withComma: { strict: F.buildMatchArmWithComma, coerce: C.coerceToMatchArmWithComma },
-	blockEnding: { strict: F.buildMatchArmBlockEnding, coerce: C.coerceToMatchArmBlockEnding, ...matchArmBlockEnding }
+	withComma: matchArmWithComma,
+	blockEnding: matchArmBlockEnding
 };
 
 export const closureExpression: {

@@ -42,13 +42,15 @@ import {
 	canonicalSeparatedListField,
 	stringConstructibleTexts,
 	wordConstructibleText,
-	isAuthoredCompound
+	isAuthoredCompound,
+	transparentContentKindNames
 } from './shared.ts';
 import {
 	fieldElementType,
 	childElementType,
 	kindEnumTextMapExpr,
 	delimiterMembersFor,
+	listHasOptions,
 	separatedListSurface
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
@@ -416,7 +418,8 @@ function emitRestParamFromResolver(
 	storageKey: string,
 	unwrapConfigKey: string | undefined,
 	buildCallExpr: (varExpr: string, isSelfUnwrap: boolean) => string,
-	childrenTypeAnnotation = ''
+	childrenTypeAnnotation = '',
+	optionsType?: string
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
@@ -433,10 +436,15 @@ function emitRestParamFromResolver(
 					`  })();`
 				];
 	const paramType = `${tName}.Loose | LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
+	const returnType = factoryReturnTypeExpr(factory);
+	const inputType =
+		optionsType === undefined
+			? `readonly (${paramType})[]`
+			: `[first?: ${paramType} | ${optionsType}, ...rest: (${paramType})[]]`;
 	const freshVar = unwrapConfigKey === undefined ? 'input' : '_elems';
 	if (!hasNumericDiscriminant) {
 		return [
-			`export function ${fn}(...input: readonly (${paramType})[]): ${factoryReturnTypeExpr(factory)} {`,
+			`export function ${fn}(...input: ${inputType}): ${returnType} {`,
 			...unwrap,
 			`  return ${buildCallExpr(freshVar, false)};`,
 			'}'
@@ -446,7 +454,7 @@ function emitRestParamFromResolver(
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
-		`export function ${fn}(...input: readonly (${paramType})[]): ${factoryReturnTypeExpr(factory)} {`,
+		`export function ${fn}(...input: ${inputType}): ${returnType} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
@@ -611,7 +619,7 @@ function emitSeparatedListFrom(
 	const hasSeparatorKindOption = node.separatorRule !== undefined;
 	const hasLeadingOption = node.leadingDelimiter === 'optional';
 	const hasTrailingOption = node.trailingDelimiter === 'optional';
-	const hasOptions = hasSeparatorKindOption || hasLeadingOption || hasTrailingOption;
+	const hasOptions = listHasOptions(node);
 
 	const elemTypeForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 	const elementsType = node.nonEmpty ? `NonEmptyArray<${elemType}>` : `${elemTypeForArray}[]`;
@@ -644,7 +652,8 @@ function emitSeparatedListFrom(
 		undefined,
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions ? buildOptionsPreservingCall(varExpr) : `${factory}(${spreadElements(varExpr)})`,
-		': readonly unknown[]'
+		': readonly unknown[]',
+		separatedListSurface(node, nodeMap, kindEntries).optionsType
 	);
 }
 
@@ -943,7 +952,8 @@ export function bareAcceptClosure(
 		const node = nodeMap.nodes.get(kind);
 		const slot = node === undefined ? undefined : bareSlotOf(node, nodeMap);
 		if (slot === undefined) return names;
-		for (const admitted of expandAndDedupeContentTypes(slotKindNames(slot), nodeMap)) {
+		const slotKinds = node instanceof AssembledList ? transparentContentKindNames(slotKindNames(slot), nodeMap) : slotKindNames(slot);
+		for (const admitted of expandAndDedupeContentTypes(slotKinds, nodeMap)) {
 			names.add(admitted);
 			for (const inner of acceptedBy(admitted, seen)) names.add(inner);
 		}
@@ -1041,7 +1051,10 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('  if (typeof v === "object" && !Array.isArray(v) && "kind" in v) {');
 	lines.push('    const { kind, ...rest } = v;');
 	lines.push('    const kindName = _kindNameOf(kind);');
-	lines.push('    if (kindName !== undefined && _isFromKind(kindName)) return _resolveByKind(kindName, rest) as T;');
+	lines.push('    if (kindName !== undefined && _isFromKind(kindName)) {');
+	lines.push('      const built = _resolveByKind(kindName, rest) as _LooseFieldInput;');
+	lines.push('      return (isNodeData(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;');
+	lines.push('    }');
 	lines.push('  }');
 	lines.push('  if (branchKinds.length === 1 && typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    const bk = branchKinds[0]!;');

@@ -417,3 +417,43 @@ describe('a mount route carries the seats of its own parent', () => {
 		expect(out).not.toContain('clause$block(F.buildClause,');
 	});
 });
+
+describe('a visible wrapper declared spliced seats on its parent', () => {
+	const wrapperGrammar = (): NodeMap =>
+		buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'match' }, { type: SYMBOL, name: 'arm' }] },
+			arm: {
+				type: SEQ,
+				members: [
+					{
+						type: FIELD,
+						name: 'pattern',
+						content: { type: SYMBOL, name: 'wrapper' },
+						annotations: { spliced: true }
+					},
+					{ type: STRING, value: '=>' },
+					{ type: FIELD, name: 'value', content: { type: PATTERN, value: '[a-z]+' } }
+				]
+			},
+			wrapper: {
+				type: SEQ,
+				members: [
+					{ type: FIELD, name: 'pattern', content: { type: PATTERN, value: '[a-z]+' } },
+					{ type: OPTIONAL, content: { type: FIELD, name: 'condition', content: { type: PATTERN, value: '[a-z]+' } } }
+				]
+			}
+		});
+
+	it('passes a value that is already the wrapper through and builds anything else into it', () => {
+		const out = emitPolymorphsOverlay({
+			nodeMap: wrapperGrammar(),
+			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
+		});
+		expect(out).toContain('const arm$splice =');
+		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
+		expect(out).toContain('const own = _o(config)["pattern"];');
+		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
+		expect(out).toMatch(/= arm\$splice\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toContain("import { TSKindId } from '../../types.js';");
+	});
+});

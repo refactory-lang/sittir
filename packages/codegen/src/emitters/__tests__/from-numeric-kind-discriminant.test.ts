@@ -27,6 +27,7 @@ describe('a `kind:` discriminant resolves both its string and numeric spellings'
 
 	it('resolves through _kindNameOf before dispatching by kind', () => {
 		expect(emitted).toContain('const kindName = _kindNameOf(kind);');
-		expect(emitted).toContain('if (kindName !== undefined && _isFromKind(kindName)) return _resolveByKind(kindName, rest) as T;');
+		expect(emitted).toContain('if (kindName !== undefined && _isFromKind(kindName)) {');
+		expect(emitted).toContain('const built = _resolveByKind(kindName, rest) as _LooseFieldInput;');
 	});
 });

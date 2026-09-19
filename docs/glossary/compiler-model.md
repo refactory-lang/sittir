@@ -335,6 +335,10 @@ pair and `default`. One derivation spread into all four SYMBOL branches of
 `deriveValuesForRule` and into supertype subtype refs, so an arm fact added to
 the model reaches every value shape and every subtype without further edits.
 
+#### spliced
+
+`annotations.spliced` on a reference becomes a `spliced` fact on the value, next to `variant` and `default`. It says the reference is a visible wrapper the grammar declares as spliced onto its parent's slot.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::deriveValuesForRule`
 
 ```text

@@ -176,7 +176,7 @@ export function rebuildFormatLoose() {
 								separator: TSKindId.Dot,
 								property: "sort",
 							}),
-							arguments: [ir.arrowFunction({
+							arguments: ir.arrowFunction({
 								body: ir.binaryExpression({
 									left: ir.memberExpression({
 										object: "b",
@@ -197,7 +197,7 @@ export function rebuildFormatLoose() {
 										pattern: "b",
 									})],
 								}),
-							})],
+							}),
 						}),
 					})],
 					terminator: TSKindId.Semi,
@@ -266,7 +266,7 @@ export function rebuildFormatLoose() {
 											separator: TSKindId.Dot,
 											property: "slice",
 										}),
-										arguments: ["offset"],
+										arguments: "offset",
 									}),
 								}),
 							}),
@@ -396,7 +396,7 @@ export function rebuildFormatLoose() {
 							separator: TSKindId.Dot,
 							property: "map",
 						}),
-						arguments: [ir.arrowFunction({
+						arguments: ir.arrowFunction({
 							body: ir.statementBlock({
 								statements: [ir.ifStatement({
 									condition: ir.parenthesizedExpression.typed({
@@ -445,11 +445,11 @@ export function rebuildFormatLoose() {
 								}).$trivia({ leading: ["// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output)."] })],
 							}),
 							content: ir.callSignature({
-								parameters: [ir.requiredParameter({
+								parameters: ir.requiredParameter({
 									pattern: "item",
-								})],
+								}),
 							}),
-						})],
+						}),
 					}),
 					terminator: TSKindId.Semi,
 				})],
@@ -531,7 +531,7 @@ export function rebuildFormatLoose() {
 								separator: TSKindId.Dot,
 								property: "entries",
 							}),
-							arguments: ["kinds"],
+							arguments: "kinds",
 						}),
 					}),
 				}), ir.returnStatement({

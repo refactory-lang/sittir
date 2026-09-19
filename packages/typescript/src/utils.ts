@@ -74,6 +74,22 @@ export function hasKindOf<K extends keyof NamespaceMap>(
 	return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
+export type HiddenLeafBuilder = readonly [kind: string, pattern: RegExp | undefined, build: (text: string) => unknown];
+
+export function admitHiddenText<T = unknown>(value: unknown, leaves: readonly HiddenLeafBuilder[], where: string): T {
+	if (Array.isArray(value)) return value.map((item) => admitHiddenText(item, leaves, where)) as T;
+	if (typeof value !== 'string') return value as T;
+	const hit =
+		leaves.length === 1
+			? leaves[0]
+			: (leaves.find(([, pattern]) => pattern?.test(value) === true) ??
+				leaves.find(([, pattern]) => pattern === undefined));
+	if (hit === undefined) {
+		throw new Error(`${where}: ${JSON.stringify(value)} matches none of [${leaves.map(([kind]) => kind).join(', ')}]`);
+	}
+	return hit[2](value) as T;
+}
+
 export function coerceMixedEnumStorage<T = unknown>(
 	value: unknown,
 	byText: readonly (readonly [string, number])[] = []

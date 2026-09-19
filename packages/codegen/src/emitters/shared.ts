@@ -595,6 +595,12 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 	return required[0];
 }
 
+export function transparentContentKindNames(kinds: readonly string[], nodeMap: NodeMap): string[] {
+	if (kinds.length !== 1) return [...kinds];
+	const content = transparentWrapperContentSlot(kinds[0]!, nodeMap);
+	return content === undefined ? [...kinds] : [...kinds, ...slotKindNames(content)];
+}
+
 export function resolveSingleFieldFactorySlot(
 	node: AssembledNode,
 	_nodeMap: NodeMap
@@ -1060,7 +1066,7 @@ export function stripUselessEscapes(pattern: string): string {
 	return out;
 }
 
-export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
+export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
 	if (!textPattern) return undefined;
 	const anchored = `^(?:${stripUselessEscapes(textPattern)})$`;
 	let regex: RegExp;
@@ -1078,5 +1084,10 @@ export function anchoredLeafRegexLiteral(kind: string, textPattern: string | und
 			);
 		}
 	}
-	return `/${regex.source}/${regex.flags}`;
+	return regex;
+}
+
+export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
+	const regex = anchoredLeafRegex(kind, textPattern);
+	return regex === undefined ? undefined : `/${regex.source}/${regex.flags}`;
 }

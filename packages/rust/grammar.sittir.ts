@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, splice, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -234,6 +234,7 @@ export default grammar(
 				},
 				last_match_arm: {
 					'0': field('attributes'),
+					'1': splice(),
 					'4/0': field('comma')
 				},
 
@@ -432,7 +433,7 @@ export default grammar(
 					'2/1': variant('body')
 				},
 
-				match_arm: [{ 0: field('attributes') }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
+				match_arm: [{ 0: field('attributes'), 1: splice() }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
 				// `///` and `//!` reach this choice as separate arms: their
 				// outer/inner marker fields are alternatives, which enrich

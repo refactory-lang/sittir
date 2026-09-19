@@ -90,12 +90,15 @@ describe('loose surface printing', () => {
 		);
 		expect(map.block!({}).source).toBe('ir.block()');
 	});
-	it('spells a list envelope as its bare array when its options are the declared default', () => {
+	it('spells a list envelope as its bare element or array when its options are the declared default', () => {
 		expect(map.function_item!({ params: map.arguments!(map.identifier!('x')) }).source).toBe(
-			'ir.functionItem({\n\tparams: [ir.identifier("x")],\n})'
+			'ir.functionItem({\n\tparams: ir.identifier("x"),\n})'
 		);
 		expect(map.function_item!({ params: map.arguments!({ delimiter: 7 }, map.identifier!('x')) }).source).toBe(
-			'ir.functionItem({\n\tparams: [ir.identifier("x")],\n})'
+			'ir.functionItem({\n\tparams: ir.identifier("x"),\n})'
+		);
+		expect(map.function_item!({ params: map.arguments!(map.identifier!('x'), map.identifier!('y')) }).source).toBe(
+			'ir.functionItem({\n\tparams: [ir.identifier("x"), ir.identifier("y")],\n})'
 		);
 		expect(map.function_item!({ params: map.arguments!({ delimiter: 8 }, map.identifier!('x')) }).source).toBe(
 			'ir.functionItem({\n\tparams: ir.arguments({ delimiter: Delimiter.Trailing }, ir.identifier("x")),\n})'
@@ -103,7 +106,7 @@ describe('loose surface printing', () => {
 	});
 	it('spells the declared default list bare at a two-list slot and names the other', () => {
 		expect(map.choice!({ value: map.arguments!(map.identifier!('x')) }).source).toBe(
-			'ir.choice({\n\tvalue: [ir.identifier("x")],\n})'
+			'ir.choice({\n\tvalue: ir.identifier("x"),\n})'
 		);
 		expect(map.choice!({ value: map.elements!(map.identifier!('x')) }).source).toBe(
 			'ir.choice({\n\tvalue: ir.elements(ir.identifier("x")),\n})'

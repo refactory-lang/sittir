@@ -4468,6 +4468,11 @@ function isGroupPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "group";
 }
 
+// packages/codegen/src/dsl/primitives/splice.ts
+function isSplicePlaceholder(v) {
+  return !!v && typeof v === "object" && v.__sittirPlaceholder === "splice";
+}
+
 // packages/codegen/src/dsl/transform/transform.ts
 function withVariantAnnotation(rule, variantName, parentKind, arm2) {
   return withAnnotations(rule, { variant: variantName, variantOf: parentKind, ...isDefaultArm(arm2) ? { default: true } : {} });
@@ -4490,7 +4495,7 @@ function transform(original, ...patchSets) {
   for (const patches of patchSets) {
     const hasPathKeys = requiresPathMode(patches);
     const hasPlaceholderAlias = Object.values(patches).some(
-      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v)
+      (v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
     );
     if (hasPathKeys || hasPlaceholderAlias) {
       rule = applyPathPatches(rule, patches);
@@ -4873,6 +4878,9 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   if (isGroupPlaceholder(patch)) {
     return withAnnotations(originalMember, { hoisted: true });
+  }
+  if (isSplicePlaceholder(patch)) {
+    return withAnnotations(originalMember, { spliced: true });
   }
   if (isVariantPlaceholder(patch)) {
     const parentKind = wireGetCurrentRuleKind();

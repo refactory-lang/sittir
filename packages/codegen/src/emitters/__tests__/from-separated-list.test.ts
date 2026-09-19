@@ -121,4 +121,32 @@ describe('from emitter — separatedList', () => {
 			/case "member_list": return \(F\.buildMemberList as \(\.\.\.args: unknown\[\]\) => unknown\)\(\.\.\.children\);/
 		);
 	});
+
+	it('types the options object first and optional, and no later position takes one', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
+		expect(emitted).toMatch(
+			/export function coerceToMemberList\(\.\.\.input: \[\s*first\?:[^]*\{ delimiter\?: [^}]*\},\s*\.\.\.rest: /
+		);
+		expect(emitted).not.toMatch(/export function coerceToMemberList\(\.\.\.input: readonly/);
+	});
+
+	it('keeps a plain element array for a list with no options', () => {
+		const rule: SeparatedListElementRule = {
+			type: SYMBOL,
+			name: 'member',
+			multiplicity: 'nonEmptyArray',
+			separator: { value: { type: STRING, value: ',' } }
+		};
+		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+
+		expect(emitted).toMatch(/export function coerceToMemberList\(\.\.\.input: readonly/);
+		expect(emitted).not.toContain('first?:');
+	});
 });

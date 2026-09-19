@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage
@@ -3139,9 +3140,13 @@ export function buildString(config: T.String.Config): T.String.Built {
 }
 
 export function buildStringContent(
-	...children: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+	...children: ((T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent) | string)[]
 ): T.StringContent.Built {
-	const _content = children;
+	const _content = admitHiddenText<NonNullable<T.StringContent['_content']>>(
+		children,
+		[['_string_content', _leafRe_build_StringContent, build_StringContent]],
+		'StringContent.content'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3151,7 +3156,10 @@ export function buildStringContent(
 				_content,
 				$with: {
 					contents: (
-						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)[]
+						...vs: (
+							| (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T._StringContent)
+							| string
+						)[]
 					) => buildStringContent(...vs)
 				}
 			},

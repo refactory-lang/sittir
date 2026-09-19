@@ -46,7 +46,10 @@ rides along as an optional key. `last_match_arm` seats the same wrapper the
 same way.
 
 The seat is declared, never inferred: the grammar file names the wrapper
-as spliced at that slot, with the same stamp a hidden group carries. What
+as spliced at that slot with `splice()`, which stamps `annotations.spliced` on
+the reference the way `group()` stamps `annotations.hoisted` on a hidden group.
+The stamp is on the reference, not the kind, so the kind stays visible and
+keeps its own factory. What
 this admits for the first time is a splice seat on a **visible** child
 that is not a choice arm — today a visible child is merge-seated only
 through `variant()` on a choice position (`ir.closureExpression.block`),

@@ -204,7 +204,7 @@ read the third pass's rules.
 
 The whole-text guard of every text-leaf factory. For each pattern-model kind that has a factory and a `textPattern`, it emits one module-scope constant `_leafRe_<factory>` holding the anchored literal `/^(?:<pattern>)$/`, and returns the kind → constant map the leaf guards read. The literal comes from `anchoredLeafRegexLiteral`, so the compile test and the emitted constant cannot drift. A kind with no derivable pattern (an external scanner token with no interior, an indent or dedent mark) gets no constant and keeps only its non-empty guard. Hidden fixed-text leaves have no factory and no constant.
 
-The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
+The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
 ### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
 
@@ -1600,6 +1600,10 @@ so no kind-to-text table is needed here.
 // boundary cast.
 ```
 
+#### options-first list coercer
+
+A separated list that has options (`separator` or `delimiter`) types its rest parameter as the tuple `[first?: Loose | LooseValue<element> | Options, ...rest: (Loose | LooseValue<element>)[]]`: the options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
+
 ### `packages/codegen/src/emitters/from.ts::emitRepeatedChildrenFrom`
 
 ```text
@@ -2152,6 +2156,10 @@ lifted into that arm.
 // error. Scalars (string/number/boolean) are excluded — some call sites
 // deliberately rely on scalar passthrough to coerceKindEnumStorage.
 ```
+
+#### kind-tagged config
+
+A `kind:` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
 
 ### `packages/codegen/src/emitters/from.ts::emitAssertNonEmptyHelper`
 
@@ -6518,6 +6526,11 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // reference to a literal string at emit time, so no generated
 // code mentions `KwAsync` / `KwMove` / `KwOperator` anywhere.
 ```
+
+
+#### hidden text leaves
+
+A pattern leaf that some slot admits as a hidden text leaf (`hiddenTextLeafKinds`) aliases `HiddenLeaf<Terminal<kind, string>>`. The brand is a phantom optional key, so a built leaf still satisfies it, and `ConfigOf` reads it to widen the slot that holds the leaf to the leaf or its text.
 
 ### `packages/codegen/src/emitters/types.ts::emitTreeInterfaceDeclarations`
 
@@ -12801,6 +12814,10 @@ that need it: `_BARE_ACCEPTS` derives ids from these names, and
 kind. Names rather than ids because only one of the two consumers wants ids,
 and a name is what the model actually carries.
 
+#### list elements through a transparent wrapper
+
+A list's admitted kinds are its content slot's kinds plus, when that slot holds exactly one kind that is a transparent wrapper (`transparentContentKindNames`), the wrapper's own required slot's kinds. A list of `_attributed_field_declaration` therefore accepts a bare `field_declaration`, and a slot that holds the list (or a forwarding envelope over it) takes one element on its own, the same as an array of one.
+
 ### `packages/codegen/src/emitters/from.ts::isLeafRegistryKind`
 
 Whether a kind has a row in `_leafRegistry` — a visible pattern, enum or
@@ -14489,6 +14506,10 @@ passes straight to the parent, anything else is the group's config and is
 built first. The `$type` probe (`_built`) is what the raw forwarded wrapper
 used to do; it lives here now, once, because the seating is the overlay's.
 
+#### wrapper seat
+
+A visible wrapper seated on its parent (`match_pattern` on a match arm) has a config key equal to the seat's own slot key. The seated method takes the wrapper's kind id as a third argument and passes the config through untouched when the value at that key is already the wrapper, either built (its `$type` is the id) or a plain config whose keys all belong to the wrapper and that names no `kind`. Anything else at the key is the wrapper's own slot and is built into the wrapper.
+
 ### `packages/codegen/src/emitters/render-module-paths.ts::renderModuleLeftOutPath`
 
 The sidecar beside a grammar's `test-fixtures.json`: the render fixtures the
@@ -14544,6 +14565,10 @@ list, or a spread-shaped parent whose sole slot is the seat (python
 `union_pattern`): the elements arrive as rest arguments and are mapped in
 place, options object included, which the key test leaves alone. The
 type admits the parent's own input or the group's config per element.
+
+#### list options
+
+A spread seat on a list that has options types its parameter as `[first?: ListElement<P> | ListOptionsOf<P> | Child, ...rest: (ListElement<P> | Child)[]]`. `ListElement` and `ListOptionsOf` split the parent's argument union by the options' `separator` / `delimiter` keys, so the options object is accepted first and rejected in every later position.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatEmission`
 
@@ -14857,6 +14882,10 @@ the group from that key's value alone (python `slice.step`, `except_clause.excep
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
 group is not a seat: the parent's own builder already takes it whole.
 
+#### declared visible wrappers
+
+A group is spliceable when its kind carries `annotations.hoisted` (a hidden group) or the reference to it carries `annotations.spliced` (a visible wrapper the grammar declares, `isHoistedAt`). A declared seat is never inferred: only `splice()` in `grammar.sittir.ts` puts the annotation on a reference.
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::elementsSeatOf`
 
 The shape-3 seats: every multiple slot — a compound's list slot or a list
@@ -14901,6 +14930,10 @@ elements seats; `undefined` for a value that is not a hoisted kind, or
 whose parent has no wire set, or that no seating reaches. The validators' `ir-render-parse` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
 no seat names.
+
+#### declared visible wrappers
+
+The gate that a seated child be hoisted reads `isHoistedAt`, so a visible wrapper whose reference is stamped `spliced` gets its `splice` seat recorded in the node model like a hidden group.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::loneEnumChoiceSlot`
 
@@ -15782,3 +15815,49 @@ struct's fields resolve by one lookup instead of a scan over every branch and
 leaf in the grammar. Takes `kindEntries` because bucketing a child under its
 parent keys it by `nestedKey(segment, kindEntries)`, the same derivation the
 address tables used to build `path` and `children` in the first place.
+
+### `packages/codegen/src/emitters/factories.ts::hiddenTextLeaves`
+
+The hidden text leaves one slot admits: the slot's node-ref values whose kind is a pattern leaf named with a leading underscore and has a factory. A bare string given at such a slot is that leaf's text. It is the one predicate behind every strict-surface consequence of the admission: the `| string` in the parameter types, the `HiddenLeaf` brand on the leaf's type alias, the `admitHiddenText` call in the factory body, and the `admitHiddenText` import.
+
+### `packages/codegen/src/emitters/factories.ts::hiddenTextLeafKinds`
+
+Every kind that some slot admits as a hidden text leaf. The types emitter brands exactly these aliases with `HiddenLeaf`, so an underscore-named pattern leaf that no slot admits (an indent or dedent mark) stays an unbranded `Terminal`.
+
+### `packages/codegen/src/emitters/factories.ts::hiddenTextAdmission`
+
+Wraps a slot's stored value in `admitHiddenText<NonNullable<T.<Kind>[<storageKey>]>>(value, [[kind, pattern, builder], ...], '<Kind>.<configKey>')`. The table lists the slot's hidden leaves with their anchored `_leafRe_*` constant, or `undefined` for a leaf with no derivable pattern. It runs after the slot's enum storage coercion, so text that names an enum member still resolves to that member first and only the remaining strings become hidden leaves.
+
+### `packages/codegen/src/emitters/factories.ts::storedSlotValueExpr`
+
+The storage coercion of one slot value (boolean keyword, bitflag, kind enum, mixed enum, or verbatim), before any hidden-leaf admission. `slotStorageFromValueExpr` composes it with `hiddenTextAdmission`.
+
+### `packages/codegen/src/emitters/factories.ts::leafReDeclaration`
+
+The anchored pattern constant a text leaf's factory declares: its `_leafRe_<factory>` name and its regex literal, or nothing for a fixed-text hidden leaf or a kind with no derivable pattern. The guard constants and the hidden-leaf admission table read it, so both name the same constant.
+
+### `packages/codegen/src/emitters/factories.ts::constructionChildElementType`
+
+`childElementType` for a construction parameter: the read-side element union plus `string` when any of the children admits a hidden text leaf. The read side (`wrap.ts`, `from.ts`) keeps `childElementType`, because a node read from a tree never holds bare text.
+
+### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
+
+`fieldElementType` for a construction parameter or setter: the read-side element union plus `string` when the slot admits a hidden text leaf.
+
+### `packages/codegen/src/emitters/client-utils.ts::emitTransportHelpers`
+
+#### admitHiddenText
+
+`admitHiddenText(value, leaves, where)` builds the hidden leaf a bare string stands for. A slot with one hidden leaf builds it directly, so its own guard names the failure. A slot with several picks the first leaf whose anchored pattern matches the text, then a leaf with no pattern, and otherwise throws `<where>: "<text>" matches none of [<kinds>]`. Arrays map element-wise and anything that is not a string passes through.
+
+### `packages/codegen/src/emitters/shared.ts::anchoredLeafRegex`
+
+The compiled whole-text regex of a leaf pattern: `^(?:<pattern>)$` with useless escapes stripped, compiled with the `u` flag and then without it. `anchoredLeafRegexLiteral` prints it as the module constant, and the leaf guard emitter tests it against the empty string to decide whether the non-empty check applies, so the constant and the check read one compilation.
+
+### `packages/codegen/src/emitters/shared.ts::transparentContentKindNames`
+
+The kinds a list admits at its content slot: the slot's own kinds and, when there is exactly one and it is a transparent wrapper, the kinds of the wrapper's required slot. The bare-accept closure reads it so a list takes an element the wrapper would have built.
+
+### `packages/codegen/src/emitters/factories.ts::listHasOptions`
+
+Whether a separated list's builder takes an options object: a separator kind to choose, or a leading or trailing delimiter the caller may set. The coercer signature, the list's own options type, and the overlay's list parameter all read it.
