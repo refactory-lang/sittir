@@ -18,6 +18,7 @@ import {
 	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
+	isPatternValue,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -315,7 +316,7 @@ export function classifyPrimitiveField(
 ): PrimitiveFieldStorage | undefined {
 	if (isMultiple(field)) return undefined;
 	if (field.values.length === 0) return undefined;
-	if (!field.values.every((v) => isTerminalValue(v))) return undefined;
+	if (!field.values.every((v) => isTerminalValue(v) || isPatternValue(v))) return undefined;
 	const info = resolveFieldStorageInfo(field, nodeMap);
 	if (info.kind === 'boolean') {
 		const text = info.texts[0];
@@ -674,10 +675,21 @@ export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
 	};
 }
 
+export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {
+	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
+	const text = node.slots.filter((slot) => slot.values.every(isPatternValue));
+	return text.length === 1 && isRequired(text[0]!) ? text[0] : undefined;
+}
+
+export function bareValueSlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
+	return resolveDirectFactorySlot(node, nodeMap) ?? lexedContentSlot(node);
+}
+
 export function fromBareInput(node: AssembledNode, nodeMap: NodeMap): FromBareInput | null {
 	if (node instanceof AssembledList) return 'elements';
 	const shape = classifyFactoryShape(node, nodeMap);
-	return shape === 'direct' || shape === 'forwarded' ? 'value' : null;
+	if (shape === 'direct' || shape === 'forwarded') return 'value';
+	return lexedContentSlot(node) === undefined ? null : 'value';
 }
 
 export function fromEmitsChildrenCoercer(node: AssembledNode, nodeMap: NodeMap): boolean {

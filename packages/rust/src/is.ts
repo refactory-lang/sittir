@@ -408,18 +408,33 @@ export interface IsGuards {
 	negativeLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NegativeLiteral };
+	integerLiteral<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteral };
 	stringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringLiteral };
 	rawStringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
+	charLiteral<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteral };
+	escapeSequence<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
 	lineComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
 	blockComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
+	shebang<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Shebang };
+	metavariable<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Metavariable };
 	macroRules<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroRules };
@@ -693,10 +708,15 @@ export interface AssertGuards {
 	capturedPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CapturedPattern };
 	referencePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ReferencePattern };
 	negativeLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NegativeLiteral };
+	integerLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IntegerLiteral };
 	stringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StringLiteral };
 	rawStringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.RawStringLiteral };
+	charLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CharLiteral };
+	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	lineComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.BlockComment };
+	shebang(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Shebang };
+	metavariable(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Metavariable };
 	macroRules(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MacroRules };
 	enumVariantListElements(
 		v: { readonly $type: number } | number
@@ -959,10 +979,15 @@ export const is = {
 	capturedPattern: _g(TSKindId.CapturedPattern),
 	referencePattern: _g(TSKindId.ReferencePattern),
 	negativeLiteral: _g(TSKindId.NegativeLiteral),
+	integerLiteral: _g(TSKindId.IntegerLiteral),
 	stringLiteral: _g(TSKindId.StringLiteral),
 	rawStringLiteral: _g(TSKindId.RawStringLiteral),
+	charLiteral: _g(TSKindId.CharLiteral),
+	escapeSequence: _g(TSKindId.EscapeSequence),
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
+	shebang: _g(TSKindId.Shebang),
+	metavariable: _g(TSKindId.Metavariable),
 	macroRules: _g(TSKindId.MacroRules),
 	enumVariantListElements: _g(TSKindId.EnumVariantListElements),
 	fieldDeclarationListElements: _g(TSKindId.FieldDeclarationListElements),
@@ -1166,10 +1191,15 @@ export const assert = {
 	capturedPattern: _makeAssert('capturedPattern', is.capturedPattern as _AnyGuard),
 	referencePattern: _makeAssert('referencePattern', is.referencePattern as _AnyGuard),
 	negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
+	integerLiteral: _makeAssert('integerLiteral', is.integerLiteral as _AnyGuard),
 	stringLiteral: _makeAssert('stringLiteral', is.stringLiteral as _AnyGuard),
 	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
+	charLiteral: _makeAssert('charLiteral', is.charLiteral as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
+	shebang: _makeAssert('shebang', is.shebang as _AnyGuard),
+	metavariable: _makeAssert('metavariable', is.metavariable as _AnyGuard),
 	macroRules: _makeAssert('macroRules', is.macroRules as _AnyGuard),
 	enumVariantListElements: _makeAssert('enumVariantListElements', is.enumVariantListElements as _AnyGuard),
 	fieldDeclarationListElements: _makeAssert(

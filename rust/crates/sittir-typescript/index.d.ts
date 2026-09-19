@@ -485,6 +485,16 @@ export interface ClassTransport {
   _class_after?: number
 }
 
+export interface CommentBlockTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface CommentLineTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
 export interface ComputedPropertyNameTransport {
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<ExpressionTransport>
@@ -684,6 +694,11 @@ export interface EnumDeclarationTransport {
   _enum_keyword_after?: number
   _enum_declaration_before?: number
   _enum_declaration_after?: number
+}
+
+export interface EscapeSequenceTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
 }
 
 export interface ExportClauseTransport {
@@ -1084,6 +1099,11 @@ export interface GenericTypeTransport {
   _type_arguments: SlotValue<TypeArgumentsTransport>
   _generic_type_before?: number
   _generic_type_after?: number
+}
+
+export interface HashBangLineTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
 }
 
 export interface IfStatementTransport {
@@ -1707,6 +1727,11 @@ export interface ParenthesizedTypeTransport {
   _rparen_before?: number
   _parenthesized_type_before?: number
   _parenthesized_type_after?: number
+}
+
+export interface PrivatePropertyIdentifierTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
 }
 
 export interface ProgramTransport {

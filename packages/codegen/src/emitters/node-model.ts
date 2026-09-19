@@ -28,6 +28,7 @@ import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts
 import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { bareAcceptClosure } from './from.ts';
+import { interiorOf, type NodeInterior } from './interior.ts';
 import { declaredDelimiterDefault } from './factories.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -82,6 +83,7 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 	name?: string;
 	slots: SerializedSlot[];
 	separator?: string;
+	interior?: NodeInterior;
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
@@ -281,6 +283,8 @@ function serializeCompoundNode(
 	};
 	if (node.annotations?.hoisted === true) out.name = node.kind;
 	if (node.separator !== undefined) out.separator = node.separator;
+	const interior = interiorOf(node);
+	if (interior !== undefined) out.interior = interior;
 	return out;
 }
 

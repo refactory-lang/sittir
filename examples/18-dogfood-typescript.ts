@@ -31,8 +31,8 @@ export function importTypes() {
 
 /** The JSDoc block that leads `applyFormat` — a `comment` node this time. */
 export function applyFormatDoc() {
-	return ir.comment(
-		'/**\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n */'
+	return ir.comment.block(
+		'*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n '
 	);
 }
 

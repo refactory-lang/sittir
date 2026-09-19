@@ -7,6 +7,7 @@ import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
 	AugmentedAssignmentLhs,
+	Comment,
 	Declaration,
 	DestructuringPattern,
 	ExportStatement,
@@ -43,6 +44,9 @@ export interface IsGuards {
 	program<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Program };
+	hashBangLine<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HashBangLine };
 	namespaceExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamespaceExport };
@@ -229,6 +233,9 @@ export interface IsGuards {
 	string<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.String };
+	escapeSequence<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
 	templateString<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TemplateString };
@@ -238,6 +245,9 @@ export interface IsGuards {
 	regex<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Regex };
+	privatePropertyIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PrivatePropertyIdentifier };
 	arguments<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Arguments };
@@ -556,6 +566,7 @@ export interface IsGuards {
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
+	comment(v: { readonly $type: string | number } | number): v is Comment;
 	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
@@ -578,6 +589,7 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	program(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Program };
+	hashBangLine(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.HashBangLine };
 	namespaceExport(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NamespaceExport };
 	exportClause(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportClause };
 	exportSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ExportSpecifier };
@@ -674,11 +686,15 @@ export interface AssertGuards {
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SequenceExpression };
 	string(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.String };
+	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	templateString(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.TemplateString };
 	templateSubstitution(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TemplateSubstitution };
 	regex(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Regex };
+	privatePropertyIdentifier(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId.PrivatePropertyIdentifier };
 	arguments(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Arguments };
 	decorator(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Decorator };
 	decoratorMemberExpression(
@@ -883,6 +899,7 @@ export interface AssertGuards {
 	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): asserts v is AugmentedAssignmentLhs;
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
+	comment(v: { readonly $type: string | number } | number): asserts v is Comment;
 	identifier(v: { readonly $type: string | number } | number): asserts v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): asserts v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
@@ -912,46 +929,48 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([386, 387, 385]);
-const _supertype_moduleExportName_ids = new Set<number>([1, 257]);
+const _supertype_exportStatement_ids = new Set<number>([387, 388, 386]);
+const _supertype_moduleExportName_ids = new Set<number>([1, 258]);
 const _supertype_declaration_ids = new Set<number>([
-	233, 235, 230, 193, 192, 281, 292, 293, 294, 303, 300, 298, 296, 291
+	234, 236, 231, 194, 193, 282, 293, 294, 295, 304, 301, 299, 297, 292
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([395, 396]);
+const _supertype_importSpecifier_ids = new Set<number>([396, 397]);
 const _supertype_statement_ids = new Set<number>([
-	183, 208, 191, 195, 197, 198, 199, 200, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212
+	184, 209, 192, 196, 198, 199, 200, 201, 203, 204, 205, 206, 207, 208, 210, 211, 212, 213
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([416, 417]);
-const _supertype_forHeader_ids = new Set<number>([420, 421, 422]);
-const _supertype_expressions_ids = new Set<number>([256]);
-const _supertype_expression_ids = new Set<number>([284, 285, 286, 294, 283, 246, 248, 242, 254, 253, 252, 241, 221]);
+const _supertype_variableDeclarator_ids = new Set<number>([417, 418]);
+const _supertype_forHeader_ids = new Set<number>([421, 422, 423]);
+const _supertype_expressions_ids = new Set<number>([257]);
+const _supertype_expression_ids = new Set<number>([285, 286, 287, 295, 284, 247, 249, 243, 255, 254, 253, 242, 222]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	244, 243, 218, 106, 1, 450, 101, 102, 99, 257, 258, 260, 103, 104, 105, 222, 226, 232, 236, 234, 229, 240, 278
+	245, 244, 219, 105, 1, 451, 100, 101, 98, 258, 259, 261, 102, 103, 104, 223, 227, 233, 237, 235, 230, 241, 279
 ]);
-const _supertype_formalParameter_ids = new Set<number>([306, 307]);
-const _supertype_lhsExpression_ids = new Set<number>([243, 244, 106, 1, 450, 223, 227, 278]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([243, 244, 450, 1, 218, 278]);
-const _supertype_destructuringPattern_ids = new Set<number>([223, 227]);
-const _supertype_updateExpression_ids = new Set<number>([404, 405]);
-const _supertype_identifier_ids = new Set<number>([106, 1]);
-const _supertype_metaProperty_ids = new Set<number>([418, 419]);
-const _supertype_pattern_ids = new Set<number>([270]);
-const _supertype_propertyName_ids = new Set<number>([100, 257, 99, 275]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 450]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 450]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 450]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 450]);
+const _supertype_formalParameter_ids = new Set<number>([307, 308]);
+const _supertype_lhsExpression_ids = new Set<number>([244, 245, 105, 1, 451, 224, 228, 279]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([244, 245, 451, 1, 219, 279]);
+const _supertype_destructuringPattern_ids = new Set<number>([224, 228]);
+const _supertype_updateExpression_ids = new Set<number>([405, 406]);
+const _supertype_comment_ids = new Set<number>([153, 154]);
+const _supertype_identifier_ids = new Set<number>([105, 1]);
+const _supertype_metaProperty_ids = new Set<number>([419, 420]);
+const _supertype_pattern_ids = new Set<number>([271]);
+const _supertype_propertyName_ids = new Set<number>([99, 258, 98, 276]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 451]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 451]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 451]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 451]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
-const _supertype_type_ids = new Set<number>([361, 358, 323, 327, 313, 314]);
-const _supertype_tupleTypeMember_ids = new Set<number>([318, 319, 320, 321]);
+const _supertype_type_ids = new Set<number>([362, 359, 324, 328, 314, 315]);
+const _supertype_tupleTypeMember_ids = new Set<number>([319, 320, 321, 322]);
 const _supertype_primaryType_ids = new Set<number>([
-	344, 345, 1, 297, 329, 347, 356, 357, 343, 336, 337, 101, 342, 340, 338, 328, 326, 360, 359
+	345, 346, 1, 298, 330, 348, 357, 358, 344, 337, 338, 100, 343, 341, 339, 329, 327, 361, 360
 ]);
-const _supertype_indexSignature_ids = new Set<number>([392, 393]);
-const _supertype_exportStatementDefault_ids = new Set<number>([409, 410]);
+const _supertype_indexSignature_ids = new Set<number>([393, 394]);
+const _supertype_exportStatementDefault_ids = new Set<number>([410, 411]);
 
 export const is = {
 	program: _g(TSKindId.Program),
+	hashBangLine: _g(TSKindId.HashBangLine),
 	namespaceExport: _g(TSKindId.NamespaceExport),
 	exportClause: _g(TSKindId.ExportClause),
 	exportSpecifier: _g(TSKindId.ExportSpecifier),
@@ -1014,9 +1033,11 @@ export const is = {
 	unaryExpression: _g(TSKindId.UnaryExpression),
 	sequenceExpression: _g(TSKindId.SequenceExpression),
 	string: _g(TSKindId.String),
+	escapeSequence: _g(TSKindId.EscapeSequence),
 	templateString: _g(TSKindId.TemplateString),
 	templateSubstitution: _g(TSKindId.TemplateSubstitution),
 	regex: _g(TSKindId.Regex),
+	privatePropertyIdentifier: _g(TSKindId.PrivatePropertyIdentifier),
 	arguments: _g(TSKindId.Arguments),
 	decorator: _g(TSKindId.Decorator),
 	decoratorMemberExpression: _g(TSKindId.DecoratorMemberExpression),
@@ -1133,6 +1154,7 @@ export const is = {
 	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
+	comment: _sg(_supertype_comment_ids),
 	identifier: _sg(_supertype_identifier_ids),
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
@@ -1174,6 +1196,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	program: _makeAssert('program', is.program as _AnyGuard),
+	hashBangLine: _makeAssert('hashBangLine', is.hashBangLine as _AnyGuard),
 	namespaceExport: _makeAssert('namespaceExport', is.namespaceExport as _AnyGuard),
 	exportClause: _makeAssert('exportClause', is.exportClause as _AnyGuard),
 	exportSpecifier: _makeAssert('exportSpecifier', is.exportSpecifier as _AnyGuard),
@@ -1242,9 +1265,11 @@ export const assert = {
 	unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
 	sequenceExpression: _makeAssert('sequenceExpression', is.sequenceExpression as _AnyGuard),
 	string: _makeAssert('string', is.string as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	templateString: _makeAssert('templateString', is.templateString as _AnyGuard),
 	templateSubstitution: _makeAssert('templateSubstitution', is.templateSubstitution as _AnyGuard),
 	regex: _makeAssert('regex', is.regex as _AnyGuard),
+	privatePropertyIdentifier: _makeAssert('privatePropertyIdentifier', is.privatePropertyIdentifier as _AnyGuard),
 	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
 	decorator: _makeAssert('decorator', is.decorator as _AnyGuard),
 	decoratorMemberExpression: _makeAssert('decoratorMemberExpression', is.decoratorMemberExpression as _AnyGuard),
@@ -1379,6 +1404,7 @@ export const assert = {
 	augmentedAssignmentLhs: _makeAssert('augmentedAssignmentLhs', is.augmentedAssignmentLhs as _AnyGuard),
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
+	comment: _makeAssert('comment', is.comment as _AnyGuard),
 	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
 	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),

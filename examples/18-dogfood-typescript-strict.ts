@@ -54,8 +54,8 @@ export function importTypesStrict() {
 
 /** The JSDoc block that leads `applyFormat`. */
 export function applyFormatDocStrict() {
-	return ir.comment(
-		'/**\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n */'
+	return ir.comment.block(
+		'*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n '
 	);
 }
 

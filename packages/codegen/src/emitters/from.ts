@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -21,6 +22,7 @@ type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorp
 type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 import {
 	anchoredLeafRegexLiteral,
+	classifyFactoryShape,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -28,11 +30,12 @@ import {
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
+	bareValueSlot,
+	lexedContentSlot,
 	fieldResolverName,
 	needsNonEmptyHoist,
 	fromEmitsChildrenCoercer,
 	fromBareInput,
-	resolveDirectFactorySlot,
 	canDefaultToEmpty,
 	scalarLeafKinds,
 	classifyFromEmission,
@@ -252,9 +255,10 @@ function emitBranchNodeDataPassthrough(
 	lines: string[],
 	inputOptional: boolean,
 	returnType: string,
-	typeName: string
+	typeName: string,
+	bare = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -325,18 +329,23 @@ function emitBranchFrom(
 			? `${fieldResolverName(typeName, f)}(${valueExpr})`
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
+	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
+	const cfg = bareContent === undefined ? 'input' : '_cfg';
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
+			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareContent !== undefined);
+		}
+		if (bareContent !== undefined) {
+			lines.push(`  const _cfg = (typeof input === 'string' ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		for (const f of slots) {
 			if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
-				const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
+				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -366,7 +375,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
+					const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -895,6 +904,14 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
+		} else if (interiorOf(node) !== undefined) {
+			const interior = interiorOf(node)!;
+			const shape = classifyFactoryShape(node, nodeMap);
+			const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
+			const arg = shape === 'direct' ? `${config}[${JSON.stringify(interior.slots.find((slot) => !slot.flag)!.configKey)}] as never` : `${config} as never`;
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => ${factory}(${arg}) },`
+			);
 		} else if (node instanceof AssembledPattern) {
 			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
 			registryEntries.push(
@@ -933,7 +950,7 @@ function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boo
 function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	switch (fromBareInput(node, nodeMap)) {
 		case 'value':
-			return resolveDirectFactorySlot(node, nodeMap);
+			return bareValueSlot(node, nodeMap);
 		case 'elements':
 			return canonicalSeparatedListField(node as AssembledList);
 		case null:
@@ -1588,6 +1605,9 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
+			if (l === `import * as F from './raw.js';` && /\bTOKEN_INTERIORS\b/.test(body)) {
+				return [l, `import { TOKEN_INTERIORS } from '../consts.js';`, `import { lexedConfig } from '@sittir/common';`];
+			}
 			if (!/\bDelimiter\./.test(body)) {
 				if (l === `import { Delimiter } from './types.js';`) return [];
 				l = l.replace(`, Delimiter } from './types.js';`, ` } from './types.js';`);

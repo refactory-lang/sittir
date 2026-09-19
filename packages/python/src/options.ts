@@ -64,7 +64,6 @@ export type AddressRoot =
 	| 'dotted_name'
 	| 'elif_clause'
 	| 'else_clause'
-	| 'escape_sequence'
 	| 'except_clause'
 	| 'except_clause_exception_as'
 	| 'except_clause_exception_list'
@@ -527,8 +526,6 @@ export interface AddressBranch {
 	readonly else_clause: 'after' | 'before' | 'colon' | 'else_keyword';
 	readonly 'else_clause/colon': 'after' | 'before';
 	readonly 'else_clause/else_keyword': 'after';
-	readonly escape_sequence: 'bslash';
-	readonly 'escape_sequence/bslash': 'after';
 	readonly except_clause: 'after' | 'before' | 'colon' | 'except_keyword' | 'star_marker';
 	readonly 'except_clause/colon': 'after' | 'before';
 	readonly 'except_clause/except_keyword': 'after';
@@ -1838,7 +1835,6 @@ export interface AddressLeaf {
 	readonly 'else_clause/colon/after': SpacingArm;
 	readonly 'else_clause/colon/before': SpacingArm;
 	readonly 'else_clause/else_keyword/after': SpacingArm;
-	readonly 'escape_sequence/bslash/after': SpacingArm;
 	readonly 'except_clause/after': SpacingArm;
 	readonly 'except_clause/before': SpacingArm;
 	readonly 'except_clause/colon/after': SpacingArm;

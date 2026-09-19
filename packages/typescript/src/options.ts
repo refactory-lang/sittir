@@ -52,7 +52,6 @@ export type AddressRoot =
 	| 'class_declaration'
 	| 'class_heritage_extends_clause'
 	| 'class_static_block'
-	| 'comment'
 	| 'computed_property_name'
 	| 'conditional_type'
 	| 'constraint'
@@ -541,8 +540,6 @@ export interface AddressBranch {
 	readonly class_heritage_extends_clause: 'after' | 'before';
 	readonly class_static_block: 'after' | 'before' | 'static_keyword';
 	readonly 'class_static_block/static_keyword': 'after';
-	readonly comment: 'slash';
-	readonly 'comment/slash': 'before';
 	readonly computed_property_name: 'after' | 'before' | 'lbrack' | 'rbrack';
 	readonly 'computed_property_name/lbrack': 'after';
 	readonly 'computed_property_name/rbrack': 'before';
@@ -2026,7 +2023,6 @@ export interface AddressLeaf {
 	readonly 'class_static_block/after': WhitespaceArm;
 	readonly 'class_static_block/before': WhitespaceArm;
 	readonly 'class_static_block/static_keyword/after': WhitespaceArm;
-	readonly 'comment/slash/before': WhitespaceArm;
 	readonly 'computed_property_name/after': WhitespaceArm;
 	readonly 'computed_property_name/before': WhitespaceArm;
 	readonly 'computed_property_name/lbrack/after': WhitespaceArm;

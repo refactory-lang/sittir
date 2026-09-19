@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isFixedTextLeaf } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
@@ -221,11 +221,20 @@ function soleSlotDummyKind(
 	return { facts, firstKindName };
 }
 
+function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
+	const patternValue = slot.values.find(isPatternValue);
+	if (patternValue === undefined) return undefined;
+	const sample = pickSampleForPattern(patternValue.pattern);
+	return sample === null ? "'test' as any" : JSON.stringify(sample);
+}
+
 function childrenCallArgs(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
+	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
+	if (patternDummy !== undefined) return patternDummy;
 	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
 	if (resolved === null || resolved.firstKindName === undefined) return '';
 	const { facts, firstKindName } = resolved;
@@ -238,6 +247,8 @@ function subFactoryChildrenArgs(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
+	const patternDummy = node.soleSlot === undefined ? undefined : patternSlotDummy(node.soleSlot);
+	if (patternDummy !== undefined) return patternDummy;
 	const resolved = soleSlotDummyKind(node, nodeMap, kindEntries);
 	if (resolved === null || resolved.firstKindName === undefined) return '';
 	const { facts, firstKindName } = resolved;
@@ -618,6 +629,8 @@ function dummyValueForField(
 	depth: number,
 	visiting: ReadonlySet<string>
 ): string {
+	const patternDummy = patternSlotDummy(field);
+	if (patternDummy !== undefined) return patternDummy;
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
 	if (depth === 0) {
 		if (storageInfo.kind === 'boolean') return 'true';

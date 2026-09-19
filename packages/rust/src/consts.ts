@@ -24,6 +24,7 @@ const NODE_KINDS = [
 	'break_expression',
 	'call_expression',
 	'captured_pattern',
+	'char_literal',
 	'closure_parameters',
 	'compound_assignment_expr',
 	'const_block',
@@ -37,6 +38,7 @@ const NODE_KINDS = [
 	'enum_variant',
 	'enum_variant_list',
 	'enum_variant_list_elements',
+	'escape_sequence',
 	'expression_statement',
 	'extern_crate_declaration',
 	'extern_modifier',
@@ -62,6 +64,7 @@ const NODE_KINDS = [
 	'if_expression',
 	'index_expression',
 	'inner_attribute_item',
+	'integer_literal',
 	'label',
 	'last_match_arm',
 	'let_condition',
@@ -77,6 +80,7 @@ const NODE_KINDS = [
 	'match_block',
 	'match_expression',
 	'match_pattern',
+	'metavariable',
 	'mut_pattern',
 	'negative_literal',
 	'ordered_field_declaration_list',
@@ -99,6 +103,7 @@ const NODE_KINDS = [
 	'scoped_type_identifier_in_expression_position',
 	'scoped_use_list',
 	'self_parameter',
+	'shebang',
 	'shorthand_field_initializer',
 	'slice_pattern',
 	'source_file',
@@ -183,7 +188,6 @@ const LEAF_KINDS = [
 	'boolean_literal',
 	'break_keyword',
 	'char_keyword',
-	'char_literal',
 	'const_keyword',
 	'continue_keyword',
 	'crate',
@@ -192,7 +196,6 @@ const LEAF_KINDS = [
 	'else_keyword',
 	'empty_statement',
 	'enum_keyword',
-	'escape_sequence',
 	'expr_2021_keyword',
 	'expr_keyword',
 	'extern_keyword',
@@ -214,7 +217,6 @@ const LEAF_KINDS = [
 	'if_keyword',
 	'impl_keyword',
 	'in_keyword',
-	'integer_literal',
 	'isize_keyword',
 	'item_keyword',
 	'let_keyword',
@@ -225,7 +227,6 @@ const LEAF_KINDS = [
 	'loop_keyword',
 	'match_keyword',
 	'meta_keyword',
-	'metavariable',
 	'mod_keyword',
 	'move_keyword',
 	'mutable_specifier',
@@ -241,7 +242,6 @@ const LEAF_KINDS = [
 	'remaining_field_pattern',
 	'return_keyword',
 	'self',
-	'shebang',
 	'static_keyword',
 	'stmt_keyword',
 	'str_keyword',
@@ -2529,6 +2529,37 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'where_clause', id: 80, enumName: 'FieldWhereClause', cName: 'field_where_clause' },
 	{ name: 'where_predicate', id: 81, enumName: 'FieldWherePredicate', cName: 'field_where_predicate' }
 ] as const;
+
+import type { TokenInterior } from '@sittir/common';
+
+/** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
+export const TOKEN_INTERIORS = {
+	char_literal: {
+		regex:
+			"^(?<b>b)?'(?<content>(?:(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\\\'])))?)'$",
+		slots: [
+			{ name: 'b', configKey: 'b', flag: true },
+			{ name: 'content', configKey: 'content' }
+		]
+	},
+	escape_sequence: {
+		regex: '^\\\\(?<content>(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))$',
+		slots: [{ name: 'content', configKey: 'content' }]
+	},
+	integer_literal: {
+		regex:
+			'^(?<content>(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+)))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
+		slots: [
+			{ name: 'content', configKey: 'content' },
+			{ name: 'suffix', configKey: 'suffix' }
+		]
+	},
+	metavariable: { regex: '^\\$(?<name>[a-zA-Z_]\\w*)$', slots: [{ name: 'name', configKey: 'name' }] },
+	shebang: {
+		regex: '^#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\n$',
+		slots: [{ name: 'content', configKey: 'content' }]
+	}
+} as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** Valid values for `_compound_assignment_expr_operator` nodes. */
 export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [

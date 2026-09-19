@@ -2737,7 +2737,8 @@ export type TypescriptGrammar = {
 	readonly _anonymous_case: { type: 'case'; named: false };
 	readonly _anonymous_catch: { type: 'catch'; named: false };
 	readonly _anonymous_class: { type: 'class'; named: false };
-	readonly comment: { type: 'comment'; named: true; extra: true };
+	readonly comment_block: { type: 'comment_block'; named: true; extra: true };
+	readonly comment_line: { type: 'comment_line'; named: true; extra: true };
 	readonly _anonymous_const: { type: 'const'; named: false };
 	readonly _anonymous_continue: { type: 'continue'; named: false };
 	readonly _anonymous_debugger: { type: 'debugger'; named: false };

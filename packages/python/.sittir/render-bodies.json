@@ -882,6 +882,19 @@
 			"field": "class_pattern_after"
 		}
 	],
+	"comment": [
+		{
+			"kind": "text",
+			"text": "#"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"comparison_operator": [
 		{
 			"kind": "seam",
@@ -1389,6 +1402,19 @@
 		{
 			"kind": "seam",
 			"field": "else_clause_after"
+		}
+	],
+	"escape_sequence": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"except_clause": [

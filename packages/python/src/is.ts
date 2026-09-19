@@ -341,12 +341,18 @@ export interface IsGuards {
 	interpolation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Interpolation };
+	escapeSequence<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
 	formatSpecifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifier };
 	await<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Await };
+	comment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Comment };
 	simpleStatementsElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimpleStatementsElements };
@@ -587,8 +593,10 @@ export interface AssertGuards {
 	string(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.String };
 	stringContent(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StringContent };
 	interpolation(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Interpolation };
+	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	formatSpecifier(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.FormatSpecifier };
 	await(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Await };
+	comment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Comment };
 	simpleStatementsElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.SimpleStatementsElements };
@@ -805,8 +813,10 @@ export const is = {
 	string: _g(TSKindId.String),
 	stringContent: _g(TSKindId.StringContent),
 	interpolation: _g(TSKindId.Interpolation),
+	escapeSequence: _g(TSKindId.EscapeSequence),
 	formatSpecifier: _g(TSKindId.FormatSpecifier),
 	await: _g(TSKindId.Await),
+	comment: _g(TSKindId.Comment),
 	simpleStatementsElements: _g(TSKindId.SimpleStatementsElements),
 	subjects: _g(TSKindId.Subjects),
 	casePatterns: _g(TSKindId.CasePatterns),
@@ -980,8 +990,10 @@ export const assert = {
 	string: _makeAssert('string', is.string as _AnyGuard),
 	stringContent: _makeAssert('stringContent', is.stringContent as _AnyGuard),
 	interpolation: _makeAssert('interpolation', is.interpolation as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	formatSpecifier: _makeAssert('formatSpecifier', is.formatSpecifier as _AnyGuard),
 	await: _makeAssert('await', is.await as _AnyGuard),
+	comment: _makeAssert('comment', is.comment as _AnyGuard),
 	simpleStatementsElements: _makeAssert('simpleStatementsElements', is.simpleStatementsElements as _AnyGuard),
 	subjects: _makeAssert('subjects', is.subjects as _AnyGuard),
 	casePatterns: _makeAssert('casePatterns', is.casePatterns as _AnyGuard),

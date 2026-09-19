@@ -17,12 +17,12 @@ import * as F from './factories/index.js';
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = {
 	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.buildIntegerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
-			return Number.isInteger(value) ? F.buildIntegerLiteral(String(value)) : F.buildFloatLiteral(String(value));
+		function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
+			return Number.isInteger(value) ? F.integerLiteral(String(value)) : F.buildFloatLiteral(String(value));
 		},
 		{
-			integer(value: number): ReturnType<typeof F.buildIntegerLiteral> {
-				return F.buildIntegerLiteral(String(value));
+			integer(value: number): ReturnType<typeof F.integerLiteral> {
+				return F.integerLiteral(String(value));
 			},
 			float(value: number): ReturnType<typeof F.buildFloatLiteral> {
 				return F.buildFloatLiteral(String(value));
@@ -149,29 +149,29 @@ export const tokenPattern: {
 	readonly tree: typeof F.tokenTreePattern;
 	readonly repetition: typeof F.tokenRepetitionPattern;
 	readonly binding: typeof F.tokenBindingPattern;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 } = {
 	tree: F.tokenTreePattern,
 	repetition: F.tokenRepetitionPattern,
 	binding: F.tokenBindingPattern,
-	metavariable: F.buildMetavariable
+	metavariable: F.metavariable
 };
 
 export const tokens: {
 	readonly tokenTree: typeof F.tokenTree;
 	readonly tokenRepetition: typeof F.tokenRepetition;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 } = {
 	tokenTree: F.tokenTree,
 	tokenRepetition: F.tokenRepetition,
-	metavariable: F.buildMetavariable
+	metavariable: F.metavariable
 };
 
 export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
@@ -181,8 +181,8 @@ export const nonSpecialToken: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	mutableSpecifier: F.buildMutableSpecifier,
@@ -194,7 +194,7 @@ export const nonSpecialToken: {
 export const useClause: {
 	readonly self: typeof F.buildSelf;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
@@ -205,7 +205,7 @@ export const useClause: {
 } = {
 	self: F.buildSelf,
 	identifier: F.buildIdentifier,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
 	scopedIdentifier: F.scopedIdentifier,
@@ -218,7 +218,7 @@ export const useClause: {
 export const type: {
 	readonly abstract: typeof F.abstractType;
 	readonly reference: typeof F.referenceType;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly pointer: typeof F.pointerType;
 	readonly generic: typeof F.genericType;
 	readonly scopedIdentifier: typeof F.scopedTypeIdentifier;
@@ -235,7 +235,7 @@ export const type: {
 } = {
 	abstract: F.abstractType,
 	reference: F.referenceType,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	pointer: F.pointerType,
 	generic: F.genericType,
 	scopedIdentifier: F.scopedTypeIdentifier,
@@ -264,8 +264,8 @@ export const expressionExceptRange: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -280,7 +280,7 @@ export const expressionExceptRange: {
 	readonly break: typeof F.breakExpression;
 	readonly continue: typeof F.continueExpression;
 	readonly index: typeof F.indexExpression;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly closure: typeof F.closureExpression;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly struct: typeof F.structExpression;
@@ -308,8 +308,8 @@ export const expressionExceptRange: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -324,7 +324,7 @@ export const expressionExceptRange: {
 	break: F.breakExpression,
 	continue: F.continueExpression,
 	index: F.indexExpression,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	closure: F.closureExpression,
 	parenthesized: F.parenthesizedExpression,
 	struct: F.structExpression,
@@ -354,8 +354,8 @@ export const expression: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -370,7 +370,7 @@ export const expression: {
 	readonly break: typeof F.breakExpression;
 	readonly continue: typeof F.continueExpression;
 	readonly index: typeof F.indexExpression;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly closure: typeof F.closureExpression;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly struct: typeof F.structExpression;
@@ -399,8 +399,8 @@ export const expression: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -415,7 +415,7 @@ export const expression: {
 	break: F.breakExpression,
 	continue: F.continueExpression,
 	index: F.indexExpression,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	closure: F.closureExpression,
 	parenthesized: F.parenthesizedExpression,
 	struct: F.structExpression,
@@ -478,8 +478,8 @@ export const condition: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -494,7 +494,7 @@ export const condition: {
 	readonly break: typeof F.breakExpression;
 	readonly continue: typeof F.continueExpression;
 	readonly index: typeof F.indexExpression;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly closure: typeof F.closureExpression;
 	readonly parenthesized: typeof F.parenthesizedExpression;
 	readonly struct: typeof F.structExpression;
@@ -524,8 +524,8 @@ export const condition: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -540,7 +540,7 @@ export const condition: {
 	break: F.breakExpression,
 	continue: F.continueExpression,
 	index: F.indexExpression,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	closure: F.closureExpression,
 	parenthesized: F.parenthesizedExpression,
 	struct: F.structExpression,
@@ -562,8 +562,8 @@ export const condition: {
 export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -585,8 +585,8 @@ export const pattern: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral,
 	identifier: F.buildIdentifier,
@@ -610,29 +610,29 @@ export const pattern: {
 export const literal: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral
 };
 
 export const literalPattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.buildCharLiteral;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.buildCharLiteral,
-	integer: F.buildIntegerLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
 };
@@ -640,14 +640,14 @@ export const literalPattern: {
 export const path: {
 	readonly self: typeof F.buildSelf;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly metavariable: typeof F.buildMetavariable;
+	readonly metavariable: typeof F.metavariable;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 } = {
 	self: F.buildSelf,
 	identifier: F.buildIdentifier,
-	metavariable: F.buildMetavariable,
+	metavariable: F.metavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
 	scopedIdentifier: F.scopedIdentifier
@@ -775,10 +775,15 @@ export const ir: {
 	readonly capturedPattern: typeof F.capturedPattern;
 	readonly referencePattern: typeof F.referencePattern;
 	readonly negativeLiteral: typeof F.negativeLiteral;
+	readonly integerLiteral: typeof F.integerLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
+	readonly charLiteral: typeof F.charLiteral;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
+	readonly shebang: typeof F.shebang;
+	readonly metavariable: typeof F.metavariable;
 	readonly macroRules: typeof F.macroRules;
 	readonly enumVariantListElements: typeof F.enumVariantListElements;
 	readonly fieldDeclarationListElements: typeof F.fieldDeclarationListElements;
@@ -824,12 +829,7 @@ export const ir: {
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
-	readonly integerLiteral: typeof F.buildIntegerLiteral;
-	readonly charLiteral: typeof F.buildCharLiteral;
-	readonly escapeSequence: typeof F.buildEscapeSequence;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly shebang: typeof F.buildShebang;
-	readonly metavariable: typeof F.buildMetavariable;
 	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
 	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
 	readonly lineCommentContent: typeof F.buildLineCommentContent;
@@ -853,7 +853,7 @@ export const ir: {
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
 	readonly captured: typeof F.capturedPattern;
-	readonly char: typeof F.buildCharLiteral;
+	readonly char: typeof F.charLiteral;
 	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
 	readonly const: typeof F.constItem;
 	readonly continue: typeof F.continueExpression;
@@ -871,7 +871,7 @@ export const ir: {
 	readonly if: typeof F.ifExpression;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
-	readonly integer: typeof F.buildIntegerLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly let: typeof F.letDeclaration;
 	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
@@ -1045,10 +1045,15 @@ export const ir: {
 	capturedPattern: F.capturedPattern,
 	referencePattern: F.referencePattern,
 	negativeLiteral: F.negativeLiteral,
+	integerLiteral: F.integerLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
+	charLiteral: F.charLiteral,
+	escapeSequence: F.escapeSequence,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
+	shebang: F.shebang,
+	metavariable: F.metavariable,
 	macroRules: F.macroRules,
 	enumVariantListElements: F.enumVariantListElements,
 	fieldDeclarationListElements: F.fieldDeclarationListElements,
@@ -1098,12 +1103,7 @@ export const ir: {
 	rangePatternWithLeftBare: F.buildRangePatternWithLeftBare,
 
 	// Leaf node factories
-	integerLiteral: F.buildIntegerLiteral,
-	charLiteral: F.buildCharLiteral,
-	escapeSequence: F.buildEscapeSequence,
 	identifier: F.buildIdentifier,
-	shebang: F.buildShebang,
-	metavariable: F.buildMetavariable,
 	stringLiteralOpen: F.buildStringLiteralOpen,
 	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
 	lineCommentContent: F.buildLineCommentContent,
@@ -1129,7 +1129,7 @@ export const ir: {
 	break: F.breakExpression,
 	call: F.callExpression,
 	captured: F.capturedPattern,
-	char: F.buildCharLiteral,
+	char: F.charLiteral,
 	compoundAssignment: F.compoundAssignmentExpr,
 	const: F.constItem,
 	continue: F.continueExpression,
@@ -1147,7 +1147,7 @@ export const ir: {
 	if: F.ifExpression,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
-	integer: F.buildIntegerLiteral,
+	integer: F.integerLiteral,
 	let: F.letDeclaration,
 	list: F.useList,
 	loop: F.loopExpression,

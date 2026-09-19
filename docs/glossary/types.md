@@ -498,6 +498,13 @@ a choice of tokens), so the edge can answer to their grammar-wide face.
  */
 ```
 
+#### token interior
+
+```text
+`nonterminal` (a slot-promoted literal survives flatten) and `lexed` (a structured bare pattern) are carried at
+every phase from link on; both are set by the token-interior pass, not by the DSL.
+```
+
 ### `packages/codegen/src/types/rule.ts::inline`
 
 ```text

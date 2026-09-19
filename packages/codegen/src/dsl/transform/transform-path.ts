@@ -14,6 +14,7 @@ interface RuntimeDsl {
 	optional?: (content: RuntimeRule) => RuntimeRule;
 	repeat?: (content: RuntimeRule) => RuntimeRule;
 	repeat1?: (content: RuntimeRule) => RuntimeRule;
+	token?: ((content: RuntimeRule) => RuntimeRule) & { immediate?: (content: RuntimeRule) => RuntimeRule };
 	field?: (name: string, content: RuntimeRule) => RuntimeRule;
 	prec?: ((value: number, content: RuntimeRule) => RuntimeRule) & {
 		left?: (value: number, content: RuntimeRule) => RuntimeRule;
@@ -497,6 +498,12 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 	if (t === 'OPTIONAL') return carryOverProperties(rule, nativeRequired('optional')(newContent));
 	if (t === 'REPEAT' || t === 'REPEAT1') {
 		return carryOverProperties(rule, nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent));
+	}
+	if (t === 'TOKEN') return carryOverProperties(rule, nativeRequired('token')(newContent));
+	if (t === 'IMMEDIATE_TOKEN') {
+		const immediate = nativeRequired('token').immediate;
+		if (typeof immediate !== 'function') throw new Error('transform: native token.immediate not available');
+		return carryOverProperties(rule, immediate(newContent));
 	}
 	if (isFieldType(t)) {
 		if (isFieldType(newContent.type)) return newContent;

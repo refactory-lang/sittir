@@ -9164,11 +9164,7 @@
                                   "$type": 65,
                                   "$source": 0,
                                   "$named": true,
-                                  "$text": "\\\"",
-                                  "$span": {
-                                    "start": 12,
-                                    "end": 14
-                                  }
+                                  "_content": "\""
                                 },
                                 {
                                   "$type": 105,
@@ -9184,11 +9180,7 @@
                                   "$type": 65,
                                   "$source": 0,
                                   "$named": true,
-                                  "$text": "\\\"",
-                                  "$span": {
-                                    "start": 36,
-                                    "end": 38
-                                  }
+                                  "_content": "\""
                                 },
                                 {
                                   "$type": 105,
@@ -9609,11 +9601,7 @@
                         "$type": 65,
                         "$source": 0,
                         "$named": true,
-                        "$text": "\\\"",
-                        "$span": {
-                          "start": 12,
-                          "end": 14
-                        }
+                        "_content": "\""
                       },
                       {
                         "$type": 105,
@@ -9629,11 +9617,7 @@
                         "$type": 65,
                         "$source": 0,
                         "$named": true,
-                        "$text": "\\\"",
-                        "$span": {
-                          "start": 36,
-                          "end": 38
-                        }
+                        "_content": "\""
                       },
                       {
                         "$type": 105,
@@ -10040,11 +10024,7 @@
                       "$type": 65,
                       "$source": 0,
                       "$named": true,
-                      "$text": "\\\"",
-                      "$span": {
-                        "start": 12,
-                        "end": 14
-                      }
+                      "_content": "\""
                     },
                     {
                       "$type": 105,
@@ -10060,11 +10040,7 @@
                       "$type": 65,
                       "$source": 0,
                       "$named": true,
-                      "$text": "\\\"",
-                      "$span": {
-                        "start": 36,
-                        "end": 38
-                      }
+                      "_content": "\""
                     },
                     {
                       "$type": 105,
@@ -10451,11 +10427,7 @@
                     "$type": 65,
                     "$source": 0,
                     "$named": true,
-                    "$text": "\\\"",
-                    "$span": {
-                      "start": 12,
-                      "end": 14
-                    }
+                    "_content": "\""
                   },
                   {
                     "$type": 105,
@@ -10471,11 +10443,7 @@
                     "$type": 65,
                     "$source": 0,
                     "$named": true,
-                    "$text": "\\\"",
-                    "$span": {
-                      "start": 36,
-                      "end": 38
-                    }
+                    "_content": "\""
                   },
                   {
                     "$type": 105,
@@ -10829,11 +10797,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\"",
-              "$span": {
-                "start": 12,
-                "end": 14
-              }
+              "_content": "\""
             },
             {
               "$type": 105,
@@ -10849,11 +10813,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\"",
-              "$span": {
-                "start": 36,
-                "end": 38
-              }
+              "_content": "\""
             },
             {
               "$type": 105,
@@ -47082,11 +47042,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\\",
-                          "$span": {
-                            "start": 43,
-                            "end": 45
-                          }
+                          "_content": "\\"
                         }
                       ]
                     }
@@ -47239,11 +47195,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\n",
-                          "$span": {
-                            "start": 62,
-                            "end": 64
-                          }
+                          "_content": "\n"
                         },
                         {
                           "$type": 105,
@@ -47326,11 +47278,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\x12",
-                          "$span": {
-                            "start": 74,
-                            "end": 78
-                          }
+                          "_content": "x12"
                         },
                         {
                           "$type": 105,
@@ -47346,11 +47294,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\x13",
-                          "$span": {
-                            "start": 86,
-                            "end": 90
-                          }
+                          "_content": "x13"
                         },
                         {
                           "$type": 105,
@@ -47427,141 +47371,85 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\xab",
-                          "$span": {
-                            "start": 109,
-                            "end": 113
-                          }
+                          "_content": "xab"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\1",
-                          "$span": {
-                            "start": 113,
-                            "end": 115
-                          }
+                          "_content": "1"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\12",
-                          "$span": {
-                            "start": 115,
-                            "end": 118
-                          }
+                          "_content": "12"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\123",
-                          "$span": {
-                            "start": 118,
-                            "end": 122
-                          }
+                          "_content": "123"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\'",
-                          "$span": {
-                            "start": 122,
-                            "end": 124
-                          }
+                          "_content": "'"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\"",
-                          "$span": {
-                            "start": 124,
-                            "end": 126
-                          }
+                          "_content": "\""
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\a",
-                          "$span": {
-                            "start": 126,
-                            "end": 128
-                          }
+                          "_content": "a"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\b",
-                          "$span": {
-                            "start": 128,
-                            "end": 130
-                          }
+                          "_content": "b"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\f",
-                          "$span": {
-                            "start": 130,
-                            "end": 132
-                          }
+                          "_content": "f"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\r",
-                          "$span": {
-                            "start": 132,
-                            "end": 134
-                          }
+                          "_content": "r"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\n",
-                          "$span": {
-                            "start": 134,
-                            "end": 136
-                          }
+                          "_content": "n"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\t",
-                          "$span": {
-                            "start": 136,
-                            "end": 138
-                          }
+                          "_content": "t"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\v",
-                          "$span": {
-                            "start": 138,
-                            "end": 140
-                          }
+                          "_content": "v"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\\",
-                          "$span": {
-                            "start": 140,
-                            "end": 142
-                          }
+                          "_content": "\\"
                         }
                       ]
                     }
@@ -47808,11 +47696,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\N{GREEK CAPITAL LETTER DELTA}",
-                          "$span": {
-                            "start": 178,
-                            "end": 208
-                          }
+                          "_content": "N{GREEK CAPITAL LETTER DELTA}"
                         }
                       ]
                     }
@@ -48315,11 +48199,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\\",
-                "$span": {
-                  "start": 43,
-                  "end": 45
-                }
+                "_content": "\\"
               }
             ]
           }
@@ -48472,11 +48352,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\n",
-                "$span": {
-                  "start": 62,
-                  "end": 64
-                }
+                "_content": "\n"
               },
               {
                 "$type": 105,
@@ -48559,11 +48435,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\x12",
-                "$span": {
-                  "start": 74,
-                  "end": 78
-                }
+                "_content": "x12"
               },
               {
                 "$type": 105,
@@ -48579,11 +48451,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\x13",
-                "$span": {
-                  "start": 86,
-                  "end": 90
-                }
+                "_content": "x13"
               },
               {
                 "$type": 105,
@@ -48660,141 +48528,85 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\xab",
-                "$span": {
-                  "start": 109,
-                  "end": 113
-                }
+                "_content": "xab"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\1",
-                "$span": {
-                  "start": 113,
-                  "end": 115
-                }
+                "_content": "1"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\12",
-                "$span": {
-                  "start": 115,
-                  "end": 118
-                }
+                "_content": "12"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\123",
-                "$span": {
-                  "start": 118,
-                  "end": 122
-                }
+                "_content": "123"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\'",
-                "$span": {
-                  "start": 122,
-                  "end": 124
-                }
+                "_content": "'"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\"",
-                "$span": {
-                  "start": 124,
-                  "end": 126
-                }
+                "_content": "\""
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\a",
-                "$span": {
-                  "start": 126,
-                  "end": 128
-                }
+                "_content": "a"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\b",
-                "$span": {
-                  "start": 128,
-                  "end": 130
-                }
+                "_content": "b"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\f",
-                "$span": {
-                  "start": 130,
-                  "end": 132
-                }
+                "_content": "f"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\r",
-                "$span": {
-                  "start": 132,
-                  "end": 134
-                }
+                "_content": "r"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 134,
-                  "end": 136
-                }
+                "_content": "n"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\t",
-                "$span": {
-                  "start": 136,
-                  "end": 138
-                }
+                "_content": "t"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\v",
-                "$span": {
-                  "start": 138,
-                  "end": 140
-                }
+                "_content": "v"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\\",
-                "$span": {
-                  "start": 140,
-                  "end": 142
-                }
+                "_content": "\\"
               }
             ]
           }
@@ -49041,11 +48853,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\N{GREEK CAPITAL LETTER DELTA}",
-                "$span": {
-                  "start": 178,
-                  "end": 208
-                }
+                "_content": "N{GREEK CAPITAL LETTER DELTA}"
               }
             ]
           }
@@ -49504,11 +49312,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\\",
-              "$span": {
-                "start": 43,
-                "end": 45
-              }
+              "_content": "\\"
             }
           ]
         }
@@ -49651,11 +49455,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\n",
-              "$span": {
-                "start": 62,
-                "end": 64
-              }
+              "_content": "\n"
             },
             {
               "$type": 105,
@@ -49733,11 +49533,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\x12",
-              "$span": {
-                "start": 74,
-                "end": 78
-              }
+              "_content": "x12"
             },
             {
               "$type": 105,
@@ -49753,11 +49549,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\x13",
-              "$span": {
-                "start": 86,
-                "end": 90
-              }
+              "_content": "x13"
             },
             {
               "$type": 105,
@@ -49829,141 +49621,85 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\xab",
-              "$span": {
-                "start": 109,
-                "end": 113
-              }
+              "_content": "xab"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\1",
-              "$span": {
-                "start": 113,
-                "end": 115
-              }
+              "_content": "1"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\12",
-              "$span": {
-                "start": 115,
-                "end": 118
-              }
+              "_content": "12"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\123",
-              "$span": {
-                "start": 118,
-                "end": 122
-              }
+              "_content": "123"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\'",
-              "$span": {
-                "start": 122,
-                "end": 124
-              }
+              "_content": "'"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\"",
-              "$span": {
-                "start": 124,
-                "end": 126
-              }
+              "_content": "\""
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\a",
-              "$span": {
-                "start": 126,
-                "end": 128
-              }
+              "_content": "a"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\b",
-              "$span": {
-                "start": 128,
-                "end": 130
-              }
+              "_content": "b"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\f",
-              "$span": {
-                "start": 130,
-                "end": 132
-              }
+              "_content": "f"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\r",
-              "$span": {
-                "start": 132,
-                "end": 134
-              }
+              "_content": "r"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 134,
-                "end": 136
-              }
+              "_content": "n"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\t",
-              "$span": {
-                "start": 136,
-                "end": 138
-              }
+              "_content": "t"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\v",
-              "$span": {
-                "start": 138,
-                "end": 140
-              }
+              "_content": "v"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\\",
-              "$span": {
-                "start": 140,
-                "end": 142
-              }
+              "_content": "\\"
             }
           ]
         }
@@ -50200,11 +49936,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\N{GREEK CAPITAL LETTER DELTA}",
-              "$span": {
-                "start": 178,
-                "end": 208
-              }
+              "_content": "N{GREEK CAPITAL LETTER DELTA}"
             }
           ]
         }
@@ -50299,11 +50031,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\x00",
-                          "$span": {
-                            "start": 3,
-                            "end": 7
-                          }
+                          "_content": "x00"
                         },
                         {
                           "$type": 105,
@@ -50380,11 +50108,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\n",
-                          "$span": {
-                            "start": 12,
-                            "end": 14
-                          }
+                          "_content": "n"
                         }
                       ]
                     }
@@ -50851,11 +50575,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\x00",
-                "$span": {
-                  "start": 3,
-                  "end": 7
-                }
+                "_content": "x00"
               },
               {
                 "$type": 105,
@@ -50932,11 +50652,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 12,
-                  "end": 14
-                }
+                "_content": "n"
               }
             ]
           }
@@ -51379,11 +51095,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\x00",
-              "$span": {
-                "start": 3,
-                "end": 7
-              }
+              "_content": "x00"
             },
             {
               "$type": 105,
@@ -51455,11 +51167,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 12,
-                "end": 14
-              }
+              "_content": "n"
             }
           ]
         }
@@ -66496,11 +66204,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\x12",
-                          "$span": {
-                            "start": 1,
-                            "end": 5
-                          }
+                          "_content": "x12"
                         },
                         {
                           "$type": 105,
@@ -66516,11 +66220,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\123",
-                          "$span": {
-                            "start": 6,
-                            "end": 10
-                          }
+                          "_content": "123"
                         },
                         {
                           "$type": 105,
@@ -66536,11 +66236,7 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\u1234",
-                          "$span": {
-                            "start": 11,
-                            "end": 17
-                          }
+                          "_content": "u1234"
                         }
                       ]
                     }
@@ -66624,11 +66320,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\x12",
-                "$span": {
-                  "start": 1,
-                  "end": 5
-                }
+                "_content": "x12"
               },
               {
                 "$type": 105,
@@ -66644,11 +66336,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\123",
-                "$span": {
-                  "start": 6,
-                  "end": 10
-                }
+                "_content": "123"
               },
               {
                 "$type": 105,
@@ -66664,11 +66352,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\u1234",
-                "$span": {
-                  "start": 11,
-                  "end": 17
-                }
+                "_content": "u1234"
               }
             ]
           }
@@ -66738,11 +66422,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\x12",
-              "$span": {
-                "start": 1,
-                "end": 5
-              }
+              "_content": "x12"
             },
             {
               "$type": 105,
@@ -66758,11 +66438,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\123",
-              "$span": {
-                "start": 6,
-                "end": 10
-              }
+              "_content": "123"
             },
             {
               "$type": 105,
@@ -66778,11 +66454,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\u1234",
-              "$span": {
-                "start": 11,
-                "end": 17
-              }
+              "_content": "u1234"
             }
           ]
         }
@@ -68256,21 +67928,13 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\n",
-                          "$span": {
-                            "start": 364,
-                            "end": 366
-                          }
+                          "_content": "n"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\n",
-                          "$span": {
-                            "start": 366,
-                            "end": 368
-                          }
+                          "_content": "\n"
                         },
                         {
                           "$type": 105,
@@ -68286,21 +67950,13 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\n",
-                          "$span": {
-                            "start": 391,
-                            "end": 393
-                          }
+                          "_content": "n"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\n",
-                          "$span": {
-                            "start": 393,
-                            "end": 395
-                          }
+                          "_content": "\n"
                         },
                         {
                           "$type": 105,
@@ -68316,21 +67972,13 @@
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\n",
-                          "$span": {
-                            "start": 422,
-                            "end": 424
-                          }
+                          "_content": "n"
                         },
                         {
                           "$type": 65,
                           "$source": 0,
                           "$named": true,
-                          "$text": "\\\n",
-                          "$span": {
-                            "start": 424,
-                            "end": 426
-                          }
+                          "_content": "\n"
                         }
                       ]
                     }
@@ -68894,21 +68542,13 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 364,
-                  "end": 366
-                }
+                "_content": "n"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\n",
-                "$span": {
-                  "start": 366,
-                  "end": 368
-                }
+                "_content": "\n"
               },
               {
                 "$type": 105,
@@ -68924,21 +68564,13 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 391,
-                  "end": 393
-                }
+                "_content": "n"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\n",
-                "$span": {
-                  "start": 393,
-                  "end": 395
-                }
+                "_content": "\n"
               },
               {
                 "$type": 105,
@@ -68954,21 +68586,13 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 422,
-                  "end": 424
-                }
+                "_content": "n"
               },
               {
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\\n",
-                "$span": {
-                  "start": 424,
-                  "end": 426
-                }
+                "_content": "\n"
               }
             ]
           }
@@ -69488,21 +69112,13 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 364,
-                "end": 366
-              }
+              "_content": "n"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\n",
-              "$span": {
-                "start": 366,
-                "end": 368
-              }
+              "_content": "\n"
             },
             {
               "$type": 105,
@@ -69518,21 +69134,13 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 391,
-                "end": 393
-              }
+              "_content": "n"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\n",
-              "$span": {
-                "start": 393,
-                "end": 395
-              }
+              "_content": "\n"
             },
             {
               "$type": 105,
@@ -69548,21 +69156,13 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 422,
-                "end": 424
-              }
+              "_content": "n"
             },
             {
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\\n",
-              "$span": {
-                "start": 424,
-                "end": 426
-              }
+              "_content": "\n"
             }
           ]
         }
@@ -84696,11 +84296,7 @@
                             "$type": 65,
                             "$source": 0,
                             "$named": true,
-                            "$text": "\\n",
-                            "$span": {
-                              "start": 6,
-                              "end": 8
-                            }
+                            "_content": "n"
                           },
                           {
                             "$type": 105,
@@ -84716,11 +84312,7 @@
                             "$type": 65,
                             "$source": 0,
                             "$named": true,
-                            "$text": "\\t",
-                            "$span": {
-                              "start": 9,
-                              "end": 11
-                            }
+                            "_content": "t"
                           },
                           {
                             "$type": 105,
@@ -84845,11 +84437,7 @@
                             "$type": 65,
                             "$source": 0,
                             "$named": true,
-                            "$text": "\\'",
-                            "$span": {
-                              "start": 21,
-                              "end": 23
-                            }
+                            "_content": "'"
                           },
                           {
                             "$type": 105,
@@ -84865,11 +84453,7 @@
                             "$type": 65,
                             "$source": 0,
                             "$named": true,
-                            "$text": "\\t",
-                            "$span": {
-                              "start": 24,
-                              "end": 26
-                            }
+                            "_content": "t"
                           },
                           {
                             "$type": 105,
@@ -85422,11 +85006,7 @@
                   "$type": 65,
                   "$source": 0,
                   "$named": true,
-                  "$text": "\\n",
-                  "$span": {
-                    "start": 6,
-                    "end": 8
-                  }
+                  "_content": "n"
                 },
                 {
                   "$type": 105,
@@ -85442,11 +85022,7 @@
                   "$type": 65,
                   "$source": 0,
                   "$named": true,
-                  "$text": "\\t",
-                  "$span": {
-                    "start": 9,
-                    "end": 11
-                  }
+                  "_content": "t"
                 },
                 {
                   "$type": 105,
@@ -85571,11 +85147,7 @@
                   "$type": 65,
                   "$source": 0,
                   "$named": true,
-                  "$text": "\\'",
-                  "$span": {
-                    "start": 21,
-                    "end": 23
-                  }
+                  "_content": "'"
                 },
                 {
                   "$type": 105,
@@ -85591,11 +85163,7 @@
                   "$type": 65,
                   "$source": 0,
                   "$named": true,
-                  "$text": "\\t",
-                  "$span": {
-                    "start": 24,
-                    "end": 26
-                  }
+                  "_content": "t"
                 },
                 {
                   "$type": 105,
@@ -86134,11 +85702,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\n",
-                "$span": {
-                  "start": 6,
-                  "end": 8
-                }
+                "_content": "n"
               },
               {
                 "$type": 105,
@@ -86154,11 +85718,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\t",
-                "$span": {
-                  "start": 9,
-                  "end": 11
-                }
+                "_content": "t"
               },
               {
                 "$type": 105,
@@ -86278,11 +85838,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\'",
-                "$span": {
-                  "start": 21,
-                  "end": 23
-                }
+                "_content": "'"
               },
               {
                 "$type": 105,
@@ -86298,11 +85854,7 @@
                 "$type": 65,
                 "$source": 0,
                 "$named": true,
-                "$text": "\\t",
-                "$span": {
-                  "start": 24,
-                  "end": 26
-                }
+                "_content": "t"
               },
               {
                 "$type": 105,
@@ -86811,11 +86363,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\n",
-              "$span": {
-                "start": 6,
-                "end": 8
-              }
+              "_content": "n"
             },
             {
               "$type": 105,
@@ -86831,11 +86379,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\t",
-              "$span": {
-                "start": 9,
-                "end": 11
-              }
+              "_content": "t"
             },
             {
               "$type": 105,
@@ -86924,11 +86468,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\'",
-              "$span": {
-                "start": 21,
-                "end": 23
-              }
+              "_content": "'"
             },
             {
               "$type": 105,
@@ -86944,11 +86484,7 @@
               "$type": 65,
               "$source": 0,
               "$named": true,
-              "$text": "\\t",
-              "$span": {
-                "start": 24,
-                "end": 26
-              }
+              "_content": "t"
             },
             {
               "$type": 105,

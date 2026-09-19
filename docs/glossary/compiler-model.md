@@ -379,6 +379,14 @@ the model reaches every value shape and every subtype without further edits.
 // `literal !== undefined` is the exact discriminator.
 ```
 
+#### token interior
+
+```text
+A field-named PATTERN yields a value with `pattern` and no `value`: it is free text constrained by that pattern,
+not a literal. Everything downstream that reads `value` as a literal (literal types, keyword presence, enum arms)
+sees no literal there; the slot types as `string` and its guard is the pattern.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
 
 ```text
@@ -3562,6 +3570,14 @@ that owns its edges (`ownsKindEdges`) gets its kind edge seams
 (`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
 back untouched.
 
+#### token interior
+
+```text
+A lexed kind is skipped by the interior seam pass: template text inside a token is written by the kind's own
+render function, so no address inside it can carry a preference. The kind still sits among its neighbours; that
+spacing comes from the parent's seams.
+```
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
 A kind's edge seams: when the kind's rule is a seq, a whitespace choice
@@ -3592,6 +3608,13 @@ nothing.
 Whether a kind gets edge seams: it is a compound node, and it is either
 visible or a hidden kind with no visible twin of the same public name,
 since the two would claim the same `<kind>_before` key.
+
+#### token interior
+
+```text
+A lexed kind owns no edges: a token that reads as one text spaces against its neighbours through the parent's
+seams, exactly as a text leaf does.
+```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
 
@@ -4232,3 +4255,23 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
+
+```text
+True when the kind is read as one text and rendered from slots around literal runs: the top rule is a structured
+`token(...)` (`tokenized`) or a structured bare pattern (`lexed`). The reader keeps `$text` for such a kind, the
+render template glues its members with adjacency marks, no seam is minted inside it and it owns no kind-edge
+seams; its slot structure is the single derivation `interiorOf` serializes.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isPatternValue`
+
+```text
+True for a slot value that is free text constrained by a pattern rather than a literal.
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isLexedKind`
+
+```text
+True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
+```

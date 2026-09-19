@@ -1185,6 +1185,27 @@
 			"field": "captured_pattern_after"
 		}
 	],
+	"char_literal": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
 	"closure_expression_block": [
 		{
 			"kind": "seam",
@@ -2027,6 +2048,19 @@
 		{
 			"kind": "seam",
 			"field": "enum_variant_list_elements_after"
+		}
+	],
+	"escape_sequence": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"expression_statement": [
@@ -3664,6 +3698,29 @@
 			"field": "inner_attribute_item_after"
 		}
 	],
+	"integer_literal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
 	"label": [
 		{
 			"kind": "seam",
@@ -4567,6 +4624,19 @@
 		{
 			"kind": "seam",
 			"field": "match_pattern_after"
+		}
+	],
+	"metavariable": [
+		{
+			"kind": "text",
+			"text": "$"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
 		}
 	],
 	"mod_item_external": [
@@ -5746,6 +5816,26 @@
 		{
 			"kind": "seam",
 			"field": "self_parameter_after"
+		}
+	],
+	"shebang": [
+		{
+			"kind": "text",
+			"text": "#!"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "tokenSeam",
+			"text": "\n"
 		}
 	],
 	"shorthand_field_initializer": [

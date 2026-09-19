@@ -1485,6 +1485,13 @@ rule (`withAnnotations`), the declaration link collects `hoistedKinds` from.
 
 A `splice()` patch stamps `annotations.spliced` on the member at its path, the way `group()` stamps `annotations.hoisted`. The two differ in what they seat: `hoisted` makes a sittir-minted hidden group spliceable wherever it is referenced, `spliced` makes one visible reference spliceable without hiding its kind.
 
+#### token interior
+
+```text
+`regex(/.../)` replaces the regex of the pattern at the patched path, so a bare pattern can draw named groups
+that name its slots. The path of a rule that is itself a pattern is `.`.
+```
+
 ### `packages/codegen/src/dsl/transform/transform.ts::relabelUniformFieldSet`
 
 ```text
@@ -1771,4 +1778,14 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
  * its variant name, a literal's text, an alias target (with and without
  * the leading underscore), a symbol's name, looking through prec wrappers.
  */
+```
+
+### `packages/codegen/src/dsl/transform/transform.ts::hoistTokenChoiceForVariants`
+
+```text
+When variant() names arms of a token whose content is a choice, the choice is hoisted above the token:
+`token(choice(A, B))` becomes `choice(token(A), token(B))` before the variants are applied, so each arm mints as
+its own token kind and the parent becomes the polymorph over them. The rewrite runs in the DSL layer both
+pipelines execute, so the parser sees the separate token kinds. It is lexically the same alternation when the arms
+have disjoint prefixes. An arm that is not a seq led by a string is an error naming the rule and the arm.
 ```
