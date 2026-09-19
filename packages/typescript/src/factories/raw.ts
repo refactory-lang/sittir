@@ -15,16 +15,27 @@ import {
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
-	if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
 	if (arr.length === 0) {
 		throw new Error(`${label}: requires at least one element`);
 	}
 }
 
-const _leafRe_buildHashBangLine = /^(?:#!.*)/u;
-const _leafRe_buildUnescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
-const _leafRe_buildUnescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
-const _leafRe_buildRegexFlags = /^(?:[a-z]+)/u;
+const _leafRe_buildHashBangLine = /^(?:(?:#!.*))$/u;
+const _leafRe_buildUnescapedDoubleStringFragment = /^(?:(?:[^"\\\r\n]+))$/u;
+const _leafRe_buildUnescapedSingleStringFragment = /^(?:(?:[^'\\\r\n]+))$/u;
+const _leafRe_buildEscapeSequence = /^(?:(?:\\[^]))$/u;
+const _leafRe_buildComment = /^(?:(?:\/\/(?:[^\r\n\u2028\u2029]*)|\/\*(?:[^*]*\*+([^/*][^*]*\*+)*)\/))$/u;
+const _leafRe_buildRegexPattern = /^(?:(?:(?:\[(?:(?:\\(?:.)|(?:[^\]\n\\])))*\]|\\(?:.)|(?:[^/\\[\n])))+)$/u;
+const _leafRe_buildRegexFlags = /^(?:(?:[a-z]+))$/u;
+const _leafRe_buildNumber =
+	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*))n))$/u;
+const _leafRe_buildIdentifier =
+	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildPrivatePropertyIdentifier =
+	/^(?:#(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildTypeIdentifier =
+	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
+const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
 
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = config.hashBangLine;
@@ -53,10 +64,8 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 }
 
 export function buildHashBangLine(text: string): T.HashBangLine.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`hash_bang_line: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildHashBangLine.test(text))
-		throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`);
+	if (!_leafRe_buildHashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.HashBangLine as const,
@@ -314,7 +323,7 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 		config.attributeKind,
 		[['with', TSKindId.WithKeyword] as const, ['assert', TSKindId.AssertKeyword] as const]
 	);
-	const _object = config.object;
+	const _object = config.object ?? buildObject();
 	return withMethods(
 		withAccessors(
 			{
@@ -516,7 +525,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bu
 
 export function buildSwitchStatement(config: T.SwitchStatement.Config): T.SwitchStatement.Built {
 	const _value = config.value;
-	const _body = config.body;
+	const _body = config.body ?? buildSwitchBody();
 	return withMethods(
 		withAccessors(
 			{
@@ -667,8 +676,8 @@ export function buildDoStatement(config: T.DoStatement.Config): T.DoStatement.Bu
 	);
 }
 
-export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement.Built {
-	const _body = config.body;
+export function buildTryStatement(config: Partial<T.TryStatement.Config> = {}): T.TryStatement.Built {
+	const _body = config.body ?? buildStatementBlock();
 	const _handler = config.handler;
 	const _finalizer = config.finalizer;
 	return withMethods(
@@ -721,7 +730,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 	);
 }
 
-export function buildBreakStatement(config: T.BreakStatement.Config): T.BreakStatement.Built {
+export function buildBreakStatement(config: Partial<T.BreakStatement.Config> = {}): T.BreakStatement.Built {
 	const _label = config.label;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.BreakStatement['_terminator']>>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -750,7 +759,7 @@ export function buildBreakStatement(config: T.BreakStatement.Config): T.BreakSta
 	);
 }
 
-export function buildContinueStatement(config: T.ContinueStatement.Config): T.ContinueStatement.Built {
+export function buildContinueStatement(config: Partial<T.ContinueStatement.Config> = {}): T.ContinueStatement.Built {
 	const _label = config.label;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ContinueStatement['_terminator']>>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -803,7 +812,7 @@ export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKi
 	);
 }
 
-export function buildReturnStatement(config: T.ReturnStatement.Config): T.ReturnStatement.Built {
+export function buildReturnStatement(config: Partial<T.ReturnStatement.Config> = {}): T.ReturnStatement.Built {
 	const _expression = coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expression']>>(config.expression, []);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ReturnStatement['_terminator']>>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -957,9 +966,9 @@ export function buildSwitchDefault(...children: T.Statement[]): T.SwitchDefault.
 	);
 }
 
-export function buildCatchClause(config: T.CatchClause.Config): T.CatchClause.Built {
+export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.CatchClause.Built {
 	const _catch_clause_group = config.catchClauseGroup;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -1245,12 +1254,12 @@ export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.Nest
 	);
 }
 
-export function buildClass(config: T.Class.Config): T.Class.Built {
+export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Built {
 	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _heritage = config.heritage;
-	const _body = config.body;
+	const _body = config.body ?? buildClassBody();
 	return withMethods(
 		withAccessors(
 			{
@@ -1287,7 +1296,7 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _heritage = config.heritage;
-	const _body = config.body;
+	const _body = config.body ?? buildClassBody();
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
 		withAccessors(
@@ -1349,9 +1358,9 @@ export function buildFunctionExpression(config: T.FunctionExpression.Config): T.
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -1392,9 +1401,9 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
 		withAccessors(
@@ -1440,9 +1449,9 @@ export function buildGeneratorFunction(config: T.GeneratorFunction.Config): T.Ge
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -1485,9 +1494,9 @@ export function buildGeneratorFunctionDeclaration(
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
 		withAccessors(
@@ -2007,13 +2016,8 @@ export function buildString(value: T.StringDouble | T.StringSingle): T.String.Bu
 }
 
 export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDoubleStringFragment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
-	if (
-		typeof process !== 'undefined' &&
-		process.env.SITTIR_DEBUG &&
-		!_leafRe_buildUnescapedDoubleStringFragment.test(text)
-	)
+	if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
+	if (!_leafRe_buildUnescapedDoubleStringFragment.test(text))
 		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -2027,13 +2031,8 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 }
 
 export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSingleStringFragment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
-	if (
-		typeof process !== 'undefined' &&
-		process.env.SITTIR_DEBUG &&
-		!_leafRe_buildUnescapedSingleStringFragment.test(text)
-	)
+	if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
+	if (!_leafRe_buildUnescapedSingleStringFragment.test(text))
 		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -2047,8 +2046,8 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 }
 
 export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`escape_sequence: text must be non-empty`);
+	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.EscapeSequence as const,
@@ -2061,8 +2060,8 @@ export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
 }
 
 export function buildComment(text: string): T.Comment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`comment: text must be non-empty`);
+	if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+	if (!_leafRe_buildComment.test(text)) throw new Error(`comment: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Comment as const,
@@ -2145,8 +2144,8 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Built {
 }
 
 export function buildRegexPattern(text: string): T.RegexPattern.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`regex_pattern: text must be non-empty`);
+	if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
+	if (!_leafRe_buildRegexPattern.test(text)) throw new Error(`regex_pattern: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RegexPattern as const,
@@ -2159,10 +2158,8 @@ export function buildRegexPattern(text: string): T.RegexPattern.Built {
 }
 
 export function buildRegexFlags(text: string): T.RegexFlags.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`regex_flags: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildRegexFlags.test(text))
-		throw new Error(`regex_flags: text does not match pattern: ${text}`);
+	if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`);
+	if (!_leafRe_buildRegexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.RegexFlags as const,
@@ -2175,8 +2172,8 @@ export function buildRegexFlags(text: string): T.RegexFlags.Built {
 }
 
 export function buildNumber(text: string): T.Number.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`number: text must be non-empty`);
+	if (text.length === 0) throw new Error(`number: text must be non-empty`);
+	if (!_leafRe_buildNumber.test(text)) throw new Error(`number: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Number as const,
@@ -2189,8 +2186,8 @@ export function buildNumber(text: string): T.Number.Built {
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.Identifier as const,
@@ -2203,8 +2200,9 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 }
 
 export function buildPrivatePropertyIdentifier(text: string): T.PrivatePropertyIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`private_property_identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
+	if (!_leafRe_buildPrivatePropertyIdentifier.test(text))
+		throw new Error(`private_property_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.PrivatePropertyIdentifier as const,
@@ -2321,7 +2319,7 @@ export function buildDecoratorCallExpression(
 ): T.DecoratorCallExpression.Built {
 	const _function = config.function;
 	const _type_arguments = config.typeArguments;
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -2417,9 +2415,9 @@ function _buildFormalParameters(value?: T.FormalParametersElements): T.FormalPar
 	);
 }
 
-export function buildClassStaticBlock(config: T.ClassStaticBlock.Config): T.ClassStaticBlock.Built {
+export function buildClassStaticBlock(config: Partial<T.ClassStaticBlock.Config> = {}): T.ClassStaticBlock.Built {
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -2572,9 +2570,9 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 	const _name = coerceMixedEnumStorage<NonNullable<T.MethodDefinition['_name']>>(config.name, []);
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _body = config.body;
+	const _body = config.body ?? buildStatementBlock();
 	return withMethods(
 		withAccessors(
 			{
@@ -2833,7 +2831,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 	const _name = coerceMixedEnumStorage<NonNullable<T.MethodSignature['_name']>>(config.name, []);
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
 	return withMethods(
 		withAccessors(
@@ -2911,7 +2909,7 @@ export function buildAbstractMethodSignature(
 	const _name = coerceMixedEnumStorage<NonNullable<T.AbstractMethodSignature['_name']>>(config.name, []);
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
 	return withMethods(
 		withAccessors(
@@ -2964,7 +2962,7 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionSignature['_terminator']>>(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
@@ -3271,7 +3269,7 @@ export function buildAbstractClassDeclaration(
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _heritage = config.heritage;
-	const _body = config.body;
+	const _body = config.body ?? buildClassBody();
 	return withMethods(
 		withAccessors(
 			{
@@ -3474,7 +3472,7 @@ export function buildExtendsTypeClause(
 export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDeclaration.Built {
 	const _const_marker = coerceBooleanKeywordStorage(config.constMarker);
 	const _name = config.name;
-	const _body = config.body;
+	const _body = config.body ?? buildEnumBody();
 	return withMethods(
 		withAccessors(
 			{
@@ -3867,7 +3865,7 @@ export function buildTypeQueryCallExpressionInTypeAnnotation(
 		config.function,
 		[['import', TSKindId.Import] as const]
 	);
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -4048,7 +4046,7 @@ export function buildRestType(value: T.Type): T.RestType.Built {
 export function buildConstructorType(config: T.ConstructorType.Config): T.ConstructorType.Built {
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _type = coerceMixedEnumStorage<NonNullable<T.ConstructorType['_type']>>(config.type, []);
 	return withMethods(
 		withAccessors(
@@ -4371,7 +4369,7 @@ export function buildTypeQueryCallExpression(
 	const _function = coerceMixedEnumStorage<NonNullable<T.TypeQueryCallExpression['_function']>>(config.function, [
 		['import', TSKindId.Import] as const
 	]);
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -4794,9 +4792,9 @@ export function buildObjectTypeFlow(config?: T.ObjectType.Flow.Config): T.Object
 	);
 }
 
-export function buildCallSignature(config: T.CallSignature.Config): T.CallSignature.Built {
+export function buildCallSignature(config: Partial<T.CallSignature.Config> = {}): T.CallSignature.Built {
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
 	return withMethods(
 		withAccessors(
@@ -5010,10 +5008,10 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Built
 	);
 }
 
-export function buildConstructSignature(config: T.ConstructSignature.Config): T.ConstructSignature.Built {
+export function buildConstructSignature(config: Partial<T.ConstructSignature.Config> = {}): T.ConstructSignature.Built {
 	const _abstract_marker = coerceBooleanKeywordStorage(config.abstractMarker);
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _type = config.type;
 	return withMethods(
 		withAccessors(
@@ -5182,7 +5180,7 @@ export function buildIntersectionType(config: T.IntersectionType.Config): T.Inte
 
 export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Built {
 	const _type_parameters = config.typeParameters;
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = coerceMixedEnumStorage<NonNullable<T.FunctionType['_return_type']>>(config.returnType, []);
 	return withMethods(
 		withAccessors(
@@ -5211,8 +5209,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 }
 
 export function buildTypeIdentifier(text: string): T.TypeIdentifier.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_type_identifier: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_type_identifier: text must be non-empty`);
+	if (!_leafRe_buildTypeIdentifier.test(text))
+		throw new Error(`_type_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TypeIdentifier as const,
@@ -5911,7 +5910,7 @@ export function buildExportStatementNamespaceExport(
 export function buildExportStatementTypeExport(
 	config: T.ExportStatementTypeExport.Config
 ): T.ExportStatementTypeExport.Built {
-	const _export_clause = config.exportClause;
+	const _export_clause = config.exportClause ?? buildExportClause();
 	const _source = config.source;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementTypeExport['_terminator']>>(
 		config.terminator,
@@ -6387,7 +6386,7 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		['import', TSKindId.Import] as const
 	]);
 	const _type_arguments = config.typeArguments;
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -6418,7 +6417,7 @@ export function buildCallExpressionTemplateCall(
 	config: T.CallExpressionTemplateCall.Config
 ): T.CallExpressionTemplateCall.Built {
 	const _function = coerceMixedEnumStorage<NonNullable<T.CallExpressionTemplateCall['_function']>>(config.function, []);
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildTemplateString();
 	return withMethods(
 		withAccessors(
 			{
@@ -6445,7 +6444,7 @@ export function buildCallExpressionTemplateCall(
 export function buildCallExpressionMember(config: T.CallExpressionMember.Config): T.CallExpressionMember.Built {
 	const _function = coerceMixedEnumStorage<NonNullable<T.CallExpressionMember['_function']>>(config.function, []);
 	const _type_arguments = config.typeArguments;
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? buildArguments();
 	return withMethods(
 		withAccessors(
 			{
@@ -6674,7 +6673,7 @@ export function buildArrowFunctionParameter(
 export function buildClassHeritageExtendsClause(
 	config: T.ClassHeritageExtendsClause.Config
 ): T.ClassHeritageExtendsClause.Built {
-	const _extends_clause = config.extendsClause;
+	const _extends_clause = config.extendsClause ?? buildExtendsClause();
 	const _implements_clause = config.implementsClause;
 	return withMethods(
 		withAccessors(
@@ -6869,7 +6868,7 @@ export function buildExportStatementDefaultFromNsFrom(
 export function buildExportStatementDefaultFromClauseFrom(
 	config: T.ExportStatementDefaultFromClauseFrom.Config
 ): T.ExportStatementDefaultFromClauseFrom.Built {
-	const _export_clause = config.exportClause;
+	const _export_clause = config.exportClause ?? buildExportClause();
 	const _source = config.source;
 	return withMethods(
 		withAccessors(
@@ -7143,8 +7142,8 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 }
 
 export function buildTemplateChars(text: string): T.TemplateChars.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_template_chars: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
+	if (!_leafRe_buildTemplateChars.test(text)) throw new Error(`_template_chars: text does not match pattern: ${text}`);
 	return withMethods(
 		{
 			$type: TSKindId.TemplateChars as const,
@@ -7157,8 +7156,7 @@ export function buildTemplateChars(text: string): T.TemplateChars.Built {
 }
 
 export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_ternary_qmark: text must be non-empty`);
+	if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.TernaryQmark as const,
@@ -7171,8 +7169,7 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Built {
 }
 
 export function buildHtmlComment(text: string): T.HtmlComment.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`html_comment: text must be non-empty`);
+	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.HtmlComment as const,
@@ -7185,8 +7182,7 @@ export function buildHtmlComment(text: string): T.HtmlComment.Built {
 }
 
 export function buildJsxText(text: string): T.JsxText.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`jsx_text: text must be non-empty`);
+	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.JsxText as const,
@@ -7199,8 +7195,7 @@ export function buildJsxText(text: string): T.JsxText.Built {
 }
 
 export function buildErrorRecovery(text: string): T.ErrorRecovery.Built {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`__error_recovery: text must be non-empty`);
+	if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.ErrorRecovery as const,

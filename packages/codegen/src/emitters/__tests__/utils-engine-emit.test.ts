@@ -31,20 +31,18 @@ describe('utils engine facade emission', () => {
 		expect(wrapSrc).toContain('}, _treeEngine(tree));');
 	});
 
-	it("ArgsOf is the union of every declared overload's parameter tuple, not the last one alone", () => {
+	it('imports ArgsOf, FlavorPair, Hoisted, and OmitEach from @sittir/types rather than redeclaring them', () => {
+		// ArgsOf's own shape (union-of-overloads, single-param unwrapping) is
+		// tested at the type level in packages/types/tests/function-utils.test-d.ts,
+		// against the one definition every grammar package now shares.
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain(
-			[
-				'export type ArgsOf<F> = F extends {',
-				'  (...a: infer A): unknown;',
-				'  (...b: infer B): unknown;',
-				'  (...c: infer C): unknown;',
-				'  (...d: infer D): unknown;',
-				'}',
-				'  ? A | B | C | D'
-			].join('\n')
+			"import type { AnyNodeData, AnyTreeNodeOf, ArgsOf, ByteRange, Edit, FlavorPair, Hoisted, OmitEach } from '@sittir/types';"
 		);
+		expect(contents).toContain('export type { ArgsOf, FlavorPair, Hoisted, OmitEach };');
+		expect(contents).not.toContain('export type ArgsOf<F> = F extends {');
+		expect(contents).not.toContain('export type Hoisted<B> = B extends {');
 	});
 
 	it('emits bundle() and hoist() beside attachProps()', () => {
@@ -56,6 +54,5 @@ describe('utils engine facade emission', () => {
 		);
 		expect(contents).toContain('value: hoistRoutes(value),');
 		expect(contents).toContain('export function hoistRoutes<B>(b: B): Hoisted<B> {');
-		expect(contents).toContain('B extends { strict: infer S }');
 	});
 });

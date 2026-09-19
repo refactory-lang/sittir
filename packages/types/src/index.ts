@@ -128,6 +128,53 @@ export interface Terminal<ID extends number | string = number, V extends string 
 	readonly $text: V;
 }
 
+/**
+ * ArgsOf<F> — the loose argument TUPLE a generated factory or sub-factory
+ * accepts, derived from F's own call signature(s) rather than re-declared.
+ * Always array-shaped, deliberately: `(...args: ArgsOf<CF>)` and
+ * `ArgsOf<CF>[0]` are both load-bearing call shapes across the generated
+ * sub-factory overlay, the former spreading a whole argument list into the
+ * child, the latter reading its first (and possibly only) positional
+ * argument out. A 4-way overload intersection (the codegen sub-factory
+ * ceiling) unions every declared overload's argument tuple; a plain
+ * rest-parameter function yields the element type as an array.
+ */
+export type ArgsOf<F> = F extends {
+	(...a: infer A): unknown;
+	(...b: infer B): unknown;
+	(...c: infer C): unknown;
+	(...d: infer D): unknown;
+}
+	? A | B | C | D
+	: F extends (...args: readonly (infer E)[]) => unknown
+		? E[]
+		: never;
+
+export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+
+/** Pairs a kind's strict builder with its loose coercer under one bundle entry. */
+export interface FlavorPair<S, C> {
+	readonly strict: S;
+	readonly coerce: C;
+}
+
+/** @internal — any factory or coercer function, for Hoisted's own bounds. */
+type AnyFlavorFn = (...args: never[]) => unknown;
+
+/**
+ * Hoisted<B> — the type of `hoistRoutes(b)`: a `FlavorPair` (or a tree of
+ * them, nested under sub-factory keys) collapses into one callable per pair,
+ * the coerce flavor preferred over strict when both are present, with every
+ * sibling key still reachable on it.
+ */
+export type Hoisted<B> = B extends { coerce: infer C }
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+	: B extends { strict: infer S }
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+		: B extends Record<string, unknown>
+			? { [K in keyof B]: Hoisted<B[K]> }
+			: B;
+
 // ---------------------------------------------------------------------------
 // Grammar primitives
 // ---------------------------------------------------------------------------

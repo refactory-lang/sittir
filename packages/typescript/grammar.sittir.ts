@@ -11,6 +11,12 @@
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
 import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
 
+function immediateClosingDelimiter(original: unknown) {
+	const seqMembers = (original as { members: unknown[] }).members;
+	const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
+	return { ...(original as object), members: [...seqMembers.slice(0, -1), token.immediate(last.value!)] };
+}
+
 const enrichedBase = enrich(base);
 export default grammar(
 	enrichedBase,
@@ -188,7 +194,30 @@ export default grammar(
 					'decorator:/separator': preference('tight'),
 					'decorator:/(_)/after': preference('newline'),
 					'decorator:/end': preference('newline'),
-					'_/separator/","/before': preference('tight'),
+					'"("/before': preference('tight'),
+					'"("/after': preference('tight'),
+					'")"/before': preference('tight'),
+					'"["/before': preference('tight'),
+					'"["/after': preference('tight'),
+					'"]"/before': preference('tight'),
+					'"{"/after': preference('tight'),
+					'"}"/before': preference('tight'),
+					'"${"/after': preference('tight'),
+					'"<"/before': preference('tight'),
+					'"<"/after': preference('tight'),
+					'">"/before': preference('tight'),
+					'"."/before': preference('tight'),
+					'"."/after': preference('tight'),
+					'","/before': preference('tight'),
+					'";"/before': preference('tight'),
+					'"++"/before': preference('tight'),
+					'"++"/after': preference('tight'),
+					'"--"/before': preference('tight'),
+					'"--"/after': preference('tight'),
+					'"?."/before': preference('tight'),
+					'"?."/after': preference('tight'),
+					'"..."/after': preference('tight'),
+					'":"/before': preference('tight'),
 					'":"/after': preference('space'),
 					'"="/before': preference('space'),
 					'"="/after': preference('space'),
@@ -200,17 +229,21 @@ export default grammar(
 					'"&"/after': preference('space'),
 					'operator:/before': preference('space'),
 					'operator:/after': preference('space'),
-					'"from"/after': preference('space'),
-					'"if"/after': preference('space'),
-					'"while"/after': preference('space'),
-					'"for"/after': preference('space'),
-					'"return"/before': preference('space'),
-					'"return"/after': preference('space'),
-					'"switch"/after': preference('space'),
-					'"catch"/after': preference('space'),
-					'"var"/after': preference('space'),
-					'kind:/after': preference('space')
+					'_/separator/","/before': preference('tight')
 				},
+
+				// A space after the substitution's `}` changes the template text. The edge
+				// sits in every string-interior context, so no neighbour immediacy reaches it.
+				template_substitution: { after: preference('tight') },
+				template_type: { after: preference('tight') },
+
+				// Unary `!` is a normal token seam (`! x` compiles fine), and
+				// the undeclared default is space — confirmed via a factory
+				// construction probe (`ir.unaryExpression({operator:'!',...})`
+				// renders "! y", not "!y"; read-render of parsed `!y` masks
+				// this because unedited content slices verbatim source bytes
+				// rather than consulting this site at all).
+				unary_expression_operator: { '"!"/after': preference('tight') },
 
 				object_type_content: {
 					'content:/separator/before': preference('tight'),
@@ -649,6 +682,23 @@ export default grammar(
 			},
 			rules: {
 				_whitespace: ($) => choice($._tight, $._space, $._newline, $._blankline, $._indent, $._dedent),
+
+				string: ($, original) => ({
+					...original,
+					members: original.members.map((arm) => {
+						const seqMembers = (arm as { members: unknown[] }).members;
+						const last = seqMembers[seqMembers.length - 1] as { type?: string; value?: string };
+						if (last.type !== 'STRING') return arm;
+						return {
+							...(arm as object),
+							members: [...seqMembers.slice(0, -1), token.immediate(last.value!)]
+						};
+					})
+				}),
+
+				template_string: ($, original) => immediateClosingDelimiter(original),
+				template_literal_type: ($, original) => immediateClosingDelimiter(original),
+				template_type: ($) => seq(token.immediate('${'), choice($.primary_type, $.infer_type), '}'),
 				// `template_substitution` sits only in string-interior contexts
 				// (template_string / template_literal_type elements), where any
 				// preceding characters are absorbed into a fragment token — no
@@ -780,7 +830,11 @@ export default grammar(
 					);
 					return seq(optional(SEP()), seq(member, repeat(seq(SEP(), member))), optional(SEP()));
 				}
-			}
+			},
+			renderAs: (_$) => ({
+				_template_chars: token.immediate(/[^`\\$]+/),
+				escape_sequence: token.immediate(/\\[^]/)
+			})
 		},
 		enrichedBase
 	)

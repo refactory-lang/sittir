@@ -168,6 +168,180 @@
   },
   {
     "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "import_from_statement",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "wildcard_import"
+      ]
+    },
+    "location": "import_from_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
+    },
+    "location": "﷑\n"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷐\n"
+    },
+    "location": "﷐\n"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_parameters",
+    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Parameters",
+      "newType": "_Parameters",
+      "visibleKinds": [
+        "parameters"
+      ]
+    },
+    "location": "_parameters"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_string_content",
+    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
+    "canProceed": true,
+    "details": {
+      "typeName": "StringContent",
+      "newType": "_StringContent",
+      "visibleKinds": [
+        "string_content"
+      ]
+    },
+    "location": "_string_content"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-unstamped-symbols",
+    "message": "4 referenced kind(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_compound_statement",
+        "_simple_statement",
+        "_suite",
+        "_unary_operator_operator"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-unstamped-literals",
+    "message": "5 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        "\n\n",
+        "\n\n\n",
+        " "
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_compound_statement",
+        "_simple_statement",
+        "_suite"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        "\n\n",
+        "\n\n\n",
+        " "
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "_unary_operator_operator"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
@@ -465,180 +639,6 @@
         "_augmented_assignment_expression_operator",
         "_operator",
         "_unary_expression_operator"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [_import_list, _parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "wildcard_import"
-      ]
-    },
-    "location": "import_from_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    },
-    "location": "﷑\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    },
-    "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_parameters",
-    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Parameters",
-      "newType": "_Parameters",
-      "visibleKinds": [
-        "parameters"
-      ]
-    },
-    "location": "_parameters"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_string_content",
-    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
-    "canProceed": true,
-    "details": {
-      "typeName": "StringContent",
-      "newType": "_StringContent",
-      "visibleKinds": [
-        "string_content"
-      ]
-    },
-    "location": "_string_content"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite",
-        "_unary_operator_operator"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "5 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-inline-excluded-symbols",
-    "message": "3 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "kinds": [
-        "_compound_statement",
-        "_simple_statement",
-        "_suite"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        "\n\n\n",
-        " "
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "1 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "_unary_operator_operator"
       ]
     },
     "scope": "grammar"

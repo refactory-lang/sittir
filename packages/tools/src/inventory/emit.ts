@@ -20,7 +20,8 @@ export type TypeExpr =
 	| { readonly k: 'kw'; readonly name: 'string' | 'boolean' | 'number' | 'unknown' | 'never' }
 	| { readonly k: 'array'; readonly of: TypeExpr }
 	| { readonly k: 'union'; readonly of: readonly TypeExpr[] }
-	| { readonly k: 'template'; readonly text: string };
+	| { readonly k: 'template'; readonly text: string }
+	| { readonly k: 'subkind'; readonly of: TypeExpr };
 
 export interface Member {
 	readonly name: string;
@@ -156,6 +157,8 @@ function kindsBeneath(d: Derivation, v: string): string[] {
 	return [...new Set([...byPath, ...byClaim])].sort();
 }
 const refOf = (path: string): TypeExpr => ({ k: 'ref', path: path.split('.').map(tsname), generic: true });
+/** What a sub-kind's interface extends: its parent with `kind` narrowed to the dotted sub-kind pattern. */
+const subKindOf = (path: string): TypeExpr => ({ k: 'subkind', of: refOf(path) });
 const setOf = (path: string): TypeExpr => ({
 	k: 'ref',
 	path: [...path.split('.').map(tsname), 'Any'],
@@ -253,7 +256,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 	const refinement = d.refinements.get(v);
 	if (holes && !refinement) {
 		const ext =
-			parentPath !== '' && (d.allvocab.has(parentPath) || d.prefixes.has(parentPath)) ? refOf(parentPath) : null;
+			parentPath !== '' && (d.allvocab.has(parentPath) || d.prefixes.has(parentPath)) ? subKindOf(parentPath) : null;
 		out.push({
 			k: 'interface',
 			name,
@@ -278,7 +281,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		out.push({
 			k: 'interface',
 			name,
-			extendsType: refOf(base),
+			extendsType: subKindOf(base),
 			members: [
 				kindMember([v]),
 				...[...refinement.literals].map(([f, ts]) => ({
@@ -296,7 +299,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		});
 	} else {
 		const mems = levelMembers(d, v);
-		const ext = sameTop ? refOf(parentPath) : null;
+		const ext = sameTop ? subKindOf(parentPath) : null;
 		const paths = kindsBeneath(d, v);
 		const members: Member[] = paths.length > 0 ? [kindMember([v])] : [];
 		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
@@ -333,6 +336,11 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 	return out;
 }
 
+function extendsSubKind(s: Statement): boolean {
+	if (s.k === 'interface') return s.extendsType?.k === 'subkind';
+	return s.k === 'namespace' && s.statements.some(extendsSubKind);
+}
+
 export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 	const tops = [...new Set([...d.allvocab].map((v) => v.split('.')[0] ?? v))].sort();
 	const files: VocabularyFile[] = [];
@@ -350,6 +358,12 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 			leading: ["// Generated from the grammars' bindings.scm and slot models. Do not edit."],
 			imports: [
 				{ names: ['GrammarContext'], namespace: null, from: './context.ts' },
+				...(statements.some(extendsSubKind)
+					? [
+							{ names: ['Simplify'], namespace: null, from: 'type-fest' },
+							{ names: ['SubKindOf'], namespace: null, from: './utils.ts' }
+						]
+					: []),
 				{ names: null, namespace: 'V', from: './index.ts' }
 			],
 			statements
@@ -418,6 +432,14 @@ function extendsIr(
 	base: boolean
 ): Identifier | NestedTypeIdentifier | ReturnType<typeof ir.genericType.strict> {
 	if (t.k === 'ident') return ir.identifier(t.name);
+	if (t.k === 'subkind') {
+		const applied = (name: string, arg: ReturnType<typeof extendsIr>) =>
+			ir.genericType.strict({
+				name: ir.identifier(name),
+				typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, arg)
+			});
+		return applied('Simplify', applied('SubKindOf', extendsIr(t.of, base)));
+	}
 	if (t.k === 'ref') {
 		const name = typeName(['V', ...t.path]);
 		return t.generic
@@ -472,6 +494,8 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType {
 				typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, ir.identifier(base ? 'BaseContext' : 'G'))
 			});
 		}
+		case 'subkind':
+			return extendsIr(t, base);
 		case 'array':
 			return ir.arrayType.strict(
 				t.of.k === 'union' ? ir.parenthesizedType.strict(toIr(t.of, base)) : toPrimary(t.of, base)

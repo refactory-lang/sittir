@@ -90,7 +90,7 @@ pub fn apply_edits(source: &str, mut edits: Vec<Edit>) -> Result<String, SpliceE
     // documented consumer-visible behavior; overlap detection is still
     // theirs.)
     edits.sort_by(|a, b| {
-        b.start_pos.cmp(&a.start_pos).then_with(||b.end_pos.cmp(&a.end_pos))
+        b.start_pos.cmp(&a.start_pos).then_with(|| b.end_pos.cmp(&a.end_pos))
     });
     let mut buf = String::from(source);
     for e in edits {

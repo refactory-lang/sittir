@@ -107,7 +107,8 @@ export function emitIs(config: EmitIsConfig): string {
 				structural = true;
 				break;
 			case 'pattern':
-			case 'token':
+			case 'keyword':
+			case 'punctuation':
 			case 'enum':
 				structural = false;
 				break;

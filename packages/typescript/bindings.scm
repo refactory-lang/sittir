@@ -33,11 +33,13 @@
 (method_definition (accessibility_modifier) @visibility)
 (method_definition "*" @generator)
 (method_definition "?" @optional)
-(method_definition accessor_kind: "get") @declaration.getter
-(method_definition accessor_kind: "set") @declaration.setter
+(method_definition accessor_kind: _ @accessor)
+(method_definition accessor_kind: "get") @declaration.method.getter
+(method_definition accessor_kind: "set") @declaration.method.setter
 ((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
 (method_signature) @declaration.method.signature
 (method_signature (accessibility_modifier) @visibility)
+(method_signature accessor_kind: _ @accessor)
 (abstract_method_signature) @declaration.method.signature.abstract
 (abstract_method_signature "abstract" @abstract)
 (abstract_method_signature (accessibility_modifier) @visibility)

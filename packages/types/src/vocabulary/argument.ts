@@ -1,6 +1,10 @@
 // Generated from the grammars' bindings.scm and slot models. Do not edit.
 import type { GrammarContext } from './context.ts';
 
+import type { Simplify } from 'type-fest';
+
+import type { SubKindOf } from './utils.ts';
+
 import type * as V from './index.ts';
 
 export interface Argument<G extends GrammarContext> {
@@ -12,7 +16,7 @@ export interface Argument<G extends GrammarContext> {
 }
 
 export namespace Argument {
-	export interface Keyword<G extends GrammarContext> extends V.Argument<G> {
+	export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Argument<G>>> {
 		// claimed by p
 		readonly kind: 'argument.keyword';
 		readonly name: G['identifier'];

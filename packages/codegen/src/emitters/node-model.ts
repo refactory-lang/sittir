@@ -25,7 +25,10 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
-import { resolveFieldStorageInfo } from './shared.ts';
+import { resolveFieldStorageInfo, compareOrdinal, anchoredLeafRegexLiteral } from './shared.ts';
+import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
+import { bareAcceptClosure } from './from.ts';
+import { declaredDelimiterDefault } from './factories.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 
@@ -43,6 +46,7 @@ interface SerializedValue {
 	unresolved?: boolean;
 	value?: string;
 	seat?: Seat;
+	default?: true;
 }
 
 interface SerializedSlot {
@@ -62,6 +66,7 @@ interface SerializedNodeBase {
 	modelType: string;
 	typeName: string;
 	factoryName?: string;
+	coerceName?: string;
 	irKey?: string;
 	hidden: boolean;
 	annotations?: RuleAnnotations;
@@ -70,6 +75,7 @@ interface SerializedNodeBase {
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	factoryFields?: string[];
+	bareAccepts?: string[];
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
@@ -82,12 +88,12 @@ interface SerializedCompoundNode extends SerializedNodeBase {
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
+	leafPattern?: string;
 	text?: string;
 }
 
-interface SerializedToken extends SerializedNodeBase {
-	modelType: 'token';
-	word: boolean;
+interface SerializedFixedText extends SerializedNodeBase {
+	modelType: 'keyword' | 'punctuation';
 	text: string;
 }
 
@@ -108,6 +114,7 @@ interface SerializedList extends SerializedNodeBase {
 	hasNonterminalSeparator: boolean;
 	leadingDelimiter: 'mandatory' | 'optional' | 'none';
 	trailingDelimiter: 'mandatory' | 'optional' | 'none';
+	defaultDelimiter: string;
 	elementKinds: string[];
 	elementSeats?: Seat[];
 }
@@ -115,7 +122,7 @@ interface SerializedList extends SerializedNodeBase {
 type SerializedNode =
 	| SerializedCompoundNode
 	| SerializedLeaf
-	| SerializedToken
+	| SerializedFixedText
 	| SerializedEnum
 	| SerializedSupertype
 	| SerializedList;
@@ -142,6 +149,10 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): SerializedNodeModel {
 	const factoryData = buildFactoryMap(nodeMap);
 	const wires = collectPolymorphWires(nodeMap, generatedIdTables, { silent: true });
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
+	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
 
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
@@ -155,6 +166,8 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
+		const accepts = bareAccepts.get(kind);
+		if (accepts !== undefined && accepts.size > 0) serialized.bareAccepts = [...accepts].sort(compareOrdinal);
 		nodes.push(serialized);
 	}
 
@@ -171,7 +184,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 		supertypes,
 		externals: nodeMap.externals ? Array.from(nodeMap.externals).sort() : [],
 		polymorphVariants: factoryData.polymorphVariants,
-		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => a.localeCompare(b))),
+		variantRoutes: Object.fromEntries([...variantRoutePaths(flattenedVariantParents(nodeMap, generatedIdTables))].sort(([a], [b]) => compareOrdinal(a, b))),
 		fieldAliasMap: factoryData.fieldAliasMap,
 		factorySlots: factoryData.factorySlots,
 		nodes
@@ -184,6 +197,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		modelType: node.modelType,
 		typeName: node.typeName,
 		factoryName: node.factoryName,
+		coerceName: node.fromFunctionName,
 		irKey: node.irKey,
 		hidden: node.hidden,
 		...(node.annotations !== undefined ? { annotations: node.annotations } : {}),
@@ -203,13 +217,14 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				...base,
 				modelType: 'pattern',
 				pattern: node.pattern,
+				leafPattern: anchoredLeafRegexLiteral(node.kind, node.textPattern),
 				text: node.fixedLiteralText
 			};
-		case 'token':
+		case 'keyword':
+		case 'punctuation':
 			return {
 				...base,
-				modelType: 'token',
-				word: node.word,
+				modelType: node.modelType,
 				text: node.text
 			};
 		case 'enum':
@@ -226,6 +241,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				hasNonterminalSeparator: node.separatorRule !== undefined,
 				leadingDelimiter: node.leadingDelimiter,
 				trailingDelimiter: node.trailingDelimiter,
+				defaultDelimiter: declaredDelimiterDefault(node),
 				elementKinds: [...valueParseKindsOf({ values: node.elements })],
 				...seatsOfList(node, nodeMap, wires)
 			};
@@ -303,6 +319,7 @@ function serializeValue(v: NodeOrTerminal, seat: Seat | undefined): SerializedVa
 		if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 		if (isUnresolvedRef(v.node)) out.unresolved = true;
 		if (seat !== undefined) out.seat = seat;
+		if (v.default === true) out.default = true;
 		return out;
 	}
 	const out: SerializedValue = {

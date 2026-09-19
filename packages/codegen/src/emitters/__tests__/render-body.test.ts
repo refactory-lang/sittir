@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
 	ADJACENT,
 	DEDENT,
+	DYNAMIC_EDGE,
 	EMPTY,
 	INDENT,
+	MARKER_EDGE,
 	SPACE,
 	branches,
 	concat,
@@ -11,6 +13,7 @@ import {
 	edgeChar,
 	equalBodies,
 	gate,
+	gateOptionalSlotSeams,
 	isExpression,
 	liftGates,
 	mentions,
@@ -42,13 +45,13 @@ describe('concat', () => {
 });
 
 describe('edgeChar and isExpression', () => {
-	it('reads literal edges from the text and slot or gate edges as braces', () => {
+	it('reads literal edges from the text, dynamic edges from slot/gate, and marker edges from structural whitespace', () => {
 		expect(edgeChar(text('fn'), 'starts')).toBe('f');
 		expect(edgeChar(text('fn'), 'ends')).toBe('n');
-		expect(edgeChar(slot('x'), 'starts')).toBe('{');
-		expect(edgeChar(gate('x', slot('x')), 'ends')).toBe('}');
-		expect(edgeChar(INDENT, 'starts')).toBe('{');
-		expect(edgeChar(tokenSeam('\n'), 'starts')).toBe('{');
+		expect(edgeChar(slot('x'), 'starts')).toBe(DYNAMIC_EDGE);
+		expect(edgeChar(gate('x', slot('x')), 'ends')).toBe(DYNAMIC_EDGE);
+		expect(edgeChar(INDENT, 'starts')).toBe(MARKER_EDGE);
+		expect(edgeChar(tokenSeam('\n'), 'starts')).toBe(MARKER_EDGE);
 		expect(edgeChar(text(' '), 'starts')).toBe(' ');
 		expect(edgeChar(EMPTY, 'ends')).toBe('');
 	});
@@ -148,7 +151,7 @@ describe('liftGates', () => {
 });
 
 describe('printRustBody', () => {
-	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name), kinds: (names: readonly string[]) => `&[${names.join(', ')}]` };
+	const printer = { field: (name: string) => (name === 'type' ? 'type_' : name), site: (name: string) => `options::SITE_CALL_${name.toUpperCase()}`, kinds: (names: readonly string[]) => `&[${names.join(', ')}]` };
 
 	it('writes each run of text as one w.text call and each slot as its own render call over the sink w', () => {
 		const body = concat(text('fn '), slot('name'), text('('), ADJACENT, slot('parameters'), SPACE, tokenSeam('\n'), text('{}'));
@@ -234,9 +237,9 @@ describe('templateOf', () => {
 
 describe('seam nodes', () => {
 	it('print as a site call resolved from the field at runtime, compare by field, and are listed by references', () => {
-		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n, kinds: (names) => `&[${names.join(', ')}]` })).toEqual([
+		expect(printRustBody(concat(text('fn'), seam('lparen_before'), text('('), slot('x')), { field: (n) => n, site: (n) => `options::SITE_CALL_${n.toUpperCase()}`, kinds: (names) => `&[${names.join(', ')}]` })).toEqual([
 			'    w.text("fn")?;',
-			'    w.site(node.lparen_before.unwrap_or(0));',
+			'    w.site_with(node.lparen_before.unwrap_or(0), options::site_strength(options::SITE_CALL_LPAREN_BEFORE, node.lparen_before.unwrap_or(0)));',
 			'    w.text("(")?;',
 			'    x.render(w)?;',
 			'    Ok(())'
@@ -246,7 +249,7 @@ describe('seam nodes', () => {
 		expect(references(concat(seam('a'), gate('x', concat(seam('b'), slot('x'))))).seams).toEqual(['a', 'b']);
 		expect(refersTo(seam('x'), 'x')).toBe(false);
 		expect(mentions(seam('x'), 'x')).toBe(false);
-		expect(edgeChar(seam('x'), 'starts')).toBe('{');
+		expect(edgeChar(seam('x'), 'starts')).toBe(MARKER_EDGE);
 		expect(isExpression(seam('x'))).toBe(true);
 	});
 
@@ -254,6 +257,49 @@ describe('seam nodes', () => {
 		const lifted = liftGates(gate('x', concat(text('->'), seam('arrow_after'), slot('x'))), () => 'optional');
 		expect(lifted.flanks.size).toBe(0);
 		expect(lifted.body[0]!.kind).toBe('if');
+	});
+});
+
+describe('gateOptionalSlotSeams', () => {
+	const own = (slotName: string): readonly string[] => [slotName];
+	it('moves a slot\'s own seams inside its presence gate and leaves every other seam where it is', () => {
+		const body = concat(seam('x_before'), gate('x', slot('x')), seam('x_after'), seam('y_before'), slot('y'));
+		expect(gateOptionalSlotSeams(body, own)).toEqual(concat(gate('x', concat(seam('x_before'), slot('x'), seam('x_after'))), seam('y_before'), slot('y')));
+	});
+
+	it('prints the seam call only inside the gate, so an absent slot leaves no site behind', () => {
+		const lines = printRustBody(gateOptionalSlotSeams(concat(text('in'), seam('comma_before'), gate('comma', slot('comma'))), own), {
+			field: (n) => n,
+			site: (n) => `options::SITE_${n.toUpperCase()}`,
+			kinds: (names) => `&[${names.join(', ')}]`
+		});
+		const site = lines.findIndex((l) => l.includes('site_with'));
+		const open = lines.findIndex((l) => l.trimStart().startsWith('if '));
+		expect(open).toBeGreaterThanOrEqual(0);
+		expect(site).toBeGreaterThan(open);
+	});
+
+	it('leaves a gate with a fallback, a kinds test, or a body that is not the bare slot alone', () => {
+		const withFallback = branches([{ test: 'x', body: slot('x') }], text('none'));
+		const kinded = [{ kind: 'if' as const, arms: [{ test: 'x', kinds: ['a'], body: slot('x') }], fallback: undefined }];
+		const flanked = gate('x', concat(text('->'), slot('x')));
+		for (const gated of [withFallback, kinded, flanked]) {
+			const body = concat(seam('x_before'), gated, seam('x_after'));
+			expect(gateOptionalSlotSeams(body, own)).toEqual(body);
+		}
+	});
+
+	it('also folds the seams named by the token the slot renders, so an absent optional punctuation leaves no site behind', () => {
+		const names = (slotName: string): readonly string[] => [slotName, 'qmark_dot'];
+		expect(gateOptionalSlotSeams(concat(slot('object'), seam('qmark_dot_before'), gate('optional_chain', slot('optional_chain')), seam('qmark_dot_after'), text('[')), names)).toEqual(
+			concat(slot('object'), gate('optional_chain', concat(seam('qmark_dot_before'), slot('optional_chain'), seam('qmark_dot_after'))), text('['))
+		);
+	});
+
+	it('folds only the seam that is beside the gate and belongs to its slot', () => {
+		expect(gateOptionalSlotSeams(concat(seam('other_before'), gate('x', slot('x')), seam('x_after')), own)).toEqual(
+			concat(seam('other_before'), gate('x', concat(slot('x'), seam('x_after'))))
+		);
 	});
 });
 

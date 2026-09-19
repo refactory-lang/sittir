@@ -5,21 +5,20 @@ import { fileURLToPath } from 'node:url';
 import { emitFactorySourceText } from '../../src/emit/factory-source.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
-const CASES = [
-	['rust', 'rust/crates/sittir-core/src/splice.rs', 'rebuildSpliceGenerated', 'examples/17-dogfood-rust.generated.ts'],
-	['typescript', 'packages/common/src/format.ts', 'rebuildFormatGenerated', 'examples/18-dogfood-typescript.generated.ts'],
-	[
-		'python',
-		'tests/format-roundtrip/fixtures/python-4space.py',
-		'rebuildPython4spaceGenerated',
-		'examples/19-dogfood-python.generated.ts'
-	]
+const TARGETS = [
+	['rust', 'rust/crates/sittir-core/src/splice.rs', 'Splice', '17-dogfood-rust'],
+	['typescript', 'packages/common/src/format.ts', 'Format', '18-dogfood-typescript'],
+	['python', 'tests/format-roundtrip/fixtures/python-4space.py', 'Python4space', '19-dogfood-python']
 ] as const;
+const CASES = TARGETS.flatMap(([grammar, target, name, stem]) => [
+	[grammar, target, `rebuild${name}Generated`, `examples/${stem}.generated.ts`, 'strict'],
+	[grammar, target, `rebuild${name}Loose`, `examples/${stem}-loose.generated.ts`, 'loose']
+] as const);
 
 describe('generated dogfood rebuilds', () => {
-	for (const [grammar, target, exportName, generated] of CASES) {
-		it(`${generated} is a fresh emit of ${target} (modulo formatting)`, async () => {
-			const fresh = await emitFactorySourceText(grammar, readFileSync(ROOT + target, 'utf8'), exportName);
+	for (const [grammar, target, exportName, generated, surface] of CASES) {
+		it(`${generated} is a fresh ${surface} emit of ${target} (modulo formatting)`, async () => {
+			const fresh = await emitFactorySourceText(grammar, readFileSync(ROOT + target, 'utf8'), exportName, { surface });
 			const checkedIn = readFileSync(ROOT + generated, 'utf8');
 			const norm = (s: string) => s.replace(/\s+/g, '').replace(/,([)\]}])/g, '$1');
 			expect(norm(checkedIn)).toBe(norm(fresh));

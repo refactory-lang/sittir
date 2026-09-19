@@ -1,9 +1,10 @@
+import type { SeamOrigin } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
 import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
-import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf } from '../dsl/primitives/spacing.ts';
+import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toPascal } from './kind-discriminant.ts';
@@ -11,6 +12,26 @@ import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { rustFieldIdent, rustTypeIdent } from './transport-common.ts';
 import { nestedKey, type AddressBranchEntry, type AddressLeafEntry, type AddressTables } from './options.ts';
+
+export type SeamStrength = 0 | 1 | 2;
+
+export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
+	switch (origin) {
+		case 'preference':
+		case 'token-default':
+		case 'word-default':
+			return 2;
+		case 'cascade':
+			return 1;
+		case 'fallback':
+		case undefined:
+			return 0;
+		default: {
+			const unreachable: never = origin;
+			return unreachable;
+		}
+	}
+}
 
 export interface SpacingSite {
 	readonly kind: string;
@@ -22,6 +43,7 @@ export interface SpacingSite {
 	readonly wireKey: string;
 	readonly defaultId: number;
 	readonly allowedIds: readonly number[];
+	readonly strength: SeamStrength;
 	readonly side?: SpacingSide;
 	readonly role?: 'separator';
 	readonly defaultText?: string;
@@ -117,6 +139,7 @@ export function planRenderOptions(
 				wireKey: '_separator',
 				defaultId: idOf(kindEntries, site.defaultArm, at),
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
+				strength: 2,
 				role: 'separator',
 				defaultText: defaultEntry.literalText
 			});
@@ -137,6 +160,7 @@ export function planRenderOptions(
 			wireKey: `_${field}`,
 			defaultId: idOf(kindEntries, defaultArm.kind ?? defaultArm.value, at),
 			allowedIds,
+			strength: seamStrength(site.origin),
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
@@ -382,7 +406,43 @@ function resolveTests(plan: RenderOptionsPlan, kindEntries: readonly KindEntryLi
 	return L;
 }
 
-export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly KindEntryLike[]): string {
+interface EdgeSlotRow {
+	readonly site: number;
+	readonly defaultId: number;
+	readonly strength: SeamStrength;
+}
+
+interface EdgeSiteRow {
+	readonly kind: number;
+	readonly before?: EdgeSlotRow;
+	readonly after?: EdgeSlotRow;
+}
+
+function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
+	const byKind = new Map<number, { before?: EdgeSlotRow; after?: EdgeSlotRow }>();
+	const ambiguous = new Set<number>();
+	plan.spacingSites.forEach((row, site) => {
+		const seam = parseSeamLabel(row.address);
+		if (seam === undefined || seam.token !== row.kind) return;
+		const id = findEntryForKindName(kindEntries, row.kind)?.id;
+		if (id === undefined) return;
+		const edges = byKind.get(id) ?? {};
+		if (edges[seam.side] !== undefined) ambiguous.add(id);
+		byKind.set(id, { ...edges, [seam.side]: { site, defaultId: row.defaultId, strength: row.strength } });
+	});
+	return [...byKind.entries()]
+		.filter(([id]) => !ambiguous.has(id))
+		.sort(([a], [b]) => a - b)
+		.map(([kind, edges]) => ({ kind, ...edges }));
+}
+
+function edgeSlotText(slot: EdgeSlotRow | undefined): string {
+	return slot === undefined
+		? '::sittir_core::options::EdgeSlot::NONE'
+		: `::sittir_core::options::EdgeSlot { site: ${slot.site}, default_arm: ${slot.defaultId}, strength: ${slot.strength} }`;
+}
+
+export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly IdEntry[]): string {
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
@@ -393,9 +453,23 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
 	L.push('/// (kind, address, label, default kind id, allowed kind ids), in canonical path order.');
-	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16])] = &[');
+	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}]),`);
+		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}], ${s.strength}),`);
+	}
+	L.push('];', '');
+	L.push(
+		'/// The strength a site\'s arm carries into the writer: its table strength when the arm is the table default, declared otherwise.',
+		'pub fn site_strength(site: usize, arm: u16) -> u8 {',
+		'    let row = &SPACING_SITES[site];',
+		'    if arm == row.3 { row.5 } else { ::sittir_core::spacing::SEAM_DECLARED }',
+		'}',
+		''
+	);
+	L.push('/// (kind id, before site, after site) of every kind that owns edge seams, sorted by kind id, so a coordinate meets the seams a rendered node writes.');
+	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
+	for (const e of edgeSitesOf(plan, kindEntries)) {
+		L.push(`    ::sittir_core::options::EdgeSite { kind: ${e.kind}, before: ${edgeSlotText(e.before)}, after: ${edgeSlotText(e.after)} },`);
 	}
 	L.push('];', '');
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
@@ -425,6 +499,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('    ResolvedOptions {');
 	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
+	L.push('        edges: EDGE_SITES,');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
 	L.push('}', '');

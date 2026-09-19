@@ -406,7 +406,7 @@ describe('render options on transports', () => {
 		const fn = src.slice(src.indexOf('fn render_arguments('));
 		const render = fn.slice(0, fn.indexOf('\n}\n'));
 		expect(render).not.toContain('let lparen_after');
-		expect(render).toMatch(/w\.site\(node\.arguments_before\.unwrap_or\(0\)\);\s*\n\s*w\.site\(node\.lparen_before\.unwrap_or\(0\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site\(node\.lparen_after\.unwrap_or\(0\)\);/);
+		expect(render).toMatch(/w\.site_with\(node\.arguments_before\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_ARGUMENTS_BEFORE, node\.arguments_before\.unwrap_or\(0\)\)\);\s*\n\s*w\.text\("\("\)\?;\s*\n\s*w\.site_with\(node\.lparen_after\.unwrap_or\(0\), options::site_strength\(options::SITE_ARGUMENTS_LPAREN_AFTER, node\.lparen_after\.unwrap_or\(0\)\)\);/);
 		expect(src).toContain('    w.finish()?;');
 		const binary = extractStructBody(src, 'BinaryExpressionTransport');
 		expect(binary).toContain('pub operator_before: Option<u16>,');
@@ -415,7 +415,19 @@ describe('render options on transports', () => {
 		expect(block).toContain('pub statement_block_before: Option<u16>,');
 		expect(block).toContain('pub statement_block_after: Option<u16>,');
 		const blockFn = src.slice(src.indexOf('fn render_statement_block('));
-		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site\(node\.statement_block_before\.unwrap_or\(0\)\);/);
+		expect(blockFn.slice(0, blockFn.indexOf('\n}\n'))).toMatch(/w\.site_with\(node\.statement_block_before\.unwrap_or\(0\), options::site_strength\(options::SITE_\w+_STATEMENT_BLOCK_BEFORE, node\.statement_block_before\.unwrap_or\(0\)\)\);/);
+	});
+
+	it('a literal arm of a per-slot child enum carries its owner-kind seam sites, fills them, and writes them around the literal', async () => {
+		const src = await getTypescriptTransportRs();
+		const enumSrc = src.slice(src.indexOf('pub enum LexicalDeclarationTerminatorTransportSlot {'));
+		expect(enumSrc.slice(0, enumSrc.indexOf('\n}\n'))).toMatch(/Literal3_73_65_6d_69\(LiteralSeams\),/);
+		const prepare = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for LexicalDeclarationTerminatorTransportSlot {'));
+		expect(prepare.slice(0, prepare.indexOf('\n}\n'))).toContain('t.before.get_or_insert(ctx.options.spacing[options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE]);');
+		const render = src.slice(src.indexOf('impl ::sittir_core::render::Render for LexicalDeclarationTerminatorTransportSlot {'));
+		expect(render.slice(0, render.indexOf('\n}\n'))).toMatch(
+			/Literal3_73_65_6d_69\(seams\) => \{\s*w\.site_with\(seams\.before\.unwrap_or\(0\), options::site_strength\(options::SITE_LEXICAL_DECLARATION_SEMI_BEFORE, seams\.before\.unwrap_or\(0\)\)\);\s*let written = w\.text\(";"\);/
+		);
 	});
 
 	it('the render entry prepares the tree through the context before dispatch', async () => {
@@ -527,7 +539,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		const transportRs = await getRustTemplatesRs();
 		const block = transportRs.slice(transportRs.indexOf('fn render_block('), transportRs.indexOf('fn render_block(') + 2000);
 		expect(block).toMatch(/after: node\.statements_separator_space\.unwrap_or\(0\),/);
-		expect(block).toMatch(/w\.site\(node\.lbrace_after\.unwrap_or\(0\)\);/);
+		expect(block).toMatch(/w\.site_with\(node\.lbrace_after\.unwrap_or\(0\), options::site_strength\(options::SITE_\w+_LBRACE_AFTER, node\.lbrace_after\.unwrap_or\(0\)\)\);/);
 		expect(block).toContain('w.text("{")?;');
 		expect(block).toContain('statements.render(w)?;');
 	});

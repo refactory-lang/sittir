@@ -80,7 +80,7 @@ function rebaseTriviaItems(trivia: readonly FormatTrivia[] | undefined, editStar
         const newOffset = item.offset + delta;
         // Clamp to zero: a large negative delta must not produce a negative
         // offset (negative indices into slice() silently corrupt output).
-         return { ...item, offset: Math.max(0, newOffset) };
+        return { ...item, offset: Math.max(0, newOffset) };
     });
 }
 

@@ -17,7 +17,6 @@ Generate typed factories, templates, and native bindings from a grammar
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
 - `-o, --output <dir>` — Output directory
-- `-n, --nodes <list>` — Comma-separated node kinds to generate
 - `-a, --all` — Generate TS + native render-module artifacts (full chain)
 - `--tests-dir <dir>` — Output directory for test files
 - `--transpile` — Transpile grammar.sittir.ts → .sittir/grammar.js
@@ -276,13 +275,13 @@ pnpm exec tsx packages/cli/src/cli.ts tool dump-ast-mismatches [options]
 
 ### `tool bindings-inventory`
 
-Compile the bindings, derive the vocabulary they imply, and draft the base interface tree for comparison
+Compile the bindings, derive the vocabulary they imply, and emit the base interface tree
 
 **Options**
 
 - `--check` — Compile every bindings.scm against its parser and report totality diagnostics
 - `--members` — Print member names and kinds per shared kind
-- `--emit <dir>` — Draft the vocabulary tree into a directory (never over the authored tree)
+- `--emit [dir]` — Emit the vocabulary tree into a directory (default: packages/types/src/vocabulary, the checked-in tree)
 
 **Example**
 
@@ -300,6 +299,8 @@ Print the strict factory source that rebuilds a source file
 - `-f, --file <path>` — Source file to rebuild
 - `-e, --export <name>` — Exported function name (default: rebuild<Basename>)
 - `-o, --out <path>` — Write the module here instead of stdout
+- `-s, --surface <strict|loose>` — Construction surface to spell: strict calls, or the loose contract (default: `strict`)
+- `-n, --nested <calls|configs>` — On the loose surface, nested compounds as builder calls or config objects (default: `calls`)
 
 **Example**
 

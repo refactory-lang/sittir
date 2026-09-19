@@ -37,9 +37,6 @@ import {
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
 
-const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
-const _parseKindCollisionSeen = new Set<string>();
-
 function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
 		diagnostic.code,
@@ -50,43 +47,8 @@ function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string
 	].join(' ');
 }
 
-function recordParseKindCollisionDiagnostic(diagnostic: ParseKindCollisionDiagnostic): void {
-	const key = parseKindCollisionKey(diagnostic);
-	if (_parseKindCollisionSeen.has(key)) return;
-	_parseKindCollisionSeen.add(key);
-	_parseKindCollisionDiagnostics.push(diagnostic);
-}
-
-export function resetParseKindCollisionDiagnostics(): void {
-	_parseKindCollisionDiagnostics.length = 0;
-	_parseKindCollisionSeen.clear();
-}
-
-export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
-	const out = [..._parseKindCollisionDiagnostics];
-	resetParseKindCollisionDiagnostics();
-	return out;
-}
-
-const _deriveShapeDiagnostics: DeriveShapeDiagnostic[] = [];
-const _deriveShapeSeen = new Set<string>();
-
-function recordDeriveShapeDiagnostic(d: DeriveShapeDiagnostic): void {
-	const key = `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
-	if (_deriveShapeSeen.has(key)) return;
-	_deriveShapeSeen.add(key);
-	_deriveShapeDiagnostics.push(d);
-}
-
-export function resetDeriveShapeDiagnostics(): void {
-	_deriveShapeDiagnostics.length = 0;
-	_deriveShapeSeen.clear();
-}
-
-export function drainDeriveShapeDiagnostics(): DeriveShapeDiagnostic[] {
-	const out = [..._deriveShapeDiagnostics];
-	resetDeriveShapeDiagnostics();
-	return out;
+function deriveShapeKey(d: DeriveShapeDiagnostic): string {
+	return `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
 }
 
 export interface AssembleWarning {
@@ -96,29 +58,41 @@ export interface AssembleWarning {
 	readonly details?: Record<string, unknown>;
 }
 
-const _assembleWarnings: AssembleWarning[] = [];
-const _assembleWarningSeen = new Set<string>();
-
 function assembleWarningKey(w: AssembleWarning): string {
 	return `${w.code}|${w.ownerKind ?? ''}|${w.message}`;
 }
 
-export function recordAssembleWarning(w: AssembleWarning): void {
-	const key = assembleWarningKey(w);
-	if (_assembleWarningSeen.has(key)) return;
-	_assembleWarningSeen.add(key);
-	_assembleWarnings.push(w);
+export class DedupedCollector<T> {
+	private readonly items: T[] = [];
+	private readonly seen = new Set<string>();
+
+	constructor(private readonly keyOf: (item: T) => string) {}
+
+	record(item: T): boolean {
+		const key = this.keyOf(item);
+		if (this.seen.has(key)) return false;
+		this.seen.add(key);
+		this.items.push(item);
+		return true;
+	}
+
+	get all(): readonly T[] {
+		return this.items;
+	}
 }
 
-export function resetAssembleWarnings(): void {
-	_assembleWarnings.length = 0;
-	_assembleWarningSeen.clear();
-}
-
-export function drainAssembleWarnings(): AssembleWarning[] {
-	const out = [..._assembleWarnings];
-	resetAssembleWarnings();
-	return out;
+/**
+ * One instance per `assemble()` call — created locally by `assemble()` and
+ * threaded through the `DeriveCtx`/`CompoundOpts` chain the node
+ * constructors already receive, replacing the three module-level `let`
+ * accumulators (`_parseKindCollisionDiagnostics`, `_deriveShapeDiagnostics`,
+ * `_assembleWarnings`) that made concurrent `assemble()` calls unsafe to
+ * interleave.
+ */
+export class AssembleDiagnosticsCollector {
+	readonly parseKindCollisions = new DedupedCollector<ParseKindCollisionDiagnostic>(parseKindCollisionKey);
+	readonly deriveShapeDiagnostics = new DedupedCollector<DeriveShapeDiagnostic>(deriveShapeKey);
+	readonly assembleWarnings = new DedupedCollector<AssembleWarning>(assembleWarningKey);
 }
 
 export { type Multiplicity } from '../../types/rule.ts';
@@ -396,12 +370,16 @@ let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;
 }
-function auditDerivationShape(rule: SimplifiedRule, context: 'fields' | 'children'): void {
+function auditDerivationShape(
+	rule: SimplifiedRule,
+	context: 'fields' | 'children',
+	diagnostics?: AssembleDiagnosticsCollector
+): void {
 	const mode = deriveAuditMode();
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
 	if (shape === 'canonical') return;
-	recordDeriveShapeDiagnostic(
+	diagnostics?.deriveShapeDiagnostics.record(
 		describeDeriveShape({
 			rawShape: shape,
 			ruleType: rule.type,
@@ -486,9 +464,9 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 	const prevAuditKind = currentAuditKind;
 	if (ctx?.kindName !== undefined) setAuditKindContext(ctx.kindName);
 	try {
-		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields');
+		if (ctx?.shapeAudit !== false) auditDerivationShape(rule, 'fields', ctx?.diagnostics);
 		const kindName = ctx?.kindName ?? currentAuditKind;
-		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
+		let slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics));
 		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
 		if (unionChoiceIds.size > 0) {
 			const isUnionSlot = (s: AssembledNonterminal): boolean => s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
@@ -496,7 +474,7 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
 			);
 			if (colliding.length > 0) {
-				recordAssembleWarning({
+				ctx?.diagnostics?.assembleWarnings.record({
 					code: 'union-slot-content-collision',
 					ownerKind: kindName,
 					message:
@@ -507,7 +485,9 @@ function _deriveSlotsInternal(rule: SimplifiedRule, ctx?: DeriveCtx): AssembledN
 				});
 				const prev = setUnionSlotRouting(false);
 				try {
-					slots = mergeSlotsByName(collectSlots(rule, kindName, ctx?.kindEntries));
+					slots = mergeSlotsByName(
+						collectSlots(rule, kindName, ctx?.kindEntries, undefined, undefined, ctx?.diagnostics)
+					);
 				} finally {
 					setUnionSlotRouting(prev);
 					drainSynthesizedUnionChoiceIds();
@@ -568,6 +548,7 @@ export interface DeriveCtx {
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase>;
 	readonly stampArmFieldNamesAsParseName?: boolean;
+	readonly diagnostics?: AssembleDiagnosticsCollector;
 }
 
 export interface KindedDeriveCtx extends DeriveCtx {
@@ -624,7 +605,7 @@ function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: Kinde
 		values: describedValues
 	});
 	for (const diagnostic of resolution.diagnostics) {
-		recordParseKindCollisionDiagnostic(diagnostic);
+		ctx.diagnostics?.parseKindCollisions.record(diagnostic);
 	}
 	const nextValues = [...resolution.values];
 	const unchanged =
@@ -701,14 +682,6 @@ export function deriveSlots(rule: SimplifiedRule, ctx?: DeriveCtx): readonly Ass
 	return _deriveSlotsInternal(rule, ctx);
 }
 
-const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
-function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
-	if (!DBG_KINDID_FALLBACK) return;
-	process.stderr.write(
-		`[DBG_KINDID_FALLBACK] ${hit.site}: literal/name lookup resolved an id for '${hit.name}' with no stamp present\n`
-	);
-}
-
 function findKindEntryById(lookup: {
 	entries: readonly GeneratedKindEntry[];
 	id: number;
@@ -754,7 +727,6 @@ export function deriveValuesForRule(
 					];
 				}
 				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(literal)', name: rule.literal });
 				return [
 					{
 						value: rule.literal,
@@ -782,9 +754,7 @@ export function deriveValuesForRule(
 			const entry = findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			const parseEntry =
 				rule.aliasedTo === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], rule.aliasedTo);
-			if (entry !== undefined || parseEntry !== undefined)
-				noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: rule.name });
-			return [
+						return [
 				{
 					node: { kind: 'unresolved-ref', name: rule.name },
 					storageKindId: entry?.id,
@@ -808,7 +778,6 @@ export function deriveValuesForRule(
 					};
 				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
-				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -836,7 +805,6 @@ export function deriveValuesForRule(
 				];
 			}
 			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'STRING/PATTERN', name: rule.value });
 			const rk = entry?.kind;
 			return [
 				{
@@ -977,7 +945,7 @@ export function nameNode(kind: string): {
 	return { typeName, factoryName, irKey };
 }
 
-export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'token' | 'pattern' | 'list';
+export type ModelType = 'envelope' | 'branch' | 'polymorph' | 'supertype' | 'enum' | 'keyword' | 'punctuation' | 'pattern' | 'list';
 
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
@@ -1472,12 +1440,28 @@ export function storageTargetOf(node: AssembledNode, ctx: NodesCtx): AssembledNo
 	return node;
 }
 
-export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledToken | AssembledEnum {
+export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledEnum {
 	return node.storage === 'kindId';
 }
 
-export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledToken {
+export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
+}
+
+export function isVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return isFixedTextLeaf(node) && !node.hidden;
+}
+
+export function isVisiblePunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && !node.hidden;
+}
+
+export function isHiddenPunctuationLeaf(node: AssembledNode): node is AssembledPunctuation {
+	return node instanceof AssembledPunctuation && node.hidden;
+}
+
+export function isWordOrVisibleTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
+	return node instanceof AssembledKeyword || isVisibleTextLeaf(node);
 }
 
 export interface CompoundOpts {
@@ -1490,6 +1474,7 @@ export interface CompoundOpts {
 	slots?: readonly AssembledNonterminal[];
 	visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	simplifiedRules?: Record<string, SimplifiedRule>;
+	assembleDiagnostics?: AssembleDiagnosticsCollector;
 }
 
 export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRule> extends AssembledNodeBase<R> {
@@ -1521,7 +1506,8 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 				kindEntries: opts?.kindEntries,
 				collision: opts?.parseKindCollisionContext,
 				visibleAliasTargets: opts?.visibleAliasTargets,
-				simplifiedRules: opts?.simplifiedRules
+				simplifiedRules: opts?.simplifiedRules,
+				diagnostics: opts?.assembleDiagnostics
 			};
 			const slots = [...deriveSlots(simplifiedRule, ctx)];
 			let resolvedSlots = resolveParseKindCollisions(slots, ctx);
@@ -1559,7 +1545,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 						const named = s.isUnnamed ? 'positional' : 'named';
 						return `    ${s.name} (${named}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
 					});
-					recordAssembleWarning({
+					ctx.diagnostics?.assembleWarnings.record({
 						code: 'storagename-collision',
 						message:
 							`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
@@ -1613,9 +1599,17 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
 		const seen = ctx.seen ?? EMPTY_SEEN;
 		if (seen.has(this.kind)) return false;
-		if (this._slots.every((slot) => !isRequired(slot))) return true;
-		const slot = this.soleSlot;
-		if (slot === undefined || isMultiple(slot)) return false;
+		// Optional sibling slots (e.g. a keyword-presence flag alongside a
+		// required body) never block a zero-argument call on their own — only
+		// the ONE required slot's own forwarding decides it. `soleSlot`
+		// (exactly one slot total) undercounts this: a node can have several
+		// slots and still take no argument as long as all but one are
+		// optional and that one forwards to an argument-optional target.
+		const requiredSlots = this._slots.filter((slot) => isRequired(slot));
+		if (requiredSlots.length === 0) return true;
+		if (requiredSlots.length > 1) return false;
+		const slot = requiredSlots[0]!;
+		if (isMultiple(slot)) return false;
 		const refs = slot.values.filter(isNodeRef);
 		const kindId = refs.length === 1 ? refs[0]!.storageKindId : undefined;
 		const target = kindId === undefined ? undefined : ctx.nodeByKindId.get(kindId);
@@ -1690,9 +1684,6 @@ export abstract class AssembledLeaf<R extends AnyRule = RenderRule> extends Asse
 		return 'tokenized' in this.rule && this.rule.tokenized === true;
 	}
 
-	get word(): boolean {
-		return false;
-	}
 }
 
 export class AssembledPattern extends AssembledLeaf<RenderRule> {
@@ -1701,13 +1692,26 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 	constructor(
 		kind: string,
 		rule: RenderRule,
-		opts?: { factoryName?: string; irKey?: string; kindEntries?: readonly GeneratedKindEntry[]; wordMatcher?: RegExp }
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			kindEntries?: readonly GeneratedKindEntry[];
+			wordMatcher?: RegExp;
+			textPattern?: string;
+		}
 	) {
 		super(kind, rule, opts);
+		this.#textPattern = opts?.textPattern;
 	}
+
+	readonly #textPattern: string | undefined;
 
 	get pattern(): string | undefined {
 		return this.rule.type === PATTERN ? this.rule.value || undefined : undefined;
+	}
+
+	get textPattern(): string | undefined {
+		return this.#textPattern ?? this.pattern;
 	}
 
 	get fixedLiteralText(): string | undefined {
@@ -1717,12 +1721,7 @@ export class AssembledPattern extends AssembledLeaf<RenderRule> {
 }
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
-	readonly #word: boolean;
-
-	override get word(): boolean {
-		return this.#word;
-	}
+	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -1734,17 +1733,14 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 			irKey?: string;
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
-			word?: boolean;
 		}
 	) {
 		super(kind, rule, opts);
-		this.#word = opts?.word ?? true;
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -1773,19 +1769,18 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledLeaf<StringRule> {
-	readonly modelType = 'token' as const;
+export class AssembledPunctuation extends AssembledLeaf<StringRule> {
+	readonly modelType = 'punctuation' as const;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
-	constructor(kind: string, rule: StringRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
-		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries });
+	constructor(kind: string, rule: StringRule, opts?: { hidden?: boolean; kindEntries?: readonly GeneratedKindEntry[] }) {
+		super(kind, rule, { hidden: opts?.hidden ?? true, kindEntries: opts?.kindEntries });
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
 		} else {
 			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.value });
 			this.resolvedKind = entry?.kind;
 			this.resolvedKindId = entry?.id;
 		}
@@ -1810,7 +1805,7 @@ export class AssembledToken extends AssembledLeaf<StringRule> {
 	override get stampChildExpression(): string {
 		const kind = JSON.stringify(this.kind);
 		const text = JSON.stringify(this.rule.value);
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
+		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: ${!this.hidden} as const }`;
 	}
 }
 
@@ -1952,7 +1947,8 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 			{
 				factoryName: nameNode(kind).factoryName,
 				kindEntries: opts.kindEntries,
-				parseKindCollisionContext: opts.parseKindCollisionContext
+				parseKindCollisionContext: opts.parseKindCollisionContext,
+				assembleDiagnostics: ctx?.diagnostics
 			},
 			rule
 		);
@@ -1989,7 +1985,7 @@ export type AssembledNode =
 	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword
-	| AssembledToken
+	| AssembledPunctuation
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledList;
@@ -2013,31 +2009,45 @@ export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolea
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
 }
 
-interface LeftmostWalkCtx {
+export interface LeftmostWalkCtx {
 	readonly rules: Record<string, RenderRule>;
 	readonly visiting: Set<string>;
 }
 
-function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+function coreLeftmostImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (isNullableMultiplicity(rule)) return false;
 	if (rule.immediate === true) return true;
 	switch (rule.type) {
 		case 'SEQ':
-			return rule.members.length > 0 && leftmostTerminalImmediate(rule.members[0], ctx);
+			return rule.members.length > 0 && coreLeftmostImmediate(rule.members[0], ctx);
 		case 'CHOICE':
 			return (
 				rule.members.length > 0 &&
-				rule.members.every((m) => leftmostTerminalImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
+				rule.members.every((m) => coreLeftmostImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
 			);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;
 			ctx.visiting.add(rule.name);
-			return leftmostTerminalImmediate(ctx.rules[rule.name], ctx);
+			return coreLeftmostImmediate(ctx.rules[rule.name], ctx);
 		}
 		default:
 			return false;
 	}
+}
+
+export function leftmostTerminalImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
+	if (!rule) return false;
+	if (isNullableMultiplicity(rule)) return false;
+	return coreLeftmostImmediate(rule, ctx);
+}
+
+export function isBoundaryLeftImmediate(members: readonly RenderRule[], fromIndex: number, ctx: LeftmostWalkCtx): boolean {
+	for (let i = fromIndex; i < members.length; i++) {
+		const member = members[i]!;
+		if (!coreLeftmostImmediate(member, { rules: ctx.rules, visiting: new Set(ctx.visiting) })) return false;
+		if (!isNullableMultiplicity(member)) return true;
+	}
+	return false;
 }
 
 export type SeamEdgeClass = 'word' | 'not-word' | 'varies';
@@ -2217,7 +2227,7 @@ export function patternTrailingEdgeClass(source: string, ctx: { isWordChar: (c: 
 
 export function edgeClassesOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeClasses {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return {
 			starts: charEdgeClass(node.text[0], ctx),
 			ends: charEdgeClass(node.text[node.text.length - 1], ctx)
@@ -2289,7 +2299,7 @@ export interface KindEdgeCharSets {
 
 export function edgeCharSetsOfKind(kind: string, ctx: EdgeClassCtx): KindEdgeCharSets {
 	const node = ctx.nodes.get(kind);
-	if (node instanceof AssembledKeyword) {
+	if (node !== undefined && isWordOrVisibleTextLeaf(node)) {
 		return node.text === ''
 			? {}
 			: { starts: new Set([node.text[0]!]), ends: new Set([node.text[node.text.length - 1]!]) };

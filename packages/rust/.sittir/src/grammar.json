@@ -1145,7 +1145,10 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "field_declaration_list"
+                    "name": "field_declaration_list",
+                    "annotations": {
+                      "default": true
+                    }
                   },
                   {
                     "type": "SYMBOL",

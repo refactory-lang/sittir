@@ -435,6 +435,22 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
+`origin` names where a seam choice's resolved default arm came from, stamped by
+`render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
+an arm or changes a rendered value: it is read back by the template emitter's
+seam census (`render-rules.ts::originOfSeamChoice`) and by
+`render-options-rs.ts::seamStrength`, which turns it into the site's strength,
+how firmly the default holds against the mark meeting it at the same gap.
+It rides in `RuleAnnotations` because that is the existing channel a
+`whitespaceChoice` member already carries per-arm facts on, not because it is
+meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
+`'token-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
+this file — the lower layer, so `compiler/model/site-addresses.ts` and
+`compiler/model/render-rules.ts` both import it rather than each declaring
+their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
+`Exclude<SeamOrigin, 'fallback' | 'word-default'>`, the subset `resolveBindings`
+itself ever produces).
+
 ```text
 /**
  * Declarative facts an author attached to a rule, carried through the phases
@@ -449,6 +465,11 @@ emitter.
  * was not declared for it.
  */
 ```
+
+`origin` admits `'cascade'` beside the declared origins and the fallback.
+`edgeTokens` is set on a kind edge's whitespace choice only, naming the
+literal tokens the kind opens or closes with (a single token or every arm of
+a choice of tokens), so the edge can answer to their grammar-wide face.
 
 ### `packages/codegen/src/types/rule.ts::RuleBase`
 

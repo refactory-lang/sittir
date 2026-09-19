@@ -1,6 +1,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
+import { compareOrdinal } from './shared.ts';
 
 export function toPascal(kind: string): string {
 	return kind
@@ -55,7 +56,7 @@ export function collectKindEntries(
 		const anon = row.parser?.anon ?? false;
 		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, literalText, anon: anon || undefined, literalRule });
 	}
-	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
+	entries.sort((a, b) => a.id - b.id || compareOrdinal(a.kind, b.kind));
 	return entries;
 }
 

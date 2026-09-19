@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
@@ -7,7 +8,7 @@ import {
 	AssembledList,
 	AssembledKeyword,
 	AssembledNonterminal,
-	AssembledToken,
+	AssembledPunctuation,
 	isNodeRef,
 	valueParseKindsOf
 } from '../compiler/model/node-map.ts';
@@ -364,7 +365,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	];
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	const subtypeRefs = node.subtypes.filter(isNodeRef);
-	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledToken || ref.node instanceof AssembledKeyword)) {
+	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledPunctuation || ref.node instanceof AssembledKeyword)) {
 		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
 	}
 	return [
@@ -1611,7 +1612,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					entry !== undefined && entry.kind === kind,
 					`ReturnType<typeof wrap${node.typeName}>`
 				);
-			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node instanceof AssembledKeyword) {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isWordOrVisibleTextLeaf(node)) {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries) {
 					const entry = findKindEntry(this.#kindEntries, kind);

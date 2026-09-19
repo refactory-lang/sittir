@@ -96,6 +96,13 @@ pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     fn adjacent(&mut self);
     fn site(&mut self, kind: u16);
+    /// A site's arm with the strength its table row gives it; `site` is the
+    /// declared-strength form. The default keeps a sink that knows nothing of
+    /// strength working as before.
+    fn site_with(&mut self, kind: u16, strength: u8) {
+        let _ = strength;
+        self.site(kind);
+    }
     fn seam(&mut self, text: &str);
     fn token_seam(&mut self, text: &str);
     /// Write the bytes a coordinate names, from the tree table this writer
