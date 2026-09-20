@@ -209,7 +209,7 @@ and is never re-interpreted.
 | ~~2~~ | ~~string / number / boolean~~ | ~~a keyword or enum member~~ | **retired** — a bare scalar is never guessed into a keyword or enum member; name the kind (rule 3) instead |
 | 3 | plain object | a kind's config | the kind is `kind:` (grammar name or `TSKindId`), else the slot's only kind, else an error |
 | 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element. An empty array (or empty spread) at an **optional** list slot is the slot absent: no elements node is built and the presence gate renders nothing (`ir.arguments([])` and `f()` render `()`); at a **required** list slot the list factory's non-empty guard throws, naming the slot |
-| 5 | kind-identified value (node data or a `kind:` object) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses |
+| 5 | kind-identified value (node data, a `kind:` object, or a bare kind id) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses; a wrapper's admitted set includes the members of any enum its slot reaches, so `returnType: TSKindId.StringKeyword` builds the `type_annotation` |
 | 6 | bare non-object (string / number / boolean / array) | the field's declared `arm.default` | the slot has one candidate or declares a default; else an error |
 | 7 | omission | nothing | whatever strict lets you omit; all slots omittable ⇒ callable with no argument |
 
@@ -263,17 +263,12 @@ every generated rebuild, strict and loose alike. The loose list call types its
 options bag the way the strict one does (options first and optional, L2), so a
 list whose read delimiter is not the stamped default is a plain call.
 
-Two spellings the printer deliberately does not attempt, because the
-runtime refuses them:
-
-- A bare kind id is never hoisted through a single-slot wrapper (rule 5
-  names node data and `kind:` objects, not ids): typescript's
-  `returnType: TSKindId.StringKeyword` lands in the slot unwrapped and
-  fails at render, where rust's `-> u32` happens to work only because its
-  `_type` slot admits the keyword directly.
-- Elements inside a bare array, and inside a tuple seat's array, keep
-  their calls: `_wrapArray` passes a string through uncoerced, and only a
-  repeated slot resolves per element.
+One spelling the printer deliberately does not attempt: elements inside a
+bare array, and inside a tuple seat's array, keep their calls. The runtime
+resolves a bare string there by the element slot's leaf patterns (`'1'` is an
+integer literal, `'"s"'` a string literal, `'a.b'` an identifier path on rust),
+but an element slot admits many leaf kinds, and the printer spells a leaf bare
+only where exactly one pattern kind could take it.
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 
@@ -446,6 +441,20 @@ built list — instead of handing the raw array straight to the envelope's
 own one-argument factory. Verified against rust at runtime: both
 `typeArguments: ['Edit']` and `typeArguments: ['String', 'SpliceError']`
 now keep every element.
+
+---
+
+### L7 — A bare number inside a list-envelope array is dropped in silence
+
+`ir.callExpression({ function: 'f', arguments: [1] })` renders `f()`: the
+element is lost, no error is raised. `_wrapArray` passes a number through
+untouched, and the list's raw factory stores nothing for a scalar that is not
+a stored kind id. Rule 1 says a string is a text leaf; a number has no rule at
+an element slot, so the contract's answer is either the spec's coercion (an
+integral slot takes the shortest round-trip decimal) or a refusal naming the
+slot, never a silent drop. Affects rust (`arguments_elements`,
+`array_expression`); typescript and python route the same shape through a form
+or a two-branch slot first, so the drop is not reachable there today.
 
 ---
 

@@ -12923,6 +12923,12 @@ that need it: `_BARE_ACCEPTS` derives ids from these names, and
 kind. Names rather than ids because only one of the two consumers wants ids,
 and a name is what the model actually carries.
 
+An admitted enum contributes its member kinds as well as itself: a wrapper
+whose slot reaches `predefined_type` accepts a bare `string_keyword` id, so
+a member id given at a parent slot that admits only the wrapper is hoisted
+through it (rule 5) exactly as a node would be, instead of reaching the
+transport unwrapped.
+
 #### list elements through a transparent wrapper
 
 A list's admitted kinds are its content slot's kinds plus, when that slot holds exactly one kind that is a transparent wrapper (`transparentContentKindNames`), the wrapper's own required slot's kinds. A list of `_attributed_field_declaration` therefore accepts a bare `field_declaration`, and a slot that holds the list (or a forwarding envelope over it) takes one element on its own, the same as an array of one.
