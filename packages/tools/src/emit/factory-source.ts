@@ -42,6 +42,7 @@ export interface LooseFacts {
 	readonly bareAccepts: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
+	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly hoistedKinds: ReadonlySet<string>;
 	/** A kind's parser id; an alias shares its target's, and the runtime admits by id. */
 	readonly kindIdOfName: (kind: string) => number | undefined;
@@ -369,11 +370,18 @@ function isFlatKind(kind: string, ctx: PrintContext): boolean {
 	return !hoisted.has(kind) && !hoisted.has(`_${kind}`) && ctx.irPathOfKind(kind).split('.').length === 2;
 }
 
-function listOptionsAreDefault(listKind: string, options: Record<string, unknown> | undefined, ctx: PrintContext): boolean {
+function listOptionsAreDefault(
+	listKind: string,
+	options: Record<string, unknown> | undefined,
+	ctx: PrintContext
+): boolean {
 	if (options === undefined) return true;
 	if (options.separator !== undefined) return false;
 	if (options.delimiter === undefined) return true;
-	return typeof options.delimiter === 'number' && ctx.delimiterArmOfId(options.delimiter) === ctx.loose!.listDefaults[listKind];
+	return (
+		typeof options.delimiter === 'number' &&
+		ctx.delimiterArmOfId(options.delimiter) === ctx.loose!.listDefaults[listKind]
+	);
 }
 
 /**
@@ -384,7 +392,9 @@ function listOptionsAreDefault(listKind: string, options: Record<string, unknown
 function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
 	const loose = ctx.loose;
 	if (loose === undefined || !isPlainObject(item) || '$type' in item) return item;
-	const keys = Object.keys(item).filter((k) => item[k] !== undefined);
+	const keys = Object.keys(item).filter(
+		(k) => item[k] !== undefined && !(Array.isArray(item[k]) && item[k].length === 0)
+	);
 	if (keys.length !== 1) return item;
 	for (const seat of Object.values(ctx.seats?.[listKind]?.['*'] ?? {})) {
 		if (seat.shape !== 'elements') continue;
@@ -406,17 +416,24 @@ function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
  * default options, directly or through a single-slot wrapper whose sole slot
  * is that list — the array the runtime builds the envelope from.
  */
-function bareArrayItems(value: Printed, ctx: PrintContext): readonly unknown[] | undefined {
+function bareArrayItems(
+	value: Printed,
+	ctx: PrintContext
+): { readonly listKind: string; readonly items: readonly unknown[] } | undefined {
 	const elements = value.facts?.elements;
 	if (elements !== undefined && value.kind !== undefined) {
-		return listOptionsAreDefault(value.kind, elements.options, ctx) ? elements.items : undefined;
+		return listOptionsAreDefault(value.kind, elements.options, ctx)
+			? { listKind: value.kind, items: elements.items }
+			: undefined;
 	}
 	const inner = value.facts?.inner;
 	if (!(inner instanceof Printed) || value.kind === undefined || inner.kind === undefined) return undefined;
 	if (inner.kind !== soleSlotKind(value.kind, ctx)) return undefined;
 	const innerElements = inner.facts?.elements;
 	if (innerElements === undefined || inner.$_trivia !== undefined) return undefined;
-	return listOptionsAreDefault(inner.kind, innerElements.options, ctx) ? innerElements.items : undefined;
+	return listOptionsAreDefault(inner.kind, innerElements.options, ctx)
+		? { listKind: inner.kind, items: innerElements.items }
+		: undefined;
 }
 
 /**
@@ -429,27 +446,80 @@ function bareArrayItems(value: Printed, ctx: PrintContext): readonly unknown[] |
  * are asked for. A node carrying trivia keeps its call, since only a call
  * can carry `$trivia`.
  */
-function loosenValue(value: Printed, kinds: readonly string[], defaultArm: string | undefined, ctx: PrintContext): unknown {
+function listElementKinds(listKind: string, ctx: PrintContext): readonly string[] | undefined {
+	const loose = ctx.loose;
+	if (loose === undefined) return undefined;
+	const seated = Object.values(ctx.seats?.[listKind]?.['*'] ?? {})
+		.filter((seat) => seat.shape === 'elements')
+		.map((seat) => seat.kind);
+	const kinds = seated.length > 0 ? seated : loose.listElementKinds[listKind];
+	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose);
+}
+
+function contentSlotKinds(kind: string, ctx: PrintContext): readonly string[] | undefined {
+	const loose = ctx.loose!;
+	const required = Object.entries(loose.slotRequired[kind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
+	if (required.length !== 1 || loose.slotMultiple[kind]?.[required[0]!] === true) return undefined;
+	const kinds = ctx.slotKinds?.[kind]?.[required[0]!];
+	return kinds === undefined ? undefined : expandSlotKinds(kinds, loose);
+}
+
+function leafReachedThrough(target: string, text: string, ctx: PrintContext): string | undefined {
+	const content = contentSlotKinds(target, ctx);
+	return (
+		(content === undefined ? undefined : soleLeafKind(content, text, ctx)) ??
+		soleLeafKind(ctx.loose!.bareAccepts[target] ?? [], text, ctx)
+	);
+}
+
+function looseListElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
+	const kinds = listElementKinds(listKind, ctx);
+	if (kinds === undefined || !(item instanceof Printed)) return item;
+	return loosenValue(item, kinds, ctx.loose!.slotDefaults[listKind]?.element, ctx);
+}
+
+function loosenValue(
+	value: Printed,
+	kinds: readonly string[],
+	defaultArm: string | undefined,
+	ctx: PrintContext
+): unknown {
 	const loose = ctx.loose!;
 	if (value.$_trivia !== undefined || value.kind === undefined) return value;
 	const branch = kinds.filter((k) => BRANCH_MODEL_TYPES.has(loose.modelTypes[k] ?? ''));
-	const target = branch.length === 1 ? branch[0] : defaultArm !== undefined && branch.includes(defaultArm) ? defaultArm : undefined;
-	const items = bareArrayItems(value, ctx);
-	if (items !== undefined && target === value.kind) {
-		const printed = items.map((item) => printValue(item, ctx, 0));
+	const target =
+		branch.length === 1 ? branch[0] : defaultArm !== undefined && branch.includes(defaultArm) ? defaultArm : undefined;
+	const array = bareArrayItems(value, ctx);
+	if (array !== undefined && target === value.kind) {
+		const { listKind, items } = array;
+		const printed = items.map((item) =>
+			printValue(looseListElement(listKind, hoistSeatElement(listKind, item, ctx), ctx), ctx, 0)
+		);
 		const bare = printed.length === 1 && !/^[{[]/.test(printed[0]!) ? printed[0]! : undefined;
 		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
 	}
 	const inner = value.facts?.inner;
-	if (inner instanceof Printed && inner.kind !== undefined && !admitsDirectly(kinds, inner, loose) && buildsNodeData(inner.kind, loose)) {
+	if (
+		inner instanceof Printed &&
+		inner.kind !== undefined &&
+		!admitsDirectly(kinds, inner, loose) &&
+		(buildsNodeData(inner.kind, loose) || !kinds.some((k) => ctx.enumKinds?.has(k)))
+	) {
 		const arms = branch.filter((b) => loose.bareAccepts[b]?.includes(inner.kind!));
 		if (arms.length === 1 && arms[0] === value.kind) return loosenValue(inner, kinds, defaultArm, ctx);
+	}
+	if (typeof inner === 'number' && !kinds.some((k) => ctx.enumKinds?.has(k))) {
+		const innerKind = ctx.kindNameFromId(inner);
+		if (innerKind !== undefined && !admitsDirectly(kinds, new Printed(inner, '', innerKind), loose)) {
+			const arms = branch.filter((b) => loose.bareAccepts[b]?.includes(innerKind));
+			if (arms.length === 1 && arms[0] === value.kind) return new Printed(inner, printValue(inner, ctx, 0), innerKind);
+		}
 	}
 	const text = value.facts?.text;
 	if (text !== undefined && loose.modelTypes[value.kind] === 'pattern') {
 		const admits = kinds.includes(value.kind)
 			? soleLeafKind(kinds, text, ctx) === value.kind
-			: target !== undefined && soleLeafKind(loose.bareAccepts[target] ?? [], text, ctx) === value.kind;
+			: target !== undefined && leafReachedThrough(target, text, ctx) === value.kind;
 		if (admits) return new Printed(value.$type, JSON.stringify(text), value.kind);
 	}
 	const config = value.facts?.config;
@@ -457,7 +527,8 @@ function loosenValue(value: Printed, kinds: readonly string[], defaultArm: strin
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
 		const member = typeof value.$type === 'number' ? ctx.memberNameOfId(value.$type) : undefined;
 		if (member !== undefined) {
-			const keyed = config === '{}' ? `{ kind: TSKindId.${member} }` : config.replace(/^\{\n/, `{\n\tkind: TSKindId.${member},\n`);
+			const keyed =
+				config === '{}' ? `{ kind: TSKindId.${member} }` : config.replace(/^\{\n/, `{\n\tkind: TSKindId.${member},\n`);
 			return new Printed(value.$type, keyed, value.kind);
 		}
 	}
@@ -603,7 +674,7 @@ export function printingFactoryMap(
 					const [first, ...rest] = args;
 					const hasOptions = isListOptions(first);
 					const items = (hasOptions ? rest : args).map((a) => hoistSeatElement(kind, wrapDirectArg(kind, a, ctx), ctx));
-					const elements = items.map((a) => printValue(a, ctx, 0));
+					const elements = items.map((a) => printValue(looseListElement(kind, a, ctx), ctx, 0));
 					const options = hasOptions ? first : undefined;
 					const head =
 						options !== undefined && !(ctx.loose !== undefined && listOptionsAreDefault(kind, options, ctx))
@@ -667,11 +738,7 @@ function mountPrinter(
 	return (...args: unknown[]): Printed => {
 		const given = args.slice(0, args.findLastIndex((a) => a !== undefined) + 1);
 		const printed = given.map((a) =>
-			printValue(
-				isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx),
-				ctx,
-				0
-			)
+			printValue(isPlainObject(a) ? wrapSeatedConfig(parentKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
 		);
 		const argSource = printed.join(', ');
 		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, parentKind, argSource);
@@ -943,7 +1010,11 @@ export async function emitFactorySourceText(
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
 		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
-		keywordKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'keyword' || model.modelTypes[k] === 'punctuation')),
+		keywordKinds: new Set(
+			Object.keys(model.modelTypes).filter(
+				(k) => model.modelTypes[k] === 'keyword' || model.modelTypes[k] === 'punctuation'
+			)
+		),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		source,
 		delimiterArmOfId: (id) => {
@@ -965,6 +1036,7 @@ export async function emitFactorySourceText(
 						bareAccepts: model.bareAccepts,
 						forwardsTo: model.forwardsTo,
 						listDefaults: model.listDefaults,
+						listElementKinds: model.listElementKinds,
 						hoistedKinds: model.hoistedKinds,
 						kindIdOfName: (kind) => idOfName.get(kind)
 					}
@@ -978,7 +1050,7 @@ export async function emitFactorySourceText(
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),
-		factorySlots: withPublicNames(model.factorySlots),
+		factorySlots: withPublicNames(model.factorySlots)
 	};
 	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);

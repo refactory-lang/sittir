@@ -41,7 +41,6 @@ const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { pluralize, snakeToCamel } = await load('modelNodeMap');
 
-
 // Validator-local slot model. validate/common.ts has no AssembledNonterminal
 // instances (it walks already-read napi NodeData), so slot descriptors are
 // built from bare name strings + locally-derived arity.
@@ -1081,6 +1080,7 @@ export interface LoadedNodeModel {
 	readonly bareAccepts: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
 	readonly listDefaults: Record<string, string>;
+	readonly listElementKinds: Record<string, readonly string[]>;
 }
 
 /** Minimal shape of the parsed node-model.json5 — only the fields the
@@ -1102,6 +1102,7 @@ interface ParsedNodeModel {
 			values?: ReadonlyArray<{ seat?: Seat; name?: string; default?: true }>;
 		}>;
 		elementSeats?: readonly Seat[];
+		elementKinds?: readonly string[];
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
@@ -1136,7 +1137,8 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	slotDefaults: {},
 	bareAccepts: {},
 	forwardsTo: {},
-	listDefaults: {}
+	listDefaults: {},
+	listElementKinds: {}
 };
 
 /**
@@ -1186,6 +1188,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 	const bareAccepts: Record<string, readonly string[]> = {};
 	const forwardsTo: Record<string, string> = {};
 	const listDefaults: Record<string, string> = {};
+	const listElementKinds: Record<string, readonly string[]> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
 		if (node.modelType !== undefined) modelTypes[node.kind] = node.modelType;
@@ -1202,8 +1205,12 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 				}
 			}
 			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
-			slotRequired[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.required === true]));
-			slotMultiple[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.multiple === true]));
+			slotRequired[node.kind] = Object.fromEntries(
+				node.slots.map((slot) => [slot.propertyName, slot.required === true])
+			);
+			slotMultiple[node.kind] = Object.fromEntries(
+				node.slots.map((slot) => [slot.propertyName, slot.multiple === true])
+			);
 			slotStorage[node.kind] = Object.fromEntries(
 				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.propertyName, slot.storage]]))
 			);
@@ -1214,6 +1221,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
 		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
+		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
 	}
 	return {
 		irKeys,
@@ -1235,7 +1243,8 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		slotDefaults,
 		bareAccepts,
 		forwardsTo,
-		listDefaults
+		listDefaults,
+		listElementKinds
 	};
 }
 
@@ -1999,7 +2008,8 @@ function projectArmSlot(
 		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
-	if (typeof value === 'number' || modelType === 'keyword' || modelType === 'punctuation') return setRoute(seat.mount, undefined);
+	if (typeof value === 'number' || modelType === 'keyword' || modelType === 'punctuation')
+		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
 		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];
@@ -2153,7 +2163,10 @@ function buildWithFactory(
 	// the factory accepts the raw source span because external-scanner
 	// delimiters can't be reconstructed from children.
 	if (shape === 'text') {
-		return carryTrivia(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)));
+		return carryTrivia(
+			referenceData,
+			(irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts))
+		);
 	}
 	const config = nodeToConfig(referenceData, opts);
 	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
@@ -2482,15 +2495,6 @@ function shouldOmitResidualScalarChildren(
 	return structuralChildren.every((child) => child == null || typeof child !== 'object');
 }
 
-
-
-
-
-
-
-
-
-
 function isOpeningDelimiter(text: string | undefined): boolean {
 	return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
 }
@@ -2616,7 +2620,6 @@ function promoteAnonymousChildrenToMissingFields(
 	return true;
 }
 
-
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
@@ -2687,15 +2690,6 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	}
 	return out;
 }
-
-
-
-
-
-
-
-
-
 
 // ---------------------------------------------------------------------------
 // Metrics emission helper
