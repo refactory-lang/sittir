@@ -19,8 +19,22 @@ import type { KindEnumEntry } from '../kind-discriminant.ts';
  * bare-accept set.
  */
 const KIND_ENTRIES: KindEnumEntry[] = [
-	{ id: 1, kind: 'string_keyword', symbolName: 'predefined_type', literalText: 'string', anon: true },
-	{ id: 2, kind: 'number_keyword', symbolName: 'predefined_type', literalText: 'number', anon: true },
+	{
+		id: 1,
+		kind: 'string_keyword',
+		member: 'StringKeyword',
+		symbolName: 'predefined_type',
+		literalText: 'string',
+		anon: true
+	},
+	{
+		id: 2,
+		kind: 'number_keyword',
+		member: 'NumberKeyword',
+		symbolName: 'predefined_type',
+		literalText: 'number',
+		anon: true
+	},
 	{ id: 3, kind: 'identifier', member: 'Identifier' },
 	{ id: 4, kind: 'type_annotation', member: 'TypeAnnotation' },
 	{ id: 5, kind: 'predefined_type', member: 'PredefinedType' }
