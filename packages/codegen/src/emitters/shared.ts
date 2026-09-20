@@ -687,7 +687,7 @@ export interface ScalarLeafKinds {
 const BOOLEAN_TEXTS = ['true', 'false'] as const;
 
 function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
-	for (const [kind, node] of nodeMap.nodes) {
+	for (const node of nodeMap.nodes.values()) {
 		if (!(node instanceof AssembledEnum)) continue;
 		const byText = new Map([...node.resolvedByText].map(([text, entry]) => [text.toLowerCase(), entry.kind]));
 		if (byText.size !== 2 || !BOOLEAN_TEXTS.every((t) => byText.has(t))) continue;
