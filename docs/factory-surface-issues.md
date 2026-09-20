@@ -250,26 +250,18 @@ The printer decides each spelling from stamped facts (`node-model.json5`:
 `bareAccepts`, a slot value's `default`, a list's `defaultDelimiter`, the
 supertypes' `subtypes`), never by re-walking the grammar.
 
-Found while writing it: the emitted `_leafRegistry` carries no `pattern`
-for pattern leaves, so `_resolveLeafString` never tests a string against a
-leaf's pattern — a bare string resolves to the first pattern kind in the
-slot's leaf order whatever the text. Rule 1's "matched by the leaf's own
-pattern" is the contract; the runtime implements "first pattern kind". The
-printer spells a leaf bare only where the slot admits one pattern kind, so
-the rebuild stays honest either way; closing the gap means stamping each
-pattern leaf's regex into the registry (the model already carries it).
+Rule 1's "matched by the leaf's own pattern" is what the runtime
+implements: each pattern leaf's anchored regex is stamped into the emitted
+`_leafRegistry`, and `_resolveLeafString` tests a bare string against it
+before resolving, so a string never lands on the first pattern kind in the
+slot's leaf order by default.
 
 What the three loose rebuilds measure today (rust `splice.rs`, typescript
 `format.ts`, python `python-4space.py`): all three render, re-parse to the
-target's tree and render the target's bytes. The type ceiling holds six
-errors, all on rust and all one gap:
-
-- **The loose list call does not type its options bag.** `ir.enumVariantListElements({ delimiter: Delimiter.Trailing }, …)`
-  builds correctly at runtime — the coercer hands the bag through — but
-  the loose overload admits elements only, so every list whose read
-  delimiter is not the stamped default is a type error. This is L2's
-  loose half, closed by the ergonomics page's item 2 (options first and
-  optional on the loose call too).
+target's tree and render the target's bytes, and the type ceiling is zero for
+every generated rebuild, strict and loose alike. The loose list call types its
+options bag the way the strict one does (options first and optional, L2), so a
+list whose read delimiter is not the stamped default is a plain call.
 
 Two spellings the printer deliberately does not attempt, because the
 runtime refuses them:
@@ -445,7 +437,7 @@ render error. The loose coercer should build the envelope with one element
 per array entry.
 
 Affected rust (`generic_type.type_arguments`, `call_expression.arguments`;
-`examples/17-dogfood-rust.ts` marked five sites). A new `_wrapArray` runtime
+the hand-written rust rebuild, since retired, marked five sites). A new `_wrapArray` runtime
 helper (from.ts, alongside `_wrapKindIds`/`_wrapWithChildren`) recurses into
 the envelope's own list target before wrapping: a 'direct'-surface kind
 (one positional child) whose sole child is itself a wrap-children kind
@@ -596,21 +588,22 @@ and names the real slot keys. Four conventions account for most confusion:
 `examples/17-dogfood-rust-strict.ts`, `18-dogfood-typescript-strict.ts` and
 `19-dogfood-python-strict.ts` each rebuild their whole target file through the
 factory surface and name a row above only where it bites (`17` marks L2). The
-loose halves, `17-dogfood-rust.ts`, `18-dogfood-typescript.ts` and
-`19-dogfood-python.ts`, carry their own gap commentary from the earlier
-worklist; a gap named there that is not a row above is a calling mistake, and
-the strict twin shows the shape that builds.
+hand-written loose rebuilds that once sat beside them are retired: their gap
+commentary named calling mistakes from the earlier worklist rather than surface
+limits, and the generated loose rebuilds below prove the same targets on the
+same surface with no hand-authored second derivation.
 
 ### The generated rebuilds
 
-`pnpm run gen:examples` prints `examples/17-dogfood-rust.generated.ts`,
-`18-dogfood-typescript.generated.ts` and `19-dogfood-python.generated.ts`
-from their targets with `sittir tool emit-factory-source`; their type errors
-are counted under `examples/generated-typecheck-ceiling.json` (a ceiling that
-only shrinks for a given emitter; when the emitter reaches more of a target,
-as the slot-key fix did, the count is re-baselined and the commit says so),
-and the package verify tests hold each to its target's tree
-as expected failures naming the open rows above. Inner comments are not
+`pnpm run gen:examples` (`packages/tools/src/scripts/gen-examples.ts`, over the
+target table in `packages/tools/src/emit/dogfood-targets.ts`) prints a strict
+and a loose rebuild of each dogfood target, `examples/<n>-dogfood-<g>.generated.ts`
+and `examples/<n>-dogfood-<g>-loose.generated.ts`, plus the strict keyword-opener
+fixtures, with `sittir tool emit-factory-source`; their type errors are counted
+under `examples/generated-typecheck-ceiling.json` (a ceiling that only shrinks
+for a given emitter; when the emitter reaches more of a target, as the slot-key
+fix did, the count is re-baselined and the commit says so), and the package
+verify tests hold each to its target's tree. Inner comments are not
 printed yet: a comment rides the following node's `$triviaData`, which the
 dispatcher does not hand to a factory. `probe-sweep.py` is not the python
 target because the override parser rejects its `name=True` keyword defaults

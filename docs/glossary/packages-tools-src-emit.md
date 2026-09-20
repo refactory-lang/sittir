@@ -105,3 +105,22 @@ spelling inside the wrapper's own call.
 Text held by a verbatim slot with no kind is printed as the bare string: a lexed kind's content slot
 (`content: "x"`), never as an identifier leaf.
 ```
+
+### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_TARGETS`
+
+The one table of dogfood rebuild targets: for each, the grammar, the
+repo-relative source file, the `examples/` file stem, the export-name base, the
+surfaces to print (`strict`, `loose`) and the committed render fixture under
+`packages/tools/tests/emit/__fixtures__/`. Everything that iterates the
+rebuilds reads this table: `pnpm run gen:examples`
+(`packages/tools/src/scripts/gen-examples.ts`), the freshness test
+(`generated-examples.test.ts`) and the render-bytes test
+(`dogfood-render-bytes.test.ts`). A new target is one row here and nothing
+else.
+
+### `packages/tools/src/emit/dogfood-targets.ts::DOGFOOD_REBUILDS`
+
+`DOGFOOD_TARGETS` expanded one row per surface, with the derived export name
+(`rebuild<Name>Generated` for strict, `rebuild<Name>Loose` for loose) and the
+derived file (`examples/<stem>.generated.ts`, `examples/<stem>-loose.generated.ts`).
+The spelling rule lives here alone; a consumer never rebuilds a name.

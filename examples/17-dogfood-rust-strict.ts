@@ -3,7 +3,7 @@ import { Delimiter, ir, TSKindId } from '@sittir/rust';
 // Rebuilds rust/crates/sittir-core/src/splice.rs through the FACTORY surface
 // alone — every node is spelled with `.strict` or a namespaced form, never a
 // loose config — so a coercion failure is never mistaken for a factory one.
-// `17-dogfood-rust.ts` rebuilds the same items through the coercion surface.
+// `17-dogfood-rust-loose.generated.ts` is the same target through the loose surface.
 //
 // Every gap marker names the layer that fails:
 //   (exposure) the factory builds the shape correctly, but no public

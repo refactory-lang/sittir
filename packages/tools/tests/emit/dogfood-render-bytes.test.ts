@@ -1,25 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { DOGFOOD_REBUILDS } from '../../src/emit/dogfood-targets.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
-const CASES = [
-	['rust', '17-dogfood-rust.generated.ts', 'rebuildSpliceGenerated', 'dogfood-rust.rendered'],
-	['typescript', '18-dogfood-typescript.generated.ts', 'rebuildFormatGenerated', 'dogfood-typescript.rendered'],
-	['python', '19-dogfood-python.generated.ts', 'rebuildPython4spaceGenerated', 'dogfood-python.rendered'],
-	['rust', '17-dogfood-rust-loose.generated.ts', 'rebuildSpliceLoose', 'dogfood-rust.rendered'],
-	['typescript', '18-dogfood-typescript-loose.generated.ts', 'rebuildFormatLoose', 'dogfood-typescript.rendered'],
-	['python', '19-dogfood-python-loose.generated.ts', 'rebuildPython4spaceLoose', 'dogfood-python.rendered'],
-	['rust', '20-keyword-openers-rust.generated.ts', 'rebuildKeywordOpenersRust', 'keyword-openers-rust.rendered'],
-	['typescript', '20-keyword-openers-typescript.generated.ts', 'rebuildKeywordOpenersTypescript', 'keyword-openers-typescript.rendered'],
-	['python', '20-keyword-openers-python.generated.ts', 'rebuildKeywordOpenersPython', 'keyword-openers-python.rendered']
-] as const;
-
 describe('dogfood rebuild render bytes', () => {
-	for (const [grammar, file, exportName, fixture] of CASES) {
+	for (const { grammar, file, exportName, rendered: fixture } of DOGFOOD_REBUILDS) {
 		it(`${grammar}: ${exportName} renders the committed fixture byte-for-byte`, async () => {
-			const absolute = ROOT + 'examples/' + file;
+			const absolute = ROOT + file;
 			const mod = (await import(pathToFileURL(absolute).href)) as Record<string, () => { $render(): string }>;
 			const rendered = mod[exportName]!().$render();
 			const expected = readFileSync(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture, 'utf8');
@@ -41,7 +30,9 @@ const READ_CASES = [
 describe('read then render is byte-exact', () => {
 	for (const [grammar, pkg, file] of READ_CASES) {
 		it(`${grammar}: a shallow and a deep read of ${file} both render its bytes`, async () => {
-			const { createEngine } = (await import(pkg)) as { createEngine: () => { parse(source: string, options?: { deep?: boolean }): { $render(): string } } };
+			const { createEngine } = (await import(pkg)) as {
+				createEngine: () => { parse(source: string, options?: { deep?: boolean }): { $render(): string } };
+			};
 			const source = readFileSync(ROOT + file, 'utf8');
 			const engine = createEngine();
 			expect(engine.parse(source).$render()).toBe(source);
