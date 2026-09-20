@@ -469,17 +469,20 @@ explicitly, the same answer a single slot gives.
 
 ---
 
-### L8 — A bare boolean is not a boolean literal
+### L8 — A bare boolean is not a boolean literal — RESOLVED
 
-`ir.letDeclaration({ pattern: 'x', value: true })` and `arguments: [true]`
-both reach the transport as a raw boolean and fail there. `_resolveScalar`
-looks the boolean up in the leaf registry under `boolean_literal`, and no
-such row exists: `boolean_literal` is an enum of two keywords, which the
-registry does not carry. The fix is for a boolean to resolve to the enum's
-member by text (`true`/`false`) through the enum's own member table, the
-coercion the spec gives it (`literal.boolean.true`), at every slot that
-admits the enum. Affects rust; typescript and python route the same shape
-through their own boolean kinds and need the same check.
+Was: `ir.letDeclaration({ pattern: 'x', value: true })` and `arguments: [true]`
+reached the transport as a raw boolean and failed there. `_resolveScalar`
+looked the boolean up in the leaf registry under the name `boolean_literal`,
+and no such row exists: rust's `boolean_literal` is an enum of two keywords,
+which the registry never carries, and typescript and python have no kind of
+that name at all, so the branch was not even emitted for them. The boolean
+kinds now come from the model rather than a name (`scalarLeafKinds`): the
+enum whose two member texts are `true` and `false` in any case, or the two
+keyword kinds with those texts. A boolean resolves to the member's kind id,
+which the slot admits as a stored id, and `LeafScalarMap` widens the enum
+or both keywords to `boolean`, so `value: true` and `[true, false]` build
+on all three grammars.
 
 ---
 

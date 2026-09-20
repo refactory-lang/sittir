@@ -56,7 +56,9 @@ export function isAuthoredCompound(
 	return node instanceof AbstractAssembledCompound && !(node instanceof AssembledList);
 }
 
-export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
+export function isTextLeaf(
+	node: AssembledNode
+): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
 	return isVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
@@ -608,7 +610,9 @@ export function transparentWrapperContentSlot(kind: string, nodeMap: NodeMap): A
 export function listRestParamType(nonEmpty: boolean, element: string, options: string | undefined): string {
 	if (nonEmpty) {
 		const elements = `[first: ${element}, ...rest: ${element}[]]`;
-		return options === undefined ? elements : `${elements} | [options: ${options}, first: ${element}, ...rest: ${element}[]]`;
+		return options === undefined
+			? elements
+			: `${elements} | [options: ${options}, first: ${element}, ...rest: ${element}[]]`;
 	}
 	return options === undefined ? `readonly ${element}[]` : `[first?: ${element} | ${options}, ...rest: ${element}[]]`;
 }
@@ -669,16 +673,39 @@ export function factoryTakesSpreadChildren(node: AssembledNode, nodeMap: NodeMap
 
 export type FromBareInput = 'value' | 'elements';
 
+export interface BooleanLeafKinds {
+	readonly trueKind: string;
+	readonly falseKind: string;
+}
+
 export interface ScalarLeafKinds {
-	readonly boolean?: string;
+	readonly boolean?: BooleanLeafKinds;
 	readonly integer?: string;
 	readonly float?: string;
+}
+
+const BOOLEAN_TEXTS = ['true', 'false'] as const;
+
+function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
+	for (const [kind, node] of nodeMap.nodes) {
+		if (!(node instanceof AssembledEnum)) continue;
+		const byText = new Map([...node.resolvedByText].map(([text, entry]) => [text.toLowerCase(), entry.kind]));
+		if (byText.size !== 2 || !BOOLEAN_TEXTS.every((t) => byText.has(t))) continue;
+		return { trueKind: byText.get('true')!, falseKind: byText.get('false')! };
+	}
+	const keywords = new Map<string, string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node instanceof AssembledKeyword && BOOLEAN_TEXTS.includes(node.text.toLowerCase() as 'true' | 'false'))
+			keywords.set(node.text.toLowerCase(), node.resolvedKind ?? kind);
+	}
+	if (!BOOLEAN_TEXTS.every((t) => keywords.has(t))) return undefined;
+	return { trueKind: keywords.get('true')!, falseKind: keywords.get('false')! };
 }
 
 export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
 	const pick = (...names: readonly string[]): string | undefined => names.find((name) => nodeMap.nodes.has(name));
 	return {
-		boolean: pick('boolean_literal'),
+		boolean: booleanLeafKinds(nodeMap),
 		integer: pick('integer_literal', 'integer'),
 		float: pick('float_literal', 'float')
 	};
@@ -693,10 +720,7 @@ export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | un
 export function isAffixedLeaf(node: AssembledNode | undefined): boolean {
 	if (node === undefined || lexedContentSlot(node) === undefined) return false;
 	const rule = (node as AbstractAssembledCompound).renderRule;
-	return (
-		rule.type === SEQ &&
-		rule.members.some((member) => member.type === STRING && member.fieldName === undefined)
-	);
+	return rule.type === SEQ && rule.members.some((member) => member.type === STRING && member.fieldName === undefined);
 }
 
 export function bareValueSlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
@@ -781,8 +805,7 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
-	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node))
-		return 'text';
+	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node)) return 'text';
 	if (isHiddenPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
 	if (node instanceof AbstractAssembledCompound) {
@@ -891,7 +914,10 @@ export function expandToConcreteParseKinds(names: readonly string[], nodeMap: No
 	return expanded;
 }
 
-export function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
+export function collectConcreteStorageKeys(
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly string[] | undefined {
 	if (!slot.isUnnamed) return undefined;
 	const labelNames = valueParseLabelsOf(slot);
 	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));

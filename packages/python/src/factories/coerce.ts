@@ -255,6 +255,7 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 }
 
 function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
+	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
 	if (typeof v === 'number') {
 		if (Number.isInteger(v)) {
 			const e = _leafRegistry['integer'];

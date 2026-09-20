@@ -1,9 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { DelimiterFlags,
-	isFixedTextLeaf,
-	isKindIdStored
-} from '../compiler/model/node-map.ts';
+import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
@@ -45,12 +42,7 @@ import type {
 	AssembledEnvelope,
 	AssembledPolymorph
 } from '../compiler/model/node-map.ts';
-import {
-	AssembledList,
-	AssembledEnum,
-	fixedTextOfKind,
-	snakeToCamel
-} from '../compiler/model/node-map.ts';
+import { AssembledList, AssembledEnum, fixedTextOfKind, snakeToCamel } from '../compiler/model/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
 	isRequired,
@@ -135,7 +127,10 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('export type LeafScalarMap = {');
 	const scalars = scalarLeafKinds(nodeMap);
 	const scalarEntries = new Map<string, string>();
-	if (scalars.boolean !== undefined) scalarEntries.set(scalars.boolean, 'boolean');
+	if (scalars.boolean !== undefined) {
+		scalarEntries.set(scalars.boolean.trueKind, 'boolean');
+		scalarEntries.set(scalars.boolean.falseKind, 'boolean');
+	}
 	if (scalars.integer !== undefined) scalarEntries.set(scalars.integer, 'number');
 	if (scalars.float !== undefined) scalarEntries.set(scalars.float, 'number');
 	for (const kind of leafKinds) {

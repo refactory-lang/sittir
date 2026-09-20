@@ -1379,16 +1379,17 @@ function emitResolverHelpers(
 
 	const scalars = scalarLeafKinds(nodeMap);
 	const scalarParam = resolveScalarParamName(
-		scalars.boolean !== undefined,
+		scalars.boolean !== undefined && kindEntries !== undefined,
 		scalars.integer !== undefined,
 		scalars.float !== undefined
 	);
 	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
-	if (scalars.boolean !== undefined) {
-		lines.push('  if (typeof v === "boolean") {');
-		lines.push(`    const e = _leafRegistry[${JSON.stringify(scalars.boolean)}];`);
-		lines.push('    return e ? e.factory(v ? "true" : "false") : undefined;');
-		lines.push('  }');
+	const booleanMember = (kind: string): string | undefined =>
+		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
+	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
+	const falseMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.falseKind);
+	if (trueMember !== undefined && falseMember !== undefined) {
+		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
 	}
 	if (scalars.integer !== undefined || scalars.float !== undefined) {
 		lines.push('  if (typeof v === "number") {');

@@ -28,7 +28,10 @@ export type NodeData<K extends NodeKind<TypescriptGrammar>> = BaseNodeData<Types
 export type NodeConfig<K extends NodeKind<TypescriptGrammar>> = BaseNodeConfig<TypescriptGrammar, K>;
 export type TreeNode<K extends NodeKind<TypescriptGrammar>> = BaseTreeNode<TypescriptGrammar, K>;
 
-export type LeafScalarMap = {};
+export type LeafScalarMap = {
+	[TSKindId.True]: boolean;
+	[TSKindId.False]: boolean;
+};
 
 export type LeafStringMap = {
 	[TSKindId.Import]: 'import';

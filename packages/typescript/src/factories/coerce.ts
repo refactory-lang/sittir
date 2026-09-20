@@ -336,7 +336,8 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(_v: boolean | number): AnyNodeData | number | undefined {
+function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
+	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
 	return undefined;
 }
 

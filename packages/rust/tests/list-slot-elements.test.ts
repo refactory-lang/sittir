@@ -32,6 +32,11 @@ describe('a list slot takes its elements bare, one or many', () => {
 		expect(ir.letDeclaration({ pattern: 'x', value: 1 }).$render()).toBe('let x = 1;');
 	});
 
+	it('resolves a bare boolean to the boolean literal, one or many, at a list slot and at a single slot alike', () => {
+		expect(ir.callExpression({ function: 'f', arguments: [true, false] }).$render()).toBe('f(true, false)');
+		expect(ir.letDeclaration({ pattern: 'x', value: true }).$render()).toBe('let x = true;');
+	});
+
 	it('takes the options object first and optional', () => {
 		expect(ir.fieldDeclarationListElements(field()).$render()).toBe('a: i32,');
 		expect(ir.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');

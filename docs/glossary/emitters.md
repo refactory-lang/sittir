@@ -5132,6 +5132,19 @@ projects it through the token interior.
  *  scalar the resolver accepts is exactly a scalar the type admits. */
 ```
 
+#### the boolean kinds come from the model, not a name
+
+A boolean resolves to a kind id, never through the leaf registry: the enum
+whose two member texts are `true` and `false` in any case (rust's
+`boolean_literal`, members `true_keyword` / `false_keyword`), or, where the
+grammar has no such enum, the two keyword kinds with those texts (typescript
+`true` / `false`, python `True` / `False`). `trueKind` / `falseKind` are the
+kinds whose ids `_resolveScalar` returns, which the slot admits as a stored
+kind id (through `_ENUMS_OF_MEMBER` when the slot names the enum), and the
+two ids `LeafScalarMap` widens to `boolean`: a slot stores the member ids,
+never the enum's own, so the map is keyed on the members and the types
+package's `WidenScalarKindId` lets a bare id with a scalar entry admit it.
+
 ### `packages/codegen/src/emitters/shared.ts::wrapExposesChildren`
 
 ```text
