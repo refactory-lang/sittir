@@ -1,6 +1,6 @@
 # Factory ergonomics — minor enhancements
 
-**Status:** Design. Collects the small construction-surface items that the
+**Status:** Landed. Items 1 and 2 are on the loose surface and its generated rebuilds; item 3 is generalized by `2026-09-17-token-interior-slots.md`, which makes it that spec's first application. Collects the small construction-surface items that the
 loose-surface contract (`docs/factory-surface-issues.md`, "The contract")
 pushed outside itself: each is a declaration or a signature convention on
 both surfaces, not a coercion. Each item stands alone; they share this page
@@ -63,8 +63,8 @@ projection (`nodeToConfig`) follows the seat as it does for a group.
   strict spelling build and render `T{a}=>{}`; the hand-spelled wrapper
   form still builds (the wrapper's own factory is untouched).
 - `ir-render-parse` stays clean on rust; `factory-render-parse` unchanged.
-- The generated rebuild of `examples/17-dogfood-rust.ts` spells its arms
-  without the inner `pattern:` key.
+- The generated loose rebuild `examples/17-dogfood-rust-loose.generated.ts`
+  spells its arms without the inner `pattern:` key.
 - `node-model.json5` records the seat as `splice` on both parents.
 
 ---
@@ -118,7 +118,8 @@ union, and the strict wrapper's signature is unchanged.
   render `<Edit>`; `body: ir.fieldDeclaration(…)` builds the field list.
 - A type-level test pins the loose slot type as `T | T[] | Envelope` for a
   list-envelope slot and rejects a trailing options object on the wrapper.
-- `examples/17-dogfood-rust.ts` spells its single-element lists bare.
+- `examples/17-dogfood-rust-loose.generated.ts` spells its single-element
+  lists bare.
 - `factory-render-parse` counts unchanged.
 
 ---
