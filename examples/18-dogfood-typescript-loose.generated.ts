@@ -119,7 +119,7 @@ export function rebuildFormatLoose() {
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.returnStatement({
-					expression: ir.templateString("leading", "s", "trailing"),
+					expression: ir.templateString(ir.identifier("leading"), ir.identifier("s"), ir.identifier("trailing")),
 					terminator: TSKindId.Semi,
 				})],
 				automaticSemicolon: true,

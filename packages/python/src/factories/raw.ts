@@ -21,20 +21,20 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 }
 
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
-const _leafRe_buildEscapeSequence =
-	/^(?:\\(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 const _leafRe_buildInteger =
 	/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u;
 const _leafRe_buildFloat =
 	/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildComment = /^(?:#(?:.*))$/u;
 const _leafRe_buildLineContinuation = /^(?:\\(?:(?:\r)?\n|\0))$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
 const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
+const _slotRe_buildEscapeSequence_content =
+	/^(?:(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u;
+const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
 	const _statements = children;
@@ -3206,16 +3206,25 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
-export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
-	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
+export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
+		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.EscapeSequence as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequence as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequence(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3328,16 +3337,25 @@ export function buildAwait(value: T.PrimaryExpression): T.Await.Built {
 	);
 }
 
-export function buildComment(text: string): T.Comment.Built {
-	if (text.length === 0) throw new Error(`comment: text must be non-empty`);
-	if (!_leafRe_buildComment.test(text)) throw new Error(`comment: text does not match pattern: ${text}`);
+export function buildComment(value: string): T.Comment.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildComment_content.test(_content))
+		throw new Error(`comment.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.Comment as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.Comment as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildComment(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -5013,7 +5031,7 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	string_content: T.StringContent.Built;
 	interpolation: T.Interpolation.Built;
-	escape_sequence: T.EscapeSequence;
+	escape_sequence: T.EscapeSequence.Built;
 	format_specifier: T.FormatSpecifier.Built;
 	type_conversion: T.TypeConversion;
 	integer: T.Integer;
@@ -5023,7 +5041,7 @@ export type FluentKindMap = {
 	false: T.False;
 	none: T.None;
 	await: T.Await.Built;
-	comment: T.Comment;
+	comment: T.Comment.Built;
 	line_continuation: T.LineContinuation;
 	positional_separator: T.PositionalSeparator;
 	keyword_separator: T.KeywordSeparator;

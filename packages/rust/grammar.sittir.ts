@@ -9,7 +9,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { enrich, field, alias, variant, arm, splice, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
+import { enrich, field, alias, variant, arm, splice, regex, wire, prec, token, grammar, preference } from '../codegen/src/dsl/dsl-authoring.ts';
 
 declare const string: (value: string) => unknown;
 
@@ -193,6 +193,10 @@ export default grammar(
 			},
 
 			patches: {
+				metavariable: { '.': regex(/\$(?<name>[a-zA-Z_]\w*)/) },
+
+				shebang: { '.': regex(/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/) },
+
 				// See docs/rust-grammar-sittir-glossary.md::use_wildcard
 				use_wildcard: {
 					'0/0/0': field('path')
@@ -694,6 +698,9 @@ export default grammar(
 					)
 			},
 			renderAs: (_$) => ({
+				float_literal: /[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?/,
+				string_content: /[^"\\]+/,
+				raw_string_literal_content: /[\s\S]*/,
 				_inner_line_doc_comment_marker: token.immediate('!'),
 				_outer_block_doc_comment_marker: token.immediate('*'),
 				_inner_block_doc_comment_marker: token.immediate('!'),

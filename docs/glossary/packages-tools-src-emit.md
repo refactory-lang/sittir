@@ -98,3 +98,10 @@ A single-slot kind's argument in both spellings: the strict form is what the
 argument is when the wrapper is dropped and it lands on the parent's slot,
 where the parent's rules decide its spelling afresh; the loose form is its
 spelling inside the wrapper's own call.
+
+### `packages/tools/src/emit/factory-source.ts::printVerbatimText`
+
+```text
+Text held by a verbatim slot with no kind is printed as the bare string: a lexed kind's content slot
+(`content: "x"`), never as an identifier leaf.
+```

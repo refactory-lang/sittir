@@ -44,7 +44,7 @@
     },
     "hash_bang_line": {
       "type": "PATTERN",
-      "value": "#!.*"
+      "value": "#!(?<content>.*)"
     },
     "export_statement": {
       "type": "CHOICE",
@@ -5166,42 +5166,25 @@
       }
     },
     "comment": {
-      "type": "TOKEN",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "//"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[^\\r\\n\\u2028\\u2029]*"
-              }
-            ]
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "/*"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[^*]*\\*+([^/*][^*]*\\*+)*"
-              },
-              {
-                "type": "STRING",
-                "value": "/"
-              }
-            ]
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "comment_line",
+          "annotations": {
+            "variant": "line",
+            "variantOf": "comment"
           }
-        ]
-      }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comment_block",
+          "annotations": {
+            "variant": "block",
+            "variantOf": "comment"
+          }
+        }
+      ]
     },
     "template_string": {
       "type": "SEQ",
@@ -13156,6 +13139,48 @@
         }
       ]
     },
+    "comment_line": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "//"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\r\\n\\u2028\\u2029]*"
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "comment_block": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "/*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "([^*]|\\*+[^*\\/])*\\**"
+          },
+          {
+            "type": "STRING",
+            "value": "*/"
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "binary_expression_in": {
       "type": "PREC_LEFT",
       "value": "binary_relation",
@@ -14677,15 +14702,19 @@
   "extras": [
     {
       "type": "SYMBOL",
-      "name": "comment"
-    },
-    {
-      "type": "SYMBOL",
       "name": "html_comment"
     },
     {
       "type": "PATTERN",
       "value": "[\\s\\p{Zs}\\uFEFF\\u2028\\u2029\\u2060\\u200B]"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment_line"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "comment_block"
     }
   ],
   "conflicts": [
@@ -16521,6 +16550,7 @@
     "type",
     "primary_type",
     "_whitespace",
+    "comment",
     "index_signature",
     "import_specifier",
     "export_statement",

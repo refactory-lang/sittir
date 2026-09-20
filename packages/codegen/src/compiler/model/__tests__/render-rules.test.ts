@@ -435,7 +435,7 @@ describe('seamRenderRules', () => {
 		]);
 		const members = membersOf(out.rules.call!);
 		expect(seamPartOf(members[0]!)).toEqual({ fieldName: 'call_before', label: 'call_before', side: 'seam', defaultArm: 'space', arms: ['tight', 'space', 'newline', 'blankline'] });
-		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', edgeTokens: ['lparen'], arms: ['tight', 'space', 'newline', 'blankline'] });
+		expect(seamPartOf(members[4]!)).toEqual({ fieldName: 'call_after', label: 'call_after', side: 'seam', defaultArm: 'newline', edgeLiterals: ['lparen'], arms: ['tight', 'space', 'newline', 'blankline'] });
 		expect(out.rules._helper).toBe(rules._helper);
 		expect(out.rules._call).toBe(rules._call);
 		expect(out.rules.pick).toBe(rules.pick);
@@ -466,14 +466,14 @@ describe('seamRenderRules', () => {
 		const edge = (kind: string, index: number) => {
 			const choice = membersOf(out.rules[kind]!)[index]!;
 			const part = seamPartOf(choice);
-			return { fieldName: part.fieldName, defaultArm: part.defaultArm, edgeTokens: part.edgeTokens, origin: seamChoiceDefault(choice)?.origin };
+			return { fieldName: part.fieldName, defaultArm: part.defaultArm, edgeLiterals: part.edgeLiterals, origin: seamChoiceDefault(choice)?.origin };
 		};
-		expect(edge('args', 0)).toEqual({ fieldName: 'args_before', defaultArm: 'tight', origin: 'cascade', edgeTokens: ['lparen'] });
-		expect(edge('args', 6)).toEqual({ fieldName: 'args_after', defaultArm: 'newline', origin: 'cascade', edgeTokens: ['rparen'] });
-		expect(edge('paren', 0)).toEqual({ fieldName: 'paren_before', defaultArm: 'space', origin: 'preference', edgeTokens: ['lparen'] });
-		expect(edge('call', 0)).toEqual({ fieldName: 'call_before', defaultArm: 'space', origin: 'fallback', edgeTokens: undefined });
-		expect(seamPartOf(membersOf(out.rules.call!)[0]!).edgeTokens).toBeUndefined();
-		expect(spacingSitesOf(out, nodeMap).find((s) => s.address === 'args_before')?.edgeTokens).toEqual(['lparen']);
+		expect(edge('args', 0)).toEqual({ fieldName: 'args_before', defaultArm: 'tight', origin: 'cascade', edgeLiterals: ['lparen'] });
+		expect(edge('args', 6)).toEqual({ fieldName: 'args_after', defaultArm: 'newline', origin: 'cascade', edgeLiterals: ['rparen'] });
+		expect(edge('paren', 0)).toEqual({ fieldName: 'paren_before', defaultArm: 'space', origin: 'preference', edgeLiterals: ['lparen'] });
+		expect(edge('call', 0)).toEqual({ fieldName: 'call_before', defaultArm: 'space', origin: 'fallback', edgeLiterals: undefined });
+		expect(seamPartOf(membersOf(out.rules.call!)[0]!).edgeLiterals).toBeUndefined();
+		expect(spacingSitesOf(out, nodeMap).find((s) => s.address === 'args_before')?.edgeLiterals).toEqual(['lparen']);
 	});
 
 	it('cascades a token-set edge only when every token of its choice resolves to one declared face', () => {
@@ -488,9 +488,9 @@ describe('seamRenderRules', () => {
 			nodeMap.nodes.set('range', new AssembledBranch('range', rules.range as never, rules.range));
 			const out = resolveRenderRules({ nodeMap, kindEntries: entries, options } as never, () => {}).seamed;
 			const choice = membersOf(out.rules.range!)[0]!;
-			return { edgeTokens: seamPartOf(choice).edgeTokens, arm: seamChoiceDefault(choice)?.arm, origin: seamChoiceDefault(choice)?.origin };
+			return { edgeLiterals: seamPartOf(choice).edgeLiterals, arm: seamChoiceDefault(choice)?.arm, origin: seamChoiceDefault(choice)?.origin };
 		};
-		expect(build({ _: { '".."/before': preference('tight'), '"..="/before': preference('tight') } })).toEqual({ edgeTokens: ['dot_dot', 'dot_dot_eq'], arm: 'tight', origin: 'cascade' });
+		expect(build({ _: { '".."/before': preference('tight'), '"..="/before': preference('tight') } })).toEqual({ edgeLiterals: ['dot_dot', 'dot_dot_eq'], arm: 'tight', origin: 'cascade' });
 		expect(build({ _: { '".."/before': preference('tight'), '"..="/before': preference('space') } }).origin).toBe('fallback');
 		expect(build({ _: { '".."/before': preference('tight') } }).origin).toBe('fallback');
 	});

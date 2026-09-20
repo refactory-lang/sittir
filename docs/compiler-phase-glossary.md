@@ -208,6 +208,13 @@ diagnostics — the per-build phantom-kind inventory persisted to
 `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` (shrink-only
 ceilings).
 
+Link also structures token interiors (`compiler/token-interior.ts`). A `token(seq(...))` that mixes literal text
+with a pattern-bearing slot, and a bare pattern that draws named groups, become a seq of literals and FIELD-named
+slots on the sittir side; the parser rule is untouched. The kind is then a compound stamped `lexed`: its text is read
+as one token, its template writes the literal runs with adjacency marks, and `interiorOf` (emitters) serializes the
+structure once for the node model, the runtime `TOKEN_INTERIORS` table, the wrap projection, the leaf registry and
+the per-slot guards.
+
 Reference: [glossary/compiler.md](glossary/compiler.md).
 
 ## Phase 3: Normalize (`compiler/normalize.ts`, `compiler/wrapper-deletion.ts`)

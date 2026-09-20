@@ -206,6 +206,13 @@ The whole-text guard of every text-leaf factory. For each pattern-model kind tha
 
 The guards themselves (`buildLeafGuards`) always run: a non-empty check on every text leaf whose pattern does not accept the empty string (an empty doc comment is valid text for a `.*` leaf, so the pattern alone decides there) and, where a constant exists, `!_leafRe_<factory>.test(text)`. Neither is conditional on a debug flag; the guard is the factory's contract.
 
+#### token interior
+
+```text
+Besides one anchored regex per pattern leaf, every text slot of a lexed kind gets its own anchored regex keyed
+by kind and slot; the raw builder tests a slot value against that constant.
+```
+
 ### `packages/codegen/src/emitters/factories.ts::factoryTypeDiscriminant`
 
 ```text
@@ -511,6 +518,12 @@ sites; a seat with no arm would be a site the renderer never fills.
 // compatible (same fields/children).
 ```
 
+#### token interior
+
+```text
+A pattern value contributes `string`; a slot holding only pattern values never types as `never`.
+```
+
 ### `packages/codegen/src/emitters/factories.ts::autoStampExpression`
 
 ```text
@@ -745,6 +758,14 @@ forwards a config or a spread to the target factory) is not emitted when the
 target is a hoisted, config-shaped group: that parent keeps the direct
 signature only, and the overlay's splice seat (`spliceShape`) supplies the
 config form. Group seating is emitted in one place.
+
+#### token interior
+
+```text
+Every text slot of a lexed kind is guarded by its own anchored pattern before the node is built; the message
+names the kind and the slot. The guards are the interior's slot patterns, so the whole-token regex is never
+tested against a slot value.
+```
 
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
 
@@ -1496,6 +1517,13 @@ so no kind-to-text table is needed here.
 // structural overlap (children + leaf shape) is enough at runtime.
 ```
 
+#### token interior
+
+```text
+A lexed kind's coercer accepts a bare string for its content slot: the string is rebound to a config object
+(`_cfg`) after the NodeData passthrough, and every slot resolver reads that binding.
+```
+
 ### `packages/codegen/src/emitters/from.ts::kindDiscriminantCheck`
 
 ```text
@@ -2061,6 +2089,26 @@ A pattern leaf's entry carries `pattern:` (`anchoredLeafRegexLiteral`) when its 
 // signature stays uniform.
 ```
 
+#### token interior
+
+```text
+A lexed kind is registered with the whole-token interior regex and a factory that projects the text into slot
+values (`lexedConfig`) before calling the raw builder, so a bare token spelling in a loose position (`'1u8'`, a
+number scalar) still resolves to the kind.
+```
+
+#### affixed leaves
+
+```text
+An affixed leaf (`isAffixedLeaf`: a lexed kind with a required fixed member) has a content row and no pattern: its text
+differs from its content, so a bare string is never matched against it. Where the slot offers a choice, the kind must be
+supplied (`ir.charLiteral('a')`); where the slot admits exactly one leaf, a bare string is that leaf's content and goes
+through the kind's own coercer, as the strict surface admits a hidden leaf's text. The emitted `_AFFIXED_KINDS` set names
+them; `_resolveOne` throws when a choice consists only of affixed leaves. An unaffixed lexed kind (rust `integer_literal`)
+keeps its whole-text pattern row, and a visible external scanner token authors its shape in `renderAs` so every
+factory-bearing pattern leaf has one; a leaf with a factory and no pattern is an emitter error, never a last resort.
+```
+
 ### `packages/codegen/src/emitters/from.ts::emitResolveByKindHelper`
 
 ```text
@@ -2420,6 +2468,12 @@ Emits the role-named getters on `synonym` (`function`, `class`, `method`, `modul
  * enum-of-literals is a leaf but mints no factory (`rawFactoryName` is
  * undefined) — its members are spelled as kind ids.
  */
+```
+
+#### token interior
+
+```text
+A lexed kind with a bare content slot is a leaf factory for the role synonyms; it is called through its hoisted factory.
 ```
 
 ### `packages/codegen/src/emitters/ir.ts::returnTypeExpr`
@@ -2808,6 +2862,11 @@ Emits the role-named getters on `synonym` (`function`, `class`, `method`, `modul
 // see `wrap.ts::_keepModelledSlots`.)
 ```
 
+#### token interior
+
+```text
+`is_text_kind` also lists lexed compounds: the reader captures their text and the wrap layer projects the slots.
+```
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::is_text_kind`
 
@@ -4882,6 +4941,13 @@ machines.
 // hidden kindEnum / bitflag — existing per-slot/AnyTransport path already handles these correctly.
 ```
 
+#### token interior
+
+```text
+A slot whose values are all pattern values is a primitive verbatim slot: its transport field is `String`, not a
+transport node.
+```
+
 ### `packages/codegen/src/emitters/shared.ts::kindEnumTextIdPairs`
 
 ```text
@@ -5001,6 +5067,14 @@ machines.
  *  the two surfaces cannot disagree about which kinds take a bare value.
  *  A sole MANY slot ('spread') is deliberately not here: its coercer hands
  *  the input to the strict factory unresolved. */
+```
+
+#### token interior
+
+```text
+A lexed kind with exactly one required text slot accepts a bare value for that slot, as a direct kind does:
+`ir.charLiteral('a')` is content `a`. Whole-token text reaches a lexed kind only through the leaf registry, which
+projects it through the token interior.
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::scalarLeafKinds`
@@ -6748,6 +6822,12 @@ A pattern leaf that some slot admits as a hidden text leaf (`hiddenTextLeafKinds
  *  `BareArm`) — spelling the widened type at the row, or indexing the
  *  kind's `LooseArgs` tuple for it, resolves eagerly and re-enters the row
  *  when the slot's union reaches the kind itself (TS2310 / TS4110). */
+```
+
+#### token interior
+
+```text
+The bare slot of a coercer row is the direct slot, or the content slot of a lexed kind.
 ```
 
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
@@ -9260,6 +9340,15 @@ Per-package `vitest.config.ts`: test include/env plus a `resolve.alias` block ma
  */
 ```
 
+#### own symbol
+
+```text
+Seating an enum arm also records the enum's own parser symbol (`ownSymbolIds`): the reference's stamped storage
+symbol, for an enum that is not hidden. A parse surfaces such an enum as one node of that symbol carrying the member
+text (`{ $type: 346, $text: 'object' }`), not as the member's own id, so the symbol is what identifies a read enum
+leaf. A hidden enum is never issued by the parser and records nothing.
+```
+
 ### `packages/codegen/src/emitters/shared.ts::classifyFieldStorageInfo`
 
 One encoding per slot, derived from `enumArmsOf`. Presence slots come first (`keywordPresenceKind`: boolean / bitflag). Otherwise: a slot whose arms are all fixed-text members (directly or through a supertype) classifies `kindEnum` (whole-slot id storage); a slot mixing those with node arms classifies `mixedEnum` — `kindId` arms seat as ids, `node` arms as nodes, and a genuinely anonymous `literal` arm (no kind at all) seats as its quoted text: it contributes to `texts` but not `enumKinds`, so the text→id table has no row for it and `coerceMixedEnumStorage` passes it through unchanged. `enumKinds` / `texts` / `enumKindsById` describe only the fixed-text arms. `verbatim` survives only for a slot with no kind-bearing arm at all (nothing to seat as an id), an enum arm with no resolved members, and a keyword reference with no wire identity. There is no longer an escape from `mixedEnum` back to text for layout literals, visible keyword references, or named-owner terminals: a keyword kind stores as its id everywhere, and the two ambiguities that escape used to dodge — an identifier spelled like a soft keyword (`type`), and whitespace-only layout tokens beside nodes — are answered by the coercion table (a string matching a fixed-text arm IS that arm) and measured by `validate:native`, not by a second encoding.
@@ -10042,7 +10131,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * `origin` is a census-only fact, orthogonal to `resolution`: it names
  * where the boundary's governing seam arm(s) came from, not how the
  * boundary bakes. `preference` means a kind- or supertype-scoped
- * `options:` declaration reached the seam; `token-default` means only a
+ * `options:` declaration reached the seam; `literal-default` means only a
  * grammar-wide `_`-scope declaration did; `fallback` means neither did —
  * the boundary has no `whitespaceChoice` neighbor at all (not
  * token-adjacent, so no declaration could ever reach it), or its
@@ -10052,7 +10141,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * mechanism). When a boundary sits between two independently-resolved
  * seam faces (a token's `after` face and the next token's `before`
  * face), the record reports the more specific of the two
- * (`preference` > `token-default` > `fallback`) — the same specificity
+ * (`preference` > `literal-default` > `fallback`) — the same specificity
  * order `resolveBindings` already uses to pick a winning declaration.
  * Never re-derived from address text here or anywhere the record is
  * read; it is read off the `origin` annotation
@@ -10066,15 +10155,15 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 ```text
 /** Per-grammar census of template-boundary seam resolutions — the
  *  static-seam-resolution spec's residue report. `preferenceOrigin`,
- *  `tokenDefaultOrigin` and `fallbackOrigin` count `boundaries` by
- *  `SeamBoundaryRecord.origin` — the token-defaults design's measure of
+ *  `literalDefaultOrigin` and `fallbackOrigin` count `boundaries` by
+ *  `SeamBoundaryRecord.origin` — the literal-defaults design's measure of
  *  how many boundaries a `_`-scope declaration would still need to
  *  reach. */
 ```
 
 `cascadeOrigin` counts the boundaries whose seam took its arm from the edge
 token's grammar-wide face (origin `cascade`), beside the preference,
-token-default and fallback counts.
+literal-default and fallback counts.
 
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
 
@@ -10310,6 +10399,12 @@ the edge of what the seam sits beside.
 // Populate ownerSlots so emitSymbol can fall back to name-based slot
 // lookup when slotByRuleId lookup fails (gap: simplifyRule may create
 // new rule objects without preserving IDs, breaking slotByRuleId).
+```
+
+#### token interior
+
+```text
+For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRule` glues its members.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitGroupTemplate`
@@ -10558,6 +10653,14 @@ seam and a literal space.
 // dropped, which would change what a trailing NEWLINE rule does at the
 // end of a render. NEWLINE content is exactly this rule's text, not an
 // inter-node seam, so `text` is the correct call.
+```
+
+#### token interior
+
+```text
+The top seq of a lexed kind is joined with adjacency marks instead of seam decisions: every slot and seam after
+the first member is preceded by an adjacent mark, and inside a gate the mark sits at the head of each arm so an
+absent optional slot leaves no mark behind. The boundary is recorded as static-glued.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::staticListInterior`
@@ -12622,6 +12725,12 @@ A flattened parent's namespace is its variant routes. The supertype-group namesp
 // type of every `input.<field>` read below.
 ```
 
+#### token interior
+
+```text
+The config type the passthrough narrows to gains `string` when the kind accepts a bare content value.
+```
+
 ### `packages/codegen/src/emitters/from.ts::ChildrenFromNode`
 
 ```text
@@ -13106,6 +13215,15 @@ candidate list.
 // text. Text survives only as the fallback for unstamped members.
 ```
 
+#### own symbol
+
+```text
+A mixed slot whose arms include an enum with its own parser symbol passes those symbols as the fourth argument of
+`projectMixedEnumStorage`; the projection folds a read node of such a symbol onto the member id its text names, so the
+transport sees the one identity the slot's enum carries. A pure enum slot needs none: `projectKindEnumStorage`
+folds by text unconditionally.
+```
+
 ### `packages/codegen/src/emitters/wrap.ts::SAFE_IDENT_KEY`
 
 ```text
@@ -13356,6 +13474,13 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 
 ```text
 // $with — calls the corresponding factory for update operations.
+```
+
+#### token interior
+
+```text
+A lexed kind projects a read node's `$text` through `TOKEN_INTERIORS[kind]` at wrap time, before slot
+normalization; a node that already carries slot storage (built or edited) is left alone.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter`
@@ -15230,20 +15355,20 @@ delimiter site.
 `strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
 `SPACING_SITES` row: how firmly the site's table default holds against the
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
-declared (`preference`, `token-default`, `word-default`) is 2, `cascade` is 1, the fallback
+declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeamStrength`
 
 How firmly a site's table default holds against the mark meeting it at the
-same gap: a declared value (a preference or token-default row, a keyword's
+same gap: a declared value (a preference or literal-default row, a keyword's
 word-default, or a value set on the node) outranks a cascaded one (the edge
 token's face reaching the kind edge), which outranks the bare fallback.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
 An exhaustive switch over `SeamOrigin | undefined`: `preference`,
-`token-default` and `word-default` are declared (2), `cascade` is 1, and
+`literal-default` and `word-default` are declared (2), `cascade` is 1, and
 `fallback` or no origin is 0. A new origin fails to compile here until it is
 given a strength.
 
@@ -15865,3 +15990,74 @@ Whether a separated list's builder takes an options object: a separator kind to 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
 The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call.
+
+### `packages/codegen/src/emitters/interior.ts::interiorOf`
+
+```text
+The slot structure of a lexed kind, derived once from its render rule and its slots: an ordered list of
+literal, flag, enum and slot entries, the anchored regex with one named group per slot, and the config key of
+each slot. `node-model.json5`, `TOKEN_INTERIORS`, the wrap projection, the leaf registry and the per-slot
+guards all read this; nothing re-derives it. Slots are matched left to right, each greedy (the regex's own
+semantics, the lexer's longest match over the whole token). A lexed kind whose render rule is not a sequence, or
+whose member is neither template text nor a slot, is a compile-time error naming the kind and the member. An
+optional literal followed by a literal it cannot be told apart from at their first differing character is a
+compile-time error naming both.
+```
+
+### `packages/codegen/src/emitters/consts.ts::emitTokenInteriors`
+
+```text
+Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kind, typed by `TokenInterior`.
+```
+
+### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
+
+```text
+The sole required text slot of a lexed kind, or undefined. It is the slot a bare loose value stands for.
+```
+
+### `packages/codegen/src/emitters/shared.ts::isAffixedLeaf`
+
+```text
+A lexed kind whose interior has a required fixed member (a quote, a sigil, a comment opener): its text differs
+from its content, so a bare string is never matched against it. An optional affix does not count, because the
+content may then equal the whole text (rust integer_literal). See "affixed leaves" under buildLeafRegistryEntries.
+```
+
+### `packages/codegen/src/emitters/render-body.ts::adjacentInto`
+
+```text
+Puts an adjacency mark before every slot and seam of a body, descending into the arms of a gate so the mark
+is only written when the gated member is.
+```
+
+### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
+
+```text
+The key under which a lexed kind's per-slot guard regex is registered.
+```
+
+### `packages/codegen/src/emitters/node-model.ts::serializeCompoundNode`
+
+```text
+A lexed kind serializes its `interior` beside its slots, from the same derivation the runtime table uses.
+```
+
+### `packages/codegen/src/emitters/ir.ts::factoryRef`
+
+```text
+A text leaf is called through its raw builder; a lexed kind through its hoisted factory, which coerces the bare content.
+```
+
+### `packages/codegen/src/emitters/test.ts::patternSlotDummy`
+
+```text
+A sample that satisfies the slot pattern, so the generated construction tests pass the per-slot guard.
+```
+
+### `packages/codegen/src/emitters/shared.ts::kindEnumOwnSymbolIds`
+
+```text
+The own parser symbols of the visible enum arms of a slot, in seating order (`enumArmsOf`.ownSymbolIds). Guards the
+text fold of `projectMixedEnumStorage` so an identifier that happens to be spelled like a member is never taken for one.
+```

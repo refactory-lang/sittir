@@ -21,22 +21,26 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_buildIntegerLiteral =
-	/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+))(?:(?:u8|i8|u16|i16|u32|i32|u64|i64|u128|i128|isize|usize|f32|f64))?)$/u;
-const _leafRe_buildCharLiteral =
-	/^(?:(?:b)?'(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\'])))?')$/u;
-const _leafRe_buildEscapeSequence =
-	/^(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u;
 const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildShebang = /^(?:(?:#![\r\f\t\v ]*([^[\n].*)?\n))$/u;
 const _leafRe_buildTypeIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 const _leafRe_buildFieldIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildMetavariable = /^(?:(?:\$[a-zA-Z_]\w*))$/u;
 const _leafRe_buildStringLiteralOpen = /^(?:(?:[bc]?"))$/u;
 const _leafRe_buildLineCommentRegularDslash = /^(?:(?:\/\/)(?:.*))$/u;
 const _leafRe_buildLineCommentContent = /^(?:(?:.*))$/u;
+const _leafRe_buildFloatLiteral =
+	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
+const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
+const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
 const _leafRe_buildLineDocContent = /^(?:(?:.*))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
+const _slotRe_buildIntegerLiteral_content =
+	/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+)))$/u;
+const _slotRe_buildCharLiteral_content =
+	/^(?:(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\'])))?)$/u;
+const _slotRe_buildEscapeSequence_content =
+	/^(?:(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u;
+const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
+const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Built {
 	const _shebang = config.shebang;
@@ -189,7 +193,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 		config.tokenPatterns ?? [],
 		[]
 	);
-	const _separator = coerceBooleanKeywordStorage(config.separator);
+	const _separator = config.separator;
 	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
@@ -207,8 +211,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				$with: {
 					tokenPatterns: (value?: NonNullable<T.TokenRepetitionPattern.Config>['tokenPatterns']) =>
 						buildTokenRepetitionPattern({ ...config, tokenPatterns: value }),
-					separator: (value?: NonNullable<T.TokenRepetitionPattern.Config>['separator']) =>
-						buildTokenRepetitionPattern({ ...config, separator: value }),
+					separator: (value?: string) => buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
 						buildTokenRepetitionPattern({ ...config, operator: value })
 				}
@@ -246,7 +249,7 @@ export function buildTokenTree(value: T.TokenTreeParen | T.TokenTreeBracket | T.
 
 export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Built {
 	const _tokens = coerceMixedEnumStorage<NonNullable<T.TokenRepetition['_tokens']>>(config.tokens ?? [], []);
-	const _separator = coerceBooleanKeywordStorage(config.separator);
+	const _separator = config.separator;
 	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
@@ -264,8 +267,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				$with: {
 					tokens: (value?: NonNullable<T.TokenRepetition.Config>['tokens']) =>
 						buildTokenRepetition({ ...config, tokens: value }),
-					separator: (value?: NonNullable<T.TokenRepetition.Config>['separator']) =>
-						buildTokenRepetition({ ...config, separator: value }),
+					separator: (value?: string) => buildTokenRepetition({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
 						buildTokenRepetition({ ...config, operator: value })
 				}
@@ -3954,16 +3956,45 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 	);
 }
 
-export function buildIntegerLiteral(text: string): T.IntegerLiteral.Built {
-	if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
-	if (!_leafRe_buildIntegerLiteral.test(text)) throw new Error(`integer_literal: text does not match pattern: ${text}`);
+export function buildIntegerLiteral(config: T.IntegerLiteral.Config): T.IntegerLiteral.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerLiteral_content.test(_content))
+		throw new Error(`integer_literal.content: text does not match pattern: ${_content}`);
+	const _suffix = coerceKindEnumStorage<NonNullable<T.IntegerLiteral['_suffix']>>(config.suffix, [
+		['u8', TSKindId.U8Keyword] as const,
+		['i8', TSKindId.I8Keyword] as const,
+		['u16', TSKindId.U16Keyword] as const,
+		['i16', TSKindId.I16Keyword] as const,
+		['u32', TSKindId.U32Keyword] as const,
+		['i32', TSKindId.I32Keyword] as const,
+		['u64', TSKindId.U64Keyword] as const,
+		['i64', TSKindId.I64Keyword] as const,
+		['u128', TSKindId.U128Keyword] as const,
+		['i128', TSKindId.I128Keyword] as const,
+		['isize', TSKindId.IsizeKeyword] as const,
+		['usize', TSKindId.UsizeKeyword] as const,
+		['f32', TSKindId.F32Keyword] as const,
+		['f64', TSKindId.F64Keyword] as const
+	]);
 	return withMethods(
-		{
-			$type: TSKindId.IntegerLiteral as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.IntegerLiteral as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_suffix,
+				$with: {
+					content: (value: string) => buildIntegerLiteral({ ...config, content: value }),
+					suffix: (value?: NonNullable<T.IntegerLiteral.Config>['suffix']) =>
+						buildIntegerLiteral({ ...config, suffix: value })
+				}
+			},
+			{
+				content: () => _content,
+				suffix: () => _suffix
+			}
+		),
 		methodsEngine
 	);
 }
@@ -4038,30 +4069,52 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	);
 }
 
-export function buildCharLiteral(text: string): T.CharLiteral.Built {
-	if (text.length === 0) throw new Error(`char_literal: text must be non-empty`);
-	if (!_leafRe_buildCharLiteral.test(text)) throw new Error(`char_literal: text does not match pattern: ${text}`);
+export function buildCharLiteral(config: T.CharLiteral.Config): T.CharLiteral.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteral_content.test(_content))
+		throw new Error(`char_literal.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.CharLiteral as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteral as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteral.Config>['b']) => buildCharLiteral({ ...config, b: value }),
+					content: (value: string) => buildCharLiteral({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
 
-export function buildEscapeSequence(text: string): T.EscapeSequence.Built {
-	if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
-	if (!_leafRe_buildEscapeSequence.test(text)) throw new Error(`escape_sequence: text does not match pattern: ${text}`);
+export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
+		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.EscapeSequence as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequence as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequence(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -4133,16 +4186,25 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 	);
 }
 
-export function buildShebang(text: string): T.Shebang.Built {
-	if (text.length === 0) throw new Error(`shebang: text must be non-empty`);
-	if (!_leafRe_buildShebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
+export function buildShebang(value: string): T.Shebang.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildShebang_content.test(_content))
+		throw new Error(`shebang.content: text does not match pattern: ${_content}`);
 	return withMethods(
-		{
-			$type: TSKindId.Shebang as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.Shebang as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildShebang(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -4189,16 +4251,25 @@ export function buildCrate(): TSKindId.Crate {
 	return TSKindId.Crate;
 }
 
-export function buildMetavariable(text: string): T.Metavariable.Built {
-	if (text.length === 0) throw new Error(`metavariable: text must be non-empty`);
-	if (!_leafRe_buildMetavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
+export function buildMetavariable(value: string): T.Metavariable.Built {
+	const _name = value;
+	if (_name !== undefined && !_slotRe_buildMetavariable_name.test(_name))
+		throw new Error(`metavariable.name: text does not match pattern: ${_name}`);
 	return withMethods(
-		{
-			$type: TSKindId.Metavariable as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
+		withAccessors(
+			{
+				$type: TSKindId.Metavariable as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					name: (value: string) => buildMetavariable(value)
+				}
+			},
+			{
+				name: () => _name
+			}
+		),
 		methodsEngine
 	);
 }
@@ -7267,6 +7338,48 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	);
 }
 
+export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
+	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
+	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.FloatLiteral as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildStringContent(text: string): T.StringContent.Built {
+	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
+	if (!_leafRe_buildStringContent.test(text)) throw new Error(`string_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.StringContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
+	if (!_leafRe_buildRawStringLiteralContent.test(text))
+		throw new Error(`raw_string_literal_content: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.RawStringLiteralContent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildLineDocContent(text: string): T.LineDocContent.Built {
 	if (!_leafRe_buildLineDocContent.test(text))
 		throw new Error(`_line_doc_content: text does not match pattern: ${text}`);
@@ -7295,19 +7408,6 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bu
 	);
 }
 
-export function buildStringContent(text: string): T.StringContent.Built {
-	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.StringContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Built {
 	if (text.length === 0) throw new Error(`_raw_string_literal_start: text must be non-empty`);
 	return withMethods(
@@ -7321,37 +7421,11 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	);
 }
 
-export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
-	if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.RawStringLiteralContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
 	if (text.length === 0) throw new Error(`_raw_string_literal_end: text must be non-empty`);
 	return withMethods(
 		{
 			$type: TSKindId.RawStringLiteralEnd as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
-	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.FloatLiteral as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7501,21 +7575,21 @@ export type FluentKindMap = {
 	captured_pattern: T.CapturedPattern.Built;
 	reference_pattern: T.ReferencePattern.Built;
 	negative_literal: T.NegativeLiteral.Built;
-	integer_literal: T.IntegerLiteral;
+	integer_literal: T.IntegerLiteral.Built;
 	string_literal: T.StringLiteral.Built;
 	raw_string_literal: T.RawStringLiteral.Built;
-	char_literal: T.CharLiteral;
-	escape_sequence: T.EscapeSequence;
+	char_literal: T.CharLiteral.Built;
+	escape_sequence: T.EscapeSequence.Built;
 	line_comment: T.LineComment.Built;
 	block_comment: T.BlockComment.Built;
 	identifier: T.Identifier;
-	shebang: T.Shebang;
+	shebang: T.Shebang.Built;
 	_type_identifier: T.TypeIdentifier;
 	_field_identifier: T.FieldIdentifier;
 	self: T.Self;
 	super: T.Super;
 	crate: T.Crate;
-	metavariable: T.Metavariable;
+	metavariable: T.Metavariable.Built;
 	macro_rules: T.MacroRules.Built;
 	enum_variant_list_elements: T.EnumVariantListElements.Built;
 	field_declaration_list_elements: T.FieldDeclarationListElements.Built;
@@ -7603,13 +7677,13 @@ export type FluentKindMap = {
 	_attributed_ordered_field: T.AttributedOrderedField.Built;
 	_type_argument: T.TypeArgument.Built;
 	_match_block_arms: T.MatchBlockArms.Built;
+	float_literal: T.FloatLiteral;
+	string_content: T.StringContent;
+	raw_string_literal_content: T.RawStringLiteralContent;
 	_line_doc_content: T.LineDocContent;
 	_block_comment_content: T.BlockCommentContent;
-	string_content: T.StringContent;
 	_raw_string_literal_start: T.RawStringLiteralStart;
-	raw_string_literal_content: T.RawStringLiteralContent;
 	_raw_string_literal_end: T.RawStringLiteralEnd;
-	float_literal: T.FloatLiteral;
 	_error_sentinel: T.ErrorSentinel;
 };
 
@@ -7843,13 +7917,13 @@ export const _factoryMap = {
 	_attributed_ordered_field: buildAttributedOrderedField,
 	_type_argument: buildTypeArgument,
 	_match_block_arms: buildMatchBlockArms,
+	float_literal: buildFloatLiteral,
+	string_content: buildStringContent,
+	raw_string_literal_content: buildRawStringLiteralContent,
 	_line_doc_content: buildLineDocContent,
 	_block_comment_content: buildBlockCommentContent,
-	string_content: buildStringContent,
 	_raw_string_literal_start: buildRawStringLiteralStart,
-	raw_string_literal_content: buildRawStringLiteralContent,
 	_raw_string_literal_end: buildRawStringLiteralEnd,
-	float_literal: buildFloatLiteral,
 	_error_sentinel: buildErrorSentinel
 } as const;
 export type _FactoryMap = typeof _factoryMap;

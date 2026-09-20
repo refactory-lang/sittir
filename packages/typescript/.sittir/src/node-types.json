@@ -7808,7 +7808,12 @@
     "named": false
   },
   {
-    "type": "comment",
+    "type": "comment_block",
+    "named": true,
+    "extra": true
+  },
+  {
+    "type": "comment_line",
     "named": true,
     "extra": true
   },

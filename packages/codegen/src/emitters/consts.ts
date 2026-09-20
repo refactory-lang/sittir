@@ -16,6 +16,7 @@ import {
 	compareOrdinal
 } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
+import { collectInteriors } from './interior.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -103,6 +104,8 @@ export function emitConsts(config: EmitConstsConfig): string {
 		sourceArtifact: generatedIdTables?.sourceArtifact
 	});
 
+	emitTokenInteriors(lines, nodeMap);
+
 	emitBitflagConstEnums(lines, nodeMap);
 
 	const emittedValueTypes = new Set<string>();
@@ -129,6 +132,20 @@ export function emitConsts(config: EmitConstsConfig): string {
 	}
 
 	return lines.join('\n');
+}
+
+function emitTokenInteriors(lines: string[], nodeMap: NodeMap): void {
+	const interiors = collectInteriors(nodeMap);
+	if (interiors.size === 0) return;
+	lines.push("import type { TokenInterior } from '@sittir/common';");
+	lines.push('');
+	lines.push('/** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */');
+	lines.push('export const TOKEN_INTERIORS = {');
+	for (const [kind, interior] of [...interiors].sort(([a], [b]) => compareOrdinal(a, b))) {
+		lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify({ regex: interior.regex, slots: interior.slots })},`);
+	}
+	lines.push("} as const satisfies { readonly [kind: string]: TokenInterior };");
+	lines.push('');
 }
 
 interface TreeSitterIdConstConfig {

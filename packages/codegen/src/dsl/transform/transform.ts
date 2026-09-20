@@ -22,6 +22,7 @@ import type { ArmDefaultPlaceholder } from '../primitives/arm.ts';
 import type { PreferencePlaceholder } from '../primitives/preference.ts';
 import { isGroupPlaceholder } from '../primitives/group.ts';
 import { isSplicePlaceholder, type SplicePlaceholder } from '../primitives/splice.ts';
+import { isRegexPlaceholder, type RegexPlaceholder } from '../primitives/regex.ts';
 import type { GroupPlaceholder } from '../primitives/group.ts';
 import { withAnnotations, withHoistedAnnotation } from '../annotations.ts';
 import type { RuleAnnotations } from '../../types/rule.ts';
@@ -81,7 +82,8 @@ export type PatchValue =
 	| ArmDefaultPlaceholder
 	| PreferencePlaceholder
 	| GroupPlaceholder
-	| SplicePlaceholder;
+	| SplicePlaceholder
+	| RegexPlaceholder;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -90,7 +92,7 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	for (const patches of patchSets) {
 		const hasPathKeys = requiresPathMode(patches);
 		const hasPlaceholderAlias = Object.values(patches).some(
-			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v)
+			(v) => isAliasPlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isSplicePlaceholder(v) || isRegexPlaceholder(v)
 		);
 		if (hasPathKeys || hasPlaceholderAlias) {
 			rule = applyPathPatches(rule, patches);
@@ -114,9 +116,34 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
 	}
 	if (variantEntries.length > 0) {
-		rule = applyVariantPatches(rule, variantEntries);
+		rule = applyVariantPatches(hoistTokenChoiceForVariants(rule, variantEntries), variantEntries);
 	}
 	return rule;
+}
+
+function isStringLedSeq(arm: RuntimeRule): boolean {
+	const a = arm as { type?: string; members?: RuntimeRule[] };
+	return a.type === 'SEQ' && Array.isArray(a.members) && (a.members[0] as { type?: string } | undefined)?.type === 'STRING';
+}
+
+function hoistTokenChoiceForVariants(
+	rule: RuntimeRule,
+	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+): RuntimeRule {
+	const wrapper = rule as { type?: string; content?: RuntimeRule };
+	if (wrapper.type !== 'TOKEN' && wrapper.type !== 'IMMEDIATE_TOKEN') return rule;
+	const choice = wrapper.content as { type?: string; members?: RuntimeRule[] } | undefined;
+	if (choice?.type !== 'CHOICE' || !Array.isArray(choice.members)) return rule;
+	const arms = choice.members;
+	const named = variantEntries.map(([key]) => parsePath(key));
+	if (!named.every((segs) => segs.length === 1 && segs[0]!.kind === 'index')) return rule;
+	const offending = arms.findIndex((arm) => !isStringLedSeq(arm));
+	if (offending >= 0) {
+		throw new Error(
+			`variant() on the arms of a token choice: arm ${offending} of '${wireGetCurrentRuleKind() ?? '(unknown)'}' is not a seq led by a string`
+		);
+	}
+	return { ...(choice as object), members: arms.map((arm) => ({ ...(wrapper as object), content: arm })) } as unknown as RuntimeRule;
 }
 
 function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly PathSegment[]): void {
@@ -575,6 +602,12 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, precStack?
 	}
 	if (isSplicePlaceholder(patch)) {
 		return withAnnotations(originalMember, { spliced: true });
+	}
+	if (isRegexPlaceholder(patch)) {
+		if ((originalMember as { type?: string }).type !== 'PATTERN') {
+			throw new Error(`regex(): the patched member is a '${(originalMember as { type?: string }).type}', not a pattern`);
+		}
+		return { ...originalMember, value: patch.source } as RuntimeRule;
 	}
 	if (isVariantPlaceholder(patch)) {
 		const parentKind = wireGetCurrentRuleKind();

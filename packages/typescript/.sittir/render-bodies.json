@@ -1577,6 +1577,36 @@
 			"field": "class_static_block_after"
 		}
 	],
+	"comment_block": [
+		{
+			"kind": "text",
+			"text": "/*"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "*/"
+		}
+	],
+	"comment_line": [
+		{
+			"kind": "text",
+			"text": "//"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"computed_property_name": [
 		{
 			"kind": "seam",
@@ -2234,6 +2264,19 @@
 		{
 			"kind": "seam",
 			"field": "enum_declaration_after"
+		}
+	],
+	"escape_sequence": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"export_clause": [
@@ -3802,6 +3845,19 @@
 		{
 			"kind": "seam",
 			"field": "generic_type_after"
+		}
+	],
+	"hash_bang_line": [
+		{
+			"kind": "text",
+			"text": "#!"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"if_statement": [
@@ -6048,6 +6104,19 @@
 		{
 			"kind": "seam",
 			"field": "parenthesized_type_after"
+		}
+	],
+	"private_property_identifier": [
+		{
+			"kind": "text",
+			"text": "#"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"program": [

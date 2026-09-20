@@ -192,11 +192,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	break_statement: { values: ['break'], factory: () => F.buildBreakStatement() },
 	continue_statement: { values: ['continue'], factory: () => F.buildContinueStatement() },
 	ellipsis: { values: ['...'], factory: () => F.buildEllipsis() },
-	escape_sequence: {
-		pattern:
-			/^(?:\\(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u,
-		factory: F.buildEscapeSequence
-	},
+	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
 	type_conversion: { pattern: /^(?:(?:![a-z]))$/u, factory: F.buildTypeConversion },
 	integer: {
 		pattern:
@@ -212,7 +208,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	true: { values: ['True'], factory: () => F.buildTrue() },
 	false: { values: ['False'], factory: () => F.buildFalse() },
 	none: { values: ['None'], factory: () => F.buildNone() },
-	comment: { pattern: /^(?:#(?:.*))$/u, factory: F.buildComment },
+	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	line_continuation: { pattern: /^(?:\\(?:(?:\r)?\n|\0))$/u, factory: F.buildLineContinuation },
 	positional_separator: { values: ['/'], factory: () => F.buildPositionalSeparator() },
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
@@ -220,6 +216,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:["']+))$/u, factory: F.buildStringEnd }
 };
+const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['escape_sequence', 'comment']);
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
 	for (const kind of kinds) {
@@ -227,10 +224,6 @@ function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | 
 		if (!entry) continue;
 		if (entry.values && entry.values.includes(v)) return entry.factory(v);
 		if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);
-	}
-	for (const kind of kinds) {
-		const entry = _leafRegistry[kind];
-		if (entry && !entry.values && !entry.pattern) return entry.factory(v);
 	}
 	return undefined;
 }
@@ -588,9 +581,15 @@ function _resolveOne<T>(
 		const scalar = _resolveScalar(v);
 		if (scalar !== undefined) return scalar as T;
 	}
-	if (typeof v === 'string' && leafKinds.length > 0) {
-		const leaf = _resolveLeafString(v, leafKinds);
+	if (typeof v === 'string') {
+		const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);
 		if (leaf !== undefined) return leaf as T;
+		if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);
+		if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {
+			throw new Error(
+				`_resolveOne: a bare string never picks among affixed leaves [${leafKinds.join(', ')}]; build one with its own factory`
+			);
+		}
 	}
 	if (typeof v === 'string') {
 		const bk = _KEYWORD_BRANCH_BY_TEXT[v];
@@ -720,8 +719,10 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	if_clause: TSKindId.IfClause,
 	concatenated_string: TSKindId.ConcatenatedString,
 	string_content: TSKindId.StringContent,
+	escape_sequence: TSKindId.EscapeSequence,
 	format_specifier: TSKindId.FormatSpecifier,
 	await: TSKindId.Await,
+	comment: TSKindId.Comment,
 	simple_statements_elements: TSKindId.SimpleStatementsElements,
 	subjects: TSKindId.Subjects,
 	case_patterns: TSKindId.CasePatterns,
@@ -848,7 +849,9 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'dictionary',
 	'parenthesized_expression',
 	'if_clause',
+	'escape_sequence',
 	'await',
+	'comment',
 	'slice_group',
 	'case_tuple_pattern',
 	'case_list_pattern',
@@ -976,10 +979,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildConcatenatedString(...(children as Parameters<typeof F.buildConcatenatedString>));
 		case 'string_content':
 			return F.buildStringContent(...(children as Parameters<typeof F.buildStringContent>));
+		case 'escape_sequence':
+			return F.buildEscapeSequence(children[0] as Parameters<typeof F.buildEscapeSequence>[0]);
 		case 'format_specifier':
 			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case 'await':
 			return F.buildAwait(children[0] as Parameters<typeof F.buildAwait>[0]);
+		case 'comment':
+			return F.buildComment(children[0] as Parameters<typeof F.buildComment>[0]);
 		case 'simple_statements_elements':
 			return (F.buildSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
 		case 'subjects':
@@ -1492,8 +1499,9 @@ const _K29: readonly string[] = [
 	'list_splat'
 ];
 const _K30: readonly string[] = ['interpolation', 'string_content'];
-const _K31: readonly string[] = ['escape_interpolation', 'escape_sequence', '_string_content'];
-const _K32: readonly string[] = [
+const _K31: readonly string[] = ['escape_interpolation', '_string_content'];
+const _K32: readonly string[] = ['escape_sequence'];
+const _K33: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1523,8 +1531,8 @@ const _K32: readonly string[] = [
 	'pattern_list',
 	'yield'
 ];
-const _K33: readonly string[] = ['for_in_clause', 'if_clause'];
-const _K34: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
+const _K34: readonly string[] = ['for_in_clause', 'if_clause'];
+const _K35: readonly string[] = ['except_clause_exception_as', 'except_clause_exception_list'];
 
 export function coerceToModule(
 	...input: readonly (
@@ -4531,7 +4539,7 @@ export function coerceToStringContent(
 	...input: readonly (
 		| T.StringContent.Loose
 		| LooseValue<
-				(T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent) | string,
+				T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent,
 				T.LeafScalarMap,
 				T.LeafStringMap,
 				T.NamespaceMap
@@ -4545,7 +4553,7 @@ export function coerceToStringContent(
 		return F.buildStringContent(
 			...(coerceMixedEnumStorage(
 				_resolveKindEnum(children, () =>
-					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(children, _K31, _K0)
+					_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(children, _K31, _K32)
 				),
 				[['\\', TSKindId.NotEscapeSequence] as const]
 			) as unknown as Parameters<typeof F.buildStringContent>)
@@ -4561,7 +4569,7 @@ export function coerceToStringContent(
 	return F.buildStringContent(
 		...(coerceMixedEnumStorage(
 			_resolveKindEnum(_elems, () =>
-				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(_elems, _K31, _K0)
+				_resolveMany<T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent>(_elems, _K31, _K32)
 			),
 			[['\\', TSKindId.NotEscapeSequence] as const]
 		) as unknown as Parameters<typeof F.buildStringContent>)
@@ -4573,7 +4581,7 @@ export function resolveInterpolation_expression(
 ): T.Interpolation['_expression'] {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, () =>
-			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K6, _K32)
+			_resolveOne<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(value, _K6, _K33)
 		),
 		[]
 	);
@@ -4608,9 +4616,26 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 	});
 }
 
+export function resolveEscapeSequence_content(
+	value: T.EscapeSequence.LooseConfig['content']
+): T.EscapeSequence['_content'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
 export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
-	return F.buildEscapeSequence(input as Parameters<typeof F.buildEscapeSequence>[0]);
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.EscapeSequence)
+		return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
+	return F.buildEscapeSequence(
+		_requireField(
+			'escape_sequence',
+			'content',
+			_resolveOne<string>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K0,
+				_K0
+			)
+		)
+	);
 }
 
 export function coerceToFormatSpecifier(
@@ -4701,9 +4726,24 @@ export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAw
 	);
 }
 
+export function resolveComment_content(value: T.Comment.LooseConfig['content']): T.Comment['_content'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildComment>;
-	return F.buildComment(input as Parameters<typeof F.buildComment>[0]);
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.Comment)
+		return input as unknown as ReturnType<typeof F.buildComment>;
+	return F.buildComment(
+		_requireField(
+			'comment',
+			'content',
+			_resolveOne<string>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K0,
+				_K0
+			)
+		)
+	);
 }
 
 export function coerceToLineContinuation(input: T.LineContinuation.Loose): ReturnType<typeof F.buildLineContinuation> {
@@ -5314,7 +5354,7 @@ export function coerceToComprehensionClauses(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildComprehensionClauses(
-			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K33) as unknown as Parameters<
+			...(_resolveMany<T.ForInClause | T.IfClause>(children, _K0, _K34) as unknown as Parameters<
 				typeof F.buildComprehensionClauses
 			>)
 		);
@@ -5327,7 +5367,7 @@ export function coerceToComprehensionClauses(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildComprehensionClauses(
-		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K33) as unknown as Parameters<
+		...(_resolveMany<T.ForInClause | T.IfClause>(_elems, _K0, _K34) as unknown as Parameters<
 			typeof F.buildComprehensionClauses
 		>)
 	);
@@ -5537,7 +5577,7 @@ export function coerceToExceptClauseExceptionList(
 export function resolveExceptClauseException_content(
 	value: T.ExceptClauseException.LooseConfig['content']
 ): T.ExceptClauseException['_content'] {
-	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K34);
+	return _resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(value, _K0, _K35);
 }
 
 export function coerceToExceptClauseException(
@@ -5552,7 +5592,7 @@ export function coerceToExceptClauseException(
 			_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K0,
-				_K34
+				_K35
 			)
 		)
 	);

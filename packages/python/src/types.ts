@@ -3649,6 +3649,12 @@ export interface Interpolation {
 	formatSpecifier(): FormatSpecifier | undefined;
 }
 
+export interface EscapeSequence {
+	readonly $type: TSKindId.EscapeSequence;
+	readonly _content: string;
+	content(): string;
+}
+
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
 	readonly _content?: readonly ('[^{}\\n]+' | Interpolation)[];
@@ -3664,6 +3670,12 @@ export interface Await {
 			| PrimaryExpression;
 	};
 	expression(): PrimaryExpression;
+}
+
+export interface Comment {
+	readonly $type: TSKindId.Comment;
+	readonly _content: string;
+	content(): string;
 }
 
 export interface SimpleStatementsElements {
@@ -4055,7 +4067,6 @@ export type PassStatement = TSKindId.PassStatement;
 export type BreakStatement = TSKindId.BreakStatement;
 export type ContinueStatement = TSKindId.ContinueStatement;
 export type Ellipsis = TSKindId.Ellipsis;
-export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
 export type Integer = Terminal<TSKindId.Integer, string>;
 export type Float = Terminal<TSKindId.Float, string>;
@@ -4063,7 +4074,6 @@ export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type True = TSKindId.True;
 export type False = TSKindId.False;
 export type None = TSKindId.None;
-export type Comment = Terminal<TSKindId.Comment, string>;
 export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
@@ -4210,8 +4220,10 @@ export interface ConcatenatedStringTree extends TreeNode<'concatenated_string'> 
 export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
 export interface AwaitTree extends TreeNode<'await'> {}
+export interface CommentTree extends TreeNode<'comment'> {}
 export interface SimpleStatementsElementsTree extends TreeNode<'simple_statements_elements'> {}
 export interface SubjectsTree extends TreeNode<'subjects'> {}
 export interface CasePatternsTree extends TreeNode<'case_patterns'> {}
@@ -4276,7 +4288,6 @@ export interface ContinueStatementTree extends AnyTreeNode {
 export interface EllipsisTree extends AnyTreeNode {
 	readonly type: 'ellipsis';
 }
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
 export interface IntegerTree extends TreeNode<'integer'> {}
 export interface FloatTree extends TreeNode<'float'> {}
@@ -4290,7 +4301,6 @@ export interface FalseTree extends AnyTreeNode {
 export interface NoneTree extends AnyTreeNode {
 	readonly type: 'none';
 }
-export interface CommentTree extends TreeNode<'comment'> {}
 export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
 export interface PositionalSeparatorTree extends AnyTreeNode {
 	readonly type: 'positional_separator';
@@ -4836,8 +4846,10 @@ export type PythonNode =
 	| String
 	| StringContent
 	| Interpolation
+	| EscapeSequence
 	| FormatSpecifier
 	| Await
+	| Comment
 	| SimpleStatementsElements
 	| Subjects
 	| CasePatterns
@@ -4982,8 +4994,10 @@ export interface KindMap {
 	string: String;
 	string_content: StringContent;
 	interpolation: Interpolation;
+	escape_sequence: EscapeSequence;
 	format_specifier: FormatSpecifier;
 	await: Await;
+	comment: Comment;
 	simple_statements_elements: SimpleStatementsElements;
 	subjects: Subjects;
 	case_patterns: CasePatterns;
@@ -5028,7 +5042,6 @@ export interface KindMap {
 	break_statement: BreakStatement;
 	continue_statement: ContinueStatement;
 	ellipsis: Ellipsis;
-	escape_sequence: EscapeSequence;
 	type_conversion: TypeConversion;
 	integer: Integer;
 	float: Float;
@@ -5036,7 +5049,6 @@ export interface KindMap {
 	true: True;
 	false: False;
 	none: None;
-	comment: Comment;
 	line_continuation: LineContinuation;
 	positional_separator: PositionalSeparator;
 	keyword_separator: KeywordSeparator;
@@ -6197,6 +6209,17 @@ export interface InterpolationNs extends NodeNs<
 	never,
 	'interpolation'
 > {}
+export interface EscapeSequenceNs extends NodeNs<
+	EscapeSequence,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequence.Built,
+	EscapeSequence.BuildArgs,
+	EscapeSequence.LooseArgs,
+	'content',
+	'escape_sequence'
+> {}
 export interface FormatSpecifierNs extends NodeNs<
 	FormatSpecifier,
 	LeafScalarMap,
@@ -6218,6 +6241,17 @@ export interface AwaitNs extends NodeNs<
 	Await.LooseArgs,
 	'expression',
 	'await'
+> {}
+export interface CommentNs extends NodeNs<
+	Comment,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Comment.Built,
+	Comment.BuildArgs,
+	Comment.LooseArgs,
+	'content',
+	'comment'
 > {}
 export interface SimpleStatementsElementsNs extends NodeNs<
 	SimpleStatementsElements,
@@ -6696,13 +6730,6 @@ export interface ImportPrefixNs extends LeafNs<
 	ImportPrefixTree,
 	'import_prefix'
 > {}
-export interface EscapeSequenceNs extends LeafNs<
-	EscapeSequence,
-	string,
-	EscapeSequence.Built,
-	EscapeSequenceTree,
-	'escape_sequence'
-> {}
 export interface TypeConversionNs extends LeafNs<
 	TypeConversion,
 	string,
@@ -6713,7 +6740,6 @@ export interface TypeConversionNs extends LeafNs<
 export interface IntegerNs extends LeafNs<Integer, string, Integer.Built, IntegerTree, 'integer'> {}
 export interface FloatNs extends LeafNs<Float, string, Float.Built, FloatTree, 'float'> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, IdentifierTree, 'identifier'> {}
-export interface CommentNs extends LeafNs<Comment, string, Comment.Built, CommentTree, 'comment'> {}
 export interface LineContinuationNs extends LeafNs<
 	LineContinuation,
 	string,
@@ -6851,8 +6877,10 @@ export interface NamespaceMap {
 	[TSKindId.String]: StringNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.Interpolation]: InterpolationNs;
+	[TSKindId.EscapeSequence]: EscapeSequenceNs;
 	[TSKindId.FormatSpecifier]: FormatSpecifierNs;
 	[TSKindId.Await]: AwaitNs;
+	[TSKindId.Comment]: CommentNs;
 	[TSKindId.SimpleStatementsElements]: SimpleStatementsElementsNs;
 	[TSKindId.Subjects]: SubjectsNs;
 	[TSKindId.CasePatterns]: CasePatternsNs;
@@ -6904,12 +6932,10 @@ export interface NamespaceMap {
 	[TSKindId.KwAsyncMarker]: KwAsyncMarkerNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
-	[TSKindId.EscapeSequence]: EscapeSequenceNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Integer]: IntegerNs;
 	[TSKindId.Float]: FloatNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.Comment]: CommentNs;
 	[TSKindId.LineContinuation]: LineContinuationNs;
 	[TSKindId.StringStart]: StringStartNs;
 	[TSKindId._StringContent]: _StringContentNs;
@@ -9044,6 +9070,22 @@ export namespace Interpolation {
 	export type Tree = TreeFor<TSKindId.Interpolation>;
 	export type Kind = 'interpolation';
 }
+export namespace EscapeSequence {
+	export type Config = ConfigFor<TSKindId.EscapeSequence>;
+	export interface Built extends T.EscapeSequence, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequence.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequence>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequence>;
+	export type Kind = 'escape_sequence';
+}
 export namespace FormatSpecifier {
 	export type Config = ConfigFor<TSKindId.FormatSpecifier>;
 	export interface Built extends T.FormatSpecifier, NodeMethodsOf {
@@ -9077,6 +9119,22 @@ export namespace Await {
 	export type LooseArgs = [value: LooseValue<T.PrimaryExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.Await>;
 	export type Kind = 'await';
+}
+export namespace Comment {
+	export type Config = ConfigFor<TSKindId.Comment>;
+	export interface Built extends T.Comment, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.Comment.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.Comment>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Comment>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.Comment>;
+	export type Kind = 'comment';
 }
 export namespace SimpleStatementsElements {
 	export type Config = ConfigFor<TSKindId.SimpleStatementsElements>;
@@ -9975,21 +10033,6 @@ export namespace ImportPrefix {
 	export type Tree = ImportPrefixNs['Tree'];
 	export type Kind = 'import_prefix';
 }
-export namespace EscapeSequence {
-	export type Config = EscapeSequenceNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.EscapeSequence;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = EscapeSequenceNs['Loose'];
-	export type LooseConfig = EscapeSequenceNs['LooseConfig'];
-	export type BuildArgs = EscapeSequenceNs['BuildArgs'];
-	export type LooseArgs = EscapeSequenceNs['LooseArgs'];
-	export type Tree = EscapeSequenceNs['Tree'];
-	export type Kind = 'escape_sequence';
-}
 export namespace TypeConversion {
 	export type Config = TypeConversionNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -10049,21 +10092,6 @@ export namespace Identifier {
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Tree = IdentifierNs['Tree'];
 	export type Kind = 'identifier';
-}
-export namespace Comment {
-	export type Config = CommentNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.Comment;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = CommentNs['Loose'];
-	export type LooseConfig = CommentNs['LooseConfig'];
-	export type BuildArgs = CommentNs['BuildArgs'];
-	export type LooseArgs = CommentNs['LooseArgs'];
-	export type Tree = CommentNs['Tree'];
-	export type Kind = 'comment';
 }
 export namespace LineContinuation {
 	export type Config = LineContinuationNs['Config'];

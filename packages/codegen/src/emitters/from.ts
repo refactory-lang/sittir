@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -21,6 +22,7 @@ type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorp
 type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 import {
 	anchoredLeafRegexLiteral,
+	classifyFactoryShape,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -28,11 +30,12 @@ import {
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
+	bareValueSlot,
+	lexedContentSlot,
 	fieldResolverName,
 	needsNonEmptyHoist,
 	fromEmitsChildrenCoercer,
 	fromBareInput,
-	resolveDirectFactorySlot,
 	canDefaultToEmpty,
 	scalarLeafKinds,
 	classifyFromEmission,
@@ -44,7 +47,8 @@ import {
 	wordConstructibleText,
 	isAuthoredCompound,
 	listRestParamType,
-	transparentContentKindNames
+	transparentContentKindNames,
+	isAffixedLeaf
 } from './shared.ts';
 import {
 	fieldElementType,
@@ -199,7 +203,7 @@ export namespace from {
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
 			result = emitStringLikeFrom(node);
-		} else if (isWordOrVisibleTextLeaf(node)) {
+		} else if (isVisibleTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
 		if (result) output.push(result);
@@ -252,9 +256,10 @@ function emitBranchNodeDataPassthrough(
 	lines: string[],
 	inputOptional: boolean,
 	returnType: string,
-	typeName: string
+	typeName: string,
+	bare = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -325,18 +330,23 @@ function emitBranchFrom(
 			? `${fieldResolverName(typeName, f)}(${valueExpr})`
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
+	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
+	const cfg = bareContent === undefined ? 'input' : '_cfg';
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
+			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareContent !== undefined);
+		}
+		if (bareContent !== undefined) {
+			lines.push(`  const _cfg = (typeof input === 'string' ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		for (const f of slots) {
 			if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
-				const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
+				const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -366,7 +376,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f, nodeMap) && !resolverFor.has(f.propertyName)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = fieldValue(f, `input${inputOptional ? '?' : ''}.${f.configKey}`);
+					const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -499,7 +509,8 @@ function emitRepeatedChildrenFrom(
 function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
 	const expanded = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot));
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
-	return leafKinds.length > 0 && branchKinds.length === 0 ? `${elementType} | string` : elementType;
+	const admitsText = leafKinds.length === 1 || leafKinds.some((kind) => !isAffixedLeaf(nodeMap.nodes.get(kind)));
+	return admitsText && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }
 
 function emitSingularChildrenFrom(
@@ -722,7 +733,7 @@ function classifyKindsForResolver(
 			branchKinds.push(t);
 			continue;
 		}
-		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isWordOrVisibleTextLeaf(n)) {
+		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isVisibleTextLeaf(n)) {
 			leafKinds.push(t);
 		} else if (isHiddenPunctuationLeaf(n)) {
 			tokenKinds.push(t);
@@ -891,15 +902,28 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (!node.rawFactoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (isWordOrVisibleTextLeaf(node)) {
+		if (isVisibleTextLeaf(node)) {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
+		} else if (isAffixedLeaf(node)) {
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { factory: (content: string) => _resolveByKind(${JSON.stringify(kind)}, content) },`
+			);
+		} else if (interiorOf(node) !== undefined) {
+			const interior = interiorOf(node)!;
+			const shape = classifyFactoryShape(node, nodeMap);
+			const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
+			const arg = shape === 'direct' ? `${config}[${JSON.stringify(interior.slots.find((slot) => !slot.flag)!.configKey)}] as never` : `${config} as never`;
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => ${factory}(${arg}) },`
+			);
 		} else if (node instanceof AssembledPattern) {
 			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
-			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { ${literal === undefined ? '' : `pattern: ${literal}, `}factory: ${factory} },`
-			);
+			if (literal === undefined) {
+				throw new Error(`leaf registry: '${kind}' has a factory but no text pattern; an external scanner token authors its shape in renderAs`);
+			}
+			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: ${factory} },`);
 		}
 	}
 	return registryEntries;
@@ -933,7 +957,7 @@ function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boo
 function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	switch (fromBareInput(node, nodeMap)) {
 		case 'value':
-			return resolveDirectFactorySlot(node, nodeMap);
+			return bareValueSlot(node, nodeMap);
 		case 'elements':
 			return canonicalSeparatedListField(node as AssembledList);
 		case null:
@@ -970,7 +994,7 @@ export function bareAcceptClosure(
 
 function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
 	if (kind.startsWith('_') || !node.rawFactoryName) return false;
-	return node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern;
+	return node instanceof AssembledEnum || isVisibleTextLeaf(node) || node instanceof AssembledPattern;
 }
 
 function emitBareRoutingTables(
@@ -1036,9 +1060,13 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
 	lines.push('  }');
-	lines.push('  if (typeof v === "string" && leafKinds.length > 0) {');
-	lines.push('    const leaf = _resolveLeafString(v, leafKinds);');
+	lines.push('  if (typeof v === "string") {');
+	lines.push('    const leaf = _resolveLeafString(v, [...leafKinds, ...branchKinds]);');
 	lines.push('    if (leaf !== undefined) return leaf as T;');
+	lines.push('    if (branchKinds.length === 0 && leafKinds.length === 1) return _resolveOneLeaf<T>(v, leafKinds[0]!);');
+	lines.push('    if (branchKinds.length === 0 && leafKinds.length > 1 && leafKinds.every((k) => _AFFIXED_KINDS.has(k))) {');
+	lines.push("      throw new Error(`_resolveOne: a bare string never picks among affixed leaves [${leafKinds.join(', ')}]; build one with its own factory`);");
+	lines.push('    }');
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
 	lines.push('    const bk = _KEYWORD_BRANCH_BY_TEXT[v];');
@@ -1281,6 +1309,8 @@ function emitResolverHelpers(
 	lines.push('const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {');
 	for (const entry of registryEntries) lines.push(entry);
 	lines.push('};');
+	const affixed = [...nodeMap.nodes].filter(([, node]) => isAffixedLeaf(node)).map(([kind]) => kind);
+	lines.push(`const _AFFIXED_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(affixed)});`);
 	lines.push('');
 
 	lines.push('function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
@@ -1289,10 +1319,6 @@ function emitResolverHelpers(
 	lines.push('    if (!entry) continue;');
 	lines.push('    if (entry.values && entry.values.includes(v)) return entry.factory(v);');
 	lines.push('    if (entry.pattern && entry.pattern.test(v)) return entry.factory(v);');
-	lines.push('  }');
-	lines.push('  for (const kind of kinds) {');
-	lines.push('    const entry = _leafRegistry[kind];');
-	lines.push('    if (entry && !entry.values && !entry.pattern) return entry.factory(v);');
 	lines.push('  }');
 	lines.push('  return undefined;');
 	lines.push('}');
@@ -1569,7 +1595,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 			this.emitBranch(node);
 			return;
 		}
-		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node)) {
+		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isVisibleTextLeaf(node)) {
 			this.emitLeaf(node);
 		}
 	}
@@ -1588,6 +1614,9 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
+			if (l === `import * as F from './raw.js';` && /\bTOKEN_INTERIORS\b/.test(body)) {
+				return [l, `import { TOKEN_INTERIORS } from '../consts.js';`, `import { lexedConfig } from '@sittir/common';`];
+			}
 			if (!/\bDelimiter\./.test(body)) {
 				if (l === `import { Delimiter } from './types.js';`) return [];
 				l = l.replace(`, Delimiter } from './types.js';`, ` } from './types.js';`);

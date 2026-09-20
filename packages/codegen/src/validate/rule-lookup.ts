@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
@@ -68,7 +68,7 @@ function classify(node: AssembledNode): RenderKindPath {
 			return 'text';
 		case 'keyword':
 		case 'punctuation':
-			return isWordOrVisibleTextLeaf(node) ? 'text' : 'none';
+			return isVisibleTextLeaf(node) ? 'text' : 'none';
 		default:
 			return 'none';
 	}

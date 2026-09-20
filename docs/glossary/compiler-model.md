@@ -379,6 +379,14 @@ the model reaches every value shape and every subtype without further edits.
 // `literal !== undefined` is the exact discriminator.
 ```
 
+#### token interior
+
+```text
+A field-named PATTERN yields a value with `pattern` and no `value`: it is free text constrained by that pattern,
+not a literal. Everything downstream that reads `value` as a literal (literal types, keyword presence, enum arms)
+sees no literal there; the slot types as `string` and its guard is the pattern.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::dedupeValues`
 
 ```text
@@ -2472,6 +2480,11 @@ A fixed-text leaf an emitter treats as a keyword-like kind: a word-shaped
 keyword of either visibility, or a visible non-word token. It is the
 complement of `isHiddenPunctuationLeaf` within the fixed-text leaves.
 
+Only the sites that must see hidden keywords use it: the kind-id and type
+tables (`consts`, `types`), `classifyFactoryShape`, and the edge classes and
+edge char sets of a kind. Every other emitter site asks `isVisibleTextLeaf`;
+tightening any of the four regenerates all three grammars differently.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
 ```text
@@ -3446,7 +3459,7 @@ refused — the arm is wrong, not merely inapplicable.
 
 `origin` is the `SeamOrigin` `withDeclaredArms` recorded when a declaration
 reached the site; an undeclared site has none and plans as the fallback.
-`edgeTokens` rides through from the `RuleSpacingSite` so the cascade paths can
+`edgeLiterals` rides through from the `RuleSpacingSite` so the cascade paths can
 be built here as well as in `render-rules.ts`.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::collectSitePreferences`
@@ -3562,6 +3575,14 @@ that owns its edges (`ownsKindEdges`) gets its kind edge seams
 (`withKindEdges`). A grammar with no whitespace kinds gets the spaced rules
 back untouched.
 
+#### token interior
+
+```text
+A lexed kind is skipped by the interior seam pass: template text inside a token is written by the kind's own
+render function, so no address inside it can carry a preference. The kind still sits among its neighbours; that
+spacing comes from the parent's seams.
+```
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::withKindEdges`
 
 A kind's edge seams: when the kind's rule is a seq, a whitespace choice
@@ -3579,8 +3600,8 @@ literal of its own and is returned unchanged.
 
 The kind's edge terminal cascades onto the edge: when the seq opens (or
 closes) with a literal token, or with a choice whose every arm is a token,
-`edgeTokensOf` names them as a set and the edge's `SpacingPart` carries it as
-`edgeTokens`, so the site answers to those tokens'
+`edgeLiteralsOf` names them as a set and the edge's `SpacingPart` carries it as
+`edgeLiterals`, so the site answers to those tokens'
 grammar-wide face as well as to `<kind>_before`/`_after` (see
 `site-addresses.ts::addressSites`). `arguments` opening with `(` takes the
 `_`-scope `"("/before` arm as its before-edge default without a row of its
@@ -3592,6 +3613,13 @@ nothing.
 Whether a kind gets edge seams: it is a compound node, and it is either
 visible or a hidden kind with no visible twin of the same public name,
 since the two would claim the same `<kind>_before` key.
+
+#### token interior
+
+```text
+A lexed kind owns no edges: a token that reads as one text spaces against its neighbours through the parent's
+seams, exactly as a text leaf does.
+```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::withArmEdgeSeams`
 
@@ -3867,7 +3895,7 @@ seam's resolved arm must be one its site admits.
 `declaredOptionArms`'s map values are `DeclaredArm` (`{ arm, origin }`),
 `origin` being `PreferenceOrigin` (`site-addresses.ts`, `Exclude<SeamOrigin,
 'fallback'>`) — `'preference'` for a kind- or supertype-scoped declaration,
-`'token-default'` for a wildcard (`_`-scope) one, decided once in
+`'literal-default'` for a wildcard (`_`-scope) one, decided once in
 `resolveBindings` from the winning entry's address (a leading `_` segment
 vs. a named one) and never re-derived downstream. `#resolve` adds the
 third state, `'fallback'`, when no declaration reaches the site at all —
@@ -3917,7 +3945,7 @@ One whitespace choice of a spaced separator, flank or seam: the transport
 field it becomes (the site key), its label, its side, its default arm and
 the arms it admits, read from the choice's own members.
 
-`edgeTokens` is set only on a kind edge whose seq opens or closes with a
+`edgeLiterals` is set only on a kind edge whose seq opens or closes with a
 literal token or a choice of tokens: the public names of those tokens (one
 element in the single-token case), stamped on the whitespace
 choice's own annotations by `whitespaceChoice` and read back by `partOf`, so
@@ -3965,7 +3993,7 @@ Every site with its canonical path, sorted. A site's index in the result is its
 site number, which is what makes a prefix-scoped declaration a contiguous range
 rather than a scan.
 
-A site that names `edgeTokens` (a kind edge whose kind opens or closes
+A site that names `edgeLiterals` (a kind edge whose kind opens or closes
 with those literals) also gets one `cascadePaths` entry per token:
 `[kind, literal, side]`, the path that token's own seam would have inside that
 kind. `cascadePathsOf` builds them; the primary `path` stays `[kind, side]`, so `options.ts` keys and
@@ -4134,7 +4162,7 @@ resolved against the grammar.
 Each site's arm, with the narrowest binding that reaches it winning (see
 `addressSegments` above for the head-segment normalization specificity
 sorts on). The map's value also carries `origin: PreferenceOrigin` —
-`'token-default'` when the winning entry's address has a wildcard head
+`'literal-default'` when the winning entry's address has a wildcard head
 (a bare `_`), `'preference'` otherwise — decided once here, from the
 address text, at the one place a site's winning declaration is chosen.
 Every other reader of a resolved arm (`declaredOptionArms`,
@@ -4232,3 +4260,23 @@ The separator token an option declared for this list, stamped once resolution
 has run. A list that chooses its separator per instance and has no stamp is a
 build error naming the arms it admits.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.lexedInterior`
+
+```text
+True when the kind is read as one text and rendered from slots around literal runs: the top rule is a structured
+`token(...)` (`tokenized`) or a structured bare pattern (`lexed`). The reader keeps `$text` for such a kind, the
+render template glues its members with adjacency marks, no seam is minted inside it and it owns no kind-edge
+seams; its slot structure is the single derivation `interiorOf` serializes.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isPatternValue`
+
+```text
+True for a slot value that is free text constrained by a pattern rather than a literal.
+```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isLexedKind`
+
+```text
+True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
+```

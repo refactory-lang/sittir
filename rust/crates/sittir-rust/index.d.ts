@@ -394,6 +394,12 @@ export interface CapturedPatternTransport {
   _captured_pattern_after?: number
 }
 
+export interface CharLiteralTransport {
+  '$_trivia'?: TransportTrivia
+  _b?: boolean
+  _content: string
+}
+
 export interface ClosureExpressionBlockTransport {
   '$_trivia'?: TransportTrivia
   _static_marker?: SlotValue<KwStaticMarkerTransport>
@@ -618,6 +624,11 @@ export interface EnumVariantTransport {
   _eq_after?: number
   _enum_variant_before?: number
   _enum_variant_after?: number
+}
+
+export interface EscapeSequenceTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
 }
 
 export interface ExpressionStatementTransport {
@@ -1016,6 +1027,12 @@ export interface InnerAttributeItemTransport {
   _inner_attribute_item_after?: number
 }
 
+export interface IntegerLiteralTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+  _suffix?: SlotValue<Box<AnyTransport>>
+}
+
 export interface LabelTransport {
   '$_trivia'?: TransportTrivia
   _name: SlotValue<IdentifierTransport>
@@ -1279,6 +1296,11 @@ export interface MatchPatternTransport {
   _if_keyword_after?: number
   _match_pattern_before?: number
   _match_pattern_after?: number
+}
+
+export interface MetavariableTransport {
+  '$_trivia'?: TransportTrivia
+  _name: string
 }
 
 export interface ModItemExternalTransport {
@@ -1649,6 +1671,11 @@ export interface SelfParameterTransport {
   _self_parameter_after?: number
 }
 
+export interface ShebangTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
 export interface ShorthandFieldInitializerTransport {
   '$_trivia'?: TransportTrivia
   _attributes?: Array<SlotValue<AttributeItemTransport>>
@@ -1795,7 +1822,7 @@ export interface TokenBindingPatternTransport {
 export interface TokenRepetitionPatternTransport {
   '$_trivia'?: TransportTrivia
   _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
-  _separator?: boolean
+  _separator?: string
   _operator: SlotValue<Box<AnyTransport>>
   _operator_before?: number
   _token_patterns_end?: number
@@ -1813,7 +1840,7 @@ export interface TokenRepetitionPatternTransport {
 export interface TokenRepetitionTransport {
   '$_trivia'?: TransportTrivia
   _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
-  _separator?: boolean
+  _separator?: string
   _operator: SlotValue<Box<AnyTransport>>
   _operator_before?: number
   _tokens_end?: number

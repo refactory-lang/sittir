@@ -1,5 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	kindDiscriminantExprForId,
@@ -144,6 +145,10 @@ function emitNonEmptyAssertHelper(): string[] {
 	];
 }
 
+function slotGuardKey(kind: string, slot: string): string {
+	return `${kind}\0${slot}`;
+}
+
 function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
 	if (kind.startsWith('_') && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
@@ -159,6 +164,18 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 		if (declaration === undefined) continue;
 		leafReConsts.set(kind, declaration.constName);
 		lines.push(`const ${declaration.constName} = ${declaration.literal};`);
+	}
+	for (const [kind, node] of nodeMap.nodes) {
+		const interior = interiorOf(node);
+		if (interior === undefined) continue;
+		for (const entry of interior.entries) {
+			if (!('slot' in entry)) continue;
+			const literal = anchoredLeafRegexLiteral(kind, entry.pattern);
+			if (literal === undefined) continue;
+			const constName = `_slotRe_${node.rawFactoryName!}_${entry.slot}`;
+			leafReConsts.set(slotGuardKey(kind, entry.slot), constName);
+			lines.push(`const ${constName} = ${literal};`);
+		}
 	}
 	return leafReConsts;
 }
@@ -269,7 +286,7 @@ export namespace factory {
 			}
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) {
+				if (isVisibleTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -283,9 +300,10 @@ export namespace factory {
 		output: string[],
 		node: FieldCarryingNode,
 		nodeMap: NodeMap,
-		kindEntries: readonly KindEnumEntry[] | undefined
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		leafReConsts: Map<string, string> = new Map()
 	): void {
-		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries));
+		output.push(emitFieldCarryingFactory(node, node.slots, nodeMap, kindEntries, leafReConsts));
 	}
 
 	export function separatedList(
@@ -328,6 +346,10 @@ export function childElementType(
 	for (const c of node.children) {
 		const slotInfo = resolveFieldStorageInfo(c, nodeMap);
 		for (const value of c.values) {
+			if (isPatternValue(value)) {
+				parts.add('string');
+				continue;
+			}
 			const storage = valueStorageOf(value, nodeMap);
 			if (storage === undefined) continue;
 			if (storage.via !== 'node') {
@@ -880,7 +902,7 @@ export function constructorSurface(
 		}
 		case 'keyword':
 		case 'punctuation':
-			if (!isWordOrVisibleTextLeaf(target)) return undefined;
+			if (!isVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
@@ -895,7 +917,8 @@ function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	slots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined
+	kindEntries: readonly KindEnumEntry[] | undefined = undefined,
+	leafReConsts: ReadonlyMap<string, string> = new Map()
 ): string {
 	const exportName = node.rawFactoryName!;
 	const fn = exportName;
@@ -961,6 +984,12 @@ function emitFieldCarryingFactory(
 	}
 	for (const f of slotsToEmit) {
 		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
+		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
+		if (guard !== undefined) {
+			lines.push(
+				`  if (${f.storageKey} !== undefined && !${guard}.test(${f.storageKey})) throw new Error(\`${node.kind}.${f.name}: text does not match pattern: \${${f.storageKey}}\`);`
+			);
+		}
 	}
 	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
@@ -1526,7 +1555,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 
 	emitBranch(node: FieldCarryingNode): void {
-		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
+		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries, this.#leafReConsts);
 	}
 
 	emitSeparatedList(node: AssembledList): void {
@@ -1567,7 +1596,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) this.emitLeaf(node);
+				if (isVisibleTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

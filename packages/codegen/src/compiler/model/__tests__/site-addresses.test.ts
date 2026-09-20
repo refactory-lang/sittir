@@ -298,7 +298,7 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 	const kindEntries = [{ kind: 'lparen', anon: true, symbolName: '(', literalText: '(', member: 'Lparen', id: 7 }] as unknown as KindEntryLike[];
 	const sites = addressSites(
 		[
-			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeTokens: ['lparen'] },
+			{ kind: 'args', slot: 'args', address: 'args_before', label: 'args_before', edgeLiterals: ['lparen'] },
 			{ kind: 'args', slot: 'args', address: 'args_after', label: 'args_after' },
 			{ kind: 'call', slot: 'lparen', address: 'lparen_before', label: 'lparen_before' }
 		],
@@ -326,7 +326,7 @@ describe('a kind edge answers to its edge token’s face as a cascaded address',
 		);
 		const byAddress = new Map([...resolved].map(([i, v]) => [sites[i]!.address, v]));
 		expect(byAddress.get('args_before')).toEqual({ arm: 'space', origin: 'preference' });
-		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'token-default' });
+		expect(byAddress.get('lparen_before')).toEqual({ arm: 'tight', origin: 'literal-default' });
 		const cascadedOnly = resolveBindings([{ path: '_/"("/before', arm: 'tight' }], [], sites, NO_SUPERTYPES, false);
 		expect(new Map([...cascadedOnly].map(([i, v]) => [sites[i]!.address, v])).get('args_before')).toEqual({ arm: 'tight', origin: 'cascade' });
 	});
@@ -337,7 +337,7 @@ describe('a kind edge over a choice of tokens cascades only a unanimous face', (
 		{ kind: 'dot_dot', anon: true, symbolName: '..', literalText: '..', member: 'DotDot', id: 3 },
 		{ kind: 'dot_dot_eq', anon: true, symbolName: '..=', literalText: '..=', member: 'DotDotEq', id: 4 }
 	] as unknown as KindEntryLike[];
-	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeTokens: ['dot_dot', 'dot_dot_eq'] }], kindEntries);
+	const sites = addressSites([{ kind: 'range', slot: 'range', address: 'range_before', label: 'range_before', edgeLiterals: ['dot_dot', 'dot_dot_eq'] }], kindEntries);
 	const resolve = (rows: { path: string; arm: string }[]) =>
 		[...resolveBindings(rows, [], sites, NO_SUPERTYPES, false)].map(([i, v]) => `${sites[i]!.address}=${v.arm}/${v.origin}`);
 

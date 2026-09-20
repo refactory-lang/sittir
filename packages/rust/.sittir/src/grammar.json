@@ -7856,7 +7856,7 @@
     },
     "shebang": {
       "type": "PATTERN",
-      "value": "#![\\r\\f\\t\\v ]*([^\\[\\n].*)?\\n"
+      "value": "#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\\n"
     },
     "_reserved_identifier": {
       "type": "ALIAS",
@@ -7912,7 +7912,7 @@
     },
     "metavariable": {
       "type": "PATTERN",
-      "value": "\\$[a-zA-Z_]\\w*"
+      "value": "\\$(?<name>[a-zA-Z_]\\w*)"
     },
     "_kw_ref_marker": {
       "type": "STRING",

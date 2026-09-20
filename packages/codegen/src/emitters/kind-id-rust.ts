@@ -67,8 +67,12 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		...new Set(
 			entries
 				.filter((entry) => {
-					const modelType = nodeMap.nodes.get(entry.kind)?.modelType;
-					return modelType === 'pattern' || modelType === 'enum';
+					const node = nodeMap.nodes.get(entry.kind);
+					return (
+						node?.modelType === 'pattern' ||
+						node?.modelType === 'enum' ||
+						(node instanceof AbstractAssembledCompound && node.lexedInterior)
+					);
 				})
 				.map((entry) => entry.id)
 		)

@@ -28,7 +28,7 @@ export type WrapperPhase = 'evaluate' | 'link';
 
 export type AnyRule = Rule<PhaseName>;
 
-export type SeamOrigin = 'preference' | 'token-default' | 'word-default' | 'cascade' | 'fallback';
+export type SeamOrigin = 'preference' | 'literal-default' | 'word-default' | 'cascade' | 'fallback';
 
 export type RuleAnnotations = {
 	readonly variant?: string;
@@ -38,7 +38,7 @@ export type RuleAnnotations = {
 	readonly hoisted?: true;
 	readonly spliced?: true;
 	readonly origin?: SeamOrigin;
-	readonly edgeTokens?: readonly string[];
+	readonly edgeLiterals?: readonly string[];
 };
 
 export type RuleBase<Phase extends PhaseName = 'normalize'> = {
@@ -59,12 +59,14 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 	readonly variantArms?: readonly string[];
 
 	readonly annotations?: RuleAnnotations;
+
+	readonly nonterminal?: boolean;
+
+	readonly lexed?: boolean;
 } & (Phase extends NormalizedPhase
 	? {
 			readonly fieldName?: string;
 			readonly multiplicity?: Multiplicity;
-			readonly nonterminal?: boolean;
-
 			readonly separator?: RuleSeparator<Rule<Phase>>;
 
 			readonly optionalElement?: boolean;

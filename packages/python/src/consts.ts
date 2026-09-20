@@ -33,6 +33,7 @@ const NODE_KINDS = [
 	'chevron',
 	'class_definition',
 	'class_pattern',
+	'comment',
 	'comparison_operator',
 	'complex_pattern',
 	'comprehension_clauses',
@@ -53,6 +54,7 @@ const NODE_KINDS = [
 	'dotted_name',
 	'elif_clause',
 	'else_clause',
+	'escape_sequence',
 	'except_clause',
 	'except_clause_exception_as',
 	'exec_statement',
@@ -153,7 +155,6 @@ const LEAF_KINDS = [
 	'break_statement',
 	'case_keyword',
 	'class_keyword',
-	'comment',
 	'continue_keyword',
 	'continue_statement',
 	'def_keyword',
@@ -162,7 +163,6 @@ const LEAF_KINDS = [
 	'ellipsis',
 	'else_keyword',
 	'escape_interpolation',
-	'escape_sequence',
 	'except_keyword',
 	'exec_keyword',
 	'false',
@@ -1784,6 +1784,18 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'with_clause', id: 69, enumName: 'FieldWithClause', cName: 'field_with_clause' },
 	{ name: 'with_item', id: 70, enumName: 'FieldWithItem', cName: 'field_with_item' }
 ] as const;
+
+import type { TokenInterior } from '@sittir/common';
+
+/** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
+export const TOKEN_INTERIORS = {
+	comment: { regex: '^#(?<content>(?:.*))$', slots: [{ name: 'content', configKey: 'content' }] },
+	escape_sequence: {
+		regex:
+			'^\\\\(?<content>(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:[\'"abfrntv\\\\])|(?:N\\{[^}]+\\})))$',
+		slots: [{ name: 'content', configKey: 'content' }]
+	}
+} as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_OPERATORS = [

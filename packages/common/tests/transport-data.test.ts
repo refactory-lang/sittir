@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, toTransportData } from '../src/transport-data.ts';
+import { markEdited, stripStructuralProvenance, toTransportData } from '../src/transport-data.ts';
 
 const leaf = (text: string, start: number) => ({
 	$type: 1,
@@ -182,5 +182,26 @@ describe('markEdited', () => {
 			_a: 1
 		});
 		expect(out).toEqual({ $type: 3, $text: 'x', _a: 1 });
+	});
+});
+
+describe('stripStructuralProvenance', () => {
+	it('keeps the coordinate of an unedited node whose slots are projected from its text', () => {
+		const node = { $type: 118, $text: "'a'", $span: { start: 3, end: 6 }, $nodeHandle: 17, _content: 'a', _b: true };
+		expect(stripStructuralProvenance(node)).toEqual({
+			$type: 118,
+			$text: "'a'",
+			$span: { start: 3, end: 6 },
+			$nodeHandle: 17,
+			_content: 'a',
+			_b: true
+		});
+	});
+
+	it('strips a node that holds child nodes, and a node an edit detached from its span', () => {
+		const parent = { $type: 1, $text: 'x', $span: { start: 0, end: 1 }, $nodeHandle: 2, _child: { $type: 3, $span: { start: 0, end: 1 } } };
+		expect(stripStructuralProvenance(parent)).toEqual({ $type: 1, _child: { $type: 3, $span: { start: 0, end: 1 } } });
+		const edited = { $type: 118, $text: "'a'", _content: 'b' };
+		expect(stripStructuralProvenance(edited)).toEqual({ $type: 118, _content: 'b' });
 	});
 });

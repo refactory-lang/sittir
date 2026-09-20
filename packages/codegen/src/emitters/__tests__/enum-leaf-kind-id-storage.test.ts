@@ -12,7 +12,9 @@ import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { classifyValueStorage, fieldTypeComponents, resolveFieldStorageInfo } from '../shared.ts';
+import { classifyValueStorage, enumArmsOf, fieldTypeComponents, kindEnumOwnSymbolIds, resolveFieldStorageInfo } from '../shared.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
+import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 const kindEntries = [
 	{ id: 1, kind: 'u8', symbolName: 'primitive_type', literalText: 'u8', anon: true },
@@ -95,5 +97,61 @@ describe('an enum leaf is kind-id-stored', () => {
 			{ kind: 'literal', value: 'u8', rawKind: 'u8', resolvedKindId: 1, immediate: undefined },
 			{ kind: 'literal', value: 'bool', rawKind: 'bool', resolvedKindId: 2, immediate: undefined }
 		]);
+	});
+});
+
+const wrapKindEntries: KindEnumEntry[] = [
+	{ id: 1, kind: 'u8', member: 'U8', symbolName: 'primitive_type', literalText: 'u8', anon: true },
+	{ id: 2, kind: 'bool', member: 'Bool', symbolName: 'primitive_type', literalText: 'bool', anon: true },
+	{ id: 3, kind: 'holder', member: 'Holder' },
+	{ id: 4, kind: 'identifier', member: 'Identifier' }
+];
+
+// holder: seq(field('name', choice($.identifier, $.<enumKind>))) — a mixed slot
+// whose enum arm is a parser symbol of its own (typescript's predefined_type).
+function makeMixedEnumNodeMap(enumKind: string) {
+	const rule: SeqRule<'link'> = {
+		type: SEQ,
+		members: [
+			{
+				type: FIELD,
+				name: 'name',
+				content: {
+					type: CHOICE,
+					members: [
+						{ type: SYMBOL, name: 'identifier' },
+						{ type: SYMBOL, name: enumKind }
+					]
+				}
+			}
+		]
+	};
+	const nodeMap = makeNodeMap();
+	nodeMap.nodes.set('holder', new AssembledBranch('holder', flatten(rule), flatten(rule), { kindEntries: wrapKindEntries }));
+	nodeMap.nodes.set(
+		enumKind,
+		new AssembledEnum(
+			enumKind,
+			{ type: CHOICE, members: [{ type: STRING, value: 'u8' }, { type: STRING, value: 'bool' }] },
+			{ kindEntries }
+		)
+	);
+	const slot = nodeMap.nodes.get('holder')!.slots.find((s) => s.name === 'name')!;
+	for (const value of slot.values) Object.assign(value, { storageKindId: 346 });
+	return { nodeMap, slot };
+}
+
+describe('a visible enum leaf reads as its own parser symbol', () => {
+	it('the walk records the enum symbol of a visible enum arm', () => {
+		const { nodeMap, slot } = makeMixedEnumNodeMap('primitive_type');
+		expect(enumArmsOf(slot, nodeMap).ownSymbolIds).toEqual([346]);
+		expect(kindEnumOwnSymbolIds(slot, nodeMap)).toEqual([346]);
+	});
+
+	it('the wrap projection folds a read enum node onto its member id by text', () => {
+		const { nodeMap } = makeMixedEnumNodeMap('primitive_type');
+		const source = emitWrap({ grammar: 'synth', nodeMap, kindEntries: wrapKindEntries });
+		expect(source).toContain('ownSymbols?.includes(entry.$type) && typeof entry.$text === "string"');
+		expect(source).toMatch(/projectMixedEnumStorage\([\s\S]*?\{ "?u8"?: 1, "?bool"?: 2 \}, undefined, \[346\]/);
 	});
 });

@@ -79,6 +79,13 @@ pnpm run build:debug          # debug binding (dev only)
 Prefer release builds when running the validators; the validation load is
 sized for the optimized binding.
 
+Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
+<lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not
+by running cargo and copying the dylib: only the `napi build` step regenerates
+`rust/crates/sittir-<lang>/index.d.ts`, so a hand-copied binary leaves it stale.
+The workspace `[profile.release] strip = "none"` keeps the binding loadable on
+macOS (see the comment in `Cargo.toml`).
+
 ## Diagnostic tooling
 
 Developer diagnostics live behind the unified `sittir` CLI:

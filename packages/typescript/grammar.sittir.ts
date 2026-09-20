@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import { enrich, field, alias, wire, refine, variant, preference } from '../codegen/src/dsl/index.ts';
+import { enrich, field, alias, wire, refine, variant, preference, regex } from '../codegen/src/dsl/index.ts';
 
 function immediateClosingDelimiter(original: unknown) {
 	const seqMembers = (original as { members: unknown[] }).members;
@@ -303,6 +303,13 @@ export default grammar(
 			},
 
 			patches: {
+				comment: {
+					'0/1/1': regex(/([^*]|\*+[^*\/])*\**/),
+					'0/1/2': { type: 'STRING', value: '*/' } as never,
+					0: variant('line'),
+					1: variant('block')
+				},
+				hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 				binary_expression: {
 					24: variant('in')
 				},
@@ -662,7 +669,12 @@ export default grammar(
 				}
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
-			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace, $.comment],
+			extras: ($, previous) => [
+				...(previous ?? []).filter((extra: { name?: string }) => extra.name !== 'comment'),
+				$.comment_line,
+				$.comment_block
+			],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),
@@ -832,8 +844,9 @@ export default grammar(
 				}
 			},
 			renderAs: (_$) => ({
-				_template_chars: token.immediate(/[^`\\$]+/),
-				escape_sequence: token.immediate(/\\[^]/)
+				html_comment: /<!--[\s\S]*?-->/,
+				jsx_text: /[^{}<>]+/,
+				_template_chars: token.immediate(/[^`\\$]+/)
 			})
 		},
 		enrichedBase

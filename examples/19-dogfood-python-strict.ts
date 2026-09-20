@@ -34,8 +34,8 @@ const id = (text: string) => ir.identifier(text);
 /** The shebang and module docstring, which the reader carries as comments. */
 export function headerStrict() {
 	return [
-		ir.synonym.comment('#!/usr/bin/env python3'),
-		ir.synonym.comment('# """Cross-tree probe-kind sweep for regression diffing."""'),
+		ir.synonym.comment('!/usr/bin/env python3'),
+		ir.synonym.comment(' """Cross-tree probe-kind sweep for regression diffing."""'),
 	];
 }
 

@@ -11,7 +11,7 @@ export function emittedTemplates(bodies: Readonly<Record<string, Body>>): Emitte
 			runtimeDerivable: 0,
 			runtimeVarying: 0,
 			preferenceOrigin: 0,
-			tokenDefaultOrigin: 0,
+			literalDefaultOrigin: 0,
 			wordDefaultOrigin: 0,
 			cascadeOrigin: 0,
 			fallbackOrigin: 0
