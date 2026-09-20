@@ -785,9 +785,9 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
 export type ConfigOf<T> = T extends unknown
 	? Simplify<
 			{
-				[K in keyof FieldsOf<T> as EscapeReservedAccessor<
-					CamelCase<K & string>
-				>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
+					FieldInputType<T, K>
+				> extends true
 					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
@@ -1126,6 +1126,7 @@ type WidenValue<
 			| WidenArrayMembers<Extract<T, readonly unknown[]>, Scalars, Strings, Depth, NsMap, Visited>
 			| WidenLeafMembers<T, Scalars, Strings>
 			| WidenKindId<BareKindId<T>, NsMap>
+			| WidenScalarKindId<BareKindId<T>, Scalars>
 			| WidenBranches<BranchMembers<T>, Scalars, Strings, Depth, NsMap, Visited>
 			| OtherMembers<T>;
 
@@ -1229,6 +1230,12 @@ type BareKindId<T> = T extends number
 
 /** @internal — a bare kind id widens to its namespace entry's `Loose`. */
 type WidenKindId<I, NsMap> = I extends keyof NsMap ? (NsMap[I] extends { readonly Loose: infer L } ? L : I) : I;
+
+/** @internal — a bare kind id the grammar's scalar map names (the true and
+ *  false keyword kinds) also admits that scalar, the way a text leaf admits
+ *  its scalar through `WidenLeafMembers`; the coercer resolves the scalar to
+ *  the kind id the slot stores. */
+type WidenScalarKindId<I, Scalars> = I extends keyof Scalars ? Scalars[I] : never;
 
 /** Widen a child slot type for the loose-config surface (applies WidenValue to arrays and single values). */
 type WidenChildSlot<

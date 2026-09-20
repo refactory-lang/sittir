@@ -1,17 +1,15 @@
 import { ir, TSKindId } from '@sittir/typescript';
 
-// The strict half of the typescript dogfood: rebuilds the same items as
-// `18-dogfood-typescript.ts` through `.strict` alone, so each gap is attributed
-// to the layer that owns it. Every call is the strict surface — `.strict` on
+// The strict typescript dogfood: rebuilds `packages/common/src/format.ts`
+// through `.strict` alone, so each gap is attributed to the layer that owns it. Every call is the strict surface — `.strict` on
 // branch kinds, `.<form>.strict` on a namespaced form, and the bare factory on
 // leaves (leaves have no `.strict`; they are already it).
 //
 // What rebuilds here is the file's skeleton: the import with its type
 // modifier and both function declarations with parameter and return
 // annotations. Each body holds two statements (`let result = …;` and
-// `return result;`); the real bodies are not written. The coercion half
-// renders the same functions with empty bodies and no annotations; every
-// shape below is constructible on this surface.
+// `return result;`); the real bodies are not written. Every shape below is
+// constructible on this surface.
 //
 // Five spellings are worth naming, because getting one wrong reads as a
 // missing feature rather than a wrong call:

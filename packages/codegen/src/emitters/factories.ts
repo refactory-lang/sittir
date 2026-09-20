@@ -186,7 +186,8 @@ export function hiddenTextLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Ass
 		const storage = valueStorageOf(value, nodeMap);
 		if (storage === undefined || storage.via !== 'node' || storage.missing) continue;
 		const node = nodeMap.nodes.get(storage.kind);
-		if (node instanceof AssembledPattern && node.kind.startsWith('_') && node.rawFactoryName !== undefined) leaves.add(node);
+		if (node instanceof AssembledPattern && node.kind.startsWith('_') && node.rawFactoryName !== undefined)
+			leaves.add(node);
 	}
 	return [...leaves];
 }
@@ -195,7 +196,10 @@ function hiddenTextAdmission(f: AssembledNonterminal, expr: string, nodeMap: Nod
 	const leaves = hiddenTextLeaves(f, nodeMap);
 	if (leaves.length === 0) return expr;
 	const table = leaves
-		.map((leaf) => `[${JSON.stringify(leaf.kind)}, ${leafReDeclaration(leaf.kind, leaf)?.constName ?? 'undefined'}, ${leaf.rawFactoryName}]`)
+		.map(
+			(leaf) =>
+				`[${JSON.stringify(leaf.kind)}, ${leafReDeclaration(leaf.kind, leaf)?.constName ?? 'undefined'}, ${leaf.rawFactoryName}]`
+		)
 		.join(', ');
 	return `admitHiddenText<NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>>(${expr}, [${table}], '${typeName}.${f.configKey}')`;
 }
@@ -317,10 +321,7 @@ export namespace factory {
 	}
 }
 
-function buildLeafGuards(
-	node: { kind: string; textPattern?: string },
-	leafReConsts: Map<string, string>
-): string[] {
+function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
 	const guards: string[] = [];
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
@@ -333,7 +334,6 @@ function buildLeafGuards(
 	}
 	return guards;
 }
-
 
 type FieldCarryingNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
 
@@ -863,13 +863,15 @@ export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): {
-	params: string;
-	paramsOverloads?: readonly string[];
-	looseParams?: string;
-	args: string;
-	argOptional?: boolean;
-} | undefined {
+):
+	| {
+			params: string;
+			paramsOverloads?: readonly string[];
+			looseParams?: string;
+			args: string;
+			argOptional?: boolean;
+	  }
+	| undefined {
 	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
 	switch (target.modelType) {
@@ -1156,7 +1158,12 @@ function emitRefineFormFactory(
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`);
 		} else {
-			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
+			const elemType = setterElemType(
+				f,
+				constructionFieldElementType(f, nodeMap, kindEntries),
+				formConfigType,
+				nodeMap
+			);
 			const setterSig = setterValueSignature(f, elemType);
 			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }),`);
 		}
@@ -1228,8 +1235,20 @@ function parenthesizeUnion(elemType: string): string {
 	return elemType.includes(' | ') ? `(${elemType})` : elemType;
 }
 
+export function listOptionKeys(surface: {
+	readonly hasSeparatorKindOption: boolean;
+	readonly hasDelimiterOption: boolean;
+}): readonly string[] {
+	return [
+		...(surface.hasSeparatorKindOption ? ['separator'] : []),
+		...(surface.hasDelimiterOption ? ['delimiter'] : [])
+	];
+}
+
 export function listHasOptions(node: AssembledList): boolean {
-	return node.separatorRule !== undefined || node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
+	return (
+		node.separatorRule !== undefined || node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional'
+	);
 }
 
 export function separatedListSurface(
@@ -1281,7 +1300,9 @@ export function separatedListSurface(
 		: [];
 	const hasDelimiterOption = node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional';
 	const separatorKindUnion =
-		candidateKindNames.length > 0 ? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ') : 'never';
+		candidateKindNames.length > 0
+			? candidateKindNames.map((k) => kindDiscriminantExpr(k, nodeMap, kindEntries)).join(' | ')
+			: 'never';
 	const optionsTypeParts: string[] = [];
 	if (hasSeparatorKindOption) optionsTypeParts.push(`separator?: ${separatorKindUnion}`);
 	if (hasDelimiterOption) optionsTypeParts.push(`delimiter?: ${delimiterUnionFor(node)}`);
@@ -1332,7 +1353,8 @@ export function declaredSeparatorDefault(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const declared = node.resolvedSeparatorArm;
-	if (declared === undefined) throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
+	if (declared === undefined)
+		throw new Error(`factories: ${node.kind} chooses its separator per instance and declares no default`);
 	return kindDiscriminantExpr(declared, nodeMap, kindEntries);
 }
 
@@ -1368,10 +1390,7 @@ function emitSeparatedListFactory(
 			`export function ${fn}(options: ${optionsType}, ...elements: ${elementsType}): ReturnType<typeof _${fn}>;`
 		);
 		lines.push(`export function ${fn}(...args: (${optionsType} | ${elemTypeForArray})[]) {`);
-		const permittedKeys = [
-			...(hasSeparatorKindOption ? ['separator'] : []),
-			...(hasDelimiterOption ? ['delimiter'] : [])
-		];
+		const permittedKeys = listOptionKeys(surface);
 		lines.push(
 			`  const _optsFirst = typeof args[0] === 'object' && args[0] !== null && !Array.isArray(args[0]) && !('$type' in (args[0] as object)) && ` +
 				`Object.keys(args[0] as object).every((k) => ${JSON.stringify(permittedKeys)}.includes(k));`
@@ -1388,7 +1407,9 @@ function emitSeparatedListFactory(
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
 	if (node.terminatedSeparator && hasTrailingOption) {
-		lines.push(`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`);
+		lines.push(
+			`  if (elements.length === 1 && ((options.delimiter ?? ${delimiterDefault}) & Delimiter.Trailing) === 0) {`
+		);
 		lines.push(`    throw new Error('${node.kind}: a single element requires a trailing delimiter (delimiter: 2)');`);
 		lines.push('  }');
 	}

@@ -29,7 +29,8 @@ export type NodeConfig<K extends NodeKind<RustGrammar>> = BaseNodeConfig<RustGra
 export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar, K>;
 
 export type LeafScalarMap = {
-	[TSKindId.BooleanLiteral]: boolean;
+	[TSKindId.TrueKeyword]: boolean;
+	[TSKindId.FalseKeyword]: boolean;
 	[TSKindId.IntegerLiteral]: number;
 	[TSKindId.FloatLiteral]: number;
 };

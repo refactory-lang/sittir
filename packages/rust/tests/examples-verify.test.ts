@@ -17,7 +17,6 @@ import { renderMainFunction, renderUntouched, roundTrip } from '../../../example
 import { readSource, readFirstFunction, wrappedLazyAccess } from '../../../examples/07-read-source.ts';
 import { summarizeTopLevelItems } from '../../../examples/09-type-guards.ts';
 import { dogfoodContract, structuralShape } from '../../../examples/helpers.ts';
-import { rebuildSplice } from '../../../examples/17-dogfood-rust.ts';
 import { rebuildSpliceStrict } from '../../../examples/17-dogfood-rust-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -172,23 +171,6 @@ describe('structuralShape trivia handling', () => {
 		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.content('c')] });
 		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.content('c')] });
 		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
-	});
-});
-
-// GAP inventory (examples/17): A=6 B=8 C=1 — each marked in the example at
-// the construct it blocks. Both assertions flip to `it` as the classes close.
-describe('examples/17 dogfood rust (splice.rs)', () => {
-	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
-	it('builds and renders the whole file through the construction surface', () => {
-		expect(rebuildSplice().$render()).toContain('pub enum SpliceError');
-	});
-	it.fails('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), rebuildSplice(), target).reparsesEqual).toBe(true);
-	});
-	it.fails('is identical to the real file modulo whitespace', () => {
-		const r = dogfoodContract(createEngine(), rebuildSplice(), target);
-		expect(r.firstDifference).toBeUndefined();
-		expect(r.sameModuloWhitespace).toBe(true);
 	});
 });
 

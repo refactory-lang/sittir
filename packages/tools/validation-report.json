@@ -23,6 +23,21 @@
     "scope": "grammar",
     "code": "kindid-unstamped-anon-literal",
     "severity": "warning",
+    "ownerKind": "#!",
+    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "#!"
+    },
+    "location": "#!"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
     "ownerKind": "﷐\n",
     "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
     "canProceed": true,
@@ -87,7 +102,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-unstamped-literals",
-    "message": "6 literal(s) resolved no parser kindId",
+    "message": "7 literal(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "texts": [
@@ -95,6 +110,7 @@
         "\n",
         "\n\n",
         " ",
+        "#!",
         "﷐\n",
         "﷑\n"
       ]
@@ -122,7 +138,7 @@
     "grammar": "rust",
     "backend": "native",
     "code": "kindid-vaporized-literals",
-    "message": "6 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "severity": "info",
     "details": {
@@ -131,6 +147,7 @@
         "\n",
         "\n\n",
         " ",
+        "#!",
         "﷐\n",
         "﷑\n"
       ]
@@ -165,6 +182,326 @@
     "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
     "canProceed": true,
     "location": "_visibility_modifier_in_path"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:binary_expression:root"
+    },
+    "location": "binary_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "ownerKind": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true,
+    "location": "binary_expression",
+    "sClass": "S4"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "warning",
+    "ownerKind": "public_field_definition",
+    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
+    "canProceed": true,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[4]",
+      "ruleId": "rule:public_field_definition:root"
+    },
+    "location": "public_field_definition"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "enum_body_elements",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name",
+        "name",
+        "name",
+        "name",
+        "name"
+      ]
+    },
+    "location": "enum_body_elements"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "export_statement_default_declaration",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
+    },
+    "location": "export_statement_default_declaration"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "export_statement_default_declaration_default_kw",
+    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "declaration"
+      ]
+    },
+    "location": "export_statement_default_declaration_default_kw"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "#!",
+    "message": "[assemble] literal \"#!\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "#!"
+    },
+    "location": "#!"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "﷐\n",
+    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷐\n"
+    },
+    "location": "﷐\n"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "ownerKind": "﷑\n",
+    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
+    "canProceed": true,
+    "details": {
+      "literalText": "﷑\n"
+    },
+    "location": "﷑\n"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_lhs_expression",
+    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
+    "canProceed": true,
+    "details": {
+      "typeName": "LhsExpression",
+      "newType": "_LhsExpression",
+      "visibleKinds": [
+        "lhs_expression"
+      ]
+    },
+    "location": "_lhs_expression"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_number",
+    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Number",
+      "newType": "_Number",
+      "visibleKinds": [
+        "number"
+      ]
+    },
+    "location": "_number"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_identifier",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Identifier",
+      "newType": "_Identifier",
+      "visibleKinds": [
+        "identifier"
+      ]
+    },
+    "location": "_identifier"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_property_identifier",
+    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "PropertyIdentifier",
+      "newType": "_PropertyIdentifier",
+      "visibleKinds": [
+        "property_identifier"
+      ]
+    },
+    "location": "_property_identifier"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "ownerKind": "_type_identifier",
+    "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    },
+    "location": "_type_identifier"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-unstamped-symbols",
+    "message": "4 referenced kind(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_augmented_assignment_expression_operator",
+        "_operator",
+        "_unary_expression_operator"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-unstamped-literals",
+    "message": "7 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "#!",
+        "﷐\n",
+        "﷑\n"
+      ]
+    },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "",
+        "\n",
+        "\n\n",
+        " ",
+        "#!",
+        "﷐\n",
+        "﷑\n"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_augmented_assignment_expression_operator",
+        "_operator",
+        "_unary_expression_operator"
+      ]
+    },
+    "scope": "grammar"
   },
   {
     "source": "grammar",
@@ -336,309 +673,6 @@
     "details": {
       "kinds": [
         "_unary_operator_operator"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': member rule:binary_expression:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]) — resolved by structural recursion",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[2]",
-      "ruleId": "rule:binary_expression:root"
-    },
-    "location": "binary_expression"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "ownerKind": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression choice expression)] alongside union arm(s) [binary_expression_in]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
-    "location": "binary_expression",
-    "sClass": "S4"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "warning",
-    "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': member rule:public_field_definition:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[4]) — resolved by structural recursion",
-    "canProceed": true,
-    "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[4]",
-      "ruleId": "rule:public_field_definition:root"
-    },
-    "location": "public_field_definition"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "name",
-        "name",
-        "name",
-        "name",
-        "name"
-      ]
-    },
-    "location": "enum_body_elements"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "export_statement_default_declaration",
-    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "declaration"
-      ]
-    },
-    "location": "export_statement_default_declaration"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "declaration"
-      ]
-    },
-    "location": "export_statement_default_declaration_default_kw"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷐\n",
-    "message": "[assemble] literal \"﷐\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷐\n"
-    },
-    "location": "﷐\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "kindid-unstamped-anon-literal",
-    "severity": "warning",
-    "ownerKind": "﷑\n",
-    "message": "[assemble] literal \"﷑\\n\" has no anonymous parser symbol — not minted",
-    "canProceed": true,
-    "details": {
-      "literalText": "﷑\n"
-    },
-    "location": "﷑\n"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_lhs_expression",
-    "message": "[assemble] typeName collision: kind '_lhs_expression' renamed 'LhsExpression' → '_LhsExpression' (visible sibling(s): 'lhs_expression')",
-    "canProceed": true,
-    "details": {
-      "typeName": "LhsExpression",
-      "newType": "_LhsExpression",
-      "visibleKinds": [
-        "lhs_expression"
-      ]
-    },
-    "location": "_lhs_expression"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_number",
-    "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Number",
-      "newType": "_Number",
-      "visibleKinds": [
-        "number"
-      ]
-    },
-    "location": "_number"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Identifier",
-      "newType": "_Identifier",
-      "visibleKinds": [
-        "identifier"
-      ]
-    },
-    "location": "_identifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_property_identifier",
-    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "PropertyIdentifier",
-      "newType": "_PropertyIdentifier",
-      "visibleKinds": [
-        "property_identifier"
-      ]
-    },
-    "location": "_property_identifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "multi-slot-nested-seq",
-    "severity": "warning",
-    "ownerKind": "_type_identifier",
-    "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
-    "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
-    },
-    "location": "_type_identifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unstamped-literals",
-    "message": "6 literal(s) resolved no parser kindId",
-    "canProceed": true,
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "severity": "warning",
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-vaporized-literals",
-    "message": "6 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
-    "canProceed": true,
-    "severity": "info",
-    "details": {
-      "texts": [
-        "",
-        "\n",
-        "\n\n",
-        " ",
-        "﷐\n",
-        "﷑\n"
-      ]
-    },
-    "scope": "grammar"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
-    "canProceed": true,
-    "severity": "warning",
-    "details": {
-      "kinds": [
-        "__number_operator",
-        "_augmented_assignment_expression_operator",
-        "_operator",
-        "_unary_expression_operator"
       ]
     },
     "scope": "grammar"

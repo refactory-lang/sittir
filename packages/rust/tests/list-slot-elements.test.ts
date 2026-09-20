@@ -21,7 +21,20 @@ describe('a list slot takes its elements bare, one or many', () => {
 		const expected = 'V {\n    a: i32,\n}';
 		expect(ir.enumVariant({ name: 'V', body: field() }).$render()).toBe(expected);
 		expect(ir.enumVariant({ name: 'V', body: [field()] }).$render()).toBe(expected);
-		expect(ir.enumVariant({ name: 'V', body: { kind: 'field_declaration', name: 'a', type: 'i32' } }).$render()).toBe(expected);
+		expect(ir.enumVariant({ name: 'V', body: { kind: 'field_declaration', name: 'a', type: 'i32' } }).$render()).toBe(
+			expected
+		);
+	});
+
+	it('resolves a bare number, one or many, at a list slot and at a single slot alike', () => {
+		expect(ir.callExpression({ function: 'f', arguments: [1] }).$render()).toBe('f(1)');
+		expect(ir.callExpression({ function: 'f', arguments: ['a', 2.5] }).$render()).toBe('f(a, 2.5)');
+		expect(ir.letDeclaration({ pattern: 'x', value: 1 }).$render()).toBe('let x = 1;');
+	});
+
+	it('resolves a bare boolean to the boolean literal, one or many, at a list slot and at a single slot alike', () => {
+		expect(ir.callExpression({ function: 'f', arguments: [true, false] }).$render()).toBe('f(true, false)');
+		expect(ir.letDeclaration({ pattern: 'x', value: true }).$render()).toBe('let x = true;');
 	});
 
 	it('takes the options object first and optional', () => {

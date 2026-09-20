@@ -29,6 +29,8 @@ export type NodeConfig<K extends NodeKind<PythonGrammar>> = BaseNodeConfig<Pytho
 export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGrammar, K>;
 
 export type LeafScalarMap = {
+	[TSKindId.True]: boolean;
+	[TSKindId.False]: boolean;
 	[TSKindId.Integer]: number;
 	[TSKindId.Float]: number;
 };

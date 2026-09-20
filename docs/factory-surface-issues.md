@@ -209,7 +209,7 @@ and is never re-interpreted.
 | ~~2~~ | ~~string / number / boolean~~ | ~~a keyword or enum member~~ | **retired** — a bare scalar is never guessed into a keyword or enum member; name the kind (rule 3) instead |
 | 3 | plain object | a kind's config | the kind is `kind:` (grammar name or `TSKindId`), else the slot's only kind, else an error |
 | 4 | array, or one bare element | a list envelope, one entry per array item (a non-array value is one entry), each coerced recursively | the slot admits one list kind, or `arm.default` names one; a `repeat` slot coerces per element. An empty array (or empty spread) at an **optional** list slot is the slot absent: no elements node is built and the presence gate renders nothing (`ir.arguments([])` and `f()` render `()`); at a **required** list slot the list factory's non-empty guard throws, naming the slot |
-| 5 | kind-identified value (node data or a `kind:` object) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses |
+| 5 | kind-identified value (node data, a `kind:` object, or a bare kind id) | wrapped by a single-slot wrapper | the slot's kind is a wrapper whose sole required slot admits the value — the same `forwarded` classification the strict factory's target overload uses; a wrapper's admitted set includes the members of any enum its slot reaches, so `returnType: TSKindId.StringKeyword` builds the `type_annotation` |
 | 6 | bare non-object (string / number / boolean / array) | the field's declared `arm.default` | the slot has one candidate or declares a default; else an error |
 | 7 | omission | nothing | whatever strict lets you omit; all slots omittable ⇒ callable with no argument |
 
@@ -250,38 +250,25 @@ The printer decides each spelling from stamped facts (`node-model.json5`:
 `bareAccepts`, a slot value's `default`, a list's `defaultDelimiter`, the
 supertypes' `subtypes`), never by re-walking the grammar.
 
-Found while writing it: the emitted `_leafRegistry` carries no `pattern`
-for pattern leaves, so `_resolveLeafString` never tests a string against a
-leaf's pattern — a bare string resolves to the first pattern kind in the
-slot's leaf order whatever the text. Rule 1's "matched by the leaf's own
-pattern" is the contract; the runtime implements "first pattern kind". The
-printer spells a leaf bare only where the slot admits one pattern kind, so
-the rebuild stays honest either way; closing the gap means stamping each
-pattern leaf's regex into the registry (the model already carries it).
+Rule 1's "matched by the leaf's own pattern" is what the runtime
+implements: each pattern leaf's anchored regex is stamped into the emitted
+`_leafRegistry`, and `_resolveLeafString` tests a bare string against it
+before resolving, so a string never lands on the first pattern kind in the
+slot's leaf order by default.
 
 What the three loose rebuilds measure today (rust `splice.rs`, typescript
 `format.ts`, python `python-4space.py`): all three render, re-parse to the
-target's tree and render the target's bytes. The type ceiling holds six
-errors, all on rust and all one gap:
+target's tree and render the target's bytes, and the type ceiling is zero for
+every generated rebuild, strict and loose alike. The loose list call types its
+options bag the way the strict one does (options first and optional, L2), so a
+list whose read delimiter is not the stamped default is a plain call.
 
-- **The loose list call does not type its options bag.** `ir.enumVariantListElements({ delimiter: Delimiter.Trailing }, …)`
-  builds correctly at runtime — the coercer hands the bag through — but
-  the loose overload admits elements only, so every list whose read
-  delimiter is not the stamped default is a type error. This is L2's
-  loose half, closed by the ergonomics page's item 2 (options first and
-  optional on the loose call too).
-
-Two spellings the printer deliberately does not attempt, because the
-runtime refuses them:
-
-- A bare kind id is never hoisted through a single-slot wrapper (rule 5
-  names node data and `kind:` objects, not ids): typescript's
-  `returnType: TSKindId.StringKeyword` lands in the slot unwrapped and
-  fails at render, where rust's `-> u32` happens to work only because its
-  `_type` slot admits the keyword directly.
-- Elements inside a bare array, and inside a tuple seat's array, keep
-  their calls: `_wrapArray` passes a string through uncoerced, and only a
-  repeated slot resolves per element.
+One spelling the printer deliberately does not attempt: elements inside a
+bare array, and inside a tuple seat's array, keep their calls. The runtime
+resolves each element through the element slot (L7), so a bare `'a'` is an
+identifier node and a bare `1` an integer literal there, but an element slot
+admits many leaf kinds, and the printer spells a leaf bare only where exactly
+one pattern kind could take it.
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 
@@ -445,7 +432,7 @@ render error. The loose coercer should build the envelope with one element
 per array entry.
 
 Affected rust (`generic_type.type_arguments`, `call_expression.arguments`;
-`examples/17-dogfood-rust.ts` marked five sites). A new `_wrapArray` runtime
+the hand-written rust rebuild, since retired, marked five sites). A new `_wrapArray` runtime
 helper (from.ts, alongside `_wrapKindIds`/`_wrapWithChildren`) recurses into
 the envelope's own list target before wrapping: a 'direct'-surface kind
 (one positional child) whose sole child is itself a wrap-children kind
@@ -454,6 +441,48 @@ built list — instead of handing the raw array straight to the envelope's
 own one-argument factory. Verified against rust at runtime: both
 `typeArguments: ['Edit']` and `typeArguments: ['String', 'SpliceError']`
 now keep every element.
+
+---
+
+### L7 — A bare number inside a list-envelope array is dropped in silence — RESOLVED
+
+Was: `ir.callExpression({ function: 'f', arguments: [1] })` rendered `f()`, and
+`ir.letDeclaration({ pattern: 'x', value: 1 })` rendered `let x =;`, with no
+error either time. Two halves of one cause: the separated-list coercer spread
+the caller's elements raw into the strict factory, where a number is a kind
+id, while the repeated-children coercer already resolved each element through
+its slot; and the kind-enum resolver at a single slot took any number as the
+slot's discriminant. The list coercer now resolves every fresh element
+through the element slot (the transparent wrapper's content slot when the
+list holds one, the wrapper's own config building through the wrapper), the
+array-wrap helper hands an array to that coercer instead of carrying a second
+element resolver, and a number is a discriminant only when it is a stored
+kind id, so `[1]` and `value: 1` are integer literals and `2.5` a float on
+both paths. A bare enum member id inside an array (`typeArguments:
+[TSKindId.StringKeyword]`) stays the member it is, admitted where its enum
+is, instead of being offered to every wrapper that now accepts it.
+
+Rule 1 holds inside arrays as well: `'a'` is an identifier node and `'1'` an
+integer literal, where before both were verbatim text the strict factory
+stored unexamined. A string no leaf accepts at a multi-arm slot is named
+explicitly, the same answer a single slot gives.
+
+---
+
+### L8 — A bare boolean is not a boolean literal — RESOLVED
+
+Was: `ir.letDeclaration({ pattern: 'x', value: true })` and `arguments: [true]`
+reached the transport as a raw boolean and failed there. `_resolveScalar`
+looked the boolean up in the leaf registry under the name `boolean_literal`,
+and no such row exists: rust's `boolean_literal` is an enum of two keywords,
+which the registry never carries, and typescript and python have no kind of
+that name at all, so the branch was not even emitted for them. The boolean
+kinds now come from the model rather than a name (`scalarLeafKinds`): the
+enum whose two member texts are `true` and `false` in any case, or the two
+keyword kinds with those texts. A boolean resolves to the member's kind id,
+which the slot admits as a stored id, and `LeafScalarMap` widens the enum
+or both keywords to `boolean`, so `value: true` and `[true, false]` build
+on all three grammars.
 
 ---
 
@@ -596,21 +625,22 @@ and names the real slot keys. Four conventions account for most confusion:
 `examples/17-dogfood-rust-strict.ts`, `18-dogfood-typescript-strict.ts` and
 `19-dogfood-python-strict.ts` each rebuild their whole target file through the
 factory surface and name a row above only where it bites (`17` marks L2). The
-loose halves, `17-dogfood-rust.ts`, `18-dogfood-typescript.ts` and
-`19-dogfood-python.ts`, carry their own gap commentary from the earlier
-worklist; a gap named there that is not a row above is a calling mistake, and
-the strict twin shows the shape that builds.
+hand-written loose rebuilds that once sat beside them are retired: their gap
+commentary named calling mistakes from the earlier worklist rather than surface
+limits, and the generated loose rebuilds below prove the same targets on the
+same surface with no hand-authored second derivation.
 
 ### The generated rebuilds
 
-`pnpm run gen:examples` prints `examples/17-dogfood-rust.generated.ts`,
-`18-dogfood-typescript.generated.ts` and `19-dogfood-python.generated.ts`
-from their targets with `sittir tool emit-factory-source`; their type errors
-are counted under `examples/generated-typecheck-ceiling.json` (a ceiling that
-only shrinks for a given emitter; when the emitter reaches more of a target,
-as the slot-key fix did, the count is re-baselined and the commit says so),
-and the package verify tests hold each to its target's tree
-as expected failures naming the open rows above. Inner comments are not
+`pnpm run gen:examples` (`packages/tools/src/scripts/gen-examples.ts`, over the
+target table in `packages/tools/src/emit/dogfood-targets.ts`) prints a strict
+and a loose rebuild of each dogfood target, `examples/<n>-dogfood-<g>.generated.ts`
+and `examples/<n>-dogfood-<g>-loose.generated.ts`, plus the strict keyword-opener
+fixtures, with `sittir tool emit-factory-source`; their type errors are counted
+under `examples/generated-typecheck-ceiling.json` (a ceiling that only shrinks
+for a given emitter; when the emitter reaches more of a target, as the slot-key
+fix did, the count is re-baselined and the commit says so), and the package
+verify tests hold each to its target's tree. Inner comments are not
 printed yet: a comment rides the following node's `$triviaData`, which the
 dispatcher does not hand to a factory. `probe-sweep.py` is not the python
 target because the override parser rejects its `name=True` keyword defaults
