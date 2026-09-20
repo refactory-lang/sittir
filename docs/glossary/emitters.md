@@ -1850,6 +1850,23 @@ A separated list types its rest parameter with `listRestParamType` from the list
 // narrow with the same member list the option type is built from.
 ```
 
+#### elements resolve through the element slot
+
+The fresh-input path never spreads the caller's elements raw into the strict
+factory. Each element goes through the same slot resolver a repeated-children
+coercer uses (`resolveFieldCall` over the element slot, many), so a bare
+string is the leaf its pattern names, a bare number or boolean is the numeric
+or boolean leaf (`_resolveScalar`), and a `kind:` object is that kind's
+config; at the strict layer a number is a kind id, which is how a bare `1`
+used to vanish from an argument list in silence. The element slot is the
+list's content slot, or, when the content is one transparent wrapper
+(`separatedListSurface().wrapper`), that wrapper's own content slot, because
+the strict factory wraps the elements itself. A list whose elements are
+literals is not resolvable and spreads as before. `_listElements` splits a
+leading options object off first, keyed on `listOptionKeys(surface)`, the
+same key list the strict factory accepts, so the options object passes
+through untouched and only the elements resolve.
+
 ### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
 ```text
@@ -2209,6 +2226,21 @@ lifted into that arm.
 
 A `kind:` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
 
+#### `_listElements`
+
+`_listElements(input, optionKeys, wrapperKind, resolve)`: the loose list
+call's argument split. When `optionKeys` is non-empty and the first argument
+is a plain object whose keys are all option keys (the strict factory's own
+test, minus the `$type` check, which `isNodeData` covers), it is the options
+object and is returned first, untouched, ahead of the resolved elements;
+otherwise every argument is an element. When the list's content is one
+transparent wrapper (`wrapperKind`), a kind-less plain object among the
+elements is that wrapper's own config and builds through the wrapper's
+coercer before the slot resolver sees it, since the element slot is the
+wrapper's content and a kind-less config there would have no single kind to
+take it; every other element goes to `resolve`, the element slot's resolver
+supplied by `emitSeparatedListFrom`.
+
 ### `packages/codegen/src/emitters/from.ts::emitAssertNonEmptyHelper`
 
 ```text
@@ -2371,6 +2403,17 @@ A `kind:` config builds its named kind and then goes back through the same routi
 ```
 
 `_wrapOptionalSoleKinds` names the direct wrapper kinds whose sole slot is optional. `_wrapArray` given an empty array for one of them builds the wrapper with no children rather than an empty inner elements node, which is the same optional-slot rule applied through the wrapper (`arguments: []` on a call).
+
+#### spread and array kinds build through their coercer
+
+`_wrapWithChildren` dispatches a `'spread'` or `'array'` kind that has a
+from-coercer to that coercer, laundered through `(...args: unknown[]) =>
+unknown` the way the strict-factory array call already was, so children given
+as an array resolve through the kind's element slot exactly as a direct call
+would. A `'direct'` kind still takes `children[0]` into its strict factory.
+`_wrapArray` therefore carries no element resolution of its own: it recurses
+into a direct kind's list target and otherwise hands the array to
+`_wrapWithChildren`. One element resolver per kind, in its coercer.
 
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymAliases`
 
@@ -12968,6 +13011,18 @@ candidate list.
  *  time; the type-level twin is `BareArms` in `@sittir/types`. */
 ```
 
+#### `_ENUMS_OF_MEMBER`
+
+Member kind id to the enum kinds that carry it (a keyword id can be a member
+of several enums), from every `AssembledEnum`'s resolved members.
+`_resolveOne` admits a bare member id wherever one of its enums is a leaf
+kind of the slot, before the arm search, so
+`typeArguments: [TSKindId.StringKeyword]` stays the enum member it is
+instead of being offered to every wrapper whose bare-accept set now lists it
+(`bareAcceptClosure`); a slot that admits the enum directly goes through
+`_resolveKindEnum` first, which is why the arm search only ever saw member
+ids at wrapper-only slots until arrays started resolving per element.
+
 ### `packages/codegen/src/emitters/from.ts::emitResolverHelpers`
 
 #### body
@@ -15992,6 +16047,13 @@ The kinds a list admits at its content slot: the slot's own kinds and, when ther
 ### `packages/codegen/src/emitters/factories.ts::listHasOptions`
 
 Whether a separated list's builder takes an options object: a separator kind to choose, or a leading or trailing delimiter the caller may set. The coercer signature, the list's own options type, and the overlay's list parameter all read it.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionKeys`
+
+The keys a list's options object may carry, `separator` and/or `delimiter`,
+derived once from the surface flags. The strict factory's options-first test
+and the coercer's `_listElements` split both read it, so the two never
+disagree on what counts as an options object.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 

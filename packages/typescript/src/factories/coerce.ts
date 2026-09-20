@@ -325,10 +325,11 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	return fn(rest);
 }
 
-/** A kind-enum slot's loose input. A NUMBER is already the slot's own
- *  stored discriminant; every other shape resolves as a leaf. */
+/** A kind-enum slot's loose input. A stored kind id is already the slot's
+ *  own discriminant; any other number is a numeric value and resolves as a
+ *  leaf like every other shape. */
 function _resolveKindEnum<T>(v: _LooseFieldInput, resolve: () => T): T {
-	return typeof v === 'number' ? (v as T) : resolve();
+	return typeof v === 'number' && _KIND_ID_STORED.has(v) ? (v as T) : resolve();
 }
 
 function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
@@ -582,6 +583,60 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		193, 194, 196, 231, 234, 236, 282, 292, 293, 294, 295, 297, 299, 301, 304, 382, 383, 416
 	])
 };
+const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
+	7: ['_reserved_identifier'],
+	8: ['_unary_expression_operator'],
+	44: ['_reserved_identifier'],
+	46: ['_augmented_assignment_expression_operator'],
+	47: ['_augmented_assignment_expression_operator'],
+	48: ['_augmented_assignment_expression_operator'],
+	49: ['_augmented_assignment_expression_operator'],
+	50: ['_augmented_assignment_expression_operator'],
+	51: ['_augmented_assignment_expression_operator'],
+	52: ['_augmented_assignment_expression_operator'],
+	53: ['_augmented_assignment_expression_operator'],
+	54: ['_augmented_assignment_expression_operator'],
+	55: ['_augmented_assignment_expression_operator'],
+	56: ['_augmented_assignment_expression_operator'],
+	57: ['_augmented_assignment_expression_operator'],
+	58: ['_augmented_assignment_expression_operator'],
+	59: ['_augmented_assignment_expression_operator'],
+	60: ['_augmented_assignment_expression_operator'],
+	70: ['_unary_expression_operator', '__number_operator'],
+	71: ['_unary_expression_operator', '__number_operator'],
+	85: ['_unary_expression_operator'],
+	86: ['_unary_expression_operator'],
+	87: ['predefined_type', '_unary_expression_operator'],
+	88: ['_unary_expression_operator'],
+	107: ['_reserved_identifier'],
+	108: ['_reserved_identifier'],
+	109: ['_reserved_identifier'],
+	110: ['_reserved_identifier'],
+	111: ['_reserved_identifier'],
+	112: ['_reserved_identifier', 'accessibility_modifier'],
+	113: ['_reserved_identifier', 'accessibility_modifier'],
+	114: ['_reserved_identifier', 'accessibility_modifier'],
+	115: ['_reserved_identifier'],
+	116: ['_reserved_identifier', '_reserved_identifier'],
+	117: ['_reserved_identifier'],
+	118: ['_reserved_identifier', 'predefined_type'],
+	119: ['_reserved_identifier', 'predefined_type'],
+	120: ['_reserved_identifier', 'predefined_type'],
+	121: ['_reserved_identifier', 'predefined_type', 'predefined_type'],
+	122: ['_reserved_identifier', 'predefined_type'],
+	123: ['_reserved_identifier', '_reserved_identifier'],
+	124: ['_reserved_identifier', 'predefined_type'],
+	125: ['_reserved_identifier'],
+	126: ['_reserved_identifier', '_kind'],
+	129: ['_kind'],
+	143: ['__for_header_operator'],
+	144: ['predefined_type'],
+	145: ['predefined_type'],
+	146: ['predefined_type'],
+	151: ['__for_header_operator'],
+	159: ['_operator'],
+	160: ['_operator']
+};
 
 function _resolveOne<T>(
 	v: _LooseFieldInput,
@@ -593,7 +648,13 @@ function _resolveOne<T>(
 	const kindId = isNodeData(v) ? v.$type : typeof v === 'number' && _KIND_ID_STORED.has(v) ? v : undefined;
 	if (typeof kindId === 'number') {
 		const kindName = KIND_NAMES.get(kindId);
-		if (kindName !== undefined && (leafKinds.includes(kindName) || branchKinds.includes(kindName))) return v as T;
+		if (
+			kindName !== undefined &&
+			(leafKinds.includes(kindName) ||
+				branchKinds.includes(kindName) ||
+				(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e)))
+		)
+			return v as T;
 		const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);
 		const arm = arms.length <= 1 ? arms[0] : undefined;
 		if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;
@@ -673,6 +734,34 @@ function _resolveMany<T>(
 	if (v === undefined || v === null) return [];
 	const arr: readonly _LooseFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOne<T>(e, leafKinds, branchKinds, defaultArm));
+}
+
+function _listElements(
+	input: readonly unknown[],
+	optionKeys: readonly string[],
+	wrapperKind: string | undefined,
+	resolve: (elements: readonly unknown[]) => readonly unknown[]
+): readonly unknown[] {
+	const head = input[0];
+	const optionsFirst =
+		optionKeys.length > 0 &&
+		typeof head === 'object' &&
+		head !== null &&
+		!Array.isArray(head) &&
+		!isNodeData(head) &&
+		Object.keys(head).every((k) => optionKeys.includes(k));
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
+		wrapperKind !== undefined &&
+		_isFromKind(wrapperKind) &&
+		typeof e === 'object' &&
+		e !== null &&
+		!Array.isArray(e) &&
+		!isNodeData(e) &&
+		!('kind' in e)
+			? _resolveByKind(wrapperKind, e)
+			: e
+	);
+	return optionsFirst ? [head, ...resolve(elements)] : [...resolve(elements)];
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
@@ -910,9 +999,9 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'debugger_statement':
 			return F.buildDebuggerStatement(children[0] as Parameters<typeof F.buildDebuggerStatement>[0]);
 		case 'switch_body':
-			return F.buildSwitchBody(...(children as Parameters<typeof F.buildSwitchBody>));
+			return (coerceToSwitchBody as (...args: unknown[]) => unknown)(...children);
 		case 'switch_default':
-			return F.buildSwitchDefault(...(children as Parameters<typeof F.buildSwitchDefault>));
+			return (coerceToSwitchDefault as (...args: unknown[]) => unknown)(...children);
 		case 'finally_clause':
 			return F.buildFinallyClause(children[0] as Parameters<typeof F.buildFinallyClause>[0]);
 		case 'parenthesized_expression':
@@ -920,13 +1009,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'yield_expression':
 			return F.buildYieldExpression(children[0] as Parameters<typeof F.buildYieldExpression>[0]);
 		case 'object':
-			return F.buildObject(...(children as Parameters<typeof F.buildObject>));
+			return (coerceToObject as (...args: unknown[]) => unknown)(...children);
 		case 'object_pattern':
-			return F.buildObjectPattern(...(children as Parameters<typeof F.buildObjectPattern>));
+			return (coerceToObjectPattern as (...args: unknown[]) => unknown)(...children);
 		case 'array':
-			return F.buildArray(...(children as Parameters<typeof F.buildArray>));
+			return (coerceToArray as (...args: unknown[]) => unknown)(...children);
 		case 'array_pattern':
-			return F.buildArrayPattern(...(children as Parameters<typeof F.buildArrayPattern>));
+			return (coerceToArrayPattern as (...args: unknown[]) => unknown)(...children);
 		case 'class_heritage':
 			return F.buildClassHeritage(children[0] as Parameters<typeof F.buildClassHeritage>[0]);
 		case 'call_expression':
@@ -936,23 +1025,23 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'spread_element':
 			return F.buildSpreadElement(children[0] as Parameters<typeof F.buildSpreadElement>[0]);
 		case 'sequence_expression':
-			return F.buildSequenceExpression(...(children as Parameters<typeof F.buildSequenceExpression>));
+			return (coerceToSequenceExpression as (...args: unknown[]) => unknown)(...children);
 		case 'string':
 			return F.buildString(children[0] as Parameters<typeof F.buildString>[0]);
 		case 'escape_sequence':
 			return F.buildEscapeSequence(children[0] as Parameters<typeof F.buildEscapeSequence>[0]);
 		case 'template_string':
-			return F.buildTemplateString(...(children as Parameters<typeof F.buildTemplateString>));
+			return (coerceToTemplateString as (...args: unknown[]) => unknown)(...children);
 		case 'template_substitution':
 			return F.buildTemplateSubstitution(children[0] as Parameters<typeof F.buildTemplateSubstitution>[0]);
 		case 'private_property_identifier':
 			return F.buildPrivatePropertyIdentifier(children[0] as Parameters<typeof F.buildPrivatePropertyIdentifier>[0]);
 		case 'arguments':
-			return F.buildArguments(...(children as Parameters<typeof F.buildArguments>));
+			return (coerceToArguments as (...args: unknown[]) => unknown)(...children);
 		case 'decorator':
 			return F.buildDecorator(children[0] as Parameters<typeof F.buildDecorator>[0]);
 		case 'class_body':
-			return F.buildClassBody(...(children as Parameters<typeof F.buildClassBody>));
+			return (coerceToClassBody as (...args: unknown[]) => unknown)(...children);
 		case 'formal_parameters':
 			return F.buildFormalParameters(children[0] as Parameters<typeof F.buildFormalParameters>[0]);
 		case 'rest_pattern':
@@ -966,13 +1055,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 				children[0] as Parameters<typeof F.buildDecoratorParenthesizedExpression>[0]
 			);
 		case 'extends_clause':
-			return F.buildExtendsClause(...(children as Parameters<typeof F.buildExtendsClause>));
+			return (coerceToExtendsClause as (...args: unknown[]) => unknown)(...children);
 		case 'implements_clause':
-			return F.buildImplementsClause(...(children as Parameters<typeof F.buildImplementsClause>));
+			return (coerceToImplementsClause as (...args: unknown[]) => unknown)(...children);
 		case 'ambient_declaration':
 			return F.buildAmbientDeclaration(children[0] as Parameters<typeof F.buildAmbientDeclaration>[0]);
 		case 'extends_type_clause':
-			return F.buildExtendsTypeClause(...(children as Parameters<typeof F.buildExtendsTypeClause>));
+			return (coerceToExtendsTypeClause as (...args: unknown[]) => unknown)(...children);
 		case 'enum_body':
 			return F.buildEnumBody(children[0] as Parameters<typeof F.buildEnumBody>[0]);
 		case 'omitting_type_annotation':
@@ -994,7 +1083,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'template_type':
 			return F.buildTemplateType(children[0] as Parameters<typeof F.buildTemplateType>[0]);
 		case 'template_literal_type':
-			return F.buildTemplateLiteralType(...(children as Parameters<typeof F.buildTemplateLiteralType>));
+			return (coerceToTemplateLiteralType as (...args: unknown[]) => unknown)(...children);
 		case 'type_predicate_annotation':
 			return F.buildTypePredicateAnnotation(children[0] as Parameters<typeof F.buildTypePredicateAnnotation>[0]);
 		case 'type_query':
@@ -1020,25 +1109,25 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'readonly_type':
 			return F.buildReadonlyType(children[0] as Parameters<typeof F.buildReadonlyType>[0]);
 		case 'export_specifiers':
-			return (F.buildExportSpecifiers as (...args: unknown[]) => unknown)(...children);
+			return (coerceToExportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case 'import_specifiers':
-			return (F.buildImportSpecifiers as (...args: unknown[]) => unknown)(...children);
+			return (coerceToImportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case 'formal_parameters_elements':
-			return (F.buildFormalParametersElements as (...args: unknown[]) => unknown)(...children);
+			return (coerceToFormalParametersElements as (...args: unknown[]) => unknown)(...children);
 		case 'enum_body_elements':
-			return (F.buildEnumBodyElements as (...args: unknown[]) => unknown)(...children);
+			return (coerceToEnumBodyElements as (...args: unknown[]) => unknown)(...children);
 		case 'types':
-			return (F.buildTypes as (...args: unknown[]) => unknown)(...children);
+			return (coerceToTypes as (...args: unknown[]) => unknown)(...children);
 		case 'type_parameters_elements':
-			return (F.buildTypeParametersElements as (...args: unknown[]) => unknown)(...children);
+			return (coerceToTypeParametersElements as (...args: unknown[]) => unknown)(...children);
 		case 'tuple_type_members':
-			return (F.buildTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
+			return (coerceToTupleTypeMembers as (...args: unknown[]) => unknown)(...children);
 		case 'import_clause_group':
 			return F.buildImportClauseGroup(children[0] as Parameters<typeof F.buildImportClauseGroup>[0]);
 		case 'ambient_declaration_global':
 			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'object_type_content':
-			return (F.buildObjectTypeContent as (...args: unknown[]) => unknown)(...children);
+			return (coerceToObjectTypeContent as (...args: unknown[]) => unknown)(...children);
 		case 'comment_line':
 			return F.buildCommentLine(children[0] as Parameters<typeof F.buildCommentLine>[0]);
 		case 'comment_block':
@@ -1048,9 +1137,9 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 				children[0] as Parameters<typeof F.buildParenthesizedExpressionSequence>[0]
 			);
 		case 'string_double':
-			return F.buildStringDouble(...(children as Parameters<typeof F.buildStringDouble>));
+			return (coerceToStringDouble as (...args: unknown[]) => unknown)(...children);
 		case 'string_single':
-			return F.buildStringSingle(...(children as Parameters<typeof F.buildStringSingle>));
+			return (coerceToStringSingle as (...args: unknown[]) => unknown)(...children);
 		case 'arrow_function_parameter':
 			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
 		case 'export_statement_default_from_star_from':
@@ -1072,20 +1161,7 @@ function _wrapArray<T>(kind: string, arr: readonly unknown[]): T {
 		if (arr.length === 0 && _wrapOptionalSoleKinds.has(kind)) return _wrapWithChildren(kind, []) as T;
 		return _wrapWithChildren(kind, [_wrapArray(elementKind, arr)]) as T;
 	}
-	const resolved = arr.map((e) => {
-		if (typeof e === 'string' || typeof e === 'number') return e;
-		if (isNodeData(e)) return e;
-		if (typeof e === 'object' && e !== null && !Array.isArray(e)) {
-			if ('kind' in e) {
-				const { kind: k, ...rest } = e;
-				const kn = _kindNameOf(k);
-				if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest);
-			}
-			if (elementKind !== undefined && _isFromKind(elementKind)) return _resolveByKind(elementKind, e);
-		}
-		return e;
-	});
-	return _wrapWithChildren(kind, resolved) as T;
+	return _wrapWithChildren(kind, arr) as T;
 }
 
 function _resolveOneBranch<T>(
@@ -1188,6 +1264,8 @@ const _super_variable_declarator: readonly string[] = ['variable_declarator_plai
 const _super_for_header: readonly string[] = ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'];
 const _super_statement_identifier: readonly string[] = ['identifier', '_reserved_identifier'];
 const _super_destructuring_pattern: readonly string[] = ['object_pattern', 'array_pattern'];
+const _super_import_specifier: readonly string[] = ['import_specifier_name', 'import_specifier_as'];
+const _super_formal_parameter: readonly string[] = ['required_parameter', 'optional_parameter'];
 const _K0: readonly string[] = ['empty_statement'];
 const _K1: readonly string[] = [
 	'export_statement_default_from',
@@ -1649,8 +1727,49 @@ const _K64: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
-const _K65: readonly string[] = ['namespace_import', 'named_imports'];
+const _K65: readonly string[] = ['private_property_identifier', 'string', 'computed_property_name', 'enum_assignment'];
 const _K66: readonly string[] = [
+	'tuple_parameter',
+	'optional_tuple_parameter',
+	'optional_type',
+	'rest_type',
+	'parenthesized_type',
+	'nested_type_identifier',
+	'generic_type',
+	'object_type',
+	'array_type',
+	'tuple_type',
+	'flow_maybe_type',
+	'type_query',
+	'index_type_query',
+	'literal_type',
+	'lookup_type',
+	'conditional_type',
+	'template_literal_type',
+	'intersection_type',
+	'union_type',
+	'function_type',
+	'readonly_type',
+	'constructor_type',
+	'infer_type',
+	'_type_query_member_expression_in_type_annotation',
+	'_type_query_call_expression_in_type_annotation'
+];
+const _K67: readonly string[] = ['namespace_import', 'named_imports'];
+const _K68: readonly string[] = [
+	'export_statement_default_from',
+	'export_statement_default_declaration',
+	'export_statement_type_export',
+	'export_statement_equals_export',
+	'export_statement_namespace_export',
+	'property_signature',
+	'call_signature',
+	'construct_signature',
+	'index_signature_colon',
+	'index_signature_mapped_type_clause',
+	'method_signature'
+];
+const _K69: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -1682,20 +1801,20 @@ const _K66: readonly string[] = [
 	'yield_expression',
 	'private_property_identifier'
 ];
-const _K67: readonly string[] = [
+const _K70: readonly string[] = [
 	'abstract_method_signature',
 	'index_signature_colon',
 	'index_signature_mapped_type_clause',
 	'method_signature',
 	'public_field_definition'
 ];
-const _K68: readonly string[] = [
+const _K71: readonly string[] = [
 	'type_annotation',
 	'omitting_type_annotation',
 	'adding_type_annotation',
 	'opting_type_annotation'
 ];
-const _K69: readonly string[] = [
+const _K72: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
@@ -1712,16 +1831,16 @@ const _K69: readonly string[] = [
 	'non_null_expression',
 	'new_expression'
 ];
-const _K70: readonly string[] = ['unescaped_double_string_fragment'];
-const _K71: readonly string[] = ['escape_sequence'];
-const _K72: readonly string[] = ['unescaped_single_string_fragment'];
-const _K73: readonly string[] = [
+const _K73: readonly string[] = ['unescaped_double_string_fragment'];
+const _K74: readonly string[] = ['escape_sequence'];
+const _K75: readonly string[] = ['unescaped_single_string_fragment'];
+const _K76: readonly string[] = [
 	'export_statement_default_from_star_from',
 	'export_statement_default_from_ns_from',
 	'export_statement_default_from_clause_from',
 	'export_clause'
 ];
-const _K74: readonly string[] = [
+const _K77: readonly string[] = [
 	'export_statement_default_declaration_default_kw',
 	'function_declaration',
 	'generator_function_declaration',
@@ -1738,7 +1857,7 @@ const _K74: readonly string[] = [
 	'import_alias',
 	'ambient_declaration'
 ];
-const _K75: readonly string[] = [
+const _K78: readonly string[] = [
 	'export_statement_default_declaration_default_kw_value',
 	'function_declaration',
 	'generator_function_declaration',
@@ -1755,7 +1874,7 @@ const _K75: readonly string[] = [
 	'import_alias',
 	'ambient_declaration'
 ];
-const _K76: readonly string[] = [
+const _K79: readonly string[] = [
 	'member_expression',
 	'subscript_expression',
 	'object_pattern',
@@ -7457,7 +7576,11 @@ export function coerceToExportSpecifiers(
 			...(children as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
 		);
 	}
-	return F.buildExportSpecifiers(...(input as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>));
+	return F.buildExportSpecifiers(
+		...(_listElements(input, ['delimiter'], 'export_specifier', (els) =>
+			_resolveMany<T.ExportSpecifier | T.Identifier | T.String>(els, _K3, _K4)
+		) as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
+	);
 }
 
 export function coerceToImportSpecifiers(
@@ -7496,7 +7619,11 @@ export function coerceToImportSpecifiers(
 			...(children as unknown as NonEmptyArray<T.ImportSpecifier>)
 		);
 	}
-	return F.buildImportSpecifiers(...(input as unknown as NonEmptyArray<T.ImportSpecifier>));
+	return F.buildImportSpecifiers(
+		...(_listElements(input, ['delimiter'], undefined, (els) =>
+			_resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier)
+		) as unknown as NonEmptyArray<T.ImportSpecifier>)
+	);
 }
 
 export function coerceToFormalParametersElements(
@@ -7536,7 +7663,9 @@ export function coerceToFormalParametersElements(
 		);
 	}
 	return F.buildFormalParametersElements(
-		...(input as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
+		...(_listElements(input, ['delimiter'], undefined, (els) =>
+			_resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter)
+		) as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
 	);
 }
 
@@ -7624,7 +7753,21 @@ export function coerceToEnumBodyElements(
 		);
 	}
 	return F.buildEnumBodyElements(
-		...(input as unknown as NonEmptyArray<
+		...(_listElements(input, ['delimiter'], undefined, (els) =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(els, () =>
+					_resolveMany<
+						| T._PropertyIdentifier
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+						| T.EnumAssignment
+					>(els, _K37, _K65)
+				),
+				[]
+			)
+		) as unknown as NonEmptyArray<
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
@@ -7661,7 +7804,14 @@ export function coerceToTypes(
 			...(children as unknown as NonEmptyArray<T.Type>)
 		);
 	}
-	return F.buildTypes(...(input as unknown as NonEmptyArray<T.Type>));
+	return F.buildTypes(
+		...(_listElements(input, ['delimiter'], undefined, (els) =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(els, () => _resolveMany<T.Type>(els, _K40, _K41)),
+				[]
+			)
+		) as unknown as NonEmptyArray<T.Type>)
+	);
 }
 
 export function coerceToTypeParametersElements(
@@ -7700,7 +7850,11 @@ export function coerceToTypeParametersElements(
 			...(children as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>)
 		);
 	}
-	return F.buildTypeParametersElements(...(input as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>));
+	return F.buildTypeParametersElements(
+		...(_listElements(input, ['delimiter'], 'type_parameter', (els) =>
+			_resolveManyLeaf<T.TypeParameter | T.Identifier>(els, 'identifier')
+		) as unknown as NonEmptyArray<T.TypeParameter | T.Identifier>)
+	);
 }
 
 export function coerceToTupleTypeMembers(
@@ -7762,16 +7916,25 @@ export function coerceToTupleTypeMembers(
 		);
 	}
 	return F.buildTupleTypeMembers(
-		...(input as unknown as NonEmptyArray<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type
-		>)
+		...(_listElements(input, ['delimiter'], undefined, (els) =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(els, () =>
+					_resolveMany<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>(
+						els,
+						_K40,
+						_K66
+					)
+				),
+				[]
+			)
+		) as unknown as NonEmptyArray<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type>)
 	);
 }
 
 export function resolveImportClauseGroup_content(
 	value: T.ImportClauseGroup.LooseConfig['content']
 ): T.ImportClauseGroup['_content'] {
-	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K65);
+	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K67);
 }
 
 export function coerceToImportClauseGroup(
@@ -7786,7 +7949,7 @@ export function coerceToImportClauseGroup(
 			_resolveOne<T.NamespaceImport | T.NamedImports>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
-				_K65
+				_K67
 			)
 		)
 	);
@@ -7962,7 +8125,16 @@ export function coerceToObjectTypeContent(
 		);
 	}
 	return F.buildObjectTypeContent(
-		...(input as unknown as NonEmptyArray<
+		...(_listElements(input, ['separator', 'delimiter'], undefined, (els) =>
+			_resolveMany<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+			>(els, _K2, _K68)
+		) as unknown as NonEmptyArray<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
@@ -8125,7 +8297,7 @@ export function resolveBinaryExpressionIn_left(
 	value: T.BinaryExpressionIn.LooseConfig['left']
 ): T.BinaryExpressionIn['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K7, _K66)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K7, _K69)),
 		[]
 	);
 }
@@ -8225,7 +8397,7 @@ export function resolveClassBodyMember_content(
 	return _resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 		value,
 		_K2,
-		_K67
+		_K70
 	);
 }
 
@@ -8335,7 +8507,7 @@ export function resolveIndexSignatureColon_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K68
+		_K71
 	);
 }
 
@@ -8384,7 +8556,7 @@ export function resolveIndexSignatureMappedTypeClause_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K68
+		_K71
 	);
 }
 
@@ -8596,7 +8768,7 @@ export function resolveCallExpressionTemplateCall_function(
 	value: T.CallExpressionTemplateCall.LooseConfig['function']
 ): T.CallExpressionTemplateCall['_function'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K7, _K69)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K7, _K72)),
 		[]
 	);
 }
@@ -8668,8 +8840,8 @@ export function coerceToStringDouble(
 		return F.buildStringDouble(
 			...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
 				children,
-				_K70,
-				_K71
+				_K73,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringDouble>)
 		);
 	}
@@ -8681,7 +8853,7 @@ export function coerceToStringDouble(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringDouble(
-		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K70, _K71) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K73, _K74) as unknown as Parameters<
 			typeof F.buildStringDouble
 		>)
 	);
@@ -8700,8 +8872,8 @@ export function coerceToStringSingle(
 		return F.buildStringSingle(
 			...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(
 				children,
-				_K72,
-				_K71
+				_K75,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringSingle>)
 		);
 	}
@@ -8713,7 +8885,7 @@ export function coerceToStringSingle(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringSingle(
-		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K72, _K71) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K75, _K74) as unknown as Parameters<
 			typeof F.buildStringSingle
 		>)
 	);
@@ -8988,7 +9160,7 @@ export function resolveExportStatementDefaultFrom_content(
 		| T.ExportStatementDefaultFromNsFrom
 		| T.ExportStatementDefaultFromClauseFrom
 		| T.ExportClause
-	>(value, _K2, _K73);
+	>(value, _K2, _K76);
 }
 
 export function resolveExportStatementDefaultFrom_automaticSemicolon(
@@ -9028,7 +9200,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): T.ExportStatementDefaultDeclaration['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K74);
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K77);
 }
 
 export function coerceToExportStatementDefaultDeclaration(
@@ -9130,7 +9302,7 @@ export function coerceToExportStatementDefaultFromClauseFrom(
 export function resolveExportStatementDefaultDeclarationDefaultKw_content(
 	value: T.ExportStatementDefaultDeclarationDefaultKw.LooseConfig['content']
 ): T.ExportStatementDefaultDeclarationDefaultKw['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K75);
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K78);
 }
 
 export function coerceToExportStatementDefaultDeclarationDefaultKw(
@@ -9145,7 +9317,7 @@ export function coerceToExportStatementDefaultDeclarationDefaultKw(
 			_resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
 				_K2,
-				_K75
+				_K78
 			)
 		)
 	);
@@ -9258,7 +9430,7 @@ export function coerceToMetaPropertyImportMeta(
 
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T._LhsExpression | T.ParenthesizedExpression>(value, _K16, _K76)),
+		_resolveKindEnum(value, () => _resolveOne<T._LhsExpression | T.ParenthesizedExpression>(value, _K16, _K79)),
 		[]
 	);
 }

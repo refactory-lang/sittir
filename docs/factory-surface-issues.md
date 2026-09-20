@@ -265,10 +265,10 @@ list whose read delimiter is not the stamped default is a plain call.
 
 One spelling the printer deliberately does not attempt: elements inside a
 bare array, and inside a tuple seat's array, keep their calls. The runtime
-resolves a bare string there by the element slot's leaf patterns (`'1'` is an
-integer literal, `'"s"'` a string literal, `'a.b'` an identifier path on rust),
-but an element slot admits many leaf kinds, and the printer spells a leaf bare
-only where exactly one pattern kind could take it.
+resolves each element through the element slot (L7), so a bare `'a'` is an
+identifier node and a bare `1` an integer literal there, but an element slot
+admits many leaf kinds, and the printer spells a leaf bare only where exactly
+one pattern kind could take it.
 
 ### L1 — The stamped kind enum is rejected as a `kind:` discriminant — RESOLVED
 
@@ -444,17 +444,42 @@ now keep every element.
 
 ---
 
-### L7 — A bare number inside a list-envelope array is dropped in silence
+### L7 — A bare number inside a list-envelope array is dropped in silence — RESOLVED
 
-`ir.callExpression({ function: 'f', arguments: [1] })` renders `f()`: the
-element is lost, no error is raised. `_wrapArray` passes a number through
-untouched, and the list's raw factory stores nothing for a scalar that is not
-a stored kind id. Rule 1 says a string is a text leaf; a number has no rule at
-an element slot, so the contract's answer is either the spec's coercion (an
-integral slot takes the shortest round-trip decimal) or a refusal naming the
-slot, never a silent drop. Affects rust (`arguments_elements`,
-`array_expression`); typescript and python route the same shape through a form
-or a two-branch slot first, so the drop is not reachable there today.
+Was: `ir.callExpression({ function: 'f', arguments: [1] })` rendered `f()`, and
+`ir.letDeclaration({ pattern: 'x', value: 1 })` rendered `let x =;`, with no
+error either time. Two halves of one cause: the separated-list coercer spread
+the caller's elements raw into the strict factory, where a number is a kind
+id, while the repeated-children coercer already resolved each element through
+its slot; and the kind-enum resolver at a single slot took any number as the
+slot's discriminant. The list coercer now resolves every fresh element
+through the element slot (the transparent wrapper's content slot when the
+list holds one, the wrapper's own config building through the wrapper), the
+array-wrap helper hands an array to that coercer instead of carrying a second
+element resolver, and a number is a discriminant only when it is a stored
+kind id, so `[1]` and `value: 1` are integer literals and `2.5` a float on
+both paths. A bare enum member id inside an array (`typeArguments:
+[TSKindId.StringKeyword]`) stays the member it is, admitted where its enum
+is, instead of being offered to every wrapper that now accepts it.
+
+Rule 1 holds inside arrays as well: `'a'` is an identifier node and `'1'` an
+integer literal, where before both were verbatim text the strict factory
+stored unexamined. A string no leaf accepts at a multi-arm slot is named
+explicitly, the same answer a single slot gives.
+
+---
+
+### L8 — A bare boolean is not a boolean literal
+
+`ir.letDeclaration({ pattern: 'x', value: true })` and `arguments: [true]`
+both reach the transport as a raw boolean and fail there. `_resolveScalar`
+looks the boolean up in the leaf registry under `boolean_literal`, and no
+such row exists: `boolean_literal` is an enum of two keywords, which the
+registry does not carry. The fix is for a boolean to resolve to the enum's
+member by text (`true`/`false`) through the enum's own member table, the
+coercion the spec gives it (`literal.boolean.true`), at every slot that
+admits the enum. Affects rust; typescript and python route the same shape
+through their own boolean kinds and need the same check.
 
 ---
 

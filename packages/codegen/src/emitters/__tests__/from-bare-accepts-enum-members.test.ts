@@ -91,4 +91,17 @@ describe('a wrapper over an enum-bearing slot accepts the enum members bare (rul
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
 		expect(emitted).toContain('"type_annotation": new Set([1,2,3,5])');
 	});
+
+	it("the _ENUMS_OF_MEMBER table names each member id's enums, so a member id is admitted where one of them is", () => {
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
+		expect(emitted).toContain('const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {');
+		expect(emitted).toContain('  1: ["predefined_type"],');
+		expect(emitted).toContain('  2: ["predefined_type"],');
+		expect(emitted).toContain('(_ENUMS_OF_MEMBER[kindId] ?? []).some((e) => leafKinds.includes(e))');
+	});
+
+	it('a number at a kind-enum slot is the discriminant only when it is a stored kind id', () => {
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries: KIND_ENTRIES });
+		expect(emitted).toContain('return typeof v === "number" && _KIND_ID_STORED.has(v) ? (v as T) : resolve();');
+	});
 });
