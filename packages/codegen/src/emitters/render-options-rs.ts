@@ -18,7 +18,7 @@ export type SeamStrength = 0 | 1 | 2;
 export function seamStrength(origin: SeamOrigin | undefined): SeamStrength {
 	switch (origin) {
 		case 'preference':
-		case 'token-default':
+		case 'literal-default':
 		case 'word-default':
 			return 2;
 		case 'cascade':

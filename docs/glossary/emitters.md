@@ -10131,7 +10131,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * `origin` is a census-only fact, orthogonal to `resolution`: it names
  * where the boundary's governing seam arm(s) came from, not how the
  * boundary bakes. `preference` means a kind- or supertype-scoped
- * `options:` declaration reached the seam; `token-default` means only a
+ * `options:` declaration reached the seam; `literal-default` means only a
  * grammar-wide `_`-scope declaration did; `fallback` means neither did —
  * the boundary has no `whitespaceChoice` neighbor at all (not
  * token-adjacent, so no declaration could ever reach it), or its
@@ -10141,7 +10141,7 @@ The inventory is the set of literals a parser token spells: a literal counts onl
  * mechanism). When a boundary sits between two independently-resolved
  * seam faces (a token's `after` face and the next token's `before`
  * face), the record reports the more specific of the two
- * (`preference` > `token-default` > `fallback`) — the same specificity
+ * (`preference` > `literal-default` > `fallback`) — the same specificity
  * order `resolveBindings` already uses to pick a winning declaration.
  * Never re-derived from address text here or anywhere the record is
  * read; it is read off the `origin` annotation
@@ -10155,15 +10155,15 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 ```text
 /** Per-grammar census of template-boundary seam resolutions — the
  *  static-seam-resolution spec's residue report. `preferenceOrigin`,
- *  `tokenDefaultOrigin` and `fallbackOrigin` count `boundaries` by
- *  `SeamBoundaryRecord.origin` — the token-defaults design's measure of
+ *  `literalDefaultOrigin` and `fallbackOrigin` count `boundaries` by
+ *  `SeamBoundaryRecord.origin` — the literal-defaults design's measure of
  *  how many boundaries a `_`-scope declaration would still need to
  *  reach. */
 ```
 
 `cascadeOrigin` counts the boundaries whose seam took its arm from the edge
 token's grammar-wide face (origin `cascade`), beside the preference,
-token-default and fallback counts.
+literal-default and fallback counts.
 
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx.isLiteralMergePair`
 
@@ -15355,20 +15355,20 @@ delimiter site.
 `strength` (`SeamStrength`, 0–2) is the sixth column of the emitted
 `SPACING_SITES` row: how firmly the site's table default holds against the
 mark meeting it at the same gap. `seamStrength` maps the site's origin —
-declared (`preference`, `token-default`, `word-default`) is 2, `cascade` is 1, the fallback
+declared (`preference`, `literal-default`, `word-default`) is 2, `cascade` is 1, the fallback
 is 0; separator sites are declared.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SeamStrength`
 
 How firmly a site's table default holds against the mark meeting it at the
-same gap: a declared value (a preference or token-default row, a keyword's
+same gap: a declared value (a preference or literal-default row, a keyword's
 word-default, or a value set on the node) outranks a cascaded one (the edge
 token's face reaching the kind edge), which outranks the bare fallback.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::seamStrength`
 
 An exhaustive switch over `SeamOrigin | undefined`: `preference`,
-`token-default` and `word-default` are declared (2), `cascade` is 1, and
+`literal-default` and `word-default` are declared (2), `cascade` is 1, and
 `fallback` or no origin is 0. A new origin fails to compile here until it is
 given a strength.
 

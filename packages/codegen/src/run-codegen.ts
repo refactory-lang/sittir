@@ -261,7 +261,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 				`(${census.staticGlued} glued, ${census.staticSpaced} spaced), ` +
 				`${census.runtimeDerivable} runtime-derivable, ` +
 				`${census.runtimeVarying} runtime-varying (residue); ` +
-				`origin: ${census.preferenceOrigin} preference, ${census.tokenDefaultOrigin} token-default, ${census.wordDefaultOrigin} word-default, ${census.cascadeOrigin} cascade, ${census.fallbackOrigin} fallback`
+				`origin: ${census.preferenceOrigin} preference, ${census.literalDefaultOrigin} literal-default, ${census.wordDefaultOrigin} word-default, ${census.cascadeOrigin} cascade, ${census.fallbackOrigin} fallback`
 		);
 		writeFileSync(
 			join(dirname(outDir), '.sittir', 'seam-census.json'),
@@ -273,7 +273,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 					runtimeDerivable: census.runtimeDerivable,
 					runtimeVarying: census.runtimeVarying,
 					preferenceOrigin: census.preferenceOrigin,
-					tokenDefaultOrigin: census.tokenDefaultOrigin,
+					literalDefaultOrigin: census.literalDefaultOrigin,
 				wordDefaultOrigin: census.wordDefaultOrigin,
 					cascadeOrigin: census.cascadeOrigin,
 					fallbackOrigin: census.fallbackOrigin,

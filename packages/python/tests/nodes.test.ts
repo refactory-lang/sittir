@@ -2745,7 +2745,7 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		const seated = (node as any).content();
 		expect(seated?.$text ?? seated).toBe(TSKindId.WildcardPattern);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('splatPattern.star builds the parent', () => {
 		const node = ir.casePattern.splatPattern.star({

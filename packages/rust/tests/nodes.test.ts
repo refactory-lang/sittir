@@ -89,7 +89,7 @@ describe('expression_statement sub-factories', () => {
 		const node = ir.expressionStatement.block({});
 		expect(node.$type).toBe(TSKindId.ExpressionStatement);
 		expect((node as any).content()?.$type).toBe(TSKindId.Block);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ifExpression builds the parent', () => {
 		const node = ir.expressionStatement.ifExpression({
@@ -299,21 +299,21 @@ describe('token_repetition_pattern sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.TokenRepetitionPattern);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Plus);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
 		const node = ir.tokenRepetitionPattern.star({});
 		expect(node.$type).toBe(TSKindId.TokenRepetitionPattern);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('qmark builds the parent', () => {
 		const node = ir.tokenRepetitionPattern.qmark({});
 		expect(node.$type).toBe(TSKindId.TokenRepetitionPattern);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Qmark);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -330,19 +330,19 @@ describe('token_tree sub-factories', () => {
 		const node = ir.tokenTree.paren();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeParen);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bracket builds the parent', () => {
 		const node = ir.tokenTree.bracket();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeBracket);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('brace builds the parent', () => {
 		const node = ir.tokenTree.brace();
 		expect(node.$type).toBe(TSKindId.TokenTree);
 		expect((node as any).content()?.$type).toBe(TSKindId.TokenTreeBrace);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -364,21 +364,21 @@ describe('token_repetition sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.TokenRepetition);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Plus);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
 		const node = ir.tokenRepetition.star({});
 		expect(node.$type).toBe(TSKindId.TokenRepetition);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('qmark builds the parent', () => {
 		const node = ir.tokenRepetition.qmark({});
 		expect(node.$type).toBe(TSKindId.TokenRepetition);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Qmark);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -401,7 +401,7 @@ describe('attribute_item sub-factories', () => {
 		const node = ir.attributeItem.self({});
 		expect(node.$type).toBe(TSKindId.AttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.attributeItem.identifier({ path: ['test'] });
@@ -419,13 +419,13 @@ describe('attribute_item sub-factories', () => {
 		const node = ir.attributeItem.super({});
 		expect(node.$type).toBe(TSKindId.AttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.attributeItem.crate({});
 		expect(node.$type).toBe(TSKindId.AttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
 		const node = ir.attributeItem.scopedIdentifier({
@@ -491,7 +491,7 @@ describe('inner_attribute_item sub-factories', () => {
 		const node = ir.innerAttributeItem.self({});
 		expect(node.$type).toBe(TSKindId.InnerAttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.innerAttributeItem.identifier({ path: ['test'] });
@@ -509,13 +509,13 @@ describe('inner_attribute_item sub-factories', () => {
 		const node = ir.innerAttributeItem.super({});
 		expect(node.$type).toBe(TSKindId.InnerAttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.innerAttributeItem.crate({});
 		expect(node.$type).toBe(TSKindId.InnerAttributeItem);
 		expect((node as any).attribute()?.$type).toBe(TSKindId.Attribute);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
 		const node = ir.innerAttributeItem.scopedIdentifier({
@@ -579,7 +579,7 @@ describe('attribute sub-factories', () => {
 		const node = ir.attribute.self({});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expect((node as any).path()).toBe(TSKindId.Self);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.attribute.identifier({ path: ['test'] });
@@ -597,13 +597,13 @@ describe('attribute sub-factories', () => {
 		const node = ir.attribute.super({});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expect((node as any).path()).toBe(TSKindId.Super);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.attribute.crate({});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expect((node as any).path()).toBe(TSKindId.Crate);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
 		const node = ir.attribute.scopedIdentifier({
@@ -1657,7 +1657,7 @@ describe('use_declaration sub-factories', () => {
 		const node = ir.useDeclaration.self({});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBe(TSKindId.Self);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('identifier builds the parent', () => {
 		const node = ir.useDeclaration.identifier({ argument: ['test'] });
@@ -1675,13 +1675,13 @@ describe('use_declaration sub-factories', () => {
 		const node = ir.useDeclaration.super({});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBe(TSKindId.Super);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('crate builds the parent', () => {
 		const node = ir.useDeclaration.crate({});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expect((node as any).argument()).toBe(TSKindId.Crate);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scopedIdentifier builds the parent', () => {
 		const node = ir.useDeclaration.scopedIdentifier({
@@ -3795,7 +3795,7 @@ describe('range_expression sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.RangeExpression);
 		const seated = (node as any).content();
 		expect(seated?.$text ?? seated).toBe(TSKindId.RangeExpressionBare);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -5527,7 +5527,7 @@ describe('else_clause sub-factories', () => {
 		const node = ir.elseClause.block({});
 		expect(node.$type).toBe(TSKindId.ElseClause);
 		expect((node as any).content()?.$type).toBe(TSKindId.Block);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ifExpression builds the parent', () => {
 		const node = ir.elseClause.ifExpression({

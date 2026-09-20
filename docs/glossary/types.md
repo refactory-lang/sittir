@@ -444,7 +444,7 @@ how firmly the default holds against the mark meeting it at the same gap.
 It rides in `RuleAnnotations` because that is the existing channel a
 `whitespaceChoice` member already carries per-arm facts on, not because it is
 meant to influence rendering. Its type, `SeamOrigin` (`'preference'` |
-`'token-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
+`'literal-default'` | `'word-default'` | `'cascade'` | `'fallback'`), is defined right above `RuleAnnotations` in
 this file — the lower layer, so `compiler/model/site-addresses.ts` and
 `compiler/model/render-rules.ts` both import it rather than each declaring
 their own copy (`site-addresses.ts`'s `PreferenceOrigin` is
@@ -467,7 +467,7 @@ itself ever produces).
 ```
 
 `origin` admits `'cascade'` beside the declared origins and the fallback.
-`edgeTokens` is set on a kind edge's whitespace choice only, naming the
+`edgeLiterals` is set on a kind edge's whitespace choice only, naming the
 literal tokens the kind opens or closes with (a single token or every arm of
 a choice of tokens), so the edge can answer to their grammar-wide face.
 

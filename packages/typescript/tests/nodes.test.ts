@@ -53,13 +53,13 @@ describe('namespace_export sub-factories', () => {
 		const node = ir.namespaceExport.string.double();
 		expect(node.$type).toBe(TSKindId.NamespaceExport);
 		expect((node as any).moduleExportName()?.$type).toBe(TSKindId.String);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('string.single builds the parent', () => {
 		const node = ir.namespaceExport.string.single();
 		expect(node.$type).toBe(TSKindId.NamespaceExport);
 		expect((node as any).moduleExportName()?.$type).toBe(TSKindId.String);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -279,7 +279,7 @@ describe('import_clause sub-factories', () => {
 		const node = ir.importClause.defaultImport.type({});
 		expect(node.$type).toBe(TSKindId.ImportClause);
 		expect((node as any).content()?.$type).toBe(TSKindId.ImportClauseDefaultImport);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('defaultImport.importClauseGroup builds the parent', () => {
 		const node = ir.importClause.defaultImport.importClauseGroup({
@@ -868,14 +868,14 @@ describe('break_statement sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.BreakStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
 		const node = ir.breakStatement.semi({});
 		expect(node.$type).toBe(TSKindId.BreakStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -897,14 +897,14 @@ describe('continue_statement sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ContinueStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
 		const node = ir.continueStatement.semi({});
 		expect(node.$type).toBe(TSKindId.ContinueStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -923,14 +923,14 @@ describe.skip('debugger_statement sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
 		const node = ir.debuggerStatement.semi();
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -952,14 +952,14 @@ describe('return_statement sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.ReturnStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.AutomaticSemicolon);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('semi builds the parent', () => {
 		const node = ir.returnStatement.semi({});
 		expect(node.$type).toBe(TSKindId.ReturnStatement);
 		const seated = (node as any).terminator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Semi);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -2435,168 +2435,168 @@ describe('binary_expression sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.AmpAmp);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pipePipe builds the parent', () => {
 		const node = ir.binaryExpression.pipePipe({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.PipePipe);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gtGt builds the parent', () => {
 		const node = ir.binaryExpression.gtGt({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.GtGt);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gtGtGt builds the parent', () => {
 		const node = ir.binaryExpression.gtGtGt({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.GtGtGt);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ltLt builds the parent', () => {
 		const node = ir.binaryExpression.ltLt({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.LtLt);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('amp builds the parent', () => {
 		const node = ir.binaryExpression.amp({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Amp);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('caret builds the parent', () => {
 		const node = ir.binaryExpression.caret({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Caret);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pipe builds the parent', () => {
 		const node = ir.binaryExpression.pipe({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Pipe);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('plus builds the parent', () => {
 		const node = ir.binaryExpression.plus({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Plus);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('dash builds the parent', () => {
 		const node = ir.binaryExpression.dash({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Dash);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('star builds the parent', () => {
 		const node = ir.binaryExpression.star({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('slash builds the parent', () => {
 		const node = ir.binaryExpression.slash({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Slash);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('percent builds the parent', () => {
 		const node = ir.binaryExpression.percent({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Percent);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('starStar builds the parent', () => {
 		const node = ir.binaryExpression.starStar({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.StarStar);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('lt builds the parent', () => {
 		const node = ir.binaryExpression.lt({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Lt);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('ltEq builds the parent', () => {
 		const node = ir.binaryExpression.ltEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.LtEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('eqEq builds the parent', () => {
 		const node = ir.binaryExpression.eqEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.EqEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('eqEqEq builds the parent', () => {
 		const node = ir.binaryExpression.eqEqEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.EqEqEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bangEq builds the parent', () => {
 		const node = ir.binaryExpression.bangEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.BangEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('bangEqEq builds the parent', () => {
 		const node = ir.binaryExpression.bangEqEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.BangEqEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gtEq builds the parent', () => {
 		const node = ir.binaryExpression.gtEq({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.GtEq);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('gt builds the parent', () => {
 		const node = ir.binaryExpression.gt({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.Gt);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('qmarkQmark builds the parent', () => {
 		const node = ir.binaryExpression.qmarkQmark({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.QmarkQmark);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('instanceof builds the parent', () => {
 		const node = ir.binaryExpression.instanceof({});
 		expect(node.$type).toBe(TSKindId.BinaryExpression);
 		const seated = (node as any).operator();
 		expect(seated?.$text ?? seated).toBe(TSKindId.InstanceofKeyword);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('in builds the parent', () => {
 		const node = ir.binaryExpression.in({
@@ -2666,13 +2666,13 @@ describe.skip('string sub-factories', () => {
 		const node = ir.string.double();
 		expect(node.$type).toBe(TSKindId.String);
 		expect((node as any).content()?.$type).toBe(TSKindId.StringDouble);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('single builds the parent', () => {
 		const node = ir.string.single();
 		expect(node.$type).toBe(TSKindId.String);
 		expect((node as any).content()?.$type).toBe(TSKindId.StringSingle);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -3116,13 +3116,13 @@ describe('rest_pattern sub-factories', () => {
 		const node = ir.restPattern.objectPattern();
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect((node as any).lhsExpression()).toBeDefined();
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('arrayPattern builds the parent', () => {
 		const node = ir.restPattern.arrayPattern();
 		expect(node.$type).toBe(TSKindId.RestPattern);
 		expect((node as any).lhsExpression()).toBeDefined();
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('nonNullExpression builds the parent', () => {
 		const node = ir.restPattern.nonNullExpression({
@@ -4180,7 +4180,7 @@ describe('required_parameter sub-factories', () => {
 		const node = ir.requiredParameter.this({});
 		expect(node.$type).toBe(TSKindId.RequiredParameter);
 		expect((node as any).pattern()).toBe(TSKindId.This);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -4205,7 +4205,7 @@ describe('optional_parameter sub-factories', () => {
 		const node = ir.optionalParameter.this({});
 		expect(node.$type).toBe(TSKindId.OptionalParameter);
 		expect((node as any).pattern()).toBe(TSKindId.This);
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -5009,13 +5009,13 @@ describe('literal_type sub-factories', () => {
 		const node = ir.literalType.string.double();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('string.single builds the parent', () => {
 		const node = ir.literalType.string.single();
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
-		expect(() => node.$render!()).not.toThrow();
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('true builds the parent', () => {
 		const node = ir.literalType.true({ $type: TSKindId.True, $text: 'true', $source: 2, $named: true } as any);

@@ -9,7 +9,7 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -74,7 +74,7 @@ export interface SeamCensusSummary {
 	readonly runtimeDerivable: number;
 	readonly runtimeVarying: number;
 	readonly preferenceOrigin: number;
-	readonly tokenDefaultOrigin: number;
+	readonly literalDefaultOrigin: number;
 	readonly wordDefaultOrigin: number;
 	readonly cascadeOrigin: number;
 	readonly fallbackOrigin: number;
@@ -175,7 +175,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				runtimeDerivable: boundaries.filter((b) => b.resolution === 'runtime-derivable').length,
 				runtimeVarying: boundaries.filter((b) => b.resolution === 'runtime-varying').length,
 				preferenceOrigin: boundaries.filter((b) => b.origin === 'preference').length,
-				tokenDefaultOrigin: boundaries.filter((b) => b.origin === 'token-default').length,
+				literalDefaultOrigin: boundaries.filter((b) => b.origin === 'literal-default').length,
 				wordDefaultOrigin: boundaries.filter((b) => b.origin === 'word-default').length,
 				cascadeOrigin: boundaries.filter((b) => b.origin === 'cascade').length,
 				fallbackOrigin: boundaries.filter((b) => b.origin === 'fallback').length
@@ -390,7 +390,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 				partIndices.push(i);
 			});
 			if (parts.length === 0) return EMPTY;
-			const ORIGIN_RANK: Record<SeamOrigin, number> = { preference: 4, 'token-default': 3, 'word-default': 2, cascade: 1, fallback: 0 };
+			const ORIGIN_RANK: Record<SeamOrigin, number> = { preference: 4, 'literal-default': 3, 'word-default': 2, cascade: 1, fallback: 0 };
 			const ARM_RANK: Record<string, number> = { indent: 3, dedent: 3, newline: 2, blankline: 2, tight: 1, space: 0 };
 			const seamChoiceBetween = (
 				leftPartIdx: number,
@@ -1358,7 +1358,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) te.emitLeaf(node);
+				if (isVisibleTextLeaf(node)) te.emitLeaf(node);
 				break;
 			case 'branch':
 			case 'envelope':

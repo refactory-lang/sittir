@@ -16,7 +16,7 @@ export interface SiteAddressInput {
 	readonly address: string;
 	readonly label: string;
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeTokens?: readonly string[];
+	readonly edgeLiterals?: readonly string[];
 }
 
 export type AddressedSite<T extends SiteAddressInput = SiteAddressInput> = T & {
@@ -40,14 +40,14 @@ export function cascadePathsOf(
 	site: SiteAddressInput,
 	kindEntries: readonly KindEntryLike[]
 ): readonly (readonly PreferenceSegment[])[] | undefined {
-	if (site.edgeTokens === undefined || site.edgeTokens.length === 0) return undefined;
+	if (site.edgeLiterals === undefined || site.edgeLiterals.length === 0) return undefined;
 	const own = publicKindName(site.kind);
 	const seam = parseSeamLabel(site.address);
 	if (seam === undefined || seam.token !== own) return undefined;
-	return site.edgeTokens.map((edgeToken) => {
-		const text = anonTokenText(kindEntries, edgeToken);
-		const token: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: edgeToken } : { kind: 'literal', text };
-		return [{ kind: 'kind-match', name: own }, token, { kind: 'name', name: seam.side }];
+	return site.edgeLiterals.map((edgeLiteral) => {
+		const text = anonTokenText(kindEntries, edgeLiteral);
+		const literal: PreferenceSegment = text === undefined ? { kind: 'fieldName', name: edgeLiteral } : { kind: 'literal', text };
+		return [{ kind: 'kind-match', name: own }, literal, { kind: 'name', name: seam.side }];
 	});
 }
 
@@ -169,7 +169,7 @@ function segmentMatches(a: PreferenceSegment, b: PreferenceSegment, membersOf: S
 export type PreferenceOrigin = Exclude<SeamOrigin, 'fallback' | 'word-default'>;
 
 function originOf(address: string): PreferenceOrigin {
-	return addressSegments(address)[0]?.kind === 'wildcard' ? 'token-default' : 'preference';
+	return addressSegments(address)[0]?.kind === 'wildcard' ? 'literal-default' : 'preference';
 }
 
 export function resolveBindings(

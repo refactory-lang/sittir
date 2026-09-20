@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -203,7 +203,7 @@ export namespace from {
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
 			result = emitStringLikeFrom(node);
-		} else if (isWordOrVisibleTextLeaf(node)) {
+		} else if (isVisibleTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
 		if (result) output.push(result);
@@ -733,7 +733,7 @@ function classifyKindsForResolver(
 			branchKinds.push(t);
 			continue;
 		}
-		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isWordOrVisibleTextLeaf(n)) {
+		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isVisibleTextLeaf(n)) {
 			leafKinds.push(t);
 		} else if (isHiddenPunctuationLeaf(n)) {
 			tokenKinds.push(t);
@@ -902,7 +902,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (!node.rawFactoryName) continue;
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const factory = `F.${node.rawFactoryName}`;
-		if (isWordOrVisibleTextLeaf(node)) {
+		if (isVisibleTextLeaf(node)) {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
@@ -994,7 +994,7 @@ export function bareAcceptClosure(
 
 function isLeafRegistryKind(kind: string, node: AssembledNode): boolean {
 	if (kind.startsWith('_') || !node.rawFactoryName) return false;
-	return node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern;
+	return node instanceof AssembledEnum || isVisibleTextLeaf(node) || node instanceof AssembledPattern;
 }
 
 function emitBareRoutingTables(
@@ -1595,7 +1595,7 @@ export class FromEmitter implements CodegenEmitter<string> {
 			this.emitBranch(node);
 			return;
 		}
-		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrVisibleTextLeaf(node)) {
+		if (node instanceof AssembledPattern || node instanceof AssembledEnum || isVisibleTextLeaf(node)) {
 			this.emitLeaf(node);
 		}
 	}

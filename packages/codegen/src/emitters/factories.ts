@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -286,7 +286,7 @@ export namespace factory {
 			}
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) {
+				if (isVisibleTextLeaf(node)) {
 					result = emitKindIdFactory(node, kindEntries, nodeMap);
 				}
 				break;
@@ -902,7 +902,7 @@ export function constructorSurface(
 		}
 		case 'keyword':
 		case 'punctuation':
-			if (!isWordOrVisibleTextLeaf(target)) return undefined;
+			if (!isVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
 			return { params: 'text: string', args: 'text' };
@@ -1596,7 +1596,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) this.emitLeaf(node);
+				if (isVisibleTextLeaf(node)) this.emitLeaf(node);
 				break;
 			case 'envelope':
 			case 'branch':

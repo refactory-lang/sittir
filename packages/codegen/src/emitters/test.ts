@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
-import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
@@ -118,7 +118,7 @@ export function emitTests(config: EmitTestsConfig): string {
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isWordOrVisibleTextLeaf(node)) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+				if (isVisibleTextLeaf(node)) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				break;
@@ -279,7 +279,7 @@ function childBareCallArgs(
 		}
 		case 'keyword':
 		case 'punctuation':
-			return isWordOrVisibleTextLeaf(child)
+			return isVisibleTextLeaf(child)
 				? buildDummyStub(child.kind, nodeMap, kindEntries, 0, new Set())
 				: undefined;
 		case 'enum': {
@@ -420,12 +420,7 @@ function emitSubFactoryTests(
 		} else {
 			cases.push(`    expect((node as any).${slotProp}()).toBeDefined();`);
 		}
-		const hasContent = args !== '' && args !== '{}';
-		if (hasContent) {
-			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		} else {
-			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
-		}
+		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		cases.push('  });');
 	}
 	for (const alias of aliases) {
@@ -440,11 +435,7 @@ function emitSubFactoryTests(
 		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${alias.name}${base.flavor}` : `ir.${base.path}.${alias.name}${base.flavor}`;
 		cases.push(`    const node = ${callTarget}(${args});`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
-		if (args === '' || args === '{}') {
-			cases.push(`    expect(() => node.$render!()).not.toThrow();`);
-		} else {
-			cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-		}
+		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		cases.push('  });');
 	}
 	if (cases.length === 0) return;
@@ -583,7 +574,7 @@ function emitKeywordTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (!isWordOrVisibleTextLeaf(node)) return;
+	if (!isVisibleTextLeaf(node)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
 	lines.push(`  it('factory produces the kind id', () => {`);
 	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);

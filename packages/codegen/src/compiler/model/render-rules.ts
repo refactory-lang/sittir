@@ -34,7 +34,7 @@ export interface SpacingPart {
 	readonly side: SpacingSide;
 	readonly defaultArm: WhitespaceArm;
 	readonly origin?: SeamOrigin;
-	readonly edgeTokens?: readonly string[];
+	readonly edgeLiterals?: readonly string[];
 	readonly arms: readonly WhitespaceArm[];
 }
 
@@ -104,7 +104,7 @@ export interface RuleSpacingSite {
 	readonly origin?: SeamOrigin;
 	readonly seat?: SeatedChild;
 	readonly path?: readonly PreferenceSegment[];
-	readonly edgeTokens?: readonly string[];
+	readonly edgeLiterals?: readonly string[];
 }
 
 type Bag = {
@@ -273,7 +273,7 @@ function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], sym
 		type: CHOICE,
 		nonterminal: true,
 		fieldName: part.fieldName,
-		...(part.edgeTokens === undefined ? {} : { annotations: { edgeTokens: part.edgeTokens } }),
+		...(part.edgeLiterals === undefined ? {} : { annotations: { edgeLiterals: part.edgeLiterals } }),
 		members: arms.map((arm) => ({
 			type: SYMBOL,
 			name: symbols[arm]!,
@@ -308,14 +308,14 @@ function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
 	if (r.fieldName === undefined || defaultMember?.name === undefined) {
 		throw new Error('render rules: a spacing choice names its field and marks its default arm');
 	}
-	const edgeTokens = r.annotations?.edgeTokens;
+	const edgeLiterals = r.annotations?.edgeLiterals;
 	return {
 		fieldName: r.fieldName,
 		label: members[0]!.annotations!.preference!,
 		side,
 		defaultArm: publicKindName(defaultMember.name) as WhitespaceArm,
 		...(defaultMember.annotations?.origin === 'word-default' ? { origin: defaultMember.annotations.origin } : {}),
-		...(edgeTokens === undefined ? {} : { edgeTokens }),
+		...(edgeLiterals === undefined ? {} : { edgeLiterals }),
 		arms: members.map((m) => publicKindName(m.name!) as WhitespaceArm)
 	};
 }
@@ -576,18 +576,18 @@ function seamChoice(
 	fallback: WhitespaceArm,
 	resolver: DefaultResolver,
 	seams: SeamArms,
-	edgeTokens?: readonly string[],
+	edgeLiterals?: readonly string[],
 	wordShaped: boolean = false
 ): RenderRule {
 	const { label, arm, origin } = resolver.resolveSeam(kind, address, fallback, seams.arms, wordShaped);
 	return whitespaceChoice(
-		{ fieldName: address, label, side: 'seam', defaultArm: arm, origin, ...(edgeTokens === undefined ? {} : { edgeTokens }), arms: seams.arms },
+		{ fieldName: address, label, side: 'seam', defaultArm: arm, origin, ...(edgeLiterals === undefined ? {} : { edgeLiterals }), arms: seams.arms },
 		seams.arms,
 		seams.symbols
 	);
 }
 
-function edgeTokensOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
+function edgeLiteralsOf(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): readonly string[] | undefined {
 	const edge = edgeMember(rule, side);
 	if (edge === undefined) return undefined;
 	const token = (member: RenderRule): string | undefined => {
@@ -737,7 +737,7 @@ function withKindEdges(
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
 	const part = (side: SeparatorSide): RenderRule =>
-		seamChoice(kind, seamLabel(publicKindName(kind), side), 'space', resolver, seams, edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config));
+		seamChoice(kind, seamLabel(publicKindName(kind), side), 'space', resolver, seams, edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config));
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {
@@ -842,7 +842,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 				defaultArm: part.defaultArm,
 				arms: part.arms,
 				...(part.origin === 'word-default' ? { origin: part.origin } : {}),
-				...(part.edgeTokens === undefined ? {} : { edgeTokens: part.edgeTokens })
+				...(part.edgeLiterals === undefined ? {} : { edgeLiterals: part.edgeLiterals })
 			});
 		}
 	};

@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf } from '../compiler/model/node-map.ts';
+import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
@@ -1645,7 +1645,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					entry !== undefined && entry.kind === kind,
 					`ReturnType<typeof wrap${node.typeName}>`
 				);
-			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isWordOrVisibleTextLeaf(node)) {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isVisibleTextLeaf(node)) {
 				if (!node.factoryName) continue;
 				if (this.#kindEntries) {
 					const entry = findKindEntry(this.#kindEntries, kind);

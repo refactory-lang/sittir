@@ -1,6 +1,6 @@
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
-import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
+import { isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
@@ -57,7 +57,7 @@ export function isAuthoredCompound(
 }
 
 export function isTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation | AssembledPattern | AssembledEnum {
-	return isWordOrVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
+	return isVisibleTextLeaf(node) || node instanceof AssembledPattern || node instanceof AssembledEnum;
 }
 
 export function canonicalSeparatedListField(node: AssembledList): AssembledNonterminal {
