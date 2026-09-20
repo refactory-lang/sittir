@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "6e758fda895bf3a0a32f6e785761f198e40922f8a216749ed6fa80893c36488f",
+  "source_hash": "e8b5d6803c8c5e49c71acb362606c1c0c2141e2a047012da7438b4853c3cdd9f",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "b71306e1a03c58aa047ef241b0ae5c48ccb3c815a2be659060b7b0a3669b2f4e",
-    "packages/python/.sittir/grammar.js": "f99f33c46ccf3a1946c18691a7edee81e1e6d47e331cf2c86b2b64baaa0e900f",
+    "packages/python/.sittir/grammar.js": "506558cc9e6a7f9942cd3d5371be2fecefc450421a118be2dc35c733c0f685a0",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "64009961c777d3677dc953fd6d788f8ca058831ce40b47bb0dbc0c5d9ae79a4c",
     "packages/python/.sittir/render-bodies.json": "0b0f891317c0e6ed16030d8dc66967cc1ff265dc50cd158202c322f95bde8cc7",
@@ -23,7 +23,7 @@
     "packages/python/src/factories/bundle.ts": "4bd2934f5db812899fff1b20ea3dbfe465e39a6c6d42ecc8c343fc0faaf45133",
     "packages/python/src/factories/coerce.ts": "d981bd3eb92245896c398fe0adb8465ddbfd7a5d6aa28119e40b1fdc5006e4f5",
     "packages/python/src/factories/index.ts": "1c2294c543e64416b063926da3cac8aec71b36d7250413366f9d50854fdcc0d5",
-    "packages/python/src/factories/overlays/polymorphs.ts": "c6b07f0b81c62b10eac362da9851e9761d90e114de3d74310b80930b536842cb",
+    "packages/python/src/factories/overlays/polymorphs.ts": "cb73ce9661e6e6510efd5ae5d124f3866bf27da4d8133d8123ebc9a6800511ca",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "3e43b5a8e9265616a28b0036bbe779c0a10135b1ef03aa013e803c7d5ff7dc4c",

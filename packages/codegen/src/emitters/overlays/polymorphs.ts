@@ -811,12 +811,13 @@ function emitSub(
 			: undefined;
 	const s = shape(sub, k, positional, mergeKeys, m, seatsConfigChild(sub, nodeMap));
 	const typeFor = (pRef: string, cRef: string): string => `${s.paramFor(pRef, cRef)} => ReturnType<typeof ${pRef}>`;
+	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	return {
 		method: s.method,
-		strictApply: `${m}(${p.strict}, ${c.strict})`,
-		strictType: typeFor(p.strict, c.strict),
-		coerceApply: p.coerce && c.coerce ? `${m}(${p.coerce}, ${c.coerce})` : undefined,
-		coerceType: p.coerce && c.coerce ? typeFor(p.coerce, c.coerce) : undefined
+		strictApply: `${m}(${wrap.strict}, ${c.strict})`,
+		strictType: typeFor(wrap.strict, c.strict),
+		coerceApply: wrap.coerce && c.coerce ? `${m}(${wrap.coerce}, ${c.coerce})` : undefined,
+		coerceType: wrap.coerce && c.coerce ? typeFor(wrap.coerce, c.coerce) : undefined
 	};
 }
 

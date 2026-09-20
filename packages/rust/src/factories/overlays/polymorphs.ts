@@ -247,60 +247,58 @@ export const expressionStatement: typeof B.expressionStatement & {
 		) => ReturnType<typeof F.buildExpressionStatement>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToExpressionStatementWithSemi>
-		) => ReturnType<typeof C.coerceToExpressionStatement>;
+		) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	unsafeBlock: {
 		strict: (...args: ArgsOf<typeof F.buildUnsafeBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUnsafeBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUnsafeBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	asyncBlock: {
 		strict: (...args: ArgsOf<typeof F.buildAsyncBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToAsyncBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAsyncBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	genBlock: {
 		strict: (...args: ArgsOf<typeof F.buildGenBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToGenBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	tryBlock: {
 		strict: (...args: ArgsOf<typeof F.buildTryBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTryBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTryBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	block: {
 		strict: (...args: ArgsOf<typeof F.buildBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	ifExpression: {
 		strict: (...args: ArgsOf<typeof F.buildIfExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 		letCondition: {
 			strict: (
 				...args: ArgsOf<typeof ifExpression.letCondition.strict>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 			coerce: (
 				...args: ArgsOf<typeof ifExpression.letCondition.coerce>
-			) => ReturnType<typeof C.coerceToExpressionStatement>;
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		letChain: {
 			strict: (...args: ArgsOf<typeof ifExpression.letChain.strict>) => ReturnType<typeof F.buildExpressionStatement>;
-			coerce: (
-				...args: ArgsOf<typeof ifExpression.letChain.coerce>
-			) => ReturnType<typeof C.coerceToExpressionStatement>;
+			coerce: (...args: ArgsOf<typeof ifExpression.letChain.coerce>) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 	};
 	matchExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMatchExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMatchExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMatchExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	whileExpression: {
 		strict: (...args: ArgsOf<typeof F.buildWhileExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToWhileExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToWhileExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 		letCondition: {
 			strict: (
 				...args: ArgsOf<typeof whileExpression.letCondition.strict>
 			) => ReturnType<typeof F.buildExpressionStatement>;
 			coerce: (
 				...args: ArgsOf<typeof whileExpression.letCondition.coerce>
-			) => ReturnType<typeof C.coerceToExpressionStatement>;
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 		letChain: {
 			strict: (
@@ -308,101 +306,95 @@ export const expressionStatement: typeof B.expressionStatement & {
 			) => ReturnType<typeof F.buildExpressionStatement>;
 			coerce: (
 				...args: ArgsOf<typeof whileExpression.letChain.coerce>
-			) => ReturnType<typeof C.coerceToExpressionStatement>;
+			) => ReturnType<typeof F.buildExpressionStatement>;
 		};
 	};
 	loopExpression: {
 		strict: (...args: ArgsOf<typeof F.buildLoopExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLoopExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLoopExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	forExpression: {
 		strict: (...args: ArgsOf<typeof F.buildForExpression>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToForExpression>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToForExpression>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 	constBlock: {
 		strict: (...args: ArgsOf<typeof F.buildConstBlock>) => ReturnType<typeof F.buildExpressionStatement>;
-		coerce: (...args: ArgsOf<typeof C.coerceToConstBlock>) => ReturnType<typeof C.coerceToExpressionStatement>;
+		coerce: (...args: ArgsOf<typeof C.coerceToConstBlock>) => ReturnType<typeof F.buildExpressionStatement>;
 	};
 } = {
 	...B.expressionStatement,
 	withSemi: {
 		strict: expressionStatement$withSemi(F.buildExpressionStatement, F.buildExpressionStatementWithSemi),
-		coerce: expressionStatement$withSemi(C.coerceToExpressionStatement, C.coerceToExpressionStatementWithSemi)
+		coerce: expressionStatement$withSemi(F.buildExpressionStatement, C.coerceToExpressionStatementWithSemi)
 	},
 	unsafeBlock: {
 		strict: expressionStatement$unsafeBlock(F.buildExpressionStatement, F.buildUnsafeBlock),
-		coerce: expressionStatement$unsafeBlock(C.coerceToExpressionStatement, C.coerceToUnsafeBlock)
+		coerce: expressionStatement$unsafeBlock(F.buildExpressionStatement, C.coerceToUnsafeBlock)
 	},
 	asyncBlock: {
 		strict: expressionStatement$asyncBlock(F.buildExpressionStatement, F.buildAsyncBlock),
-		coerce: expressionStatement$asyncBlock(C.coerceToExpressionStatement, C.coerceToAsyncBlock)
+		coerce: expressionStatement$asyncBlock(F.buildExpressionStatement, C.coerceToAsyncBlock)
 	},
 	genBlock: {
 		strict: expressionStatement$genBlock(F.buildExpressionStatement, F.buildGenBlock),
-		coerce: expressionStatement$genBlock(C.coerceToExpressionStatement, C.coerceToGenBlock)
+		coerce: expressionStatement$genBlock(F.buildExpressionStatement, C.coerceToGenBlock)
 	},
 	tryBlock: {
 		strict: expressionStatement$tryBlock(F.buildExpressionStatement, F.buildTryBlock),
-		coerce: expressionStatement$tryBlock(C.coerceToExpressionStatement, C.coerceToTryBlock)
+		coerce: expressionStatement$tryBlock(F.buildExpressionStatement, C.coerceToTryBlock)
 	},
 	block: {
 		strict: expressionStatement$block(F.buildExpressionStatement, F.buildBlock),
-		coerce: expressionStatement$block(C.coerceToExpressionStatement, C.coerceToBlock)
+		coerce: expressionStatement$block(F.buildExpressionStatement, C.coerceToBlock)
 	},
 	ifExpression: {
 		strict: expressionStatement$ifExpression(F.buildExpressionStatement, F.buildIfExpression),
-		coerce: expressionStatement$ifExpression(C.coerceToExpressionStatement, C.coerceToIfExpression),
+		coerce: expressionStatement$ifExpression(F.buildExpressionStatement, C.coerceToIfExpression),
 		letCondition: {
 			strict: expressionStatement$ifExpressionLetCondition(
 				F.buildExpressionStatement,
 				ifExpression.letCondition.strict
 			),
-			coerce: expressionStatement$ifExpressionLetCondition(
-				C.coerceToExpressionStatement,
-				ifExpression.letCondition.coerce
-			)
+			coerce: expressionStatement$ifExpressionLetCondition(F.buildExpressionStatement, ifExpression.letCondition.coerce)
 		},
 		letChain: {
 			strict: expressionStatement$ifExpressionLetChain(F.buildExpressionStatement, ifExpression.letChain.strict),
-			coerce: expressionStatement$ifExpressionLetChain(C.coerceToExpressionStatement, ifExpression.letChain.coerce)
+			coerce: expressionStatement$ifExpressionLetChain(F.buildExpressionStatement, ifExpression.letChain.coerce)
 		}
 	},
 	matchExpression: {
 		strict: expressionStatement$matchExpression(F.buildExpressionStatement, F.buildMatchExpression),
-		coerce: expressionStatement$matchExpression(C.coerceToExpressionStatement, C.coerceToMatchExpression)
+		coerce: expressionStatement$matchExpression(F.buildExpressionStatement, C.coerceToMatchExpression)
 	},
 	whileExpression: {
 		strict: expressionStatement$whileExpression(F.buildExpressionStatement, F.buildWhileExpression),
-		coerce: expressionStatement$whileExpression(C.coerceToExpressionStatement, C.coerceToWhileExpression),
+		coerce: expressionStatement$whileExpression(F.buildExpressionStatement, C.coerceToWhileExpression),
 		letCondition: {
 			strict: expressionStatement$whileExpressionLetCondition(
 				F.buildExpressionStatement,
 				whileExpression.letCondition.strict
 			),
 			coerce: expressionStatement$whileExpressionLetCondition(
-				C.coerceToExpressionStatement,
+				F.buildExpressionStatement,
 				whileExpression.letCondition.coerce
 			)
 		},
 		letChain: {
 			strict: expressionStatement$whileExpressionLetChain(F.buildExpressionStatement, whileExpression.letChain.strict),
-			coerce: expressionStatement$whileExpressionLetChain(
-				C.coerceToExpressionStatement,
-				whileExpression.letChain.coerce
-			)
+			coerce: expressionStatement$whileExpressionLetChain(F.buildExpressionStatement, whileExpression.letChain.coerce)
 		}
 	},
 	loopExpression: {
 		strict: expressionStatement$loopExpression(F.buildExpressionStatement, F.buildLoopExpression),
-		coerce: expressionStatement$loopExpression(C.coerceToExpressionStatement, C.coerceToLoopExpression)
+		coerce: expressionStatement$loopExpression(F.buildExpressionStatement, C.coerceToLoopExpression)
 	},
 	forExpression: {
 		strict: expressionStatement$forExpression(F.buildExpressionStatement, F.buildForExpression),
-		coerce: expressionStatement$forExpression(C.coerceToExpressionStatement, C.coerceToForExpression)
+		coerce: expressionStatement$forExpression(F.buildExpressionStatement, C.coerceToForExpression)
 	},
 	constBlock: {
 		strict: expressionStatement$constBlock(F.buildExpressionStatement, F.buildConstBlock),
-		coerce: expressionStatement$constBlock(C.coerceToExpressionStatement, C.coerceToConstBlock)
+		coerce: expressionStatement$constBlock(F.buildExpressionStatement, C.coerceToConstBlock)
 	}
 };
 
@@ -545,29 +537,29 @@ const tokenTree$brace =
 export const tokenTree: typeof B.tokenTree & {
 	paren: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeParen>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeParen>) => ReturnType<typeof F.buildTokenTree>;
 	};
 	bracket: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBracket>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBracket>) => ReturnType<typeof F.buildTokenTree>;
 	};
 	brace: {
 		strict: (...args: ArgsOf<typeof F.buildTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBrace>) => ReturnType<typeof C.coerceToTokenTree>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTokenTreeBrace>) => ReturnType<typeof F.buildTokenTree>;
 	};
 } = {
 	...B.tokenTree,
 	paren: {
 		strict: tokenTree$paren(F.buildTokenTree, F.buildTokenTreeParen),
-		coerce: tokenTree$paren(C.coerceToTokenTree, C.coerceToTokenTreeParen)
+		coerce: tokenTree$paren(F.buildTokenTree, C.coerceToTokenTreeParen)
 	},
 	bracket: {
 		strict: tokenTree$bracket(F.buildTokenTree, F.buildTokenTreeBracket),
-		coerce: tokenTree$bracket(C.coerceToTokenTree, C.coerceToTokenTreeBracket)
+		coerce: tokenTree$bracket(F.buildTokenTree, C.coerceToTokenTreeBracket)
 	},
 	brace: {
 		strict: tokenTree$brace(F.buildTokenTree, F.buildTokenTreeBrace),
-		coerce: tokenTree$brace(C.coerceToTokenTree, C.coerceToTokenTreeBrace)
+		coerce: tokenTree$brace(F.buildTokenTree, C.coerceToTokenTreeBrace)
 	}
 };
 
@@ -1543,85 +1535,85 @@ const attributeItem$delimTokenTreeBrace =
 export const attributeItem: typeof B.attributeItem & {
 	self: {
 		strict: (...args: ArgsOf<typeof attribute.self.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof attribute.metavariable.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.metavariable.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.metavariable.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof attribute.super.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.super.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.super.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof attribute.crate.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof attribute.scopedIdentifier.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	attributeInput: {
 		strict: (...args: ArgsOf<typeof attribute.input.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	delimTokenTreeParen: {
 		strict: (...args: ArgsOf<typeof attribute.input.paren.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.paren.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.paren.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	delimTokenTreeBracket: {
 		strict: (...args: ArgsOf<typeof attribute.input.bracket.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.bracket.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.bracket.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 	delimTokenTreeBrace: {
 		strict: (...args: ArgsOf<typeof attribute.input.brace.strict>) => ReturnType<typeof F.buildAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.brace.coerce>) => ReturnType<typeof C.coerceToAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.brace.coerce>) => ReturnType<typeof F.buildAttributeItem>;
 	};
 } = {
 	...B.attributeItem,
 	self: {
 		strict: attributeItem$self(F.buildAttributeItem, attribute.self.strict),
-		coerce: attributeItem$self(C.coerceToAttributeItem, attribute.self.coerce)
+		coerce: attributeItem$self(F.buildAttributeItem, attribute.self.coerce)
 	},
 	identifier: {
 		strict: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.strict),
-		coerce: attributeItem$identifier(C.coerceToAttributeItem, attribute.identifier.coerce)
+		coerce: attributeItem$identifier(F.buildAttributeItem, attribute.identifier.coerce)
 	},
 	metavariable: {
 		strict: attributeItem$metavariable(F.buildAttributeItem, attribute.metavariable.strict),
-		coerce: attributeItem$metavariable(C.coerceToAttributeItem, attribute.metavariable.coerce)
+		coerce: attributeItem$metavariable(F.buildAttributeItem, attribute.metavariable.coerce)
 	},
 	super: {
 		strict: attributeItem$super(F.buildAttributeItem, attribute.super.strict),
-		coerce: attributeItem$super(C.coerceToAttributeItem, attribute.super.coerce)
+		coerce: attributeItem$super(F.buildAttributeItem, attribute.super.coerce)
 	},
 	crate: {
 		strict: attributeItem$crate(F.buildAttributeItem, attribute.crate.strict),
-		coerce: attributeItem$crate(C.coerceToAttributeItem, attribute.crate.coerce)
+		coerce: attributeItem$crate(F.buildAttributeItem, attribute.crate.coerce)
 	},
 	scopedIdentifier: {
 		strict: attributeItem$scopedIdentifier(F.buildAttributeItem, attribute.scopedIdentifier.strict),
-		coerce: attributeItem$scopedIdentifier(C.coerceToAttributeItem, attribute.scopedIdentifier.coerce)
+		coerce: attributeItem$scopedIdentifier(F.buildAttributeItem, attribute.scopedIdentifier.coerce)
 	},
 	attributeInput: {
 		strict: attributeItem$attributeInput(F.buildAttributeItem, attribute.input.strict),
-		coerce: attributeItem$attributeInput(C.coerceToAttributeItem, attribute.input.coerce)
+		coerce: attributeItem$attributeInput(F.buildAttributeItem, attribute.input.coerce)
 	},
 	delimTokenTreeParen: {
 		strict: attributeItem$delimTokenTreeParen(F.buildAttributeItem, attribute.input.paren.strict),
-		coerce: attributeItem$delimTokenTreeParen(C.coerceToAttributeItem, attribute.input.paren.coerce)
+		coerce: attributeItem$delimTokenTreeParen(F.buildAttributeItem, attribute.input.paren.coerce)
 	},
 	delimTokenTreeBracket: {
 		strict: attributeItem$delimTokenTreeBracket(F.buildAttributeItem, attribute.input.bracket.strict),
-		coerce: attributeItem$delimTokenTreeBracket(C.coerceToAttributeItem, attribute.input.bracket.coerce)
+		coerce: attributeItem$delimTokenTreeBracket(F.buildAttributeItem, attribute.input.bracket.coerce)
 	},
 	delimTokenTreeBrace: {
 		strict: attributeItem$delimTokenTreeBrace(F.buildAttributeItem, attribute.input.brace.strict),
-		coerce: attributeItem$delimTokenTreeBrace(C.coerceToAttributeItem, attribute.input.brace.coerce)
+		coerce: attributeItem$delimTokenTreeBrace(F.buildAttributeItem, attribute.input.brace.coerce)
 	}
 };
 
@@ -1668,87 +1660,85 @@ const innerAttributeItem$delimTokenTreeBrace =
 export const innerAttributeItem: typeof B.innerAttributeItem & {
 	self: {
 		strict: (...args: ArgsOf<typeof attribute.self.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.self.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof attribute.identifier.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.identifier.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof attribute.metavariable.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.metavariable.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.metavariable.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof attribute.super.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.super.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.super.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof attribute.crate.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.crate.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof attribute.scopedIdentifier.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (
-			...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>
-		) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.scopedIdentifier.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	attributeInput: {
 		strict: (...args: ArgsOf<typeof attribute.input.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	delimTokenTreeParen: {
 		strict: (...args: ArgsOf<typeof attribute.input.paren.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.paren.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.paren.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	delimTokenTreeBracket: {
 		strict: (...args: ArgsOf<typeof attribute.input.bracket.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.bracket.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.bracket.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 	delimTokenTreeBrace: {
 		strict: (...args: ArgsOf<typeof attribute.input.brace.strict>) => ReturnType<typeof F.buildInnerAttributeItem>;
-		coerce: (...args: ArgsOf<typeof attribute.input.brace.coerce>) => ReturnType<typeof C.coerceToInnerAttributeItem>;
+		coerce: (...args: ArgsOf<typeof attribute.input.brace.coerce>) => ReturnType<typeof F.buildInnerAttributeItem>;
 	};
 } = {
 	...B.innerAttributeItem,
 	self: {
 		strict: innerAttributeItem$self(F.buildInnerAttributeItem, attribute.self.strict),
-		coerce: innerAttributeItem$self(C.coerceToInnerAttributeItem, attribute.self.coerce)
+		coerce: innerAttributeItem$self(F.buildInnerAttributeItem, attribute.self.coerce)
 	},
 	identifier: {
 		strict: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.strict),
-		coerce: innerAttributeItem$identifier(C.coerceToInnerAttributeItem, attribute.identifier.coerce)
+		coerce: innerAttributeItem$identifier(F.buildInnerAttributeItem, attribute.identifier.coerce)
 	},
 	metavariable: {
 		strict: innerAttributeItem$metavariable(F.buildInnerAttributeItem, attribute.metavariable.strict),
-		coerce: innerAttributeItem$metavariable(C.coerceToInnerAttributeItem, attribute.metavariable.coerce)
+		coerce: innerAttributeItem$metavariable(F.buildInnerAttributeItem, attribute.metavariable.coerce)
 	},
 	super: {
 		strict: innerAttributeItem$super(F.buildInnerAttributeItem, attribute.super.strict),
-		coerce: innerAttributeItem$super(C.coerceToInnerAttributeItem, attribute.super.coerce)
+		coerce: innerAttributeItem$super(F.buildInnerAttributeItem, attribute.super.coerce)
 	},
 	crate: {
 		strict: innerAttributeItem$crate(F.buildInnerAttributeItem, attribute.crate.strict),
-		coerce: innerAttributeItem$crate(C.coerceToInnerAttributeItem, attribute.crate.coerce)
+		coerce: innerAttributeItem$crate(F.buildInnerAttributeItem, attribute.crate.coerce)
 	},
 	scopedIdentifier: {
 		strict: innerAttributeItem$scopedIdentifier(F.buildInnerAttributeItem, attribute.scopedIdentifier.strict),
-		coerce: innerAttributeItem$scopedIdentifier(C.coerceToInnerAttributeItem, attribute.scopedIdentifier.coerce)
+		coerce: innerAttributeItem$scopedIdentifier(F.buildInnerAttributeItem, attribute.scopedIdentifier.coerce)
 	},
 	attributeInput: {
 		strict: innerAttributeItem$attributeInput(F.buildInnerAttributeItem, attribute.input.strict),
-		coerce: innerAttributeItem$attributeInput(C.coerceToInnerAttributeItem, attribute.input.coerce)
+		coerce: innerAttributeItem$attributeInput(F.buildInnerAttributeItem, attribute.input.coerce)
 	},
 	delimTokenTreeParen: {
 		strict: innerAttributeItem$delimTokenTreeParen(F.buildInnerAttributeItem, attribute.input.paren.strict),
-		coerce: innerAttributeItem$delimTokenTreeParen(C.coerceToInnerAttributeItem, attribute.input.paren.coerce)
+		coerce: innerAttributeItem$delimTokenTreeParen(F.buildInnerAttributeItem, attribute.input.paren.coerce)
 	},
 	delimTokenTreeBracket: {
 		strict: innerAttributeItem$delimTokenTreeBracket(F.buildInnerAttributeItem, attribute.input.bracket.strict),
-		coerce: innerAttributeItem$delimTokenTreeBracket(C.coerceToInnerAttributeItem, attribute.input.bracket.coerce)
+		coerce: innerAttributeItem$delimTokenTreeBracket(F.buildInnerAttributeItem, attribute.input.bracket.coerce)
 	},
 	delimTokenTreeBrace: {
 		strict: innerAttributeItem$delimTokenTreeBrace(F.buildInnerAttributeItem, attribute.input.brace.strict),
-		coerce: innerAttributeItem$delimTokenTreeBrace(C.coerceToInnerAttributeItem, attribute.input.brace.coerce)
+		coerce: innerAttributeItem$delimTokenTreeBrace(F.buildInnerAttributeItem, attribute.input.brace.coerce)
 	}
 };
 
@@ -1952,13 +1942,13 @@ const bracketedType$qualifiedType =
 export const bracketedType: typeof B.bracketedType & {
 	qualifiedType: {
 		strict: (...args: ArgsOf<typeof F.buildQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToQualifiedType>) => ReturnType<typeof C.coerceToBracketedType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToQualifiedType>) => ReturnType<typeof F.buildBracketedType>;
 	};
 } = {
 	...B.bracketedType,
 	qualifiedType: {
 		strict: bracketedType$qualifiedType(F.buildBracketedType, F.buildQualifiedType),
-		coerce: bracketedType$qualifiedType(C.coerceToBracketedType, C.coerceToQualifiedType)
+		coerce: bracketedType$qualifiedType(F.buildBracketedType, C.coerceToQualifiedType)
 	}
 };
 
@@ -2917,133 +2907,133 @@ const negativeLiteral$floatLiteral =
 export const negativeLiteral: typeof B.negativeLiteral & {
 	integerLiteral: {
 		strict: (...args: ArgsOf<typeof F.buildIntegerLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteral>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
 		u8: {
 			strict: (...args: ArgsOf<typeof integerLiteral.u8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.u8.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.u8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		i8: {
 			strict: (...args: ArgsOf<typeof integerLiteral.i8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.i8.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.i8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		u16: {
 			strict: (...args: ArgsOf<typeof integerLiteral.u16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.u16.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.u16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		i16: {
 			strict: (...args: ArgsOf<typeof integerLiteral.i16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.i16.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.i16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		u32: {
 			strict: (...args: ArgsOf<typeof integerLiteral.u32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.u32.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.u32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		i32: {
 			strict: (...args: ArgsOf<typeof integerLiteral.i32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.i32.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.i32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		u64: {
 			strict: (...args: ArgsOf<typeof integerLiteral.u64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.u64.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.u64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		i64: {
 			strict: (...args: ArgsOf<typeof integerLiteral.i64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.i64.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.i64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		u128: {
 			strict: (...args: ArgsOf<typeof integerLiteral.u128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.u128.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.u128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		i128: {
 			strict: (...args: ArgsOf<typeof integerLiteral.i128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.i128.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.i128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		isize: {
 			strict: (...args: ArgsOf<typeof integerLiteral.isize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.isize.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.isize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		usize: {
 			strict: (...args: ArgsOf<typeof integerLiteral.usize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.usize.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.usize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		f32: {
 			strict: (...args: ArgsOf<typeof integerLiteral.f32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.f32.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.f32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 		f64: {
 			strict: (...args: ArgsOf<typeof integerLiteral.f64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
-			coerce: (...args: ArgsOf<typeof integerLiteral.f64.coerce>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteral.f64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
 		};
 	};
 	floatLiteral: {
 		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof C.coerceToNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
 	};
 } = {
 	...B.negativeLiteral,
 	integerLiteral: {
 		strict: negativeLiteral$integerLiteral(F.buildNegativeLiteral, F.buildIntegerLiteral),
-		coerce: negativeLiteral$integerLiteral(C.coerceToNegativeLiteral, C.coerceToIntegerLiteral),
+		coerce: negativeLiteral$integerLiteral(F.buildNegativeLiteral, C.coerceToIntegerLiteral),
 		u8: {
 			strict: negativeLiteral$u8(F.buildNegativeLiteral, integerLiteral.u8.strict),
-			coerce: negativeLiteral$u8(C.coerceToNegativeLiteral, integerLiteral.u8.coerce)
+			coerce: negativeLiteral$u8(F.buildNegativeLiteral, integerLiteral.u8.coerce)
 		},
 		i8: {
 			strict: negativeLiteral$i8(F.buildNegativeLiteral, integerLiteral.i8.strict),
-			coerce: negativeLiteral$i8(C.coerceToNegativeLiteral, integerLiteral.i8.coerce)
+			coerce: negativeLiteral$i8(F.buildNegativeLiteral, integerLiteral.i8.coerce)
 		},
 		u16: {
 			strict: negativeLiteral$u16(F.buildNegativeLiteral, integerLiteral.u16.strict),
-			coerce: negativeLiteral$u16(C.coerceToNegativeLiteral, integerLiteral.u16.coerce)
+			coerce: negativeLiteral$u16(F.buildNegativeLiteral, integerLiteral.u16.coerce)
 		},
 		i16: {
 			strict: negativeLiteral$i16(F.buildNegativeLiteral, integerLiteral.i16.strict),
-			coerce: negativeLiteral$i16(C.coerceToNegativeLiteral, integerLiteral.i16.coerce)
+			coerce: negativeLiteral$i16(F.buildNegativeLiteral, integerLiteral.i16.coerce)
 		},
 		u32: {
 			strict: negativeLiteral$u32(F.buildNegativeLiteral, integerLiteral.u32.strict),
-			coerce: negativeLiteral$u32(C.coerceToNegativeLiteral, integerLiteral.u32.coerce)
+			coerce: negativeLiteral$u32(F.buildNegativeLiteral, integerLiteral.u32.coerce)
 		},
 		i32: {
 			strict: negativeLiteral$i32(F.buildNegativeLiteral, integerLiteral.i32.strict),
-			coerce: negativeLiteral$i32(C.coerceToNegativeLiteral, integerLiteral.i32.coerce)
+			coerce: negativeLiteral$i32(F.buildNegativeLiteral, integerLiteral.i32.coerce)
 		},
 		u64: {
 			strict: negativeLiteral$u64(F.buildNegativeLiteral, integerLiteral.u64.strict),
-			coerce: negativeLiteral$u64(C.coerceToNegativeLiteral, integerLiteral.u64.coerce)
+			coerce: negativeLiteral$u64(F.buildNegativeLiteral, integerLiteral.u64.coerce)
 		},
 		i64: {
 			strict: negativeLiteral$i64(F.buildNegativeLiteral, integerLiteral.i64.strict),
-			coerce: negativeLiteral$i64(C.coerceToNegativeLiteral, integerLiteral.i64.coerce)
+			coerce: negativeLiteral$i64(F.buildNegativeLiteral, integerLiteral.i64.coerce)
 		},
 		u128: {
 			strict: negativeLiteral$u128(F.buildNegativeLiteral, integerLiteral.u128.strict),
-			coerce: negativeLiteral$u128(C.coerceToNegativeLiteral, integerLiteral.u128.coerce)
+			coerce: negativeLiteral$u128(F.buildNegativeLiteral, integerLiteral.u128.coerce)
 		},
 		i128: {
 			strict: negativeLiteral$i128(F.buildNegativeLiteral, integerLiteral.i128.strict),
-			coerce: negativeLiteral$i128(C.coerceToNegativeLiteral, integerLiteral.i128.coerce)
+			coerce: negativeLiteral$i128(F.buildNegativeLiteral, integerLiteral.i128.coerce)
 		},
 		isize: {
 			strict: negativeLiteral$isize(F.buildNegativeLiteral, integerLiteral.isize.strict),
-			coerce: negativeLiteral$isize(C.coerceToNegativeLiteral, integerLiteral.isize.coerce)
+			coerce: negativeLiteral$isize(F.buildNegativeLiteral, integerLiteral.isize.coerce)
 		},
 		usize: {
 			strict: negativeLiteral$usize(F.buildNegativeLiteral, integerLiteral.usize.strict),
-			coerce: negativeLiteral$usize(C.coerceToNegativeLiteral, integerLiteral.usize.coerce)
+			coerce: negativeLiteral$usize(F.buildNegativeLiteral, integerLiteral.usize.coerce)
 		},
 		f32: {
 			strict: negativeLiteral$f32(F.buildNegativeLiteral, integerLiteral.f32.strict),
-			coerce: negativeLiteral$f32(C.coerceToNegativeLiteral, integerLiteral.f32.coerce)
+			coerce: negativeLiteral$f32(F.buildNegativeLiteral, integerLiteral.f32.coerce)
 		},
 		f64: {
 			strict: negativeLiteral$f64(F.buildNegativeLiteral, integerLiteral.f64.strict),
-			coerce: negativeLiteral$f64(C.coerceToNegativeLiteral, integerLiteral.f64.coerce)
+			coerce: negativeLiteral$f64(F.buildNegativeLiteral, integerLiteral.f64.coerce)
 		}
 	},
 	floatLiteral: {
 		strict: negativeLiteral$floatLiteral(F.buildNegativeLiteral, F.buildFloatLiteral),
-		coerce: negativeLiteral$floatLiteral(C.coerceToNegativeLiteral, C.coerceToFloatLiteral)
+		coerce: negativeLiteral$floatLiteral(F.buildNegativeLiteral, C.coerceToFloatLiteral)
 	}
 };
 
@@ -3412,53 +3402,53 @@ const useWildcardGroup$scopedIdentifier =
 export const useWildcardGroup: typeof B.useWildcardGroup & {
 	self: {
 		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof C.coerceToUseWildcardGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToScopedIdentifier>) => ReturnType<typeof F.buildUseWildcardGroup>;
 	};
 } = {
 	...B.useWildcardGroup,
 	self: {
 		strict: useWildcardGroup$self(F.buildUseWildcardGroup, F.buildSelf),
-		coerce: useWildcardGroup$self(C.coerceToUseWildcardGroup, C.coerceToSelf)
+		coerce: useWildcardGroup$self(F.buildUseWildcardGroup, C.coerceToSelf)
 	},
 	identifier: {
 		strict: useWildcardGroup$identifier(F.buildUseWildcardGroup, F.buildIdentifier),
-		coerce: useWildcardGroup$identifier(C.coerceToUseWildcardGroup, C.coerceToIdentifier)
+		coerce: useWildcardGroup$identifier(F.buildUseWildcardGroup, C.coerceToIdentifier)
 	},
 	metavariable: {
 		strict: useWildcardGroup$metavariable(F.buildUseWildcardGroup, F.buildMetavariable),
-		coerce: useWildcardGroup$metavariable(C.coerceToUseWildcardGroup, C.coerceToMetavariable)
+		coerce: useWildcardGroup$metavariable(F.buildUseWildcardGroup, C.coerceToMetavariable)
 	},
 	super: {
 		strict: useWildcardGroup$super(F.buildUseWildcardGroup, F.buildSuper),
-		coerce: useWildcardGroup$super(C.coerceToUseWildcardGroup, C.coerceToSuper)
+		coerce: useWildcardGroup$super(F.buildUseWildcardGroup, C.coerceToSuper)
 	},
 	crate: {
 		strict: useWildcardGroup$crate(F.buildUseWildcardGroup, F.buildCrate),
-		coerce: useWildcardGroup$crate(C.coerceToUseWildcardGroup, C.coerceToCrate)
+		coerce: useWildcardGroup$crate(F.buildUseWildcardGroup, C.coerceToCrate)
 	},
 	scopedIdentifier: {
 		strict: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, F.buildScopedIdentifier),
-		coerce: useWildcardGroup$scopedIdentifier(C.coerceToUseWildcardGroup, C.coerceToScopedIdentifier)
+		coerce: useWildcardGroup$scopedIdentifier(F.buildUseWildcardGroup, C.coerceToScopedIdentifier)
 	}
 };
 
@@ -3489,55 +3479,53 @@ const useWildcard$scopedIdentifier =
 export const useWildcard: typeof B.useWildcard & {
 	self: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.self.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.self.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.self.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.identifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.identifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.metavariable.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.metavariable.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.metavariable.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.super.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.super.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.super.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.crate.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (...args: ArgsOf<typeof useWildcardGroup.crate.coerce>) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.crate.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.strict>) => ReturnType<typeof F.buildUseWildcard>;
-		coerce: (
-			...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.coerce>
-		) => ReturnType<typeof C.coerceToUseWildcard>;
+		coerce: (...args: ArgsOf<typeof useWildcardGroup.scopedIdentifier.coerce>) => ReturnType<typeof F.buildUseWildcard>;
 	};
 } = {
 	...B.useWildcard,
 	self: {
 		strict: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.strict),
-		coerce: useWildcard$self(C.coerceToUseWildcard, useWildcardGroup.self.coerce)
+		coerce: useWildcard$self(F.buildUseWildcard, useWildcardGroup.self.coerce)
 	},
 	identifier: {
 		strict: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.strict),
-		coerce: useWildcard$identifier(C.coerceToUseWildcard, useWildcardGroup.identifier.coerce)
+		coerce: useWildcard$identifier(F.buildUseWildcard, useWildcardGroup.identifier.coerce)
 	},
 	metavariable: {
 		strict: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.strict),
-		coerce: useWildcard$metavariable(C.coerceToUseWildcard, useWildcardGroup.metavariable.coerce)
+		coerce: useWildcard$metavariable(F.buildUseWildcard, useWildcardGroup.metavariable.coerce)
 	},
 	super: {
 		strict: useWildcard$super(F.buildUseWildcard, useWildcardGroup.super.strict),
-		coerce: useWildcard$super(C.coerceToUseWildcard, useWildcardGroup.super.coerce)
+		coerce: useWildcard$super(F.buildUseWildcard, useWildcardGroup.super.coerce)
 	},
 	crate: {
 		strict: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.strict),
-		coerce: useWildcard$crate(C.coerceToUseWildcard, useWildcardGroup.crate.coerce)
+		coerce: useWildcard$crate(F.buildUseWildcard, useWildcardGroup.crate.coerce)
 	},
 	scopedIdentifier: {
 		strict: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.strict),
-		coerce: useWildcard$scopedIdentifier(C.coerceToUseWildcard, useWildcardGroup.scopedIdentifier.coerce)
+		coerce: useWildcard$scopedIdentifier(F.buildUseWildcard, useWildcardGroup.scopedIdentifier.coerce)
 	}
 };
 
@@ -3797,59 +3785,54 @@ const visibilityModifierPubInPath$scopedIdentifier =
 const visibilityModifierPubInPath: {
 	self: {
 		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 	metavariable: {
 		strict: (...args: ArgsOf<typeof F.buildMetavariable>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToMetavariable>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMetavariable>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 	scopedIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedIdentifier>) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToScopedIdentifier>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPubInPath>;
+		) => ReturnType<typeof F.buildVisibilityModifierPubInPath>;
 	};
 } = {
 	self: {
 		strict: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, F.buildSelf),
-		coerce: visibilityModifierPubInPath$self(C.coerceToVisibilityModifierPubInPath, C.coerceToSelf)
+		coerce: visibilityModifierPubInPath$self(F.buildVisibilityModifierPubInPath, C.coerceToSelf)
 	},
 	identifier: {
 		strict: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, F.buildIdentifier),
-		coerce: visibilityModifierPubInPath$identifier(C.coerceToVisibilityModifierPubInPath, C.coerceToIdentifier)
+		coerce: visibilityModifierPubInPath$identifier(F.buildVisibilityModifierPubInPath, C.coerceToIdentifier)
 	},
 	metavariable: {
 		strict: visibilityModifierPubInPath$metavariable(F.buildVisibilityModifierPubInPath, F.buildMetavariable),
-		coerce: visibilityModifierPubInPath$metavariable(C.coerceToVisibilityModifierPubInPath, C.coerceToMetavariable)
+		coerce: visibilityModifierPubInPath$metavariable(F.buildVisibilityModifierPubInPath, C.coerceToMetavariable)
 	},
 	super: {
 		strict: visibilityModifierPubInPath$super(F.buildVisibilityModifierPubInPath, F.buildSuper),
-		coerce: visibilityModifierPubInPath$super(C.coerceToVisibilityModifierPubInPath, C.coerceToSuper)
+		coerce: visibilityModifierPubInPath$super(F.buildVisibilityModifierPubInPath, C.coerceToSuper)
 	},
 	crate: {
 		strict: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, F.buildCrate),
-		coerce: visibilityModifierPubInPath$crate(C.coerceToVisibilityModifierPubInPath, C.coerceToCrate)
+		coerce: visibilityModifierPubInPath$crate(F.buildVisibilityModifierPubInPath, C.coerceToCrate)
 	},
 	scopedIdentifier: {
 		strict: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, F.buildScopedIdentifier),
-		coerce: visibilityModifierPubInPath$scopedIdentifier(
-			C.coerceToVisibilityModifierPubInPath,
-			C.coerceToScopedIdentifier
-		)
+		coerce: visibilityModifierPubInPath$scopedIdentifier(F.buildVisibilityModifierPubInPath, C.coerceToScopedIdentifier)
 	}
 };
 
@@ -3884,15 +3867,15 @@ const visibilityModifierGroup$scopedIdentifier =
 export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 	self: {
 		strict: (...args: ArgsOf<typeof F.buildSelf>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSelf>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 	};
 	super: {
 		strict: (...args: ArgsOf<typeof F.buildSuper>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSuper>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 	};
 	crate: {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 	};
 	inPath: {
 		strict: (
@@ -3900,14 +3883,14 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToVisibilityModifierPubInPath>
-		) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+		) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		identifier: {
 			strict: (
 				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.strict>
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPubInPath.identifier.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
 		metavariable: {
 			strict: (
@@ -3915,7 +3898,7 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPubInPath.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -3923,33 +3906,33 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPubInPath.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifierGroup>;
+			) => ReturnType<typeof F.buildVisibilityModifierGroup>;
 		};
 	};
 } = {
 	...B.visibilityModifierGroup,
 	self: {
 		strict: visibilityModifierGroup$self(F.buildVisibilityModifierGroup, F.buildSelf),
-		coerce: visibilityModifierGroup$self(C.coerceToVisibilityModifierGroup, C.coerceToSelf)
+		coerce: visibilityModifierGroup$self(F.buildVisibilityModifierGroup, C.coerceToSelf)
 	},
 	super: {
 		strict: visibilityModifierGroup$super(F.buildVisibilityModifierGroup, F.buildSuper),
-		coerce: visibilityModifierGroup$super(C.coerceToVisibilityModifierGroup, C.coerceToSuper)
+		coerce: visibilityModifierGroup$super(F.buildVisibilityModifierGroup, C.coerceToSuper)
 	},
 	crate: {
 		strict: visibilityModifierGroup$crate(F.buildVisibilityModifierGroup, F.buildCrate),
-		coerce: visibilityModifierGroup$crate(C.coerceToVisibilityModifierGroup, C.coerceToCrate)
+		coerce: visibilityModifierGroup$crate(F.buildVisibilityModifierGroup, C.coerceToCrate)
 	},
 	inPath: {
 		strict: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, F.buildVisibilityModifierPubInPath),
-		coerce: visibilityModifierGroup$inPath(C.coerceToVisibilityModifierGroup, C.coerceToVisibilityModifierPubInPath),
+		coerce: visibilityModifierGroup$inPath(F.buildVisibilityModifierGroup, C.coerceToVisibilityModifierPubInPath),
 		identifier: {
 			strict: visibilityModifierGroup$identifier(
 				F.buildVisibilityModifierGroup,
 				visibilityModifierPubInPath.identifier.strict
 			),
 			coerce: visibilityModifierGroup$identifier(
-				C.coerceToVisibilityModifierGroup,
+				F.buildVisibilityModifierGroup,
 				visibilityModifierPubInPath.identifier.coerce
 			)
 		},
@@ -3959,7 +3942,7 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 				visibilityModifierPubInPath.metavariable.strict
 			),
 			coerce: visibilityModifierGroup$metavariable(
-				C.coerceToVisibilityModifierGroup,
+				F.buildVisibilityModifierGroup,
 				visibilityModifierPubInPath.metavariable.coerce
 			)
 		},
@@ -3969,7 +3952,7 @@ export const visibilityModifierGroup: typeof B.visibilityModifierGroup & {
 				visibilityModifierPubInPath.scopedIdentifier.strict
 			),
 			coerce: visibilityModifierGroup$scopedIdentifier(
-				C.coerceToVisibilityModifierGroup,
+				F.buildVisibilityModifierGroup,
 				visibilityModifierPubInPath.scopedIdentifier.coerce
 			)
 		}
@@ -4011,7 +3994,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.self.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	super: {
 		strict: (
@@ -4019,7 +4002,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.super.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	crate: {
 		strict: (
@@ -4027,7 +4010,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.crate.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	inPath: {
 		strict: (
@@ -4035,7 +4018,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	identifier: {
 		strict: (
@@ -4043,7 +4026,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.identifier.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	metavariable: {
 		strict: (
@@ -4051,7 +4034,7 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.metavariable.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 	scopedIdentifier: {
 		strict: (
@@ -4059,24 +4042,24 @@ const visibilityModifierPub: {
 		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 		coerce: (
 			...args: ArgsOf<typeof visibilityModifierGroup.inPath.scopedIdentifier.coerce>
-		) => ReturnType<typeof C.coerceToVisibilityModifierPub>;
+		) => ReturnType<typeof F.buildVisibilityModifierPub>;
 	};
 } = {
 	self: {
 		strict: visibilityModifierPub$self(F.buildVisibilityModifierPub, visibilityModifierGroup.self.strict),
-		coerce: visibilityModifierPub$self(C.coerceToVisibilityModifierPub, visibilityModifierGroup.self.coerce)
+		coerce: visibilityModifierPub$self(F.buildVisibilityModifierPub, visibilityModifierGroup.self.coerce)
 	},
 	super: {
 		strict: visibilityModifierPub$super(F.buildVisibilityModifierPub, visibilityModifierGroup.super.strict),
-		coerce: visibilityModifierPub$super(C.coerceToVisibilityModifierPub, visibilityModifierGroup.super.coerce)
+		coerce: visibilityModifierPub$super(F.buildVisibilityModifierPub, visibilityModifierGroup.super.coerce)
 	},
 	crate: {
 		strict: visibilityModifierPub$crate(F.buildVisibilityModifierPub, visibilityModifierGroup.crate.strict),
-		coerce: visibilityModifierPub$crate(C.coerceToVisibilityModifierPub, visibilityModifierGroup.crate.coerce)
+		coerce: visibilityModifierPub$crate(F.buildVisibilityModifierPub, visibilityModifierGroup.crate.coerce)
 	},
 	inPath: {
 		strict: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.strict),
-		coerce: visibilityModifierPub$inPath(C.coerceToVisibilityModifierPub, visibilityModifierGroup.inPath.coerce)
+		coerce: visibilityModifierPub$inPath(F.buildVisibilityModifierPub, visibilityModifierGroup.inPath.coerce)
 	},
 	identifier: {
 		strict: visibilityModifierPub$identifier(
@@ -4084,7 +4067,7 @@ const visibilityModifierPub: {
 			visibilityModifierGroup.inPath.identifier.strict
 		),
 		coerce: visibilityModifierPub$identifier(
-			C.coerceToVisibilityModifierPub,
+			F.buildVisibilityModifierPub,
 			visibilityModifierGroup.inPath.identifier.coerce
 		)
 	},
@@ -4094,7 +4077,7 @@ const visibilityModifierPub: {
 			visibilityModifierGroup.inPath.metavariable.strict
 		),
 		coerce: visibilityModifierPub$metavariable(
-			C.coerceToVisibilityModifierPub,
+			F.buildVisibilityModifierPub,
 			visibilityModifierGroup.inPath.metavariable.coerce
 		)
 	},
@@ -4104,7 +4087,7 @@ const visibilityModifierPub: {
 			visibilityModifierGroup.inPath.scopedIdentifier.strict
 		),
 		coerce: visibilityModifierPub$scopedIdentifier(
-			C.coerceToVisibilityModifierPub,
+			F.buildVisibilityModifierPub,
 			visibilityModifierGroup.inPath.scopedIdentifier.coerce
 		)
 	}
@@ -4145,20 +4128,18 @@ const visibilityModifier$scopedIdentifier =
 export const visibilityModifier: typeof B.visibilityModifier & {
 	crate: {
 		strict: (...args: ArgsOf<typeof F.buildCrate>) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof C.coerceToVisibilityModifier>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCrate>) => ReturnType<typeof F.buildVisibilityModifier>;
 	};
 	pub: {
 		strict: (...args: ArgsOf<typeof F.buildVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToVisibilityModifierPub>
-		) => ReturnType<typeof C.coerceToVisibilityModifier>;
+		coerce: (...args: ArgsOf<typeof C.coerceToVisibilityModifierPub>) => ReturnType<typeof F.buildVisibilityModifier>;
 		self: {
 			strict: (
 				...args: ArgsOf<typeof visibilityModifierPub.self.strict>
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.self.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 		super: {
 			strict: (
@@ -4166,7 +4147,7 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.super.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 		inPath: {
 			strict: (
@@ -4174,7 +4155,7 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.inPath.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 		identifier: {
 			strict: (
@@ -4182,7 +4163,7 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.identifier.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 		metavariable: {
 			strict: (
@@ -4190,7 +4171,7 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -4198,37 +4179,37 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 			) => ReturnType<typeof F.buildVisibilityModifier>;
 			coerce: (
 				...args: ArgsOf<typeof visibilityModifierPub.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToVisibilityModifier>;
+			) => ReturnType<typeof F.buildVisibilityModifier>;
 		};
 	};
 } = {
 	...B.visibilityModifier,
 	crate: {
 		strict: visibilityModifier$crate(F.buildVisibilityModifier, F.buildCrate),
-		coerce: visibilityModifier$crate(C.coerceToVisibilityModifier, C.coerceToCrate)
+		coerce: visibilityModifier$crate(F.buildVisibilityModifier, C.coerceToCrate)
 	},
 	pub: {
 		strict: visibilityModifier$pub(F.buildVisibilityModifier, F.buildVisibilityModifierPub),
-		coerce: visibilityModifier$pub(C.coerceToVisibilityModifier, C.coerceToVisibilityModifierPub),
+		coerce: visibilityModifier$pub(F.buildVisibilityModifier, C.coerceToVisibilityModifierPub),
 		self: {
 			strict: visibilityModifier$self(F.buildVisibilityModifier, visibilityModifierPub.self.strict),
-			coerce: visibilityModifier$self(C.coerceToVisibilityModifier, visibilityModifierPub.self.coerce)
+			coerce: visibilityModifier$self(F.buildVisibilityModifier, visibilityModifierPub.self.coerce)
 		},
 		super: {
 			strict: visibilityModifier$super(F.buildVisibilityModifier, visibilityModifierPub.super.strict),
-			coerce: visibilityModifier$super(C.coerceToVisibilityModifier, visibilityModifierPub.super.coerce)
+			coerce: visibilityModifier$super(F.buildVisibilityModifier, visibilityModifierPub.super.coerce)
 		},
 		inPath: {
 			strict: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.strict),
-			coerce: visibilityModifier$pubInPath(C.coerceToVisibilityModifier, visibilityModifierPub.inPath.coerce)
+			coerce: visibilityModifier$pubInPath(F.buildVisibilityModifier, visibilityModifierPub.inPath.coerce)
 		},
 		identifier: {
 			strict: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.strict),
-			coerce: visibilityModifier$identifier(C.coerceToVisibilityModifier, visibilityModifierPub.identifier.coerce)
+			coerce: visibilityModifier$identifier(F.buildVisibilityModifier, visibilityModifierPub.identifier.coerce)
 		},
 		metavariable: {
 			strict: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.strict),
-			coerce: visibilityModifier$metavariable(C.coerceToVisibilityModifier, visibilityModifierPub.metavariable.coerce)
+			coerce: visibilityModifier$metavariable(F.buildVisibilityModifier, visibilityModifierPub.metavariable.coerce)
 		},
 		scopedIdentifier: {
 			strict: visibilityModifier$scopedIdentifier(
@@ -4236,7 +4217,7 @@ export const visibilityModifier: typeof B.visibilityModifier & {
 				visibilityModifierPub.scopedIdentifier.strict
 			),
 			coerce: visibilityModifier$scopedIdentifier(
-				C.coerceToVisibilityModifier,
+				F.buildVisibilityModifier,
 				visibilityModifierPub.scopedIdentifier.coerce
 			)
 		}
@@ -4290,20 +4271,18 @@ const functionTypeTraitForm$genericType =
 const functionTypeTraitForm: {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 	};
 	scopedTypeIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		self: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.strict>
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		metavariable: {
 			strict: (
@@ -4311,7 +4290,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		super: {
 			strict: (
@@ -4319,7 +4298,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.super.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		crate: {
 			strict: (
@@ -4327,7 +4306,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -4335,7 +4314,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		genericTypeWithTurbofish: {
 			strict: (
@@ -4343,7 +4322,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.genericTypeWithTurbofish.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		bracketedType: {
 			strict: (
@@ -4351,7 +4330,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		qualifiedType: {
 			strict: (
@@ -4359,7 +4338,7 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.qualifiedType.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 		genericType: {
 			strict: (
@@ -4367,38 +4346,35 @@ const functionTypeTraitForm: {
 			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.genericType.coerce>
-			) => ReturnType<typeof C.coerceToFunctionTypeTraitForm>;
+			) => ReturnType<typeof F.buildFunctionTypeTraitForm>;
 		};
 	};
 } = {
 	identifier: {
 		strict: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, F.buildIdentifier),
-		coerce: functionTypeTraitForm$identifier(C.coerceToFunctionTypeTraitForm, C.coerceToIdentifier)
+		coerce: functionTypeTraitForm$identifier(F.buildFunctionTypeTraitForm, C.coerceToIdentifier)
 	},
 	scopedTypeIdentifier: {
 		strict: functionTypeTraitForm$scopedTypeIdentifier(F.buildFunctionTypeTraitForm, F.buildScopedTypeIdentifier),
-		coerce: functionTypeTraitForm$scopedTypeIdentifier(C.coerceToFunctionTypeTraitForm, C.coerceToScopedTypeIdentifier),
+		coerce: functionTypeTraitForm$scopedTypeIdentifier(F.buildFunctionTypeTraitForm, C.coerceToScopedTypeIdentifier),
 		self: {
 			strict: functionTypeTraitForm$self(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.self.strict),
-			coerce: functionTypeTraitForm$self(C.coerceToFunctionTypeTraitForm, scopedTypeIdentifier.self.coerce)
+			coerce: functionTypeTraitForm$self(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.self.coerce)
 		},
 		metavariable: {
 			strict: functionTypeTraitForm$metavariable(
 				F.buildFunctionTypeTraitForm,
 				scopedTypeIdentifier.metavariable.strict
 			),
-			coerce: functionTypeTraitForm$metavariable(
-				C.coerceToFunctionTypeTraitForm,
-				scopedTypeIdentifier.metavariable.coerce
-			)
+			coerce: functionTypeTraitForm$metavariable(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.metavariable.coerce)
 		},
 		super: {
 			strict: functionTypeTraitForm$super(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.super.strict),
-			coerce: functionTypeTraitForm$super(C.coerceToFunctionTypeTraitForm, scopedTypeIdentifier.super.coerce)
+			coerce: functionTypeTraitForm$super(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.super.coerce)
 		},
 		crate: {
 			strict: functionTypeTraitForm$crate(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.crate.strict),
-			coerce: functionTypeTraitForm$crate(C.coerceToFunctionTypeTraitForm, scopedTypeIdentifier.crate.coerce)
+			coerce: functionTypeTraitForm$crate(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.crate.coerce)
 		},
 		scopedIdentifier: {
 			strict: functionTypeTraitForm$scopedIdentifier(
@@ -4406,7 +4382,7 @@ const functionTypeTraitForm: {
 				scopedTypeIdentifier.scopedIdentifier.strict
 			),
 			coerce: functionTypeTraitForm$scopedIdentifier(
-				C.coerceToFunctionTypeTraitForm,
+				F.buildFunctionTypeTraitForm,
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
@@ -4416,7 +4392,7 @@ const functionTypeTraitForm: {
 				scopedTypeIdentifier.genericTypeWithTurbofish.strict
 			),
 			coerce: functionTypeTraitForm$genericTypeWithTurbofish(
-				C.coerceToFunctionTypeTraitForm,
+				F.buildFunctionTypeTraitForm,
 				scopedTypeIdentifier.genericTypeWithTurbofish.coerce
 			)
 		},
@@ -4426,7 +4402,7 @@ const functionTypeTraitForm: {
 				scopedTypeIdentifier.bracketedType.strict
 			),
 			coerce: functionTypeTraitForm$bracketedType(
-				C.coerceToFunctionTypeTraitForm,
+				F.buildFunctionTypeTraitForm,
 				scopedTypeIdentifier.bracketedType.coerce
 			)
 		},
@@ -4436,16 +4412,13 @@ const functionTypeTraitForm: {
 				scopedTypeIdentifier.bracketedType.qualifiedType.strict
 			),
 			coerce: functionTypeTraitForm$qualifiedType(
-				C.coerceToFunctionTypeTraitForm,
+				F.buildFunctionTypeTraitForm,
 				scopedTypeIdentifier.bracketedType.qualifiedType.coerce
 			)
 		},
 		genericType: {
 			strict: functionTypeTraitForm$genericType(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.genericType.strict),
-			coerce: functionTypeTraitForm$genericType(
-				C.coerceToFunctionTypeTraitForm,
-				scopedTypeIdentifier.genericType.coerce
-			)
+			coerce: functionTypeTraitForm$genericType(F.buildFunctionTypeTraitForm, scopedTypeIdentifier.genericType.coerce)
 		}
 	}
 };
@@ -5691,18 +5664,18 @@ const dynamicType$tupleType =
 export const dynamicType: typeof B.dynamicType & {
 	higherRankedTraitBound: {
 		strict: (...args: ArgsOf<typeof F.buildHigherRankedTraitBound>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToHigherRankedTraitBound>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToHigherRankedTraitBound>) => ReturnType<typeof F.buildDynamicType>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildDynamicType>;
 	};
 	scopedTypeIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>) => ReturnType<typeof F.buildDynamicType>;
 		self: {
 			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.self.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>) => ReturnType<typeof C.coerceToDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		metavariable: {
 			strict: (
@@ -5710,15 +5683,15 @@ export const dynamicType: typeof B.dynamicType & {
 			) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToDynamicType>;
+			) => ReturnType<typeof F.buildDynamicType>;
 		};
 		super: {
 			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.super.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.super.coerce>) => ReturnType<typeof C.coerceToDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.super.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		crate: {
 			strict: (...args: ArgsOf<typeof scopedTypeIdentifier.crate.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>) => ReturnType<typeof C.coerceToDynamicType>;
+			coerce: (...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -5726,7 +5699,7 @@ export const dynamicType: typeof B.dynamicType & {
 			) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToDynamicType>;
+			) => ReturnType<typeof F.buildDynamicType>;
 		};
 		genericTypeWithTurbofish: {
 			strict: (
@@ -5734,7 +5707,7 @@ export const dynamicType: typeof B.dynamicType & {
 			) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.genericTypeWithTurbofish.coerce>
-			) => ReturnType<typeof C.coerceToDynamicType>;
+			) => ReturnType<typeof F.buildDynamicType>;
 		};
 		bracketedType: {
 			strict: (
@@ -5742,7 +5715,7 @@ export const dynamicType: typeof B.dynamicType & {
 			) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.coerce>
-			) => ReturnType<typeof C.coerceToDynamicType>;
+			) => ReturnType<typeof F.buildDynamicType>;
 		};
 		qualifiedType: {
 			strict: (
@@ -5750,61 +5723,61 @@ export const dynamicType: typeof B.dynamicType & {
 			) => ReturnType<typeof F.buildDynamicType>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.qualifiedType.coerce>
-			) => ReturnType<typeof C.coerceToDynamicType>;
+			) => ReturnType<typeof F.buildDynamicType>;
 		};
 	};
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildDynamicType>;
 	};
 	functionType: {
 		strict: (...args: ArgsOf<typeof F.buildFunctionType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFunctionType>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFunctionType>) => ReturnType<typeof F.buildDynamicType>;
 		traitForm: {
 			strict: (...args: ArgsOf<typeof functionType.traitForm.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof functionType.traitForm.coerce>) => ReturnType<typeof C.coerceToDynamicType>;
+			coerce: (...args: ArgsOf<typeof functionType.traitForm.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 		fnForm: {
 			strict: (...args: ArgsOf<typeof functionType.fnForm.strict>) => ReturnType<typeof F.buildDynamicType>;
-			coerce: (...args: ArgsOf<typeof functionType.fnForm.coerce>) => ReturnType<typeof C.coerceToDynamicType>;
+			coerce: (...args: ArgsOf<typeof functionType.fnForm.coerce>) => ReturnType<typeof F.buildDynamicType>;
 		};
 	};
 	tupleType: {
 		strict: (...args: ArgsOf<typeof F.buildTupleType>) => ReturnType<typeof F.buildDynamicType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTupleType>) => ReturnType<typeof C.coerceToDynamicType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTupleType>) => ReturnType<typeof F.buildDynamicType>;
 	};
 } = {
 	...B.dynamicType,
 	higherRankedTraitBound: {
 		strict: dynamicType$higherRankedTraitBound(F.buildDynamicType, F.buildHigherRankedTraitBound),
-		coerce: dynamicType$higherRankedTraitBound(C.coerceToDynamicType, C.coerceToHigherRankedTraitBound)
+		coerce: dynamicType$higherRankedTraitBound(F.buildDynamicType, C.coerceToHigherRankedTraitBound)
 	},
 	identifier: {
 		strict: dynamicType$identifier(F.buildDynamicType, F.buildIdentifier),
-		coerce: dynamicType$identifier(C.coerceToDynamicType, C.coerceToIdentifier)
+		coerce: dynamicType$identifier(F.buildDynamicType, C.coerceToIdentifier)
 	},
 	scopedTypeIdentifier: {
 		strict: dynamicType$scopedTypeIdentifier(F.buildDynamicType, F.buildScopedTypeIdentifier),
-		coerce: dynamicType$scopedTypeIdentifier(C.coerceToDynamicType, C.coerceToScopedTypeIdentifier),
+		coerce: dynamicType$scopedTypeIdentifier(F.buildDynamicType, C.coerceToScopedTypeIdentifier),
 		self: {
 			strict: dynamicType$self(F.buildDynamicType, scopedTypeIdentifier.self.strict),
-			coerce: dynamicType$self(C.coerceToDynamicType, scopedTypeIdentifier.self.coerce)
+			coerce: dynamicType$self(F.buildDynamicType, scopedTypeIdentifier.self.coerce)
 		},
 		metavariable: {
 			strict: dynamicType$metavariable(F.buildDynamicType, scopedTypeIdentifier.metavariable.strict),
-			coerce: dynamicType$metavariable(C.coerceToDynamicType, scopedTypeIdentifier.metavariable.coerce)
+			coerce: dynamicType$metavariable(F.buildDynamicType, scopedTypeIdentifier.metavariable.coerce)
 		},
 		super: {
 			strict: dynamicType$super(F.buildDynamicType, scopedTypeIdentifier.super.strict),
-			coerce: dynamicType$super(C.coerceToDynamicType, scopedTypeIdentifier.super.coerce)
+			coerce: dynamicType$super(F.buildDynamicType, scopedTypeIdentifier.super.coerce)
 		},
 		crate: {
 			strict: dynamicType$crate(F.buildDynamicType, scopedTypeIdentifier.crate.strict),
-			coerce: dynamicType$crate(C.coerceToDynamicType, scopedTypeIdentifier.crate.coerce)
+			coerce: dynamicType$crate(F.buildDynamicType, scopedTypeIdentifier.crate.coerce)
 		},
 		scopedIdentifier: {
 			strict: dynamicType$scopedIdentifier(F.buildDynamicType, scopedTypeIdentifier.scopedIdentifier.strict),
-			coerce: dynamicType$scopedIdentifier(C.coerceToDynamicType, scopedTypeIdentifier.scopedIdentifier.coerce)
+			coerce: dynamicType$scopedIdentifier(F.buildDynamicType, scopedTypeIdentifier.scopedIdentifier.coerce)
 		},
 		genericTypeWithTurbofish: {
 			strict: dynamicType$genericTypeWithTurbofish(
@@ -5812,38 +5785,38 @@ export const dynamicType: typeof B.dynamicType & {
 				scopedTypeIdentifier.genericTypeWithTurbofish.strict
 			),
 			coerce: dynamicType$genericTypeWithTurbofish(
-				C.coerceToDynamicType,
+				F.buildDynamicType,
 				scopedTypeIdentifier.genericTypeWithTurbofish.coerce
 			)
 		},
 		bracketedType: {
 			strict: dynamicType$bracketedType(F.buildDynamicType, scopedTypeIdentifier.bracketedType.strict),
-			coerce: dynamicType$bracketedType(C.coerceToDynamicType, scopedTypeIdentifier.bracketedType.coerce)
+			coerce: dynamicType$bracketedType(F.buildDynamicType, scopedTypeIdentifier.bracketedType.coerce)
 		},
 		qualifiedType: {
 			strict: dynamicType$qualifiedType(F.buildDynamicType, scopedTypeIdentifier.bracketedType.qualifiedType.strict),
-			coerce: dynamicType$qualifiedType(C.coerceToDynamicType, scopedTypeIdentifier.bracketedType.qualifiedType.coerce)
+			coerce: dynamicType$qualifiedType(F.buildDynamicType, scopedTypeIdentifier.bracketedType.qualifiedType.coerce)
 		}
 	},
 	genericType: {
 		strict: dynamicType$genericType(F.buildDynamicType, F.buildGenericType),
-		coerce: dynamicType$genericType(C.coerceToDynamicType, C.coerceToGenericType)
+		coerce: dynamicType$genericType(F.buildDynamicType, C.coerceToGenericType)
 	},
 	functionType: {
 		strict: dynamicType$functionType(F.buildDynamicType, F.buildFunctionType),
-		coerce: dynamicType$functionType(C.coerceToDynamicType, C.coerceToFunctionType),
+		coerce: dynamicType$functionType(F.buildDynamicType, C.coerceToFunctionType),
 		traitForm: {
 			strict: dynamicType$functionTypeTraitForm(F.buildDynamicType, functionType.traitForm.strict),
-			coerce: dynamicType$functionTypeTraitForm(C.coerceToDynamicType, functionType.traitForm.coerce)
+			coerce: dynamicType$functionTypeTraitForm(F.buildDynamicType, functionType.traitForm.coerce)
 		},
 		fnForm: {
 			strict: dynamicType$functionTypeFnForm(F.buildDynamicType, functionType.fnForm.strict),
-			coerce: dynamicType$functionTypeFnForm(C.coerceToDynamicType, functionType.fnForm.coerce)
+			coerce: dynamicType$functionTypeFnForm(F.buildDynamicType, functionType.fnForm.coerce)
 		}
 	},
 	tupleType: {
 		strict: dynamicType$tupleType(F.buildDynamicType, F.buildTupleType),
-		coerce: dynamicType$tupleType(C.coerceToDynamicType, C.coerceToTupleType)
+		coerce: dynamicType$tupleType(F.buildDynamicType, C.coerceToTupleType)
 	}
 };
 
@@ -6404,14 +6377,14 @@ const rangeExpression$bare =
 export const rangeExpression: typeof B.rangeExpression & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionBinary>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
 		dotDot: {
 			strict: (
 				...args: ArgsOf<typeof rangeExpressionBinary.dotDot.strict>
 			) => ReturnType<typeof F.buildRangeExpression>;
 			coerce: (
 				...args: ArgsOf<typeof rangeExpressionBinary.dotDot.coerce>
-			) => ReturnType<typeof C.coerceToRangeExpression>;
+			) => ReturnType<typeof F.buildRangeExpression>;
 		};
 		dotDotDot: {
 			strict: (
@@ -6419,7 +6392,7 @@ export const rangeExpression: typeof B.rangeExpression & {
 			) => ReturnType<typeof F.buildRangeExpression>;
 			coerce: (
 				...args: ArgsOf<typeof rangeExpressionBinary.dotDotDot.coerce>
-			) => ReturnType<typeof C.coerceToRangeExpression>;
+			) => ReturnType<typeof F.buildRangeExpression>;
 		};
 		dotDotEq: {
 			strict: (
@@ -6427,16 +6400,16 @@ export const rangeExpression: typeof B.rangeExpression & {
 			) => ReturnType<typeof F.buildRangeExpression>;
 			coerce: (
 				...args: ArgsOf<typeof rangeExpressionBinary.dotDotEq.coerce>
-			) => ReturnType<typeof C.coerceToRangeExpression>;
+			) => ReturnType<typeof F.buildRangeExpression>;
 		};
 	};
 	postfix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPostfix>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
 	};
 	prefix: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPrefix>) => ReturnType<typeof C.coerceToRangeExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
 	};
 	bare: {
 		strict: () => ReturnType<typeof F.buildRangeExpression>;
@@ -6446,27 +6419,27 @@ export const rangeExpression: typeof B.rangeExpression & {
 	...B.rangeExpression,
 	binary: {
 		strict: rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary),
-		coerce: rangeExpression$binary(C.coerceToRangeExpression, C.coerceToRangeExpressionBinary),
+		coerce: rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary),
 		dotDot: {
 			strict: rangeExpression$dotDot(F.buildRangeExpression, rangeExpressionBinary.dotDot.strict),
-			coerce: rangeExpression$dotDot(C.coerceToRangeExpression, rangeExpressionBinary.dotDot.coerce)
+			coerce: rangeExpression$dotDot(F.buildRangeExpression, rangeExpressionBinary.dotDot.coerce)
 		},
 		dotDotDot: {
 			strict: rangeExpression$dotDotDot(F.buildRangeExpression, rangeExpressionBinary.dotDotDot.strict),
-			coerce: rangeExpression$dotDotDot(C.coerceToRangeExpression, rangeExpressionBinary.dotDotDot.coerce)
+			coerce: rangeExpression$dotDotDot(F.buildRangeExpression, rangeExpressionBinary.dotDotDot.coerce)
 		},
 		dotDotEq: {
 			strict: rangeExpression$dotDotEq(F.buildRangeExpression, rangeExpressionBinary.dotDotEq.strict),
-			coerce: rangeExpression$dotDotEq(C.coerceToRangeExpression, rangeExpressionBinary.dotDotEq.coerce)
+			coerce: rangeExpression$dotDotEq(F.buildRangeExpression, rangeExpressionBinary.dotDotEq.coerce)
 		}
 	},
 	postfix: {
 		strict: rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix),
-		coerce: rangeExpression$postfix(C.coerceToRangeExpression, C.coerceToRangeExpressionPostfix)
+		coerce: rangeExpression$postfix(F.buildRangeExpression, C.coerceToRangeExpressionPostfix)
 	},
 	prefix: {
 		strict: rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix),
-		coerce: rangeExpression$prefix(C.coerceToRangeExpression, C.coerceToRangeExpressionPrefix)
+		coerce: rangeExpression$prefix(F.buildRangeExpression, C.coerceToRangeExpressionPrefix)
 	},
 	bare: {
 		strict: rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare),
@@ -9338,36 +9311,36 @@ const elseClause$letChain =
 export const elseClause: typeof B.elseClause & {
 	block: {
 		strict: (...args: ArgsOf<typeof F.buildBlock>) => ReturnType<typeof F.buildElseClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlock>) => ReturnType<typeof C.coerceToElseClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlock>) => ReturnType<typeof F.buildElseClause>;
 	};
 	ifExpression: {
 		strict: (...args: ArgsOf<typeof F.buildIfExpression>) => ReturnType<typeof F.buildElseClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof C.coerceToElseClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIfExpression>) => ReturnType<typeof F.buildElseClause>;
 		letCondition: {
 			strict: (...args: ArgsOf<typeof ifExpression.letCondition.strict>) => ReturnType<typeof F.buildElseClause>;
-			coerce: (...args: ArgsOf<typeof ifExpression.letCondition.coerce>) => ReturnType<typeof C.coerceToElseClause>;
+			coerce: (...args: ArgsOf<typeof ifExpression.letCondition.coerce>) => ReturnType<typeof F.buildElseClause>;
 		};
 		letChain: {
 			strict: (...args: ArgsOf<typeof ifExpression.letChain.strict>) => ReturnType<typeof F.buildElseClause>;
-			coerce: (...args: ArgsOf<typeof ifExpression.letChain.coerce>) => ReturnType<typeof C.coerceToElseClause>;
+			coerce: (...args: ArgsOf<typeof ifExpression.letChain.coerce>) => ReturnType<typeof F.buildElseClause>;
 		};
 	};
 } = {
 	...B.elseClause,
 	block: {
 		strict: elseClause$block(F.buildElseClause, F.buildBlock),
-		coerce: elseClause$block(C.coerceToElseClause, C.coerceToBlock)
+		coerce: elseClause$block(F.buildElseClause, C.coerceToBlock)
 	},
 	ifExpression: {
 		strict: elseClause$ifExpression(F.buildElseClause, F.buildIfExpression),
-		coerce: elseClause$ifExpression(C.coerceToElseClause, C.coerceToIfExpression),
+		coerce: elseClause$ifExpression(F.buildElseClause, C.coerceToIfExpression),
 		letCondition: {
 			strict: elseClause$letCondition(F.buildElseClause, ifExpression.letCondition.strict),
-			coerce: elseClause$letCondition(C.coerceToElseClause, ifExpression.letCondition.coerce)
+			coerce: elseClause$letCondition(F.buildElseClause, ifExpression.letCondition.coerce)
 		},
 		letChain: {
 			strict: elseClause$letChain(F.buildElseClause, ifExpression.letChain.strict),
-			coerce: elseClause$letChain(C.coerceToElseClause, ifExpression.letChain.coerce)
+			coerce: elseClause$letChain(F.buildElseClause, ifExpression.letChain.coerce)
 		}
 	}
 };
@@ -9978,37 +9951,37 @@ const lineComment$content =
 export const lineComment: typeof B.lineComment & {
 	regularDslash: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegularDslash>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
 	};
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocOuter>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
 	};
 	docInner: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
 	};
 	content: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentContent>) => ReturnType<typeof C.coerceToLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
 	};
 } = {
 	...B.lineComment,
 	regularDslash: {
 		strict: lineComment$regularDslash(F.buildLineComment, F.buildLineCommentRegularDslash),
-		coerce: lineComment$regularDslash(C.coerceToLineComment, C.coerceToLineCommentRegularDslash)
+		coerce: lineComment$regularDslash(F.buildLineComment, C.coerceToLineCommentRegularDslash)
 	},
 	docOuter: {
 		strict: lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter),
-		coerce: lineComment$docOuter(C.coerceToLineComment, C.coerceToLineCommentDocOuter)
+		coerce: lineComment$docOuter(F.buildLineComment, C.coerceToLineCommentDocOuter)
 	},
 	docInner: {
 		strict: lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner),
-		coerce: lineComment$docInner(C.coerceToLineComment, C.coerceToLineCommentDocInner)
+		coerce: lineComment$docInner(F.buildLineComment, C.coerceToLineCommentDocInner)
 	},
 	content: {
 		strict: lineComment$content(F.buildLineComment, F.buildLineCommentContent),
-		coerce: lineComment$content(C.coerceToLineComment, C.coerceToLineCommentContent)
+		coerce: lineComment$content(F.buildLineComment, C.coerceToLineCommentContent)
 	}
 };
 
@@ -10027,29 +10000,29 @@ const blockComment$content =
 export const blockComment: typeof B.blockComment & {
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocOuter>) => ReturnType<typeof C.coerceToBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
 	};
 	docInner: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof C.coerceToBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 	};
 	content: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof C.coerceToBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
 	};
 } = {
 	...B.blockComment,
 	docOuter: {
 		strict: blockComment$docOuter(F.buildBlockComment, F.buildBlockCommentDocOuter),
-		coerce: blockComment$docOuter(C.coerceToBlockComment, C.coerceToBlockCommentDocOuter)
+		coerce: blockComment$docOuter(F.buildBlockComment, C.coerceToBlockCommentDocOuter)
 	},
 	docInner: {
 		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
-		coerce: blockComment$docInner(C.coerceToBlockComment, C.coerceToBlockCommentDocInner)
+		coerce: blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner)
 	},
 	content: {
 		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),
-		coerce: blockComment$content(C.coerceToBlockComment, C.coerceToBlockCommentContent)
+		coerce: blockComment$content(F.buildBlockComment, C.coerceToBlockCommentContent)
 	}
 };
 
@@ -10949,20 +10922,20 @@ const implItemPositiveClause$genericType =
 const implItemPositiveClause: {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildImplItemPositiveClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildImplItemPositiveClause>;
 	};
 	scopedTypeIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+		) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		self: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.strict>
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		metavariable: {
 			strict: (
@@ -10970,7 +10943,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		super: {
 			strict: (
@@ -10978,7 +10951,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.super.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		crate: {
 			strict: (
@@ -10986,7 +10959,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -10994,7 +10967,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		genericTypeWithTurbofish: {
 			strict: (
@@ -11002,7 +10975,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.genericTypeWithTurbofish.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		bracketedType: {
 			strict: (
@@ -11010,7 +10983,7 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 		qualifiedType: {
 			strict: (
@@ -11018,27 +10991,24 @@ const implItemPositiveClause: {
 			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.qualifiedType.coerce>
-			) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+			) => ReturnType<typeof F.buildImplItemPositiveClause>;
 		};
 	};
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildImplItemPositiveClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof C.coerceToImplItemPositiveClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildImplItemPositiveClause>;
 	};
 } = {
 	identifier: {
 		strict: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, F.buildIdentifier),
-		coerce: implItemPositiveClause$identifier(C.coerceToImplItemPositiveClause, C.coerceToIdentifier)
+		coerce: implItemPositiveClause$identifier(F.buildImplItemPositiveClause, C.coerceToIdentifier)
 	},
 	scopedTypeIdentifier: {
 		strict: implItemPositiveClause$scopedTypeIdentifier(F.buildImplItemPositiveClause, F.buildScopedTypeIdentifier),
-		coerce: implItemPositiveClause$scopedTypeIdentifier(
-			C.coerceToImplItemPositiveClause,
-			C.coerceToScopedTypeIdentifier
-		),
+		coerce: implItemPositiveClause$scopedTypeIdentifier(F.buildImplItemPositiveClause, C.coerceToScopedTypeIdentifier),
 		self: {
 			strict: implItemPositiveClause$self(F.buildImplItemPositiveClause, scopedTypeIdentifier.self.strict),
-			coerce: implItemPositiveClause$self(C.coerceToImplItemPositiveClause, scopedTypeIdentifier.self.coerce)
+			coerce: implItemPositiveClause$self(F.buildImplItemPositiveClause, scopedTypeIdentifier.self.coerce)
 		},
 		metavariable: {
 			strict: implItemPositiveClause$metavariable(
@@ -11046,17 +11016,17 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.metavariable.strict
 			),
 			coerce: implItemPositiveClause$metavariable(
-				C.coerceToImplItemPositiveClause,
+				F.buildImplItemPositiveClause,
 				scopedTypeIdentifier.metavariable.coerce
 			)
 		},
 		super: {
 			strict: implItemPositiveClause$super(F.buildImplItemPositiveClause, scopedTypeIdentifier.super.strict),
-			coerce: implItemPositiveClause$super(C.coerceToImplItemPositiveClause, scopedTypeIdentifier.super.coerce)
+			coerce: implItemPositiveClause$super(F.buildImplItemPositiveClause, scopedTypeIdentifier.super.coerce)
 		},
 		crate: {
 			strict: implItemPositiveClause$crate(F.buildImplItemPositiveClause, scopedTypeIdentifier.crate.strict),
-			coerce: implItemPositiveClause$crate(C.coerceToImplItemPositiveClause, scopedTypeIdentifier.crate.coerce)
+			coerce: implItemPositiveClause$crate(F.buildImplItemPositiveClause, scopedTypeIdentifier.crate.coerce)
 		},
 		scopedIdentifier: {
 			strict: implItemPositiveClause$scopedIdentifier(
@@ -11064,7 +11034,7 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.scopedIdentifier.strict
 			),
 			coerce: implItemPositiveClause$scopedIdentifier(
-				C.coerceToImplItemPositiveClause,
+				F.buildImplItemPositiveClause,
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
@@ -11074,7 +11044,7 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.genericTypeWithTurbofish.strict
 			),
 			coerce: implItemPositiveClause$genericTypeWithTurbofish(
-				C.coerceToImplItemPositiveClause,
+				F.buildImplItemPositiveClause,
 				scopedTypeIdentifier.genericTypeWithTurbofish.coerce
 			)
 		},
@@ -11084,7 +11054,7 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.bracketedType.strict
 			),
 			coerce: implItemPositiveClause$bracketedType(
-				C.coerceToImplItemPositiveClause,
+				F.buildImplItemPositiveClause,
 				scopedTypeIdentifier.bracketedType.coerce
 			)
 		},
@@ -11094,14 +11064,14 @@ const implItemPositiveClause: {
 				scopedTypeIdentifier.bracketedType.qualifiedType.strict
 			),
 			coerce: implItemPositiveClause$qualifiedType(
-				C.coerceToImplItemPositiveClause,
+				F.buildImplItemPositiveClause,
 				scopedTypeIdentifier.bracketedType.qualifiedType.coerce
 			)
 		}
 	},
 	genericType: {
 		strict: implItemPositiveClause$genericType(F.buildImplItemPositiveClause, F.buildGenericType),
-		coerce: implItemPositiveClause$genericType(C.coerceToImplItemPositiveClause, C.coerceToGenericType)
+		coerce: implItemPositiveClause$genericType(F.buildImplItemPositiveClause, C.coerceToGenericType)
 	}
 };
 
@@ -11152,20 +11122,20 @@ const implItemNegativeClause$genericType =
 const implItemNegativeClause: {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildImplItemNegativeClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildImplItemNegativeClause>;
 	};
 	scopedTypeIdentifier: {
 		strict: (...args: ArgsOf<typeof F.buildScopedTypeIdentifier>) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToScopedTypeIdentifier>
-		) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+		) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		self: {
 			strict: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.strict>
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.self.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		metavariable: {
 			strict: (
@@ -11173,7 +11143,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.metavariable.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		super: {
 			strict: (
@@ -11181,7 +11151,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.super.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		crate: {
 			strict: (
@@ -11189,7 +11159,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.crate.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		scopedIdentifier: {
 			strict: (
@@ -11197,7 +11167,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.scopedIdentifier.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		genericTypeWithTurbofish: {
 			strict: (
@@ -11205,7 +11175,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.genericTypeWithTurbofish.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		bracketedType: {
 			strict: (
@@ -11213,7 +11183,7 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 		qualifiedType: {
 			strict: (
@@ -11221,27 +11191,24 @@ const implItemNegativeClause: {
 			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 			coerce: (
 				...args: ArgsOf<typeof scopedTypeIdentifier.bracketedType.qualifiedType.coerce>
-			) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+			) => ReturnType<typeof F.buildImplItemNegativeClause>;
 		};
 	};
 	genericType: {
 		strict: (...args: ArgsOf<typeof F.buildGenericType>) => ReturnType<typeof F.buildImplItemNegativeClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof C.coerceToImplItemNegativeClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToGenericType>) => ReturnType<typeof F.buildImplItemNegativeClause>;
 	};
 } = {
 	identifier: {
 		strict: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, F.buildIdentifier),
-		coerce: implItemNegativeClause$identifier(C.coerceToImplItemNegativeClause, C.coerceToIdentifier)
+		coerce: implItemNegativeClause$identifier(F.buildImplItemNegativeClause, C.coerceToIdentifier)
 	},
 	scopedTypeIdentifier: {
 		strict: implItemNegativeClause$scopedTypeIdentifier(F.buildImplItemNegativeClause, F.buildScopedTypeIdentifier),
-		coerce: implItemNegativeClause$scopedTypeIdentifier(
-			C.coerceToImplItemNegativeClause,
-			C.coerceToScopedTypeIdentifier
-		),
+		coerce: implItemNegativeClause$scopedTypeIdentifier(F.buildImplItemNegativeClause, C.coerceToScopedTypeIdentifier),
 		self: {
 			strict: implItemNegativeClause$self(F.buildImplItemNegativeClause, scopedTypeIdentifier.self.strict),
-			coerce: implItemNegativeClause$self(C.coerceToImplItemNegativeClause, scopedTypeIdentifier.self.coerce)
+			coerce: implItemNegativeClause$self(F.buildImplItemNegativeClause, scopedTypeIdentifier.self.coerce)
 		},
 		metavariable: {
 			strict: implItemNegativeClause$metavariable(
@@ -11249,17 +11216,17 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.metavariable.strict
 			),
 			coerce: implItemNegativeClause$metavariable(
-				C.coerceToImplItemNegativeClause,
+				F.buildImplItemNegativeClause,
 				scopedTypeIdentifier.metavariable.coerce
 			)
 		},
 		super: {
 			strict: implItemNegativeClause$super(F.buildImplItemNegativeClause, scopedTypeIdentifier.super.strict),
-			coerce: implItemNegativeClause$super(C.coerceToImplItemNegativeClause, scopedTypeIdentifier.super.coerce)
+			coerce: implItemNegativeClause$super(F.buildImplItemNegativeClause, scopedTypeIdentifier.super.coerce)
 		},
 		crate: {
 			strict: implItemNegativeClause$crate(F.buildImplItemNegativeClause, scopedTypeIdentifier.crate.strict),
-			coerce: implItemNegativeClause$crate(C.coerceToImplItemNegativeClause, scopedTypeIdentifier.crate.coerce)
+			coerce: implItemNegativeClause$crate(F.buildImplItemNegativeClause, scopedTypeIdentifier.crate.coerce)
 		},
 		scopedIdentifier: {
 			strict: implItemNegativeClause$scopedIdentifier(
@@ -11267,7 +11234,7 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.scopedIdentifier.strict
 			),
 			coerce: implItemNegativeClause$scopedIdentifier(
-				C.coerceToImplItemNegativeClause,
+				F.buildImplItemNegativeClause,
 				scopedTypeIdentifier.scopedIdentifier.coerce
 			)
 		},
@@ -11277,7 +11244,7 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.genericTypeWithTurbofish.strict
 			),
 			coerce: implItemNegativeClause$genericTypeWithTurbofish(
-				C.coerceToImplItemNegativeClause,
+				F.buildImplItemNegativeClause,
 				scopedTypeIdentifier.genericTypeWithTurbofish.coerce
 			)
 		},
@@ -11287,7 +11254,7 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.bracketedType.strict
 			),
 			coerce: implItemNegativeClause$bracketedType(
-				C.coerceToImplItemNegativeClause,
+				F.buildImplItemNegativeClause,
 				scopedTypeIdentifier.bracketedType.coerce
 			)
 		},
@@ -11297,14 +11264,14 @@ const implItemNegativeClause: {
 				scopedTypeIdentifier.bracketedType.qualifiedType.strict
 			),
 			coerce: implItemNegativeClause$qualifiedType(
-				C.coerceToImplItemNegativeClause,
+				F.buildImplItemNegativeClause,
 				scopedTypeIdentifier.bracketedType.qualifiedType.coerce
 			)
 		}
 	},
 	genericType: {
 		strict: implItemNegativeClause$genericType(F.buildImplItemNegativeClause, F.buildGenericType),
-		coerce: implItemNegativeClause$genericType(C.coerceToImplItemNegativeClause, C.coerceToGenericType)
+		coerce: implItemNegativeClause$genericType(F.buildImplItemNegativeClause, C.coerceToGenericType)
 	}
 };
 

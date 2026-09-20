@@ -196,10 +196,10 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).toContain('export const comment: typeof B.comment & {');
 		expect(text).toContain('	...B.comment,');
 		expect(text).toContain(
-			'	doc: { strict: comment$doc(F.buildComment, F.buildCommentDoc), coerce: comment$doc(C.coerceToComment, C.coerceToCommentDoc) },'
+			'	doc: { strict: comment$doc(F.buildComment, F.buildCommentDoc), coerce: comment$doc(F.buildComment, C.coerceToCommentDoc) },'
 		);
 		expect(text).toContain(
-			'	plain: { strict: comment$plain(F.buildComment, F.buildCommentPlain), coerce: comment$plain(C.coerceToComment, C.coerceToCommentPlain) },'
+			'	plain: { strict: comment$plain(F.buildComment, F.buildCommentPlain), coerce: comment$plain(F.buildComment, C.coerceToCommentPlain) },'
 		);
 
 		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
