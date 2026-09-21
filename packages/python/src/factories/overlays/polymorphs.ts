@@ -3128,7 +3128,7 @@ const simplePatternNegative$leadingPoint =
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
-const simplePatternNegative$exponent =
+const simplePatternNegative$scientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
@@ -3200,15 +3200,15 @@ const simplePatternNegative: {
 			}
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
-	exponent: {
+	scientific: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFloatExponent>;
+				content: ArgsOf<typeof F.buildFloatScientific>;
 			}
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFloatExponent>;
+				content: ArgsOf<typeof C.coerceToFloatScientific>;
 			}
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
@@ -3237,9 +3237,9 @@ const simplePatternNegative: {
 		strict: simplePatternNegative$leadingPoint(F.buildSimplePatternNegative, F.buildFloatLeadingPoint),
 		coerce: simplePatternNegative$leadingPoint(C.coerceToSimplePatternNegative, C.coerceToFloatLeadingPoint)
 	},
-	exponent: {
-		strict: simplePatternNegative$exponent(F.buildSimplePatternNegative, F.buildFloatExponent),
-		coerce: simplePatternNegative$exponent(C.coerceToSimplePatternNegative, C.coerceToFloatExponent)
+	scientific: {
+		strict: simplePatternNegative$scientific(F.buildSimplePatternNegative, F.buildFloatScientific),
+		coerce: simplePatternNegative$scientific(C.coerceToSimplePatternNegative, C.coerceToFloatScientific)
 	}
 };
 
@@ -3434,7 +3434,7 @@ const keywordPattern$floatLeadingPoint =
 		const { value: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
-const keywordPattern$floatExponent =
+const keywordPattern$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
@@ -3693,15 +3693,15 @@ export const keywordPattern: typeof B.keywordPattern & {
 				}
 			) => ReturnType<typeof C.coerceToKeywordPattern>;
 		};
-		exponent: {
+		scientific: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
-					value: ArgsOf<typeof simplePatternNegative.exponent.strict>;
+					value: ArgsOf<typeof simplePatternNegative.scientific.strict>;
 				}
 			) => ReturnType<typeof F.buildKeywordPattern>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
-					value: ArgsOf<typeof simplePatternNegative.exponent.coerce>;
+					value: ArgsOf<typeof simplePatternNegative.scientific.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToKeywordPattern>;
 		};
@@ -3837,9 +3837,9 @@ export const keywordPattern: typeof B.keywordPattern & {
 			strict: keywordPattern$floatLeadingPoint(F.buildKeywordPattern, simplePatternNegative.leadingPoint.strict),
 			coerce: keywordPattern$floatLeadingPoint(C.coerceToKeywordPattern, simplePatternNegative.leadingPoint.coerce)
 		},
-		exponent: {
-			strict: keywordPattern$floatExponent(F.buildKeywordPattern, simplePatternNegative.exponent.strict),
-			coerce: keywordPattern$floatExponent(C.coerceToKeywordPattern, simplePatternNegative.exponent.coerce)
+		scientific: {
+			strict: keywordPattern$floatScientific(F.buildKeywordPattern, simplePatternNegative.scientific.strict),
+			coerce: keywordPattern$floatScientific(C.coerceToKeywordPattern, simplePatternNegative.scientific.coerce)
 		}
 	},
 	complexPattern: {
@@ -3944,7 +3944,7 @@ const casePattern$floatLeadingPoint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const casePattern$floatExponent =
+const casePattern$floatScientific =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -4096,9 +4096,13 @@ export const casePattern: typeof B.casePattern & {
 				...args: ArgsOf<typeof simplePatternNegative.leadingPoint.coerce>
 			) => ReturnType<typeof F.buildCasePattern>;
 		};
-		exponent: {
-			strict: (...args: ArgsOf<typeof simplePatternNegative.exponent.strict>) => ReturnType<typeof F.buildCasePattern>;
-			coerce: (...args: ArgsOf<typeof simplePatternNegative.exponent.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		scientific: {
+			strict: (
+				...args: ArgsOf<typeof simplePatternNegative.scientific.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof simplePatternNegative.scientific.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
 		};
 	};
 } = {
@@ -4214,9 +4218,9 @@ export const casePattern: typeof B.casePattern & {
 			strict: casePattern$floatLeadingPoint(F.buildCasePattern, simplePatternNegative.leadingPoint.strict),
 			coerce: casePattern$floatLeadingPoint(F.buildCasePattern, simplePatternNegative.leadingPoint.coerce)
 		},
-		exponent: {
-			strict: casePattern$floatExponent(F.buildCasePattern, simplePatternNegative.exponent.strict),
-			coerce: casePattern$floatExponent(F.buildCasePattern, simplePatternNegative.exponent.coerce)
+		scientific: {
+			strict: casePattern$floatScientific(F.buildCasePattern, simplePatternNegative.scientific.strict),
+			coerce: casePattern$floatScientific(F.buildCasePattern, simplePatternNegative.scientific.coerce)
 		}
 	}
 };
@@ -4355,7 +4359,7 @@ const keyValuePattern$floatLeadingPoint =
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const keyValuePattern$floatExponent =
+const keyValuePattern$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
@@ -4601,15 +4605,15 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 				}
 			) => ReturnType<typeof C.coerceToKeyValuePattern>;
 		};
-		exponent: {
+		scientific: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-					key: ArgsOf<typeof simplePatternNegative.exponent.strict>;
+					key: ArgsOf<typeof simplePatternNegative.scientific.strict>;
 				}
 			) => ReturnType<typeof F.buildKeyValuePattern>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-					key: ArgsOf<typeof simplePatternNegative.exponent.coerce>;
+					key: ArgsOf<typeof simplePatternNegative.scientific.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToKeyValuePattern>;
 		};
@@ -4745,9 +4749,9 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 			strict: keyValuePattern$floatLeadingPoint(F.buildKeyValuePattern, simplePatternNegative.leadingPoint.strict),
 			coerce: keyValuePattern$floatLeadingPoint(C.coerceToKeyValuePattern, simplePatternNegative.leadingPoint.coerce)
 		},
-		exponent: {
-			strict: keyValuePattern$floatExponent(F.buildKeyValuePattern, simplePatternNegative.exponent.strict),
-			coerce: keyValuePattern$floatExponent(C.coerceToKeyValuePattern, simplePatternNegative.exponent.coerce)
+		scientific: {
+			strict: keyValuePattern$floatScientific(F.buildKeyValuePattern, simplePatternNegative.scientific.strict),
+			coerce: keyValuePattern$floatScientific(C.coerceToKeyValuePattern, simplePatternNegative.scientific.coerce)
 		}
 	},
 	complexPattern: {
@@ -6351,13 +6355,13 @@ export const float: {
 	readonly coerce: typeof C.coerceToFloatPoint;
 	readonly point: { strict: typeof F.buildFloatPoint; coerce: typeof C.coerceToFloatPoint };
 	readonly leadingPoint: { strict: typeof F.buildFloatLeadingPoint; coerce: typeof C.coerceToFloatLeadingPoint };
-	readonly exponent: { strict: typeof F.buildFloatExponent; coerce: typeof C.coerceToFloatExponent };
+	readonly scientific: { strict: typeof F.buildFloatScientific; coerce: typeof C.coerceToFloatScientific };
 } = {
 	strict: F.buildFloatPoint,
 	coerce: C.coerceToFloatPoint,
 	point: { strict: F.buildFloatPoint, coerce: C.coerceToFloatPoint },
 	leadingPoint: { strict: F.buildFloatLeadingPoint, coerce: C.coerceToFloatLeadingPoint },
-	exponent: { strict: F.buildFloatExponent, coerce: C.coerceToFloatExponent }
+	scientific: { strict: F.buildFloatScientific, coerce: C.coerceToFloatScientific }
 };
 
 export const lineContinuation: {

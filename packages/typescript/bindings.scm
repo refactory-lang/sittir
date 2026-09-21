@@ -267,7 +267,7 @@
 (number_bigint) @literal.number.integer
 (number_float_point) @literal.number.float
 (number_float_leading_point) @literal.number.float
-(number_float_exponent) @literal.number.float
+(number_float_scientific) @literal.number.float
 (true) @literal.boolean.true
 (false) @literal.boolean.false
 (null) @literal.null

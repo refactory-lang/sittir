@@ -161,7 +161,7 @@ export const _fromMap = {
 	integer_decimal: coerceToIntegerDecimal,
 	float_point: coerceToFloatPoint,
 	float_leading_point: coerceToFloatLeadingPoint,
-	float_exponent: coerceToFloatExponent,
+	float_scientific: coerceToFloatScientific,
 	escape_sequence_unicode_fixed: coerceToEscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_wide: coerceToEscapeSequenceUnicodeWide,
 	escape_sequence_hex: coerceToEscapeSequenceHex,
@@ -241,9 +241,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: /^(?:(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u,
 		factory: F.buildFloatLeadingPoint
 	},
-	float_exponent: {
+	float_scientific: {
 		pattern: /^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u,
-		factory: F.buildFloatExponent
+		factory: F.buildFloatScientific
 	},
 	escape_sequence_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_fixed', content)
@@ -1332,7 +1332,7 @@ const _K7: readonly string[] = [
 	'integer_decimal',
 	'float_point',
 	'float_leading_point',
-	'float_exponent',
+	'float_scientific',
 	'true',
 	'false',
 	'none',
@@ -1476,7 +1476,7 @@ const _K18: readonly string[] = [
 	'complex_pattern',
 	'dotted_name'
 ];
-const _K19: readonly string[] = ['integer_decimal', 'float_point', 'float_leading_point', 'float_exponent'];
+const _K19: readonly string[] = ['integer_decimal', 'float_point', 'float_leading_point', 'float_scientific'];
 const _K20: readonly string[] = ['integer_hex', 'integer_octal', 'integer_binary'];
 const _K21: readonly string[] = ['identifier', 'keyword_separator', 'positional_separator'];
 const _K22: readonly string[] = [
@@ -5968,9 +5968,9 @@ export function coerceToFloatLeadingPoint(
 	return F.buildFloatLeadingPoint(input as Parameters<typeof F.buildFloatLeadingPoint>[0]);
 }
 
-export function coerceToFloatExponent(input: T.FloatExponent.Loose): ReturnType<typeof F.buildFloatExponent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatExponent>;
-	return F.buildFloatExponent(input as Parameters<typeof F.buildFloatExponent>[0]);
+export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnType<typeof F.buildFloatScientific> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatScientific>;
+	return F.buildFloatScientific(input as Parameters<typeof F.buildFloatScientific>[0]);
 }
 
 export function resolveEscapeSequenceUnicodeFixed_content(

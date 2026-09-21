@@ -164,7 +164,7 @@ pub const COMMENT_BLOCK: KindId = KindId(153);
 pub const NUMBER_HEX: KindId = KindId(154);
 pub const NUMBER_FLOAT_POINT: KindId = KindId(155);
 pub const NUMBER_FLOAT_LEADING_POINT: KindId = KindId(156);
-pub const NUMBER_FLOAT_EXPONENT: KindId = KindId(157);
+pub const NUMBER_FLOAT_SCIENTIFIC: KindId = KindId(157);
 pub const NUMBER_DECIMAL: KindId = KindId(158);
 pub const NUMBER_BINARY: KindId = KindId(159);
 pub const NUMBER_OCTAL: KindId = KindId(160);
@@ -633,7 +633,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         154 => "number_hex", // "number_hex"
         155 => "number_float_point", // "number_float_point"
         156 => "number_float_leading_point", // "number_float_leading_point"
-        157 => "number_float_exponent", // "number_float_exponent"
+        157 => "number_float_scientific", // "number_float_scientific"
         158 => "number_decimal", // "number_decimal"
         159 => "number_binary", // "number_binary"
         160 => "number_octal", // "number_octal"

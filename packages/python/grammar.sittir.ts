@@ -136,7 +136,7 @@ export default grammar(
 				float: {
 					0: variant('point', { default: true }),
 					1: variant('leading_point'),
-					2: variant('exponent')
+					2: variant('scientific')
 				},
 				escape_sequence: {
 					0: variant('unicode_fixed'),

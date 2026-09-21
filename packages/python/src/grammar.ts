@@ -88,9 +88,9 @@ export type PythonGrammar = {
 		type: 'float';
 		named: true;
 		subtypes: [
-			{ type: 'float_exponent'; named: true },
 			{ type: 'float_leading_point'; named: true },
-			{ type: 'float_point'; named: true }
+			{ type: 'float_point'; named: true },
+			{ type: 'float_scientific'; named: true }
 		];
 	};
 	readonly integer: {
@@ -1712,9 +1712,9 @@ export type PythonGrammar = {
 	readonly _anonymous_exec: { type: 'exec'; named: false };
 	readonly false: { type: 'false'; named: true };
 	readonly _anonymous_finally: { type: 'finally'; named: false };
-	readonly float_exponent: { type: 'float_exponent'; named: true };
 	readonly float_leading_point: { type: 'float_leading_point'; named: true };
 	readonly float_point: { type: 'float_point'; named: true };
+	readonly float_scientific: { type: 'float_scientific'; named: true };
 	readonly _anonymous_for: { type: 'for'; named: false };
 	readonly _anonymous_from: { type: 'from'; named: false };
 	readonly _anonymous_global: { type: 'global'; named: false };

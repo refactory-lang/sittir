@@ -234,7 +234,7 @@ pub enum AnyTransport {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     EscapeSequenceUnicodeFixed(EscapeSequenceUnicodeFixedTransport),
     EscapeSequenceUnicodeWide(EscapeSequenceUnicodeWideTransport),
     EscapeSequenceHex(EscapeSequenceHexTransport),
@@ -575,7 +575,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::IntegerDecimal(t) => t.prepare(ctx),
             AnyTransport::FloatPoint(t) => t.prepare(ctx),
             AnyTransport::FloatLeadingPoint(t) => t.prepare(ctx),
-            AnyTransport::FloatExponent(t) => t.prepare(ctx),
+            AnyTransport::FloatScientific(t) => t.prepare(ctx),
             AnyTransport::EscapeSequenceUnicodeFixed(t) => t.prepare(ctx),
             AnyTransport::EscapeSequenceUnicodeWide(t) => t.prepare(ctx),
             AnyTransport::EscapeSequenceHex(t) => t.prepare(ctx),
@@ -1388,9 +1388,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 95 => Ok(AnyTransport::FloatLeadingPoint(
                     FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: float_exponent (FLOAT_EXPONENT)
-                96 => Ok(AnyTransport::FloatExponent(
-                    FloatExponentTransport::from_napi_value(env, napi_val)?
+                // kind: float_scientific (FLOAT_SCIENTIFIC)
+                96 => Ok(AnyTransport::FloatScientific(
+                    FloatScientificTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: escape_sequence_unicode_fixed (ESCAPE_SEQUENCE_UNICODE_FIXED)
                 97 => Ok(AnyTransport::EscapeSequenceUnicodeFixed(
@@ -4193,7 +4193,7 @@ impl ::sittir_core::render::Render for IntegerTransport {
 pub enum FloatTransport {
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -4202,7 +4202,7 @@ impl ::sittir_core::prepare::Prepare for FloatTransport {
         match self {
             FloatTransport::FloatPoint(t) => t.prepare(ctx),
             FloatTransport::FloatLeadingPoint(t) => t.prepare(ctx),
-            FloatTransport::FloatExponent(t) => t.prepare(ctx),
+            FloatTransport::FloatScientific(t) => t.prepare(ctx),
             FloatTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -4224,8 +4224,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                         if let Ok(value) = FloatLeadingPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatLeadingPoint(value));
                         }
-                        if let Ok(value) = FloatExponentTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::FloatExponent(value));
+                        if let Ok(value) = FloatScientificTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatScientific(value));
                         }
                         Err(::napi::Error::from_reason("aliased kind id 251 in FloatTransport decodes as none of its members"))
                     },
@@ -4235,8 +4235,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FloatTransport",
@@ -4256,8 +4256,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                         if let Ok(value) = FloatLeadingPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::FloatLeadingPoint(value));
                         }
-                        if let Ok(value) = FloatExponentTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::FloatExponent(value));
+                        if let Ok(value) = FloatScientificTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatScientific(value));
                         }
                         Err(::napi::Error::from_reason("aliased kind id 251 in FloatTransport decodes as none of its members"))
                     },
@@ -4267,8 +4267,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FloatTransport",
@@ -4316,7 +4316,7 @@ impl ::sittir_core::view::KindOf for FloatTransport {
         match self {
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -4326,7 +4326,7 @@ fn float_transport_to_any(t: FloatTransport) -> AnyTransport {
     match t {
         FloatTransport::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         FloatTransport::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        FloatTransport::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        FloatTransport::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         FloatTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -5136,7 +5136,7 @@ pub enum ExpressionStatementContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -5185,7 +5185,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentTransportSlot
             ExpressionStatementContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ExpressionStatementContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ExpressionStatementContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::True(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::False(t) => t.prepare(ctx),
             ExpressionStatementContentTransportSlot::None(t) => t.prepare(ctx),
@@ -5236,7 +5236,7 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -5353,8 +5353,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -5511,8 +5511,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -5641,7 +5641,7 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
         ExpressionStatementContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ExpressionStatementContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ExpressionStatementContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ExpressionStatementContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ExpressionStatementContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ExpressionStatementContentTransportSlot::True(inner) => AnyTransport::True(inner),
         ExpressionStatementContentTransportSlot::False(inner) => AnyTransport::False(inner),
         ExpressionStatementContentTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -5691,7 +5691,7 @@ impl ::sittir_core::render::Render for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::FloatPoint(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ExpressionStatementContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            ExpressionStatementContentTransportSlot::FloatScientific(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::True(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::False(inner) => inner.render(w),
             ExpressionStatementContentTransportSlot::None(inner) => inner.render(w),
@@ -5741,7 +5741,7 @@ pub enum ReturnStatementExpressionsTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -5785,7 +5785,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionsTransportSlot
             ReturnStatementExpressionsTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ReturnStatementExpressionsTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ReturnStatementExpressionsTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::True(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::False(t) => t.prepare(ctx),
             ReturnStatementExpressionsTransportSlot::None(t) => t.prepare(ctx),
@@ -5831,7 +5831,7 @@ impl ::sittir_core::view::KindOf for ReturnStatementExpressionsTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -5943,8 +5943,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -6086,8 +6086,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionsTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -6201,7 +6201,7 @@ fn return_statement_expressions_transport_slot_to_any(t: ReturnStatementExpressi
         ReturnStatementExpressionsTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ReturnStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ReturnStatementExpressionsTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ReturnStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ReturnStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
         ReturnStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
         ReturnStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -6246,7 +6246,7 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionsTransportSlot {
             ReturnStatementExpressionsTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::FloatPoint(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ReturnStatementExpressionsTransportSlot::FloatExponent(inner) => inner.render(w),
+            ReturnStatementExpressionsTransportSlot::FloatScientific(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::True(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::False(inner) => inner.render(w),
             ReturnStatementExpressionsTransportSlot::None(inner) => inner.render(w),
@@ -6291,7 +6291,7 @@ pub enum DeleteStatementExpressionsTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -6335,7 +6335,7 @@ impl ::sittir_core::prepare::Prepare for DeleteStatementExpressionsTransportSlot
             DeleteStatementExpressionsTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::FloatPoint(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            DeleteStatementExpressionsTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            DeleteStatementExpressionsTransportSlot::FloatScientific(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::True(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::False(t) => t.prepare(ctx),
             DeleteStatementExpressionsTransportSlot::None(t) => t.prepare(ctx),
@@ -6381,7 +6381,7 @@ impl ::sittir_core::view::KindOf for DeleteStatementExpressionsTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -6493,8 +6493,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -6636,8 +6636,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeleteStatementExpressionsTransp
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -6751,7 +6751,7 @@ fn delete_statement_expressions_transport_slot_to_any(t: DeleteStatementExpressi
         DeleteStatementExpressionsTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         DeleteStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         DeleteStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        DeleteStatementExpressionsTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        DeleteStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         DeleteStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
         DeleteStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
         DeleteStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -6796,7 +6796,7 @@ impl ::sittir_core::render::Render for DeleteStatementExpressionsTransportSlot {
             DeleteStatementExpressionsTransportSlot::IntegerDecimal(inner) => inner.render(w),
             DeleteStatementExpressionsTransportSlot::FloatPoint(inner) => inner.render(w),
             DeleteStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            DeleteStatementExpressionsTransportSlot::FloatExponent(inner) => inner.render(w),
+            DeleteStatementExpressionsTransportSlot::FloatScientific(inner) => inner.render(w),
             DeleteStatementExpressionsTransportSlot::True(inner) => inner.render(w),
             DeleteStatementExpressionsTransportSlot::False(inner) => inner.render(w),
             DeleteStatementExpressionsTransportSlot::None(inner) => inner.render(w),
@@ -6841,7 +6841,7 @@ pub enum RaiseStatementExpressionsTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -6885,7 +6885,7 @@ impl ::sittir_core::prepare::Prepare for RaiseStatementExpressionsTransportSlot 
             RaiseStatementExpressionsTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             RaiseStatementExpressionsTransportSlot::FloatPoint(t) => t.prepare(ctx),
             RaiseStatementExpressionsTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            RaiseStatementExpressionsTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            RaiseStatementExpressionsTransportSlot::FloatScientific(t) => t.prepare(ctx),
             RaiseStatementExpressionsTransportSlot::True(t) => t.prepare(ctx),
             RaiseStatementExpressionsTransportSlot::False(t) => t.prepare(ctx),
             RaiseStatementExpressionsTransportSlot::None(t) => t.prepare(ctx),
@@ -6931,7 +6931,7 @@ impl ::sittir_core::view::KindOf for RaiseStatementExpressionsTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -7043,8 +7043,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -7186,8 +7186,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseStatementExpressionsTranspo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -7301,7 +7301,7 @@ fn raise_statement_expressions_transport_slot_to_any(t: RaiseStatementExpression
         RaiseStatementExpressionsTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         RaiseStatementExpressionsTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         RaiseStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        RaiseStatementExpressionsTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        RaiseStatementExpressionsTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         RaiseStatementExpressionsTransportSlot::True(inner) => AnyTransport::True(inner),
         RaiseStatementExpressionsTransportSlot::False(inner) => AnyTransport::False(inner),
         RaiseStatementExpressionsTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -7346,7 +7346,7 @@ impl ::sittir_core::render::Render for RaiseStatementExpressionsTransportSlot {
             RaiseStatementExpressionsTransportSlot::IntegerDecimal(inner) => inner.render(w),
             RaiseStatementExpressionsTransportSlot::FloatPoint(inner) => inner.render(w),
             RaiseStatementExpressionsTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            RaiseStatementExpressionsTransportSlot::FloatExponent(inner) => inner.render(w),
+            RaiseStatementExpressionsTransportSlot::FloatScientific(inner) => inner.render(w),
             RaiseStatementExpressionsTransportSlot::True(inner) => inner.render(w),
             RaiseStatementExpressionsTransportSlot::False(inner) => inner.render(w),
             RaiseStatementExpressionsTransportSlot::None(inner) => inner.render(w),
@@ -7917,7 +7917,7 @@ pub enum ForStatementRightTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -7961,7 +7961,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementRightTransportSlot {
             ForStatementRightTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ForStatementRightTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ForStatementRightTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::True(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::False(t) => t.prepare(ctx),
             ForStatementRightTransportSlot::None(t) => t.prepare(ctx),
@@ -8007,7 +8007,7 @@ impl ::sittir_core::view::KindOf for ForStatementRightTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -8119,8 +8119,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -8262,8 +8262,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -8377,7 +8377,7 @@ fn for_statement_right_transport_slot_to_any(t: ForStatementRightTransportSlot) 
         ForStatementRightTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ForStatementRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ForStatementRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ForStatementRightTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ForStatementRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ForStatementRightTransportSlot::True(inner) => AnyTransport::True(inner),
         ForStatementRightTransportSlot::False(inner) => AnyTransport::False(inner),
         ForStatementRightTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -8422,7 +8422,7 @@ impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
             ForStatementRightTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ForStatementRightTransportSlot::FloatPoint(inner) => inner.render(w),
             ForStatementRightTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ForStatementRightTransportSlot::FloatExponent(inner) => inner.render(w),
+            ForStatementRightTransportSlot::FloatScientific(inner) => inner.render(w),
             ForStatementRightTransportSlot::True(inner) => inner.render(w),
             ForStatementRightTransportSlot::False(inner) => inner.render(w),
             ForStatementRightTransportSlot::None(inner) => inner.render(w),
@@ -10792,7 +10792,7 @@ pub enum ComplexPatternImaginaryTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -10805,7 +10805,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternImaginaryTransportSlot {
             ComplexPatternImaginaryTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ComplexPatternImaginaryTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ComplexPatternImaginaryTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ComplexPatternImaginaryTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ComplexPatternImaginaryTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ComplexPatternImaginaryTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -10820,7 +10820,7 @@ impl ::sittir_core::view::KindOf for ComplexPatternImaginaryTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -10853,8 +10853,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternImaginaryTransport
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternImaginaryTransportSlot",
@@ -10885,8 +10885,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternImaginaryTransport
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternImaginaryTransportSlot",
@@ -10937,7 +10937,7 @@ fn complex_pattern_imaginary_transport_slot_to_any(t: ComplexPatternImaginaryTra
         ComplexPatternImaginaryTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ComplexPatternImaginaryTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ComplexPatternImaginaryTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ComplexPatternImaginaryTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ComplexPatternImaginaryTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ComplexPatternImaginaryTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -10951,7 +10951,7 @@ impl ::sittir_core::render::Render for ComplexPatternImaginaryTransportSlot {
             ComplexPatternImaginaryTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ComplexPatternImaginaryTransportSlot::FloatPoint(inner) => inner.render(w),
             ComplexPatternImaginaryTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ComplexPatternImaginaryTransportSlot::FloatExponent(inner) => inner.render(w),
+            ComplexPatternImaginaryTransportSlot::FloatScientific(inner) => inner.render(w),
             ComplexPatternImaginaryTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -11069,7 +11069,7 @@ pub enum ComplexPatternContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -11082,7 +11082,7 @@ impl ::sittir_core::prepare::Prepare for ComplexPatternContentTransportSlot {
             ComplexPatternContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ComplexPatternContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ComplexPatternContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ComplexPatternContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ComplexPatternContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ComplexPatternContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -11097,7 +11097,7 @@ impl ::sittir_core::view::KindOf for ComplexPatternContentTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -11130,8 +11130,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternContentTransportSl
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternContentTransportSlot",
@@ -11162,8 +11162,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternContentTransportSl
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternContentTransportSlot",
@@ -11214,7 +11214,7 @@ fn complex_pattern_content_transport_slot_to_any(t: ComplexPatternContentTranspo
         ComplexPatternContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ComplexPatternContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ComplexPatternContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ComplexPatternContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ComplexPatternContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ComplexPatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -11228,7 +11228,7 @@ impl ::sittir_core::render::Render for ComplexPatternContentTransportSlot {
             ComplexPatternContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ComplexPatternContentTransportSlot::FloatPoint(inner) => inner.render(w),
             ComplexPatternContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ComplexPatternContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            ComplexPatternContentTransportSlot::FloatScientific(inner) => inner.render(w),
             ComplexPatternContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -12131,7 +12131,7 @@ pub enum LambdaWithinForInClauseBodyTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -12175,7 +12175,7 @@ impl ::sittir_core::prepare::Prepare for LambdaWithinForInClauseBodyTransportSlo
             LambdaWithinForInClauseBodyTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::FloatPoint(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            LambdaWithinForInClauseBodyTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            LambdaWithinForInClauseBodyTransportSlot::FloatScientific(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::True(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::False(t) => t.prepare(ctx),
             LambdaWithinForInClauseBodyTransportSlot::None(t) => t.prepare(ctx),
@@ -12221,7 +12221,7 @@ impl ::sittir_core::view::KindOf for LambdaWithinForInClauseBodyTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -12333,8 +12333,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -12476,8 +12476,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LambdaWithinForInClauseBodyTrans
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -12591,7 +12591,7 @@ fn lambda_within_for_in_clause_body_transport_slot_to_any(t: LambdaWithinForInCl
         LambdaWithinForInClauseBodyTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         LambdaWithinForInClauseBodyTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        LambdaWithinForInClauseBodyTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        LambdaWithinForInClauseBodyTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         LambdaWithinForInClauseBodyTransportSlot::True(inner) => AnyTransport::True(inner),
         LambdaWithinForInClauseBodyTransportSlot::False(inner) => AnyTransport::False(inner),
         LambdaWithinForInClauseBodyTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -12636,7 +12636,7 @@ impl ::sittir_core::render::Render for LambdaWithinForInClauseBodyTransportSlot 
             LambdaWithinForInClauseBodyTransportSlot::IntegerDecimal(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::FloatPoint(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            LambdaWithinForInClauseBodyTransportSlot::FloatExponent(inner) => inner.render(w),
+            LambdaWithinForInClauseBodyTransportSlot::FloatScientific(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::True(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::False(inner) => inner.render(w),
             LambdaWithinForInClauseBodyTransportSlot::None(inner) => inner.render(w),
@@ -13071,7 +13071,7 @@ pub enum AugmentedAssignmentRightTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -13121,7 +13121,7 @@ impl ::sittir_core::prepare::Prepare for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::FloatPoint(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            AugmentedAssignmentRightTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            AugmentedAssignmentRightTransportSlot::FloatScientific(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::True(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::False(t) => t.prepare(ctx),
             AugmentedAssignmentRightTransportSlot::None(t) => t.prepare(ctx),
@@ -13173,7 +13173,7 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -13291,8 +13291,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -13452,8 +13452,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentRightTranspor
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -13585,7 +13585,7 @@ fn augmented_assignment_right_transport_slot_to_any(t: AugmentedAssignmentRightT
         AugmentedAssignmentRightTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         AugmentedAssignmentRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AugmentedAssignmentRightTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        AugmentedAssignmentRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         AugmentedAssignmentRightTransportSlot::True(inner) => AnyTransport::True(inner),
         AugmentedAssignmentRightTransportSlot::False(inner) => AnyTransport::False(inner),
         AugmentedAssignmentRightTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -13636,7 +13636,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentRightTransportSlot {
             AugmentedAssignmentRightTransportSlot::IntegerDecimal(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::FloatPoint(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            AugmentedAssignmentRightTransportSlot::FloatExponent(inner) => inner.render(w),
+            AugmentedAssignmentRightTransportSlot::FloatScientific(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::True(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::False(inner) => inner.render(w),
             AugmentedAssignmentRightTransportSlot::None(inner) => inner.render(w),
@@ -13804,7 +13804,7 @@ pub enum YieldContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -13849,7 +13849,7 @@ impl ::sittir_core::prepare::Prepare for YieldContentTransportSlot {
             YieldContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             YieldContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             YieldContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            YieldContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            YieldContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             YieldContentTransportSlot::True(t) => t.prepare(ctx),
             YieldContentTransportSlot::False(t) => t.prepare(ctx),
             YieldContentTransportSlot::None(t) => t.prepare(ctx),
@@ -13896,7 +13896,7 @@ impl ::sittir_core::view::KindOf for YieldContentTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -14011,8 +14011,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -14157,8 +14157,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -14273,7 +14273,7 @@ fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTrans
         YieldContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         YieldContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         YieldContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        YieldContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        YieldContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         YieldContentTransportSlot::True(inner) => AnyTransport::True(inner),
         YieldContentTransportSlot::False(inner) => AnyTransport::False(inner),
         YieldContentTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -14319,7 +14319,7 @@ impl ::sittir_core::render::Render for YieldContentTransportSlot {
             YieldContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             YieldContentTransportSlot::FloatPoint(inner) => inner.render(w),
             YieldContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            YieldContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            YieldContentTransportSlot::FloatScientific(inner) => inner.render(w),
             YieldContentTransportSlot::True(inner) => inner.render(w),
             YieldContentTransportSlot::False(inner) => inner.render(w),
             YieldContentTransportSlot::None(inner) => inner.render(w),
@@ -14641,7 +14641,7 @@ pub enum TypeContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -14689,7 +14689,7 @@ impl ::sittir_core::prepare::Prepare for TypeContentTransportSlot {
             TypeContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             TypeContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             TypeContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            TypeContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            TypeContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             TypeContentTransportSlot::True(t) => t.prepare(ctx),
             TypeContentTransportSlot::False(t) => t.prepare(ctx),
             TypeContentTransportSlot::None(t) => t.prepare(ctx),
@@ -14739,7 +14739,7 @@ impl ::sittir_core::view::KindOf for TypeContentTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -14855,8 +14855,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -15010,8 +15010,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -15137,7 +15137,7 @@ fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTranspo
         TypeContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         TypeContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         TypeContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        TypeContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        TypeContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         TypeContentTransportSlot::True(inner) => AnyTransport::True(inner),
         TypeContentTransportSlot::False(inner) => AnyTransport::False(inner),
         TypeContentTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -15186,7 +15186,7 @@ impl ::sittir_core::render::Render for TypeContentTransportSlot {
             TypeContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             TypeContentTransportSlot::FloatPoint(inner) => inner.render(w),
             TypeContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            TypeContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            TypeContentTransportSlot::FloatScientific(inner) => inner.render(w),
             TypeContentTransportSlot::True(inner) => inner.render(w),
             TypeContentTransportSlot::False(inner) => inner.render(w),
             TypeContentTransportSlot::None(inner) => inner.render(w),
@@ -15491,7 +15491,7 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -15536,7 +15536,7 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionContentTransport
             ParenthesizedExpressionContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ParenthesizedExpressionContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ParenthesizedExpressionContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::True(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::False(t) => t.prepare(ctx),
             ParenthesizedExpressionContentTransportSlot::None(t) => t.prepare(ctx),
@@ -15583,7 +15583,7 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionContentTransportSlot
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -15696,8 +15696,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -15842,8 +15842,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -15960,7 +15960,7 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
         ParenthesizedExpressionContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ParenthesizedExpressionContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ParenthesizedExpressionContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ParenthesizedExpressionContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ParenthesizedExpressionContentTransportSlot::True(inner) => AnyTransport::True(inner),
         ParenthesizedExpressionContentTransportSlot::False(inner) => AnyTransport::False(inner),
         ParenthesizedExpressionContentTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -16006,7 +16006,7 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionContentTransportSl
             ParenthesizedExpressionContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ParenthesizedExpressionContentTransportSlot::FloatPoint(inner) => inner.render(w),
             ParenthesizedExpressionContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ParenthesizedExpressionContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            ParenthesizedExpressionContentTransportSlot::FloatScientific(inner) => inner.render(w),
             ParenthesizedExpressionContentTransportSlot::True(inner) => inner.render(w),
             ParenthesizedExpressionContentTransportSlot::False(inner) => inner.render(w),
             ParenthesizedExpressionContentTransportSlot::None(inner) => inner.render(w),
@@ -16052,7 +16052,7 @@ pub enum CollectionElementsElementTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -16098,7 +16098,7 @@ impl ::sittir_core::prepare::Prepare for CollectionElementsElementTransportSlot 
             CollectionElementsElementTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             CollectionElementsElementTransportSlot::FloatPoint(t) => t.prepare(ctx),
             CollectionElementsElementTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            CollectionElementsElementTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            CollectionElementsElementTransportSlot::FloatScientific(t) => t.prepare(ctx),
             CollectionElementsElementTransportSlot::True(t) => t.prepare(ctx),
             CollectionElementsElementTransportSlot::False(t) => t.prepare(ctx),
             CollectionElementsElementTransportSlot::None(t) => t.prepare(ctx),
@@ -16146,7 +16146,7 @@ impl ::sittir_core::view::KindOf for CollectionElementsElementTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -16260,8 +16260,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -16409,8 +16409,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsElementTranspo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -16530,7 +16530,7 @@ fn collection_elements_element_transport_slot_to_any(t: CollectionElementsElemen
         CollectionElementsElementTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         CollectionElementsElementTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         CollectionElementsElementTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        CollectionElementsElementTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        CollectionElementsElementTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         CollectionElementsElementTransportSlot::True(inner) => AnyTransport::True(inner),
         CollectionElementsElementTransportSlot::False(inner) => AnyTransport::False(inner),
         CollectionElementsElementTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -16577,7 +16577,7 @@ impl ::sittir_core::render::Render for CollectionElementsElementTransportSlot {
             CollectionElementsElementTransportSlot::IntegerDecimal(inner) => inner.render(w),
             CollectionElementsElementTransportSlot::FloatPoint(inner) => inner.render(w),
             CollectionElementsElementTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            CollectionElementsElementTransportSlot::FloatExponent(inner) => inner.render(w),
+            CollectionElementsElementTransportSlot::FloatScientific(inner) => inner.render(w),
             CollectionElementsElementTransportSlot::True(inner) => inner.render(w),
             CollectionElementsElementTransportSlot::False(inner) => inner.render(w),
             CollectionElementsElementTransportSlot::None(inner) => inner.render(w),
@@ -16930,7 +16930,7 @@ pub enum ForInClauseRightTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -16974,7 +16974,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseRightTransportSlot {
             ForInClauseRightTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ForInClauseRightTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ForInClauseRightTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::True(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::False(t) => t.prepare(ctx),
             ForInClauseRightTransportSlot::None(t) => t.prepare(ctx),
@@ -17020,7 +17020,7 @@ impl ::sittir_core::view::KindOf for ForInClauseRightTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -17132,8 +17132,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -17275,8 +17275,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -17390,7 +17390,7 @@ fn for_in_clause_right_transport_slot_to_any(t: ForInClauseRightTransportSlot) -
         ForInClauseRightTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ForInClauseRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ForInClauseRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ForInClauseRightTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ForInClauseRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ForInClauseRightTransportSlot::True(inner) => AnyTransport::True(inner),
         ForInClauseRightTransportSlot::False(inner) => AnyTransport::False(inner),
         ForInClauseRightTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -17435,7 +17435,7 @@ impl ::sittir_core::render::Render for ForInClauseRightTransportSlot {
             ForInClauseRightTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ForInClauseRightTransportSlot::FloatPoint(inner) => inner.render(w),
             ForInClauseRightTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ForInClauseRightTransportSlot::FloatExponent(inner) => inner.render(w),
+            ForInClauseRightTransportSlot::FloatScientific(inner) => inner.render(w),
             ForInClauseRightTransportSlot::True(inner) => inner.render(w),
             ForInClauseRightTransportSlot::False(inner) => inner.render(w),
             ForInClauseRightTransportSlot::None(inner) => inner.render(w),
@@ -17899,7 +17899,7 @@ pub enum InterpolationExpressionTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -17945,7 +17945,7 @@ impl ::sittir_core::prepare::Prepare for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::FloatPoint(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            InterpolationExpressionTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            InterpolationExpressionTransportSlot::FloatScientific(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::True(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::False(t) => t.prepare(ctx),
             InterpolationExpressionTransportSlot::None(t) => t.prepare(ctx),
@@ -17993,7 +17993,7 @@ impl ::sittir_core::view::KindOf for InterpolationExpressionTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -18107,8 +18107,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -18256,8 +18256,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationExpressionTransport
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -18377,7 +18377,7 @@ fn interpolation_expression_transport_slot_to_any(t: InterpolationExpressionTran
         InterpolationExpressionTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         InterpolationExpressionTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         InterpolationExpressionTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        InterpolationExpressionTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        InterpolationExpressionTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         InterpolationExpressionTransportSlot::True(inner) => AnyTransport::True(inner),
         InterpolationExpressionTransportSlot::False(inner) => AnyTransport::False(inner),
         InterpolationExpressionTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -18424,7 +18424,7 @@ impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
             InterpolationExpressionTransportSlot::IntegerDecimal(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::FloatPoint(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            InterpolationExpressionTransportSlot::FloatExponent(inner) => inner.render(w),
+            InterpolationExpressionTransportSlot::FloatScientific(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::True(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::False(inner) => inner.render(w),
             InterpolationExpressionTransportSlot::None(inner) => inner.render(w),
@@ -18680,7 +18680,7 @@ pub enum ArgumentListElementsElementTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -18727,7 +18727,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsElementTransportSlo
             ArgumentListElementsElementTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::FloatPoint(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            ArgumentListElementsElementTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            ArgumentListElementsElementTransportSlot::FloatScientific(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::True(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::False(t) => t.prepare(ctx),
             ArgumentListElementsElementTransportSlot::None(t) => t.prepare(ctx),
@@ -18776,7 +18776,7 @@ impl ::sittir_core::view::KindOf for ArgumentListElementsElementTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -18891,8 +18891,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -19043,8 +19043,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListElementsElementTrans
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -19167,7 +19167,7 @@ fn argument_list_elements_element_transport_slot_to_any(t: ArgumentListElementsE
         ArgumentListElementsElementTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         ArgumentListElementsElementTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         ArgumentListElementsElementTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        ArgumentListElementsElementTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        ArgumentListElementsElementTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         ArgumentListElementsElementTransportSlot::True(inner) => AnyTransport::True(inner),
         ArgumentListElementsElementTransportSlot::False(inner) => AnyTransport::False(inner),
         ArgumentListElementsElementTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -19215,7 +19215,7 @@ impl ::sittir_core::render::Render for ArgumentListElementsElementTransportSlot 
             ArgumentListElementsElementTransportSlot::IntegerDecimal(inner) => inner.render(w),
             ArgumentListElementsElementTransportSlot::FloatPoint(inner) => inner.render(w),
             ArgumentListElementsElementTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            ArgumentListElementsElementTransportSlot::FloatExponent(inner) => inner.render(w),
+            ArgumentListElementsElementTransportSlot::FloatScientific(inner) => inner.render(w),
             ArgumentListElementsElementTransportSlot::True(inner) => inner.render(w),
             ArgumentListElementsElementTransportSlot::False(inner) => inner.render(w),
             ArgumentListElementsElementTransportSlot::None(inner) => inner.render(w),
@@ -19375,7 +19375,7 @@ pub enum SubscriptsSubscriptTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -19419,7 +19419,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::FloatPoint(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            SubscriptsSubscriptTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            SubscriptsSubscriptTransportSlot::FloatScientific(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::True(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::False(t) => t.prepare(ctx),
             SubscriptsSubscriptTransportSlot::None(t) => t.prepare(ctx),
@@ -19465,7 +19465,7 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -19577,8 +19577,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -19720,8 +19720,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptsSubscriptTransportSlot
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -19835,7 +19835,7 @@ fn subscripts_subscript_transport_slot_to_any(t: SubscriptsSubscriptTransportSlo
         SubscriptsSubscriptTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         SubscriptsSubscriptTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         SubscriptsSubscriptTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        SubscriptsSubscriptTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        SubscriptsSubscriptTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         SubscriptsSubscriptTransportSlot::True(inner) => AnyTransport::True(inner),
         SubscriptsSubscriptTransportSlot::False(inner) => AnyTransport::False(inner),
         SubscriptsSubscriptTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -19880,7 +19880,7 @@ impl ::sittir_core::render::Render for SubscriptsSubscriptTransportSlot {
             SubscriptsSubscriptTransportSlot::IntegerDecimal(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::FloatPoint(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            SubscriptsSubscriptTransportSlot::FloatExponent(inner) => inner.render(w),
+            SubscriptsSubscriptTransportSlot::FloatScientific(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::True(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::False(inner) => inner.render(w),
             SubscriptsSubscriptTransportSlot::None(inner) => inner.render(w),
@@ -20653,7 +20653,7 @@ pub enum SimplePatternNegativeContentTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -20666,7 +20666,7 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeContentTransportSl
             SimplePatternNegativeContentTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             SimplePatternNegativeContentTransportSlot::FloatPoint(t) => t.prepare(ctx),
             SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            SimplePatternNegativeContentTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            SimplePatternNegativeContentTransportSlot::FloatScientific(t) => t.prepare(ctx),
             SimplePatternNegativeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -20681,7 +20681,7 @@ impl ::sittir_core::view::KindOf for SimplePatternNegativeContentTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -20714,8 +20714,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SimplePatternNegativeContentTransportSlot",
@@ -20746,8 +20746,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SimplePatternNegativeContentTransportSlot",
@@ -20798,7 +20798,7 @@ fn simple_pattern_negative_content_transport_slot_to_any(t: SimplePatternNegativ
         SimplePatternNegativeContentTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         SimplePatternNegativeContentTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        SimplePatternNegativeContentTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        SimplePatternNegativeContentTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         SimplePatternNegativeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -20812,7 +20812,7 @@ impl ::sittir_core::render::Render for SimplePatternNegativeContentTransportSlot
             SimplePatternNegativeContentTransportSlot::IntegerDecimal(inner) => inner.render(w),
             SimplePatternNegativeContentTransportSlot::FloatPoint(inner) => inner.render(w),
             SimplePatternNegativeContentTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            SimplePatternNegativeContentTransportSlot::FloatExponent(inner) => inner.render(w),
+            SimplePatternNegativeContentTransportSlot::FloatScientific(inner) => inner.render(w),
             SimplePatternNegativeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -21156,7 +21156,7 @@ pub enum AssignmentEqRightTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -21206,7 +21206,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::FloatPoint(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            AssignmentEqRightTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            AssignmentEqRightTransportSlot::FloatScientific(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::True(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::False(t) => t.prepare(ctx),
             AssignmentEqRightTransportSlot::None(t) => t.prepare(ctx),
@@ -21258,7 +21258,7 @@ impl ::sittir_core::view::KindOf for AssignmentEqRightTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -21376,8 +21376,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -21537,8 +21537,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentEqRightTransportSlot {
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -21670,7 +21670,7 @@ fn assignment_eq_right_transport_slot_to_any(t: AssignmentEqRightTransportSlot) 
         AssignmentEqRightTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         AssignmentEqRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         AssignmentEqRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AssignmentEqRightTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        AssignmentEqRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         AssignmentEqRightTransportSlot::True(inner) => AnyTransport::True(inner),
         AssignmentEqRightTransportSlot::False(inner) => AnyTransport::False(inner),
         AssignmentEqRightTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -21721,7 +21721,7 @@ impl ::sittir_core::render::Render for AssignmentEqRightTransportSlot {
             AssignmentEqRightTransportSlot::IntegerDecimal(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::FloatPoint(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            AssignmentEqRightTransportSlot::FloatExponent(inner) => inner.render(w),
+            AssignmentEqRightTransportSlot::FloatScientific(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::True(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::False(inner) => inner.render(w),
             AssignmentEqRightTransportSlot::None(inner) => inner.render(w),
@@ -22190,7 +22190,7 @@ pub enum AssignmentTypedRightTransportSlot {
     IntegerDecimal(IntegerDecimalTransport),
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
-    FloatExponent(FloatExponentTransport),
+    FloatScientific(FloatScientificTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -22240,7 +22240,7 @@ impl ::sittir_core::prepare::Prepare for AssignmentTypedRightTransportSlot {
             AssignmentTypedRightTransportSlot::IntegerDecimal(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::FloatPoint(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::FloatLeadingPoint(t) => t.prepare(ctx),
-            AssignmentTypedRightTransportSlot::FloatExponent(t) => t.prepare(ctx),
+            AssignmentTypedRightTransportSlot::FloatScientific(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::True(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::False(t) => t.prepare(ctx),
             AssignmentTypedRightTransportSlot::None(t) => t.prepare(ctx),
@@ -22292,7 +22292,7 @@ impl ::sittir_core::view::KindOf for AssignmentTypedRightTransportSlot {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::True(inner) => inner.kind_in(kinds),
             Self::False(inner) => inner.kind_in(kinds),
             Self::None(inner) => inner.kind_in(kinds),
@@ -22410,8 +22410,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -22571,8 +22571,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTypedRightTransportSlo
                     95 => Ok(Self::FloatLeadingPoint(
                         FloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    96 => Ok(Self::FloatExponent(
-                        FloatExponentTransport::from_napi_value(env, napi_val)?
+                    96 => Ok(Self::FloatScientific(
+                        FloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     205 => Ok(Self::UnaryOperator(
                         UnaryOperatorTransport::from_napi_value(env, napi_val)?
@@ -22704,7 +22704,7 @@ fn assignment_typed_right_transport_slot_to_any(t: AssignmentTypedRightTransport
         AssignmentTypedRightTransportSlot::IntegerDecimal(inner) => AnyTransport::IntegerDecimal(inner),
         AssignmentTypedRightTransportSlot::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         AssignmentTypedRightTransportSlot::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
-        AssignmentTypedRightTransportSlot::FloatExponent(inner) => AnyTransport::FloatExponent(inner),
+        AssignmentTypedRightTransportSlot::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
         AssignmentTypedRightTransportSlot::True(inner) => AnyTransport::True(inner),
         AssignmentTypedRightTransportSlot::False(inner) => AnyTransport::False(inner),
         AssignmentTypedRightTransportSlot::None(inner) => AnyTransport::None(inner),
@@ -22755,7 +22755,7 @@ impl ::sittir_core::render::Render for AssignmentTypedRightTransportSlot {
             AssignmentTypedRightTransportSlot::IntegerDecimal(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::FloatPoint(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::FloatLeadingPoint(inner) => inner.render(w),
-            AssignmentTypedRightTransportSlot::FloatExponent(inner) => inner.render(w),
+            AssignmentTypedRightTransportSlot::FloatScientific(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::True(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::False(inner) => inner.render(w),
             AssignmentTypedRightTransportSlot::None(inner) => inner.render(w),
@@ -35139,31 +35139,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatLeadingPointTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FloatExponentTransport {
+pub struct FloatScientificTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for FloatExponentTransport {
+impl ::sittir_core::view::KindOf for FloatScientificTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::render::Render for FloatExponentTransport {
+impl ::sittir_core::render::Render for FloatScientificTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for FloatExponentTransport {
+impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatExponentTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatScientificTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35185,7 +35185,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatExponentTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatExponentTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatScientificTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -35201,7 +35201,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatExponentTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatExponentTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for FloatScientificTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -35211,22 +35211,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatExponentTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FloatExponentTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FloatScientificTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FloatExponentTransport::from_napi_value(env, napi_val).map(Box::new)
+        FloatScientificTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatExponentTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatScientificTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FloatExponentTransport::to_napi_value(env, *val)
+        FloatScientificTransport::to_napi_value(env, *val)
     }
 }
 
@@ -47933,7 +47933,7 @@ fn render_float_leading_point(t: &FloatLeadingPointTransport, w: &mut dyn ::sitt
     w.text(&t.text)
 }
 
-fn render_float_exponent(t: &FloatExponentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_float_scientific(t: &FloatScientificTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -48707,7 +48707,7 @@ fn render_float(t: &FloatTransport, w: &mut dyn ::sittir_core::render::RenderSin
     match t {
         FloatTransport::FloatPoint(inner) => inner.render(w),
         FloatTransport::FloatLeadingPoint(inner) => inner.render(w),
-        FloatTransport::FloatExponent(inner) => inner.render(w),
+        FloatTransport::FloatScientific(inner) => inner.render(w),
         FloatTransport::Verbatim(inner) => inner.render(w),
     }
 }
@@ -48888,7 +48888,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::IntegerDecimal(inner) => inner.kind_in(kinds),
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::FloatExponent(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::EscapeSequenceUnicodeFixed(inner) => inner.kind_in(kinds),
             Self::EscapeSequenceUnicodeWide(inner) => inner.kind_in(kinds),
             Self::EscapeSequenceHex(inner) => inner.kind_in(kinds),
@@ -49172,7 +49172,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::IntegerDecimal(t) => t.render(w),
             AnyTransport::FloatPoint(t) => t.render(w),
             AnyTransport::FloatLeadingPoint(t) => t.render(w),
-            AnyTransport::FloatExponent(t) => t.render(w),
+            AnyTransport::FloatScientific(t) => t.render(w),
             AnyTransport::EscapeSequenceUnicodeFixed(t) => t.render(w),
             AnyTransport::EscapeSequenceUnicodeWide(t) => t.render(w),
             AnyTransport::EscapeSequenceHex(t) => t.render(w),

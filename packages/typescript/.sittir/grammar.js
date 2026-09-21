@@ -5882,7 +5882,7 @@ var grammar_sittir_default = grammar(
           0: variant("hex"),
           1: variant("float_point"),
           2: variant("float_leading_point"),
-          3: variant("float_exponent"),
+          3: variant("float_scientific"),
           4: variant("decimal", { default: true }),
           5: variant("binary"),
           6: variant("octal"),

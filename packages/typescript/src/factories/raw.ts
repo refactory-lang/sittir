@@ -29,7 +29,7 @@ const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTypeIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _leafRe_buildNumberFloatExponent =
+const _leafRe_buildNumberFloatScientific =
 	/^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))$/u;
 const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
 const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
@@ -6127,13 +6127,13 @@ export function buildNumberFloatLeadingPoint(value: string): T.NumberFloatLeadin
 	);
 }
 
-export function buildNumberFloatExponent(text: string): T.NumberFloatExponent.Built {
-	if (text.length === 0) throw new Error(`number_float_exponent: text must be non-empty`);
-	if (!_leafRe_buildNumberFloatExponent.test(text))
-		throw new Error(`number_float_exponent: text does not match pattern: ${text}`);
+export function buildNumberFloatScientific(text: string): T.NumberFloatScientific.Built {
+	if (text.length === 0) throw new Error(`number_float_scientific: text must be non-empty`);
+	if (!_leafRe_buildNumberFloatScientific.test(text))
+		throw new Error(`number_float_scientific: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.NumberFloatExponent as const,
+			$type: TSKindId.NumberFloatScientific as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -7663,7 +7663,7 @@ export type FluentKindMap = {
 	number_hex: T.NumberHex.Built;
 	number_float_point: T.NumberFloatPoint.Built;
 	number_float_leading_point: T.NumberFloatLeadingPoint.Built;
-	number_float_exponent: T.NumberFloatExponent;
+	number_float_scientific: T.NumberFloatScientific;
 	number_decimal: T.NumberDecimal;
 	number_binary: T.NumberBinary.Built;
 	number_octal: T.NumberOctal.Built;
@@ -7904,7 +7904,7 @@ export const _factoryMap = {
 	number_hex: buildNumberHex,
 	number_float_point: buildNumberFloatPoint,
 	number_float_leading_point: buildNumberFloatLeadingPoint,
-	number_float_exponent: buildNumberFloatExponent,
+	number_float_scientific: buildNumberFloatScientific,
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,

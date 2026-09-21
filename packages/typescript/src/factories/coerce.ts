@@ -204,7 +204,7 @@ export const _fromMap = {
 	number_hex: coerceToNumberHex,
 	number_float_point: coerceToNumberFloatPoint,
 	number_float_leading_point: coerceToNumberFloatLeadingPoint,
-	number_float_exponent: coerceToNumberFloatExponent,
+	number_float_scientific: coerceToNumberFloatScientific,
 	number_decimal: coerceToNumberDecimal,
 	number_binary: coerceToNumberBinary,
 	number_octal: coerceToNumberOctal,
@@ -301,9 +301,9 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 			F.buildNumberFloatPoint(lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point') as never)
 	},
 	number_float_leading_point: { factory: (content: string) => _resolveByKind('number_float_leading_point', content) },
-	number_float_exponent: {
+	number_float_scientific: {
 		pattern: /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))$/u,
-		factory: F.buildNumberFloatExponent
+		factory: F.buildNumberFloatScientific
 	},
 	number_decimal: { pattern: /^(?:(?:\d(_?\d)*))$/u, factory: F.buildNumberDecimal },
 	number_binary: {
@@ -1357,7 +1357,7 @@ const _K7: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_exponent',
+	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1409,7 +1409,7 @@ const _K9: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_exponent',
+	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1631,7 +1631,7 @@ const _K27: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_exponent',
+	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1671,7 +1671,7 @@ const _K36: readonly string[] = [
 	'array_pattern',
 	'non_null_expression'
 ];
-const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_float_exponent', 'number_decimal'];
+const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_float_scientific', 'number_decimal'];
 const _K38: readonly string[] = [
 	'private_property_identifier',
 	'string',
@@ -1764,7 +1764,7 @@ const _K56: readonly string[] = [
 	'_type_query_member_expression',
 	'_type_query_call_expression'
 ];
-const _K57: readonly string[] = ['predefined_type', 'number_float_exponent', 'number_decimal'];
+const _K57: readonly string[] = ['predefined_type', 'number_float_scientific', 'number_decimal'];
 const _K58: readonly string[] = [
 	'string',
 	'number_hex',
@@ -1799,7 +1799,7 @@ const _K62: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K63: readonly string[] = ['number_float_exponent', 'number_decimal', 'true', 'false', 'null', 'undefined'];
+const _K63: readonly string[] = ['number_float_scientific', 'number_decimal', 'true', 'false', 'null', 'undefined'];
 const _K64: readonly string[] = [
 	'_number',
 	'number_hex',
@@ -1810,7 +1810,7 @@ const _K64: readonly string[] = [
 	'number_bigint',
 	'string'
 ];
-const _K65: readonly string[] = ['number_float_exponent', 'number_decimal'];
+const _K65: readonly string[] = ['number_float_scientific', 'number_decimal'];
 const _K66: readonly string[] = [
 	'number_hex',
 	'number_float_point',
@@ -8491,11 +8491,11 @@ export function coerceToNumberFloatLeadingPoint(
 	);
 }
 
-export function coerceToNumberFloatExponent(
-	input: T.NumberFloatExponent.Loose
-): ReturnType<typeof F.buildNumberFloatExponent> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberFloatExponent>;
-	return F.buildNumberFloatExponent(input as Parameters<typeof F.buildNumberFloatExponent>[0]);
+export function coerceToNumberFloatScientific(
+	input: T.NumberFloatScientific.Loose
+): ReturnType<typeof F.buildNumberFloatScientific> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
+	return F.buildNumberFloatScientific(input as Parameters<typeof F.buildNumberFloatScientific>[0]);
 }
 
 export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {

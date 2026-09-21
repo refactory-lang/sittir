@@ -103,7 +103,7 @@ pub const INTEGER_BINARY: KindId = KindId(92);
 pub const INTEGER_DECIMAL: KindId = KindId(93);
 pub const FLOAT_POINT: KindId = KindId(94);
 pub const FLOAT_LEADING_POINT: KindId = KindId(95);
-pub const FLOAT_EXPONENT: KindId = KindId(96);
+pub const FLOAT_SCIENTIFIC: KindId = KindId(96);
 pub const ESCAPE_SEQUENCE_UNICODE_FIXED: KindId = KindId(97);
 pub const ESCAPE_SEQUENCE_UNICODE_WIDE: KindId = KindId(98);
 pub const ESCAPE_SEQUENCE_HEX: KindId = KindId(99);
@@ -441,7 +441,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         93 => "integer_decimal", // "integer_decimal"
         94 => "float_point", // "float_point"
         95 => "float_leading_point", // "float_leading_point"
-        96 => "float_exponent", // "float_exponent"
+        96 => "float_scientific", // "float_scientific"
         97 => "escape_sequence_unicode_fixed", // "escape_sequence_unicode_fixed"
         98 => "escape_sequence_unicode_wide", // "escape_sequence_unicode_wide"
         99 => "escape_sequence_hex", // "escape_sequence_hex"

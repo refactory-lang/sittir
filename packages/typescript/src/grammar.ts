@@ -95,9 +95,9 @@ export type TypescriptGrammar = {
 			{ type: 'number_bigint'; named: true },
 			{ type: 'number_binary'; named: true },
 			{ type: 'number_decimal'; named: true },
-			{ type: 'number_float_exponent'; named: true },
 			{ type: 'number_float_leading_point'; named: true },
 			{ type: 'number_float_point'; named: true },
+			{ type: 'number_float_scientific'; named: true },
 			{ type: 'number_hex'; named: true },
 			{ type: 'number_octal'; named: true }
 		];
@@ -2796,9 +2796,9 @@ export type TypescriptGrammar = {
 	readonly number_bigint: { type: 'number_bigint'; named: true };
 	readonly number_binary: { type: 'number_binary'; named: true };
 	readonly number_decimal: { type: 'number_decimal'; named: true };
-	readonly number_float_exponent: { type: 'number_float_exponent'; named: true };
 	readonly number_float_leading_point: { type: 'number_float_leading_point'; named: true };
 	readonly number_float_point: { type: 'number_float_point'; named: true };
+	readonly number_float_scientific: { type: 'number_float_scientific'; named: true };
 	readonly number_hex: { type: 'number_hex'; named: true };
 	readonly number_octal: { type: 'number_octal'; named: true };
 	readonly _anonymous_object: { type: 'object'; named: false };

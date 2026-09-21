@@ -290,7 +290,7 @@ pub enum AnyTransport {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -812,7 +812,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::NumberHex(t) => t.prepare(ctx),
             AnyTransport::NumberFloatPoint(t) => t.prepare(ctx),
             AnyTransport::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            AnyTransport::NumberFloatExponent(t) => t.prepare(ctx),
+            AnyTransport::NumberFloatScientific(t) => t.prepare(ctx),
             AnyTransport::NumberDecimal(t) => t.prepare(ctx),
             AnyTransport::NumberBinary(t) => t.prepare(ctx),
             AnyTransport::NumberOctal(t) => t.prepare(ctx),
@@ -1962,9 +1962,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 156 => Ok(AnyTransport::NumberFloatLeadingPoint(
                     NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: number_float_exponent (NUMBER_FLOAT_EXPONENT)
-                157 => Ok(AnyTransport::NumberFloatExponent(
-                    NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                // kind: number_float_scientific (NUMBER_FLOAT_SCIENTIFIC)
+                157 => Ok(AnyTransport::NumberFloatScientific(
+                    NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: number_decimal (NUMBER_DECIMAL)
                 158 => Ok(AnyTransport::NumberDecimal(
@@ -6165,7 +6165,7 @@ pub enum NumberTransport {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -6179,7 +6179,7 @@ impl ::sittir_core::prepare::Prepare for NumberTransport {
             NumberTransport::NumberHex(t) => t.prepare(ctx),
             NumberTransport::NumberFloatPoint(t) => t.prepare(ctx),
             NumberTransport::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            NumberTransport::NumberFloatExponent(t) => t.prepare(ctx),
+            NumberTransport::NumberFloatScientific(t) => t.prepare(ctx),
             NumberTransport::NumberDecimal(t) => t.prepare(ctx),
             NumberTransport::NumberBinary(t) => t.prepare(ctx),
             NumberTransport::NumberOctal(t) => t.prepare(ctx),
@@ -6208,8 +6208,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
                         if let Ok(value) = NumberFloatLeadingPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NumberFloatLeadingPoint(value));
                         }
-                        if let Ok(value) = NumberFloatExponentTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberFloatExponent(value));
+                        if let Ok(value) = NumberFloatScientificTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NumberFloatScientific(value));
                         }
                         if let Ok(value) = NumberDecimalTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NumberDecimal(value));
@@ -6234,8 +6234,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -6270,8 +6270,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
                         if let Ok(value) = NumberFloatLeadingPointTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NumberFloatLeadingPoint(value));
                         }
-                        if let Ok(value) = NumberFloatExponentTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::NumberFloatExponent(value));
+                        if let Ok(value) = NumberFloatScientificTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NumberFloatScientific(value));
                         }
                         if let Ok(value) = NumberDecimalTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NumberDecimal(value));
@@ -6296,8 +6296,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberTransport {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -6358,7 +6358,7 @@ impl ::sittir_core::view::KindOf for NumberTransport {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -6373,7 +6373,7 @@ fn number_transport_to_any(t: NumberTransport) -> AnyTransport {
         NumberTransport::NumberHex(inner) => AnyTransport::NumberHex(inner),
         NumberTransport::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         NumberTransport::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        NumberTransport::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        NumberTransport::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         NumberTransport::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         NumberTransport::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         NumberTransport::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -9178,7 +9178,7 @@ pub enum ExpressionStatementExpressionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -9232,7 +9232,7 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementExpressionTransportS
             ExpressionStatementExpressionTransportSlot::NumberHex(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ExpressionStatementExpressionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ExpressionStatementExpressionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ExpressionStatementExpressionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -9288,7 +9288,7 @@ impl ::sittir_core::view::KindOf for ExpressionStatementExpressionTransportSlot 
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -9463,8 +9463,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -9684,8 +9684,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementExpressionTra
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -9824,7 +9824,7 @@ fn expression_statement_expression_transport_slot_to_any(t: ExpressionStatementE
         ExpressionStatementExpressionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ExpressionStatementExpressionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ExpressionStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ExpressionStatementExpressionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ExpressionStatementExpressionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ExpressionStatementExpressionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ExpressionStatementExpressionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ExpressionStatementExpressionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -9879,7 +9879,7 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionTransportSlo
             ExpressionStatementExpressionTransportSlot::NumberHex(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ExpressionStatementExpressionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ExpressionStatementExpressionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberDecimal(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberBinary(inner) => inner.render(w),
             ExpressionStatementExpressionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -10473,7 +10473,7 @@ pub enum ForStatementInitializerTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -10530,7 +10530,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForStatementInitializerTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForStatementInitializerTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForStatementInitializerTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -10593,7 +10593,7 @@ impl ::sittir_core::view::KindOf for ForStatementInitializerTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -10776,8 +10776,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -11004,8 +11004,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -11146,7 +11146,7 @@ fn for_statement_initializer_transport_slot_to_any(t: ForStatementInitializerTra
         ForStatementInitializerTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForStatementInitializerTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForStatementInitializerTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForStatementInitializerTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForStatementInitializerTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForStatementInitializerTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForStatementInitializerTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForStatementInitializerTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -11204,7 +11204,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NumberHex(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForStatementInitializerTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForStatementInitializerTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberBinary(inner) => inner.render(w),
             ForStatementInitializerTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -11266,7 +11266,7 @@ pub enum ForStatementConditionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -11321,7 +11321,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForStatementConditionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForStatementConditionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForStatementConditionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -11382,7 +11382,7 @@ impl ::sittir_core::view::KindOf for ForStatementConditionTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -11559,8 +11559,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -11781,8 +11781,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -11921,7 +11921,7 @@ fn for_statement_condition_transport_slot_to_any(t: ForStatementConditionTranspo
         ForStatementConditionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForStatementConditionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForStatementConditionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForStatementConditionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForStatementConditionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForStatementConditionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForStatementConditionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForStatementConditionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -11977,7 +11977,7 @@ impl ::sittir_core::render::Render for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::NumberHex(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForStatementConditionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForStatementConditionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberBinary(inner) => inner.render(w),
             ForStatementConditionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -12039,7 +12039,7 @@ pub enum ForStatementIncrementTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -12093,7 +12093,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementIncrementTransportSlot {
             ForStatementIncrementTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForStatementIncrementTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForStatementIncrementTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForStatementIncrementTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForStatementIncrementTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForStatementIncrementTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForStatementIncrementTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForStatementIncrementTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -12149,7 +12149,7 @@ impl ::sittir_core::view::KindOf for ForStatementIncrementTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -12324,8 +12324,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -12545,8 +12545,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementIncrementTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -12685,7 +12685,7 @@ fn for_statement_increment_transport_slot_to_any(t: ForStatementIncrementTranspo
         ForStatementIncrementTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForStatementIncrementTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForStatementIncrementTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForStatementIncrementTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForStatementIncrementTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForStatementIncrementTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForStatementIncrementTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForStatementIncrementTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -12740,7 +12740,7 @@ impl ::sittir_core::render::Render for ForStatementIncrementTransportSlot {
             ForStatementIncrementTransportSlot::NumberHex(inner) => inner.render(w),
             ForStatementIncrementTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForStatementIncrementTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForStatementIncrementTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForStatementIncrementTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForStatementIncrementTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForStatementIncrementTransportSlot::NumberBinary(inner) => inner.render(w),
             ForStatementIncrementTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -13340,7 +13340,7 @@ pub enum ReturnStatementExpressionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -13394,7 +13394,7 @@ impl ::sittir_core::prepare::Prepare for ReturnStatementExpressionTransportSlot 
             ReturnStatementExpressionTransportSlot::NumberHex(t) => t.prepare(ctx),
             ReturnStatementExpressionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ReturnStatementExpressionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ReturnStatementExpressionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ReturnStatementExpressionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ReturnStatementExpressionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ReturnStatementExpressionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ReturnStatementExpressionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -13450,7 +13450,7 @@ impl ::sittir_core::view::KindOf for ReturnStatementExpressionTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -13625,8 +13625,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -13846,8 +13846,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnStatementExpressionTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -13986,7 +13986,7 @@ fn return_statement_expression_transport_slot_to_any(t: ReturnStatementExpressio
         ReturnStatementExpressionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ReturnStatementExpressionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ReturnStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ReturnStatementExpressionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ReturnStatementExpressionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ReturnStatementExpressionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ReturnStatementExpressionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ReturnStatementExpressionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -14041,7 +14041,7 @@ impl ::sittir_core::render::Render for ReturnStatementExpressionTransportSlot {
             ReturnStatementExpressionTransportSlot::NumberHex(inner) => inner.render(w),
             ReturnStatementExpressionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ReturnStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ReturnStatementExpressionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ReturnStatementExpressionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ReturnStatementExpressionTransportSlot::NumberDecimal(inner) => inner.render(w),
             ReturnStatementExpressionTransportSlot::NumberBinary(inner) => inner.render(w),
             ReturnStatementExpressionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -14208,7 +14208,7 @@ pub enum ThrowStatementExpressionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -14262,7 +14262,7 @@ impl ::sittir_core::prepare::Prepare for ThrowStatementExpressionTransportSlot {
             ThrowStatementExpressionTransportSlot::NumberHex(t) => t.prepare(ctx),
             ThrowStatementExpressionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ThrowStatementExpressionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ThrowStatementExpressionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ThrowStatementExpressionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ThrowStatementExpressionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ThrowStatementExpressionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ThrowStatementExpressionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -14318,7 +14318,7 @@ impl ::sittir_core::view::KindOf for ThrowStatementExpressionTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -14493,8 +14493,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -14714,8 +14714,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowStatementExpressionTranspor
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -14854,7 +14854,7 @@ fn throw_statement_expression_transport_slot_to_any(t: ThrowStatementExpressionT
         ThrowStatementExpressionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ThrowStatementExpressionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ThrowStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ThrowStatementExpressionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ThrowStatementExpressionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ThrowStatementExpressionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ThrowStatementExpressionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ThrowStatementExpressionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -14909,7 +14909,7 @@ impl ::sittir_core::render::Render for ThrowStatementExpressionTransportSlot {
             ThrowStatementExpressionTransportSlot::NumberHex(inner) => inner.render(w),
             ThrowStatementExpressionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ThrowStatementExpressionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ThrowStatementExpressionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ThrowStatementExpressionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ThrowStatementExpressionTransportSlot::NumberDecimal(inner) => inner.render(w),
             ThrowStatementExpressionTransportSlot::NumberBinary(inner) => inner.render(w),
             ThrowStatementExpressionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -15188,7 +15188,7 @@ pub enum SwitchCaseValueTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -15242,7 +15242,7 @@ impl ::sittir_core::prepare::Prepare for SwitchCaseValueTransportSlot {
             SwitchCaseValueTransportSlot::NumberHex(t) => t.prepare(ctx),
             SwitchCaseValueTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             SwitchCaseValueTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            SwitchCaseValueTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            SwitchCaseValueTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             SwitchCaseValueTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             SwitchCaseValueTransportSlot::NumberBinary(t) => t.prepare(ctx),
             SwitchCaseValueTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -15298,7 +15298,7 @@ impl ::sittir_core::view::KindOf for SwitchCaseValueTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -15473,8 +15473,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -15694,8 +15694,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchCaseValueTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -15834,7 +15834,7 @@ fn switch_case_value_transport_slot_to_any(t: SwitchCaseValueTransportSlot) -> A
         SwitchCaseValueTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         SwitchCaseValueTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         SwitchCaseValueTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        SwitchCaseValueTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        SwitchCaseValueTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         SwitchCaseValueTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         SwitchCaseValueTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         SwitchCaseValueTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -15889,7 +15889,7 @@ impl ::sittir_core::render::Render for SwitchCaseValueTransportSlot {
             SwitchCaseValueTransportSlot::NumberHex(inner) => inner.render(w),
             SwitchCaseValueTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             SwitchCaseValueTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            SwitchCaseValueTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            SwitchCaseValueTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             SwitchCaseValueTransportSlot::NumberDecimal(inner) => inner.render(w),
             SwitchCaseValueTransportSlot::NumberBinary(inner) => inner.render(w),
             SwitchCaseValueTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -17053,7 +17053,7 @@ pub enum ArrayElementsTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -17107,7 +17107,7 @@ impl ::sittir_core::prepare::Prepare for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NumberHex(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ArrayElementsTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ArrayElementsTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ArrayElementsTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -17163,7 +17163,7 @@ impl ::sittir_core::view::KindOf for ArrayElementsTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -17338,8 +17338,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -17559,8 +17559,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayElementsTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -17699,7 +17699,7 @@ fn array_elements_transport_slot_to_any(t: ArrayElementsTransportSlot) -> AnyTra
         ArrayElementsTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ArrayElementsTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ArrayElementsTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ArrayElementsTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ArrayElementsTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ArrayElementsTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ArrayElementsTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ArrayElementsTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -17754,7 +17754,7 @@ impl ::sittir_core::render::Render for ArrayElementsTransportSlot {
             ArrayElementsTransportSlot::NumberHex(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ArrayElementsTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ArrayElementsTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberDecimal(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberBinary(inner) => inner.render(w),
             ArrayElementsTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -19693,7 +19693,7 @@ pub enum ArrowFunctionBodyTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -19747,7 +19747,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NumberHex(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ArrowFunctionBodyTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ArrowFunctionBodyTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ArrowFunctionBodyTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -19803,7 +19803,7 @@ impl ::sittir_core::view::KindOf for ArrowFunctionBodyTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -19978,8 +19978,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -20199,8 +20199,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -20339,7 +20339,7 @@ fn arrow_function_body_transport_slot_to_any(t: ArrowFunctionBodyTransportSlot) 
         ArrowFunctionBodyTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ArrowFunctionBodyTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ArrowFunctionBodyTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ArrowFunctionBodyTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ArrowFunctionBodyTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ArrowFunctionBodyTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ArrowFunctionBodyTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ArrowFunctionBodyTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -20394,7 +20394,7 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyTransportSlot {
             ArrowFunctionBodyTransportSlot::NumberHex(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ArrowFunctionBodyTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ArrowFunctionBodyTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberDecimal(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberBinary(inner) => inner.render(w),
             ArrowFunctionBodyTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -20684,7 +20684,7 @@ pub enum MemberExpressionObjectTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -20738,7 +20738,7 @@ impl ::sittir_core::prepare::Prepare for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::NumberHex(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            MemberExpressionObjectTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            MemberExpressionObjectTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NumberBinary(t) => t.prepare(ctx),
             MemberExpressionObjectTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -20794,7 +20794,7 @@ impl ::sittir_core::view::KindOf for MemberExpressionObjectTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -20970,8 +20970,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -21189,8 +21189,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -21326,7 +21326,7 @@ fn member_expression_object_transport_slot_to_any(t: MemberExpressionObjectTrans
         MemberExpressionObjectTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         MemberExpressionObjectTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         MemberExpressionObjectTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        MemberExpressionObjectTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        MemberExpressionObjectTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         MemberExpressionObjectTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         MemberExpressionObjectTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         MemberExpressionObjectTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -21381,7 +21381,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectTransportSlot {
             MemberExpressionObjectTransportSlot::NumberHex(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            MemberExpressionObjectTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            MemberExpressionObjectTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberDecimal(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberBinary(inner) => inner.render(w),
             MemberExpressionObjectTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -21690,7 +21690,7 @@ pub enum SubscriptExpressionObjectTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -21743,7 +21743,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionObjectTransportSlot 
             SubscriptExpressionObjectTransportSlot::NumberHex(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            SubscriptExpressionObjectTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            SubscriptExpressionObjectTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NumberBinary(t) => t.prepare(ctx),
             SubscriptExpressionObjectTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -21798,7 +21798,7 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionObjectTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -21972,8 +21972,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -22190,8 +22190,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionObjectTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -22327,7 +22327,7 @@ fn subscript_expression_object_transport_slot_to_any(t: SubscriptExpressionObjec
         SubscriptExpressionObjectTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         SubscriptExpressionObjectTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         SubscriptExpressionObjectTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        SubscriptExpressionObjectTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        SubscriptExpressionObjectTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         SubscriptExpressionObjectTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         SubscriptExpressionObjectTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         SubscriptExpressionObjectTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -22381,7 +22381,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectTransportSlot {
             SubscriptExpressionObjectTransportSlot::NumberHex(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            SubscriptExpressionObjectTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            SubscriptExpressionObjectTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberDecimal(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberBinary(inner) => inner.render(w),
             SubscriptExpressionObjectTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -22542,7 +22542,7 @@ pub enum SubscriptExpressionIndexTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -22596,7 +22596,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptExpressionIndexTransportSlot {
             SubscriptExpressionIndexTransportSlot::NumberHex(t) => t.prepare(ctx),
             SubscriptExpressionIndexTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             SubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            SubscriptExpressionIndexTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            SubscriptExpressionIndexTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             SubscriptExpressionIndexTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             SubscriptExpressionIndexTransportSlot::NumberBinary(t) => t.prepare(ctx),
             SubscriptExpressionIndexTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -22652,7 +22652,7 @@ impl ::sittir_core::view::KindOf for SubscriptExpressionIndexTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -22827,8 +22827,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -23048,8 +23048,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionIndexTranspor
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -23188,7 +23188,7 @@ fn subscript_expression_index_transport_slot_to_any(t: SubscriptExpressionIndexT
         SubscriptExpressionIndexTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         SubscriptExpressionIndexTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         SubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        SubscriptExpressionIndexTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        SubscriptExpressionIndexTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         SubscriptExpressionIndexTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         SubscriptExpressionIndexTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         SubscriptExpressionIndexTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -23243,7 +23243,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionIndexTransportSlot {
             SubscriptExpressionIndexTransportSlot::NumberHex(inner) => inner.render(w),
             SubscriptExpressionIndexTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             SubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            SubscriptExpressionIndexTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            SubscriptExpressionIndexTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             SubscriptExpressionIndexTransportSlot::NumberDecimal(inner) => inner.render(w),
             SubscriptExpressionIndexTransportSlot::NumberBinary(inner) => inner.render(w),
             SubscriptExpressionIndexTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -24896,7 +24896,7 @@ pub enum TemplateSubstitutionExpressionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -24950,7 +24950,7 @@ impl ::sittir_core::prepare::Prepare for TemplateSubstitutionExpressionTransport
             TemplateSubstitutionExpressionTransportSlot::NumberHex(t) => t.prepare(ctx),
             TemplateSubstitutionExpressionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             TemplateSubstitutionExpressionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            TemplateSubstitutionExpressionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            TemplateSubstitutionExpressionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             TemplateSubstitutionExpressionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             TemplateSubstitutionExpressionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             TemplateSubstitutionExpressionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -25006,7 +25006,7 @@ impl ::sittir_core::view::KindOf for TemplateSubstitutionExpressionTransportSlot
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -25181,8 +25181,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -25402,8 +25402,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateSubstitutionExpressionTr
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -25542,7 +25542,7 @@ fn template_substitution_expression_transport_slot_to_any(t: TemplateSubstitutio
         TemplateSubstitutionExpressionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         TemplateSubstitutionExpressionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         TemplateSubstitutionExpressionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        TemplateSubstitutionExpressionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        TemplateSubstitutionExpressionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         TemplateSubstitutionExpressionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         TemplateSubstitutionExpressionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         TemplateSubstitutionExpressionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -25597,7 +25597,7 @@ impl ::sittir_core::render::Render for TemplateSubstitutionExpressionTransportSl
             TemplateSubstitutionExpressionTransportSlot::NumberHex(inner) => inner.render(w),
             TemplateSubstitutionExpressionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             TemplateSubstitutionExpressionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            TemplateSubstitutionExpressionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            TemplateSubstitutionExpressionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             TemplateSubstitutionExpressionTransportSlot::NumberDecimal(inner) => inner.render(w),
             TemplateSubstitutionExpressionTransportSlot::NumberBinary(inner) => inner.render(w),
             TemplateSubstitutionExpressionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -25652,7 +25652,7 @@ pub enum ArgumentsArgumentsTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -25706,7 +25706,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsArgumentsTransportSlot {
             ArgumentsArgumentsTransportSlot::NumberHex(t) => t.prepare(ctx),
             ArgumentsArgumentsTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ArgumentsArgumentsTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ArgumentsArgumentsTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ArgumentsArgumentsTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ArgumentsArgumentsTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -25762,7 +25762,7 @@ impl ::sittir_core::view::KindOf for ArgumentsArgumentsTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -25937,8 +25937,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -26158,8 +26158,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -26298,7 +26298,7 @@ fn arguments_arguments_transport_slot_to_any(t: ArgumentsArgumentsTransportSlot)
         ArgumentsArgumentsTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ArgumentsArgumentsTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ArgumentsArgumentsTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ArgumentsArgumentsTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ArgumentsArgumentsTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ArgumentsArgumentsTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ArgumentsArgumentsTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -26353,7 +26353,7 @@ impl ::sittir_core::render::Render for ArgumentsArgumentsTransportSlot {
             ArgumentsArgumentsTransportSlot::NumberHex(inner) => inner.render(w),
             ArgumentsArgumentsTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ArgumentsArgumentsTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ArgumentsArgumentsTransportSlot::NumberDecimal(inner) => inner.render(w),
             ArgumentsArgumentsTransportSlot::NumberBinary(inner) => inner.render(w),
             ArgumentsArgumentsTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -27994,7 +27994,7 @@ pub enum MethodDefinitionNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -28013,7 +28013,7 @@ impl ::sittir_core::prepare::Prepare for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            MethodDefinitionNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            MethodDefinitionNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             MethodDefinitionNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -28034,7 +28034,7 @@ impl ::sittir_core::view::KindOf for MethodDefinitionNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -28141,8 +28141,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -28274,8 +28274,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionNameTransportSlo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -28359,7 +28359,7 @@ fn method_definition_name_transport_slot_to_any(t: MethodDefinitionNameTransport
         MethodDefinitionNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         MethodDefinitionNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         MethodDefinitionNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        MethodDefinitionNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        MethodDefinitionNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         MethodDefinitionNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         MethodDefinitionNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         MethodDefinitionNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -28379,7 +28379,7 @@ impl ::sittir_core::render::Render for MethodDefinitionNameTransportSlot {
             MethodDefinitionNameTransportSlot::NumberHex(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            MethodDefinitionNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            MethodDefinitionNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberBinary(inner) => inner.render(w),
             MethodDefinitionNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -28619,7 +28619,7 @@ pub enum PairKeyTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -28638,7 +28638,7 @@ impl ::sittir_core::prepare::Prepare for PairKeyTransportSlot {
             PairKeyTransportSlot::NumberHex(t) => t.prepare(ctx),
             PairKeyTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             PairKeyTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            PairKeyTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            PairKeyTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             PairKeyTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             PairKeyTransportSlot::NumberBinary(t) => t.prepare(ctx),
             PairKeyTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -28659,7 +28659,7 @@ impl ::sittir_core::view::KindOf for PairKeyTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -28766,8 +28766,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -28899,8 +28899,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairKeyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -28984,7 +28984,7 @@ fn pair_key_transport_slot_to_any(t: PairKeyTransportSlot) -> AnyTransport {
         PairKeyTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         PairKeyTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         PairKeyTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        PairKeyTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        PairKeyTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         PairKeyTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         PairKeyTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         PairKeyTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -29004,7 +29004,7 @@ impl ::sittir_core::render::Render for PairKeyTransportSlot {
             PairKeyTransportSlot::NumberHex(inner) => inner.render(w),
             PairKeyTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             PairKeyTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            PairKeyTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            PairKeyTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             PairKeyTransportSlot::NumberDecimal(inner) => inner.render(w),
             PairKeyTransportSlot::NumberBinary(inner) => inner.render(w),
             PairKeyTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -29024,7 +29024,7 @@ pub enum PairPatternKeyTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -29043,7 +29043,7 @@ impl ::sittir_core::prepare::Prepare for PairPatternKeyTransportSlot {
             PairPatternKeyTransportSlot::NumberHex(t) => t.prepare(ctx),
             PairPatternKeyTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             PairPatternKeyTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            PairPatternKeyTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            PairPatternKeyTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             PairPatternKeyTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             PairPatternKeyTransportSlot::NumberBinary(t) => t.prepare(ctx),
             PairPatternKeyTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -29064,7 +29064,7 @@ impl ::sittir_core::view::KindOf for PairPatternKeyTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -29171,8 +29171,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -29304,8 +29304,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternKeyTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -29389,7 +29389,7 @@ fn pair_pattern_key_transport_slot_to_any(t: PairPatternKeyTransportSlot) -> Any
         PairPatternKeyTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         PairPatternKeyTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         PairPatternKeyTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        PairPatternKeyTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        PairPatternKeyTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         PairPatternKeyTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         PairPatternKeyTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         PairPatternKeyTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -29409,7 +29409,7 @@ impl ::sittir_core::render::Render for PairPatternKeyTransportSlot {
             PairPatternKeyTransportSlot::NumberHex(inner) => inner.render(w),
             PairPatternKeyTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             PairPatternKeyTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            PairPatternKeyTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            PairPatternKeyTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             PairPatternKeyTransportSlot::NumberDecimal(inner) => inner.render(w),
             PairPatternKeyTransportSlot::NumberBinary(inner) => inner.render(w),
             PairPatternKeyTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -30399,7 +30399,7 @@ pub enum PublicFieldDefinitionNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -30418,7 +30418,7 @@ impl ::sittir_core::prepare::Prepare for PublicFieldDefinitionNameTransportSlot 
             PublicFieldDefinitionNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             PublicFieldDefinitionNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             PublicFieldDefinitionNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            PublicFieldDefinitionNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            PublicFieldDefinitionNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             PublicFieldDefinitionNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             PublicFieldDefinitionNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             PublicFieldDefinitionNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -30439,7 +30439,7 @@ impl ::sittir_core::view::KindOf for PublicFieldDefinitionNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -30546,8 +30546,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -30679,8 +30679,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionNameTranspo
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -30764,7 +30764,7 @@ fn public_field_definition_name_transport_slot_to_any(t: PublicFieldDefinitionNa
         PublicFieldDefinitionNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         PublicFieldDefinitionNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         PublicFieldDefinitionNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        PublicFieldDefinitionNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        PublicFieldDefinitionNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         PublicFieldDefinitionNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         PublicFieldDefinitionNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         PublicFieldDefinitionNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -30784,7 +30784,7 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionNameTransportSlot {
             PublicFieldDefinitionNameTransportSlot::NumberHex(inner) => inner.render(w),
             PublicFieldDefinitionNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             PublicFieldDefinitionNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            PublicFieldDefinitionNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            PublicFieldDefinitionNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             PublicFieldDefinitionNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             PublicFieldDefinitionNameTransportSlot::NumberBinary(inner) => inner.render(w),
             PublicFieldDefinitionNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -31615,7 +31615,7 @@ pub enum MethodSignatureNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -31634,7 +31634,7 @@ impl ::sittir_core::prepare::Prepare for MethodSignatureNameTransportSlot {
             MethodSignatureNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             MethodSignatureNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             MethodSignatureNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            MethodSignatureNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            MethodSignatureNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             MethodSignatureNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             MethodSignatureNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             MethodSignatureNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -31655,7 +31655,7 @@ impl ::sittir_core::view::KindOf for MethodSignatureNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -31762,8 +31762,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -31895,8 +31895,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureNameTransportSlot
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -31980,7 +31980,7 @@ fn method_signature_name_transport_slot_to_any(t: MethodSignatureNameTransportSl
         MethodSignatureNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         MethodSignatureNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         MethodSignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        MethodSignatureNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        MethodSignatureNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         MethodSignatureNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         MethodSignatureNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         MethodSignatureNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -32000,7 +32000,7 @@ impl ::sittir_core::render::Render for MethodSignatureNameTransportSlot {
             MethodSignatureNameTransportSlot::NumberHex(inner) => inner.render(w),
             MethodSignatureNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             MethodSignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            MethodSignatureNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            MethodSignatureNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             MethodSignatureNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             MethodSignatureNameTransportSlot::NumberBinary(inner) => inner.render(w),
             MethodSignatureNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -32559,7 +32559,7 @@ pub enum AbstractMethodSignatureNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -32578,7 +32578,7 @@ impl ::sittir_core::prepare::Prepare for AbstractMethodSignatureNameTransportSlo
             AbstractMethodSignatureNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             AbstractMethodSignatureNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             AbstractMethodSignatureNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            AbstractMethodSignatureNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            AbstractMethodSignatureNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             AbstractMethodSignatureNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             AbstractMethodSignatureNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             AbstractMethodSignatureNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -32599,7 +32599,7 @@ impl ::sittir_core::view::KindOf for AbstractMethodSignatureNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -32706,8 +32706,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -32839,8 +32839,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureNameTrans
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -32924,7 +32924,7 @@ fn abstract_method_signature_name_transport_slot_to_any(t: AbstractMethodSignatu
         AbstractMethodSignatureNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         AbstractMethodSignatureNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         AbstractMethodSignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        AbstractMethodSignatureNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        AbstractMethodSignatureNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         AbstractMethodSignatureNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         AbstractMethodSignatureNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         AbstractMethodSignatureNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -32944,7 +32944,7 @@ impl ::sittir_core::render::Render for AbstractMethodSignatureNameTransportSlot 
             AbstractMethodSignatureNameTransportSlot::NumberHex(inner) => inner.render(w),
             AbstractMethodSignatureNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             AbstractMethodSignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            AbstractMethodSignatureNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            AbstractMethodSignatureNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             AbstractMethodSignatureNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             AbstractMethodSignatureNameTransportSlot::NumberBinary(inner) => inner.render(w),
             AbstractMethodSignatureNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -35248,7 +35248,7 @@ pub enum EnumAssignmentNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -35267,7 +35267,7 @@ impl ::sittir_core::prepare::Prepare for EnumAssignmentNameTransportSlot {
             EnumAssignmentNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             EnumAssignmentNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             EnumAssignmentNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            EnumAssignmentNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            EnumAssignmentNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             EnumAssignmentNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             EnumAssignmentNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             EnumAssignmentNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -35288,7 +35288,7 @@ impl ::sittir_core::view::KindOf for EnumAssignmentNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -35395,8 +35395,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -35528,8 +35528,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumAssignmentNameTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -35613,7 +35613,7 @@ fn enum_assignment_name_transport_slot_to_any(t: EnumAssignmentNameTransportSlot
         EnumAssignmentNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         EnumAssignmentNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         EnumAssignmentNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        EnumAssignmentNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        EnumAssignmentNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         EnumAssignmentNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         EnumAssignmentNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         EnumAssignmentNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -35633,7 +35633,7 @@ impl ::sittir_core::render::Render for EnumAssignmentNameTransportSlot {
             EnumAssignmentNameTransportSlot::NumberHex(inner) => inner.render(w),
             EnumAssignmentNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             EnumAssignmentNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            EnumAssignmentNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            EnumAssignmentNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             EnumAssignmentNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             EnumAssignmentNameTransportSlot::NumberBinary(inner) => inner.render(w),
             EnumAssignmentNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -39255,7 +39255,7 @@ pub enum TypeQuerySubscriptExpressionIndexTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -39280,7 +39280,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionIndexTransp
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBinary(t) => t.prepare(ctx),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -39307,7 +39307,7 @@ impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionIndexTransportS
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -39358,8 +39358,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -39406,8 +39406,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -39468,7 +39468,7 @@ fn type_query_subscript_expression_index_transport_slot_to_any(t: TypeQuerySubsc
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         TypeQuerySubscriptExpressionIndexTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -39494,7 +39494,7 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberHex(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            TypeQuerySubscriptExpressionIndexTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberDecimal(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberBinary(inner) => inner.render(w),
             TypeQuerySubscriptExpressionIndexTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -40016,7 +40016,7 @@ pub enum LiteralTypeContentTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -40036,7 +40036,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberHex(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            LiteralTypeContentTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            LiteralTypeContentTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::NumberBinary(t) => t.prepare(ctx),
             LiteralTypeContentTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -40058,7 +40058,7 @@ impl ::sittir_core::view::KindOf for LiteralTypeContentTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -40101,8 +40101,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -40149,8 +40149,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeContentTransportSlot 
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -40214,7 +40214,7 @@ fn literal_type_content_transport_slot_to_any(t: LiteralTypeContentTransportSlot
         LiteralTypeContentTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         LiteralTypeContentTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         LiteralTypeContentTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        LiteralTypeContentTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        LiteralTypeContentTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         LiteralTypeContentTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         LiteralTypeContentTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         LiteralTypeContentTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -40235,7 +40235,7 @@ impl ::sittir_core::render::Render for LiteralTypeContentTransportSlot {
             LiteralTypeContentTransportSlot::NumberHex(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            LiteralTypeContentTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            LiteralTypeContentTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::NumberDecimal(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::NumberBinary(inner) => inner.render(w),
             LiteralTypeContentTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -41096,7 +41096,7 @@ pub enum PropertySignatureNameTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -41115,7 +41115,7 @@ impl ::sittir_core::prepare::Prepare for PropertySignatureNameTransportSlot {
             PropertySignatureNameTransportSlot::NumberHex(t) => t.prepare(ctx),
             PropertySignatureNameTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             PropertySignatureNameTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            PropertySignatureNameTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            PropertySignatureNameTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             PropertySignatureNameTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             PropertySignatureNameTransportSlot::NumberBinary(t) => t.prepare(ctx),
             PropertySignatureNameTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -41136,7 +41136,7 @@ impl ::sittir_core::view::KindOf for PropertySignatureNameTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -41243,8 +41243,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -41376,8 +41376,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureNameTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -41461,7 +41461,7 @@ fn property_signature_name_transport_slot_to_any(t: PropertySignatureNameTranspo
         PropertySignatureNameTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         PropertySignatureNameTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         PropertySignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        PropertySignatureNameTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        PropertySignatureNameTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         PropertySignatureNameTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         PropertySignatureNameTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         PropertySignatureNameTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -41481,7 +41481,7 @@ impl ::sittir_core::render::Render for PropertySignatureNameTransportSlot {
             PropertySignatureNameTransportSlot::NumberHex(inner) => inner.render(w),
             PropertySignatureNameTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             PropertySignatureNameTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            PropertySignatureNameTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            PropertySignatureNameTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             PropertySignatureNameTransportSlot::NumberDecimal(inner) => inner.render(w),
             PropertySignatureNameTransportSlot::NumberBinary(inner) => inner.render(w),
             PropertySignatureNameTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -42484,7 +42484,7 @@ pub enum EnumBodyElementsContentTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -42504,7 +42504,7 @@ impl ::sittir_core::prepare::Prepare for EnumBodyElementsContentTransportSlot {
             EnumBodyElementsContentTransportSlot::NumberHex(t) => t.prepare(ctx),
             EnumBodyElementsContentTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             EnumBodyElementsContentTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            EnumBodyElementsContentTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            EnumBodyElementsContentTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             EnumBodyElementsContentTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             EnumBodyElementsContentTransportSlot::NumberBinary(t) => t.prepare(ctx),
             EnumBodyElementsContentTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -42526,7 +42526,7 @@ impl ::sittir_core::view::KindOf for EnumBodyElementsContentTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -42636,8 +42636,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -42772,8 +42772,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyElementsContentTransport
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -42858,7 +42858,7 @@ fn enum_body_elements_content_transport_slot_to_any(t: EnumBodyElementsContentTr
         EnumBodyElementsContentTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         EnumBodyElementsContentTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         EnumBodyElementsContentTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        EnumBodyElementsContentTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        EnumBodyElementsContentTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         EnumBodyElementsContentTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         EnumBodyElementsContentTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         EnumBodyElementsContentTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -42879,7 +42879,7 @@ impl ::sittir_core::render::Render for EnumBodyElementsContentTransportSlot {
             EnumBodyElementsContentTransportSlot::NumberHex(inner) => inner.render(w),
             EnumBodyElementsContentTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             EnumBodyElementsContentTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            EnumBodyElementsContentTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            EnumBodyElementsContentTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             EnumBodyElementsContentTransportSlot::NumberDecimal(inner) => inner.render(w),
             EnumBodyElementsContentTransportSlot::NumberBinary(inner) => inner.render(w),
             EnumBodyElementsContentTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -44607,7 +44607,7 @@ pub enum BinaryExpressionInLeftTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -44661,7 +44661,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NumberHex(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            BinaryExpressionInLeftTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            BinaryExpressionInLeftTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::NumberBinary(t) => t.prepare(ctx),
             BinaryExpressionInLeftTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -44717,7 +44717,7 @@ impl ::sittir_core::view::KindOf for BinaryExpressionInLeftTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -44892,8 +44892,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -45113,8 +45113,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionInLeftTransportS
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -45253,7 +45253,7 @@ fn binary_expression_in_left_transport_slot_to_any(t: BinaryExpressionInLeftTran
         BinaryExpressionInLeftTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         BinaryExpressionInLeftTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         BinaryExpressionInLeftTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        BinaryExpressionInLeftTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        BinaryExpressionInLeftTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         BinaryExpressionInLeftTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         BinaryExpressionInLeftTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         BinaryExpressionInLeftTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -45308,7 +45308,7 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftTransportSlot {
             BinaryExpressionInLeftTransportSlot::NumberHex(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            BinaryExpressionInLeftTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            BinaryExpressionInLeftTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberDecimal(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberBinary(inner) => inner.render(w),
             BinaryExpressionInLeftTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -47409,7 +47409,7 @@ pub enum CallExpressionCallFunctionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -47463,7 +47463,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionCallFunctionTransportSlot
             CallExpressionCallFunctionTransportSlot::NumberHex(t) => t.prepare(ctx),
             CallExpressionCallFunctionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            CallExpressionCallFunctionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             CallExpressionCallFunctionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             CallExpressionCallFunctionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             CallExpressionCallFunctionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -47519,7 +47519,7 @@ impl ::sittir_core::view::KindOf for CallExpressionCallFunctionTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -47695,8 +47695,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -47914,8 +47914,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -48051,7 +48051,7 @@ fn call_expression_call_function_transport_slot_to_any(t: CallExpressionCallFunc
         CallExpressionCallFunctionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         CallExpressionCallFunctionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        CallExpressionCallFunctionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        CallExpressionCallFunctionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         CallExpressionCallFunctionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         CallExpressionCallFunctionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         CallExpressionCallFunctionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -48106,7 +48106,7 @@ impl ::sittir_core::render::Render for CallExpressionCallFunctionTransportSlot {
             CallExpressionCallFunctionTransportSlot::NumberHex(inner) => inner.render(w),
             CallExpressionCallFunctionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             CallExpressionCallFunctionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            CallExpressionCallFunctionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            CallExpressionCallFunctionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             CallExpressionCallFunctionTransportSlot::NumberDecimal(inner) => inner.render(w),
             CallExpressionCallFunctionTransportSlot::NumberBinary(inner) => inner.render(w),
             CallExpressionCallFunctionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -48156,7 +48156,7 @@ pub enum CallExpressionTemplateCallFunctionTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -48195,7 +48195,7 @@ impl ::sittir_core::prepare::Prepare for CallExpressionTemplateCallFunctionTrans
             CallExpressionTemplateCallFunctionTransportSlot::NumberHex(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            CallExpressionTemplateCallFunctionTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            CallExpressionTemplateCallFunctionTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NumberBinary(t) => t.prepare(ctx),
             CallExpressionTemplateCallFunctionTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -48236,7 +48236,7 @@ impl ::sittir_core::view::KindOf for CallExpressionTemplateCallFunctionTransport
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -48386,8 +48386,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -48562,8 +48562,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionTemplateCallFuncti
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -48667,7 +48667,7 @@ fn call_expression_template_call_function_transport_slot_to_any(t: CallExpressio
         CallExpressionTemplateCallFunctionTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         CallExpressionTemplateCallFunctionTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         CallExpressionTemplateCallFunctionTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        CallExpressionTemplateCallFunctionTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        CallExpressionTemplateCallFunctionTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         CallExpressionTemplateCallFunctionTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         CallExpressionTemplateCallFunctionTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         CallExpressionTemplateCallFunctionTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -48707,7 +48707,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionTranspo
             CallExpressionTemplateCallFunctionTransportSlot::NumberHex(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            CallExpressionTemplateCallFunctionTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            CallExpressionTemplateCallFunctionTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberDecimal(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberBinary(inner) => inner.render(w),
             CallExpressionTemplateCallFunctionTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -51049,7 +51049,7 @@ pub enum ForHeaderLhsRightTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -51103,7 +51103,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLhsRightTransportSlot {
             ForHeaderLhsRightTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForHeaderLhsRightTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForHeaderLhsRightTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForHeaderLhsRightTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForHeaderLhsRightTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForHeaderLhsRightTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForHeaderLhsRightTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForHeaderLhsRightTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -51159,7 +51159,7 @@ impl ::sittir_core::view::KindOf for ForHeaderLhsRightTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -51334,8 +51334,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsRightTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -51555,8 +51555,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsRightTransportSlot {
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -51695,7 +51695,7 @@ fn for_header_lhs_right_transport_slot_to_any(t: ForHeaderLhsRightTransportSlot)
         ForHeaderLhsRightTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForHeaderLhsRightTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForHeaderLhsRightTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForHeaderLhsRightTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForHeaderLhsRightTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForHeaderLhsRightTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForHeaderLhsRightTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForHeaderLhsRightTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -51750,7 +51750,7 @@ impl ::sittir_core::render::Render for ForHeaderLhsRightTransportSlot {
             ForHeaderLhsRightTransportSlot::NumberHex(inner) => inner.render(w),
             ForHeaderLhsRightTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForHeaderLhsRightTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForHeaderLhsRightTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForHeaderLhsRightTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForHeaderLhsRightTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForHeaderLhsRightTransportSlot::NumberBinary(inner) => inner.render(w),
             ForHeaderLhsRightTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -52044,7 +52044,7 @@ pub enum ForHeaderVarKindRightTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -52098,7 +52098,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderVarKindRightTransportSlot {
             ForHeaderVarKindRightTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForHeaderVarKindRightTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForHeaderVarKindRightTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForHeaderVarKindRightTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForHeaderVarKindRightTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForHeaderVarKindRightTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForHeaderVarKindRightTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForHeaderVarKindRightTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -52154,7 +52154,7 @@ impl ::sittir_core::view::KindOf for ForHeaderVarKindRightTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -52329,8 +52329,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindRightTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -52550,8 +52550,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindRightTransportSl
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -52690,7 +52690,7 @@ fn for_header_var_kind_right_transport_slot_to_any(t: ForHeaderVarKindRightTrans
         ForHeaderVarKindRightTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForHeaderVarKindRightTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForHeaderVarKindRightTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForHeaderVarKindRightTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForHeaderVarKindRightTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForHeaderVarKindRightTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForHeaderVarKindRightTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForHeaderVarKindRightTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -52745,7 +52745,7 @@ impl ::sittir_core::render::Render for ForHeaderVarKindRightTransportSlot {
             ForHeaderVarKindRightTransportSlot::NumberHex(inner) => inner.render(w),
             ForHeaderVarKindRightTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForHeaderVarKindRightTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForHeaderVarKindRightTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForHeaderVarKindRightTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForHeaderVarKindRightTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForHeaderVarKindRightTransportSlot::NumberBinary(inner) => inner.render(w),
             ForHeaderVarKindRightTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -53143,7 +53143,7 @@ pub enum ForHeaderLetConstKindRightTransportSlot {
     NumberHex(NumberHexTransport),
     NumberFloatPoint(NumberFloatPointTransport),
     NumberFloatLeadingPoint(NumberFloatLeadingPointTransport),
-    NumberFloatExponent(NumberFloatExponentTransport),
+    NumberFloatScientific(NumberFloatScientificTransport),
     NumberDecimal(NumberDecimalTransport),
     NumberBinary(NumberBinaryTransport),
     NumberOctal(NumberOctalTransport),
@@ -53197,7 +53197,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderLetConstKindRightTransportSlot
             ForHeaderLetConstKindRightTransportSlot::NumberHex(t) => t.prepare(ctx),
             ForHeaderLetConstKindRightTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
             ForHeaderLetConstKindRightTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ForHeaderLetConstKindRightTransportSlot::NumberFloatExponent(t) => t.prepare(ctx),
+            ForHeaderLetConstKindRightTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
             ForHeaderLetConstKindRightTransportSlot::NumberDecimal(t) => t.prepare(ctx),
             ForHeaderLetConstKindRightTransportSlot::NumberBinary(t) => t.prepare(ctx),
             ForHeaderLetConstKindRightTransportSlot::NumberOctal(t) => t.prepare(ctx),
@@ -53253,7 +53253,7 @@ impl ::sittir_core::view::KindOf for ForHeaderLetConstKindRightTransportSlot {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -53428,8 +53428,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindRightTransp
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -53649,8 +53649,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindRightTransp
                     156 => Ok(Self::NumberFloatLeadingPoint(
                         NumberFloatLeadingPointTransport::from_napi_value(env, napi_val)?
                     )),
-                    157 => Ok(Self::NumberFloatExponent(
-                        NumberFloatExponentTransport::from_napi_value(env, napi_val)?
+                    157 => Ok(Self::NumberFloatScientific(
+                        NumberFloatScientificTransport::from_napi_value(env, napi_val)?
                     )),
                     158 => Ok(Self::NumberDecimal(
                         NumberDecimalTransport::from_napi_value(env, napi_val)?
@@ -53789,7 +53789,7 @@ fn for_header_let_const_kind_right_transport_slot_to_any(t: ForHeaderLetConstKin
         ForHeaderLetConstKindRightTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
         ForHeaderLetConstKindRightTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
         ForHeaderLetConstKindRightTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ForHeaderLetConstKindRightTransportSlot::NumberFloatExponent(inner) => AnyTransport::NumberFloatExponent(inner),
+        ForHeaderLetConstKindRightTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
         ForHeaderLetConstKindRightTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
         ForHeaderLetConstKindRightTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
         ForHeaderLetConstKindRightTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
@@ -53844,7 +53844,7 @@ impl ::sittir_core::render::Render for ForHeaderLetConstKindRightTransportSlot {
             ForHeaderLetConstKindRightTransportSlot::NumberHex(inner) => inner.render(w),
             ForHeaderLetConstKindRightTransportSlot::NumberFloatPoint(inner) => inner.render(w),
             ForHeaderLetConstKindRightTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ForHeaderLetConstKindRightTransportSlot::NumberFloatExponent(inner) => inner.render(w),
+            ForHeaderLetConstKindRightTransportSlot::NumberFloatScientific(inner) => inner.render(w),
             ForHeaderLetConstKindRightTransportSlot::NumberDecimal(inner) => inner.render(w),
             ForHeaderLetConstKindRightTransportSlot::NumberBinary(inner) => inner.render(w),
             ForHeaderLetConstKindRightTransportSlot::NumberOctal(inner) => inner.render(w),
@@ -71236,31 +71236,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatLeadingPointTranspo
 }
 
 #[derive(Debug, Clone)]
-pub struct NumberFloatExponentTransport {
+pub struct NumberFloatScientificTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for NumberFloatExponentTransport {
+impl ::sittir_core::view::KindOf for NumberFloatScientificTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(157)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::render::Render for NumberFloatExponentTransport {
+impl ::sittir_core::render::Render for NumberFloatScientificTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for NumberFloatExponentTransport {
+impl ::sittir_core::prepare::Prepare for NumberFloatScientificTransport {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
     }
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -71282,7 +71282,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -71298,7 +71298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatScientificTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -71308,22 +71308,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<NumberFloatExponentTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<NumberFloatScientificTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        NumberFloatExponentTransport::from_napi_value(env, napi_val).map(Box::new)
+        NumberFloatScientificTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatExponentTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<NumberFloatScientificTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        NumberFloatExponentTransport::to_napi_value(env, *val)
+        NumberFloatScientificTransport::to_napi_value(env, *val)
     }
 }
 
@@ -91361,7 +91361,7 @@ fn render_number_float_leading_point(node: &NumberFloatLeadingPointTransport, w:
     Ok(())
 }
 
-fn render_number_float_exponent(t: &NumberFloatExponentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_number_float_scientific(t: &NumberFloatScientificTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -92676,7 +92676,7 @@ fn render_number(t: &NumberTransport, w: &mut dyn ::sittir_core::render::RenderS
         NumberTransport::NumberHex(inner) => inner.render(w),
         NumberTransport::NumberFloatPoint(inner) => inner.render(w),
         NumberTransport::NumberFloatLeadingPoint(inner) => inner.render(w),
-        NumberTransport::NumberFloatExponent(inner) => inner.render(w),
+        NumberTransport::NumberFloatScientific(inner) => inner.render(w),
         NumberTransport::NumberDecimal(inner) => inner.render(w),
         NumberTransport::NumberBinary(inner) => inner.render(w),
         NumberTransport::NumberOctal(inner) => inner.render(w),
@@ -92985,7 +92985,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::NumberHex(inner) => inner.kind_in(kinds),
             Self::NumberFloatPoint(inner) => inner.kind_in(kinds),
             Self::NumberFloatLeadingPoint(inner) => inner.kind_in(kinds),
-            Self::NumberFloatExponent(inner) => inner.kind_in(kinds),
+            Self::NumberFloatScientific(inner) => inner.kind_in(kinds),
             Self::NumberDecimal(inner) => inner.kind_in(kinds),
             Self::NumberBinary(inner) => inner.kind_in(kinds),
             Self::NumberOctal(inner) => inner.kind_in(kinds),
@@ -93397,7 +93397,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::NumberHex(t) => t.render(w),
             AnyTransport::NumberFloatPoint(t) => t.render(w),
             AnyTransport::NumberFloatLeadingPoint(t) => t.render(w),
-            AnyTransport::NumberFloatExponent(t) => t.render(w),
+            AnyTransport::NumberFloatScientific(t) => t.render(w),
             AnyTransport::NumberDecimal(t) => t.render(w),
             AnyTransport::NumberBinary(t) => t.render(w),
             AnyTransport::NumberOctal(t) => t.render(w),

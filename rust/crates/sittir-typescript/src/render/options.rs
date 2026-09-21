@@ -793,10 +793,10 @@ pub const SITE_NEW_EXPRESSION_NEW_EXPRESSION_AFTER: usize = 784;
 pub const SITE_NON_NULL_EXPRESSION_BANG_BEFORE: usize = 785;
 pub const SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_BEFORE: usize = 786;
 pub const SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_AFTER: usize = 787;
-pub const SITE_NUMBER_FLOAT_EXPONENT_PLUS_BEFORE: usize = 788;
-pub const SITE_NUMBER_FLOAT_EXPONENT_PLUS_AFTER: usize = 789;
-pub const SITE_NUMBER_FLOAT_EXPONENT_DASH_BEFORE: usize = 790;
-pub const SITE_NUMBER_FLOAT_EXPONENT_DASH_AFTER: usize = 791;
+pub const SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_BEFORE: usize = 788;
+pub const SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_AFTER: usize = 789;
+pub const SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_BEFORE: usize = 790;
+pub const SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_AFTER: usize = 791;
 pub const SITE_NUMBER_OPERATOR_PLUS_BEFORE: usize = 792;
 pub const SITE_NUMBER_OPERATOR_PLUS_AFTER: usize = 793;
 pub const SITE_NUMBER_OPERATOR_DASH_BEFORE: usize = 794;
@@ -2220,10 +2220,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[
     ("non_null_expression", "bang_before", "bang_before", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("non_null_expression", "non_null_expression_before", "non_null_expression_before", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("non_null_expression", "non_null_expression_after", "non_null_expression_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("number_float_exponent", "plus_before", "plus_before", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("number_float_exponent", "plus_after", "plus_after", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("number_float_exponent", "dash_before", "dash_before", 178, &[177, 178, 179, 180, 181, 182], 0),
-    ("number_float_exponent", "dash_after", "dash_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("number_float_scientific", "plus_before", "plus_before", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("number_float_scientific", "plus_after", "plus_after", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("number_float_scientific", "dash_before", "dash_before", 178, &[177, 178, 179, 180, 181, 182], 0),
+    ("number_float_scientific", "dash_after", "dash_after", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("number_operator", "plus_before", "plus_before", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("number_operator", "plus_after", "plus_after", 178, &[177, 178, 179, 180, 181, 182], 0),
     ("number_operator", "dash_before", "dash_before", 178, &[177, 178, 179, 180, 181, 182], 0),
@@ -3193,7 +3193,7 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("nested_type_identifier", &[780, 778, 779, 781]),
     ("new_expression", &[783, 782, 784]),
     ("non_null_expression", &[786, 785, 787]),
-    ("number_float_exponent", &[790, 791, 788, 789]),
+    ("number_float_scientific", &[790, 791, 788, 789]),
     ("number_operator", &[794, 795, 792, 793]),
     ("object", &[805, 803, 800, 799, 804, 806, 796, 797, 798]),
     ("object_assignment_pattern", &[809, 807, 808, 810]),
@@ -3430,7 +3430,7 @@ pub struct Options {
     pub nested_type_identifier: Option<NestedTypeIdentifierOptions>,
     pub new_expression: Option<NewExpressionOptions>,
     pub non_null_expression: Option<NonNullExpressionOptions>,
-    pub number_float_exponent: Option<NumberFloatExponentOptions>,
+    pub number_float_scientific: Option<NumberFloatScientificOptions>,
     pub number_operator: Option<NumberOperatorOptions>,
     pub object: Option<ObjectOptions>,
     pub object_assignment_pattern: Option<ObjectAssignmentPatternOptions>,
@@ -3517,7 +3517,7 @@ pub struct Options {
 impl ::napi::bindgen_prelude::FromNapiValue for Options {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "abstract_class_declaration", "abstract_method_signature", "adding_type_annotation", "ambient_declaration", "ambient_declaration_global", "ambient_declaration_module", "arguments", "array", "array_pattern", "array_type", "arrow_function", "as_expression", "asserts", "asserts_annotation", "assignment_expression", "assignment_pattern", "augmented_assignment_expression", "augmented_assignment_expression_operator", "await_expression", "binary_expression", "binary_expression_in", "body", "break_statement", "call_expression_call", "call_expression_member", "call_expression_template_call", "call_signature", "case_body", "catch_clause", "catch_clause_group", "class", "class_body", "class_body_member", "class_body_method", "class_body_method_sig", "class_declaration", "class_heritage_extends_clause", "class_static_block", "computed_property_name", "conditional_type", "constraint", "construct_signature", "constructor_type", "continue_statement", "debugger_statement", "decorator", "decorator_call_expression", "decorator_member_expression", "decorator_parenthesized_expression", "default_type", "do_statement", "else_clause", "enum_assignment", "enum_body", "enum_body_elements", "enum_declaration", "export_clause", "export_specifier", "export_specifiers", "export_statement_default_declaration", "export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_value", "export_statement_default_from", "export_statement_default_from_clause_from", "export_statement_default_from_ns_from", "export_statement_default_from_star_from", "export_statement_equals_export", "export_statement_namespace_export", "export_statement_type_export", "expression_statement", "extends_clause", "extends_clause_single", "extends_type_clause", "finally_clause", "flow_maybe_type", "for_header_let_const_kind", "for_header_lhs", "for_header_var_kind", "for_in_statement", "for_statement", "formal_parameters", "formal_parameters_elements", "function_declaration", "function_expression", "function_signature", "function_type", "gap", "generator_function", "generator_function_declaration", "generic_type", "if_statement", "implements_clause", "import_alias", "import_attribute", "import_clause_default_import", "import_clause_group", "import_require_clause", "import_specifier_as", "import_specifier_name", "import_specifiers", "import_statement", "import_statement_clause_from", "index_signature_colon", "index_signature_mapped_type_clause", "index_type_query", "infer_type", "instantiation_expression", "interface_declaration", "internal_module", "intersection_type", "labeled_statement", "lexical_declaration", "lookup_type", "mapped_type_clause", "member_expression", "meta_property_import_meta", "meta_property_new_target", "method_definition", "method_signature", "module", "named_imports", "namespace_export", "namespace_import", "nested_identifier", "nested_type_identifier", "new_expression", "non_null_expression", "number_float_exponent", "number_operator", "object", "object_assignment_pattern", "object_pattern", "object_type", "object_type_content", "omitting_type_annotation", "operator", "opting_type_annotation", "optional_parameter", "optional_tuple_parameter", "optional_type", "pair", "pair_pattern", "parenthesized_expression_sequence", "parenthesized_expression_typed", "parenthesized_type", "predefined_type", "program", "property_signature", "public_field_definition", "quotes", "readonly_type", "regex", "regex_pattern", "required_parameter", "rest_pattern", "rest_type", "return_statement", "satisfies_expression", "sequence_expression", "spread_element", "statement_block", "statements", "string", "string_double", "string_single", "subscript_expression", "switch_body", "switch_case", "switch_default", "switch_statement", "template_literal_type", "template_string", "template_substitution", "template_type", "ternary_expression", "throw_statement", "try_statement", "tuple_parameter", "tuple_type", "tuple_type_members", "type_alias_declaration", "type_annotation", "type_arguments", "type_assertion", "type_parameter", "type_parameters", "type_parameters_elements", "type_predicate", "type_predicate_annotation", "type_query", "type_query_call_expression", "type_query_call_expression_in_type_annotation", "type_query_instantiation_expression", "type_query_member_expression", "type_query_member_expression_in_type_annotation", "type_query_subscript_expression", "types", "unary_expression", "unary_expression_operator", "union_type", "update_expression_postfix", "update_expression_prefix", "variable_declaration", "variable_declarator_definite", "variable_declarator_plain", "while_statement", "with_statement", "yield_expression"], "")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "abstract_class_declaration", "abstract_method_signature", "adding_type_annotation", "ambient_declaration", "ambient_declaration_global", "ambient_declaration_module", "arguments", "array", "array_pattern", "array_type", "arrow_function", "as_expression", "asserts", "asserts_annotation", "assignment_expression", "assignment_pattern", "augmented_assignment_expression", "augmented_assignment_expression_operator", "await_expression", "binary_expression", "binary_expression_in", "body", "break_statement", "call_expression_call", "call_expression_member", "call_expression_template_call", "call_signature", "case_body", "catch_clause", "catch_clause_group", "class", "class_body", "class_body_member", "class_body_method", "class_body_method_sig", "class_declaration", "class_heritage_extends_clause", "class_static_block", "computed_property_name", "conditional_type", "constraint", "construct_signature", "constructor_type", "continue_statement", "debugger_statement", "decorator", "decorator_call_expression", "decorator_member_expression", "decorator_parenthesized_expression", "default_type", "do_statement", "else_clause", "enum_assignment", "enum_body", "enum_body_elements", "enum_declaration", "export_clause", "export_specifier", "export_specifiers", "export_statement_default_declaration", "export_statement_default_declaration_default_kw", "export_statement_default_declaration_default_kw_value", "export_statement_default_from", "export_statement_default_from_clause_from", "export_statement_default_from_ns_from", "export_statement_default_from_star_from", "export_statement_equals_export", "export_statement_namespace_export", "export_statement_type_export", "expression_statement", "extends_clause", "extends_clause_single", "extends_type_clause", "finally_clause", "flow_maybe_type", "for_header_let_const_kind", "for_header_lhs", "for_header_var_kind", "for_in_statement", "for_statement", "formal_parameters", "formal_parameters_elements", "function_declaration", "function_expression", "function_signature", "function_type", "gap", "generator_function", "generator_function_declaration", "generic_type", "if_statement", "implements_clause", "import_alias", "import_attribute", "import_clause_default_import", "import_clause_group", "import_require_clause", "import_specifier_as", "import_specifier_name", "import_specifiers", "import_statement", "import_statement_clause_from", "index_signature_colon", "index_signature_mapped_type_clause", "index_type_query", "infer_type", "instantiation_expression", "interface_declaration", "internal_module", "intersection_type", "labeled_statement", "lexical_declaration", "lookup_type", "mapped_type_clause", "member_expression", "meta_property_import_meta", "meta_property_new_target", "method_definition", "method_signature", "module", "named_imports", "namespace_export", "namespace_import", "nested_identifier", "nested_type_identifier", "new_expression", "non_null_expression", "number_float_scientific", "number_operator", "object", "object_assignment_pattern", "object_pattern", "object_type", "object_type_content", "omitting_type_annotation", "operator", "opting_type_annotation", "optional_parameter", "optional_tuple_parameter", "optional_type", "pair", "pair_pattern", "parenthesized_expression_sequence", "parenthesized_expression_typed", "parenthesized_type", "predefined_type", "program", "property_signature", "public_field_definition", "quotes", "readonly_type", "regex", "regex_pattern", "required_parameter", "rest_pattern", "rest_type", "return_statement", "satisfies_expression", "sequence_expression", "spread_element", "statement_block", "statements", "string", "string_double", "string_single", "subscript_expression", "switch_body", "switch_case", "switch_default", "switch_statement", "template_literal_type", "template_string", "template_substitution", "template_type", "ternary_expression", "throw_statement", "try_statement", "tuple_parameter", "tuple_type", "tuple_type_members", "type_alias_declaration", "type_annotation", "type_arguments", "type_assertion", "type_parameter", "type_parameters", "type_parameters_elements", "type_predicate", "type_predicate_annotation", "type_query", "type_query_call_expression", "type_query_call_expression_in_type_annotation", "type_query_instantiation_expression", "type_query_member_expression", "type_query_member_expression_in_type_annotation", "type_query_subscript_expression", "types", "unary_expression", "unary_expression_operator", "union_type", "update_expression_postfix", "update_expression_prefix", "variable_declaration", "variable_declarator_definite", "variable_declarator_plain", "while_statement", "with_statement", "yield_expression"], "")?;
         Ok(Self {
             indent: obj.get("indent")?,
             abstract_class_declaration: obj.get("abstract_class_declaration")?,
@@ -3647,7 +3647,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Options {
             nested_type_identifier: obj.get("nested_type_identifier")?,
             new_expression: obj.get("new_expression")?,
             non_null_expression: obj.get("non_null_expression")?,
-            number_float_exponent: obj.get("number_float_exponent")?,
+            number_float_scientific: obj.get("number_float_scientific")?,
             number_operator: obj.get("number_operator")?,
             object: obj.get("object")?,
             object_assignment_pattern: obj.get("object_assignment_pattern")?,
@@ -3864,7 +3864,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Options {
         obj.set("nested_type_identifier", val.nested_type_identifier)?;
         obj.set("new_expression", val.new_expression)?;
         obj.set("non_null_expression", val.non_null_expression)?;
-        obj.set("number_float_exponent", val.number_float_exponent)?;
+        obj.set("number_float_scientific", val.number_float_scientific)?;
         obj.set("number_operator", val.number_operator)?;
         obj.set("object", val.object)?;
         obj.set("object_assignment_pattern", val.object_assignment_pattern)?;
@@ -18985,16 +18985,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NonNullExpressionBangOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct NumberFloatExponentOptions {
-    pub dash: Option<NumberFloatExponentDashOptions>,
-    pub plus: Option<NumberFloatExponentPlusOptions>,
+pub struct NumberFloatScientificOptions {
+    pub dash: Option<NumberFloatScientificDashOptions>,
+    pub plus: Option<NumberFloatScientificPlusOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["dash", "plus"], "(number_float_exponent)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["dash", "plus"], "(number_float_scientific)")?;
         Ok(Self {
             dash: obj.get("dash")?,
             plus: obj.get("plus")?,
@@ -19003,7 +19003,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatScientificOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("dash", val.dash)?;
@@ -19013,16 +19013,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct NumberFloatExponentDashOptions {
+pub struct NumberFloatScientificDashOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentDashOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificDashOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(number_float_exponent)/\"-\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(number_float_scientific)/\"-\"")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
@@ -19031,7 +19031,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentDashOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentDashOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatScientificDashOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -19041,16 +19041,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentDashOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct NumberFloatExponentPlusOptions {
+pub struct NumberFloatScientificPlusOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentPlusOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatScientificPlusOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(number_float_exponent)/\"+\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(number_float_scientific)/\"+\"")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
@@ -19059,7 +19059,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NumberFloatExponentPlusOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatExponentPlusOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for NumberFloatScientificPlusOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -35025,17 +35025,17 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     if let Some(v) = options.non_null_expression.as_ref().and_then(|o| o.before) {
         set_spacing(&mut table, SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_BEFORE, SPACING_SITES[SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_BEFORE].4, v, "(non_null_expression)/before")?;
     }
-    if let Some(v) = options.number_float_exponent.as_ref().and_then(|o| o.dash.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_NUMBER_FLOAT_EXPONENT_DASH_AFTER, SPACING_SITES[SITE_NUMBER_FLOAT_EXPONENT_DASH_AFTER].4, v, "(number_float_exponent)/\"-\"/after")?;
+    if let Some(v) = options.number_float_scientific.as_ref().and_then(|o| o.dash.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_AFTER, SPACING_SITES[SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_AFTER].4, v, "(number_float_scientific)/\"-\"/after")?;
     }
-    if let Some(v) = options.number_float_exponent.as_ref().and_then(|o| o.dash.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_NUMBER_FLOAT_EXPONENT_DASH_BEFORE, SPACING_SITES[SITE_NUMBER_FLOAT_EXPONENT_DASH_BEFORE].4, v, "(number_float_exponent)/\"-\"/before")?;
+    if let Some(v) = options.number_float_scientific.as_ref().and_then(|o| o.dash.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_BEFORE, SPACING_SITES[SITE_NUMBER_FLOAT_SCIENTIFIC_DASH_BEFORE].4, v, "(number_float_scientific)/\"-\"/before")?;
     }
-    if let Some(v) = options.number_float_exponent.as_ref().and_then(|o| o.plus.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_NUMBER_FLOAT_EXPONENT_PLUS_AFTER, SPACING_SITES[SITE_NUMBER_FLOAT_EXPONENT_PLUS_AFTER].4, v, "(number_float_exponent)/\"+\"/after")?;
+    if let Some(v) = options.number_float_scientific.as_ref().and_then(|o| o.plus.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_AFTER, SPACING_SITES[SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_AFTER].4, v, "(number_float_scientific)/\"+\"/after")?;
     }
-    if let Some(v) = options.number_float_exponent.as_ref().and_then(|o| o.plus.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_NUMBER_FLOAT_EXPONENT_PLUS_BEFORE, SPACING_SITES[SITE_NUMBER_FLOAT_EXPONENT_PLUS_BEFORE].4, v, "(number_float_exponent)/\"+\"/before")?;
+    if let Some(v) = options.number_float_scientific.as_ref().and_then(|o| o.plus.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_BEFORE, SPACING_SITES[SITE_NUMBER_FLOAT_SCIENTIFIC_PLUS_BEFORE].4, v, "(number_float_scientific)/\"+\"/before")?;
     }
     if let Some(v) = options.number_operator.as_ref().and_then(|o| o.dash.as_ref()).and_then(|o| o.after) {
         set_spacing(&mut table, SITE_NUMBER_OPERATOR_DASH_AFTER, SPACING_SITES[SITE_NUMBER_OPERATOR_DASH_AFTER].4, v, "(number_operator)/\"-\"/after")?;

@@ -2932,8 +2932,8 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.exponent builds the parent', () => {
-		const node = ir.casePattern.negative.exponent({ content: ['1e0'] });
+	it('negative.scientific builds the parent', () => {
+		const node = ir.casePattern.negative.scientific({ content: ['1e0'] });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3291,8 +3291,8 @@ describe('keyword_pattern sub-factories', () => {
 		expect((node as any).value()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negative.exponent builds the parent', () => {
-		const node = ir.keywordPattern.negative.exponent({
+	it('negative.scientific builds the parent', () => {
+		const node = ir.keywordPattern.negative.scientific({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			value: [{ content: ['1e0'] }]
 		});

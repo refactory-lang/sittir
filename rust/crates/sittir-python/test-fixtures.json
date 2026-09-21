@@ -46425,7 +46425,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "- .6_6\n+ .1_1\n123.4123\n123.123J\n1_1.3_1\n1_1.\n1e+3_4j\n.3e1_4\n",
-    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_leading_point)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_leading_point)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_exponent))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_leading_point))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_leading_point)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_leading_point)))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_scientific))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_leading_point))) (newline)))",
     "wrappedText": "- .6_6\n+ .1_1\n123.4123\n123.123J\n1_1.3_1\n1_1.\n1e+3_4j\n.3e1_4\n",
     "wrappedOffset": 0
   },
@@ -46669,7 +46669,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "1e+3_4j",
-    "expectedReparseTree": "(expression_statement (float_exponent))",
+    "expectedReparseTree": "(expression_statement (float_scientific))",
     "wrappedText": "1e+3_4j",
     "wrappedOffset": 0
   },
@@ -47001,7 +47001,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "1e322\n1e-3\n1e+3\n1.8e10\n1.e10\n- 1e10\n",
-    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_exponent))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_exponent))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_exponent))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_exponent)))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_scientific))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_scientific))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_scientific))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (float_point))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (unary_operator argument: (float_scientific)))) (newline)))",
     "wrappedText": "1e322\n1e-3\n1e+3\n1.8e10\n1.e10\n- 1e10\n",
     "wrappedOffset": 0
   },
@@ -47033,7 +47033,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "1e322",
-    "expectedReparseTree": "(expression_statement (float_exponent))",
+    "expectedReparseTree": "(expression_statement (float_scientific))",
     "wrappedText": "1e322",
     "wrappedOffset": 0
   },
@@ -47065,7 +47065,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "1e-3",
-    "expectedReparseTree": "(expression_statement (float_exponent))",
+    "expectedReparseTree": "(expression_statement (float_scientific))",
     "wrappedText": "1e-3",
     "wrappedOffset": 0
   },
@@ -47097,7 +47097,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "1e+3",
-    "expectedReparseTree": "(expression_statement (float_exponent))",
+    "expectedReparseTree": "(expression_statement (float_scientific))",
     "wrappedText": "1e+3",
     "wrappedOffset": 0
   },
@@ -47203,7 +47203,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "- 1e10",
-    "expectedReparseTree": "(expression_statement (unary_operator argument: (float_exponent)))",
+    "expectedReparseTree": "(expression_statement (unary_operator argument: (float_scientific)))",
     "wrappedText": "- 1e10",
     "wrappedOffset": 0
   },
@@ -47240,7 +47240,7 @@
     "pattern": "unary_operator",
     "edits": [],
     "expectedSourceOut": "- 1e10",
-    "expectedReparseTree": "(unary_operator argument: (float_exponent))",
+    "expectedReparseTree": "(unary_operator argument: (float_scientific))",
     "wrappedText": "_ = - 1e10",
     "wrappedOffset": 4
   },

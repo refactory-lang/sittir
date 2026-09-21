@@ -513,7 +513,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -600,7 +600,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -643,7 +643,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -680,7 +680,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -731,7 +731,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -782,7 +782,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'float',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -818,7 +818,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'escape_sequence_named'
 	]),
 	integer: new Set(['integer_hex', 'integer_octal', 'integer_binary', 'integer_decimal']),
-	float: new Set(['float_point', 'float_leading_point', 'float_exponent']),
+	float: new Set(['float_point', 'float_leading_point', 'float_scientific']),
 	keyword_identifier: new Set(['identifier']),
 	line_continuation: new Set(['line_continuation_newline', 'line_continuation_nul']),
 	_whitespace: new Set([
@@ -1436,7 +1436,7 @@ export function wrapExpressionStatement(
 			| T.Assignment
 			| T.AugmentedAssignment
 			| T.Yield;
-		readonly _float_exponent?:
+		readonly _float_scientific?:
 			| T.Expression
 			| T.ExpressionStatementTuple
 			| T.Assignment
@@ -1559,7 +1559,7 @@ export function wrapExpressionStatement(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -1609,9 +1609,9 @@ export function wrapExpressionStatement(
 				'_ellipsis',
 				'_expression_statement_tuple',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -1654,7 +1654,7 @@ export function wrapExpressionStatement(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -1790,7 +1790,7 @@ export function wrapReturnStatement(
 		readonly _integer_decimal?: T.Expression | T.ExpressionList;
 		readonly _float_point?: T.Expression | T.ExpressionList;
 		readonly _float_leading_point?: T.Expression | T.ExpressionList;
-		readonly _float_exponent?: T.Expression | T.ExpressionList;
+		readonly _float_scientific?: T.Expression | T.ExpressionList;
 		readonly _true?: T.Expression | T.ExpressionList;
 		readonly _false?: T.Expression | T.ExpressionList;
 		readonly _none?: T.Expression | T.ExpressionList;
@@ -1833,7 +1833,7 @@ export function wrapReturnStatement(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -1874,9 +1874,9 @@ export function wrapReturnStatement(
 				'_ellipsis',
 				'_expression_list',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -1918,7 +1918,7 @@ export function wrapReturnStatement(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -1979,7 +1979,7 @@ export function wrapDeleteStatement(
 		readonly _integer_decimal?: T.Expression | T.ExpressionList;
 		readonly _float_point?: T.Expression | T.ExpressionList;
 		readonly _float_leading_point?: T.Expression | T.ExpressionList;
-		readonly _float_exponent?: T.Expression | T.ExpressionList;
+		readonly _float_scientific?: T.Expression | T.ExpressionList;
 		readonly _true?: T.Expression | T.ExpressionList;
 		readonly _false?: T.Expression | T.ExpressionList;
 		readonly _none?: T.Expression | T.ExpressionList;
@@ -2022,7 +2022,7 @@ export function wrapDeleteStatement(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -2063,9 +2063,9 @@ export function wrapDeleteStatement(
 				'_ellipsis',
 				'_expression_list',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -2107,7 +2107,7 @@ export function wrapDeleteStatement(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -2168,7 +2168,7 @@ export function wrapRaiseStatement(
 		readonly _integer_decimal?: T.Expression | T.ExpressionList;
 		readonly _float_point?: T.Expression | T.ExpressionList;
 		readonly _float_leading_point?: T.Expression | T.ExpressionList;
-		readonly _float_exponent?: T.Expression | T.ExpressionList;
+		readonly _float_scientific?: T.Expression | T.ExpressionList;
 		readonly _true?: T.Expression | T.ExpressionList;
 		readonly _false?: T.Expression | T.ExpressionList;
 		readonly _none?: T.Expression | T.ExpressionList;
@@ -2212,7 +2212,7 @@ export function wrapRaiseStatement(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -2253,9 +2253,9 @@ export function wrapRaiseStatement(
 				'_ellipsis',
 				'_expression_list',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -2297,7 +2297,7 @@ export function wrapRaiseStatement(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -3560,7 +3560,7 @@ export function wrapExpressionList(
 		readonly _integer_decimal?: T.Expression;
 		readonly _float_point?: T.Expression;
 		readonly _float_leading_point?: T.Expression;
-		readonly _float_exponent?: T.Expression;
+		readonly _float_scientific?: T.Expression;
 		readonly _true?: T.Expression;
 		readonly _false?: T.Expression;
 		readonly _none?: T.Expression;
@@ -3603,7 +3603,7 @@ export function wrapExpressionList(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -3644,9 +3644,9 @@ export function wrapExpressionList(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -3688,7 +3688,7 @@ export function wrapExpressionList(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -4559,7 +4559,7 @@ export function wrapComplexPattern(
 		readonly _integer_decimal?: T.Integer | T.Float;
 		readonly _float_point?: T.Integer | T.Float;
 		readonly _float_leading_point?: T.Integer | T.Float;
-		readonly _float_exponent?: T.Integer | T.Float;
+		readonly _float_scientific?: T.Integer | T.Float;
 	},
 	tree: TreeHandle
 ) {
@@ -4574,16 +4574,16 @@ export function wrapComplexPattern(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent'
+		'_float_scientific'
 	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ComplexPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_integer_binary',
 				'_integer_decimal',
 				'_integer_hex',
@@ -4622,7 +4622,7 @@ export function wrapComplexPattern(
 					data._integer_decimal ??
 					data._float_point ??
 					data._float_leading_point ??
-					data._float_exponent,
+					data._float_scientific,
 				'content',
 				true,
 				data.$type,
@@ -5097,7 +5097,7 @@ export function wrapExpressionWithinForInClause(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -5138,7 +5138,7 @@ export function wrapExpressionWithinForInClause(
 		'integer_decimal',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -5181,7 +5181,7 @@ export function wrapExpressionWithinForInClause(
 			'integer_decimal',
 			'float_point',
 			'float_leading_point',
-			'float_exponent',
+			'float_scientific',
 			'true',
 			'false',
 			'none',
@@ -5246,7 +5246,7 @@ export function wrapExpression(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -5286,7 +5286,7 @@ export function wrapExpression(
 		'integer_decimal',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -5328,7 +5328,7 @@ export function wrapExpression(
 			'integer_decimal',
 			'float_point',
 			'float_leading_point',
-			'float_exponent',
+			'float_scientific',
 			'true',
 			'false',
 			'none',
@@ -5402,7 +5402,7 @@ export function wrapPrimaryExpression(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent'
+		'_float_scientific'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'await',
@@ -5436,7 +5436,7 @@ export function wrapPrimaryExpression(
 		'integer_decimal',
 		'float_point',
 		'float_leading_point',
-		'float_exponent'
+		'float_scientific'
 	]) as T.PrimaryExpression | readonly T.PrimaryExpression[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -5472,7 +5472,7 @@ export function wrapPrimaryExpression(
 			'integer_decimal',
 			'float_point',
 			'float_leading_point',
-			'float_exponent'
+			'float_scientific'
 		]);
 	if (
 		filtered === undefined &&
@@ -6049,7 +6049,7 @@ export function wrapRightHandSide(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -6097,7 +6097,7 @@ export function wrapRightHandSide(
 		'integer_decimal',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -6147,7 +6147,7 @@ export function wrapRightHandSide(
 			'integer_decimal',
 			'float_point',
 			'float_leading_point',
-			'float_exponent',
+			'float_scientific',
 			'true',
 			'false',
 			'none',
@@ -6208,7 +6208,7 @@ export function wrapYield(
 		readonly _integer_decimal?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _float_point?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _float_leading_point?: T.YieldFromClause | T.Expression | T.ExpressionList;
-		readonly _float_exponent?: T.YieldFromClause | T.Expression | T.ExpressionList;
+		readonly _float_scientific?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _true?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _false?: T.YieldFromClause | T.Expression | T.ExpressionList;
 		readonly _none?: T.YieldFromClause | T.Expression | T.ExpressionList;
@@ -6252,7 +6252,7 @@ export function wrapYield(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -6293,9 +6293,9 @@ export function wrapYield(
 				'_ellipsis',
 				'_expression_list',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -6339,7 +6339,7 @@ export function wrapYield(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -6670,7 +6670,7 @@ export function wrapType(
 			| T.UnionType
 			| T.ConstrainedType
 			| T.MemberType;
-		readonly _float_exponent?:
+		readonly _float_scientific?:
 			| T.Expression
 			| T.SplatType
 			| T.GenericType
@@ -6789,7 +6789,7 @@ export function wrapType(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -6834,9 +6834,9 @@ export function wrapType(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_generic_type',
 				'_identifier',
@@ -6882,7 +6882,7 @@ export function wrapType(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -7484,7 +7484,7 @@ export function wrapParenthesizedExpression(
 		readonly _integer_decimal?: T.Expression | T.Yield | T.ListSplat;
 		readonly _float_point?: T.Expression | T.Yield | T.ListSplat;
 		readonly _float_leading_point?: T.Expression | T.Yield | T.ListSplat;
-		readonly _float_exponent?: T.Expression | T.Yield | T.ListSplat;
+		readonly _float_scientific?: T.Expression | T.Yield | T.ListSplat;
 		readonly _true?: T.Expression | T.Yield | T.ListSplat;
 		readonly _false?: T.Expression | T.Yield | T.ListSplat;
 		readonly _none?: T.Expression | T.Yield | T.ListSplat;
@@ -7528,7 +7528,7 @@ export function wrapParenthesizedExpression(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -7569,9 +7569,9 @@ export function wrapParenthesizedExpression(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -7615,7 +7615,7 @@ export function wrapParenthesizedExpression(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -8150,7 +8150,7 @@ export function wrapFExpression(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -8193,7 +8193,7 @@ export function wrapFExpression(
 		'integer_decimal',
 		'float_point',
 		'float_leading_point',
-		'float_exponent',
+		'float_scientific',
 		'true',
 		'false',
 		'none',
@@ -8238,7 +8238,7 @@ export function wrapFExpression(
 			'integer_decimal',
 			'float_point',
 			'float_leading_point',
-			'float_exponent',
+			'float_scientific',
 			'true',
 			'false',
 			'none',
@@ -8401,13 +8401,13 @@ export function wrapInteger(
 
 export function wrapFloat(data: T.Float & { readonly $other?: T.Float | readonly T.Float[] }, tree: TreeHandle) {
 	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_float_point', '_float_leading_point', '_float_exponent']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['float_point', 'float_leading_point', 'float_exponent']) as
+	const node = _keepModelledSlots(data, ['_float_point', '_float_leading_point', '_float_scientific']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['float_point', 'float_leading_point', 'float_scientific']) as
 		| T.Float
 		| readonly T.Float[]
 		| undefined;
 	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['float_point', 'float_leading_point', 'float_exponent']);
+		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['float_point', 'float_leading_point', 'float_scientific']);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -8686,7 +8686,7 @@ export function wrapExpressionListExpressions(
 		readonly _integer_decimal?: T.Expression;
 		readonly _float_point?: T.Expression;
 		readonly _float_leading_point?: T.Expression;
-		readonly _float_exponent?: T.Expression;
+		readonly _float_scientific?: T.Expression;
 		readonly _true?: T.Expression;
 		readonly _false?: T.Expression;
 		readonly _none?: T.Expression;
@@ -8730,7 +8730,7 @@ export function wrapExpressionListExpressions(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -8772,7 +8772,7 @@ export function wrapExpressionListExpressions(
 					['integer_decimal', data._integer_decimal],
 					['float_point', data._float_point],
 					['float_leading_point', data._float_leading_point],
-					['float_exponent', data._float_exponent],
+					['float_scientific', data._float_scientific],
 					['true', data._true],
 					['false', data._false],
 					['none', data._none],
@@ -8815,9 +8815,9 @@ export function wrapExpressionListExpressions(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -9068,7 +9068,7 @@ export function wrapSliceGroup(
 		readonly _integer_decimal?: T.Expression;
 		readonly _float_point?: T.Expression;
 		readonly _float_leading_point?: T.Expression;
-		readonly _float_exponent?: T.Expression;
+		readonly _float_scientific?: T.Expression;
 		readonly _true?: T.Expression;
 		readonly _false?: T.Expression;
 		readonly _none?: T.Expression;
@@ -9110,7 +9110,7 @@ export function wrapSliceGroup(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -9149,9 +9149,9 @@ export function wrapSliceGroup(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -9193,7 +9193,7 @@ export function wrapSliceGroup(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -9869,7 +9869,7 @@ export function wrapSimplePatternNegative(
 		readonly _integer_decimal?: T.Integer | T.Float;
 		readonly _float_point?: T.Integer | T.Float;
 		readonly _float_leading_point?: T.Integer | T.Float;
-		readonly _float_exponent?: T.Integer | T.Float;
+		readonly _float_scientific?: T.Integer | T.Float;
 	},
 	tree: TreeHandle
 ) {
@@ -9882,16 +9882,16 @@ export function wrapSimplePatternNegative(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent'
+		'_float_scientific'
 	]);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.SimplePatternNegative as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_integer_binary',
 				'_integer_decimal',
 				'_integer_hex',
@@ -9914,7 +9914,7 @@ export function wrapSimplePatternNegative(
 					data._integer_decimal ??
 					data._float_point ??
 					data._float_leading_point ??
-					data._float_exponent,
+					data._float_scientific,
 				'content',
 				true,
 				data.$type,
@@ -10336,7 +10336,7 @@ export function wrapComparisonOperatorComparator(
 		readonly _integer_decimal?: T.PrimaryExpression;
 		readonly _float_point?: T.PrimaryExpression;
 		readonly _float_leading_point?: T.PrimaryExpression;
-		readonly _float_exponent?: T.PrimaryExpression;
+		readonly _float_scientific?: T.PrimaryExpression;
 		readonly _true?: T.PrimaryExpression;
 		readonly _false?: T.PrimaryExpression;
 		readonly _none?: T.PrimaryExpression;
@@ -10372,7 +10372,7 @@ export function wrapComparisonOperatorComparator(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -10406,9 +10406,9 @@ export function wrapComparisonOperatorComparator(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -10478,7 +10478,7 @@ export function wrapComparisonOperatorComparator(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -10540,7 +10540,7 @@ export function wrapYieldFromClause(
 		readonly _integer_decimal?: T.Expression;
 		readonly _float_point?: T.Expression;
 		readonly _float_leading_point?: T.Expression;
-		readonly _float_exponent?: T.Expression;
+		readonly _float_scientific?: T.Expression;
 		readonly _true?: T.Expression;
 		readonly _false?: T.Expression;
 		readonly _none?: T.Expression;
@@ -10582,7 +10582,7 @@ export function wrapYieldFromClause(
 		'_integer_decimal',
 		'_float_point',
 		'_float_leading_point',
-		'_float_exponent',
+		'_float_scientific',
 		'_true',
 		'_false',
 		'_none',
@@ -10621,9 +10621,9 @@ export function wrapYieldFromClause(
 				'_dictionary_comprehension',
 				'_ellipsis',
 				'_false',
-				'_float_exponent',
 				'_float_leading_point',
 				'_float_point',
+				'_float_scientific',
 				'_generator_expression',
 				'_identifier',
 				'_integer_binary',
@@ -10665,7 +10665,7 @@ export function wrapYieldFromClause(
 						data._integer_decimal ??
 						data._float_point ??
 						data._float_leading_point ??
-						data._float_exponent ??
+						data._float_scientific ??
 						data._true ??
 						data._false ??
 						data._none ??
@@ -10885,7 +10885,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.IntegerDecimal]: (d) => ({ ...d, $type: TSKindId.IntegerDecimal as const }),
 	[TSKindId.FloatPoint]: (d) => ({ ...d, $type: TSKindId.FloatPoint as const }),
 	[TSKindId.FloatLeadingPoint]: (d) => ({ ...d, $type: TSKindId.FloatLeadingPoint as const }),
-	[TSKindId.FloatExponent]: (d) => ({ ...d, $type: TSKindId.FloatExponent as const }),
+	[TSKindId.FloatScientific]: (d) => ({ ...d, $type: TSKindId.FloatScientific as const }),
 	[TSKindId.EscapeSequenceUnicodeFixed]: (d, t) =>
 		wrapEscapeSequenceUnicodeFixed(d as unknown as T.EscapeSequenceUnicodeFixed, t),
 	[TSKindId.EscapeSequenceUnicodeWide]: (d, t) =>
@@ -11092,7 +11092,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.IntegerDecimal]: _NodeData & { readonly $type: TSKindId.IntegerDecimal };
 	[TSKindId.FloatPoint]: _NodeData & { readonly $type: TSKindId.FloatPoint };
 	[TSKindId.FloatLeadingPoint]: _NodeData & { readonly $type: TSKindId.FloatLeadingPoint };
-	[TSKindId.FloatExponent]: _NodeData & { readonly $type: TSKindId.FloatExponent };
+	[TSKindId.FloatScientific]: _NodeData & { readonly $type: TSKindId.FloatScientific };
 	[TSKindId.EscapeSequenceUnicodeFixed]: ReturnType<typeof wrapEscapeSequenceUnicodeFixed>;
 	[TSKindId.EscapeSequenceUnicodeWide]: ReturnType<typeof wrapEscapeSequenceUnicodeWide>;
 	[TSKindId.EscapeSequenceHex]: ReturnType<typeof wrapEscapeSequenceHex>;

@@ -5432,13 +5432,13 @@
         },
         {
           "type": "SYMBOL",
-          "name": "number_float_exponent",
+          "name": "number_float_scientific",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "float_exponent",
+            "variant": "float_scientific",
             "variantOf": "number"
           }
         },
@@ -13629,7 +13629,7 @@
         "hoisted": true
       }
     },
-    "number_float_exponent": {
+    "number_float_scientific": {
       "type": "TOKEN",
       "content": {
         "type": "SEQ",
@@ -16279,10 +16279,10 @@
     ],
     [
       "number",
-      "number_float_exponent"
+      "number_float_scientific"
     ],
     [
-      "number_float_exponent"
+      "number_float_scientific"
     ],
     [
       "number",

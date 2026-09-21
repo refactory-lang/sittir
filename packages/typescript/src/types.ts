@@ -343,7 +343,7 @@ export enum TSKindId {
 	NumberHex = 154,
 	NumberFloatPoint = 155,
 	NumberFloatLeadingPoint = 156,
-	NumberFloatExponent = 157,
+	NumberFloatScientific = 157,
 	NumberDecimal = 158,
 	NumberBinary = 159,
 	NumberOctal = 160,
@@ -810,7 +810,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[154, 'number_hex'],
 	[155, 'number_float_point'],
 	[156, 'number_float_leading_point'],
-	[157, 'number_float_exponent'],
+	[157, 'number_float_scientific'],
 	[158, 'number_decimal'],
 	[159, 'number_binary'],
 	[160, 'number_octal'],
@@ -1279,7 +1279,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[154, 'number_hex'],
 	[155, 'number_float_point'],
 	[156, 'number_float_leading_point'],
-	[157, 'number_float_exponent'],
+	[157, 'number_float_scientific'],
 	[158, 'number_decimal'],
 	[159, 'number_binary'],
 	[160, 'number_octal'],
@@ -1910,8 +1910,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NumberFloatPoint;
 		case 'number_float_leading_point':
 			return TSKindId.NumberFloatLeadingPoint;
-		case 'number_float_exponent':
-			return TSKindId.NumberFloatExponent;
+		case 'number_float_scientific':
+			return TSKindId.NumberFloatScientific;
 		case 'number_decimal':
 			return TSKindId.NumberDecimal;
 		case 'number_binary':
@@ -2997,7 +2997,7 @@ export enum NumberKind {
 	NumberHex = 'number_hex',
 	NumberFloatPoint = 'number_float_point',
 	NumberFloatLeadingPoint = 'number_float_leading_point',
-	NumberFloatExponent = 'number_float_exponent',
+	NumberFloatScientific = 'number_float_scientific',
 	NumberDecimal = 'number_decimal',
 	NumberBinary = 'number_binary',
 	NumberOctal = 'number_octal',
@@ -11821,7 +11821,7 @@ export type UnaryExpressionOperator =
 	| TSKindId.DeleteKeyword;
 export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
-export type NumberFloatExponent = Terminal<TSKindId.NumberFloatExponent, string>;
+export type NumberFloatScientific = Terminal<TSKindId.NumberFloatScientific, string>;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
@@ -12159,7 +12159,7 @@ export interface NumberOperatorTree extends AnyTreeNode {
 export interface OperatorTree extends AnyTreeNode {
 	readonly type: '_operator';
 }
-export interface NumberFloatExponentTree extends TreeNode<'number_float_exponent'> {}
+export interface NumberFloatScientificTree extends TreeNode<'number_float_scientific'> {}
 export interface NumberDecimalTree extends TreeNode<'number_decimal'> {}
 export interface MetaPropertyNewTargetTree extends AnyTreeNode {
 	readonly type: 'meta_property_new_target';
@@ -12648,7 +12648,7 @@ export type Number =
 	| NumberHex
 	| NumberFloatPoint
 	| NumberFloatLeadingPoint
-	| NumberFloatExponent
+	| NumberFloatScientific
 	| NumberDecimal
 	| NumberBinary
 	| NumberOctal
@@ -12658,7 +12658,7 @@ export type NumberTree =
 	| NumberHexTree
 	| NumberFloatPointTree
 	| NumberFloatLeadingPointTree
-	| NumberFloatExponentTree
+	| NumberFloatScientificTree
 	| NumberDecimalTree
 	| NumberBinaryTree
 	| NumberOctalTree
@@ -13292,7 +13292,7 @@ export interface KindMap {
 	_unary_expression_operator: UnaryExpressionOperator;
 	__number_operator: NumberOperator;
 	_operator: Operator;
-	number_float_exponent: NumberFloatExponent;
+	number_float_scientific: NumberFloatScientific;
 	number_decimal: NumberDecimal;
 	meta_property_new_target: MetaPropertyNewTarget;
 	meta_property_import_meta: MetaPropertyImportMeta;
@@ -15754,12 +15754,12 @@ export interface TypeIdentifierNs extends LeafNs<
 	TypeIdentifierTree,
 	'_type_identifier'
 > {}
-export interface NumberFloatExponentNs extends LeafNs<
-	NumberFloatExponent,
+export interface NumberFloatScientificNs extends LeafNs<
+	NumberFloatScientific,
 	string,
-	NumberFloatExponent.Built,
-	NumberFloatExponentTree,
-	'number_float_exponent'
+	NumberFloatScientific.Built,
+	NumberFloatScientificTree,
+	'number_float_scientific'
 > {}
 export interface NumberDecimalNs extends LeafNs<
 	NumberDecimal,
@@ -16039,7 +16039,7 @@ export interface NamespaceMap {
 	[TSKindId.RegexFlags]: RegexFlagsNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId.NumberFloatExponent]: NumberFloatExponentNs;
+	[TSKindId.NumberFloatScientific]: NumberFloatScientificNs;
 	[TSKindId.NumberDecimal]: NumberDecimalNs;
 	[TSKindId.HtmlComment]: HtmlCommentNs;
 	[TSKindId.JsxText]: JsxTextNs;
@@ -21129,20 +21129,20 @@ export namespace TypeIdentifier {
 	export type Tree = TypeIdentifierNs['Tree'];
 	export type Kind = '_type_identifier';
 }
-export namespace NumberFloatExponent {
-	export type Config = NumberFloatExponentNs['Config'];
+export namespace NumberFloatScientific {
+	export type Config = NumberFloatScientificNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.NumberFloatExponent;
+		readonly $type: TSKindId.NumberFloatScientific;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = NumberFloatExponentNs['Loose'];
-	export type LooseConfig = NumberFloatExponentNs['LooseConfig'];
-	export type BuildArgs = NumberFloatExponentNs['BuildArgs'];
-	export type LooseArgs = NumberFloatExponentNs['LooseArgs'];
-	export type Tree = NumberFloatExponentNs['Tree'];
-	export type Kind = 'number_float_exponent';
+	export type Loose = NumberFloatScientificNs['Loose'];
+	export type LooseConfig = NumberFloatScientificNs['LooseConfig'];
+	export type BuildArgs = NumberFloatScientificNs['BuildArgs'];
+	export type LooseArgs = NumberFloatScientificNs['LooseArgs'];
+	export type Tree = NumberFloatScientificNs['Tree'];
+	export type Kind = 'number_float_scientific';
 }
 export namespace NumberDecimal {
 	export type Config = NumberDecimalNs['Config'];

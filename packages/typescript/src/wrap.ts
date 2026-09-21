@@ -579,7 +579,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -656,7 +656,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -726,7 +726,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -821,7 +821,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -899,7 +899,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -3524,7 +3524,7 @@ export function wrapExpression(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -3576,7 +3576,7 @@ export function wrapExpression(
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -3630,7 +3630,7 @@ export function wrapExpression(
 			'number_hex',
 			'number_float_point',
 			'number_float_leading_point',
-			'number_float_exponent',
+			'number_float_scientific',
 			'number_decimal',
 			'number_binary',
 			'number_octal',
@@ -3705,7 +3705,7 @@ export function wrapPrimaryExpression(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -3742,7 +3742,7 @@ export function wrapPrimaryExpression(
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -3781,7 +3781,7 @@ export function wrapPrimaryExpression(
 			'number_hex',
 			'number_float_point',
 			'number_float_leading_point',
-			'number_float_exponent',
+			'number_float_scientific',
 			'number_decimal',
 			'number_binary',
 			'number_octal',
@@ -6522,7 +6522,7 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -6532,7 +6532,7 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -6544,7 +6544,7 @@ export function wrapNumber(data: T.Number & { readonly $other?: T.Number | reado
 			'number_hex',
 			'number_float_point',
 			'number_float_leading_point',
-			'number_float_exponent',
+			'number_float_scientific',
 			'number_decimal',
 			'number_binary',
 			'number_octal',
@@ -7692,7 +7692,7 @@ export function wrapPropertyName(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -7708,7 +7708,7 @@ export function wrapPropertyName(
 		'number_hex',
 		'number_float_point',
 		'number_float_leading_point',
-		'number_float_exponent',
+		'number_float_scientific',
 		'number_decimal',
 		'number_binary',
 		'number_octal',
@@ -7726,7 +7726,7 @@ export function wrapPropertyName(
 			'number_hex',
 			'number_float_point',
 			'number_float_leading_point',
-			'number_float_exponent',
+			'number_float_scientific',
 			'number_decimal',
 			'number_binary',
 			'number_octal',
@@ -12240,7 +12240,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_float_exponent?:
+		readonly _number_float_scientific?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -12329,7 +12329,7 @@ export function wrapLiteralType(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -12349,9 +12349,9 @@ export function wrapLiteralType(
 				'_number_bigint',
 				'_number_binary',
 				'_number_decimal',
-				'_number_float_exponent',
 				'_number_float_leading_point',
 				'_number_float_point',
+				'_number_float_scientific',
 				'_number_hex',
 				'_number_octal',
 				'_string',
@@ -12367,7 +12367,7 @@ export function wrapLiteralType(
 						data._number_hex ??
 						data._number_float_point ??
 						data._number_float_leading_point ??
-						data._number_float_exponent ??
+						data._number_float_scientific ??
 						data._number_decimal ??
 						data._number_binary ??
 						data._number_octal ??
@@ -13551,7 +13551,7 @@ export function wrapEnumBodyElements(
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_float_exponent?:
+		readonly _number_float_scientific?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
@@ -13615,7 +13615,7 @@ export function wrapEnumBodyElements(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -13635,7 +13635,7 @@ export function wrapEnumBodyElements(
 					['number_hex', data._number_hex],
 					['number_float_point', data._number_float_point],
 					['number_float_leading_point', data._number_float_leading_point],
-					['number_float_exponent', data._number_float_exponent],
+					['number_float_scientific', data._number_float_scientific],
 					['number_decimal', data._number_decimal],
 					['number_binary', data._number_binary],
 					['number_octal', data._number_octal],
@@ -13657,9 +13657,9 @@ export function wrapEnumBodyElements(
 				'_number_bigint',
 				'_number_binary',
 				'_number_decimal',
-				'_number_float_exponent',
 				'_number_float_leading_point',
 				'_number_float_point',
+				'_number_float_scientific',
 				'_number_hex',
 				'_number_octal',
 				'_private_property_identifier',
@@ -15270,7 +15270,7 @@ export function wrapParenthesizedExpressionTyped(
 		readonly _number_hex?: T.Expression;
 		readonly _number_float_point?: T.Expression;
 		readonly _number_float_leading_point?: T.Expression;
-		readonly _number_float_exponent?: T.Expression;
+		readonly _number_float_scientific?: T.Expression;
 		readonly _number_decimal?: T.Expression;
 		readonly _number_binary?: T.Expression;
 		readonly _number_octal?: T.Expression;
@@ -15323,7 +15323,7 @@ export function wrapParenthesizedExpressionTyped(
 		'_number_hex',
 		'_number_float_point',
 		'_number_float_leading_point',
-		'_number_float_exponent',
+		'_number_float_scientific',
 		'_number_decimal',
 		'_number_binary',
 		'_number_octal',
@@ -15382,9 +15382,9 @@ export function wrapParenthesizedExpressionTyped(
 				'_number_bigint',
 				'_number_binary',
 				'_number_decimal',
-				'_number_float_exponent',
 				'_number_float_leading_point',
 				'_number_float_point',
+				'_number_float_scientific',
 				'_number_hex',
 				'_number_octal',
 				'_object',
@@ -15426,7 +15426,7 @@ export function wrapParenthesizedExpressionTyped(
 						data._number_hex ??
 						data._number_float_point ??
 						data._number_float_leading_point ??
-						data._number_float_exponent ??
+						data._number_float_scientific ??
 						data._number_decimal ??
 						data._number_binary ??
 						data._number_octal ??
@@ -17365,7 +17365,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NumberFloatPoint]: (d, t) => wrapNumberFloatPoint(d as unknown as T.NumberFloatPoint, t),
 	[TSKindId.NumberFloatLeadingPoint]: (d, t) =>
 		wrapNumberFloatLeadingPoint(d as unknown as T.NumberFloatLeadingPoint, t),
-	[TSKindId.NumberFloatExponent]: (d) => ({ ...d, $type: TSKindId.NumberFloatExponent as const }),
+	[TSKindId.NumberFloatScientific]: (d) => ({ ...d, $type: TSKindId.NumberFloatScientific as const }),
 	[TSKindId.NumberDecimal]: (d) => ({ ...d, $type: TSKindId.NumberDecimal as const }),
 	[TSKindId.NumberBinary]: (d, t) => wrapNumberBinary(d as unknown as T.NumberBinary, t),
 	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
@@ -17669,7 +17669,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.NumberHex]: ReturnType<typeof wrapNumberHex>;
 	[TSKindId.NumberFloatPoint]: ReturnType<typeof wrapNumberFloatPoint>;
 	[TSKindId.NumberFloatLeadingPoint]: ReturnType<typeof wrapNumberFloatLeadingPoint>;
-	[TSKindId.NumberFloatExponent]: _NodeData & { readonly $type: TSKindId.NumberFloatExponent };
+	[TSKindId.NumberFloatScientific]: _NodeData & { readonly $type: TSKindId.NumberFloatScientific };
 	[TSKindId.NumberDecimal]: _NodeData & { readonly $type: TSKindId.NumberDecimal };
 	[TSKindId.NumberBinary]: ReturnType<typeof wrapNumberBinary>;
 	[TSKindId.NumberOctal]: ReturnType<typeof wrapNumberOctal>;

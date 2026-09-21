@@ -224,15 +224,15 @@
     "named": true,
     "subtypes": [
       {
-        "type": "float_exponent",
-        "named": true
-      },
-      {
         "type": "float_leading_point",
         "named": true
       },
       {
         "type": "float_point",
+        "named": true
+      },
+      {
+        "type": "float_scientific",
         "named": true
       }
     ]
@@ -4828,15 +4828,15 @@
     "named": false
   },
   {
-    "type": "float_exponent",
-    "named": true
-  },
-  {
     "type": "float_leading_point",
     "named": true
   },
   {
     "type": "float_point",
+    "named": true
+  },
+  {
+    "type": "float_scientific",
     "named": true
   },
   {

@@ -28,7 +28,7 @@ const _leafRe_buildFloatPoint =
 	/^(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u;
 const _leafRe_buildFloatLeadingPoint =
 	/^(?:(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u;
-const _leafRe_buildFloatExponent = /^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u;
+const _leafRe_buildFloatScientific = /^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u;
 const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
 const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
@@ -4437,12 +4437,13 @@ export function buildFloatLeadingPoint(text: string): T.FloatLeadingPoint.Built 
 	);
 }
 
-export function buildFloatExponent(text: string): T.FloatExponent.Built {
-	if (text.length === 0) throw new Error(`float_exponent: text must be non-empty`);
-	if (!_leafRe_buildFloatExponent.test(text)) throw new Error(`float_exponent: text does not match pattern: ${text}`);
+export function buildFloatScientific(text: string): T.FloatScientific.Built {
+	if (text.length === 0) throw new Error(`float_scientific: text must be non-empty`);
+	if (!_leafRe_buildFloatScientific.test(text))
+		throw new Error(`float_scientific: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.FloatExponent as const,
+			$type: TSKindId.FloatScientific as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5341,7 +5342,7 @@ export type FluentKindMap = {
 	integer_decimal: T.IntegerDecimal;
 	float_point: T.FloatPoint;
 	float_leading_point: T.FloatLeadingPoint;
-	float_exponent: T.FloatExponent;
+	float_scientific: T.FloatScientific;
 	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Built;
 	escape_sequence_unicode_wide: T.EscapeSequenceUnicodeWide.Built;
 	escape_sequence_hex: T.EscapeSequenceHex.Built;
@@ -5524,7 +5525,7 @@ export const _factoryMap = {
 	integer_decimal: buildIntegerDecimal,
 	float_point: buildFloatPoint,
 	float_leading_point: buildFloatLeadingPoint,
-	float_exponent: buildFloatExponent,
+	float_scientific: buildFloatScientific,
 	escape_sequence_unicode_fixed: buildEscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_wide: buildEscapeSequenceUnicodeWide,
 	escape_sequence_hex: buildEscapeSequenceHex,
