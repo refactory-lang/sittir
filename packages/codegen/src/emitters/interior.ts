@@ -185,10 +185,14 @@ export function numberSignature(pattern: RegExp): NumberSignature | undefined {
 	return shape === undefined ? undefined : SIGNATURE_OF_BASE[shape.base];
 }
 
+function interiorGuard(interior: NodeInterior): RegExp {
+	return new RegExp(interior.regex, 'su');
+}
+
 function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
 	if (!node.rawFactoryName || kind.startsWith('_')) return undefined;
 	const interior = interiorOf(node);
-	if (interior !== undefined) return new RegExp(interior.regex, 'su');
+	if (interior !== undefined) return interiorGuard(interior);
 	return node instanceof AssembledPattern ? anchoredLeafRegex(kind, node.textPattern) : undefined;
 }
 
@@ -242,7 +246,7 @@ export function bareInteriorText(kind: string, node: AssembledNode): BareInterio
 	if (lexedContentSlot(node) !== undefined) return undefined;
 	const interior = interiorOf(node);
 	if (interior === undefined) return undefined;
-	return { number: numberShapeOfPattern(kind, interior.regex) };
+	return { number: numberShape(interiorGuard(interior)) };
 }
 
 export function numberTextArgs(shape: NumberShape): string {

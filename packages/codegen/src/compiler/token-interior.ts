@@ -48,6 +48,8 @@ function containsField(rule: LinkRule): boolean {
 		case CHOICE:
 			return rule.members.some(containsField);
 		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
 			return containsField(rule.content);
 		default:
 			return false;
@@ -123,10 +125,16 @@ interface InteriorState {
 	readonly slotCount: number;
 }
 
+function unnamedInGroup(kind: string): never {
+	throw new Error(`token interior: '${kind}' names a part inside an optional group next to an unnamed pattern; name every pattern in the group`);
+}
+
 function structureMembers(
+	kind: string,
 	rawMembers: readonly LinkRule[],
 	lookup: (name: string) => LinkRule | undefined,
-	state: InteriorState
+	state: InteriorState,
+	inGroup: boolean
 ): LinkRule[] | undefined {
 	const members = [...rawMembers];
 	const classes = members.map(memberClass);
@@ -136,7 +144,7 @@ function structureMembers(
 		const member = members[i]!;
 		if (cls === 'group') {
 			const arm = groupArm(member)!;
-			const inner = structureMembers(flattenMembers(arm.members), lookup, state);
+			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true);
 			if (inner === undefined) return undefined;
 			const rebuilt = { ...arm, members: inner } as LinkRule;
 			out.push(
@@ -166,6 +174,7 @@ function structureMembers(
 		}
 		let end = i + 1;
 		if (!isField(member)) {
+			if (inGroup) unnamedInGroup(kind);
 			while (end < members.length && classes[end] === 'slot' && !isField(members[end]!)) end += 1;
 		}
 		const run = members.slice(i, end);
@@ -185,6 +194,7 @@ function structureMembers(
 }
 
 function structureSeq(
+	kind: string,
 	seq: LinkRule & { type: typeof SEQ },
 	lookup: (name: string) => LinkRule | undefined
 ): LinkRule | undefined {
@@ -195,15 +205,16 @@ function structureSeq(
 	const slotCount = classes.filter(
 		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
 	).length;
-	const out = structureMembers(members, lookup, { slotSeen: false, slotCount });
+	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount }, false);
 	return out === undefined ? undefined : { ...seq, members: out };
 }
 
 function structureInterior(
+	kind: string,
 	content: LinkRule,
 	lookup: (name: string) => LinkRule | undefined
 ): LinkRule | undefined {
-	if (content.type === SEQ) return structureSeq(content as LinkRule & { type: typeof SEQ }, lookup);
+	if (content.type === SEQ) return structureSeq(kind, content as LinkRule & { type: typeof SEQ }, lookup);
 	return undefined;
 }
 
@@ -284,7 +295,7 @@ export function structureTokenInterior(rules: Record<string, LinkRule>): void {
 			continue;
 		}
 		if (rule.type !== TOKEN) continue;
-		const structured = structureInterior(rule.content, lookup);
+		const structured = structureInterior(kind, rule.content, lookup);
 		if (structured !== undefined) rules[kind] = { ...rule, content: structured } as LinkRule;
 	}
 }

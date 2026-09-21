@@ -2045,11 +2045,7 @@ function extractExternalNames(base2, hasWrapper) {
       }
     }
   );
-  try {
-    return harvestSupertypeNames(externals(dollar));
-  } catch {
-    return /* @__PURE__ */ new Set();
-  }
+  return harvestSupertypeNames(externals(dollar));
 }
 function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
   if (seen.has(name)) return false;

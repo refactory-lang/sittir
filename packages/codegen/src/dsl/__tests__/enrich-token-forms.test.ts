@@ -1,4 +1,3 @@
-// packages/codegen/src/dsl/__tests__/enrich-token-forms.test.ts
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';

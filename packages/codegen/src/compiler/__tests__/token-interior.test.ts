@@ -136,6 +136,11 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 		expect(members[1]).toMatchObject({ type: FIELD, name: 'fraction', content: { type: OPTIONAL, content: { type: PATTERN, value: '(?:(?:[0-9]+_?))+' } } });
 	});
 
+	it('rejects an unnamed pattern next to a named part inside an optional group', () => {
+		const group = optional(seq(pat('[eE]'), named('exponent', pat('\\d+'))));
+		expect(() => structured(token(seq(named('integer', pat('\\d+')), group)))).toThrow(/names a part inside an optional group next to an unnamed pattern/);
+	});
+
 	it('leaves a token with no named part on the composed path, so its output does not change', () => {
 		const members = membersOf(structured(token(seq(pat('\\d+'), str('.'), seq(pat('\\d+'), choice(str('e'), str('E')))))));
 		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['content', undefined, 'content2']);

@@ -11197,7 +11197,7 @@ authored field is untouched: its nested sequences still compose into one slot, s
 
 ### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
 
-The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text.
+The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so it is a compile-time error naming the kind (`unnamedInGroup`).
 
 ### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
 
@@ -11205,7 +11205,7 @@ The members of a sequence with every nested (non-lexed) sequence spliced in, rec
 
 ### `packages/codegen/src/compiler/token-interior.ts::containsField`
 
-Whether a rule holds an authored `field()` at any depth through sequences, choices and optionals; the gate for the flattened, group-aware path.
+Whether a rule holds an authored `field()` at any depth through sequences, choices, optionals and repeats (the same descent as `containsPattern`); the gate for the flattened, group-aware path.
 
 ### `packages/codegen/src/compiler/token-interior.ts::groupArm`
 

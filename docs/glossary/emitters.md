@@ -5156,7 +5156,7 @@ The shape of a pattern leaf's own text pattern.
 
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
 
-Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric. A bare string is projected onto the kind's slots through its token interior.
+Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric (`numberShape` over the interior guard, compiled once by `interiorGuard` for the leaf guard and for this probe). A bare string is projected onto the kind's slots through its token interior.
 
 ### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
 
@@ -16142,7 +16142,7 @@ Turns the members of a lexed kind's render rule into interior nodes: an entry fo
 
 ### `packages/codegen/src/emitters/interior.ts::groupMembers`
 
-The members of a nested sequence member, which is an optional group of interior members.
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
 
 ### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
 
