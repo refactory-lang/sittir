@@ -196,7 +196,7 @@
 ((string (string_start) @_p) @literal.string.raw (#match? @_p "^[rR]"))
 ((string (string_start) @_p) @literal.string.triple (#match? @_p "\"\"\"|'''"))
 (integer) @literal.number.integer
-((integer) @literal.number.integer.hex (#match? @literal.number.integer.hex "^0[xX]"))
+(integer_hex) @literal.number.integer.hex
 (float) @literal.number.float
 (true) @literal.boolean.true
 (false) @literal.boolean.false

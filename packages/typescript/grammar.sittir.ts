@@ -311,10 +311,13 @@ export default grammar(
 				},
 				number: {
 					0: variant('hex'),
-					1: variant('decimal', { default: true }),
-					2: variant('binary'),
-					3: variant('octal'),
-					4: variant('bigint')
+					1: variant('float_point'),
+					2: variant('float_leading_point'),
+					3: variant('float_exponent'),
+					4: variant('decimal', { default: true }),
+					5: variant('binary'),
+					6: variant('octal'),
+					7: variant('bigint')
 				},
 				hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 				binary_expression: {

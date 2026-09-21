@@ -141,7 +141,7 @@ export type AddressRoot =
 	| 'nested_type_identifier'
 	| 'new_expression'
 	| 'non_null_expression'
-	| 'number_decimal'
+	| 'number_float_exponent'
 	| 'number_operator'
 	| 'object'
 	| 'object_assignment_pattern'
@@ -950,10 +950,9 @@ export interface AddressBranch {
 	readonly 'new_expression/new_keyword': 'after';
 	readonly non_null_expression: 'after' | 'bang' | 'before';
 	readonly 'non_null_expression/bang': 'before';
-	readonly number_decimal: 'dash' | 'dot' | 'plus';
-	readonly 'number_decimal/dash': 'after' | 'before';
-	readonly 'number_decimal/dot': 'after' | 'before';
-	readonly 'number_decimal/plus': 'after' | 'before';
+	readonly number_float_exponent: 'dash' | 'plus';
+	readonly 'number_float_exponent/dash': 'after' | 'before';
+	readonly 'number_float_exponent/plus': 'after' | 'before';
 	readonly number_operator: 'dash' | 'plus';
 	readonly 'number_operator/dash': 'after' | 'before';
 	readonly 'number_operator/plus': 'after' | 'before';
@@ -2541,12 +2540,10 @@ export interface AddressLeaf {
 	readonly 'non_null_expression/after': WhitespaceArm;
 	readonly 'non_null_expression/bang/before': WhitespaceArm;
 	readonly 'non_null_expression/before': WhitespaceArm;
-	readonly 'number_decimal/dash/after': WhitespaceArm;
-	readonly 'number_decimal/dash/before': WhitespaceArm;
-	readonly 'number_decimal/dot/after': WhitespaceArm;
-	readonly 'number_decimal/dot/before': WhitespaceArm;
-	readonly 'number_decimal/plus/after': WhitespaceArm;
-	readonly 'number_decimal/plus/before': WhitespaceArm;
+	readonly 'number_float_exponent/dash/after': WhitespaceArm;
+	readonly 'number_float_exponent/dash/before': WhitespaceArm;
+	readonly 'number_float_exponent/plus/after': WhitespaceArm;
+	readonly 'number_float_exponent/plus/before': WhitespaceArm;
 	readonly 'number_operator/dash/after': WhitespaceArm;
 	readonly 'number_operator/dash/before': WhitespaceArm;
 	readonly 'number_operator/plus/after': WhitespaceArm;

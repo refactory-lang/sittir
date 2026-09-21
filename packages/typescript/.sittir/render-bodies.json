@@ -5586,6 +5586,36 @@
 			"name": "content"
 		}
 	],
+	"number_float_leading_point": [
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"number_float_point": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content2"
+		}
+	],
 	"number_hex": [
 		{
 			"kind": "slot",

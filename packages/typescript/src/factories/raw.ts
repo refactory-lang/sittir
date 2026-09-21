@@ -29,8 +29,9 @@ const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTypeIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _leafRe_buildNumberDecimal =
-	/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*)))$/u;
+const _leafRe_buildNumberFloatExponent =
+	/^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))$/u;
+const _leafRe_buildNumberDecimal = /^(?:(?:\d(_?\d)*))$/u;
 const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
 const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
 const _leafRe_buildTemplateChars = /^(?:(?:[^`\\$]+))$/u;
@@ -43,6 +44,9 @@ const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
 const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
 const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
 const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+const _slotRe_buildNumberFloatPoint_content = /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?))$/u;
+const _slotRe_buildNumberFloatPoint_content2 = /^(?:(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?)$/u;
+const _slotRe_buildNumberFloatLeadingPoint_content = /^(?:(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?)$/u;
 const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
 const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
 const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
@@ -6071,6 +6075,73 @@ export function buildNumberHex(config: T.NumberHex.Config): T.NumberHex.Built {
 	);
 }
 
+export function buildNumberFloatPoint(config: T.NumberFloatPoint.Config): T.NumberFloatPoint.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildNumberFloatPoint_content.test(_content))
+		throw new Error(`number_float_point.content: text does not match pattern: ${_content}`);
+	const _content2 = config.content2;
+	if (_content2 !== undefined && !_slotRe_buildNumberFloatPoint_content2.test(_content2))
+		throw new Error(`number_float_point.content2: text does not match pattern: ${_content2}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberFloatPoint as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_content2,
+				$with: {
+					content: (value: string) => buildNumberFloatPoint({ ...config, content: value }),
+					content2: (value: string) => buildNumberFloatPoint({ ...config, content2: value })
+				}
+			},
+			{
+				content: () => _content,
+				content2: () => _content2
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberFloatLeadingPoint(value: string): T.NumberFloatLeadingPoint.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildNumberFloatLeadingPoint_content.test(_content))
+		throw new Error(`number_float_leading_point.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberFloatLeadingPoint as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildNumberFloatLeadingPoint(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberFloatExponent(text: string): T.NumberFloatExponent.Built {
+	if (text.length === 0) throw new Error(`number_float_exponent: text must be non-empty`);
+	if (!_leafRe_buildNumberFloatExponent.test(text))
+		throw new Error(`number_float_exponent: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.NumberFloatExponent as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildNumberDecimal(text: string): T.NumberDecimal.Built {
 	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
 	if (!_leafRe_buildNumberDecimal.test(text)) throw new Error(`number_decimal: text does not match pattern: ${text}`);
@@ -7590,6 +7661,9 @@ export type FluentKindMap = {
 	comment_line: T.CommentLine.Built;
 	comment_block: T.CommentBlock.Built;
 	number_hex: T.NumberHex.Built;
+	number_float_point: T.NumberFloatPoint.Built;
+	number_float_leading_point: T.NumberFloatLeadingPoint.Built;
+	number_float_exponent: T.NumberFloatExponent;
 	number_decimal: T.NumberDecimal;
 	number_binary: T.NumberBinary.Built;
 	number_octal: T.NumberOctal.Built;
@@ -7828,6 +7902,9 @@ export const _factoryMap = {
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
 	number_hex: buildNumberHex,
+	number_float_point: buildNumberFloatPoint,
+	number_float_leading_point: buildNumberFloatLeadingPoint,
+	number_float_exponent: buildNumberFloatExponent,
 	number_decimal: buildNumberDecimal,
 	number_binary: buildNumberBinary,
 	number_octal: buildNumberOctal,

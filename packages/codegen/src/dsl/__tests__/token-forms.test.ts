@@ -36,9 +36,10 @@ describe('distributeTokenForms', () => {
 	});
 	it('hoists a top-level form alternation, one token per arm', () => {
 		const hex = seq(choice(S('0x'), S('0X')), P('[0-9a-f]+'));
-		const dec = choice(seq(P('\\d+'), S('.'), P('\\d+')), P('\\d+'));
-		const rule = token(choice(hex, dec));
-		expect(shape(distributeTokenForms(rule, 'number'))).toEqual(shape(choice(token(hex), token(dec))));
+		const point = seq(P('\\d+'), S('.'), P('\\d+'));
+		const digits = P('\\d+');
+		const rule = token(choice(hex, choice(point, digits)));
+		expect(shape(distributeTokenForms(rule, 'number'))).toEqual(shape(choice(token(hex), token(point), token(digits))));
 	});
 	it('distributes the enclosing seq over an alternation at an inner position and keeps the wrapper kind', () => {
 		const rule = immediate(seq(S('\\'), choice(P('u[0-9a-f]{4}'), P('x[0-9a-f]{2}'))));
@@ -64,10 +65,17 @@ describe('distributeTokenForms', () => {
 		const viaOptional = distributeTokenForms(token(seq(S("'"), { type: 'OPTIONAL', content: forms } as unknown as RuntimeRule, S("'"))), 'c');
 		expect(shape(viaOptional)).toEqual(shape(viaChoice));
 	});
-	it('does not descend into an arm that is itself an alternation', () => {
-		const dec = choice(seq(P('\\d+'), S('.')), P('\\d+'));
+	it('flattens an arm that is itself a form alternation into the parent, one token per form', () => {
+		const point = seq(P('\\d+'), S('.'));
+		const dec = choice(point, P('\\d+'));
 		const out = distributeTokenForms(token(choice(P('[a-z]+'), dec)), 'demo') as unknown as { members: RuntimeRule[] };
-		expect(shape(out.members[1]!)).toEqual(shape(token(dec)));
+		expect(out.members.map(shape)).toEqual([token(P('[a-z]+')), token(point), token(P('\\d+'))].map(shape));
+	});
+	it('keeps a nested choice of spellings as one arm', () => {
+		const out = distributeTokenForms(token(choice(P('[a-z]+'), choice(S('x'), S('y')))), 'demo') as unknown as {
+			members: RuntimeRule[];
+		};
+		expect(out.members).toHaveLength(2);
 	});
 	it('keeps the prec stack around the distributed choice', () => {
 		const rule = prec(3, token(choice(P('a+'), seq(S('b'), P('c+')))));

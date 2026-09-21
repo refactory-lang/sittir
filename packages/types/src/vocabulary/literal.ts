@@ -59,17 +59,37 @@ export namespace Literal {
 	}
 	export namespace Number {
 		export interface Float<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
-			// claimed by pr
+			// claimed by prt
 			readonly kind: 'literal.number.float';
 		}
 		export interface Integer<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
-			// claimed by pr
+			// claimed by prt
 			readonly kind: 'literal.number.integer';
+			readonly prefix?: '0B' | '0O' | '0X' | '0b' | '0o' | '0x';
+			// pt only
 		}
 		export namespace Integer {
 			export interface Hex<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number.Integer<G>>> {
-				// claimed by p
+				// claimed by prt
 				readonly kind: 'literal.number.integer.hex';
+				readonly prefix?: '0X' | '0x';
+				// pt only
+				readonly suffix?:
+					| 'f32'
+					| 'f64'
+					| 'i128'
+					| 'i16'
+					| 'i32'
+					| 'i64'
+					| 'i8'
+					| 'isize'
+					| 'u128'
+					| 'u16'
+					| 'u32'
+					| 'u64'
+					| 'u8'
+					| 'usize';
+				// r only
 			}
 			export type Any<G extends GrammarContext> = V.Literal.Number.Integer<G> | V.Literal.Number.Integer.Hex<G>;
 		}

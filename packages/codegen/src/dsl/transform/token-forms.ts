@@ -23,25 +23,31 @@ export function classifyTokenChoice(choice: RuntimeRule): TokenChoiceClass {
 	return 'forms';
 }
 
+function flattenFormArms(arms: readonly RuntimeRule[]): RuntimeRule[] {
+	return arms.flatMap((arm) =>
+		isChoiceType(typeOf(arm)) && classifyTokenChoice(arm) === 'forms' ? flattenFormArms(membersOf(arm)) : [arm]
+	);
+}
+
 type Site = { readonly path: readonly number[]; readonly arms: readonly RuntimeRule[] };
 
 function findOutermostForms(rule: RuntimeRule, path: readonly number[]): Site | undefined {
 	const t = typeOf(rule);
 	if (isChoiceType(t)) {
 		const cls = classifyTokenChoice(rule);
-		if (cls === 'forms') return { path, arms: membersOf(rule) };
+		if (cls === 'forms') return { path, arms: flattenFormArms(membersOf(rule)) };
 		if (cls === 'spelling') return undefined;
 		const live = membersOf(rule).filter((m) => !isBlank(m));
 		const only = live.length === 1 ? live[0]! : undefined;
 		if (only !== undefined && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === 'forms') {
-			return { path, arms: [...membersOf(only), membersOf(rule).find(isBlank)!] };
+			return { path, arms: [...flattenFormArms(membersOf(only)), membersOf(rule).find(isBlank)!] };
 		}
 		return undefined;
 	}
 	if (t === 'OPTIONAL') {
 		const inner = contentOf(rule);
 		if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === 'forms') {
-			return { path, arms: [...membersOf(inner), BLANK] };
+			return { path, arms: [...flattenFormArms(membersOf(inner)), BLANK] };
 		}
 		return undefined;
 	}

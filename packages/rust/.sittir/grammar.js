@@ -1560,23 +1560,28 @@ function classifyTokenChoice(choice2) {
   if (arms.every(isString)) return "spelling";
   return "forms";
 }
+function flattenFormArms(arms) {
+  return arms.flatMap(
+    (arm2) => isChoiceType(typeOf(arm2)) && classifyTokenChoice(arm2) === "forms" ? flattenFormArms(membersOf2(arm2)) : [arm2]
+  );
+}
 function findOutermostForms(rule, path) {
   const t = typeOf(rule);
   if (isChoiceType(t)) {
     const cls = classifyTokenChoice(rule);
-    if (cls === "forms") return { path, arms: membersOf2(rule) };
+    if (cls === "forms") return { path, arms: flattenFormArms(membersOf2(rule)) };
     if (cls === "spelling") return void 0;
     const live = membersOf2(rule).filter((m) => !isBlank(m));
     const only = live.length === 1 ? live[0] : void 0;
     if (only !== void 0 && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === "forms") {
-      return { path, arms: [...membersOf2(only), membersOf2(rule).find(isBlank)] };
+      return { path, arms: [...flattenFormArms(membersOf2(only)), membersOf2(rule).find(isBlank)] };
     }
     return void 0;
   }
   if (t === "OPTIONAL") {
     const inner = contentOf2(rule);
     if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === "forms") {
-      return { path, arms: [...membersOf2(inner), BLANK] };
+      return { path, arms: [...flattenFormArms(membersOf2(inner)), BLANK] };
     }
     return void 0;
   }

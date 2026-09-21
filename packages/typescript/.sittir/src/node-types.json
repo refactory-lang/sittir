@@ -240,6 +240,18 @@
         "named": true
       },
       {
+        "type": "number_float_exponent",
+        "named": true
+      },
+      {
+        "type": "number_float_leading_point",
+        "named": true
+      },
+      {
+        "type": "number_float_point",
+        "named": true
+      },
+      {
         "type": "number_hex",
         "named": true
       },
@@ -8014,6 +8026,18 @@
   },
   {
     "type": "number_decimal",
+    "named": true
+  },
+  {
+    "type": "number_float_exponent",
+    "named": true
+  },
+  {
+    "type": "number_float_leading_point",
+    "named": true
+  },
+  {
+    "type": "number_float_point",
     "named": true
   },
   {

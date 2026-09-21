@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 435,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -150,6 +150,9 @@
     "number_bigint": "number.bigint",
     "number_binary": "number.binary",
     "number_decimal": "number.decimal",
+    "number_float_exponent": "number.floatExponent",
+    "number_float_leading_point": "number.floatLeadingPoint",
+    "number_float_point": "number.floatPoint",
     "number_hex": "number.hex",
     "number_octal": "number.octal",
     "update_expression_postfix": "updateExpression.postfix",
@@ -3163,6 +3166,9 @@
         "wireKeys": [
           "_unary_expression",
           "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_exponent",
           "_number_decimal",
           "_number_binary",
           "_number_octal",
@@ -3537,6 +3543,9 @@
           "_private_property_identifier",
           "_string",
           "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_exponent",
           "_number_decimal",
           "_number_binary",
           "_number_octal",
@@ -3736,6 +3745,31 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_point": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content2": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_leading_point": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -4007,6 +4041,9 @@
           "_this",
           "_super",
           "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_exponent",
           "_number_decimal",
           "_number_binary",
           "_number_octal",
@@ -6078,6 +6115,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -6532,6 +6572,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -7261,6 +7304,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -9255,6 +9301,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -10188,6 +10237,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -10622,6 +10674,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -10731,6 +10786,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -12146,6 +12204,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -15284,6 +15345,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -15989,6 +16053,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_octal",
         "string",
@@ -17452,6 +17519,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -17513,6 +17583,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_octal"
       ]
@@ -17666,8 +17739,154 @@
         "tokenForm": true,
         "hoisted": true
       },
-      "leafPattern": "/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)\\.(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|\\.(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*)|(?:\\d(_?\\d)*)))$/u",
+      "pattern": "\\d(_?\\d)*",
+      "leafPattern": "/^(?:(?:\\d(_?\\d)*))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "number_float_exponent",
+      "modelType": "pattern",
+      "typeName": "NumberFloatExponent",
+      "factoryName": "numberFloatExponent",
+      "irKey": "numberFloatExponent",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "number_float_leading_point",
+      "modelType": "branch",
+      "typeName": "NumberFloatLeadingPoint",
+      "factoryName": "numberFloatLeadingPoint",
+      "irKey": "numberFloatLeadingPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_leading_point",
+      "interior": {
+        "entries": [
+          {
+            "lit": "."
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?"
+          }
+        ],
+        "regex": "^\\.(?<content>(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "number_float_point",
+      "modelType": "branch",
+      "typeName": "NumberFloatPoint",
+      "factoryName": "numberFloatPoint",
+      "irKey": "numberFloatPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "content2",
+          "propertyName": "content2",
+          "paramName": "content2",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)"
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "content2",
+            "pattern": "(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?"
+          }
+        ],
+        "regex": "^(?<content>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<content2>(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          },
+          {
+            "name": "content2",
+            "configKey": "content2"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "content2"
+      ]
     },
     {
       "kind": "number_hex",
@@ -18236,6 +18455,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -18329,6 +18551,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -18654,6 +18879,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -19124,6 +19352,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -20131,6 +20362,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -20537,6 +20771,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -20639,6 +20876,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -20973,6 +21213,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -21810,6 +22053,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -21918,6 +22164,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -22350,6 +22599,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -22436,6 +22688,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -22649,6 +22904,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -22743,6 +23001,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -23251,6 +23512,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",
@@ -24041,6 +24305,9 @@
         "number_bigint",
         "number_binary",
         "number_decimal",
+        "number_float_exponent",
+        "number_float_leading_point",
+        "number_float_point",
         "number_hex",
         "number_keyword",
         "number_octal",

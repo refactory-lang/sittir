@@ -25,10 +25,10 @@ describe('enrich: token forms', () => {
 		const out = enrich(grammarWith({ number: token(numberBody()), source: seq({ type: 'SYMBOL', name: 'number' }) }));
 		const rules = rulesOf(out);
 		expect(rules.number.type).toBe('CHOICE');
-		expect(rules.number.members.map((m: any) => m.name)).toEqual(['number_arm1', 'number_arm2', 'number_arm3']);
+		expect(rules.number.members.map((m: any) => m.name)).toEqual(['number_arm1', 'number_arm2', 'number_arm3', 'number_arm4']);
 		expect(rules.number_arm1.type).toBe('TOKEN');
 		expect(rules.number_arm1.annotations?.hoisted).toBe(true);
-		expect(rules.number_arm2.content.type).toBe('CHOICE');
+		expect(rules.number_arm2.content.type).toBe('SEQ');
 		expect((out as any).supertypes).toContain('number');
 	});
 
