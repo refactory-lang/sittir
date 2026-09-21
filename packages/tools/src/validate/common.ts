@@ -1200,19 +1200,19 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 				for (const value of slot.values ?? []) {
 					if (value.seat !== undefined) seatAt(node.kind, slot.name, value.seat);
 					if (value.default === true && value.name !== undefined) {
-						(slotDefaults[node.kind] ??= {})[slot.propertyName] = value.name;
+						(slotDefaults[node.kind] ??= {})[snakeToCamel(slot.name)] = value.name;
 					}
 				}
 			}
-			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [slot.propertyName, slot.kinds ?? []]));
+			slotKinds[node.kind] = Object.fromEntries(node.slots.map((slot) => [snakeToCamel(slot.name), slot.kinds ?? []]));
 			slotRequired[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [slot.propertyName, slot.required === true])
+				node.slots.map((slot) => [snakeToCamel(slot.name), slot.required === true])
 			);
 			slotMultiple[node.kind] = Object.fromEntries(
-				node.slots.map((slot) => [slot.propertyName, slot.multiple === true])
+				node.slots.map((slot) => [snakeToCamel(slot.name), slot.multiple === true])
 			);
 			slotStorage[node.kind] = Object.fromEntries(
-				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[slot.propertyName, slot.storage]]))
+				node.slots.flatMap((slot) => (slot.storage === undefined ? [] : [[snakeToCamel(slot.name), slot.storage]]))
 			);
 		}
 		if (node.factoryShape !== undefined) factoryShapes[node.kind] = node.factoryShape;

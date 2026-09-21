@@ -63,6 +63,14 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		name: 'KeywordOpenersPython',
 		surfaces: ['strict'],
 		rendered: 'keyword-openers-python.rendered'
+	},
+	{
+		grammar: 'rust',
+		source: 'packages/tools/tests/emit/__fixtures__/list-seat-configs.rs',
+		stem: '21-list-seat-configs-rust',
+		name: 'ListSeatConfigsRust',
+		surfaces: ['strict', 'loose'],
+		rendered: 'list-seat-configs-rust.rendered'
 	}
 ];
 
