@@ -357,3 +357,89 @@ A `_bindings` value is a label path. Nothing else: an address with a differing
 default declares it under its kind, and an address in no group is only a
 declaration. The union of value shapes an earlier draft carried was the
 membership and the default fighting for one slot.
+
+## Amendments (2026-09-21)
+
+Reviewed against what landed. Both surfaces materialized the site set once
+per site — as generated type tables on the TypeScript side and as named
+fields on the Rust side — where this design derives it. Four corrections,
+each a conformance to a section above rather than a new mechanism.
+
+### Kind edges live in the transport base
+
+Every transport carries `before` and `after` once, in the shared base beside
+its trivia field. They are the kind's own edges (`<kind>/before`,
+`<kind>/after`), so a per-kind field named after the kind is the same fact
+spelled 400 times.
+
+### A sibling gap rides on the element carrier
+
+"A sibling gap belongs to the child before it" is a statement about
+storage as much as addressing. The carrier of a repeated slot's element —
+today `SlotValue<T>` inside the slot's `Vec` — gains `gap_after: Option<u16>`.
+That is the one place the reader's gap classifier writes (it classifies the
+gaps between still-parsed items and nothing else), and it is the one
+per-node override that exists. Singular children carry nothing extra: their
+gaps are their own edges.
+
+### A token seam has no per-node carrier
+
+`arguments/lparen/after` is a site — the only owner of the gap between `(`
+and the first element, which is why the flanks were retired in its favour —
+but nothing writes it per node: the classifier does not, and the TypeScript
+surface never exposed the key. The field, its `prepare` fill and the
+`fill_options` walk go, as "What this retires" already said; render reads
+the resolved vector at the site, which is what it does today whenever the
+field is `None`. A token that is its kind's first or last member has no
+outward seam; that gap is the kind edge.
+
+Reading is the accessor newtype over the dense vector described under
+"Reading", not the nested `Option<u16>` structs that were generated instead.
+
+### The TypeScript `Options` type is derived, not tabulated
+
+The generated `options.ts` is a site table (`AddressRoot`, `AddressBranch`,
+`AddressLeaf`) with a mapped tail. Under this design the table does not
+exist. The addresses need three facts per kind: its tokens in order, which
+slots repeat and with what separator, and each slot's element kinds. The
+node interfaces already carry the third. The first two are render-rule
+facts, so the generator emits one **template type** per kind beside its
+interface — the rule's members in order, one line —
+
+```ts
+export type ArgumentsTemplate = readonly [Tok<'lparen'>, Repeat<'arguments', Sep<'comma'>>, Tok<'rparen'>];
+```
+
+and `Options` is one generic in `packages/types`, mapped over the existing
+kind-to-interface map:
+
+```ts
+type Sides = { readonly before?: Whitespace; readonly after?: Whitespace };
+type TokSites<M> = M extends Tok<infer N> ? { readonly [K in N]?: Sides } : {};
+type ElementSites<E> = { readonly [K in KindNameOf<E>]?: { readonly after?: Whitespace } };
+type RepeatSites<Node, M> = M extends Repeat<infer N, infer S>
+	? { readonly [K in N]?: { readonly separator?: Sides & SepValue<S> } & ElementSites<ElementOf<Node[`_${N}`]>> }
+	: {};
+type Sites<Node, Tpl extends readonly unknown[]> =
+	Sides & UnionToIntersection<TokSites<Tpl[number]> | RepeatSites<Node, Tpl[number]>>;
+export type Options = { readonly [K in Kind]?: Sites<NodeOf<K>, TemplateOf<K>> } & { readonly indent?: string };
+```
+
+Labels keep their place as virtual kinds at the top level. The template is
+the only fact emitted for the type that is not already in the interface,
+and it is emitted from the same render rule the site vector is numbered
+from: one source, two projections. The grammar type in `grammar.ts` was
+considered as the source instead — a field's `types` already list a
+separator that sits inside the field — and set aside: node-types omits
+every unfielded token and lists a separator only when the field wraps the
+repeat, so it would need the same additions the template carries, in a
+file that mirrors tree-sitter's output rather than sittir's model.
+
+Instantiation cost was measured on the typescript grammar before planning
+(2026-09-21): a spike deriving `Options` from 146 generated template types
+and the real `types.ts` interfaces compiled at 3,058,924 instantiations
+against 3,054,405 for today's tabulated `options.ts`, a difference under
+0.2% on a total dominated by the transitive import of `types.ts`; check
+time was within noise (1.65 s against 2.11 s). There is no cliff, and the
+usage `arguments: { lparen: { after }, _arguments: { separator, spread_element: { after } } }`
+type-checks against the derived type.
