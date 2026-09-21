@@ -9,5 +9,7 @@ export { assertRenderableNodeData, isRenderableNodeData } from './native-boundar
 export { normalizeNativeReadNode } from './native-read.ts';
 export { toTransportData, stripStructuralProvenance, markEdited } from './transport-data.ts';
 export { projectInterior, lexedConfig } from './interior.ts';
+export { numberText } from './number.ts';
+export type { NumberBase } from './number.ts';
 export type { TokenInterior, InteriorSlot, ProjectedInterior } from './interior.ts';
 export { sliceSpan, spanSlicer, type ByteSpan } from './span.ts';

@@ -21,11 +21,12 @@ import {
 	hasKind,
 	coerceBooleanKeywordStorage,
 	coerceBitflagStorage,
-	withAccessors
+	withAccessors,
+	numberText
 } from '@sittir/common/utils';
 import type { WithMethodsEngine } from '@sittir/common/utils';
 
-export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };
+export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText };
 
 export function isNodeData<K extends keyof NamespaceMap>(
 	v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']

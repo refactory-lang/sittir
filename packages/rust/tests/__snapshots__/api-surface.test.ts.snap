@@ -339,6 +339,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "literalPattern": "object",
   "methodsEngine": "object",
   "nonSpecialToken": "object",
+  "numberText": "function",
   "path": "object",
   "pattern": "object",
   "readTreeNode": "function",

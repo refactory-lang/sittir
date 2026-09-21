@@ -183,3 +183,5 @@ function carryTriviaThroughWith(node: AnyNodeData): void {
 		};
 	}
 }
+
+export { numberText } from './number.ts';

@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig } from '@sittir/common';
+import { lexedConfig, numberText } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -5899,13 +5899,15 @@ export function resolveIntegerHex_prefix(value: T.IntegerHex.LooseConfig['prefix
 }
 
 export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): T.IntegerHex['_content'] {
-	return _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerHex(input: T.IntegerHex.Loose): ReturnType<typeof F.buildIntegerHex> {
-	if (!_isLooseConfig<T.IntegerHex.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerHex.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerHex.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerHex.LooseConfig;
 	return F.buildIntegerHex({
 		prefix: _requireField('integer_hex', 'prefix', resolveIntegerHex_prefix(_cfg.prefix)),
 		content: _requireField('integer_hex', 'content', resolveIntegerHex_content(_cfg.content))
@@ -5917,13 +5919,15 @@ export function resolveIntegerOctal_prefix(value: T.IntegerOctal.LooseConfig['pr
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
-	return _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerOctal(input: T.IntegerOctal.Loose): ReturnType<typeof F.buildIntegerOctal> {
-	if (!_isLooseConfig<T.IntegerOctal.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerOctal.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerOctal.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerOctal.LooseConfig;
 	return F.buildIntegerOctal({
 		prefix: _requireField('integer_octal', 'prefix', resolveIntegerOctal_prefix(_cfg.prefix)),
 		content: _requireField('integer_octal', 'content', resolveIntegerOctal_content(_cfg.content))
@@ -5937,13 +5941,15 @@ export function resolveIntegerBinary_prefix(value: T.IntegerBinary.LooseConfig['
 export function resolveIntegerBinary_content(
 	value: T.IntegerBinary.LooseConfig['content']
 ): T.IntegerBinary['_content'] {
-	return _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToIntegerBinary(input: T.IntegerBinary.Loose): ReturnType<typeof F.buildIntegerBinary> {
-	if (!_isLooseConfig<T.IntegerBinary.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerBinary.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerBinary.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerBinary.LooseConfig;
 	return F.buildIntegerBinary({
 		prefix: _requireField('integer_binary', 'prefix', resolveIntegerBinary_prefix(_cfg.prefix)),
 		content: _requireField('integer_binary', 'content', resolveIntegerBinary_content(_cfg.content))
@@ -5951,24 +5957,28 @@ export function coerceToIntegerBinary(input: T.IntegerBinary.Loose): ReturnType<
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIntegerDecimal>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildIntegerDecimal>;
 	return F.buildIntegerDecimal(input as Parameters<typeof F.buildIntegerDecimal>[0]);
 }
 
 export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof F.buildFloatPoint> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatPoint>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildFloatPoint>;
 	return F.buildFloatPoint(input as Parameters<typeof F.buildFloatPoint>[0]);
 }
 
 export function coerceToFloatLeadingPoint(
 	input: T.FloatLeadingPoint.Loose
 ): ReturnType<typeof F.buildFloatLeadingPoint> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLeadingPoint>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildFloatLeadingPoint>;
 	return F.buildFloatLeadingPoint(input as Parameters<typeof F.buildFloatLeadingPoint>[0]);
 }
 
 export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnType<typeof F.buildFloatScientific> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatScientific>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildFloatScientific>;
 	return F.buildFloatScientific(input as Parameters<typeof F.buildFloatScientific>[0]);
 }
 
@@ -6047,7 +6057,7 @@ export function coerceToEscapeSequenceHex(
 export function resolveEscapeSequenceOctal_content(
 	value: T.EscapeSequenceOctal.LooseConfig['content']
 ): T.EscapeSequenceOctal['_content'] {
-	return _resolveOne<string>(value, _K0, _K0);
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToEscapeSequenceOctal(

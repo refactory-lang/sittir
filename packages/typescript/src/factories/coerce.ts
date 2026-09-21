@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig } from '@sittir/common';
+import { lexedConfig, numberText } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -8445,13 +8445,15 @@ export function resolveNumberHex_prefix(value: T.NumberHex.LooseConfig['prefix']
 }
 
 export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): T.NumberHex['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberHex(input: T.NumberHex.Loose): ReturnType<typeof F.buildNumberHex> {
-	if (!_isLooseConfig<T.NumberHex.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.NumberHex.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberHex>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberHex.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.NumberHex.LooseConfig;
 	return F.buildNumberHex({
 		prefix: _requireField('number_hex', 'prefix', resolveNumberHex_prefix(_cfg.prefix)),
 		content: _requireField('number_hex', 'content', resolveNumberHex_content(_cfg.content))
@@ -8461,7 +8463,7 @@ export function coerceToNumberHex(input: T.NumberHex.Loose): ReturnType<typeof F
 export function resolveNumberFloatPoint_content(
 	value: T.NumberFloatPoint.LooseConfig['content']
 ): T.NumberFloatPoint['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatPoint_content2(
@@ -8482,7 +8484,7 @@ export function coerceToNumberFloatPoint(input: T.NumberFloatPoint.Loose): Retur
 export function resolveNumberFloatLeadingPoint_content(
 	value: T.NumberFloatLeadingPoint.LooseConfig['content']
 ): T.NumberFloatLeadingPoint['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatLeadingPoint(
@@ -8506,12 +8508,14 @@ export function coerceToNumberFloatLeadingPoint(
 export function coerceToNumberFloatScientific(
 	input: T.NumberFloatScientific.Loose
 ): ReturnType<typeof F.buildNumberFloatScientific> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
 	return F.buildNumberFloatScientific(input as Parameters<typeof F.buildNumberFloatScientific>[0]);
 }
 
 export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberDecimal>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildNumberDecimal>;
 	return F.buildNumberDecimal(input as Parameters<typeof F.buildNumberDecimal>[0]);
 }
 
@@ -8520,13 +8524,15 @@ export function resolveNumberBinary_prefix(value: T.NumberBinary.LooseConfig['pr
 }
 
 export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['content']): T.NumberBinary['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberBinary(input: T.NumberBinary.Loose): ReturnType<typeof F.buildNumberBinary> {
-	if (!_isLooseConfig<T.NumberBinary.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.NumberBinary.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberBinary>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberBinary.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.NumberBinary.LooseConfig;
 	return F.buildNumberBinary({
 		prefix: _requireField('number_binary', 'prefix', resolveNumberBinary_prefix(_cfg.prefix)),
 		content: _requireField('number_binary', 'content', resolveNumberBinary_content(_cfg.content))
@@ -8538,13 +8544,15 @@ export function resolveNumberOctal_prefix(value: T.NumberOctal.LooseConfig['pref
 }
 
 export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['content']): T.NumberOctal['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberOctal(input: T.NumberOctal.Loose): ReturnType<typeof F.buildNumberOctal> {
-	if (!_isLooseConfig<T.NumberOctal.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.NumberOctal.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberOctal>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberOctal.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.NumberOctal.LooseConfig;
 	return F.buildNumberOctal({
 		prefix: _requireField('number_octal', 'prefix', resolveNumberOctal_prefix(_cfg.prefix)),
 		content: _requireField('number_octal', 'content', resolveNumberOctal_content(_cfg.content))
@@ -8552,7 +8560,7 @@ export function coerceToNumberOctal(input: T.NumberOctal.Loose): ReturnType<type
 }
 
 export function resolveNumberBigint_content(value: T.NumberBigint.LooseConfig['content']): T.NumberBigint['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(16, '0x', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<typeof F.buildNumberBigint> {

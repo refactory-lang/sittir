@@ -332,6 +332,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "lhsExpression": "object",
   "methodsEngine": "object",
   "moduleExportName": "object",
+  "numberText": "function",
   "pattern": "object",
   "primaryExpression": "object",
   "primaryType": "object",

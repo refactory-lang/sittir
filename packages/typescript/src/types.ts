@@ -7,6 +7,7 @@ import type {
 	TreeNode as BaseTreeNode,
 	ConfigOf,
 	LooseConfigOf,
+	WidenNumeric,
 	LooseValue,
 	NodeKind,
 	NodeNs,
@@ -15760,14 +15761,14 @@ export interface TypeIdentifierNs extends LeafNs<
 > {}
 export interface NumberFloatScientificNs extends LeafNs<
 	NumberFloatScientific,
-	string,
+	string | number,
 	NumberFloatScientific.Built,
 	NumberFloatScientificTree,
 	'number_float_scientific'
 > {}
 export interface NumberDecimalNs extends LeafNs<
 	NumberDecimal,
-	string,
+	string | number,
 	NumberDecimal.Built,
 	NumberDecimalTree,
 	'number_decimal'
@@ -19906,45 +19907,54 @@ export namespace CommentBlock {
 	export type Kind = 'comment_block';
 }
 export namespace NumberHex {
-	export type Config = ConfigFor<TSKindId.NumberHex>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberHex>, 'content'>;
 	export interface Built extends T.NumberHex, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			prefix(value: '0x' | '0X'): T.NumberHex.Built;
-			content(value: string): T.NumberHex.Built;
+			content(value: string | number): T.NumberHex.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberHex>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberHex>;
-	export type BuildArgs = [config: ConfigOf<T.NumberHex>];
+	export type Loose =
+		| LooseFor<TSKindId.NumberHex>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberHex>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberHex>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberHex>, 'content'>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberHex
+		config:
+			| WidenNumeric<LooseConfigOf<T.NumberHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'content'>
+			| T.NumberHex
 	];
 	export type Tree = TreeFor<TSKindId.NumberHex>;
 	export type Kind = 'number_hex';
 }
 export namespace NumberFloatPoint {
-	export type Config = ConfigFor<TSKindId.NumberFloatPoint>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberFloatPoint>, 'content'>;
 	export interface Built extends T.NumberFloatPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string): T.NumberFloatPoint.Built;
+			content(value: string | number): T.NumberFloatPoint.Built;
 			content2(value: string): T.NumberFloatPoint.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberFloatPoint>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberFloatPoint>;
-	export type BuildArgs = [config: ConfigOf<T.NumberFloatPoint>];
+	export type Loose =
+		| LooseFor<TSKindId.NumberFloatPoint>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatPoint>, 'content'>;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatPoint>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatPoint>, 'content'>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberFloatPoint
+		config:
+			| WidenNumeric<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'content'>
+			| T.NumberFloatPoint
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatPoint>;
 	export type Kind = 'number_float_point';
 }
 export namespace NumberFloatLeadingPoint {
-	export type Config = ConfigFor<TSKindId.NumberFloatLeadingPoint>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'content'>;
 	export interface Built extends T.NumberFloatLeadingPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -19952,53 +19962,66 @@ export namespace NumberFloatLeadingPoint {
 			content(value: string): T.NumberFloatLeadingPoint.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberFloatLeadingPoint>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberFloatLeadingPoint>;
+	export type Loose =
+		| LooseFor<TSKindId.NumberFloatLeadingPoint>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'content'>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.NumberFloatLeadingPoint>;
 	export type Kind = 'number_float_leading_point';
 }
 export namespace NumberBinary {
-	export type Config = ConfigFor<TSKindId.NumberBinary>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBinary>, 'content'>;
 	export interface Built extends T.NumberBinary, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			prefix(value: '0b' | '0B'): T.NumberBinary.Built;
-			content(value: string): T.NumberBinary.Built;
+			content(value: string | number): T.NumberBinary.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberBinary>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberBinary>;
-	export type BuildArgs = [config: ConfigOf<T.NumberBinary>];
+	export type Loose =
+		| LooseFor<TSKindId.NumberBinary>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberBinary>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBinary>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberBinary>, 'content'>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberBinary
+		config:
+			| WidenNumeric<LooseConfigOf<T.NumberBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'content'>
+			| T.NumberBinary
 	];
 	export type Tree = TreeFor<TSKindId.NumberBinary>;
 	export type Kind = 'number_binary';
 }
 export namespace NumberOctal {
-	export type Config = ConfigFor<TSKindId.NumberOctal>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberOctal>, 'content'>;
 	export interface Built extends T.NumberOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			prefix(value: '0o' | '0O'): T.NumberOctal.Built;
-			content(value: string): T.NumberOctal.Built;
+			content(value: string | number): T.NumberOctal.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberOctal>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberOctal>;
-	export type BuildArgs = [config: ConfigOf<T.NumberOctal>];
+	export type Loose =
+		| LooseFor<TSKindId.NumberOctal>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberOctal>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberOctal>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberOctal>, 'content'>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberOctal
+		config:
+			| WidenNumeric<LooseConfigOf<T.NumberOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'content'>
+			| T.NumberOctal
 	];
 	export type Tree = TreeFor<TSKindId.NumberOctal>;
 	export type Kind = 'number_octal';
 }
 export namespace NumberBigint {
-	export type Config = ConfigFor<TSKindId.NumberBigint>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigint>, 'content'>;
 	export interface Built extends T.NumberBigint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20006,8 +20029,11 @@ export namespace NumberBigint {
 			content(value: string): T.NumberBigint.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.NumberBigint>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberBigint>;
+	export type Loose =
+		| LooseFor<TSKindId.NumberBigint>
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberBigint>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigint>, 'content'>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.NumberBigint>;

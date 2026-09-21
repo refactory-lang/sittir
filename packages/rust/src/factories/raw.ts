@@ -3,7 +3,7 @@
 import type * as T from '../types.js';
 import { Delimiter } from '../types.js';
 import { TSKindId } from '../types.js';
-import type { NonEmptyArray } from '@sittir/types';
+import type { NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withMethods,
 	withAccessors,
@@ -12,6 +12,7 @@ import {
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
+	numberText,
 	isNodeData
 } from '../utils.js';
 
@@ -5312,8 +5313,10 @@ export function buildStringLiteralOpen(text: string): T.StringLiteralOpen.Built 
 	);
 }
 
-export function buildIntegerLiteralDecimal(config: T.IntegerLiteralDecimal.Config): T.IntegerLiteralDecimal.Built {
-	const _content = config.content;
+export function buildIntegerLiteralDecimal(
+	config: WidenNumeric<T.IntegerLiteralDecimal.Config, 'content'>
+): T.IntegerLiteralDecimal.Built {
+	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
 		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${_content}`);
 	const _suffix = config.suffix;
@@ -5328,7 +5331,7 @@ export function buildIntegerLiteralDecimal(config: T.IntegerLiteralDecimal.Confi
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string) => buildIntegerLiteralDecimal({ ...config, content: value }),
+					content: (value: string | number) => buildIntegerLiteralDecimal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -5357,8 +5360,10 @@ export function buildIntegerLiteralDecimal(config: T.IntegerLiteralDecimal.Confi
 	);
 }
 
-export function buildIntegerLiteralHex(config: T.IntegerLiteralHex.Config): T.IntegerLiteralHex.Built {
-	const _content = config.content;
+export function buildIntegerLiteralHex(
+	config: WidenNumeric<T.IntegerLiteralHex.Config, 'content'>
+): T.IntegerLiteralHex.Built {
+	const _content = numberText(16, '0x', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
 		throw new Error(`integer_literal_hex.content: text does not match pattern: ${_content}`);
 	const _suffix = config.suffix;
@@ -5373,7 +5378,7 @@ export function buildIntegerLiteralHex(config: T.IntegerLiteralHex.Config): T.In
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string) => buildIntegerLiteralHex({ ...config, content: value }),
+					content: (value: string | number) => buildIntegerLiteralHex({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -5402,8 +5407,10 @@ export function buildIntegerLiteralHex(config: T.IntegerLiteralHex.Config): T.In
 	);
 }
 
-export function buildIntegerLiteralBinary(config: T.IntegerLiteralBinary.Config): T.IntegerLiteralBinary.Built {
-	const _content = config.content;
+export function buildIntegerLiteralBinary(
+	config: WidenNumeric<T.IntegerLiteralBinary.Config, 'content'>
+): T.IntegerLiteralBinary.Built {
+	const _content = numberText(2, '0b', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
 		throw new Error(`integer_literal_binary.content: text does not match pattern: ${_content}`);
 	const _suffix = config.suffix;
@@ -5418,7 +5425,7 @@ export function buildIntegerLiteralBinary(config: T.IntegerLiteralBinary.Config)
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string) => buildIntegerLiteralBinary({ ...config, content: value }),
+					content: (value: string | number) => buildIntegerLiteralBinary({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -5447,8 +5454,10 @@ export function buildIntegerLiteralBinary(config: T.IntegerLiteralBinary.Config)
 	);
 }
 
-export function buildIntegerLiteralOctal(config: T.IntegerLiteralOctal.Config): T.IntegerLiteralOctal.Built {
-	const _content = config.content;
+export function buildIntegerLiteralOctal(
+	config: WidenNumeric<T.IntegerLiteralOctal.Config, 'content'>
+): T.IntegerLiteralOctal.Built {
+	const _content = numberText(8, '0o', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
 		throw new Error(`integer_literal_octal.content: text does not match pattern: ${_content}`);
 	const _suffix = config.suffix;
@@ -5463,7 +5472,7 @@ export function buildIntegerLiteralOctal(config: T.IntegerLiteralOctal.Config): 
 				_content,
 				_suffix,
 				$with: {
-					content: (value: string) => buildIntegerLiteralOctal({ ...config, content: value }),
+					content: (value: string | number) => buildIntegerLiteralOctal({ ...config, content: value }),
 					suffix: (
 						value?:
 							| 'u8'
@@ -7597,7 +7606,8 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	);
 }
 
-export function buildFloatLiteral(text: string): T.FloatLiteral.Built {
+export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
+	text = numberText('float', '', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
 	return withMethods(

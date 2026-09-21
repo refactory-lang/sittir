@@ -3,7 +3,7 @@
 import type * as T from '../types.js';
 import { Delimiter } from '../types.js';
 import { TSKindId } from '../types.js';
-import type { ConfigOf, NonEmptyArray } from '@sittir/types';
+import type { ConfigOf, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withMethods,
 	withAccessors,
@@ -12,6 +12,7 @@ import {
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
+	numberText,
 	isNodeData
 } from '../utils.js';
 
@@ -6046,11 +6047,11 @@ export function buildCommentBlock(value: string): T.CommentBlock.Built {
 	);
 }
 
-export function buildNumberHex(config: T.NumberHex.Config): T.NumberHex.Built {
+export function buildNumberHex(config: WidenNumeric<T.NumberHex.Config, 'content'>): T.NumberHex.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
 		throw new Error(`number_hex.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(16, '', config.content);
 	if (_content !== undefined && !_slotRe_buildNumberHex_content.test(_content))
 		throw new Error(`number_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -6063,7 +6064,7 @@ export function buildNumberHex(config: T.NumberHex.Config): T.NumberHex.Built {
 				_content,
 				$with: {
 					prefix: (value: '0x' | '0X') => buildNumberHex({ ...config, prefix: value }),
-					content: (value: string) => buildNumberHex({ ...config, content: value })
+					content: (value: string | number) => buildNumberHex({ ...config, content: value })
 				}
 			},
 			{
@@ -6075,8 +6076,10 @@ export function buildNumberHex(config: T.NumberHex.Config): T.NumberHex.Built {
 	);
 }
 
-export function buildNumberFloatPoint(config: T.NumberFloatPoint.Config): T.NumberFloatPoint.Built {
-	const _content = config.content;
+export function buildNumberFloatPoint(
+	config: WidenNumeric<T.NumberFloatPoint.Config, 'content'>
+): T.NumberFloatPoint.Built {
+	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildNumberFloatPoint_content.test(_content))
 		throw new Error(`number_float_point.content: text does not match pattern: ${_content}`);
 	const _content2 = config.content2;
@@ -6091,7 +6094,7 @@ export function buildNumberFloatPoint(config: T.NumberFloatPoint.Config): T.Numb
 				_content,
 				_content2,
 				$with: {
-					content: (value: string) => buildNumberFloatPoint({ ...config, content: value }),
+					content: (value: string | number) => buildNumberFloatPoint({ ...config, content: value }),
 					content2: (value: string) => buildNumberFloatPoint({ ...config, content2: value })
 				}
 			},
@@ -6105,7 +6108,7 @@ export function buildNumberFloatPoint(config: T.NumberFloatPoint.Config): T.Numb
 }
 
 export function buildNumberFloatLeadingPoint(value: string): T.NumberFloatLeadingPoint.Built {
-	const _content = value;
+	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildNumberFloatLeadingPoint_content.test(_content))
 		throw new Error(`number_float_leading_point.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -6127,7 +6130,8 @@ export function buildNumberFloatLeadingPoint(value: string): T.NumberFloatLeadin
 	);
 }
 
-export function buildNumberFloatScientific(text: string): T.NumberFloatScientific.Built {
+export function buildNumberFloatScientific(text: string | number): T.NumberFloatScientific.Built {
+	text = numberText('float', '', text);
 	if (text.length === 0) throw new Error(`number_float_scientific: text must be non-empty`);
 	if (!_leafRe_buildNumberFloatScientific.test(text))
 		throw new Error(`number_float_scientific: text does not match pattern: ${text}`);
@@ -6142,7 +6146,8 @@ export function buildNumberFloatScientific(text: string): T.NumberFloatScientifi
 	);
 }
 
-export function buildNumberDecimal(text: string): T.NumberDecimal.Built {
+export function buildNumberDecimal(text: string | number): T.NumberDecimal.Built {
+	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
 	if (!_leafRe_buildNumberDecimal.test(text)) throw new Error(`number_decimal: text does not match pattern: ${text}`);
 	return withMethods(
@@ -6156,11 +6161,11 @@ export function buildNumberDecimal(text: string): T.NumberDecimal.Built {
 	);
 }
 
-export function buildNumberBinary(config: T.NumberBinary.Config): T.NumberBinary.Built {
+export function buildNumberBinary(config: WidenNumeric<T.NumberBinary.Config, 'content'>): T.NumberBinary.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
 		throw new Error(`number_binary.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(2, '', config.content);
 	if (_content !== undefined && !_slotRe_buildNumberBinary_content.test(_content))
 		throw new Error(`number_binary.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -6173,7 +6178,7 @@ export function buildNumberBinary(config: T.NumberBinary.Config): T.NumberBinary
 				_content,
 				$with: {
 					prefix: (value: '0b' | '0B') => buildNumberBinary({ ...config, prefix: value }),
-					content: (value: string) => buildNumberBinary({ ...config, content: value })
+					content: (value: string | number) => buildNumberBinary({ ...config, content: value })
 				}
 			},
 			{
@@ -6185,11 +6190,11 @@ export function buildNumberBinary(config: T.NumberBinary.Config): T.NumberBinary
 	);
 }
 
-export function buildNumberOctal(config: T.NumberOctal.Config): T.NumberOctal.Built {
+export function buildNumberOctal(config: WidenNumeric<T.NumberOctal.Config, 'content'>): T.NumberOctal.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
 		throw new Error(`number_octal.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(8, '', config.content);
 	if (_content !== undefined && !_slotRe_buildNumberOctal_content.test(_content))
 		throw new Error(`number_octal.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -6202,7 +6207,7 @@ export function buildNumberOctal(config: T.NumberOctal.Config): T.NumberOctal.Bu
 				_content,
 				$with: {
 					prefix: (value: '0o' | '0O') => buildNumberOctal({ ...config, prefix: value }),
-					content: (value: string) => buildNumberOctal({ ...config, content: value })
+					content: (value: string | number) => buildNumberOctal({ ...config, content: value })
 				}
 			},
 			{
@@ -6215,7 +6220,7 @@ export function buildNumberOctal(config: T.NumberOctal.Config): T.NumberOctal.Bu
 }
 
 export function buildNumberBigint(value: string): T.NumberBigint.Built {
-	const _content = value;
+	const _content = numberText(16, '0x', value);
 	if (_content !== undefined && !_slotRe_buildNumberBigint_content.test(_content))
 		throw new Error(`number_bigint.content: text does not match pattern: ${_content}`);
 	return withMethods(

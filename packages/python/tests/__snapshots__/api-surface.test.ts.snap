@@ -255,6 +255,7 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "leftHandSide": "object",
   "methodsEngine": "object",
   "namedExpressionLhs": "object",
+  "numberText": "function",
   "parameter": "object",
   "pattern": "object",
   "primaryExpression": "object",

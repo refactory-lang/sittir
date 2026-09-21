@@ -7,6 +7,7 @@ import type {
 	TreeNode as BaseTreeNode,
 	ConfigOf,
 	LooseConfigOf,
+	WidenNumeric,
 	LooseValue,
 	NodeKind,
 	NodeNs,
@@ -14677,7 +14678,7 @@ export interface LineCommentContentNs extends LeafNs<
 > {}
 export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral,
-	string,
+	string | number,
 	FloatLiteral.Built,
 	FloatLiteralTree,
 	'float_literal'
@@ -18149,12 +18150,12 @@ export namespace TupleExpressionElements {
 	export type Kind = '_tuple_expression_elements';
 }
 export namespace IntegerLiteralDecimal {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralDecimal>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
 	export interface Built extends T.IntegerLiteralDecimal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string): T.IntegerLiteralDecimal.Built;
+			content(value: string | number): T.IntegerLiteralDecimal.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -18174,24 +18175,30 @@ export namespace IntegerLiteralDecimal {
 			): T.IntegerLiteralDecimal.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralDecimal>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralDecimal>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralDecimal>];
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralDecimal>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralDecimal>, 'content'>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.IntegerLiteralDecimal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralDecimal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
 			| T.IntegerLiteralDecimal
 	];
 	export type Tree = TreeFor<TSKindId.IntegerLiteralDecimal>;
 	export type Kind = 'integer_literal_decimal';
 }
 export namespace IntegerLiteralHex {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralHex>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
 	export interface Built extends T.IntegerLiteralHex, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string): T.IntegerLiteralHex.Built;
+			content(value: string | number): T.IntegerLiteralHex.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -18211,24 +18218,30 @@ export namespace IntegerLiteralHex {
 			): T.IntegerLiteralHex.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralHex>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralHex>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralHex>];
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralHex>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralHex>, 'content'>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.IntegerLiteralHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
 			| T.IntegerLiteralHex
 	];
 	export type Tree = TreeFor<TSKindId.IntegerLiteralHex>;
 	export type Kind = 'integer_literal_hex';
 }
 export namespace IntegerLiteralBinary {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralBinary>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
 	export interface Built extends T.IntegerLiteralBinary, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string): T.IntegerLiteralBinary.Built;
+			content(value: string | number): T.IntegerLiteralBinary.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -18248,24 +18261,30 @@ export namespace IntegerLiteralBinary {
 			): T.IntegerLiteralBinary.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralBinary>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralBinary>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralBinary>];
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralBinary>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralBinary>, 'content'>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.IntegerLiteralBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
 			| T.IntegerLiteralBinary
 	];
 	export type Tree = TreeFor<TSKindId.IntegerLiteralBinary>;
 	export type Kind = 'integer_literal_binary';
 }
 export namespace IntegerLiteralOctal {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralOctal>;
+	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
 	export interface Built extends T.IntegerLiteralOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			content(value: string): T.IntegerLiteralOctal.Built;
+			content(value: string | number): T.IntegerLiteralOctal.Built;
 			suffix(
 				value?:
 					| 'u8'
@@ -18285,12 +18304,18 @@ export namespace IntegerLiteralOctal {
 			): T.IntegerLiteralOctal.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralOctal>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralOctal>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralOctal>];
+	export type Loose =
+		| LooseFor<TSKindId.IntegerLiteralOctal>
+		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, 'content'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralOctal>, 'content'>];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.IntegerLiteralOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| WidenNumeric<
+					LooseConfigOf<T.IntegerLiteralOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'content'
+			  >
 			| T.IntegerLiteralOctal
 	];
 	export type Tree = TreeFor<TSKindId.IntegerLiteralOctal>;

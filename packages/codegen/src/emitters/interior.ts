@@ -2,7 +2,9 @@ import { CHOICE, PATTERN, SEQ, STRING } from '../types/rule-types.ts'; // @rule-
 import type { RenderRule } from '../types/rule.ts';
 import {
 	AbstractAssembledCompound,
+	AssembledNonterminal,
 	AssembledPattern,
+	isPatternValue,
 	AssembledSupertype,
 	isRequired,
 	storageKindOfRef,
@@ -122,21 +124,36 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 	return out;
 }
 
+export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly prefix: '' };
 export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
 
-export const NUMBER_PROBES: Readonly<Record<NumberSignature, readonly string[]>> = {
-	decimal: ['255'],
-	hex: ['0xff', '0Xff'],
-	octal: ['0o377', '0O377'],
-	binary: ['0b11111111', '0B11111111'],
-	float: ['1.5', '.5', '1e5', '1.5e5']
-};
+const FLOAT_PROBES = ['1.5', '.5', '1e5', '1.5e5'] as const;
 
-const SIGNATURE_ORDER: readonly NumberSignature[] = ['decimal', 'hex', 'octal', 'binary', 'float'];
+const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts: string; readonly rejects: string; readonly prefixes: readonly string[] }[] = [
+	{ base: 16, accepts: 'ff', rejects: 'g', prefixes: ['0x', '0X', ''] },
+	{ base: 10, accepts: '89', rejects: 'a', prefixes: [''] },
+	{ base: 8, accepts: '77', rejects: '8', prefixes: ['0o', '0O', ''] },
+	{ base: 2, accepts: '11', rejects: '2', prefixes: ['0b', '0B', ''] }
+];
+
+export function numberShape(pattern: RegExp): NumberShape | undefined {
+	if (pattern.test('')) return undefined;
+	for (const { base, accepts, rejects, prefixes } of INTEGER_BASES) {
+		for (const prefix of prefixes) {
+			if (pattern.test(`${prefix}${accepts}`) && !pattern.test(`${prefix}${rejects}`)) {
+				return { base, prefix: prefix.toLowerCase() };
+			}
+		}
+	}
+	if (!pattern.test('a') && FLOAT_PROBES.some((text) => pattern.test(text))) return { base: 'float', prefix: '' };
+	return undefined;
+}
+
+const SIGNATURE_OF_BASE = { 2: 'binary', 8: 'octal', 10: 'decimal', 16: 'hex', float: 'float' } as const;
 
 export function numberSignature(pattern: RegExp): NumberSignature | undefined {
-	if (pattern.test('a') || pattern.test('')) return undefined;
-	return SIGNATURE_ORDER.find((signature) => NUMBER_PROBES[signature].some((text) => pattern.test(text)));
+	const shape = numberShape(pattern);
+	return shape === undefined ? undefined : SIGNATURE_OF_BASE[shape.base];
 }
 
 function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
@@ -165,4 +182,29 @@ export function numericLeafKinds(nodeMap: NodeMap): readonly string[] {
 	}
 	const found = [...numberSignatures(nodeMap)].filter(([, signature]) => signature === 'decimal' || signature === 'float').map(([kind]) => kind);
 	return [...found.filter((kind) => defaults.has(kind)), ...found.filter((kind) => !defaults.has(kind))];
+}
+
+export function numberShapeOfPattern(label: string, pattern: string): NumberShape | undefined {
+	const guard = anchoredLeafRegex(label, pattern);
+	return guard === undefined ? undefined : numberShape(guard);
+}
+
+export function numericSlotShape(slot: AssembledNonterminal): NumberShape | undefined {
+	if (slot.values.length === 0 || !slot.values.every(isPatternValue)) return undefined;
+	const patterns = new Set(slot.values.map((value) => value.pattern));
+	if (patterns.size !== 1) return undefined;
+	return numberShapeOfPattern(slot.name, [...patterns][0]!);
+}
+
+export function numericSlotKeys(node: AssembledNode): readonly string[] {
+	return node.slots.filter((slot) => numericSlotShape(slot) !== undefined).map((slot) => slot.configKey);
+}
+
+export function numericLeafShape(kind: string, node: AssembledNode): NumberShape | undefined {
+	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return undefined;
+	return numberShapeOfPattern(kind, node.textPattern);
+}
+
+export function numberTextArgs(shape: NumberShape): string {
+	return `${JSON.stringify(shape.base)}, ${JSON.stringify(shape.prefix)}`;
 }

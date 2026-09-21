@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { interiorOf, numericLeafKinds } from './interior.ts';
+import { interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -158,7 +158,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyNodeData';
-const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray'] as const;
+const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray', 'WidenNumeric'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -208,7 +208,7 @@ export namespace from {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
-			result = emitStringLikeFrom(node);
+			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node) !== undefined);
 		} else if (isVisibleTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
@@ -264,9 +264,9 @@ function emitBranchNodeDataPassthrough(
 	inputOptional: boolean,
 	returnType: string,
 	typeName: string,
-	bare = false
+	bare: false | 'text' | 'number' = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${bare === 'number' ? ' | number' : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -328,7 +328,9 @@ function emitBranchFrom(
 				''
 			);
 		} else {
-			lines.push(signature, `  return ${body};`, '}', '');
+			const shape = numericSlotShape(f);
+			const numeric = shape === undefined ? body : `typeof value === 'number' ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
+			lines.push(signature, `  return ${numeric};`, '}', '');
 		}
 	}
 	const resolverFor = new Set(resolverSlots.map((f) => f.propertyName));
@@ -345,11 +347,12 @@ function emitBranchFrom(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareContent !== undefined);
+			const bareKind = bareContent === undefined ? false : numericSlotShape(bareContent) === undefined ? 'text' : 'number';
+			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
 		}
 		if (bareContent !== undefined) {
 			lines.push(
-				`  const _cfg = (typeof input === 'string' ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${numericSlotShape(bareContent) === undefined ? '' : " || typeof input === 'number'"} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
@@ -694,12 +697,12 @@ interface LeafFromNode {
 	readonly fromFunctionName?: string;
 }
 
-function emitStringLikeFrom(node: LeafFromNode): string {
+function emitStringLikeFrom(node: LeafFromNode, numeric: boolean): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (typeof input !== 'string') return input as unknown as ${factoryReturnTypeExpr(factory)};`,
+		`  if (typeof input !== 'string'${numeric ? " && typeof input !== 'number'" : ''}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'
 	].join('\n');
@@ -1671,8 +1674,17 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
-			if (l === `import * as F from './raw.js';` && /\bTOKEN_INTERIORS\b/.test(body)) {
-				return [l, `import { TOKEN_INTERIORS } from '../consts.js';`, `import { lexedConfig } from '@sittir/common';`];
+			if (l === `import * as F from './raw.js';`) {
+				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
+				const usesNumberText = /\bnumberText\(/.test(body);
+				if (usesInterior || usesNumberText) {
+					const common = [...(usesInterior ? ['lexedConfig'] : []), ...(usesNumberText ? ['numberText'] : [])];
+					return [
+						l,
+						...(usesInterior ? [`import { TOKEN_INTERIORS } from '../consts.js';`] : []),
+						`import { ${common.join(', ')} } from '@sittir/common';`
+					];
+				}
 			}
 			if (!/\bDelimiter\./.test(body)) {
 				if (l === `import { Delimiter } from './types.js';`) return [];

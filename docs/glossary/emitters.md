@@ -5130,9 +5130,37 @@ projects it through the token interior.
  *  name: see `numericLeafKinds`. */
 ```
 
+### `packages/codegen/src/emitters/interior.ts::numberShape`
+
+The numeric shape of a guard pattern: an integer written in base 2, 8, 10 or 16 with the prefix the pattern requires (`0x`, `0o`, `0b`, or none), or a float, or nothing. It is found by probing the anchored pattern, never by reading its source: a base is taken when the pattern accepts digits of that base (with the prefix, when it needs one) and rejects a digit outside it, so `0x[0-9a-f]+` is hex with prefix `0x`, a bare `[\da-fA-F]+` is hex with no prefix, `\d+` is decimal, and a pattern that accepts a letter outside the base, or the empty string, has no shape. A float is a pattern that accepts a float numeral and no letter. The one classifier behind bare-number coercion, the number acceptance of builders and the widened config types.
+
+### `packages/codegen/src/emitters/interior.ts::numberSignature`
+
+`numberShape` named for reading and tests: decimal, hex, octal, binary or float.
+
+### `packages/codegen/src/emitters/interior.ts::numberShapeOfPattern`
+
+`numberShape` of a pattern source, compiled the way every leaf guard is.
+
+### `packages/codegen/src/emitters/interior.ts::numericSlotShape`
+
+The shape of a text slot whose values are one pattern; a slot of any other kind has none.
+
+### `packages/codegen/src/emitters/interior.ts::numericSlotKeys`
+
+The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
+
+### `packages/codegen/src/emitters/interior.ts::numericLeafShape`
+
+The shape of a pattern leaf's own text pattern.
+
+### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
+
+The base and prefix arguments of the `numberText` call an emitter writes for a shape.
+
 ### `packages/codegen/src/emitters/interior.ts::numericLeafKinds`
 
-The leaf kinds a bare JavaScript number can resolve to, found from each leaf's own guard pattern: a leaf counts when its anchored pattern (a lexed kind's composed interior regex, or a pattern leaf's text pattern) accepts a canonical numeral (`1`, `1.5`, `.5`, `1e5`) and rejects a letter and the empty string. A hex content pattern accepts letters and is excluded; a binary or octal content accepts digits and stays in. The list is ordered the default arms of hoisted parents first, then declaration order. The runtime resolver tests `String(value)` against each leaf's registered pattern in that order and builds the first that accepts it, so `1` reaches the default integer arm, `1.5` a point arm and `1e21` a scientific arm, in any grammar, with no leaf named in the emitter. The same list types the number-accepting leaves in `LeafScalarMap`.
+The leaf kinds a bare JavaScript number can resolve to: the leaves whose guard has a decimal or float shape (a hex, octal or binary leaf is reached by naming its arm). The list is ordered the default arms of hoisted parents first, then declaration order. The runtime resolver tests `String(value)` against each leaf's registered pattern in that order and builds the first that accepts it, so `1` reaches the default integer arm, `1.5` a point arm and `1e21` a scientific arm, in any grammar, with no leaf named in the emitter. The same list types the number-accepting leaves in `LeafScalarMap`.
 
 #### the boolean kinds come from the model, not a name
 
@@ -16158,3 +16186,12 @@ A sample that satisfies the slot pattern, so the generated construction tests pa
 The own parser symbols of the visible enum arms of a slot, in seating order (`enumArmsOf`.ownSymbolIds). Guards the
 text fold of `projectMixedEnumStorage` so an identifier that happens to be spelled like a member is never taken for one.
 ```
+
+### `packages/codegen/src/emitters/factories.ts::leafTextParams`
+
+The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
+
+### `packages/codegen/src/emitters/types.ts::widenNumericSlots`
+
+Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so the namespace `Config` and `LooseConfig` accept a number where the builder converts one.
+

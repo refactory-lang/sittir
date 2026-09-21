@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
-import { lexedConfig } from '@sittir/common';
+import { lexedConfig, numberText } from '@sittir/common';
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray } from '@sittir/types';
@@ -7214,7 +7214,7 @@ export function coerceToStringLiteralOpen(
 export function resolveIntegerLiteralDecimal_content(
 	value: T.IntegerLiteralDecimal.LooseConfig['content']
 ): T.IntegerLiteralDecimal['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralDecimal_suffix(
@@ -7228,9 +7228,11 @@ export function resolveIntegerLiteralDecimal_suffix(
 export function coerceToIntegerLiteralDecimal(
 	input: T.IntegerLiteralDecimal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralDecimal> {
-	if (!_isLooseConfig<T.IntegerLiteralDecimal.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerLiteralDecimal.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralDecimal>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerLiteralDecimal.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerLiteralDecimal.LooseConfig;
 	return F.buildIntegerLiteralDecimal({
 		content: _requireField('integer_literal_decimal', 'content', resolveIntegerLiteralDecimal_content(_cfg.content)),
 		suffix: resolveIntegerLiteralDecimal_suffix(_cfg.suffix)
@@ -7240,7 +7242,7 @@ export function coerceToIntegerLiteralDecimal(
 export function resolveIntegerLiteralHex_content(
 	value: T.IntegerLiteralHex.LooseConfig['content']
 ): T.IntegerLiteralHex['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(16, '0x', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralHex_suffix(
@@ -7254,9 +7256,11 @@ export function resolveIntegerLiteralHex_suffix(
 export function coerceToIntegerLiteralHex(
 	input: T.IntegerLiteralHex.Loose
 ): ReturnType<typeof F.buildIntegerLiteralHex> {
-	if (!_isLooseConfig<T.IntegerLiteralHex.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerLiteralHex.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralHex>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerLiteralHex.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerLiteralHex.LooseConfig;
 	return F.buildIntegerLiteralHex({
 		content: _requireField('integer_literal_hex', 'content', resolveIntegerLiteralHex_content(_cfg.content)),
 		suffix: resolveIntegerLiteralHex_suffix(_cfg.suffix)
@@ -7266,7 +7270,7 @@ export function coerceToIntegerLiteralHex(
 export function resolveIntegerLiteralBinary_content(
 	value: T.IntegerLiteralBinary.LooseConfig['content']
 ): T.IntegerLiteralBinary['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(2, '0b', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralBinary_suffix(
@@ -7280,9 +7284,11 @@ export function resolveIntegerLiteralBinary_suffix(
 export function coerceToIntegerLiteralBinary(
 	input: T.IntegerLiteralBinary.Loose
 ): ReturnType<typeof F.buildIntegerLiteralBinary> {
-	if (!_isLooseConfig<T.IntegerLiteralBinary.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerLiteralBinary.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralBinary>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerLiteralBinary.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerLiteralBinary.LooseConfig;
 	return F.buildIntegerLiteralBinary({
 		content: _requireField('integer_literal_binary', 'content', resolveIntegerLiteralBinary_content(_cfg.content)),
 		suffix: resolveIntegerLiteralBinary_suffix(_cfg.suffix)
@@ -7292,7 +7298,7 @@ export function coerceToIntegerLiteralBinary(
 export function resolveIntegerLiteralOctal_content(
 	value: T.IntegerLiteralOctal.LooseConfig['content']
 ): T.IntegerLiteralOctal['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
+	return typeof value === 'number' ? numberText(8, '0o', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function resolveIntegerLiteralOctal_suffix(
@@ -7306,9 +7312,11 @@ export function resolveIntegerLiteralOctal_suffix(
 export function coerceToIntegerLiteralOctal(
 	input: T.IntegerLiteralOctal.Loose
 ): ReturnType<typeof F.buildIntegerLiteralOctal> {
-	if (!_isLooseConfig<T.IntegerLiteralOctal.LooseConfig | string>(input))
+	if (!_isLooseConfig<T.IntegerLiteralOctal.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildIntegerLiteralOctal>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.IntegerLiteralOctal.LooseConfig;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
+	) as T.IntegerLiteralOctal.LooseConfig;
 	return F.buildIntegerLiteralOctal({
 		content: _requireField('integer_literal_octal', 'content', resolveIntegerLiteralOctal_content(_cfg.content)),
 		suffix: resolveIntegerLiteralOctal_suffix(_cfg.suffix)
@@ -9484,7 +9492,8 @@ export function coerceToMatchBlockArms(input: T.MatchBlockArms.Loose): ReturnTyp
 }
 
 export function coerceToFloatLiteral(input: T.FloatLiteral.Loose): ReturnType<typeof F.buildFloatLiteral> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
+	if (typeof input !== 'string' && typeof input !== 'number')
+		return input as unknown as ReturnType<typeof F.buildFloatLiteral>;
 	return F.buildFloatLiteral(input as Parameters<typeof F.buildFloatLiteral>[0]);
 }
 

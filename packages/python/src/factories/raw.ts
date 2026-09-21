@@ -3,7 +3,7 @@
 import type * as T from '../types.js';
 import { Delimiter } from '../types.js';
 import { TSKindId } from '../types.js';
-import type { NonEmptyArray } from '@sittir/types';
+import type { NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withMethods,
 	withAccessors,
@@ -11,7 +11,8 @@ import {
 	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
-	coerceMixedEnumStorage
+	coerceMixedEnumStorage,
+	numberText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -4307,11 +4308,11 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 	);
 }
 
-export function buildIntegerHex(config: T.IntegerHex.Config): T.IntegerHex.Built {
+export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'content'>): T.IntegerHex.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(16, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4324,7 +4325,7 @@ export function buildIntegerHex(config: T.IntegerHex.Config): T.IntegerHex.Built
 				_content,
 				$with: {
 					prefix: (value: '0x' | '0X') => buildIntegerHex({ ...config, prefix: value }),
-					content: (value: string) => buildIntegerHex({ ...config, content: value })
+					content: (value: string | number) => buildIntegerHex({ ...config, content: value })
 				}
 			},
 			{
@@ -4336,11 +4337,11 @@ export function buildIntegerHex(config: T.IntegerHex.Config): T.IntegerHex.Built
 	);
 }
 
-export function buildIntegerOctal(config: T.IntegerOctal.Config): T.IntegerOctal.Built {
+export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'content'>): T.IntegerOctal.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(8, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4353,7 +4354,7 @@ export function buildIntegerOctal(config: T.IntegerOctal.Config): T.IntegerOctal
 				_content,
 				$with: {
 					prefix: (value: '0o' | '0O') => buildIntegerOctal({ ...config, prefix: value }),
-					content: (value: string) => buildIntegerOctal({ ...config, content: value })
+					content: (value: string | number) => buildIntegerOctal({ ...config, content: value })
 				}
 			},
 			{
@@ -4365,11 +4366,11 @@ export function buildIntegerOctal(config: T.IntegerOctal.Config): T.IntegerOctal
 	);
 }
 
-export function buildIntegerBinary(config: T.IntegerBinary.Config): T.IntegerBinary.Built {
+export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 'content'>): T.IntegerBinary.Built {
 	const _prefix = config.prefix;
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
+	const _content = numberText(2, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4382,7 +4383,7 @@ export function buildIntegerBinary(config: T.IntegerBinary.Config): T.IntegerBin
 				_content,
 				$with: {
 					prefix: (value: '0b' | '0B') => buildIntegerBinary({ ...config, prefix: value }),
-					content: (value: string) => buildIntegerBinary({ ...config, content: value })
+					content: (value: string | number) => buildIntegerBinary({ ...config, content: value })
 				}
 			},
 			{
@@ -4394,7 +4395,8 @@ export function buildIntegerBinary(config: T.IntegerBinary.Config): T.IntegerBin
 	);
 }
 
-export function buildIntegerDecimal(text: string): T.IntegerDecimal.Built {
+export function buildIntegerDecimal(text: string | number): T.IntegerDecimal.Built {
+	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`integer_decimal: text must be non-empty`);
 	if (!_leafRe_buildIntegerDecimal.test(text)) throw new Error(`integer_decimal: text does not match pattern: ${text}`);
 	return withMethods(
@@ -4408,7 +4410,8 @@ export function buildIntegerDecimal(text: string): T.IntegerDecimal.Built {
 	);
 }
 
-export function buildFloatPoint(text: string): T.FloatPoint.Built {
+export function buildFloatPoint(text: string | number): T.FloatPoint.Built {
+	text = numberText('float', '', text);
 	if (text.length === 0) throw new Error(`float_point: text must be non-empty`);
 	if (!_leafRe_buildFloatPoint.test(text)) throw new Error(`float_point: text does not match pattern: ${text}`);
 	return withMethods(
@@ -4422,7 +4425,8 @@ export function buildFloatPoint(text: string): T.FloatPoint.Built {
 	);
 }
 
-export function buildFloatLeadingPoint(text: string): T.FloatLeadingPoint.Built {
+export function buildFloatLeadingPoint(text: string | number): T.FloatLeadingPoint.Built {
+	text = numberText('float', '', text);
 	if (text.length === 0) throw new Error(`float_leading_point: text must be non-empty`);
 	if (!_leafRe_buildFloatLeadingPoint.test(text))
 		throw new Error(`float_leading_point: text does not match pattern: ${text}`);
@@ -4437,7 +4441,8 @@ export function buildFloatLeadingPoint(text: string): T.FloatLeadingPoint.Built 
 	);
 }
 
-export function buildFloatScientific(text: string): T.FloatScientific.Built {
+export function buildFloatScientific(text: string | number): T.FloatScientific.Built {
+	text = numberText('float', '', text);
 	if (text.length === 0) throw new Error(`float_scientific: text must be non-empty`);
 	if (!_leafRe_buildFloatScientific.test(text))
 		throw new Error(`float_scientific: text does not match pattern: ${text}`);
@@ -4522,7 +4527,7 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 }
 
 export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.Built {
-	const _content = value;
+	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${_content}`);
 	return withMethods(

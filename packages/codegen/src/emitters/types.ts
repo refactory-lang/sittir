@@ -3,7 +3,7 @@ import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/mo
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { numericLeafKinds } from './interior.ts';
+import { numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -65,6 +65,7 @@ import {
 	fromBareInput,
 	bareValueSlot,
 	scalarLeafKinds,
+	lexedContentSlot,
 	canonicalSeparatedListField,
 	enumMemberDiscriminant
 } from './shared.ts';
@@ -280,7 +281,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		const node = nodeMap.nodes.get(kind)!;
 		const tree = treeEmitted.has(node.typeName) ? `${node.typeName}Tree` : 'never';
 		lines.push(
-			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafTextType(node)}, ${node.typeName}.Built, ${tree}, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, ${tree}, '${kind}'> {}`
 		);
 	}
 	lines.push('');
@@ -355,6 +356,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesLooseValue = /\bLooseValue\b/.test(body);
 	const usesLooseConfigOf = /\bLooseConfigOf\b/.test(body);
 	const usesConfigOf = /\bConfigOf\b/.test(body);
+	const usesWidenNumeric = /\bWidenNumeric\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
 	const usesKindEnum = /\bKindEnum\b/.test(body);
 	const usesHiddenLeaf = /\bHiddenLeaf\b/.test(body);
@@ -366,6 +368,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'TreeNode as BaseTreeNode',
 		...(usesConfigOf ? ['ConfigOf'] : []),
 		...(usesLooseConfigOf ? ['LooseConfigOf'] : []),
+		...(usesWidenNumeric ? ['WidenNumeric'] : []),
 		...(usesLooseValue ? ['LooseValue'] : []),
 		'NodeKind',
 		'NodeNs',
@@ -570,6 +573,10 @@ function emitLeafTerminalAliases(
 
 function leafTextType(node: AssembledNode): string {
 	return node.modelType === 'enum' ? node.values.map((v) => JSON.stringify(v)).join(' | ') : 'string';
+}
+
+function leafConstructionTextType(node: AssembledNode): string {
+	return numericLeafShape(node.kind, node) === undefined ? leafTextType(node) : 'string | number';
 }
 
 function emitTreeInterfaceDeclarations(
@@ -1073,6 +1080,11 @@ function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly Refine
 	lines.push('');
 }
 
+function widenNumericSlots(type: string, node: AssembledNode): string {
+	const keys = numericSlotKeys(node);
+	return keys.length === 0 ? type : `WidenNumeric<${type}, ${keys.map((key) => JSON.stringify(key)).join(' | ')}>`;
+}
+
 function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
@@ -1090,15 +1102,20 @@ function emitNamespaceSugarBlock(
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
-		lines.push(`  export type Config = ConfigFor<${nsKey}>;`);
+		lines.push(`  export type Config = ${widenNumericSlots(`ConfigFor<${nsKey}>`, node)};`);
 	}
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
 	if (surface !== undefined) emitBuiltInterface(lines, surface, '  ');
 	else lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
-	lines.push(`  export type Loose = LooseFor<${nsKey}>;`);
-	lines.push(`  export type LooseConfig = LooseConfigFor<${nsKey}>;`);
+	const bareNumeric = ((): boolean => {
+		const bare = lexedContentSlot(node);
+		return (bare !== undefined && numericSlotShape(bare) !== undefined) || numericLeafShape(kind, node) !== undefined;
+	})();
+	const looseWidened = numericSlotKeys(node).length > 0 ? ` | ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)}` : '';
+	lines.push(`  export type Loose = LooseFor<${nsKey}>${looseWidened}${bareNumeric ? ' | number' : ''};`);
+	lines.push(`  export type LooseConfig = ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)};`);
 	if (surface !== undefined) {
 		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
 		lines.push(`  export type LooseArgs = ${surface.looseArgs};`);
