@@ -92,11 +92,10 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 }
 
 function triviaSuffix(trivia: NodeTrivia | undefined, ctx: PrintContext): string {
-	if (trivia === undefined || (trivia.leading.length === 0 && trivia.trailing.length === 0)) return '';
-	const parts: string[] = [];
-	if (trivia.leading.length > 0) parts.push(`leading: ${printValue(trivia.leading, ctx, 0)}`);
-	if (trivia.trailing.length > 0) parts.push(`trailing: ${printValue(trivia.trailing, ctx, 0)}`);
-	return `.$trivia({ ${parts.join(', ')} })`;
+	if (trivia === undefined) return '';
+	const side = (name: 'leading' | 'trailing'): string =>
+		trivia[name].length === 0 ? '' : `.$trivia.${name}(${trivia[name].map((entry) => printValue(entry, ctx, 0)).join(', ')})`;
+	return side('leading') + side('trailing');
 }
 
 function reindent(source: string, depth: number): string {

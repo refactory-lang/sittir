@@ -57,11 +57,17 @@ export const methodsEngine = {
  *  back the same kind. A type alias cannot name itself, so the earlier
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
+export interface TriviaSetterOf<Self> {
+	(...args: ((Comment | string) | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): Self;
+	leading(...items: (Comment | string)[]): Self;
+	trailing(...items: (Comment | string)[]): Self;
+}
+
 export interface NodeMethodsOf {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: (Comment | string | { leading?: (Comment | string)[]; trailing?: (Comment | string)[] })[]): this;
+	$trivia: TriviaSetterOf<this>;
 }
 
 export function withMethods<T extends object>(node: T, engine: typeof methodsEngine): T & NodeMethodsOf {

@@ -107,7 +107,7 @@ export function rebuildFormatStrict() {
 	return ir.program.strict({
 		statements: [
 			importTypesStrict(),
-			applyFormatStrict().$trivia({ leading: [applyFormatDocStrict()] }),
+			applyFormatStrict().$trivia.leading(applyFormatDocStrict()),
 			applyBoundaryStrict(),
 		],
 	});
