@@ -540,17 +540,13 @@ const keyParams = () =>
 		})
 	);
 
-interface Trivia {
-	leading?: string[];
-	trailing?: string[];
-}
+type Triviable<N> = {
+	readonly $trivia: { leading(...items: string[]): N; trailing(...items: string[]): N };
+};
 
-function trivia(leading: readonly string[], trailing: readonly string[]): Trivia | null {
-	if (leading.length === 0 && trailing.length === 0) return null;
-	const t: Trivia = {};
-	if (leading.length > 0) t.leading = [...leading];
-	if (trailing.length > 0) t.trailing = [...trailing];
-	return t;
+function withTrivia<N extends Triviable<N>>(node: N, leading: readonly string[], trailing: readonly string[]): N {
+	const led = leading.length > 0 ? node.$trivia.leading(...leading) : node;
+	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
 }
 
 function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature {
@@ -560,8 +556,7 @@ function memberIr(m: Member, base: boolean, leading: readonly string[]): Propert
 		...(m.optional ? { optionalMarker: true } : {}),
 		type: ir.typeAnnotation.strict(toIr(m.type, base))
 	});
-	const t = trivia(leading, m.trailing);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, leading, m.trailing);
 }
 
 function interfaceIr(s: Interface, base: boolean): TsStatement {
@@ -580,8 +575,7 @@ function interfaceIr(s: Interface, base: boolean): TsStatement {
 		body: ir.objectType.strict({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
 	});
 	const built = ir.exportStatement.default.declaration.strict({ content: decl });
-	const t = trivia(s.leading, s.trailing);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, s.leading, s.trailing);
 }
 
 function statementIr(s: Statement, base: boolean): TsStatement {
@@ -620,8 +614,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 		fromClause: { importClause: clause, source: str(imp.from) },
 		terminator: TSKindId.Semi
 	});
-	const t = trivia(leading, []);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, leading, []);
 }
 
 export function renderVocabularyFile(file: VocabularyFile): string {

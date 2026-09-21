@@ -49,6 +49,16 @@ describe('@sittir/common/utils runtime surface', () => {
 		const triviaNodeB: AnyNodeData = { $type: 3, $source: 2, $text: 'b' };
 		expect(node.$trivia(triviaNodeA, triviaNodeB)).toBe(node);
 		expect((node as Record<string, unknown>).$_trivia).toEqual({ leading: [triviaNodeA, triviaNodeB] });
+		expect(node.$trivia.leading(triviaNodeA, triviaNodeB)).toBe(node);
+		expect((node as Record<string, unknown>).$_trivia).toEqual({ leading: [triviaNodeA, triviaNodeB] });
+		expect(node.$trivia.trailing(triviaNodeB)).toBe(node);
+		expect((node as Record<string, unknown>).$_trivia).toEqual({
+			leading: [triviaNodeA, triviaNodeB],
+			trailing: [triviaNodeB]
+		});
+		expect(node.$trivia.leading()).toBe(node);
+		expect((node as Record<string, unknown>).$_trivia).toEqual({ leading: [], trailing: [triviaNodeB] });
+		expect(Object.keys(node)).not.toContain('$trivia');
 		expect(render).toHaveBeenCalledTimes(1);
 		expect(render).toHaveBeenCalledWith(node);
 		expect(toEdit).toHaveBeenCalledTimes(2);

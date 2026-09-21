@@ -20,6 +20,13 @@ describe('$trivia() on the typescript surface', () => {
 		expect(makeFn('f').$trivia('// hi').$render()).toBe('// hi\nfunction f() {}');
 	});
 
+	it('leading and trailing each take a spread and chain', () => {
+		const fn = makeFn('f')
+			.$trivia.leading('/** doc */', ir.comment.line(' second'))
+			.$trivia.trailing('// tail');
+		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
+	});
+
 	it('a program root carries trivia like any node', () => {
 		const program = ir.program({ statements: [makeFn('f')] }).$trivia('// top');
 		expect(program.$render().startsWith('// top\n')).toBe(true);

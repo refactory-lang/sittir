@@ -9,7 +9,13 @@ export interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: unknown[]): T & WithMethodsRuntime<T>;
+	$trivia: TriviaSetterRuntime<T & WithMethodsRuntime<T>>;
+}
+
+export interface TriviaSetterRuntime<Self> {
+	(...args: unknown[]): Self;
+	leading(...items: unknown[]): Self;
+	trailing(...items: unknown[]): Self;
 }
 
 export interface WithMethodsEngine {
@@ -19,7 +25,7 @@ export interface WithMethodsEngine {
 
 export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
 	carryTriviaThroughWith(node);
-	return Object.assign(node, {
+	Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return engine.render(this);
 		},
@@ -29,11 +35,39 @@ export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsE
 		$replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
 			return engine.toEdit(this, target.range());
 		},
-		$trivia(this: AnyNodeData, ...args: unknown[]) {
-			setTriviaData(this, toTriviaData(args));
-			return this as unknown as T & WithMethodsRuntime<T>;
-		}
 	});
+	Object.defineProperty(node, '$trivia', {
+		get(this: AnyNodeData) {
+			return triviaSetterOf(this);
+		},
+		enumerable: false,
+		configurable: true
+	});
+	return node as T & WithMethodsRuntime<T>;
+}
+
+/**
+ * `$trivia` as a callable that also carries `leading` and `trailing`, each
+ * bound to its node: `node.$trivia.leading('// a', '// b')` sets that side
+ * from a spread and keeps the other, so the two chain. Called directly it is
+ * the earlier form: rest args are leading, one `{ leading, trailing }` object
+ * is taken as it is, and the last call wins.
+ */
+function triviaSetterOf<Self extends AnyNodeData>(node: Self): TriviaSetterRuntime<Self> {
+	const setSide = (side: 'leading' | 'trailing', items: readonly unknown[]): Self => {
+		setTriviaData(node, { ...node.$_trivia, [side]: items as readonly TriviaEntry[] });
+		return node;
+	};
+	return Object.assign(
+		(...args: unknown[]): Self => {
+			setTriviaData(node, toTriviaData(args));
+			return node;
+		},
+		{
+			leading: (...items: unknown[]): Self => setSide('leading', items),
+			trailing: (...items: unknown[]): Self => setSide('trailing', items)
+		}
+	);
 }
 
 /**
