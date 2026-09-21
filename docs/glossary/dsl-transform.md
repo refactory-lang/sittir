@@ -1789,3 +1789,11 @@ its own token kind and the parent becomes the polymorph over them. The rewrite r
 pipelines execute, so the parser sees the separate token kinds. It is lexically the same alternation when the arms
 have disjoint prefixes. An arm that is not a seq led by a string is an error naming the rule and the arm.
 ```
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::classifyTokenChoice`
+
+What a choice under a token is, by its arms: `presence` when an arm is blank, `spelling` when every arm is a string literal, `forms` otherwise. Only `forms` hoists; the other two are what the token-interior pass seats as a flag or an enum slot.
+
+### `packages/codegen/src/dsl/transform/token-forms.ts::distributeTokenForms`
+
+The rule algebra behind the token-form hoist. For a rule whose prec-peeled core is a `TOKEN` or `IMMEDIATE_TOKEN`, finds the outermost form alternation on any path from the token root (descending through seqs and through a presence choice whose live arm is a form alternation, in which case the blank is one more arm) and distributes the whole token body over the arms: each arm becomes its own token of the same wrapper kind with the surrounding structure kept, and the result is a `CHOICE` of those tokens under the original prec stack. An arm that is itself an alternation is not descended into; it stays one lexeme. Two hazards are diagnostics: an arm that matches the empty string (a pattern is tested as an anchored regex against the empty string), and two arms with identical bodies. Any other rule shape is returned as is.

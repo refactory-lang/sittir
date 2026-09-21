@@ -85,9 +85,31 @@ export const isEmptyBody = (rule: unknown): boolean => {
 	return isBlankType(r?.type) || (typeEq(r?.type, 'CHOICE') && r?.members?.length === 0);
 };
 
+export type CompiledPattern = { readonly regex: RegExp } | { readonly error: Error };
+
+export function compileAnchoredPattern(source: string): CompiledPattern {
+	const anchored = `^(?:${source})$`;
+	try {
+		return { regex: new RegExp(anchored, 'u') };
+	} catch {
+		try {
+			return { regex: new RegExp(anchored) };
+		} catch (error) {
+			return { error: error as Error };
+		}
+	}
+}
+
+export function patternAcceptsEmpty(source: string): boolean {
+	const compiled = compileAnchoredPattern(source);
+	return 'regex' in compiled && compiled.regex.test('');
+}
+
 export function matchesEmpty(rule: RuntimeRule): boolean {
 	const t = rule.type;
 	if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+	if (t === 'STRING') return (rule as { value?: unknown }).value === '';
+	if (t === 'PATTERN') return patternAcceptsEmpty(String((rule as { value?: unknown }).value));
 	const members = (rule as { members?: readonly RuntimeRule[] }).members ?? [];
 	if (isChoiceType(t)) return members.some(matchesEmpty);
 	if (isSeqType(t)) return members.every(matchesEmpty);

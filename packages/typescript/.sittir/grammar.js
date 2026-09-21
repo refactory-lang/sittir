@@ -83,9 +83,27 @@ var isStringType = (t) => typeEq(t, "STRING");
 var isPlainRepeatType = (t) => typeEq(t, "REPEAT");
 var isRepeatType = (t) => typeEq(t, "REPEAT") || typeEq(t, "REPEAT1");
 var isBlankType = (t) => typeEq(t, "BLANK");
+function compileAnchoredPattern(source) {
+  const anchored = `^(?:${source})$`;
+  try {
+    return { regex: new RegExp(anchored, "u") };
+  } catch {
+    try {
+      return { regex: new RegExp(anchored) };
+    } catch (error) {
+      return { error };
+    }
+  }
+}
+function patternAcceptsEmpty(source) {
+  const compiled = compileAnchoredPattern(source);
+  return "regex" in compiled && compiled.regex.test("");
+}
 function matchesEmpty(rule) {
   const t = rule.type;
   if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;
+  if (t === "STRING") return rule.value === "";
+  if (t === "PATTERN") return patternAcceptsEmpty(String(rule.value));
   const members = rule.members ?? [];
   if (isChoiceType(t)) return members.some(matchesEmpty);
   if (isSeqType(t)) return members.every(matchesEmpty);

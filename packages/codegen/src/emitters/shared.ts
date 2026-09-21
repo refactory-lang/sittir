@@ -1,5 +1,6 @@
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
+import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 import { isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
@@ -1132,23 +1133,16 @@ export function stripUselessEscapes(pattern: string): string {
 
 export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
 	if (!textPattern) return undefined;
-	const anchored = `^(?:${stripUselessEscapes(textPattern)})$`;
-	let regex: RegExp;
-	try {
-		regex = new RegExp(anchored, 'u');
-	} catch {
-		try {
-			regex = new RegExp(anchored);
-		} catch (e) {
-			throw new Error(
-				`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
-					`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(anchored)}. ` +
-					`Cause: ${(e as Error).message}. ` +
-					`Either fix the grammar or add the kind to an emitter exception list.`
-			);
-		}
+	const compiled = compileAnchoredPattern(stripUselessEscapes(textPattern));
+	if ('error' in compiled) {
+		throw new Error(
+			`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
+				`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(`^(?:${stripUselessEscapes(textPattern)})$`)}. ` +
+				`Cause: ${compiled.error.message}. ` +
+				`Either fix the grammar or add the kind to an emitter exception list.`
+		);
 	}
-	return regex;
+	return compiled.regex;
 }
 
 export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
