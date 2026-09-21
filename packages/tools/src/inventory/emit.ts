@@ -549,11 +549,6 @@ const keyParams = () =>
 		})
 	);
 
-interface Trivia {
-	leading?: string[];
-	trailing?: string[];
-}
-
 type Triviable<N> = {
 	readonly $trivia: { leading(...items: string[]): N; trailing(...items: string[]): N };
 };
