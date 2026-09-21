@@ -435,6 +435,11 @@ every unfielded token and lists a separator only when the field wraps the
 repeat, so it would need the same additions the template carries, in a
 file that mirrors tree-sitter's output rather than sittir's model.
 
-Instantiation cost is measured on the typescript grammar before this is
-planned, because a distributive conditional over 210 kinds' tuples is
-either instant or a cliff.
+Instantiation cost was measured on the typescript grammar before planning
+(2026-09-21): a spike deriving `Options` from 146 generated template types
+and the real `types.ts` interfaces compiled at 3,058,924 instantiations
+against 3,054,405 for today's tabulated `options.ts`, a difference under
+0.2% on a total dominated by the transitive import of `types.ts`; check
+time was within noise (1.65 s against 2.11 s). There is no cliff, and the
+usage `arguments: { lparen: { after }, _arguments: { separator, spread_element: { after } } }`
+type-checks against the derived type.

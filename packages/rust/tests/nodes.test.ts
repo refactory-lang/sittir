@@ -6449,108 +6449,6 @@ describe('raw_string_literal', () => {
 	});
 });
 
-describe('line_comment', () => {
-	it('factory produces correct type', () => {
-		const node = ir.lineComment({
-			$type: TSKindId.LineCommentRegularDslash,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.LineComment);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.lineComment({
-			$type: TSKindId.LineCommentRegularDslash,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('line_comment sub-factories', () => {
-	it('regularDslash builds the parent', () => {
-		const node = ir.lineComment.regularDslash('// a');
-		expect(node.$type).toBe(TSKindId.LineComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentRegularDslash);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('docOuter builds the parent', () => {
-		const node = ir.lineComment.docOuter({
-			$type: TSKindId.LineDocContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.LineComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentDocOuter);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('docInner builds the parent', () => {
-		const node = ir.lineComment.docInner({
-			$type: TSKindId.LineDocContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.LineComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentDocInner);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('content builds the parent', () => {
-		const node = ir.lineComment.content('test');
-		expect(node.$type).toBe(TSKindId.LineComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentContent);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('block_comment', () => {
-	it('factory produces correct type', () => {
-		const node = ir.blockComment();
-		expect(node.$type).toBe(TSKindId.BlockComment);
-		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.blockComment();
-		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('block_comment sub-factories', () => {
-	it('docOuter builds the parent', () => {
-		const node = ir.blockComment.docOuter({
-			$type: TSKindId.BlockCommentContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.BlockComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentDocOuter);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('docInner builds the parent', () => {
-		const node = ir.blockComment.docInner({
-			$type: TSKindId.BlockCommentContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.BlockComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentDocInner);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('content builds the parent', () => {
-		const node = ir.blockComment.content('test');
-		expect(node.$type).toBe(TSKindId.BlockComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentContent);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('identifier', () => {
 	it('factory produces correct type', () => {
 		const node = ir.identifier('test');
@@ -8221,24 +8119,6 @@ describe('match_arm_block_ending sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
 		expect((node as any).value()?.$type).toBe(TSKindId.ConstBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('line_comment_regular_dslash', () => {
-	it('factory produces correct type', () => {
-		const node = ir.lineCommentRegularDslash('// a');
-		expect(node.$type).toBe(TSKindId.LineCommentRegularDslash);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('// a');
-	});
-});
-
-describe('line_comment_content', () => {
-	it('factory produces correct type', () => {
-		const node = ir.lineCommentContent('test');
-		expect(node.$type).toBe(TSKindId.LineCommentContent);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('test');
 	});
 });
 

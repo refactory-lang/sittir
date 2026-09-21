@@ -670,11 +670,6 @@ export default grammar(
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-			extras: ($, previous) => [
-				...(previous ?? []).filter((extra: { name?: string }) => extra.name !== 'comment'),
-				$.comment_line,
-				$.comment_block
-			],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),

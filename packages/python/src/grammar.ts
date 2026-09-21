@@ -103,12 +103,6 @@ export type PythonGrammar = {
 			{ type: 'integer_arm4'; named: true }
 		];
 	};
-	readonly line_continuation: {
-		type: 'line_continuation';
-		named: true;
-		extra: true;
-		subtypes: [{ type: 'line_continuation_arm1'; named: true }, { type: 'line_continuation_arm2'; named: true }];
-	};
 	readonly parameter: {
 		type: 'parameter';
 		named: true;
@@ -1734,8 +1728,8 @@ export type PythonGrammar = {
 	readonly integer_arm4: { type: 'integer_arm4'; named: true };
 	readonly _anonymous_is: { type: 'is'; named: false };
 	readonly _anonymous_lambda: { type: 'lambda'; named: false };
-	readonly line_continuation_arm1: { type: 'line_continuation_arm1'; named: true };
-	readonly line_continuation_arm2: { type: 'line_continuation_arm2'; named: true };
+	readonly line_continuation_arm1: { type: 'line_continuation_arm1'; named: true; extra: true };
+	readonly line_continuation_arm2: { type: 'line_continuation_arm2'; named: true; extra: true };
 	readonly _anonymous_match: { type: 'match'; named: false };
 	readonly newline: { type: 'newline'; named: true };
 	readonly none: { type: 'none'; named: true };

@@ -767,6 +767,33 @@ function nestVariant(v, nestedUnder) {
   return nestedUnder.length === 0 ? v : { ...v, nestedUnder };
 }
 
+// packages/codegen/src/dsl/wire/symbol-renames.ts
+function resolveName(name, renames) {
+  let current = name;
+  for (let hops = 0; hops < renames.size; hops++) {
+    const next = renames.get(current);
+    if (next === void 0 || next === current) return current;
+    current = next;
+  }
+  return current;
+}
+function renameRule(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) return value.map((entry) => renameRule(entry, renames));
+  if (value === null || typeof value !== "object") return value;
+  const record = value;
+  const out = {};
+  for (const [key, entry] of Object.entries(record)) out[key] = renameRule(entry, renames);
+  if (record.type === "SYMBOL" && typeof record.name === "string") out.name = resolveName(record.name, renames);
+  return out;
+}
+function renameNameList(value, renames) {
+  if (renames.size === 0) return value;
+  if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
+  if (typeof value === "string") return resolveName(value, renames);
+  return renameRule(value, renames);
+}
+
 // packages/codegen/src/dsl/rule-metadata.ts
 function makeRuleMetadata(shape) {
   return shape;
@@ -1750,6 +1777,7 @@ function enrich(baseInput) {
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
   addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
+  replaceExtras(hasWrapper ? result.grammar : result, tokenFormArms(mergedRules, tokenFormParents));
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
@@ -1847,6 +1875,32 @@ function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedu
   let out = { ...core, members };
   for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
   return out;
+}
+function tokenFormArms(rules, parents) {
+  const arms = /* @__PURE__ */ new Map();
+  for (const parent of parents) {
+    let core = rules[parent];
+    while (core !== void 0 && isPrecWrapper(core)) core = core.content;
+    const members = core?.members ?? [];
+    arms.set(parent, members.flatMap((m) => m.name === void 0 ? [] : [m.name]));
+  }
+  return arms;
+}
+function replaceExtras(result, replacements) {
+  if (replacements.size === 0) return;
+  const current = result.extras;
+  const replaced = (entries, dollar) => entries.flatMap((entry) => {
+    const isSymbol = entry?.type === "SYMBOL";
+    const arms = isSymbol ? replacements.get(entry.name) : void 0;
+    if (arms === void 0) return [entry];
+    return arms.map((arm2) => dollar === void 0 ? { type: "SYMBOL", name: arm2 } : dollar[arm2]);
+  });
+  if (typeof current === "function") {
+    const fn = current;
+    result.extras = (dollar, previous) => replaced(fn(dollar, previous), dollar);
+    return;
+  }
+  if (Array.isArray(current)) result.extras = replaced(current, void 0);
 }
 function addSupertypes(result, names) {
   if (names.length === 0) return;
@@ -4034,12 +4088,18 @@ function wire(config, base2) {
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
+  const inheritedKeys = baseArg === void 0 ? {} : baseArg.grammar ?? baseArg;
+  const renamedCallbacks = Object.fromEntries(
+    ["extras", "externals", "precedences"].filter((key) => key in cfg || inheritedKeys[key] !== void 0).map((key) => [key, renamingCallback(cfg[key], renameRule, context)])
+  );
   const wired = {
     ...cfg,
     rules: outRules,
-    ...conflicts === void 0 ? {} : { conflicts },
-    ...inline === void 0 ? {} : { inline },
-    supertypes
+    ...renamedCallbacks,
+    ...cfg.reserved === void 0 ? {} : { reserved: renamingReserved(cfg.reserved, context) },
+    conflicts: renamingCallback(conflicts, renameNameList, context),
+    inline: renamingCallback(inline, renameNameList, context),
+    supertypes: renamingCallback(supertypes, renameNameList, context)
   };
   Object.defineProperty(wired, "__wireContext__", {
     value: context,
@@ -4047,6 +4107,21 @@ function wire(config, base2) {
     configurable: true
   });
   return wired;
+}
+function renamingReserved(reserved, context) {
+  if (reserved === null || typeof reserved !== "object" || Array.isArray(reserved)) return reserved;
+  return Object.fromEntries(
+    Object.entries(reserved).map(([contextName, list]) => [
+      contextName,
+      typeof list === "function" ? renamingCallback(list, renameRule, context) : renameRule(list, context.symbolRenames)
+    ])
+  );
+}
+function renamingCallback(user, rename, context) {
+  return function renamed($, previous) {
+    const value = user === void 0 ? previous : user.call(this, $, previous);
+    return rename(value, context.symbolRenames);
+  };
 }
 function polymorphVisibleName(parentKind, suffix) {
   const visibleParent = parentKind.startsWith("_") ? parentKind.slice(1) : parentKind;

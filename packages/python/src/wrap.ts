@@ -4124,8 +4124,8 @@ export function wrapCasePattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ True: 71, False: 72, None: 73, _: 280 },
-				{ 48: 280 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			content() {
@@ -4250,8 +4250,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
 					slotName: 'patterns',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 280 },
-				{ 48: 280 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			patterns() {
@@ -4346,8 +4346,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 					slotName: 'key',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 280 },
-				{ 48: 280 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 			_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
@@ -4410,8 +4410,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
 					slotName: 'value',
 					span: (data as _NodeData).$span
 				}),
-				{ True: 71, False: 72, None: 73, _: 280 },
-				{ 48: 280 }
+				{ True: 71, False: 72, None: 73, _: 279 },
+				{ 48: 279 }
 			),
 
 			name() {
@@ -7971,35 +7971,6 @@ export function wrapComment(data: T.Comment, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapLineContinuation(
-	data: T.LineContinuation & { readonly $other?: T.LineContinuation | readonly T.LineContinuation[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_line_continuation_arm1', '_line_continuation_arm2']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['line_continuation_arm1', 'line_continuation_arm2']) as
-		| T.LineContinuation
-		| readonly T.LineContinuation[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['line_continuation_arm1', 'line_continuation_arm2']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.LineContinuation>(node as T.LineContinuation, tree);
-	}
-	return drillIn<T.LineContinuation>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
 export function wrapEscapeSequenceArm1(data: T.EscapeSequenceArm1, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_arm1'], 'escape_sequence_arm1');
@@ -10364,7 +10335,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.None]: (d) => ({ ...d, $type: TSKindId.None as const }),
 	[TSKindId.Await]: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	[TSKindId.Comment]: (d, t) => wrapComment(d as unknown as T.Comment, t),
-	[TSKindId.LineContinuation]: (d, t) => wrapLineContinuation(d as unknown as T.LineContinuation, t),
 	[TSKindId.PositionalSeparator]: (d) => ({ ...d, $type: TSKindId.PositionalSeparator as const }),
 	[TSKindId.KeywordSeparator]: (d) => ({ ...d, $type: TSKindId.KeywordSeparator as const }),
 	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
@@ -10574,7 +10544,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.None]: _NodeData & { readonly $type: TSKindId.None };
 	[TSKindId.Await]: ReturnType<typeof wrapAwait>;
 	[TSKindId.Comment]: ReturnType<typeof wrapComment>;
-	[TSKindId.LineContinuation]: ReturnType<typeof wrapLineContinuation>;
 	[TSKindId.PositionalSeparator]: _NodeData & { readonly $type: TSKindId.PositionalSeparator };
 	[TSKindId.KeywordSeparator]: _NodeData & { readonly $type: TSKindId.KeywordSeparator };
 	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };

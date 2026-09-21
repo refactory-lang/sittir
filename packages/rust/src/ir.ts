@@ -739,8 +739,6 @@ export const ir: {
 	readonly negativeLiteral: typeof F.negativeLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
-	readonly lineComment: typeof F.lineComment;
-	readonly blockComment: typeof F.blockComment;
 	readonly shebang: typeof F.shebang;
 	readonly metavariable: typeof F.metavariable;
 	readonly macroRules: typeof F.macroRules;
@@ -790,13 +788,9 @@ export const ir: {
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
-	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
-	readonly lineCommentContent: typeof F.buildLineCommentContent;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
-	readonly lineDocContent: typeof F.buildLineDocContent;
-	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
 	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
 	readonly abstract: typeof F.abstractType;
@@ -1004,8 +998,6 @@ export const ir: {
 	negativeLiteral: F.negativeLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
-	lineComment: F.lineComment,
-	blockComment: F.blockComment,
 	shebang: F.shebang,
 	metavariable: F.metavariable,
 	macroRules: F.macroRules,
@@ -1059,13 +1051,9 @@ export const ir: {
 	// Leaf node factories
 	identifier: F.buildIdentifier,
 	stringLiteralOpen: F.buildStringLiteralOpen,
-	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
-	lineCommentContent: F.buildLineCommentContent,
 	floatLiteral: F.buildFloatLiteral,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
-	lineDocContent: F.buildLineDocContent,
-	blockCommentContent: F.buildBlockCommentContent,
 	rawStringLiteralStart: F.buildRawStringLiteralStart,
 	rawStringLiteralEnd: F.buildRawStringLiteralEnd,
 

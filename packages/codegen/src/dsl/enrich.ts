@@ -184,6 +184,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
 	addSupertypes((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormParents);
+	replaceExtras((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormArms(mergedRules, tokenFormParents));
 	if (clauseGroupNames.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
 			value: clauseGroupNames,
@@ -305,6 +306,35 @@ function hoistTokenForms(
 	let out = { ...core, members } as unknown as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i]!, content: out } as unknown as Rule;
 	return out;
+}
+
+function tokenFormArms(rules: Record<string, Rule>, parents: readonly string[]): ReadonlyMap<string, readonly string[]> {
+	const arms = new Map<string, readonly string[]>();
+	for (const parent of parents) {
+		let core = rules[parent];
+		while (core !== undefined && isPrecWrapper(core as { type: string })) core = (core as unknown as { content: Rule }).content;
+		const members = (core as unknown as { members?: readonly { name?: string }[] } | undefined)?.members ?? [];
+		arms.set(parent, members.flatMap((m) => (m.name === undefined ? [] : [m.name])));
+	}
+	return arms;
+}
+
+function replaceExtras(result: Record<string, unknown>, replacements: ReadonlyMap<string, readonly string[]>): void {
+	if (replacements.size === 0) return;
+	const current = result.extras;
+	const replaced = (entries: readonly unknown[], dollar: Record<string, unknown> | undefined): unknown[] =>
+		entries.flatMap((entry) => {
+			const isSymbol = (entry as { type?: string } | undefined)?.type === 'SYMBOL';
+			const arms = isSymbol ? replacements.get((entry as { name: string }).name) : undefined;
+			if (arms === undefined) return [entry];
+			return arms.map((arm) => (dollar === undefined ? { type: 'SYMBOL', name: arm } : dollar[arm]));
+		});
+	if (typeof current === 'function') {
+		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
+		result.extras = (dollar: Record<string, unknown>, previous?: unknown) => replaced(fn(dollar, previous), dollar);
+		return;
+	}
+	if (Array.isArray(current)) result.extras = replaced(current, undefined);
 }
 
 function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {

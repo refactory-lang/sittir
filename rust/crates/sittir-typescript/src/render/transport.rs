@@ -2763,16 +2763,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 
 #[derive(Debug, Clone)]
 pub enum TriviaTransport {
-    CommentLine(CommentLineTransport),
-    CommentBlock(CommentBlockTransport),
     Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TriviaTransport::CommentLine(t) => t.prepare(ctx),
-            TriviaTransport::CommentBlock(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -2781,8 +2777,6 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
 impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TriviaTransport::CommentLine(t) => t.render(w),
-            TriviaTransport::CommentBlock(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
         }
     }
@@ -2797,8 +2791,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    157 => Ok(Self::CommentLine(CommentLineTransport::from_napi_value(env, napi_val)?)),
-                    158 => Ok(Self::CommentBlock(CommentBlockTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -2810,8 +2802,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
                 match kind_id {
-                    157 => Ok(Self::CommentLine(CommentLineTransport::from_napi_value(env, napi_val)?)),
-                    158 => Ok(Self::CommentBlock(CommentBlockTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),

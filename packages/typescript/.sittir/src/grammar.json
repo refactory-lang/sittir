@@ -14819,19 +14819,19 @@
   "extras": [
     {
       "type": "SYMBOL",
-      "name": "html_comment"
-    },
-    {
-      "type": "PATTERN",
-      "value": "[\\s\\p{Zs}\\uFEFF\\u2028\\u2029\\u2060\\u200B]"
-    },
-    {
-      "type": "SYMBOL",
       "name": "comment_line"
     },
     {
       "type": "SYMBOL",
       "name": "comment_block"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "html_comment"
+    },
+    {
+      "type": "PATTERN",
+      "value": "[\\s\\p{Zs}\\uFEFF\\u2028\\u2029\\u2060\\u200B]"
     }
   ],
   "conflicts": [

@@ -8079,7 +8079,11 @@
     },
     {
       "type": "SYMBOL",
-      "name": "line_continuation"
+      "name": "line_continuation_arm1"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "line_continuation_arm2"
     }
   ],
   "conflicts": [

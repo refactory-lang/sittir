@@ -6262,3 +6262,15 @@ The names in the grammar's `externals`, whether it is an array or a `$ => [...]`
 ### `packages/codegen/src/dsl/enrich.ts::addSupertypes`
 
 Appends rule names to the grammar's `supertypes`, whether it is an array of names or a `$ => [...]` function, skipping names already listed. The token-form parents go through here so tree-sitter treats each as the supertype of its minted arms.
+
+### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
+
+Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over the callbacks it hands tree-sitter that hold rules (`extras`, `externals`, `precedences`, `reserved`), reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies.
+
+### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
+
+The same rename for the lists tree-sitter holds as names (`conflicts`, `inline`, `supertypes`): bare strings and symbol entries both. Callbacks are wrapped only for keys the config or the base defines, since tree-sitter rejects a callback for a property that must be an object (`reserved`) or that the grammar lacks.
+
+### `packages/codegen/src/dsl/enrich.ts::replaceExtras`
+
+A token-form parent that the grammar lists in `extras` is replaced there by its minted arms (`tokenFormArms`, read from the parent's final members after ordinals collapse), for an array of rules or a `$ => [...]` function alike. The arms are then renamed with everything else when `variant()` names them, so a grammar no longer restates its extras to swap a parent for its arms.

@@ -211,10 +211,6 @@ pub enum AnyTransport {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     BooleanLiteral(BooleanLiteralEnum),
-    LineComment(LineCommentTransport),
-    InnerLineDocCommentMarker(InnerLineDocCommentMarkerTransport),
-    OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
-    BlockComment(BlockCommentTransport),
     Identifier(IdentifierTransport),
     Shebang(ShebangTransport),
     ReservedIdentifier(ReservedIdentifierEnum),
@@ -302,12 +298,6 @@ pub enum AnyTransport {
     ForeignModItemBody(ForeignModItemBodyTransport),
     MatchArmWithComma(MatchArmWithCommaTransport),
     MatchArmBlockEnding(MatchArmBlockEndingTransport),
-    LineCommentRegularDslash(LineCommentRegularDslashTransport),
-    LineCommentDocOuter(LineCommentDocOuterTransport),
-    LineCommentDocInner(LineCommentDocInnerTransport),
-    LineCommentContent(LineCommentContentTransport),
-    BlockCommentDocOuter(BlockCommentDocOuterTransport),
-    BlockCommentDocInner(BlockCommentDocInnerTransport),
     TokenTreePatternParen(TokenTreePatternParenTransport),
     TokenTreePatternBracket(TokenTreePatternBracketTransport),
     TokenTreePatternBrace(TokenTreePatternBraceTransport),
@@ -340,10 +330,6 @@ pub enum AnyTransport {
     FloatLiteral(FloatLiteralTransport),
     StringContent(StringContentTransport),
     RawStringLiteralContent(RawStringLiteralContentTransport),
-    OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
-    InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
-    LineDocContent(LineDocContentTransport),
-    BlockCommentContent(BlockCommentContentTransport),
     Tight(TightTransport),
     Space(SpaceTransport),
     Newline(NewlineTransport),
@@ -442,9 +428,6 @@ pub enum AnyTransport {
     Dquote(DquoteTransport),
     TrueKeyword(TrueKeywordTransport),
     FalseKeyword(FalseKeywordTransport),
-    SlashSlash(SlashSlashTransport),
-    SlashStar(SlashStarTransport),
-    StarSlash(StarSlashTransport),
     DefaultKeyword(DefaultKeywordTransport),
     U8Keyword(U8KeywordTransport),
     I8Keyword(I8KeywordTransport),
@@ -705,10 +688,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::StringLiteral(t) => t.prepare(ctx),
             AnyTransport::RawStringLiteral(t) => t.prepare(ctx),
             AnyTransport::BooleanLiteral(t) => t.prepare(ctx),
-            AnyTransport::LineComment(t) => t.prepare(ctx),
-            AnyTransport::InnerLineDocCommentMarker(t) => t.prepare(ctx),
-            AnyTransport::OuterLineDocCommentMarker(t) => t.prepare(ctx),
-            AnyTransport::BlockComment(t) => t.prepare(ctx),
             AnyTransport::Identifier(t) => t.prepare(ctx),
             AnyTransport::Shebang(t) => t.prepare(ctx),
             AnyTransport::ReservedIdentifier(t) => t.prepare(ctx),
@@ -796,12 +775,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::ForeignModItemBody(t) => t.prepare(ctx),
             AnyTransport::MatchArmWithComma(t) => t.prepare(ctx),
             AnyTransport::MatchArmBlockEnding(t) => t.prepare(ctx),
-            AnyTransport::LineCommentRegularDslash(t) => t.prepare(ctx),
-            AnyTransport::LineCommentDocOuter(t) => t.prepare(ctx),
-            AnyTransport::LineCommentDocInner(t) => t.prepare(ctx),
-            AnyTransport::LineCommentContent(t) => t.prepare(ctx),
-            AnyTransport::BlockCommentDocOuter(t) => t.prepare(ctx),
-            AnyTransport::BlockCommentDocInner(t) => t.prepare(ctx),
             AnyTransport::TokenTreePatternParen(t) => t.prepare(ctx),
             AnyTransport::TokenTreePatternBracket(t) => t.prepare(ctx),
             AnyTransport::TokenTreePatternBrace(t) => t.prepare(ctx),
@@ -834,10 +807,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FloatLiteral(t) => t.prepare(ctx),
             AnyTransport::StringContent(t) => t.prepare(ctx),
             AnyTransport::RawStringLiteralContent(t) => t.prepare(ctx),
-            AnyTransport::OuterBlockDocCommentMarker(t) => t.prepare(ctx),
-            AnyTransport::InnerBlockDocCommentMarker(t) => t.prepare(ctx),
-            AnyTransport::LineDocContent(t) => t.prepare(ctx),
-            AnyTransport::BlockCommentContent(t) => t.prepare(ctx),
             AnyTransport::Tight(t) => t.prepare(ctx),
             AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Newline(t) => t.prepare(ctx),
@@ -936,9 +905,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Dquote(t) => t.prepare(ctx),
             AnyTransport::TrueKeyword(t) => t.prepare(ctx),
             AnyTransport::FalseKeyword(t) => t.prepare(ctx),
-            AnyTransport::SlashSlash(t) => t.prepare(ctx),
-            AnyTransport::SlashStar(t) => t.prepare(ctx),
-            AnyTransport::StarSlash(t) => t.prepare(ctx),
             AnyTransport::DefaultKeyword(t) => t.prepare(ctx),
             AnyTransport::U8Keyword(t) => t.prepare(ctx),
             AnyTransport::I8Keyword(t) => t.prepare(ctx),
@@ -1606,22 +1572,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 331 => Ok(AnyTransport::BooleanLiteral(
                     BooleanLiteralEnum::from_napi_value(env, napi_val)?
                 )),
-                // kind: line_comment (LINE_COMMENT)
-                332 => Ok(AnyTransport::LineComment(
-                    LineCommentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _inner_line_doc_comment_marker (_INNER_LINE_DOC_COMMENT_MARKER)
-                333 => Ok(AnyTransport::InnerLineDocCommentMarker(
-                    InnerLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _outer_line_doc_comment_marker (_OUTER_LINE_DOC_COMMENT_MARKER)
-                334 => Ok(AnyTransport::OuterLineDocCommentMarker(
-                    OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: block_comment (BLOCK_COMMENT)
-                335 => Ok(AnyTransport::BlockComment(
-                    BlockCommentTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: identifier (IDENTIFIER)
                 1 => Ok(AnyTransport::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
@@ -1958,30 +1908,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 400 => Ok(AnyTransport::MatchArmBlockEnding(
                     MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: line_comment_regular_dslash (LINE_COMMENT_REGULAR_DSLASH)
-                401 => Ok(AnyTransport::LineCommentRegularDslash(
-                    LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: line_comment_doc_outer (LINE_COMMENT_DOC_OUTER)
-                402 => Ok(AnyTransport::LineCommentDocOuter(
-                    LineCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: line_comment_doc_inner (LINE_COMMENT_DOC_INNER)
-                403 => Ok(AnyTransport::LineCommentDocInner(
-                    LineCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: line_comment_content (LINE_COMMENT_CONTENT)
-                153 => Ok(AnyTransport::LineCommentContent(
-                    LineCommentContentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: block_comment_doc_outer (BLOCK_COMMENT_DOC_OUTER)
-                404 => Ok(AnyTransport::BlockCommentDocOuter(
-                    BlockCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: block_comment_doc_inner (BLOCK_COMMENT_DOC_INNER)
-                405 => Ok(AnyTransport::BlockCommentDocInner(
-                    BlockCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: token_tree_pattern_paren (TOKEN_TREE_PATTERN_PAREN)
                 406 => Ok(AnyTransport::TokenTreePatternParen(
                     TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
@@ -2109,22 +2035,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: raw_string_literal_content (RAW_STRING_LITERAL_CONTENT)
                 157 => Ok(AnyTransport::RawStringLiteralContent(
                     RawStringLiteralContentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
-                160 => Ok(AnyTransport::OuterBlockDocCommentMarker(
-                    OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _inner_block_doc_comment_marker (_INNER_BLOCK_DOC_COMMENT_MARKER)
-                161 => Ok(AnyTransport::InnerBlockDocCommentMarker(
-                    InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _line_doc_content (_LINE_DOC_CONTENT)
-                163 => Ok(AnyTransport::LineDocContent(
-                    LineDocContentTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _block_comment_content (_BLOCK_COMMENT_CONTENT)
-                162 => Ok(AnyTransport::BlockCommentContent(
-                    BlockCommentContentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _tight (_TIGHT)
                 165 => Ok(AnyTransport::Tight(
@@ -2518,18 +2428,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 118 => Ok(AnyTransport::FalseKeyword(
                     FalseKeywordTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: slash_slash (SLASH_SLASH)
-                119 => Ok(AnyTransport::SlashSlash(
-                    SlashSlashTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: slash_star (SLASH_STAR)
-                122 => Ok(AnyTransport::SlashStar(
-                    SlashStarTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: star_slash (STAR_SLASH)
-                123 => Ok(AnyTransport::StarSlash(
-                    StarSlashTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: default_keyword (DEFAULT_KEYWORD)
                 125 => Ok(AnyTransport::DefaultKeyword(
                     DefaultKeywordTransport::from_napi_value(env, napi_val)?
@@ -2717,16 +2615,12 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 
 #[derive(Debug, Clone)]
 pub enum TriviaTransport {
-    LineComment(LineCommentTransport),
-    BlockComment(BlockCommentTransport),
     Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TriviaTransport::LineComment(t) => t.prepare(ctx),
-            TriviaTransport::BlockComment(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -2735,8 +2629,6 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
 impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TriviaTransport::LineComment(t) => t.render(w),
-            TriviaTransport::BlockComment(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
         }
     }
@@ -2751,8 +2643,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    332 => Ok(Self::LineComment(LineCommentTransport::from_napi_value(env, napi_val)?)),
-                    335 => Ok(Self::BlockComment(BlockCommentTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -2764,8 +2654,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
                 match kind_id {
-                    332 => Ok(Self::LineComment(LineCommentTransport::from_napi_value(env, napi_val)?)),
-                    335 => Ok(Self::BlockComment(BlockCommentTransport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -28861,275 +28749,6 @@ impl ::sittir_core::render::Render for StringLiteralElementsTransportSlot {
             StringLiteralElementsTransportSlot::EscapeSequenceArm4(inner) => { w.adjacent(); inner.render(w) },
             StringLiteralElementsTransportSlot::StringContent(inner) => inner.render(w),
             StringLiteralElementsTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum LineCommentContentTransportSlot {
-    LineCommentRegularDslash(LineCommentRegularDslashTransport),
-    LineCommentDocOuter(LineCommentDocOuterTransport),
-    LineCommentDocInner(LineCommentDocInnerTransport),
-    LineCommentContent(LineCommentContentTransport),
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            LineCommentContentTransportSlot::LineCommentRegularDslash(t) => t.prepare(ctx),
-            LineCommentContentTransportSlot::LineCommentDocOuter(t) => t.prepare(ctx),
-            LineCommentContentTransportSlot::LineCommentDocInner(t) => t.prepare(ctx),
-            LineCommentContentTransportSlot::LineCommentContent(t) => t.prepare(ctx),
-            LineCommentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for LineCommentContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::LineCommentRegularDslash(inner) => inner.kind_in(kinds),
-            Self::LineCommentDocOuter(inner) => inner.kind_in(kinds),
-            Self::LineCommentDocInner(inner) => inner.kind_in(kinds),
-            Self::LineCommentContent(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(153), ::sittir_core::types::KindId(401)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    401 => Ok(Self::LineCommentRegularDslash(
-                        LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
-                    )),
-                    402 => Ok(Self::LineCommentDocOuter(
-                        LineCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::LineCommentDocInner(
-                        LineCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::LineCommentContent(
-                        LineCommentContentTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LineCommentContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in LineCommentContentTransportSlot")
-                )?;
-                match kind_id {
-                    401 => Ok(Self::LineCommentRegularDslash(
-                        LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
-                    )),
-                    402 => Ok(Self::LineCommentDocOuter(
-                        LineCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    403 => Ok(Self::LineCommentDocInner(
-                        LineCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    153 => Ok(Self::LineCommentContent(
-                        LineCommentContentTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in LineCommentContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("LineCommentContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineCommentContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LineCommentContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn line_comment_content_transport_slot_to_any(t: LineCommentContentTransportSlot) -> AnyTransport {
-    match t {
-        LineCommentContentTransportSlot::LineCommentRegularDslash(inner) => AnyTransport::LineCommentRegularDslash(inner),
-        LineCommentContentTransportSlot::LineCommentDocOuter(inner) => AnyTransport::LineCommentDocOuter(inner),
-        LineCommentContentTransportSlot::LineCommentDocInner(inner) => AnyTransport::LineCommentDocInner(inner),
-        LineCommentContentTransportSlot::LineCommentContent(inner) => AnyTransport::LineCommentContent(inner),
-        LineCommentContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LineCommentContentTransportSlot::LineCommentRegularDslash(inner) => inner.render(w),
-            LineCommentContentTransportSlot::LineCommentDocOuter(inner) => { w.adjacent(); inner.render(w) },
-            LineCommentContentTransportSlot::LineCommentDocInner(inner) => { w.adjacent(); inner.render(w) },
-            LineCommentContentTransportSlot::LineCommentContent(inner) => inner.render(w),
-            LineCommentContentTransportSlot::Verbatim(inner) => inner.render(w),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum BlockCommentContentTransportSlot {
-    BlockCommentDocOuter(BlockCommentDocOuterTransport),
-    BlockCommentDocInner(BlockCommentDocInnerTransport),
-    BlockCommentContent(BlockCommentContentTransport),
-    Verbatim(VerbatimTransport),
-}
-
-impl ::sittir_core::prepare::Prepare for BlockCommentContentTransportSlot {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            BlockCommentContentTransportSlot::BlockCommentDocOuter(t) => t.prepare(ctx),
-            BlockCommentContentTransportSlot::BlockCommentDocInner(t) => t.prepare(ctx),
-            BlockCommentContentTransportSlot::BlockCommentContent(t) => t.prepare(ctx),
-            BlockCommentContentTransportSlot::Verbatim(t) => t.prepare(ctx),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for BlockCommentContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::BlockCommentDocOuter(inner) => inner.kind_in(kinds),
-            Self::BlockCommentDocInner(inner) => inner.kind_in(kinds),
-            Self::BlockCommentContent(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    404 => Ok(Self::BlockCommentDocOuter(
-                        BlockCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    405 => Ok(Self::BlockCommentDocInner(
-                        BlockCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    162 => Ok(Self::BlockCommentContent(
-                        BlockCommentContentTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in BlockCommentContentTransportSlot")
-                )?;
-                match kind_id {
-                    404 => Ok(Self::BlockCommentDocOuter(
-                        BlockCommentDocOuterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    405 => Ok(Self::BlockCommentDocInner(
-                        BlockCommentDocInnerTransport::from_napi_value(env, napi_val)?
-                    )),
-                    162 => Ok(Self::BlockCommentContent(
-                        BlockCommentContentTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in BlockCommentContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("BlockCommentContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("BlockCommentContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockCommentContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn block_comment_content_transport_slot_to_any(t: BlockCommentContentTransportSlot) -> AnyTransport {
-    match t {
-        BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => AnyTransport::BlockCommentDocOuter(inner),
-        BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => AnyTransport::BlockCommentDocInner(inner),
-        BlockCommentContentTransportSlot::BlockCommentContent(inner) => AnyTransport::BlockCommentContent(inner),
-        BlockCommentContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl ::sittir_core::render::Render for BlockCommentContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            BlockCommentContentTransportSlot::BlockCommentDocOuter(inner) => { w.adjacent(); inner.render(w) },
-            BlockCommentContentTransportSlot::BlockCommentDocInner(inner) => { w.adjacent(); inner.render(w) },
-            BlockCommentContentTransportSlot::BlockCommentContent(inner) => inner.render(w),
-            BlockCommentContentTransportSlot::Verbatim(inner) => { w.adjacent(); inner.render(w) },
         }
     }
 }
@@ -56708,308 +56327,6 @@ impl ::sittir_core::render::Render for BooleanLiteralEnum {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LineCommentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<LineCommentContentTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_line_comment_before"))]
-    pub line_comment_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_line_comment_after"))]
-    pub line_comment_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for LineCommentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(332)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_line_comment(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.line_comment_before.get_or_insert(ctx.options.spacing[options::SITE_LINE_COMMENT_LINE_COMMENT_BEFORE]);
-        self.line_comment_after.get_or_insert(ctx.options.spacing[options::SITE_LINE_COMMENT_LINE_COMMENT_AFTER]);
-        self.content.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct InnerLineDocCommentMarkerTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for InnerLineDocCommentMarkerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(333)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for InnerLineDocCommentMarkerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for InnerLineDocCommentMarkerTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "!".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "!".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InnerLineDocCommentMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InnerLineDocCommentMarkerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InnerLineDocCommentMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InnerLineDocCommentMarkerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InnerLineDocCommentMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct OuterLineDocCommentMarkerTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for OuterLineDocCommentMarkerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(334)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for OuterLineDocCommentMarkerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for OuterLineDocCommentMarkerTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "/".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "/".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "/".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OuterLineDocCommentMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OuterLineDocCommentMarkerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OuterLineDocCommentMarkerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        OuterLineDocCommentMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct BlockCommentTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<::sittir_core::SlotValue<BlockCommentContentTransportSlot, true>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_slash_before"))]
-    pub star_slash_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_slash_star_after"))]
-    pub slash_star_after: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_before"))]
-    pub block_comment_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_after"))]
-    pub block_comment_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for BlockCommentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(335)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for BlockCommentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_block_comment(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BlockCommentTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.star_slash_before.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_STAR_SLASH_BEFORE]);
-        self.slash_star_after.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_SLASH_STAR_AFTER]);
-        self.block_comment_before.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_BLOCK_COMMENT_BEFORE]);
-        self.block_comment_after.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_BLOCK_COMMENT_AFTER]);
-        self.content.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockCommentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct IdentifierTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
@@ -64991,394 +64308,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MatchArmBlockEndingTransport> 
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct LineCommentRegularDslashTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for LineCommentRegularDslashTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(401)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentRegularDslashTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentRegularDslashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineCommentRegularDslashTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentRegularDslashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentRegularDslashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentRegularDslashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentRegularDslashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LineCommentDocOuterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
-    pub doc: ::sittir_core::SlotValue<LineDocContentTransport, true>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_line_comment_doc_outer_after"))]
-    pub line_comment_doc_outer_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for LineCommentDocOuterTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(402)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentDocOuterTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_line_comment_doc_outer(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentDocOuterTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.line_comment_doc_outer_after.get_or_insert(ctx.options.spacing[options::SITE_LINE_COMMENT_DOC_OUTER_LINE_COMMENT_DOC_OUTER_AFTER]);
-        self.doc.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentDocOuterTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentDocOuterTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentDocOuterTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentDocOuterTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct LineCommentDocInnerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
-    pub doc: ::sittir_core::SlotValue<LineDocContentTransport, true>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_line_comment_doc_inner_after"))]
-    pub line_comment_doc_inner_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for LineCommentDocInnerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(403)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentDocInnerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_line_comment_doc_inner(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentDocInnerTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.line_comment_doc_inner_after.get_or_insert(ctx.options.spacing[options::SITE_LINE_COMMENT_DOC_INNER_LINE_COMMENT_DOC_INNER_AFTER]);
-        self.doc.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentDocInnerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentDocInnerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentDocInnerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentDocInnerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct LineCommentContentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for LineCommentContentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(153)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineCommentContentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineCommentContentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineCommentContentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineCommentContentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineCommentContentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineCommentContentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineCommentContentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct BlockCommentDocOuterTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
-    pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport, true>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_doc_outer_after"))]
-    pub block_comment_doc_outer_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for BlockCommentDocOuterTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(404)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for BlockCommentDocOuterTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_block_comment_doc_outer(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.block_comment_doc_outer_after.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_DOC_OUTER_BLOCK_COMMENT_DOC_OUTER_AFTER]);
-        self.doc.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentDocOuterTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockCommentDocOuterTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentDocOuterTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentDocOuterTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct BlockCommentDocInnerTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
-    pub doc: Option<::sittir_core::SlotValue<BlockCommentContentTransport, true>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block_comment_doc_inner_after"))]
-    pub block_comment_doc_inner_after: Option<u16>,
-}
-
-impl ::sittir_core::view::KindOf for BlockCommentDocInnerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(405)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for BlockCommentDocInnerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, render_block_comment_doc_inner(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerTransport {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.block_comment_doc_inner_after.get_or_insert(ctx.options.spacing[options::SITE_BLOCK_COMMENT_DOC_INNER_BLOCK_COMMENT_DOC_INNER_AFTER]);
-        self.doc.prepare(ctx)?;
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentDocInnerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockCommentDocInnerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentDocInnerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentDocInnerTransport::to_napi_value(env, *val)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct TokenTreePatternParenTransport {
@@ -68119,378 +67048,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RawStringLiteralContentTranspo
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         RawStringLiteralContentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct OuterBlockDocCommentMarkerTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for OuterBlockDocCommentMarkerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(160)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for OuterBlockDocCommentMarkerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for OuterBlockDocCommentMarkerTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "*".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "*".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OuterBlockDocCommentMarkerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OuterBlockDocCommentMarkerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        OuterBlockDocCommentMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct InnerBlockDocCommentMarkerTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for InnerBlockDocCommentMarkerTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(161)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for InnerBlockDocCommentMarkerTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for InnerBlockDocCommentMarkerTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "!".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "!".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InnerBlockDocCommentMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InnerBlockDocCommentMarkerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InnerBlockDocCommentMarkerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        InnerBlockDocCommentMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct LineDocContentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for LineDocContentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(163)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LineDocContentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for LineDocContentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineDocContentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<LineDocContentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        LineDocContentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<LineDocContentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        LineDocContentTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct BlockCommentContentTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for BlockCommentContentTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for BlockCommentContentTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, { w.adjacent(); w.text(&self.text) })
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BlockCommentContentTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentContentTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentContentTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BlockCommentContentTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BlockCommentContentTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BlockCommentContentTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BlockCommentContentTransport::to_napi_value(env, *val)
     }
 }
 
@@ -77695,288 +76252,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FalseKeywordTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct SlashSlashTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for SlashSlashTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for SlashSlashTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SlashSlashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "//".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "//".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "//".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SlashSlashTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashSlashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SlashSlashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashSlashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SlashSlashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct SlashStarTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for SlashStarTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for SlashStarTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for SlashStarTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashStarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "/*".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "/*".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashStarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "/*".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SlashStarTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashStarTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SlashStarTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashStarTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SlashStarTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct StarSlashTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for StarSlashTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for StarSlashTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StarSlashTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StarSlashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "*/".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "*/".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StarSlashTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "*/".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StarSlashTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StarSlashTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StarSlashTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StarSlashTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StarSlashTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct DefaultKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -83310,37 +81585,6 @@ fn render_boolean_literal(t: &BooleanLiteralEnum, w: &mut dyn ::sittir_core::ren
     t.render(w)
 }
 
-fn render_line_comment(node: &LineCommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    w.site_with(node.line_comment_before.unwrap_or(0), options::site_strength(options::SITE_LINE_COMMENT_LINE_COMMENT_BEFORE, node.line_comment_before.unwrap_or(0)));
-    w.text("//")?;
-    content.render(w)?;
-    w.site_with(node.line_comment_after.unwrap_or(0), options::site_strength(options::SITE_LINE_COMMENT_LINE_COMMENT_AFTER, node.line_comment_after.unwrap_or(0)));
-    Ok(())
-}
-
-fn render_inner_line_doc_comment_marker(t: &InnerLineDocCommentMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_block_comment(node: &BlockCommentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = View::new(&node.content, "{}");
-    w.site_with(node.block_comment_before.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_BLOCK_COMMENT_BEFORE, node.block_comment_before.unwrap_or(0)));
-    w.text("/*")?;
-    w.site_with(node.slash_star_after.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_SLASH_STAR_AFTER, node.slash_star_after.unwrap_or(0)));
-    content.render(w)?;
-    w.site_with(node.star_slash_before.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_STAR_SLASH_BEFORE, node.star_slash_before.unwrap_or(0)));
-    w.text("*/")?;
-    w.site_with(node.block_comment_after.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_BLOCK_COMMENT_AFTER, node.block_comment_after.unwrap_or(0)));
-    Ok(())
-}
-
 fn render_identifier(t: &IdentifierTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -84380,47 +82624,6 @@ fn render_match_arm_block_ending(node: &MatchArmBlockEndingTransport, w: &mut dy
     Ok(())
 }
 
-fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_line_comment_doc_outer(node: &LineCommentDocOuterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let doc = &node.doc;
-    w.text("/")?;
-    doc.render(w)?;
-    w.site_with(node.line_comment_doc_outer_after.unwrap_or(0), options::site_strength(options::SITE_LINE_COMMENT_DOC_OUTER_LINE_COMMENT_DOC_OUTER_AFTER, node.line_comment_doc_outer_after.unwrap_or(0)));
-    Ok(())
-}
-
-fn render_line_comment_doc_inner(node: &LineCommentDocInnerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let doc = &node.doc;
-    w.text("!")?;
-    doc.render(w)?;
-    w.site_with(node.line_comment_doc_inner_after.unwrap_or(0), options::site_strength(options::SITE_LINE_COMMENT_DOC_INNER_LINE_COMMENT_DOC_INNER_AFTER, node.line_comment_doc_inner_after.unwrap_or(0)));
-    Ok(())
-}
-
-fn render_line_comment_content(t: &LineCommentContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_block_comment_doc_outer(node: &BlockCommentDocOuterTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let doc = View::new(&node.doc, "{}");
-    w.text("*")?;
-    doc.render(w)?;
-    w.site_with(node.block_comment_doc_outer_after.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_DOC_OUTER_BLOCK_COMMENT_DOC_OUTER_AFTER, node.block_comment_doc_outer_after.unwrap_or(0)));
-    Ok(())
-}
-
-fn render_block_comment_doc_inner(node: &BlockCommentDocInnerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let doc = View::new(&node.doc, "{}");
-    w.text("!")?;
-    doc.render(w)?;
-    w.site_with(node.block_comment_doc_inner_after.unwrap_or(0), options::site_strength(options::SITE_BLOCK_COMMENT_DOC_INNER_BLOCK_COMMENT_DOC_INNER_AFTER, node.block_comment_doc_inner_after.unwrap_or(0)));
-    Ok(())
-}
-
 fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let token_patterns = ListView {
         items: node.token_patterns.as_deref().unwrap_or(&[]),
@@ -84964,26 +83167,6 @@ fn render_raw_string_literal_content(t: &RawStringLiteralContentTransport, w: &m
     w.text(&t.text)
 }
 
-fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_inner_block_doc_comment_marker(t: &InnerBlockDocCommentMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_line_doc_content(t: &LineDocContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
-fn render_block_comment_content(t: &BlockCommentContentTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.adjacent();
-    w.text(&t.text)
-}
-
 fn render_tight(t: &TightTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     { w.token_seam(&t.text); Ok::<(), ::sittir_core::render::RenderError>(()) }
 }
@@ -85373,18 +83556,6 @@ fn render_true_keyword(t: &TrueKeywordTransport, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_false_keyword(t: &FalseKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_slash_slash(t: &SlashSlashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_slash_star(t: &SlashStarTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_star_slash(t: &StarSlashTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -85949,10 +84120,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::StringLiteral(inner) => inner.kind_in(kinds),
             Self::RawStringLiteral(inner) => inner.kind_in(kinds),
             Self::BooleanLiteral(inner) => inner.kind_in(kinds),
-            Self::LineComment(inner) => inner.kind_in(kinds),
-            Self::InnerLineDocCommentMarker(inner) => inner.kind_in(kinds),
-            Self::OuterLineDocCommentMarker(inner) => inner.kind_in(kinds),
-            Self::BlockComment(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::Shebang(inner) => inner.kind_in(kinds),
             Self::ReservedIdentifier(inner) => inner.kind_in(kinds),
@@ -86040,12 +84207,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::ForeignModItemBody(inner) => inner.kind_in(kinds),
             Self::MatchArmWithComma(inner) => inner.kind_in(kinds),
             Self::MatchArmBlockEnding(inner) => inner.kind_in(kinds),
-            Self::LineCommentRegularDslash(inner) => inner.kind_in(kinds),
-            Self::LineCommentDocOuter(inner) => inner.kind_in(kinds),
-            Self::LineCommentDocInner(inner) => inner.kind_in(kinds),
-            Self::LineCommentContent(inner) => inner.kind_in(kinds),
-            Self::BlockCommentDocOuter(inner) => inner.kind_in(kinds),
-            Self::BlockCommentDocInner(inner) => inner.kind_in(kinds),
             Self::TokenTreePatternParen(inner) => inner.kind_in(kinds),
             Self::TokenTreePatternBracket(inner) => inner.kind_in(kinds),
             Self::TokenTreePatternBrace(inner) => inner.kind_in(kinds),
@@ -86078,10 +84239,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::FloatLiteral(inner) => inner.kind_in(kinds),
             Self::StringContent(inner) => inner.kind_in(kinds),
             Self::RawStringLiteralContent(inner) => inner.kind_in(kinds),
-            Self::OuterBlockDocCommentMarker(inner) => inner.kind_in(kinds),
-            Self::InnerBlockDocCommentMarker(inner) => inner.kind_in(kinds),
-            Self::LineDocContent(inner) => inner.kind_in(kinds),
-            Self::BlockCommentContent(inner) => inner.kind_in(kinds),
             Self::Tight(inner) => inner.kind_in(kinds),
             Self::Space(inner) => inner.kind_in(kinds),
             Self::Newline(inner) => inner.kind_in(kinds),
@@ -86180,9 +84337,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Dquote(inner) => inner.kind_in(kinds),
             Self::TrueKeyword(inner) => inner.kind_in(kinds),
             Self::FalseKeyword(inner) => inner.kind_in(kinds),
-            Self::SlashSlash(inner) => inner.kind_in(kinds),
-            Self::SlashStar(inner) => inner.kind_in(kinds),
-            Self::StarSlash(inner) => inner.kind_in(kinds),
             Self::DefaultKeyword(inner) => inner.kind_in(kinds),
             Self::U8Keyword(inner) => inner.kind_in(kinds),
             Self::I8Keyword(inner) => inner.kind_in(kinds),
@@ -86358,10 +84512,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::StringLiteral(t) => t.render(w),
             AnyTransport::RawStringLiteral(t) => t.render(w),
             AnyTransport::BooleanLiteral(t) => t.render(w),
-            AnyTransport::LineComment(t) => t.render(w),
-            AnyTransport::InnerLineDocCommentMarker(t) => t.render(w),
-            AnyTransport::OuterLineDocCommentMarker(t) => t.render(w),
-            AnyTransport::BlockComment(t) => t.render(w),
             AnyTransport::Identifier(t) => t.render(w),
             AnyTransport::Shebang(t) => t.render(w),
             AnyTransport::ReservedIdentifier(t) => t.render(w),
@@ -86449,12 +84599,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::ForeignModItemBody(t) => t.render(w),
             AnyTransport::MatchArmWithComma(t) => t.render(w),
             AnyTransport::MatchArmBlockEnding(t) => t.render(w),
-            AnyTransport::LineCommentRegularDslash(t) => t.render(w),
-            AnyTransport::LineCommentDocOuter(t) => t.render(w),
-            AnyTransport::LineCommentDocInner(t) => t.render(w),
-            AnyTransport::LineCommentContent(t) => t.render(w),
-            AnyTransport::BlockCommentDocOuter(t) => t.render(w),
-            AnyTransport::BlockCommentDocInner(t) => t.render(w),
             AnyTransport::TokenTreePatternParen(t) => t.render(w),
             AnyTransport::TokenTreePatternBracket(t) => t.render(w),
             AnyTransport::TokenTreePatternBrace(t) => t.render(w),
@@ -86487,10 +84631,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::FloatLiteral(t) => t.render(w),
             AnyTransport::StringContent(t) => t.render(w),
             AnyTransport::RawStringLiteralContent(t) => t.render(w),
-            AnyTransport::OuterBlockDocCommentMarker(t) => t.render(w),
-            AnyTransport::InnerBlockDocCommentMarker(t) => t.render(w),
-            AnyTransport::LineDocContent(t) => t.render(w),
-            AnyTransport::BlockCommentContent(t) => t.render(w),
             AnyTransport::Tight(t) => t.render(w),
             AnyTransport::Space(t) => t.render(w),
             AnyTransport::Newline(t) => t.render(w),
@@ -86589,9 +84729,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Dquote(t) => t.render(w),
             AnyTransport::TrueKeyword(t) => t.render(w),
             AnyTransport::FalseKeyword(t) => t.render(w),
-            AnyTransport::SlashSlash(t) => t.render(w),
-            AnyTransport::SlashStar(t) => t.render(w),
-            AnyTransport::StarSlash(t) => t.render(w),
             AnyTransport::DefaultKeyword(t) => t.render(w),
             AnyTransport::U8Keyword(t) => t.render(w),
             AnyTransport::I8Keyword(t) => t.render(w),

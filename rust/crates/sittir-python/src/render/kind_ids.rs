@@ -260,88 +260,87 @@ pub const FORMAT_SPECIFIER: KindId = KindId(249);
 pub const INTEGER: KindId = KindId(250);
 pub const FLOAT: KindId = KindId(251);
 pub const AWAIT: KindId = KindId(252);
-pub const LINE_CONTINUATION: KindId = KindId(253);
-pub const POSITIONAL_SEPARATOR: KindId = KindId(254);
-pub const KEYWORD_SEPARATOR: KindId = KindId(255);
-pub const _KW_ASYNC_MARKER: KindId = KindId(256);
-pub const SIMPLE_STATEMENTS_ELEMENTS: KindId = KindId(257);
-pub const SUBJECTS: KindId = KindId(258);
-pub const CASE_PATTERNS: KindId = KindId(259);
-pub const WITH_CLAUSE_WITH_ITEMS: KindId = KindId(260);
-pub const TYPES: KindId = KindId(261);
-pub const ARGUMENT_LIST_ELEMENTS: KindId = KindId(262);
-pub const EXPRESSION_LIST_EXPRESSIONS: KindId = KindId(263);
-pub const LIST_PATTERN_CASE_PATTERNS: KindId = KindId(264);
-pub const DICT_PATTERN_ELEMENTS: KindId = KindId(265);
-pub const PATTERN_LIST_PATTERNS: KindId = KindId(266);
-pub const SUBSCRIPTS: KindId = KindId(267);
-pub const DICTIONARY_ELEMENTS: KindId = KindId(268);
-pub const SLICE_GROUP: KindId = KindId(269);
-pub const _AUGMENTED_ASSIGNMENT_OPERATOR: KindId = KindId(270);
-pub const EXCEPT_CLAUSE_EXCEPTION_AS: KindId = KindId(271);
-pub const CASE_TUPLE_PATTERN: KindId = KindId(272);
-pub const CASE_LIST_PATTERN: KindId = KindId(273);
-pub const CASE_AS_PATTERN: KindId = KindId(274);
-pub const COMPREHENSION_CLAUSES: KindId = KindId(275);
-pub const _PRINT_ARGUMENTS: KindId = KindId(276);
-pub const _PRINT_CHEVRON_ARGUMENTS: KindId = KindId(277);
-pub const PRINT_STATEMENT_CHEVRON: KindId = KindId(278);
-pub const PRINT_STATEMENT_PLAIN: KindId = KindId(279);
-pub const _WILDCARD_PATTERN: KindId = KindId(280);
-pub const _PARENTHESIZED_IMPORT_LIST: KindId = KindId(281);
-pub const SIMPLE_PATTERN_NEGATIVE: KindId = KindId(282);
-pub const EXCEPT_CLAUSE_EXCEPTION_LIST: KindId = KindId(283);
-pub const EXCEPT_CLAUSE_EXCEPTION: KindId = KindId(284);
-pub const ASSIGNMENT_EQ: KindId = KindId(285);
-pub const ASSIGNMENT_TYPE: KindId = KindId(286);
-pub const ASSIGNMENT_TYPED: KindId = KindId(287);
-pub const EXPRESSION_STATEMENT_TUPLE: KindId = KindId(288);
-pub const WITH_CLAUSE_BARE: KindId = KindId(289);
-pub const WITH_CLAUSE_PAREN: KindId = KindId(290);
-pub const MATCH_BLOCK_BLOCK: KindId = KindId(291);
-pub const SUITE_INLINE: KindId = KindId(292);
-pub const SUITE_BLOCK: KindId = KindId(293);
-pub const SUITE_EMPTY: KindId = KindId(294);
-pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(295);
-pub const _YIELD_FROM_CLAUSE: KindId = KindId(296);
-pub const MODULE_REPEAT1: KindId = KindId(297);
-pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(298);
-pub const _IMPORT_LIST_REPEAT1: KindId = KindId(299);
-pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(300);
-pub const IF_STATEMENT_REPEAT1: KindId = KindId(301);
-pub const TRY_STATEMENT_REPEAT1: KindId = KindId(302);
-pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(303);
-pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(304);
-pub const DOTTED_NAME_REPEAT1: KindId = KindId(305);
-pub const UNION_PATTERN_REPEAT1: KindId = KindId(306);
-pub const _PARAMETERS_REPEAT1: KindId = KindId(307);
-pub const _PATTERNS_REPEAT1: KindId = KindId(308);
-pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(309);
-pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(310);
-pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(311);
-pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(312);
-pub const STRING_REPEAT1: KindId = KindId(313);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(314);
-pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(315);
-pub const SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(316);
-pub const SUBJECTS_REPEAT1: KindId = KindId(317);
-pub const CASE_PATTERNS_REPEAT1: KindId = KindId(318);
-pub const WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(319);
-pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(320);
-pub const TYPES_REPEAT1: KindId = KindId(321);
-pub const ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(322);
-pub const EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(323);
-pub const DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(324);
-pub const PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(325);
-pub const SUBSCRIPTS_REPEAT1: KindId = KindId(326);
-pub const DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(327);
-pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(328);
-pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(329);
-pub const EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(330);
-pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(331);
-pub const _AS_PATTERN_TARGET: KindId = KindId(332);
-pub const _FORMAT_EXPRESSION: KindId = KindId(333);
-pub const _NAMES: KindId = KindId(334);
+pub const POSITIONAL_SEPARATOR: KindId = KindId(253);
+pub const KEYWORD_SEPARATOR: KindId = KindId(254);
+pub const _KW_ASYNC_MARKER: KindId = KindId(255);
+pub const SIMPLE_STATEMENTS_ELEMENTS: KindId = KindId(256);
+pub const SUBJECTS: KindId = KindId(257);
+pub const CASE_PATTERNS: KindId = KindId(258);
+pub const WITH_CLAUSE_WITH_ITEMS: KindId = KindId(259);
+pub const TYPES: KindId = KindId(260);
+pub const ARGUMENT_LIST_ELEMENTS: KindId = KindId(261);
+pub const EXPRESSION_LIST_EXPRESSIONS: KindId = KindId(262);
+pub const LIST_PATTERN_CASE_PATTERNS: KindId = KindId(263);
+pub const DICT_PATTERN_ELEMENTS: KindId = KindId(264);
+pub const PATTERN_LIST_PATTERNS: KindId = KindId(265);
+pub const SUBSCRIPTS: KindId = KindId(266);
+pub const DICTIONARY_ELEMENTS: KindId = KindId(267);
+pub const SLICE_GROUP: KindId = KindId(268);
+pub const _AUGMENTED_ASSIGNMENT_OPERATOR: KindId = KindId(269);
+pub const EXCEPT_CLAUSE_EXCEPTION_AS: KindId = KindId(270);
+pub const CASE_TUPLE_PATTERN: KindId = KindId(271);
+pub const CASE_LIST_PATTERN: KindId = KindId(272);
+pub const CASE_AS_PATTERN: KindId = KindId(273);
+pub const COMPREHENSION_CLAUSES: KindId = KindId(274);
+pub const _PRINT_ARGUMENTS: KindId = KindId(275);
+pub const _PRINT_CHEVRON_ARGUMENTS: KindId = KindId(276);
+pub const PRINT_STATEMENT_CHEVRON: KindId = KindId(277);
+pub const PRINT_STATEMENT_PLAIN: KindId = KindId(278);
+pub const _WILDCARD_PATTERN: KindId = KindId(279);
+pub const _PARENTHESIZED_IMPORT_LIST: KindId = KindId(280);
+pub const SIMPLE_PATTERN_NEGATIVE: KindId = KindId(281);
+pub const EXCEPT_CLAUSE_EXCEPTION_LIST: KindId = KindId(282);
+pub const EXCEPT_CLAUSE_EXCEPTION: KindId = KindId(283);
+pub const ASSIGNMENT_EQ: KindId = KindId(284);
+pub const ASSIGNMENT_TYPE: KindId = KindId(285);
+pub const ASSIGNMENT_TYPED: KindId = KindId(286);
+pub const EXPRESSION_STATEMENT_TUPLE: KindId = KindId(287);
+pub const WITH_CLAUSE_BARE: KindId = KindId(288);
+pub const WITH_CLAUSE_PAREN: KindId = KindId(289);
+pub const MATCH_BLOCK_BLOCK: KindId = KindId(290);
+pub const SUITE_INLINE: KindId = KindId(291);
+pub const SUITE_BLOCK: KindId = KindId(292);
+pub const SUITE_EMPTY: KindId = KindId(293);
+pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(294);
+pub const _YIELD_FROM_CLAUSE: KindId = KindId(295);
+pub const MODULE_REPEAT1: KindId = KindId(296);
+pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(297);
+pub const _IMPORT_LIST_REPEAT1: KindId = KindId(298);
+pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(299);
+pub const IF_STATEMENT_REPEAT1: KindId = KindId(300);
+pub const TRY_STATEMENT_REPEAT1: KindId = KindId(301);
+pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(302);
+pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(303);
+pub const DOTTED_NAME_REPEAT1: KindId = KindId(304);
+pub const UNION_PATTERN_REPEAT1: KindId = KindId(305);
+pub const _PARAMETERS_REPEAT1: KindId = KindId(306);
+pub const _PATTERNS_REPEAT1: KindId = KindId(307);
+pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(308);
+pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(309);
+pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(310);
+pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(311);
+pub const STRING_REPEAT1: KindId = KindId(312);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(313);
+pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(314);
+pub const SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(315);
+pub const SUBJECTS_REPEAT1: KindId = KindId(316);
+pub const CASE_PATTERNS_REPEAT1: KindId = KindId(317);
+pub const WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(318);
+pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(319);
+pub const TYPES_REPEAT1: KindId = KindId(320);
+pub const ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(321);
+pub const EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(322);
+pub const DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(323);
+pub const PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(324);
+pub const SUBSCRIPTS_REPEAT1: KindId = KindId(325);
+pub const DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(326);
+pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(327);
+pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(328);
+pub const EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(329);
+pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(330);
+pub const _AS_PATTERN_TARGET: KindId = KindId(331);
+pub const _FORMAT_EXPRESSION: KindId = KindId(332);
+pub const _NAMES: KindId = KindId(333);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -599,88 +598,87 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         250 => "integer", // "integer"
         251 => "float", // "float"
         252 => "await", // "await"
-        253 => "line_continuation", // "line_continuation"
-        254 => "positional_separator", // "positional_separator"
-        255 => "keyword_separator", // "keyword_separator"
-        256 => "_kw_async_marker", // "_kw_async_marker"
-        257 => "simple_statements_elements", // "simple_statements_elements"
-        258 => "subjects", // "subjects"
-        259 => "case_patterns", // "case_patterns"
-        260 => "with_clause_with_items", // "with_clause_with_items"
-        261 => "types", // "types"
-        262 => "argument_list_elements", // "argument_list_elements"
-        263 => "expression_list_expressions", // "expression_list_expressions"
-        264 => "list_pattern_case_patterns", // "list_pattern_case_patterns"
-        265 => "dict_pattern_elements", // "dict_pattern_elements"
-        266 => "pattern_list_patterns", // "pattern_list_patterns"
-        267 => "subscripts", // "subscripts"
-        268 => "dictionary_elements", // "dictionary_elements"
-        269 => "slice_group", // "slice_group"
-        270 => "_augmented_assignment_operator", // "_augmented_assignment_operator"
-        271 => "except_clause_exception_as", // "except_clause_exception_as"
-        272 => "case_tuple_pattern", // "case_tuple_pattern"
-        273 => "case_list_pattern", // "case_list_pattern"
-        274 => "case_as_pattern", // "case_as_pattern"
-        275 => "comprehension_clauses", // "comprehension_clauses"
-        276 => "print_arguments", // "_print_arguments"
-        277 => "print_chevron_arguments", // "_print_chevron_arguments"
-        278 => "print_statement_chevron", // "print_statement_chevron"
-        279 => "print_statement_plain", // "print_statement_plain"
-        280 => "wildcard_pattern", // "_wildcard_pattern"
-        281 => "parenthesized_import_list", // "_parenthesized_import_list"
-        282 => "simple_pattern_negative", // "simple_pattern_negative"
-        283 => "except_clause_exception_list", // "except_clause_exception_list"
-        284 => "except_clause_exception", // "except_clause_exception"
-        285 => "assignment_eq", // "assignment_eq"
-        286 => "assignment_type", // "assignment_type"
-        287 => "assignment_typed", // "assignment_typed"
-        288 => "expression_statement_tuple", // "expression_statement_tuple"
-        289 => "with_clause_bare", // "with_clause_bare"
-        290 => "with_clause_paren", // "with_clause_paren"
-        291 => "match_block_block", // "match_block_block"
-        292 => "suite_inline", // "suite_inline"
-        293 => "suite_block", // "suite_block"
-        294 => "suite_empty", // "suite_empty"
-        295 => "comparison_operator_comparator", // "_comparison_operator_comparator"
-        296 => "yield_from_clause", // "_yield_from_clause"
-        297 => "module_repeat1", // "module_repeat1"
-        298 => "import_prefix_repeat1", // "import_prefix_repeat1"
-        299 => "_import_list_repeat1", // "_import_list_repeat1"
-        300 => "assert_statement_repeat1", // "assert_statement_repeat1"
-        301 => "if_statement_repeat1", // "if_statement_repeat1"
-        302 => "try_statement_repeat1", // "try_statement_repeat1"
-        303 => "global_statement_repeat1", // "global_statement_repeat1"
-        304 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
-        305 => "dotted_name_repeat1", // "dotted_name_repeat1"
-        306 => "union_pattern_repeat1", // "union_pattern_repeat1"
-        307 => "_parameters_repeat1", // "_parameters_repeat1"
-        308 => "_patterns_repeat1", // "_patterns_repeat1"
-        309 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
-        310 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
-        311 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
-        312 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
-        313 => "string_repeat1", // "string_repeat1"
-        314 => "string_content_repeat1", // "string_content_repeat1"
-        315 => "format_specifier_repeat1", // "format_specifier_repeat1"
-        316 => "simple_statements_elements_repeat1", // "simple_statements_elements_repeat1"
-        317 => "subjects_repeat1", // "subjects_repeat1"
-        318 => "case_patterns_repeat1", // "case_patterns_repeat1"
-        319 => "with_clause_with_items_repeat1", // "with_clause_with_items_repeat1"
-        320 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
-        321 => "types_repeat1", // "types_repeat1"
-        322 => "argument_list_elements_repeat1", // "argument_list_elements_repeat1"
-        323 => "expression_list_expressions_repeat1", // "expression_list_expressions_repeat1"
-        324 => "dict_pattern_elements_repeat1", // "dict_pattern_elements_repeat1"
-        325 => "pattern_list_patterns_repeat1", // "pattern_list_patterns_repeat1"
-        326 => "subscripts_repeat1", // "subscripts_repeat1"
-        327 => "dictionary_elements_repeat1", // "dictionary_elements_repeat1"
-        328 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
-        329 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
-        330 => "except_clause_exception_list_repeat1", // "except_clause_exception_list_repeat1"
-        331 => "match_block_block_repeat1", // "match_block_block_repeat1"
-        332 => "as_pattern_target", // "_as_pattern_target"
-        333 => "format_expression", // "_format_expression"
-        334 => "names", // "_names"
+        253 => "positional_separator", // "positional_separator"
+        254 => "keyword_separator", // "keyword_separator"
+        255 => "_kw_async_marker", // "_kw_async_marker"
+        256 => "simple_statements_elements", // "simple_statements_elements"
+        257 => "subjects", // "subjects"
+        258 => "case_patterns", // "case_patterns"
+        259 => "with_clause_with_items", // "with_clause_with_items"
+        260 => "types", // "types"
+        261 => "argument_list_elements", // "argument_list_elements"
+        262 => "expression_list_expressions", // "expression_list_expressions"
+        263 => "list_pattern_case_patterns", // "list_pattern_case_patterns"
+        264 => "dict_pattern_elements", // "dict_pattern_elements"
+        265 => "pattern_list_patterns", // "pattern_list_patterns"
+        266 => "subscripts", // "subscripts"
+        267 => "dictionary_elements", // "dictionary_elements"
+        268 => "slice_group", // "slice_group"
+        269 => "_augmented_assignment_operator", // "_augmented_assignment_operator"
+        270 => "except_clause_exception_as", // "except_clause_exception_as"
+        271 => "case_tuple_pattern", // "case_tuple_pattern"
+        272 => "case_list_pattern", // "case_list_pattern"
+        273 => "case_as_pattern", // "case_as_pattern"
+        274 => "comprehension_clauses", // "comprehension_clauses"
+        275 => "print_arguments", // "_print_arguments"
+        276 => "print_chevron_arguments", // "_print_chevron_arguments"
+        277 => "print_statement_chevron", // "print_statement_chevron"
+        278 => "print_statement_plain", // "print_statement_plain"
+        279 => "wildcard_pattern", // "_wildcard_pattern"
+        280 => "parenthesized_import_list", // "_parenthesized_import_list"
+        281 => "simple_pattern_negative", // "simple_pattern_negative"
+        282 => "except_clause_exception_list", // "except_clause_exception_list"
+        283 => "except_clause_exception", // "except_clause_exception"
+        284 => "assignment_eq", // "assignment_eq"
+        285 => "assignment_type", // "assignment_type"
+        286 => "assignment_typed", // "assignment_typed"
+        287 => "expression_statement_tuple", // "expression_statement_tuple"
+        288 => "with_clause_bare", // "with_clause_bare"
+        289 => "with_clause_paren", // "with_clause_paren"
+        290 => "match_block_block", // "match_block_block"
+        291 => "suite_inline", // "suite_inline"
+        292 => "suite_block", // "suite_block"
+        293 => "suite_empty", // "suite_empty"
+        294 => "comparison_operator_comparator", // "_comparison_operator_comparator"
+        295 => "yield_from_clause", // "_yield_from_clause"
+        296 => "module_repeat1", // "module_repeat1"
+        297 => "import_prefix_repeat1", // "import_prefix_repeat1"
+        298 => "_import_list_repeat1", // "_import_list_repeat1"
+        299 => "assert_statement_repeat1", // "assert_statement_repeat1"
+        300 => "if_statement_repeat1", // "if_statement_repeat1"
+        301 => "try_statement_repeat1", // "try_statement_repeat1"
+        302 => "global_statement_repeat1", // "global_statement_repeat1"
+        303 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
+        304 => "dotted_name_repeat1", // "dotted_name_repeat1"
+        305 => "union_pattern_repeat1", // "union_pattern_repeat1"
+        306 => "_parameters_repeat1", // "_parameters_repeat1"
+        307 => "_patterns_repeat1", // "_patterns_repeat1"
+        308 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
+        309 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
+        310 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
+        311 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
+        312 => "string_repeat1", // "string_repeat1"
+        313 => "string_content_repeat1", // "string_content_repeat1"
+        314 => "format_specifier_repeat1", // "format_specifier_repeat1"
+        315 => "simple_statements_elements_repeat1", // "simple_statements_elements_repeat1"
+        316 => "subjects_repeat1", // "subjects_repeat1"
+        317 => "case_patterns_repeat1", // "case_patterns_repeat1"
+        318 => "with_clause_with_items_repeat1", // "with_clause_with_items_repeat1"
+        319 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
+        320 => "types_repeat1", // "types_repeat1"
+        321 => "argument_list_elements_repeat1", // "argument_list_elements_repeat1"
+        322 => "expression_list_expressions_repeat1", // "expression_list_expressions_repeat1"
+        323 => "dict_pattern_elements_repeat1", // "dict_pattern_elements_repeat1"
+        324 => "pattern_list_patterns_repeat1", // "pattern_list_patterns_repeat1"
+        325 => "subscripts_repeat1", // "subscripts_repeat1"
+        326 => "dictionary_elements_repeat1", // "dictionary_elements_repeat1"
+        327 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
+        328 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
+        329 => "except_clause_exception_list_repeat1", // "except_clause_exception_list_repeat1"
+        330 => "match_block_block_repeat1", // "match_block_block_repeat1"
+        331 => "as_pattern_target", // "_as_pattern_target"
+        332 => "format_expression", // "_format_expression"
+        333 => "names", // "_names"
         _ => "<unknown>",
     }
 }
@@ -689,7 +687,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 67 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 114 | 115 | 116 | 117 | 118 | 119 | 128 | 270)
+    matches!(kind.0, 1 | 67 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 114 | 115 | 116 | 117 | 118 | 119 | 128 | 269)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
@@ -710,21 +708,21 @@ static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (189, "pattern", &[6]),
     (238, "element", &[6]),
     (239, "right", &[6]),
-    (257, "simple_statement", &[91]),
-    (258, "subject", &[6]),
-    (259, "case_pattern", &[6]),
-    (260, "with_item", &[6]),
-    (261, "type", &[6]),
-    (262, "element", &[6]),
-    (264, "case_pattern", &[6]),
-    (265, "element", &[6]),
-    (267, "subscript", &[6]),
-    (268, "element", &[6]),
+    (256, "simple_statement", &[91]),
+    (257, "subject", &[6]),
+    (258, "case_pattern", &[6]),
+    (259, "with_item", &[6]),
+    (260, "type", &[6]),
+    (261, "element", &[6]),
+    (263, "case_pattern", &[6]),
+    (264, "element", &[6]),
+    (266, "subscript", &[6]),
+    (267, "element", &[6]),
+    (275, "argument", &[6]),
     (276, "argument", &[6]),
-    (277, "argument", &[6]),
-    (283, "value", &[6]),
-    (288, "expression", &[6]),
-    (289, "with_item", &[6]),
+    (282, "value", &[6]),
+    (287, "expression", &[6]),
+    (288, "with_item", &[6]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

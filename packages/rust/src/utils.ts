@@ -12,7 +12,7 @@ import type {
 	Hoisted,
 	OmitEach
 } from '@sittir/types';
-import type { BlockComment, LineComment, NamespaceMap } from './types.js';
+import type { NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -62,12 +62,7 @@ export interface NodeMethodsOf {
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
 	$trivia(
-		...args: (
-			| BlockComment
-			| LineComment
-			| string
-			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
-		)[]
+		...args: (AnyNodeData | string | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
 	): this;
 }
 
