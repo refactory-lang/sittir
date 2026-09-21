@@ -11213,7 +11213,7 @@ The sequence a member's optional group holds, when the member is an optional or 
 
 ### `packages/codegen/src/compiler/token-interior.ts::optionalArm`
 
-The live arm of an optional or of a choice with a blank and one other member.
+The live arm of an optional or of a choice with a blank and one other member. A zero-or-more repeat reads as an optional one-or-more repeat, so a named repeated pattern is an optional slot rather than a required one.
 
 ### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
 

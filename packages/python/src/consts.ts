@@ -166,9 +166,6 @@ const LEAF_KINDS = [
 	'exec_keyword',
 	'false',
 	'finally_keyword',
-	'float_leading_point',
-	'float_point',
-	'float_scientific',
 	'for_keyword',
 	'from_keyword',
 	'global_keyword',
@@ -1885,6 +1882,38 @@ export const TOKEN_INTERIORS = {
 	escape_sequence_unicode_wide: {
 		regex: '^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$',
 		slots: [{ name: 'content', configKey: 'content' }]
+	},
+	float_leading_point: {
+		regex:
+			'^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
+		slots: [
+			{ name: 'integer', configKey: 'integer' },
+			{ name: 'fraction', configKey: 'fraction' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'exponent', configKey: 'exponent' },
+			{ name: 'imaginary', configKey: 'imaginary' }
+		]
+	},
+	float_point: {
+		regex:
+			'^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$',
+		slots: [
+			{ name: 'integer', configKey: 'integer' },
+			{ name: 'fraction', configKey: 'fraction' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'exponent', configKey: 'exponent' },
+			{ name: 'imaginary', configKey: 'imaginary' }
+		]
+	},
+	float_scientific: {
+		regex:
+			'^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$',
+		slots: [
+			{ name: 'integer', configKey: 'integer' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'exponent', configKey: 'exponent' },
+			{ name: 'imaginary', configKey: 'imaginary' }
+		]
 	},
 	integer_binary: {
 		regex: '^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$',

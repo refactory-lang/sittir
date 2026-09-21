@@ -653,6 +653,32 @@ export interface FinallyClauseTransport {
   _finally_clause_after?: number
 }
 
+export interface FloatLeadingPointTransport {
+  '$_trivia'?: TransportTrivia
+  _integer?: string
+  _fraction: string
+  _marker?: string
+  _exponent?: string
+  _imaginary?: string
+}
+
+export interface FloatPointTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _fraction?: string
+  _marker?: string
+  _exponent?: string
+  _imaginary?: string
+}
+
+export interface FloatScientificTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _marker: string
+  _exponent: string
+  _imaginary?: string
+}
+
 export interface ForInClauseTransport {
   '$_trivia'?: TransportTrivia
   _async_marker?: SlotValue<KwAsyncMarkerTransport>

@@ -3,7 +3,7 @@ import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/mo
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
+import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -1114,7 +1114,10 @@ function emitNamespaceSugarBlock(
 		return (bare !== undefined && numericSlotShape(bare) !== undefined) || numericLeafShape(kind, node) !== undefined;
 	})();
 	const looseWidened = numericSlotKeys(node).length > 0 ? ` | ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)}` : '';
-	lines.push(`  export type Loose = LooseFor<${nsKey}>${looseWidened}${bareNumeric ? ' | number' : ''};`);
+	const bareInterior = bareInteriorText(kind, node);
+	const bareText = bareInterior === undefined ? '' : ' | string';
+	const bareAnyNumber = bareNumeric || bareInterior?.number !== undefined;
+	lines.push(`  export type Loose = LooseFor<${nsKey}>${looseWidened}${bareText}${bareAnyNumber ? ' | number' : ''};`);
 	lines.push(`  export type LooseConfig = ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)};`);
 	if (surface !== undefined) {
 		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);

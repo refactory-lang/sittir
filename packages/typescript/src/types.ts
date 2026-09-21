@@ -19973,7 +19973,9 @@ export namespace NumberFloatPoint {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatPoint>, 'integer' | 'fraction' | 'exponent'>;
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatPoint>, 'integer' | 'fraction' | 'exponent'>
+		| string
+		| number;
 	export type LooseConfig = WidenNumeric<
 		LooseConfigFor<TSKindId.NumberFloatPoint>,
 		'integer' | 'fraction' | 'exponent'
@@ -20004,7 +20006,9 @@ export namespace NumberFloatLeadingPoint {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatLeadingPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>;
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>
+		| string
+		| number;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>;
 	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>];
 	export type LooseArgs = [
@@ -20032,7 +20036,9 @@ export namespace NumberFloatScientific {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatScientific>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>;
+		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>
+		| string
+		| number;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>;
 	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatScientific>, 'integer' | 'exponent'>];
 	export type LooseArgs = [

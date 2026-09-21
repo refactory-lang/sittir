@@ -8505,14 +8505,19 @@ export function resolveNumberFloatPoint_exponent(
 }
 
 export function coerceToNumberFloatPoint(input: T.NumberFloatPoint.Loose): ReturnType<typeof F.buildNumberFloatPoint> {
-	if (!_isLooseConfig<T.NumberFloatPoint.LooseConfig>(input))
+	if (!_isLooseConfig<T.NumberFloatPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatPoint>;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['number_float_point'], 'number_float_point')
+			: input
+	) as T.NumberFloatPoint.LooseConfig;
 	return F.buildNumberFloatPoint({
-		integer: _requireField('number_float_point', 'integer', resolveNumberFloatPoint_integer(input.integer)),
-		fraction: resolveNumberFloatPoint_fraction(input.fraction),
-		marker: resolveNumberFloatPoint_marker(input.marker),
-		sign: resolveNumberFloatPoint_sign(input.sign),
-		exponent: resolveNumberFloatPoint_exponent(input.exponent)
+		integer: _requireField('number_float_point', 'integer', resolveNumberFloatPoint_integer(_cfg.integer)),
+		fraction: resolveNumberFloatPoint_fraction(_cfg.fraction),
+		marker: resolveNumberFloatPoint_marker(_cfg.marker),
+		sign: resolveNumberFloatPoint_sign(_cfg.sign),
+		exponent: resolveNumberFloatPoint_exponent(_cfg.exponent)
 	});
 }
 
@@ -8543,17 +8548,26 @@ export function resolveNumberFloatLeadingPoint_exponent(
 export function coerceToNumberFloatLeadingPoint(
 	input: T.NumberFloatLeadingPoint.Loose
 ): ReturnType<typeof F.buildNumberFloatLeadingPoint> {
-	if (!_isLooseConfig<T.NumberFloatLeadingPoint.LooseConfig>(input))
+	if (!_isLooseConfig<T.NumberFloatLeadingPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatLeadingPoint>;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(
+					numberText('float', '', input),
+					TOKEN_INTERIORS['number_float_leading_point'],
+					'number_float_leading_point'
+				)
+			: input
+	) as T.NumberFloatLeadingPoint.LooseConfig;
 	return F.buildNumberFloatLeadingPoint({
 		fraction: _requireField(
 			'number_float_leading_point',
 			'fraction',
-			resolveNumberFloatLeadingPoint_fraction(input.fraction)
+			resolveNumberFloatLeadingPoint_fraction(_cfg.fraction)
 		),
-		marker: resolveNumberFloatLeadingPoint_marker(input.marker),
-		sign: resolveNumberFloatLeadingPoint_sign(input.sign),
-		exponent: resolveNumberFloatLeadingPoint_exponent(input.exponent)
+		marker: resolveNumberFloatLeadingPoint_marker(_cfg.marker),
+		sign: resolveNumberFloatLeadingPoint_sign(_cfg.sign),
+		exponent: resolveNumberFloatLeadingPoint_exponent(_cfg.exponent)
 	});
 }
 
@@ -8584,17 +8598,22 @@ export function resolveNumberFloatScientific_exponent(
 export function coerceToNumberFloatScientific(
 	input: T.NumberFloatScientific.Loose
 ): ReturnType<typeof F.buildNumberFloatScientific> {
-	if (!_isLooseConfig<T.NumberFloatScientific.LooseConfig>(input))
+	if (!_isLooseConfig<T.NumberFloatScientific.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(
+					numberText('float', '', input),
+					TOKEN_INTERIORS['number_float_scientific'],
+					'number_float_scientific'
+				)
+			: input
+	) as T.NumberFloatScientific.LooseConfig;
 	return F.buildNumberFloatScientific({
-		integer: _requireField('number_float_scientific', 'integer', resolveNumberFloatScientific_integer(input.integer)),
-		marker: _requireField('number_float_scientific', 'marker', resolveNumberFloatScientific_marker(input.marker)),
-		sign: resolveNumberFloatScientific_sign(input.sign),
-		exponent: _requireField(
-			'number_float_scientific',
-			'exponent',
-			resolveNumberFloatScientific_exponent(input.exponent)
-		)
+		integer: _requireField('number_float_scientific', 'integer', resolveNumberFloatScientific_integer(_cfg.integer)),
+		marker: _requireField('number_float_scientific', 'marker', resolveNumberFloatScientific_marker(_cfg.marker)),
+		sign: resolveNumberFloatScientific_sign(_cfg.sign),
+		exponent: _requireField('number_float_scientific', 'exponent', resolveNumberFloatScientific_exponent(_cfg.exponent))
 	});
 }
 

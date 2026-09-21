@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../types/rule.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { composeTokenText } from '../dsl/rule-patterns.ts';
@@ -31,6 +31,8 @@ function containsPattern(rule: LinkRule): boolean {
 		case CHOICE:
 			return rule.members.some(containsPattern);
 		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
 		case FIELD:
 			return containsPattern(rule.content);
 		default:
@@ -70,6 +72,7 @@ function groupArm(rule: LinkRule): (LinkRule & { type: typeof SEQ }) | undefined
 }
 
 function optionalArm(rule: LinkRule): LinkRule | undefined {
+	if (rule.type === REPEAT) return { ...rule, type: REPEAT1 } as LinkRule;
 	if (rule.type === OPTIONAL) return rule.content;
 	if (rule.type !== CHOICE || !rule.members.some(isBlank)) return undefined;
 	const live = rule.members.filter((m) => !isBlank(m));
@@ -188,7 +191,7 @@ function structureSeq(
 	const members = containsField(seq) ? flattenMembers(seq.members) : seq.members;
 	const classes = members.map(memberClass);
 	if (!members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m))) return undefined;
-	if (!classes.some((c) => c === 'template' || c === 'flag' || c === 'enum' || c === 'group')) return undefined;
+	if (!containsField(seq) && !classes.some((c) => c === 'template' || c === 'flag' || c === 'enum' || c === 'group')) return undefined;
 	const slotCount = classes.filter(
 		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
 	).length;

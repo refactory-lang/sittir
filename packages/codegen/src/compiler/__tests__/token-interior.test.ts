@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../../types/rule.ts';
 import { structureTokenInterior } from '../token-interior.ts';
 
@@ -121,6 +121,19 @@ describe('structureTokenInterior — named parts inside nested structure', () =>
 	it('makes a named optional pattern an optional slot', () => {
 		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), str('.'), named('fraction', optional(pat('\\d+')))))));
 		expect(members[2]).toMatchObject({ type: FIELD, name: 'fraction', content: { type: OPTIONAL, content: { type: PATTERN } } });
+	});
+
+	it('structures a token whose members are all named parts, keeping a repeated pattern repeated', () => {
+		const digits = { type: REPEAT1, content: pat('[0-9]+_?') } as LinkRule;
+		const members = membersOf(structured(token(seq(named('integer', digits), seq(named('marker', pat('[eE]')), named('exponent', digits))))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['integer', 'marker', 'exponent']);
+		expect(members[0]).toMatchObject({ type: FIELD, content: { type: PATTERN, value: '(?:(?:[0-9]+_?))+' } });
+	});
+
+	it('reads a named zero-or-more pattern as an optional slot of the one-or-more pattern', () => {
+		const digits = { type: REPEAT, content: pat('[0-9]+_?') } as LinkRule;
+		const members = membersOf(structured(token(seq(str('.'), named('fraction', digits)))));
+		expect(members[1]).toMatchObject({ type: FIELD, name: 'fraction', content: { type: OPTIONAL, content: { type: PATTERN, value: '(?:(?:[0-9]+_?))+' } } });
 	});
 
 	it('leaves a token with no named part on the composed path, so its output does not change', () => {

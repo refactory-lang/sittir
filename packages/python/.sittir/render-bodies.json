@@ -1745,6 +1745,219 @@
 			"field": "finally_clause_after"
 		}
 	],
+	"float_leading_point": [
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "integer",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "integer"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "fraction"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "imaginary",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "imaginary"
+						}
+					]
+				}
+			]
+		}
+	],
+	"float_point": [
+		{
+			"kind": "slot",
+			"name": "integer"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "fraction",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "fraction"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "imaginary",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "imaginary"
+						}
+					]
+				}
+			]
+		}
+	],
+	"float_scientific": [
+		{
+			"kind": "slot",
+			"name": "integer"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "marker"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "exponent"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "imaginary",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "imaginary"
+						}
+					]
+				}
+			]
+		}
+	],
 	"for_in_clause": [
 		{
 			"kind": "seam",

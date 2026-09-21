@@ -234,16 +234,21 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: F.buildIntegerDecimal
 	},
 	float_point: {
-		pattern: /^(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u,
-		factory: F.buildFloatPoint
+		pattern: new RegExp(TOKEN_INTERIORS['float_point'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildFloatPoint(lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point') as never)
 	},
 	float_leading_point: {
-		pattern: /^(?:(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u,
-		factory: F.buildFloatLeadingPoint
+		pattern: new RegExp(TOKEN_INTERIORS['float_leading_point'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildFloatLeadingPoint(
+				lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point') as never
+			)
 	},
 	float_scientific: {
-		pattern: /^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u,
-		factory: F.buildFloatScientific
+		pattern: new RegExp(TOKEN_INTERIORS['float_scientific'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildFloatScientific(lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific') as never)
 	},
 	escape_sequence_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_fixed', content)
@@ -1326,17 +1331,7 @@ const _K3: readonly string[] = ['relative_import', 'dotted_name'];
 const _K4: readonly string[] = ['wildcard_import'];
 const _K5: readonly string[] = ['dotted_name', 'aliased_import'];
 const _K6: readonly string[] = ['print_statement_chevron', 'print_statement_plain'];
-const _K7: readonly string[] = [
-	'identifier',
-	'integer_decimal',
-	'float_point',
-	'float_leading_point',
-	'float_scientific',
-	'true',
-	'false',
-	'none',
-	'ellipsis'
-];
+const _K7: readonly string[] = ['identifier', 'integer_decimal', 'true', 'false', 'none', 'ellipsis'];
 const _K8: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
@@ -1349,6 +1344,9 @@ const _K8: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1379,6 +1377,9 @@ const _K9: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1415,6 +1416,9 @@ const _K10: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1475,8 +1479,15 @@ const _K18: readonly string[] = [
 	'complex_pattern',
 	'dotted_name'
 ];
-const _K19: readonly string[] = ['integer_decimal', 'float_point', 'float_leading_point', 'float_scientific'];
-const _K20: readonly string[] = ['integer_hex', 'integer_octal', 'integer_binary'];
+const _K19: readonly string[] = ['integer_decimal'];
+const _K20: readonly string[] = [
+	'integer_hex',
+	'integer_octal',
+	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific'
+];
 const _K21: readonly string[] = ['identifier', 'keyword_separator', 'positional_separator'];
 const _K22: readonly string[] = [
 	'typed_parameter',
@@ -1497,6 +1508,9 @@ const _K26: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1524,6 +1538,9 @@ const _K27: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1555,6 +1572,9 @@ const _K28: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1593,6 +1613,9 @@ const _K29: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1626,6 +1649,9 @@ const _K32: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1661,6 +1687,9 @@ const _K33: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1693,6 +1722,9 @@ const _K34: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1728,6 +1760,9 @@ const _K37: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1777,6 +1812,9 @@ const _K40: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -1812,6 +1850,9 @@ const _K42: readonly string[] = [
 	'integer_hex',
 	'integer_octal',
 	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'unary_operator',
 	'attribute',
 	'subscript',
@@ -5962,24 +6003,130 @@ export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnTyp
 	return F.buildIntegerDecimal(input as Parameters<typeof F.buildIntegerDecimal>[0]);
 }
 
+export function resolveFloatPoint_integer(value: T.FloatPoint.LooseConfig['integer']): T.FloatPoint['_integer'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatPoint_fraction(value: T.FloatPoint.LooseConfig['fraction']): T.FloatPoint['_fraction'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatPoint_marker(value: T.FloatPoint.LooseConfig['marker']): T.FloatPoint['_marker'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatPoint_exponent(value: T.FloatPoint.LooseConfig['exponent']): T.FloatPoint['_exponent'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatPoint_imaginary(value: T.FloatPoint.LooseConfig['imaginary']): T.FloatPoint['_imaginary'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
 export function coerceToFloatPoint(input: T.FloatPoint.Loose): ReturnType<typeof F.buildFloatPoint> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (!_isLooseConfig<T.FloatPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatPoint>;
-	return F.buildFloatPoint(input as Parameters<typeof F.buildFloatPoint>[0]);
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_point'], 'float_point')
+			: input
+	) as T.FloatPoint.LooseConfig;
+	return F.buildFloatPoint({
+		integer: _requireField('float_point', 'integer', resolveFloatPoint_integer(_cfg.integer)),
+		fraction: resolveFloatPoint_fraction(_cfg.fraction),
+		marker: resolveFloatPoint_marker(_cfg.marker),
+		exponent: resolveFloatPoint_exponent(_cfg.exponent),
+		imaginary: resolveFloatPoint_imaginary(_cfg.imaginary)
+	});
+}
+
+export function resolveFloatLeadingPoint_integer(
+	value: T.FloatLeadingPoint.LooseConfig['integer']
+): T.FloatLeadingPoint['_integer'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatLeadingPoint_fraction(
+	value: T.FloatLeadingPoint.LooseConfig['fraction']
+): T.FloatLeadingPoint['_fraction'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatLeadingPoint_marker(
+	value: T.FloatLeadingPoint.LooseConfig['marker']
+): T.FloatLeadingPoint['_marker'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatLeadingPoint_exponent(
+	value: T.FloatLeadingPoint.LooseConfig['exponent']
+): T.FloatLeadingPoint['_exponent'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatLeadingPoint_imaginary(
+	value: T.FloatLeadingPoint.LooseConfig['imaginary']
+): T.FloatLeadingPoint['_imaginary'] {
+	return _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToFloatLeadingPoint(
 	input: T.FloatLeadingPoint.Loose
 ): ReturnType<typeof F.buildFloatLeadingPoint> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (!_isLooseConfig<T.FloatLeadingPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatLeadingPoint>;
-	return F.buildFloatLeadingPoint(input as Parameters<typeof F.buildFloatLeadingPoint>[0]);
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_leading_point'], 'float_leading_point')
+			: input
+	) as T.FloatLeadingPoint.LooseConfig;
+	return F.buildFloatLeadingPoint({
+		integer: resolveFloatLeadingPoint_integer(_cfg.integer),
+		fraction: _requireField('float_leading_point', 'fraction', resolveFloatLeadingPoint_fraction(_cfg.fraction)),
+		marker: resolveFloatLeadingPoint_marker(_cfg.marker),
+		exponent: resolveFloatLeadingPoint_exponent(_cfg.exponent),
+		imaginary: resolveFloatLeadingPoint_imaginary(_cfg.imaginary)
+	});
+}
+
+export function resolveFloatScientific_integer(
+	value: T.FloatScientific.LooseConfig['integer']
+): T.FloatScientific['_integer'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatScientific_marker(
+	value: T.FloatScientific.LooseConfig['marker']
+): T.FloatScientific['_marker'] {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatScientific_exponent(
+	value: T.FloatScientific.LooseConfig['exponent']
+): T.FloatScientific['_exponent'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K0, _K0);
+}
+
+export function resolveFloatScientific_imaginary(
+	value: T.FloatScientific.LooseConfig['imaginary']
+): T.FloatScientific['_imaginary'] {
+	return _resolveOne<string>(value, _K0, _K0);
 }
 
 export function coerceToFloatScientific(input: T.FloatScientific.Loose): ReturnType<typeof F.buildFloatScientific> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (!_isLooseConfig<T.FloatScientific.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatScientific>;
-	return F.buildFloatScientific(input as Parameters<typeof F.buildFloatScientific>[0]);
+	const _cfg = (
+		typeof input === 'string' || typeof input === 'number'
+			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['float_scientific'], 'float_scientific')
+			: input
+	) as T.FloatScientific.LooseConfig;
+	return F.buildFloatScientific({
+		integer: _requireField('float_scientific', 'integer', resolveFloatScientific_integer(_cfg.integer)),
+		marker: _requireField('float_scientific', 'marker', resolveFloatScientific_marker(_cfg.marker)),
+		exponent: _requireField('float_scientific', 'exponent', resolveFloatScientific_exponent(_cfg.exponent)),
+		imaginary: resolveFloatScientific_imaginary(_cfg.imaginary)
+	});
 }
 
 export function resolveEscapeSequenceUnicodeFixed_content(

@@ -5154,6 +5154,10 @@ The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
 
 The shape of a pattern leaf's own text pattern.
 
+### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
+
+Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric. A bare string is projected onto the kind's slots through its token interior.
+
 ### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
 
 The base and prefix arguments of the `numberText` call an emitter writes for a shape.

@@ -4194,7 +4194,6 @@ pub enum FloatTransport {
     FloatPoint(FloatPointTransport),
     FloatLeadingPoint(FloatLeadingPointTransport),
     FloatScientific(FloatScientificTransport),
-    Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for FloatTransport {
@@ -4203,7 +4202,6 @@ impl ::sittir_core::prepare::Prepare for FloatTransport {
             FloatTransport::FloatPoint(t) => t.prepare(ctx),
             FloatTransport::FloatLeadingPoint(t) => t.prepare(ctx),
             FloatTransport::FloatScientific(t) => t.prepare(ctx),
-            FloatTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
@@ -4275,8 +4273,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
                     ))),
                 }
             }
-            ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("FloatTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("FloatTransport: expected u16 kind_id or object with $type")),
         }
     }
 }
@@ -4317,7 +4314,6 @@ impl ::sittir_core::view::KindOf for FloatTransport {
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
             Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -4327,7 +4323,6 @@ fn float_transport_to_any(t: FloatTransport) -> AnyTransport {
         FloatTransport::FloatPoint(inner) => AnyTransport::FloatPoint(inner),
         FloatTransport::FloatLeadingPoint(inner) => AnyTransport::FloatLeadingPoint(inner),
         FloatTransport::FloatScientific(inner) => AnyTransport::FloatScientific(inner),
-        FloatTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -5264,7 +5259,7 @@ impl ::sittir_core::view::KindOf for ExpressionStatementContentTransportSlot {
             Self::AssignmentTyped(inner) => inner.kind_in(kinds),
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -5854,7 +5849,7 @@ impl ::sittir_core::view::KindOf for ReturnStatementExpressionsTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6404,7 +6399,7 @@ impl ::sittir_core::view::KindOf for DeleteStatementExpressionsTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6954,7 +6949,7 @@ impl ::sittir_core::view::KindOf for RaiseStatementExpressionsTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8030,7 +8025,7 @@ impl ::sittir_core::view::KindOf for ForStatementRightTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10821,7 +10816,7 @@ impl ::sittir_core::view::KindOf for ComplexPatternImaginaryTransportSlot {
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
             Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -11098,7 +11093,7 @@ impl ::sittir_core::view::KindOf for ComplexPatternContentTransportSlot {
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
             Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -12244,7 +12239,7 @@ impl ::sittir_core::view::KindOf for LambdaWithinForInClauseBodyTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13202,7 +13197,7 @@ impl ::sittir_core::view::KindOf for AugmentedAssignmentRightTransportSlot {
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13919,7 +13914,7 @@ impl ::sittir_core::view::KindOf for YieldContentTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::ExpressionList(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14766,7 +14761,7 @@ impl ::sittir_core::view::KindOf for TypeContentTransportSlot {
             Self::UnionType(inner) => inner.kind_in(kinds),
             Self::ConstrainedType(inner) => inner.kind_in(kinds),
             Self::MemberType(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -15607,7 +15602,7 @@ impl ::sittir_core::view::KindOf for ParenthesizedExpressionContentTransportSlot
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::ListSplat(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16171,7 +16166,7 @@ impl ::sittir_core::view::KindOf for CollectionElementsElementTransportSlot {
             Self::Yield(inner) => inner.kind_in(kinds),
             Self::ListSplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -17043,7 +17038,7 @@ impl ::sittir_core::view::KindOf for ForInClauseRightTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::LambdaWithinForInClause(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18018,7 +18013,7 @@ impl ::sittir_core::view::KindOf for InterpolationExpressionTransportSlot {
             Self::ExpressionList(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18802,7 +18797,7 @@ impl ::sittir_core::view::KindOf for ArgumentListElementsElementTransportSlot {
             Self::DictionarySplat(inner) => inner.kind_in(kinds),
             Self::ParenthesizedListSplat(inner) => inner.kind_in(kinds),
             Self::KeywordArgument(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -19488,7 +19483,7 @@ impl ::sittir_core::view::KindOf for SubscriptsSubscriptTransportSlot {
             Self::NamedExpression(inner) => inner.kind_in(kinds),
             Self::AsPattern(inner) => inner.kind_in(kinds),
             Self::Slice(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -20682,7 +20677,7 @@ impl ::sittir_core::view::KindOf for SimplePatternNegativeContentTransportSlot {
             Self::FloatPoint(inner) => inner.kind_in(kinds),
             Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
             Self::FloatScientific(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -21287,7 +21282,7 @@ impl ::sittir_core::view::KindOf for AssignmentEqRightTransportSlot {
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -22321,7 +22316,7 @@ impl ::sittir_core::view::KindOf for AssignmentTypedRightTransportSlot {
             Self::AugmentedAssignment(inner) => inner.kind_in(kinds),
             Self::PatternList(inner) => inner.kind_in(kinds),
             Self::Yield(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95), ::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -34954,10 +34949,21 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IntegerDecimalTransport> {
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatPointTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
+    pub integer: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
+    pub fraction: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    pub marker: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    pub exponent: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
+    pub imaginary: Option<String>,
 }
 
 impl ::sittir_core::view::KindOf for FloatPointTransport {
@@ -34968,61 +34974,18 @@ impl ::sittir_core::view::KindOf for FloatPointTransport {
 
 impl ::sittir_core::render::Render for FloatPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, render_float_point(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatPointTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.integer.prepare(ctx)?;
+        self.fraction.prepare(ctx)?;
+        self.marker.prepare(ctx)?;
+        self.exponent.prepare(ctx)?;
+        self.imaginary.prepare(ctx)?;
         Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatPointTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatPointTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatPointTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -35046,10 +35009,21 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatPointTransport> {
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatLeadingPointTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
+    pub integer: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_fraction"))]
+    pub fraction: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    pub marker: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    pub exponent: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
+    pub imaginary: Option<String>,
 }
 
 impl ::sittir_core::view::KindOf for FloatLeadingPointTransport {
@@ -35060,61 +35034,18 @@ impl ::sittir_core::view::KindOf for FloatLeadingPointTransport {
 
 impl ::sittir_core::render::Render for FloatLeadingPointTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, render_float_leading_point(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatLeadingPointTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.integer.prepare(ctx)?;
+        self.fraction.prepare(ctx)?;
+        self.marker.prepare(ctx)?;
+        self.exponent.prepare(ctx)?;
+        self.imaginary.prepare(ctx)?;
         Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatLeadingPointTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatLeadingPointTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatLeadingPointTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -35138,10 +35069,19 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FloatLeadingPointTransport> {
     }
 }
 
+#[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct FloatScientificTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_integer"))]
+    pub integer: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_marker"))]
+    pub marker: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exponent"))]
+    pub exponent: String,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
+    pub imaginary: Option<String>,
 }
 
 impl ::sittir_core::view::KindOf for FloatScientificTransport {
@@ -35152,61 +35092,17 @@ impl ::sittir_core::view::KindOf for FloatScientificTransport {
 
 impl ::sittir_core::render::Render for FloatScientificTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
+        render_with_trivia!(self, w, render_float_scientific(self, w))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for FloatScientificTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.integer.prepare(ctx)?;
+        self.marker.prepare(ctx)?;
+        self.exponent.prepare(ctx)?;
+        self.imaginary.prepare(ctx)?;
         Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatScientificTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_default()
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatScientificTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatScientificTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
@@ -47925,16 +47821,77 @@ fn render_integer_decimal(t: &IntegerDecimalTransport, w: &mut dyn ::sittir_core
     w.text(&t.text)
 }
 
-fn render_float_point(t: &FloatPointTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_float_point(node: &FloatPointTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = View::new(&node.exponent, "{}");
+    let fraction = View::new(&node.fraction, "{}");
+    let imaginary = View::new(&node.imaginary, "{}");
+    let integer = &node.integer;
+    let marker = View::new(&node.marker, "{}");
+    integer.render(w)?;
+    w.text(".")?;
+    if fraction.is_present() {
+        w.adjacent();
+        fraction.render(w)?;
+    }
+    if marker.is_present() {
+        if marker.is_present() {
+            w.adjacent();
+            marker.render(w)?;
+        }
+        if exponent.is_present() {
+            w.adjacent();
+            exponent.render(w)?;
+        }
+    }
+    if imaginary.is_present() {
+        w.adjacent();
+        imaginary.render(w)?;
+    }
+    Ok(())
 }
 
-fn render_float_leading_point(t: &FloatLeadingPointTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_float_leading_point(node: &FloatLeadingPointTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = View::new(&node.exponent, "{}");
+    let fraction = &node.fraction;
+    let imaginary = View::new(&node.imaginary, "{}");
+    let integer = View::new(&node.integer, "{}");
+    let marker = View::new(&node.marker, "{}");
+    integer.render(w)?;
+    w.text(".")?;
+    w.adjacent();
+    fraction.render(w)?;
+    if marker.is_present() {
+        if marker.is_present() {
+            w.adjacent();
+            marker.render(w)?;
+        }
+        if exponent.is_present() {
+            w.adjacent();
+            exponent.render(w)?;
+        }
+    }
+    if imaginary.is_present() {
+        w.adjacent();
+        imaginary.render(w)?;
+    }
+    Ok(())
 }
 
-fn render_float_scientific(t: &FloatScientificTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
+fn render_float_scientific(node: &FloatScientificTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let exponent = &node.exponent;
+    let imaginary = View::new(&node.imaginary, "{}");
+    let integer = &node.integer;
+    let marker = &node.marker;
+    integer.render(w)?;
+    w.adjacent();
+    marker.render(w)?;
+    w.adjacent();
+    exponent.render(w)?;
+    if imaginary.is_present() {
+        w.adjacent();
+        imaginary.render(w)?;
+    }
+    Ok(())
 }
 
 fn render_escape_sequence_unicode_fixed(node: &EscapeSequenceUnicodeFixedTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -48708,7 +48665,6 @@ fn render_float(t: &FloatTransport, w: &mut dyn ::sittir_core::render::RenderSin
         FloatTransport::FloatPoint(inner) => inner.render(w),
         FloatTransport::FloatLeadingPoint(inner) => inner.render(w),
         FloatTransport::FloatScientific(inner) => inner.render(w),
-        FloatTransport::Verbatim(inner) => inner.render(w),
     }
 }
 

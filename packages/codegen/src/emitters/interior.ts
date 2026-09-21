@@ -11,7 +11,7 @@ import {
 	type AssembledNode
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { anchoredLeafRegex, slotLiteralValues } from './shared.ts';
+import { anchoredLeafRegex, lexedContentSlot, slotLiteralValues } from './shared.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -232,6 +232,17 @@ export function numericSlotKeys(node: AssembledNode): readonly string[] {
 export function numericLeafShape(kind: string, node: AssembledNode): NumberShape | undefined {
 	if (!(node instanceof AssembledPattern) || node.textPattern === undefined) return undefined;
 	return numberShapeOfPattern(kind, node.textPattern);
+}
+
+export interface BareInteriorText {
+	readonly number: NumberShape | undefined;
+}
+
+export function bareInteriorText(kind: string, node: AssembledNode): BareInteriorText | undefined {
+	if (lexedContentSlot(node) !== undefined) return undefined;
+	const interior = interiorOf(node);
+	if (interior === undefined) return undefined;
+	return { number: numberShapeOfPattern(kind, interior.regex) };
 }
 
 export function numberTextArgs(shape: NumberShape): string {

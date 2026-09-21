@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
+import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -340,15 +340,32 @@ function emitBranchFrom(
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
-	const cfg = bareContent === undefined ? 'input' : '_cfg';
+	const bareInterior = canDirectFactoryCall || slots.length === 0 ? undefined : bareInteriorText(node.kind, node);
+	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			const bareKind = bareContent === undefined ? false : numericSlotShape(bareContent) === undefined ? 'text' : 'number';
+			const bareKind =
+				bareInterior !== undefined
+					? bareInterior.number === undefined
+						? 'text'
+						: 'number'
+					: bareContent === undefined
+						? false
+						: numericSlotShape(bareContent) === undefined
+							? 'text'
+							: 'number';
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
+		}
+		if (bareInterior !== undefined) {
+			const shape = bareInterior.number;
+			const text = shape === undefined ? 'input' : `numberText(${numberTextArgs(shape)}, input)`;
+			lines.push(
+				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : " || typeof input === 'number'"} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
+			);
 		}
 		if (bareContent !== undefined) {
 			lines.push(

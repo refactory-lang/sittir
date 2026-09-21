@@ -72,8 +72,6 @@ export type AddressRoot =
 	| 'expression_list_expressions'
 	| 'expression_statement_tuple'
 	| 'finally_clause'
-	| 'float_leading_point'
-	| 'float_point'
 	| 'for_in_clause'
 	| 'for_statement'
 	| 'format_specifier'
@@ -763,10 +761,6 @@ export interface AddressBranch {
 	readonly finally_clause: 'after' | 'before' | 'colon' | 'finally_keyword';
 	readonly 'finally_clause/colon': 'after' | 'before';
 	readonly 'finally_clause/finally_keyword': 'after';
-	readonly float_leading_point: 'dot';
-	readonly 'float_leading_point/dot': 'after' | 'before';
-	readonly float_point: 'dot';
-	readonly 'float_point/dot': 'after' | 'before';
 	readonly for_in_clause: 'after' | 'async_marker' | 'before' | 'comma' | 'for_keyword' | 'in_keyword' | 'right';
 	readonly 'for_in_clause/async_marker': 'after';
 	readonly 'for_in_clause/comma': 'before';
@@ -1975,10 +1969,6 @@ export interface AddressLeaf {
 	readonly 'finally_clause/colon/after': SpacingArm;
 	readonly 'finally_clause/colon/before': SpacingArm;
 	readonly 'finally_clause/finally_keyword/after': SpacingArm;
-	readonly 'float_leading_point/dot/after': SpacingArm;
-	readonly 'float_leading_point/dot/before': SpacingArm;
-	readonly 'float_point/dot/after': SpacingArm;
-	readonly 'float_point/dot/before': SpacingArm;
 	readonly 'for_in_clause/after': SpacingArm;
 	readonly 'for_in_clause/async_marker/after': SpacingArm;
 	readonly 'for_in_clause/before': SpacingArm;

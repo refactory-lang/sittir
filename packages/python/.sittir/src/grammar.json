@@ -5796,10 +5796,17 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "integer",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
@@ -5807,19 +5814,26 @@
                 "value": "."
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                "type": "FIELD",
+                "name": "fraction",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
                     }
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "CHOICE",
@@ -5828,14 +5842,28 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "PATTERN",
-                        "value": "[eE][\\+-]?"
-                      },
-                      {
-                        "type": "REPEAT1",
+                        "type": "FIELD",
+                        "name": "marker",
                         "content": {
                           "type": "PATTERN",
-                          "value": "[0-9]+_?"
+                          "value": "[eE][\\+-]?"
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "exponent",
+                        "content": {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[0-9]+_?"
+                          }
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
                         }
                       }
                     ]
@@ -5848,16 +5876,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -5875,29 +5910,43 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                "type": "FIELD",
+                "name": "integer",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
                     }
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "."
               },
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "fraction",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
@@ -5907,14 +5956,28 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "PATTERN",
-                        "value": "[eE][\\+-]?"
-                      },
-                      {
-                        "type": "REPEAT1",
+                        "type": "FIELD",
+                        "name": "marker",
                         "content": {
                           "type": "PATTERN",
-                          "value": "[0-9]+_?"
+                          "value": "[eE][\\+-]?"
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "exponent",
+                        "content": {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[0-9]+_?"
+                          }
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
                         }
                       }
                     ]
@@ -5927,16 +5990,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -5954,24 +6024,45 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "integer",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "[eE][\\+-]?"
-                  },
-                  {
-                    "type": "REPEAT1",
+                    "type": "FIELD",
+                    "name": "marker",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                      "value": "[eE][\\+-]?"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent",
+                    "content": {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
                     }
                   }
                 ]
@@ -5979,16 +6070,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -7805,10 +7903,17 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "integer",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
@@ -7816,19 +7921,26 @@
                 "value": "."
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                "type": "FIELD",
+                "name": "fraction",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
                     }
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "CHOICE",
@@ -7837,14 +7949,28 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "PATTERN",
-                        "value": "[eE][\\+-]?"
-                      },
-                      {
-                        "type": "REPEAT1",
+                        "type": "FIELD",
+                        "name": "marker",
                         "content": {
                           "type": "PATTERN",
-                          "value": "[0-9]+_?"
+                          "value": "[eE][\\+-]?"
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "exponent",
+                        "content": {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[0-9]+_?"
+                          }
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
                         }
                       }
                     ]
@@ -7857,16 +7983,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -7884,29 +8017,43 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                "type": "FIELD",
+                "name": "integer",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
                     }
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "."
               },
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "fraction",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
@@ -7916,14 +8063,28 @@
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "PATTERN",
-                        "value": "[eE][\\+-]?"
-                      },
-                      {
-                        "type": "REPEAT1",
+                        "type": "FIELD",
+                        "name": "marker",
                         "content": {
                           "type": "PATTERN",
-                          "value": "[0-9]+_?"
+                          "value": "[eE][\\+-]?"
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "exponent",
+                        "content": {
+                          "type": "REPEAT1",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[0-9]+_?"
+                          }
+                        },
+                        "metadata": {
+                          "fieldSource": "override"
                         }
                       }
                     ]
@@ -7936,16 +8097,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
@@ -7963,24 +8131,45 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "REPEAT1",
+                "type": "FIELD",
+                "name": "integer",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[0-9]+_?"
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[0-9]+_?"
+                  }
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "PATTERN",
-                    "value": "[eE][\\+-]?"
-                  },
-                  {
-                    "type": "REPEAT1",
+                    "type": "FIELD",
+                    "name": "marker",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[0-9]+_?"
+                      "value": "[eE][\\+-]?"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent",
+                    "content": {
+                      "type": "REPEAT1",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[0-9]+_?"
+                      }
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
                     }
                   }
                 ]
@@ -7988,16 +8177,23 @@
             ]
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[jJ]"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "FIELD",
+            "name": "imaginary",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[jJ]"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       },
