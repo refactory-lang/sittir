@@ -1780,16 +1780,6 @@ Only a HIDDEN group lift (`isHiddenKind`) is looked through. A visible lift is a
  */
 ```
 
-### `packages/codegen/src/dsl/transform/transform.ts::hoistTokenChoiceForVariants`
-
-```text
-When variant() names arms of a token whose content is a choice, the choice is hoisted above the token:
-`token(choice(A, B))` becomes `choice(token(A), token(B))` before the variants are applied, so each arm mints as
-its own token kind and the parent becomes the polymorph over them. The rewrite runs in the DSL layer both
-pipelines execute, so the parser sees the separate token kinds. It is lexically the same alternation when the arms
-have disjoint prefixes. An arm that is not a seq led by a string is an error naming the rule and the arm.
-```
-
 ### `packages/codegen/src/dsl/transform/token-forms.ts::classifyTokenChoice`
 
 What a choice under a token is, by its arms: `presence` when an arm is blank, `spelling` when every arm is a string literal, `forms` otherwise. Only `forms` hoists; the other two are what the token-interior pass seats as a flag or an enum slot.

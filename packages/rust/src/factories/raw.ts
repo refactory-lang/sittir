@@ -33,14 +33,23 @@ const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
 const _leafRe_buildRawStringLiteralContent = /^(?:(?:[\s\S]*))$/u;
 const _leafRe_buildLineDocContent = /^(?:(?:.*))$/u;
 const _leafRe_buildBlockCommentContent = /^(?:(?:[^]*))$/u;
-const _slotRe_buildIntegerLiteral_content =
-	/^(?:(?:(?:[0-9][0-9_]*)|(?:0x[0-9a-fA-F_]+)|(?:0b[01_]+)|(?:0o[0-7_]+)))$/u;
-const _slotRe_buildCharLiteral_content =
-	/^(?:(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2}))|(?:[^\\'])))?)$/u;
-const _slotRe_buildEscapeSequence_content =
-	/^(?:(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))$/u;
 const _slotRe_buildShebang_content = /^(?:[\r\f\t\v ]*(?:[^[\n].*)?)$/u;
 const _slotRe_buildMetavariable_name = /^(?:[a-zA-Z_]\w*)$/u;
+const _slotRe_buildIntegerLiteralArm1_content = /^(?:(?:[0-9][0-9_]*))$/u;
+const _slotRe_buildIntegerLiteralArm1_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+const _slotRe_buildIntegerLiteralArm2_content = /^(?:(?:0x[0-9a-fA-F_]+))$/u;
+const _slotRe_buildIntegerLiteralArm2_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+const _slotRe_buildIntegerLiteralArm3_content = /^(?:(?:0b[01_]+))$/u;
+const _slotRe_buildIntegerLiteralArm3_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+const _slotRe_buildIntegerLiteralArm4_content = /^(?:(?:0o[0-7_]+))$/u;
+const _slotRe_buildIntegerLiteralArm4_suffix = /^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$/u;
+const _slotRe_buildCharLiteralArm1_content =
+	/^(?:(?:\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:x[0-9a-fA-F]{2})))?)$/u;
+const _slotRe_buildCharLiteralArm2_content = /^(?:(?:(?:[^\\']))?)$/u;
+const _slotRe_buildEscapeSequenceArm1_content = /^(?:(?:[^xu]))$/u;
+const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
+const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
+const _slotRe_buildEscapeSequenceArm4_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Built {
 	const _shebang = config.shebang;
@@ -3956,49 +3965,6 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 	);
 }
 
-export function buildIntegerLiteral(config: T.IntegerLiteral.Config): T.IntegerLiteral.Built {
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildIntegerLiteral_content.test(_content))
-		throw new Error(`integer_literal.content: text does not match pattern: ${_content}`);
-	const _suffix = coerceKindEnumStorage<NonNullable<T.IntegerLiteral['_suffix']>>(config.suffix, [
-		['u8', TSKindId.U8Keyword] as const,
-		['i8', TSKindId.I8Keyword] as const,
-		['u16', TSKindId.U16Keyword] as const,
-		['i16', TSKindId.I16Keyword] as const,
-		['u32', TSKindId.U32Keyword] as const,
-		['i32', TSKindId.I32Keyword] as const,
-		['u64', TSKindId.U64Keyword] as const,
-		['i64', TSKindId.I64Keyword] as const,
-		['u128', TSKindId.U128Keyword] as const,
-		['i128', TSKindId.I128Keyword] as const,
-		['isize', TSKindId.IsizeKeyword] as const,
-		['usize', TSKindId.UsizeKeyword] as const,
-		['f32', TSKindId.F32Keyword] as const,
-		['f64', TSKindId.F64Keyword] as const
-	]);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.IntegerLiteral as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_suffix,
-				$with: {
-					content: (value: string) => buildIntegerLiteral({ ...config, content: value }),
-					suffix: (value?: NonNullable<T.IntegerLiteral.Config>['suffix']) =>
-						buildIntegerLiteral({ ...config, suffix: value })
-				}
-			},
-			{
-				content: () => _content,
-				suffix: () => _suffix
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Built {
 	const _string_open = admitHiddenText<NonNullable<T.StringLiteral['_string_open']>>(
 		config.stringOpen,
@@ -4063,56 +4029,6 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 				rawStringLiteralStart: () => _raw_string_literal_start,
 				stringContent: () => _string_content,
 				rawStringLiteralEnd: () => _raw_string_literal_end
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildCharLiteral(config: T.CharLiteral.Config): T.CharLiteral.Built {
-	const _b = coerceBooleanKeywordStorage(config.b);
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteral_content.test(_content))
-		throw new Error(`char_literal.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CharLiteral as const,
-				$source: 2 as const,
-				$named: true as const,
-				_b,
-				_content,
-				$with: {
-					b: (value?: NonNullable<T.CharLiteral.Config>['b']) => buildCharLiteral({ ...config, b: value }),
-					content: (value: string) => buildCharLiteral({ ...config, content: value })
-				}
-			},
-			{
-				b: () => _b,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
-	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
-		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequence as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequence(value)
-				}
-			},
-			{
-				content: () => _content
 			}
 		),
 		methodsEngine
@@ -4268,6 +4184,332 @@ export function buildMetavariable(value: string): T.Metavariable.Built {
 			},
 			{
 				name: () => _name
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerLiteralArm1(config: T.IntegerLiteralArm1.Config): T.IntegerLiteralArm1.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerLiteralArm1_content.test(_content))
+		throw new Error(`integer_literal_arm1.content: text does not match pattern: ${_content}`);
+	const _suffix = config.suffix;
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralArm1_suffix.test(_suffix))
+		throw new Error(`integer_literal_arm1.suffix: text does not match pattern: ${_suffix}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerLiteralArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_suffix,
+				$with: {
+					content: (value: string) => buildIntegerLiteralArm1({ ...config, content: value }),
+					suffix: (
+						value?:
+							| 'u8'
+							| 'i8'
+							| 'u16'
+							| 'i16'
+							| 'u32'
+							| 'i32'
+							| 'u64'
+							| 'i64'
+							| 'u128'
+							| 'i128'
+							| 'isize'
+							| 'usize'
+							| 'f32'
+							| 'f64'
+					) => buildIntegerLiteralArm1({ ...config, suffix: value })
+				}
+			},
+			{
+				content: () => _content,
+				suffix: () => _suffix
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerLiteralArm2(config: T.IntegerLiteralArm2.Config): T.IntegerLiteralArm2.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerLiteralArm2_content.test(_content))
+		throw new Error(`integer_literal_arm2.content: text does not match pattern: ${_content}`);
+	const _suffix = config.suffix;
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralArm2_suffix.test(_suffix))
+		throw new Error(`integer_literal_arm2.suffix: text does not match pattern: ${_suffix}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerLiteralArm2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_suffix,
+				$with: {
+					content: (value: string) => buildIntegerLiteralArm2({ ...config, content: value }),
+					suffix: (
+						value?:
+							| 'u8'
+							| 'i8'
+							| 'u16'
+							| 'i16'
+							| 'u32'
+							| 'i32'
+							| 'u64'
+							| 'i64'
+							| 'u128'
+							| 'i128'
+							| 'isize'
+							| 'usize'
+							| 'f32'
+							| 'f64'
+					) => buildIntegerLiteralArm2({ ...config, suffix: value })
+				}
+			},
+			{
+				content: () => _content,
+				suffix: () => _suffix
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerLiteralArm3(config: T.IntegerLiteralArm3.Config): T.IntegerLiteralArm3.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerLiteralArm3_content.test(_content))
+		throw new Error(`integer_literal_arm3.content: text does not match pattern: ${_content}`);
+	const _suffix = config.suffix;
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralArm3_suffix.test(_suffix))
+		throw new Error(`integer_literal_arm3.suffix: text does not match pattern: ${_suffix}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerLiteralArm3 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_suffix,
+				$with: {
+					content: (value: string) => buildIntegerLiteralArm3({ ...config, content: value }),
+					suffix: (
+						value?:
+							| 'u8'
+							| 'i8'
+							| 'u16'
+							| 'i16'
+							| 'u32'
+							| 'i32'
+							| 'u64'
+							| 'i64'
+							| 'u128'
+							| 'i128'
+							| 'isize'
+							| 'usize'
+							| 'f32'
+							| 'f64'
+					) => buildIntegerLiteralArm3({ ...config, suffix: value })
+				}
+			},
+			{
+				content: () => _content,
+				suffix: () => _suffix
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerLiteralArm4(config: T.IntegerLiteralArm4.Config): T.IntegerLiteralArm4.Built {
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerLiteralArm4_content.test(_content))
+		throw new Error(`integer_literal_arm4.content: text does not match pattern: ${_content}`);
+	const _suffix = config.suffix;
+	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralArm4_suffix.test(_suffix))
+		throw new Error(`integer_literal_arm4.suffix: text does not match pattern: ${_suffix}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerLiteralArm4 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_suffix,
+				$with: {
+					content: (value: string) => buildIntegerLiteralArm4({ ...config, content: value }),
+					suffix: (
+						value?:
+							| 'u8'
+							| 'i8'
+							| 'u16'
+							| 'i16'
+							| 'u32'
+							| 'i32'
+							| 'u64'
+							| 'i64'
+							| 'u128'
+							| 'i128'
+							| 'isize'
+							| 'usize'
+							| 'f32'
+							| 'f64'
+					) => buildIntegerLiteralArm4({ ...config, suffix: value })
+				}
+			},
+			{
+				content: () => _content,
+				suffix: () => _suffix
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralArm1(config: T.CharLiteralArm1.Config): T.CharLiteralArm1.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralArm1_content.test(_content))
+		throw new Error(`char_literal_arm1.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralArm1.Config>['b']) => buildCharLiteralArm1({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralArm1({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCharLiteralArm2(config: T.CharLiteralArm2.Config): T.CharLiteralArm2.Built {
+	const _b = coerceBooleanKeywordStorage(config.b);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildCharLiteralArm2_content.test(_content))
+		throw new Error(`char_literal_arm2.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CharLiteralArm2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_b,
+				_content,
+				$with: {
+					b: (value?: NonNullable<T.CharLiteralArm2.Config>['b']) => buildCharLiteralArm2({ ...config, b: value }),
+					content: (value: string) => buildCharLiteralArm2({ ...config, content: value })
+				}
+			},
+			{
+				b: () => _b,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm1(value: string): T.EscapeSequenceArm1.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm1_content.test(_content))
+		throw new Error(`escape_sequence_arm1.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm1(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm2(value: string): T.EscapeSequenceArm2.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm2_content.test(_content))
+		throw new Error(`escape_sequence_arm2.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm2(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm3(value: string): T.EscapeSequenceArm3.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm3_content.test(_content))
+		throw new Error(`escape_sequence_arm3.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm3 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm3(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm4(value: string): T.EscapeSequenceArm4.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm4_content.test(_content))
+		throw new Error(`escape_sequence_arm4.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm4 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm4(value)
+				}
+			},
+			{
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -7575,11 +7817,8 @@ export type FluentKindMap = {
 	captured_pattern: T.CapturedPattern.Built;
 	reference_pattern: T.ReferencePattern.Built;
 	negative_literal: T.NegativeLiteral.Built;
-	integer_literal: T.IntegerLiteral.Built;
 	string_literal: T.StringLiteral.Built;
 	raw_string_literal: T.RawStringLiteral.Built;
-	char_literal: T.CharLiteral.Built;
-	escape_sequence: T.EscapeSequence.Built;
 	line_comment: T.LineComment.Built;
 	block_comment: T.BlockComment.Built;
 	identifier: T.Identifier;
@@ -7590,6 +7829,16 @@ export type FluentKindMap = {
 	super: T.Super;
 	crate: T.Crate;
 	metavariable: T.Metavariable.Built;
+	integer_literal_arm1: T.IntegerLiteralArm1.Built;
+	integer_literal_arm2: T.IntegerLiteralArm2.Built;
+	integer_literal_arm3: T.IntegerLiteralArm3.Built;
+	integer_literal_arm4: T.IntegerLiteralArm4.Built;
+	char_literal_arm1: T.CharLiteralArm1.Built;
+	char_literal_arm2: T.CharLiteralArm2.Built;
+	escape_sequence_arm1: T.EscapeSequenceArm1.Built;
+	escape_sequence_arm2: T.EscapeSequenceArm2.Built;
+	escape_sequence_arm3: T.EscapeSequenceArm3.Built;
+	escape_sequence_arm4: T.EscapeSequenceArm4.Built;
 	macro_rules: T.MacroRules.Built;
 	enum_variant_list_elements: T.EnumVariantListElements.Built;
 	field_declaration_list_elements: T.FieldDeclarationListElements.Built;
@@ -7815,11 +8064,8 @@ export const _factoryMap = {
 	captured_pattern: buildCapturedPattern,
 	reference_pattern: buildReferencePattern,
 	negative_literal: buildNegativeLiteral,
-	integer_literal: buildIntegerLiteral,
 	string_literal: buildStringLiteral,
 	raw_string_literal: buildRawStringLiteral,
-	char_literal: buildCharLiteral,
-	escape_sequence: buildEscapeSequence,
 	line_comment: buildLineComment,
 	block_comment: buildBlockComment,
 	identifier: buildIdentifier,
@@ -7830,6 +8076,16 @@ export const _factoryMap = {
 	super: buildSuper,
 	crate: buildCrate,
 	metavariable: buildMetavariable,
+	integer_literal_arm1: buildIntegerLiteralArm1,
+	integer_literal_arm2: buildIntegerLiteralArm2,
+	integer_literal_arm3: buildIntegerLiteralArm3,
+	integer_literal_arm4: buildIntegerLiteralArm4,
+	char_literal_arm1: buildCharLiteralArm1,
+	char_literal_arm2: buildCharLiteralArm2,
+	escape_sequence_arm1: buildEscapeSequenceArm1,
+	escape_sequence_arm2: buildEscapeSequenceArm2,
+	escape_sequence_arm3: buildEscapeSequenceArm3,
+	escape_sequence_arm4: buildEscapeSequenceArm4,
 	macro_rules: buildMacroRules,
 	enum_variant_list_elements: buildEnumVariantListElements,
 	field_declaration_list_elements: buildFieldDeclarationListElements,

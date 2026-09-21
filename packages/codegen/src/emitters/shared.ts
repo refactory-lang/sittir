@@ -447,7 +447,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	return { arms, texts, sawNodeArm, verbatim, ownSymbolIds };
 }
 
-function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
+function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap, owner?: AssembledNode): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -477,6 +477,9 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		collapsesMultiplicity: false
 	});
 	const walked = enumArmsOf(field, nodeMap);
+	if (owner instanceof AbstractAssembledCompound && owner.lexedInterior && !walked.verbatim && !walked.sawNodeArm && walked.texts.length > 0) {
+		return { kind: 'verbatim', texts: [...walked.texts], enumKinds: [], enumKindsById: new Map(), collapsesMultiplicity: false };
+	}
 	if (walked.verbatim || walked.arms.length === 0) return verbatim();
 	const enumKindsById = new Map<string, number>();
 	for (const arm of walked.arms) if (arm.id !== undefined) enumKindsById.set(arm.kind, arm.id);
@@ -489,11 +492,15 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	};
 }
 
+export function isTextEnum(info: FieldStorageInfo): boolean {
+	return info.kind === 'verbatim' && info.texts.length > 0;
+}
+
 export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
 			for (const value of slot.values) value.storage = classifyValueStorage(value, nodeMap);
-			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
+			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap, node);
 		}
 	}
 }

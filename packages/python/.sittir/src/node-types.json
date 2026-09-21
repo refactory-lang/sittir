@@ -148,6 +148,40 @@
     ]
   },
   {
+    "type": "escape_sequence",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "escape_sequence_arm1",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm2",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm3",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm4",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm5",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm6",
+        "named": true
+      },
+      {
+        "type": "escape_sequence_arm7",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "expression",
     "named": true,
     "subtypes": [
@@ -181,6 +215,61 @@
       },
       {
         "type": "primary_expression",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "float",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "float_arm1",
+        "named": true
+      },
+      {
+        "type": "float_arm2",
+        "named": true
+      },
+      {
+        "type": "float_arm3",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "integer",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "integer_arm1",
+        "named": true
+      },
+      {
+        "type": "integer_arm2",
+        "named": true
+      },
+      {
+        "type": "integer_arm3",
+        "named": true
+      },
+      {
+        "type": "integer_arm4",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "line_continuation",
+    "named": true,
+    "extra": true,
+    "subtypes": [
+      {
+        "type": "line_continuation_arm1",
+        "named": true
+      },
+      {
+        "type": "line_continuation_arm2",
         "named": true
       }
     ]
@@ -4710,7 +4799,31 @@
     "named": true
   },
   {
-    "type": "escape_sequence",
+    "type": "escape_sequence_arm1",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm2",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm3",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm4",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm5",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm6",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_arm7",
     "named": true
   },
   {
@@ -4730,7 +4843,15 @@
     "named": false
   },
   {
-    "type": "float",
+    "type": "float_arm1",
+    "named": true
+  },
+  {
+    "type": "float_arm2",
+    "named": true
+  },
+  {
+    "type": "float_arm3",
     "named": true
   },
   {
@@ -4762,7 +4883,19 @@
     "named": false
   },
   {
-    "type": "integer",
+    "type": "integer_arm1",
+    "named": true
+  },
+  {
+    "type": "integer_arm2",
+    "named": true
+  },
+  {
+    "type": "integer_arm3",
+    "named": true
+  },
+  {
+    "type": "integer_arm4",
     "named": true
   },
   {
@@ -4774,9 +4907,12 @@
     "named": false
   },
   {
-    "type": "line_continuation",
-    "named": true,
-    "extra": true
+    "type": "line_continuation_arm1",
+    "named": true
+  },
+  {
+    "type": "line_continuation_arm2",
+    "named": true
   },
   {
     "type": "match",

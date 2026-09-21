@@ -304,8 +304,8 @@ export default grammar(
 
 			patches: {
 				comment: {
-					'0/1/1': regex(/([^*]|\*+[^*\/])*\**/),
-					'0/1/2': { type: 'STRING', value: '*/' } as never,
+					'1/0/1': regex(/([^*]|\*+[^*\/])*\**/),
+					'1/0/2': { type: 'STRING', value: '*/' } as never,
 					0: variant('line'),
 					1: variant('block')
 				},
@@ -669,7 +669,7 @@ export default grammar(
 				}
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
-			supertypes: ($, previous) => [...(previous ?? []), $._whitespace, $.comment],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
 			extras: ($, previous) => [
 				...(previous ?? []).filter((extra: { name?: string }) => extra.name !== 'comment'),
 				$.comment_line,

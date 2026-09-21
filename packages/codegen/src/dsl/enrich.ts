@@ -48,6 +48,7 @@ import {
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { distributeTokenForms } from './transform/token-forms.ts';
 
 export interface GrammarResult {
 	grammar: {
@@ -110,6 +111,17 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
+	const externalNames = extractExternalNames(base, hasWrapper);
+	const tokenFormParents: string[] = [];
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule) continue;
+		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
+		const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames);
+		if (hoisted === rule) continue;
+		enrichedRules[name] = hoisted;
+		tokenFormParents.push(name);
+	}
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
 	hiddenListPromotionNames = new Map();
 	hoistKwRules = kwRules;
@@ -171,6 +183,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
+	addSupertypes((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormParents);
 	if (clauseGroupNames.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
 			value: clauseGroupNames,
@@ -261,6 +274,56 @@ function applyFieldWrapPasses(
 	return r;
 }
 
+function hoistTokenForms(
+	parentKind: string,
+	rule: Rule,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	groupDedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	visibleGroupSources: Set<string>,
+	clauseGroupOwners: Map<string, string>,
+	externalNames: ReadonlySet<string>
+): Rule {
+	if (externalNames.has(parentKind)) return rule;
+	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind) as unknown as Rule;
+	if (distributed === rule) return rule;
+	const precStack: Rule[] = [];
+	let core = distributed;
+	while (isPrecWrapper(core as { type: string })) {
+		precStack.push(core);
+		core = (core as unknown as { content: Rule }).content;
+	}
+	const arms = (core as unknown as { members: Rule[] }).members;
+	const members = arms.map((arm, i) => {
+		const minted = visibleGroupSynthName(arm, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, undefined, undefined, 'arm');
+		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
+		visibleGroupSources.add(minted);
+		if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+		return makeGroupLiftSymbol(arm, minted);
+	});
+	let out = { ...core, members } as unknown as Rule;
+	for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i]!, content: out } as unknown as Rule;
+	return out;
+}
+
+function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {
+	if (names.length === 0) return;
+	const current = result.supertypes;
+	if (typeof current === 'function') {
+		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
+		result.supertypes = (dollar: Record<string, unknown>, previous?: unknown) => {
+			const base = fn(dollar, previous);
+			const listed = harvestSupertypeNames(base);
+			return [...base, ...names.filter((n) => !listed.has(n)).map((n) => dollar[n])];
+		};
+		return;
+	}
+	const base = Array.isArray(current) ? current : [];
+	const listed = harvestSupertypeNames(base);
+	result.supertypes = [...base, ...names.filter((n) => !listed.has(n))];
+}
+
 function applyHoistAndUnalias(
 	ruleName: string,
 	rule: Rule,
@@ -318,6 +381,25 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	}
 	if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
 	return new Set();
+}
+
+function extractExternalNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
+	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
+	const externals = root?.externals;
+	if (typeof externals !== 'function') return Array.isArray(externals) ? harvestSupertypeNames(externals) : new Set();
+	const dollar = new Proxy(
+		{},
+		{
+			get(_t, prop) {
+				return typeof prop === 'string' ? { type: 'SYMBOL', name: prop } : undefined;
+			}
+		}
+	);
+	try {
+		return harvestSupertypeNames((externals as (proxy: unknown) => unknown)(dollar));
+	} catch {
+		return new Set();
+	}
 }
 
 function isAnonymousLiteralShapedRule(name: string, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {

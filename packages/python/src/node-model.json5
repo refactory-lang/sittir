@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 283,
+  "nodeCount": 299,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -16,8 +16,12 @@
     "_suite",
     "_whitespace",
     "assignment",
+    "escape_sequence",
     "expression",
+    "float",
+    "integer",
     "keyword_identifier",
+    "line_continuation",
     "parameter",
     "pattern",
     "primary_expression",
@@ -249,8 +253,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -314,8 +323,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -358,8 +372,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -402,8 +421,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -943,8 +967,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -1124,8 +1153,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3"
         ]
       }
     },
@@ -1432,8 +1466,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -1568,8 +1607,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -1828,8 +1872,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -1968,7 +2017,13 @@
         "nonEmpty": false,
         "wireKeys": [
           "_escape_interpolation",
-          "_escape_sequence",
+          "_escape_sequence_arm1",
+          "_escape_sequence_arm2",
+          "_escape_sequence_arm3",
+          "_escape_sequence_arm4",
+          "_escape_sequence_arm5",
+          "_escape_sequence_arm6",
+          "_escape_sequence_arm7",
           "_not_escape_sequence",
           "_string_fragment"
         ]
@@ -2004,15 +2059,6 @@
         "nonEmpty": false
       }
     },
-    "escape_sequence": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "format_specifier": {
       "content": {
         "unnamed": false,
@@ -2035,6 +2081,117 @@
       }
     },
     "comment": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm2": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm3": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm4": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm5": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm6": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_arm7": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_arm1": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_arm2": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_arm3": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2114,8 +2271,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -2210,8 +2372,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -2366,8 +2533,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3"
         ]
       }
     },
@@ -2531,8 +2703,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -2571,8 +2748,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_arm1",
+          "_integer_arm2",
+          "_integer_arm3",
+          "_integer_arm4",
+          "_float_arm1",
+          "_float_arm2",
+          "_float_arm3",
           "_true",
           "_false",
           "_none",
@@ -2684,10 +2866,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -3339,10 +3526,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -3402,10 +3594,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -3563,14 +3760,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -3763,10 +3965,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -3928,10 +4135,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "keyword_argument",
         "lambda",
         "list",
@@ -3999,10 +4211,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "keyword_argument",
         "lambda",
         "list",
@@ -4694,10 +4911,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -5656,10 +5878,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -6471,10 +6698,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -6639,10 +6871,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -6785,10 +7022,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -6907,10 +7149,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -6984,10 +7231,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -7254,14 +7506,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -7339,11 +7596,31 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "EscapeSequence",
-      "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "escape_sequence_arm1",
+        "escape_sequence_arm2",
+        "escape_sequence_arm3",
+        "escape_sequence_arm4",
+        "escape_sequence_arm5",
+        "escape_sequence_arm6",
+        "escape_sequence_arm7"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm1",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm1",
+      "factoryName": "escapeSequenceArm1",
+      "irKey": "escapeSequenceArm1",
       "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7362,6 +7639,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_arm1",
       "interior": {
         "entries": [
           {
@@ -7369,10 +7647,322 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\}))"
+            "pattern": "(?:u[a-fA-F\\d]{4})"
           }
         ],
-        "regex": "^\\\\(?<content>(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$",
+        "regex": "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm2",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm2",
+      "factoryName": "escapeSequenceArm2",
+      "irKey": "escapeSequenceArm2",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm2",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:U[a-fA-F\\d]{8})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm3",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm3",
+      "factoryName": "escapeSequenceArm3",
+      "irKey": "escapeSequenceArm3",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm3",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:x[a-fA-F\\d]{2})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm4",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm4",
+      "factoryName": "escapeSequenceArm4",
+      "irKey": "escapeSequenceArm4",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm4",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\d{1,3})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\d{1,3}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm5",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm5",
+      "factoryName": "escapeSequenceArm5",
+      "irKey": "escapeSequenceArm5",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm5",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\r?\\n)"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\r?\\n))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm6",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm6",
+      "factoryName": "escapeSequenceArm6",
+      "irKey": "escapeSequenceArm6",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm6",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:['\"abfrntv\\\\])"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:['\"abfrntv\\\\]))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_arm7",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceArm7",
+      "factoryName": "escapeSequenceArm7",
+      "irKey": "escapeSequenceArm7",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_arm7",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:N\\{[^}]+\\})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:N\\{[^}]+\\}))$",
         "slots": [
           {
             "name": "content",
@@ -7821,10 +8411,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -7936,10 +8531,15 @@
         "expression_list",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -8002,10 +8602,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -8109,14 +8714,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -8163,12 +8773,54 @@
     },
     {
       "kind": "float",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Float",
-      "factoryName": "float",
       "irKey": "float",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "float_arm1",
+        "float_arm2",
+        "float_arm3"
+      ]
+    },
+    {
+      "kind": "float_arm1",
+      "modelType": "pattern",
+      "typeName": "FloatArm1",
+      "factoryName": "floatArm1",
+      "irKey": "floatArm1",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u",
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "float_arm2",
+      "modelType": "pattern",
+      "typeName": "FloatArm2",
+      "factoryName": "floatArm2",
+      "irKey": "floatArm2",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "float_arm3",
+      "modelType": "pattern",
+      "typeName": "FloatArm3",
+      "factoryName": "floatArm3",
+      "irKey": "floatArm3",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u",
       "factoryShape": "text"
     },
     {
@@ -8923,10 +9575,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -9192,12 +9849,281 @@
     },
     {
       "kind": "integer",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Integer",
-      "factoryName": "integer",
       "irKey": "integer",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4"
+      ]
+    },
+    {
+      "kind": "integer_arm1",
+      "modelType": "branch",
+      "typeName": "IntegerArm1",
+      "factoryName": "integerArm1",
+      "irKey": "integerArm1",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u",
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_arm1",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_arm2",
+      "modelType": "branch",
+      "typeName": "IntegerArm2",
+      "factoryName": "integerArm2",
+      "irKey": "integerArm2",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_arm2",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-7]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_arm3",
+      "modelType": "branch",
+      "typeName": "IntegerArm3",
+      "factoryName": "integerArm3",
+      "irKey": "integerArm3",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0b"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0B"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_arm3",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0b",
+              "0B"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-1]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_arm4",
+      "modelType": "pattern",
+      "typeName": "IntegerArm4",
+      "factoryName": "integerArm4",
+      "irKey": "integerArm4",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u",
       "factoryShape": "text"
     },
     {
@@ -9764,12 +10690,42 @@
     },
     {
       "kind": "line_continuation",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "LineContinuation",
-      "factoryName": "lineContinuation",
       "irKey": "lineContinuation",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "line_continuation_arm1",
+        "line_continuation_arm2"
+      ]
+    },
+    {
+      "kind": "line_continuation_arm1",
+      "modelType": "pattern",
+      "typeName": "LineContinuationArm1",
+      "factoryName": "lineContinuationArm1",
+      "irKey": "lineContinuationArm1",
       "hidden": false,
-      "leafPattern": "/^(?:\\\\(?:(?:\\r)?\\n|\\0))$/u",
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "line_continuation_arm2",
+      "modelType": "punctuation",
+      "typeName": "LineContinuationArm2",
+      "factoryName": "lineContinuationArm2",
+      "irKey": "lineContinuationArm2",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\\u0000\" as const",
+      "text": "\\\u0000",
       "factoryShape": "text"
     },
     {
@@ -9825,10 +10781,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -10047,10 +11008,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -10564,10 +11530,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -10791,10 +11762,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -10875,10 +11851,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -11215,10 +12196,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -11357,10 +12343,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -11600,10 +12591,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -11688,10 +12684,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -11889,14 +12890,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -12102,10 +13108,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -12492,10 +13503,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -12618,10 +13634,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -12800,14 +13821,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -13021,10 +14047,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -13178,11 +14209,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -13338,11 +14374,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -13556,11 +14597,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -13995,10 +15041,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -14078,10 +15129,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -14146,10 +15202,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -14224,10 +15285,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",
@@ -14408,10 +15474,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_arm1",
+        "float_arm2",
+        "float_arm3",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_arm1",
+        "integer_arm2",
+        "integer_arm3",
+        "integer_arm4",
         "lambda",
         "list",
         "list_comprehension",

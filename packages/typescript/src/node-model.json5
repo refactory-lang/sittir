@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 430,
+  "nodeCount": 435,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -28,6 +28,7 @@
     "index_signature",
     "lhs_expression",
     "meta_property",
+    "number",
     "pattern",
     "primary_expression",
     "primary_type",
@@ -3156,7 +3157,11 @@
         "nonEmpty": false,
         "wireKeys": [
           "_unary_expression",
-          "_number",
+          "_number_arm1",
+          "_number_arm2",
+          "_number_arm3",
+          "_number_arm4",
+          "_number_arm5",
           "_string",
           "_true",
           "_false",
@@ -3485,6 +3490,63 @@
         "nonEmpty": false
       }
     },
+    "number_arm1": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_arm3": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_arm4": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_arm5": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "export_specifiers": {
       "export_specifier": {
         "unnamed": false,
@@ -3526,7 +3588,11 @@
           "_identifier",
           "_private_property_identifier",
           "_string",
-          "_number",
+          "_number_arm1",
+          "_number_arm2",
+          "_number_arm3",
+          "_number_arm4",
+          "_number_arm5",
           "_computed_property_name"
         ]
       }
@@ -3935,7 +4001,11 @@
           "_identifier",
           "_this",
           "_super",
-          "_number",
+          "_number_arm1",
+          "_number_arm2",
+          "_number_arm3",
+          "_number_arm4",
+          "_number_arm5",
           "_string",
           "_template_string",
           "_regex",
@@ -6000,7 +6070,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -6450,7 +6524,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -7175,7 +7253,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -9163,7 +9245,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -10092,7 +10178,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -10522,7 +10612,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -10627,7 +10721,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -12038,7 +12136,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -15172,7 +15274,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -15873,7 +15979,11 @@
         "_number",
         "false",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "string",
         "string_double",
         "string_single",
@@ -17332,7 +17442,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -17383,13 +17497,335 @@
     },
     {
       "kind": "number",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Number",
-      "factoryName": "number",
       "irKey": "number",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5"
+      ]
+    },
+    {
+      "kind": "number_arm1",
+      "modelType": "branch",
+      "typeName": "NumberArm1",
+      "factoryName": "numberArm1",
+      "irKey": "numberArm1",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)\\.(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|\\.(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*)|(?:\\d(_?\\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*))n))$/u",
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_arm1",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[\\da-fA-F](_?[\\da-fA-F])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "number_arm2",
+      "modelType": "pattern",
+      "typeName": "NumberArm2",
+      "factoryName": "numberArm2",
+      "irKey": "numberArm2",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)\\.(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|\\.(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*)|(?:\\d(_?\\d)*)))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "number_arm3",
+      "modelType": "branch",
+      "typeName": "NumberArm3",
+      "factoryName": "numberArm3",
+      "irKey": "numberArm3",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0b"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0B"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_arm3",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0b",
+              "0B"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[0-1](_?[0-1])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "number_arm4",
+      "modelType": "branch",
+      "typeName": "NumberArm4",
+      "factoryName": "numberArm4",
+      "irKey": "numberArm4",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_arm4",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[0-7](_?[0-7])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "number_arm5",
+      "modelType": "branch",
+      "typeName": "NumberArm5",
+      "factoryName": "numberArm5",
+      "irKey": "numberArm5",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_arm5",
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*))"
+          },
+          {
+            "lit": "n"
+          }
+        ],
+        "regex": "^(?<content>(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*)))n$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "number_keyword",
@@ -17785,7 +18221,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -17874,7 +18314,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -18195,7 +18639,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -18661,7 +19109,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -19664,7 +20116,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -20066,7 +20522,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -20164,7 +20624,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -20494,7 +20958,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -21327,7 +21795,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",
@@ -21431,7 +21903,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -21859,7 +22335,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -21941,7 +22421,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -22150,7 +22634,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -22240,7 +22728,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -22744,7 +23236,11 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object_keyword",
         "object_type",
@@ -23530,7 +24026,11 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_arm1",
+        "number_arm2",
+        "number_arm3",
+        "number_arm4",
+        "number_arm5",
         "number_keyword",
         "object",
         "object_keyword",

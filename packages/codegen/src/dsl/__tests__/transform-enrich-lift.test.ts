@@ -42,6 +42,26 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		}
 	});
 
+	it('renames the minted arms of a token-form choice when variant() names its top-level arms', () => {
+		const line = { type: 'TOKEN', content: { type: 'SEQ', members: [{ type: 'STRING', value: '//' }, { type: 'PATTERN', value: '.*' }] } } as any;
+		const block = { type: 'TOKEN', content: { type: 'SEQ', members: [{ type: 'STRING', value: '/*' }, { type: 'STRING', value: '*/' }] } } as any;
+		const bodies: Record<string, any> = { comment_arm1: line, comment_arm2: block };
+		setGroupLiftRuleMap({ get: (n: string) => bodies[n], set: () => {} });
+		try {
+			const { result: patched, ctx } = withWireContext('comment', () => {
+				const lift = (name: string) => ({ type: 'SYMBOL', name, metadata: { author: 'enrich' } });
+				const original = { type: 'CHOICE', members: [lift('comment_arm1'), lift('comment_arm2')] } as any;
+				return transform(original, { 0: variant('line'), 1: variant('block') }) as any;
+			});
+			expect(ctx.symbolRenames.get('comment_arm1')).toBe('comment_line');
+			expect(ctx.symbolRenames.get('comment_arm2')).toBe('comment_block');
+			expect(ctx.deposits.get('comment_line')).toMatchObject({ type: 'TOKEN' });
+			expect(patched.members.map((m: any) => m.name)).toEqual(['comment_line', 'comment_block']);
+		} finally {
+			setGroupLiftRuleMap(undefined);
+		}
+	});
+
 	it('alias() re-homes a bare symbol reference to an authored rule without minting a synthetic deposit', () => {
 		const { result: patched, ctx } = withWireContext('rehome', () => {
 			const original = { type: 'SYMBOL', name: 'authored_rule' } as any;

@@ -88,6 +88,17 @@ export type TypescriptGrammar = {
 		named: true;
 		subtypes: [{ type: 'meta_property_import_meta'; named: true }, { type: 'meta_property_new_target'; named: true }];
 	};
+	readonly number: {
+		type: 'number';
+		named: true;
+		subtypes: [
+			{ type: 'number_arm1'; named: true },
+			{ type: 'number_arm2'; named: true },
+			{ type: 'number_arm3'; named: true },
+			{ type: 'number_arm4'; named: true },
+			{ type: 'number_arm5'; named: true }
+		];
+	};
 	readonly pattern: {
 		type: 'pattern';
 		named: true;
@@ -2779,7 +2790,11 @@ export type TypescriptGrammar = {
 	readonly _anonymous_new: { type: 'new'; named: false };
 	readonly null: { type: 'null'; named: true };
 	readonly _anonymous_number: { type: 'number'; named: false };
-	readonly number: { type: 'number'; named: true };
+	readonly number_arm1: { type: 'number_arm1'; named: true };
+	readonly number_arm2: { type: 'number_arm2'; named: true };
+	readonly number_arm3: { type: 'number_arm3'; named: true };
+	readonly number_arm4: { type: 'number_arm4'; named: true };
+	readonly number_arm5: { type: 'number_arm5'; named: true };
 	readonly _anonymous_object: { type: 'object'; named: false };
 	readonly _anonymous_of: { type: 'of'; named: false };
 	readonly _anonymous_override: { type: 'override'; named: false };

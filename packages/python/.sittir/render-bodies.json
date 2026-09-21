@@ -1404,7 +1404,85 @@
 			"field": "else_clause_after"
 		}
 	],
-	"escape_sequence": [
+	"escape_sequence_arm1": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm2": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm3": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm4": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm5": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm6": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_arm7": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2213,6 +2291,45 @@
 		{
 			"kind": "seam",
 			"field": "import_statement_after"
+		}
+	],
+	"integer_arm1": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"integer_arm2": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"integer_arm3": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"interpolation": [

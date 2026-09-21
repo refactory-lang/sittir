@@ -20,9 +20,6 @@ export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
-	number(value: number): ReturnType<typeof F.buildNumber> {
-		return F.buildNumber(String(value));
-	},
 	comment: Object.assign(
 		function comment(content: string): ReturnType<typeof F.comment.line> {
 			return F.comment.line(content);
@@ -194,7 +191,6 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
-	readonly number: typeof F.buildNumber;
 	readonly string: typeof F.string;
 	readonly templateString: typeof F.templateString;
 	readonly regex: typeof F.regex;
@@ -218,7 +214,6 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	this: F.buildThis,
 	super: F.buildSuper,
-	number: F.buildNumber,
 	string: F.string,
 	templateString: F.templateString,
 	regex: F.regex,
@@ -284,6 +279,12 @@ export const destructuringPattern: {
 	array: F.arrayPattern
 };
 
+export const number: {
+	readonly arm2: typeof F.buildNumberArm2;
+} = {
+	arm2: F.buildNumberArm2
+};
+
 export const identifier: typeof F.buildIdentifier & {
 	readonly undefined: typeof F.buildUndefined;
 	readonly identifier: typeof F.buildIdentifier;
@@ -301,12 +302,10 @@ export const pattern: {
 export const propertyName: {
 	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly string: typeof F.string;
-	readonly number: typeof F.buildNumber;
 	readonly computed: typeof F.computedPropertyName;
 } = {
 	privateIdentifier: F.privatePropertyIdentifier,
 	string: F.string,
-	number: F.buildNumber,
 	computed: F.computedPropertyName
 };
 
@@ -600,12 +599,13 @@ export const ir: {
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
-	readonly number: typeof F.buildNumber;
+	readonly numberArm2: typeof F.buildNumberArm2;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly templateChars: typeof F.buildTemplateChars;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
 	readonly ambient: typeof F.ambientDeclaration;
+	readonly arm2: typeof F.buildNumberArm2;
 	readonly as: typeof F.asExpression;
 	readonly assignment: typeof F.assignmentExpression;
 	readonly augmentedAssignment: typeof F.augmentedAssignmentExpression;
@@ -679,6 +679,7 @@ export const ir: {
 	readonly lhsExpression: typeof lhsExpression;
 	readonly augmentedAssignmentLhs: typeof augmentedAssignmentLhs;
 	readonly destructuringPattern: typeof destructuringPattern;
+	readonly number: typeof number;
 	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
 	readonly propertyName: typeof propertyName;
@@ -892,7 +893,7 @@ export const ir: {
 	unescapedSingleStringFragment: F.buildUnescapedSingleStringFragment,
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
-	number: F.buildNumber,
+	numberArm2: F.buildNumberArm2,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 	templateChars: F.buildTemplateChars,
@@ -900,6 +901,7 @@ export const ir: {
 	// Supertype-stripped short aliases
 	abstractClass: F.abstractClassDeclaration,
 	ambient: F.ambientDeclaration,
+	arm2: F.buildNumberArm2,
 	as: F.asExpression,
 	assignment: F.assignmentExpression,
 	augmentedAssignment: F.augmentedAssignmentExpression,
@@ -975,6 +977,7 @@ export const ir: {
 	lhsExpression,
 	augmentedAssignmentLhs,
 	destructuringPattern,
+	number,
 	identifier,
 	pattern,
 	propertyName,

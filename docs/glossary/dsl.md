@@ -6250,3 +6250,15 @@ themselves.
 ```text
 /** Whether a patch value is a preference placeholder. */
 ```
+
+### `packages/codegen/src/dsl/enrich.ts::hoistTokenForms`
+
+The unconditional token-form hoist, one pass over every rule before clause hoisting: the body is distributed over its outermost form alternation (`distributeTokenForms`); each arm is minted as a visible group of the `arm` flavor through `visibleGroupSynthName` and referenced by a group-lift symbol, so the arms are reachable by path patches through the lift and a `variant()` on the parent's top-level arms renames them (`renameEnrichLift`), exactly as for any other enrich-minted arm. The rule becomes a choice of the minted symbols and is reported to `addSupertypes`. Minted arms get a visible-group source entry and the parent as owner, like every other enrich mint, so `collapseSingletonMintOrdinals` drops the ordinal from a lone unnamed arm. A rule the grammar declares in `externals` is left alone: the scanner produces that token, and tree-sitter rejects a name that is both an external token and a non-terminal.
+
+### `packages/codegen/src/dsl/enrich.ts::extractExternalNames`
+
+The names in the grammar's `externals`, whether it is an array or a `$ => [...]` function, harvested the way `extractSupertypeNames` harvests supertypes.
+
+### `packages/codegen/src/dsl/enrich.ts::addSupertypes`
+
+Appends rule names to the grammar's `supertypes`, whether it is an array of names or a `$ => [...]` function, skipping names already listed. The token-form parents go through here so tree-sitter treats each as the supertype of its minted arms.

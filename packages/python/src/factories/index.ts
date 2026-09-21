@@ -107,7 +107,6 @@ export const concatenatedString: Hoisted<typeof O.concatenatedString> = hoist(O.
 export const string: Hoisted<typeof O.string> = hoist(O.string);
 export const stringContent: Hoisted<typeof O.stringContent> = hoist(O.stringContent);
 export const interpolation: Hoisted<typeof O.interpolation> = hoist(O.interpolation);
-export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoist(O.escapeSequence);
 export const formatSpecifier: Hoisted<typeof O.formatSpecifier> = hoist(O.formatSpecifier);
 export const await_: Hoisted<typeof O.await_> = hoist(O.await_);
 export const comment: Hoisted<typeof O.comment> = hoist(O.comment);

@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
-import { interiorOf } from './interior.ts';
+import { interiorEnumArms, interiorOf } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	kindDiscriminantExprForId,
@@ -169,11 +169,13 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 		const interior = interiorOf(node);
 		if (interior === undefined) continue;
 		for (const entry of interior.entries) {
-			if (!('slot' in entry)) continue;
-			const literal = anchoredLeafRegexLiteral(kind, entry.pattern);
+			const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+			if (guarded === undefined) continue;
+			const { slot, pattern } = guarded;
+			const literal = anchoredLeafRegexLiteral(kind, pattern);
 			if (literal === undefined) continue;
-			const constName = `_slotRe_${node.rawFactoryName!}_${entry.slot}`;
-			leafReConsts.set(slotGuardKey(kind, entry.slot), constName);
+			const constName = `_slotRe_${node.rawFactoryName!}_${slot}`;
+			leafReConsts.set(slotGuardKey(kind, slot), constName);
 			lines.push(`const ${constName} = ${literal};`);
 		}
 	}

@@ -115,35 +115,8 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 		if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
 		rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
 	}
-	if (variantEntries.length > 0) {
-		rule = applyVariantPatches(hoistTokenChoiceForVariants(rule, variantEntries), variantEntries);
-	}
+	if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
 	return rule;
-}
-
-function isStringLedSeq(arm: RuntimeRule): boolean {
-	const a = arm as { type?: string; members?: RuntimeRule[] };
-	return a.type === 'SEQ' && Array.isArray(a.members) && (a.members[0] as { type?: string } | undefined)?.type === 'STRING';
-}
-
-function hoistTokenChoiceForVariants(
-	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
-): RuntimeRule {
-	const wrapper = rule as { type?: string; content?: RuntimeRule };
-	if (wrapper.type !== 'TOKEN' && wrapper.type !== 'IMMEDIATE_TOKEN') return rule;
-	const choice = wrapper.content as { type?: string; members?: RuntimeRule[] } | undefined;
-	if (choice?.type !== 'CHOICE' || !Array.isArray(choice.members)) return rule;
-	const arms = choice.members;
-	const named = variantEntries.map(([key]) => parsePath(key));
-	if (!named.every((segs) => segs.length === 1 && segs[0]!.kind === 'index')) return rule;
-	const offending = arms.findIndex((arm) => !isStringLedSeq(arm));
-	if (offending >= 0) {
-		throw new Error(
-			`variant() on the arms of a token choice: arm ${offending} of '${wireGetCurrentRuleKind() ?? '(unknown)'}' is not a seq led by a string`
-		);
-	}
-	return { ...(choice as object), members: arms.map((arm) => ({ ...(wrapper as object), content: arm })) } as unknown as RuntimeRule;
 }
 
 function assertChoiceArmPath(rule: RuntimeRule, key: string, segments: readonly PathSegment[]): void {

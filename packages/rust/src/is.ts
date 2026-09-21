@@ -7,17 +7,20 @@ import { TSKindId } from './types.js';
 import type {
 	NamespaceMap,
 	ArrayExpression,
+	CharLiteral,
 	ClosureExpression,
 	Condition,
 	DeclarationStatement,
 	DelimTokenTree,
 	DelimTokens,
+	EscapeSequence,
 	Expression,
 	ExpressionEndingWithBlock,
 	ExpressionExceptRange,
 	FieldPattern,
 	ForeignModItem,
 	ImplItem,
+	IntegerLiteral,
 	Literal,
 	LiteralPattern,
 	MacroDefinition,
@@ -408,21 +411,12 @@ export interface IsGuards {
 	negativeLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NegativeLiteral };
-	integerLiteral<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IntegerLiteral };
 	stringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringLiteral };
 	rawStringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
-	charLiteral<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CharLiteral };
-	escapeSequence<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequence };
 	lineComment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
@@ -527,6 +521,9 @@ export interface IsGuards {
 	orPattern(v: { readonly $type: string | number } | number): v is OrPattern;
 	literal(v: { readonly $type: string | number } | number): v is Literal;
 	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
+	integerLiteral(v: { readonly $type: string | number } | number): v is IntegerLiteral;
+	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral;
+	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
 	path(v: { readonly $type: string | number } | number): v is Path;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 }
@@ -708,11 +705,8 @@ export interface AssertGuards {
 	capturedPattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CapturedPattern };
 	referencePattern(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.ReferencePattern };
 	negativeLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NegativeLiteral };
-	integerLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.IntegerLiteral };
 	stringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StringLiteral };
 	rawStringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.RawStringLiteral };
-	charLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.CharLiteral };
-	escapeSequence(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.EscapeSequence };
 	lineComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LineComment };
 	blockComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.BlockComment };
 	shebang(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Shebang };
@@ -797,6 +791,9 @@ export interface AssertGuards {
 	orPattern(v: { readonly $type: string | number } | number): asserts v is OrPattern;
 	literal(v: { readonly $type: string | number } | number): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number } | number): asserts v is LiteralPattern;
+	integerLiteral(v: { readonly $type: string | number } | number): asserts v is IntegerLiteral;
+	charLiteral(v: { readonly $type: string | number } | number): asserts v is CharLiteral;
+	escapeSequence(v: { readonly $type: string | number } | number): asserts v is EscapeSequence;
 	path(v: { readonly $type: string | number } | number): asserts v is Path;
 	whitespace(v: { readonly $type: string | number } | number): asserts v is Whitespace;
 }
@@ -810,52 +807,55 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_statement_ids = new Set<number>([
-	166, 192, 246, 165, 177, 178, 184, 185, 194, 195, 196, 201, 202, 210, 211, 191, 193
+	174, 200, 254, 173, 185, 186, 192, 193, 202, 203, 204, 209, 210, 218, 219, 199, 201
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	192, 246, 165, 177, 178, 184, 185, 194, 195, 196, 201, 202, 210, 211, 191, 193
+	200, 254, 173, 185, 186, 192, 193, 202, 203, 204, 209, 210, 218, 219, 199, 201
 ]);
-const _supertype_macroDefinition_ids = new Set<number>([406, 407, 408]);
-const _supertype_tokenPattern_ids = new Set<number>([172, 171, 132]);
-const _supertype_tokenTreePattern_ids = new Set<number>([395, 396, 397]);
-const _supertype_tokens_ids = new Set<number>([174, 175, 132]);
-const _supertype_nonSpecialToken_ids = new Set<number>([318, 319, 118, 320, 116, 151, 1, 73, 129, 130, 131, 354, 355]);
-const _supertype_modItem_ids = new Set<number>([376, 377]);
-const _supertype_foreignModItem_ids = new Set<number>([386, 387]);
-const _supertype_structItem_ids = new Set<number>([413, 414, 415]);
-const _supertype_implItem_ids = new Set<number>([370, 371]);
-const _supertype_useClause_ids = new Set<number>([129, 1, 132, 130, 131, 250, 215, 214, 213, 216]);
-const _supertype_type_ids = new Set<number>([242, 239, 132, 233, 252, 230, 231, 227, 229, 1, 246, 241, 243, 235, 205]);
-const _supertype_pointerType_ids = new Set<number>([380, 381]);
+const _supertype_macroDefinition_ids = new Set<number>([417, 418, 419]);
+const _supertype_tokenPattern_ids = new Set<number>([180, 179, 129]);
+const _supertype_tokenTreePattern_ids = new Set<number>([406, 407, 408]);
+const _supertype_tokens_ids = new Set<number>([182, 183, 129]);
+const _supertype_nonSpecialToken_ids = new Set<number>([327, 328, 331, 159, 1, 73, 126, 127, 128, 365, 366]);
+const _supertype_modItem_ids = new Set<number>([387, 388]);
+const _supertype_foreignModItem_ids = new Set<number>([397, 398]);
+const _supertype_structItem_ids = new Set<number>([424, 425, 426]);
+const _supertype_implItem_ids = new Set<number>([381, 382]);
+const _supertype_useClause_ids = new Set<number>([126, 1, 129, 127, 128, 258, 223, 222, 221, 224]);
+const _supertype_type_ids = new Set<number>([250, 247, 129, 241, 260, 238, 239, 235, 237, 1, 254, 249, 251, 243, 213]);
+const _supertype_pointerType_ids = new Set<number>([391, 392]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	254, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 118, 320, 116, 151, 1, 129, 250, 232, 294, 295, 267, 246, 268,
-	291, 292, 293, 132, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
+	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
 ]);
 const _supertype_expression_ids = new Set<number>([
-	254, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 118, 320, 116, 151, 1, 129, 250, 232, 294, 295, 267, 246, 268,
-	291, 292, 293, 132, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287, 253
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
+	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287
+	304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
 ]);
-const _supertype_delimTokenTree_ids = new Set<number>([401, 402, 403]);
-const _supertype_referenceExpression_ids = new Set<number>([364, 365, 366, 367]);
-const _supertype_arrayExpression_ids = new Set<number>([359, 360]);
+const _supertype_delimTokenTree_ids = new Set<number>([412, 413, 414]);
+const _supertype_referenceExpression_ids = new Set<number>([375, 376, 377, 378]);
+const _supertype_arrayExpression_ids = new Set<number>([370, 371]);
 const _supertype_condition_ids = new Set<number>([
-	254, 255, 257, 258, 259, 260, 263, 261, 262, 318, 319, 118, 320, 116, 151, 1, 129, 250, 232, 294, 295, 267, 246, 268,
-	291, 292, 293, 132, 266, 269, 296, 297, 298, 299, 300, 274, 279, 284, 285, 286, 287, 253, 275, 276
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
+	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261, 283, 284
 ]);
-const _supertype_matchArm_ids = new Set<number>([388, 389]);
-const _supertype_closureExpression_ids = new Set<number>([362, 363]);
+const _supertype_matchArm_ids = new Set<number>([399, 400]);
+const _supertype_closureExpression_ids = new Set<number>([373, 374]);
 const _supertype_pattern_ids = new Set<number>([
-	318, 319, 118, 320, 116, 151, 317, 1, 250, 302, 303, 305, 306, 311, 304, 312, 313, 308, 309, 287, 246, 356
+	327, 328, 331, 159, 325, 1, 258, 310, 311, 313, 314, 319, 312, 320, 321, 316, 317, 295, 254, 367
 ]);
-const _supertype_fieldPattern_ids = new Set<number>([404, 405]);
-const _supertype_rangePattern_ids = new Set<number>([412, 409]);
-const _supertype_orPattern_ids = new Set<number>([378, 379]);
-const _supertype_literal_ids = new Set<number>([318, 319, 118, 320, 116, 151]);
-const _supertype_literalPattern_ids = new Set<number>([318, 319, 118, 320, 116, 151, 317]);
-const _supertype_path_ids = new Set<number>([129, 1, 132, 130, 131, 250]);
+const _supertype_fieldPattern_ids = new Set<number>([415, 416]);
+const _supertype_rangePattern_ids = new Set<number>([423, 420]);
+const _supertype_orPattern_ids = new Set<number>([389, 390]);
+const _supertype_literal_ids = new Set<number>([327, 328, 331, 159]);
+const _supertype_literalPattern_ids = new Set<number>([327, 328, 331, 159, 325]);
+const _supertype_integerLiteral_ids = new Set<number>([131, 132, 133, 134]);
+const _supertype_charLiteral_ids = new Set<number>([135, 136]);
+const _supertype_escapeSequence_ids = new Set<number>([138, 139, 140, 141]);
+const _supertype_path_ids = new Set<number>([126, 1, 129, 127, 128, 258]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -979,11 +979,8 @@ export const is = {
 	capturedPattern: _g(TSKindId.CapturedPattern),
 	referencePattern: _g(TSKindId.ReferencePattern),
 	negativeLiteral: _g(TSKindId.NegativeLiteral),
-	integerLiteral: _g(TSKindId.IntegerLiteral),
 	stringLiteral: _g(TSKindId.StringLiteral),
 	rawStringLiteral: _g(TSKindId.RawStringLiteral),
-	charLiteral: _g(TSKindId.CharLiteral),
-	escapeSequence: _g(TSKindId.EscapeSequence),
 	lineComment: _g(TSKindId.LineComment),
 	blockComment: _g(TSKindId.BlockComment),
 	shebang: _g(TSKindId.Shebang),
@@ -1040,6 +1037,9 @@ export const is = {
 	orPattern: _sg(_supertype_orPattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
+	integerLiteral: _sg(_supertype_integerLiteral_ids),
+	charLiteral: _sg(_supertype_charLiteral_ids),
+	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	path: _sg(_supertype_path_ids),
 	whitespace: _sg(new Set<number>())
 } as unknown as IsGuards;
@@ -1191,11 +1191,8 @@ export const assert = {
 	capturedPattern: _makeAssert('capturedPattern', is.capturedPattern as _AnyGuard),
 	referencePattern: _makeAssert('referencePattern', is.referencePattern as _AnyGuard),
 	negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
-	integerLiteral: _makeAssert('integerLiteral', is.integerLiteral as _AnyGuard),
 	stringLiteral: _makeAssert('stringLiteral', is.stringLiteral as _AnyGuard),
 	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
-	charLiteral: _makeAssert('charLiteral', is.charLiteral as _AnyGuard),
-	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
 	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
 	shebang: _makeAssert('shebang', is.shebang as _AnyGuard),
@@ -1261,6 +1258,9 @@ export const assert = {
 	orPattern: _makeAssert('orPattern', is.orPattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
+	integerLiteral: _makeAssert('integerLiteral', is.integerLiteral as _AnyGuard),
+	charLiteral: _makeAssert('charLiteral', is.charLiteral as _AnyGuard),
+	escapeSequence: _makeAssert('escapeSequence', is.escapeSequence as _AnyGuard),
 	path: _makeAssert('path', is.path as _AnyGuard),
 	whitespace: _makeAssert('whitespace', is.whitespace as _AnyGuard)
 } as unknown as AssertGuards;

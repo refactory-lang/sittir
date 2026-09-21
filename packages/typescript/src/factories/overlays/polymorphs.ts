@@ -6319,12 +6319,6 @@ const pair$stringSingle =
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const pair$number =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
-	};
 const pair$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -6368,14 +6362,6 @@ export const pair: typeof B.pair & {
 			) => ReturnType<typeof C.coerceToPair>;
 		};
 	};
-	number: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumber> }
-		) => ReturnType<typeof F.buildPair>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumber> }
-		) => ReturnType<typeof C.coerceToPair>;
-	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildComputedPropertyName>[0] }
@@ -6404,7 +6390,6 @@ export const pair: typeof B.pair & {
 			coerce: pair$stringSingle(C.coerceToPair, string.single.coerce)
 		}
 	},
-	number: { strict: pair$number(F.buildPair, F.buildNumber), coerce: pair$number(C.coerceToPair, C.coerceToNumber) },
 	computedPropertyName: {
 		strict: pair$computedPropertyName(F.buildPair, F.buildComputedPropertyName),
 		coerce: pair$computedPropertyName(C.coerceToPair, C.coerceToComputedPropertyName)
@@ -7030,12 +7015,6 @@ const enumAssignment$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const enumAssignment$number =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
-	};
 const enumAssignment$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -7089,14 +7068,6 @@ export const enumAssignment: typeof B.enumAssignment & {
 			) => ReturnType<typeof C.coerceToEnumAssignment>;
 		};
 	};
-	number: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumber> }
-		) => ReturnType<typeof F.buildEnumAssignment>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof C.coerceToNumber> }
-		) => ReturnType<typeof C.coerceToEnumAssignment>;
-	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
@@ -7126,10 +7097,6 @@ export const enumAssignment: typeof B.enumAssignment & {
 			strict: enumAssignment$stringSingle(F.buildEnumAssignment, string.single.strict),
 			coerce: enumAssignment$stringSingle(C.coerceToEnumAssignment, string.single.coerce)
 		}
-	},
-	number: {
-		strict: enumAssignment$number(F.buildEnumAssignment, F.buildNumber),
-		coerce: enumAssignment$number(C.coerceToEnumAssignment, C.coerceToNumber)
 	},
 	computedPropertyName: {
 		strict: enumAssignment$computedPropertyName(F.buildEnumAssignment, F.buildComputedPropertyName),
@@ -8048,6 +8015,10 @@ export const typeQuery: typeof B.typeQuery & {
 	}
 };
 
+const literalType$number =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$string =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -8077,6 +8048,10 @@ const literalType$undefined =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const literalType: typeof B.literalType & {
+	number: {
+		strict: (...args: ArgsOf<typeof F.build_Number>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceTo_Number>) => ReturnType<typeof F.buildLiteralType>;
+	};
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildLiteralType>;
@@ -8107,6 +8082,10 @@ export const literalType: typeof B.literalType & {
 	};
 } = {
 	...B.literalType,
+	number: {
+		strict: literalType$number(F.buildLiteralType, F.build_Number),
+		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number)
+	},
 	string: {
 		strict: literalType$string(F.buildLiteralType, F.buildString),
 		coerce: literalType$string(F.buildLiteralType, C.coerceToString),
@@ -8348,12 +8327,6 @@ const propertySignature$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const propertySignature$number =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
-	};
 const propertySignature$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -8407,16 +8380,6 @@ export const propertySignature: typeof B.propertySignature & {
 			) => ReturnType<typeof C.coerceToPropertySignature>;
 		};
 	};
-	number: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumber> }
-		) => ReturnType<typeof F.buildPropertySignature>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumber>;
-			}
-		) => ReturnType<typeof C.coerceToPropertySignature>;
-	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
@@ -8449,10 +8412,6 @@ export const propertySignature: typeof B.propertySignature & {
 			strict: propertySignature$stringSingle(F.buildPropertySignature, string.single.strict),
 			coerce: propertySignature$stringSingle(C.coerceToPropertySignature, string.single.coerce)
 		}
-	},
-	number: {
-		strict: propertySignature$number(F.buildPropertySignature, F.buildNumber),
-		coerce: propertySignature$number(C.coerceToPropertySignature, C.coerceToNumber)
 	},
 	computedPropertyName: {
 		strict: propertySignature$computedPropertyName(F.buildPropertySignature, F.buildComputedPropertyName),

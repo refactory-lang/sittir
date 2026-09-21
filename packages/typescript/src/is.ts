@@ -21,6 +21,7 @@ import type {
 	IndexSignature,
 	MetaProperty,
 	ModuleExportName,
+	Number,
 	Pattern,
 	PrimaryExpression,
 	PrimaryType,
@@ -567,6 +568,7 @@ export interface IsGuards {
 	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
 	comment(v: { readonly $type: string | number } | number): v is Comment;
+	number(v: { readonly $type: string | number } | number): v is Number;
 	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
@@ -900,6 +902,7 @@ export interface AssertGuards {
 	destructuringPattern(v: { readonly $type: string | number } | number): asserts v is DestructuringPattern;
 	updateExpression(v: { readonly $type: string | number } | number): asserts v is UpdateExpression;
 	comment(v: { readonly $type: string | number } | number): asserts v is Comment;
+	number(v: { readonly $type: string | number } | number): asserts v is Number;
 	identifier(v: { readonly $type: string | number } | number): asserts v is _Identifier;
 	metaProperty(v: { readonly $type: string | number } | number): asserts v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
@@ -929,44 +932,45 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([387, 388, 386]);
-const _supertype_moduleExportName_ids = new Set<number>([1, 258]);
+const _supertype_exportStatement_ids = new Set<number>([392, 393, 391]);
+const _supertype_moduleExportName_ids = new Set<number>([1, 262]);
 const _supertype_declaration_ids = new Set<number>([
-	234, 236, 231, 194, 193, 282, 293, 294, 295, 304, 301, 299, 297, 292
+	238, 240, 235, 198, 197, 287, 298, 299, 300, 309, 306, 304, 302, 297
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([396, 397]);
+const _supertype_importSpecifier_ids = new Set<number>([401, 402]);
 const _supertype_statement_ids = new Set<number>([
-	184, 209, 192, 196, 198, 199, 200, 201, 203, 204, 205, 206, 207, 208, 210, 211, 212, 213
+	188, 213, 196, 200, 202, 203, 204, 205, 207, 208, 209, 210, 211, 212, 214, 215, 216, 217
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([417, 418]);
-const _supertype_forHeader_ids = new Set<number>([421, 422, 423]);
-const _supertype_expressions_ids = new Set<number>([257]);
-const _supertype_expression_ids = new Set<number>([285, 286, 287, 295, 284, 247, 249, 243, 255, 254, 253, 242, 222]);
+const _supertype_variableDeclarator_ids = new Set<number>([422, 423]);
+const _supertype_forHeader_ids = new Set<number>([426, 427, 428]);
+const _supertype_expressions_ids = new Set<number>([261]);
+const _supertype_expression_ids = new Set<number>([290, 291, 292, 300, 289, 251, 253, 247, 259, 258, 257, 246, 226]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	245, 244, 219, 105, 1, 451, 100, 101, 98, 258, 259, 261, 102, 103, 104, 223, 227, 233, 237, 235, 230, 241, 279
+	249, 248, 223, 104, 1, 456, 99, 100, 262, 263, 265, 101, 102, 103, 227, 231, 237, 241, 239, 234, 245, 284
 ]);
-const _supertype_formalParameter_ids = new Set<number>([307, 308]);
-const _supertype_lhsExpression_ids = new Set<number>([244, 245, 105, 1, 451, 224, 228, 279]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([244, 245, 451, 1, 219, 279]);
-const _supertype_destructuringPattern_ids = new Set<number>([224, 228]);
-const _supertype_updateExpression_ids = new Set<number>([405, 406]);
-const _supertype_comment_ids = new Set<number>([153, 154]);
-const _supertype_identifier_ids = new Set<number>([105, 1]);
-const _supertype_metaProperty_ids = new Set<number>([419, 420]);
-const _supertype_pattern_ids = new Set<number>([271]);
-const _supertype_propertyName_ids = new Set<number>([99, 258, 98, 276]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 451]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 451]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 451]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 451]);
+const _supertype_formalParameter_ids = new Set<number>([312, 313]);
+const _supertype_lhsExpression_ids = new Set<number>([248, 249, 104, 1, 456, 228, 232, 284]);
+const _supertype_augmentedAssignmentLhs_ids = new Set<number>([248, 249, 456, 1, 223, 284]);
+const _supertype_destructuringPattern_ids = new Set<number>([228, 232]);
+const _supertype_updateExpression_ids = new Set<number>([410, 411]);
+const _supertype_comment_ids = new Set<number>([157, 158]);
+const _supertype_number_ids = new Set<number>([150, 151, 152, 153, 154]);
+const _supertype_identifier_ids = new Set<number>([104, 1]);
+const _supertype_metaProperty_ids = new Set<number>([424, 425]);
+const _supertype_pattern_ids = new Set<number>([276]);
+const _supertype_propertyName_ids = new Set<number>([98, 262, 281]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 456]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 456]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 456]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 456]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
-const _supertype_type_ids = new Set<number>([362, 359, 324, 328, 314, 315]);
-const _supertype_tupleTypeMember_ids = new Set<number>([319, 320, 321, 322]);
+const _supertype_type_ids = new Set<number>([367, 364, 329, 333, 319, 320]);
+const _supertype_tupleTypeMember_ids = new Set<number>([324, 325, 326, 327]);
 const _supertype_primaryType_ids = new Set<number>([
-	345, 346, 1, 298, 330, 348, 357, 358, 344, 337, 338, 100, 343, 341, 339, 329, 327, 361, 360
+	350, 351, 1, 303, 335, 353, 362, 363, 349, 342, 343, 99, 348, 346, 344, 334, 332, 366, 365
 ]);
-const _supertype_indexSignature_ids = new Set<number>([393, 394]);
-const _supertype_exportStatementDefault_ids = new Set<number>([410, 411]);
+const _supertype_indexSignature_ids = new Set<number>([398, 399]);
+const _supertype_exportStatementDefault_ids = new Set<number>([415, 416]);
 
 export const is = {
 	program: _g(TSKindId.Program),
@@ -1155,6 +1159,7 @@ export const is = {
 	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
 	comment: _sg(_supertype_comment_ids),
+	number: _sg(_supertype_number_ids),
 	identifier: _sg(_supertype_identifier_ids),
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
@@ -1405,6 +1410,7 @@ export const assert = {
 	destructuringPattern: _makeAssert('destructuringPattern', is.destructuringPattern as _AnyGuard),
 	updateExpression: _makeAssert('updateExpression', is.updateExpression as _AnyGuard),
 	comment: _makeAssert('comment', is.comment as _AnyGuard),
+	number: _makeAssert('number', is.number as _AnyGuard),
 	identifier: _makeAssert('identifier', is.identifier as _AnyGuard),
 	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),

@@ -72,7 +72,8 @@ export type AddressRoot =
 	| 'expression_list_expressions'
 	| 'expression_statement_tuple'
 	| 'finally_clause'
-	| 'float'
+	| 'float_arm1'
+	| 'float_arm2'
 	| 'for_in_clause'
 	| 'for_statement'
 	| 'format_specifier'
@@ -93,7 +94,8 @@ export type AddressRoot =
 	| 'keyword_pattern'
 	| 'lambda'
 	| 'lambda_within_for_in_clause'
-	| 'line_continuation'
+	| 'line_continuation_arm1'
+	| 'line_continuation_arm2'
 	| 'list'
 	| 'list_comprehension'
 	| 'list_pattern'
@@ -761,8 +763,10 @@ export interface AddressBranch {
 	readonly finally_clause: 'after' | 'before' | 'colon' | 'finally_keyword';
 	readonly 'finally_clause/colon': 'after' | 'before';
 	readonly 'finally_clause/finally_keyword': 'after';
-	readonly float: 'dot';
-	readonly 'float/dot': 'after' | 'before';
+	readonly float_arm1: 'dot';
+	readonly 'float_arm1/dot': 'after' | 'before';
+	readonly float_arm2: 'dot';
+	readonly 'float_arm2/dot': 'after' | 'before';
 	readonly for_in_clause: 'after' | 'async_marker' | 'before' | 'comma' | 'for_keyword' | 'in_keyword' | 'right';
 	readonly 'for_in_clause/async_marker': 'after';
 	readonly 'for_in_clause/comma': 'before';
@@ -886,8 +890,10 @@ export interface AddressBranch {
 	readonly lambda_within_for_in_clause: 'after' | 'before' | 'colon' | 'lambda_keyword';
 	readonly 'lambda_within_for_in_clause/colon': 'after' | 'before';
 	readonly 'lambda_within_for_in_clause/lambda_keyword': 'after';
-	readonly line_continuation: 'bslash';
-	readonly 'line_continuation/bslash': 'after';
+	readonly line_continuation_arm1: 'bslash';
+	readonly 'line_continuation_arm1/bslash': 'after';
+	readonly line_continuation_arm2: 'bslash';
+	readonly 'line_continuation_arm2/bslash': 'after';
 	readonly list: 'after' | 'before' | 'lbrack' | 'rbrack';
 	readonly 'list/lbrack': 'after';
 	readonly 'list/rbrack': 'before';
@@ -1969,8 +1975,10 @@ export interface AddressLeaf {
 	readonly 'finally_clause/colon/after': SpacingArm;
 	readonly 'finally_clause/colon/before': SpacingArm;
 	readonly 'finally_clause/finally_keyword/after': SpacingArm;
-	readonly 'float/dot/after': SpacingArm;
-	readonly 'float/dot/before': SpacingArm;
+	readonly 'float_arm1/dot/after': SpacingArm;
+	readonly 'float_arm1/dot/before': SpacingArm;
+	readonly 'float_arm2/dot/after': SpacingArm;
+	readonly 'float_arm2/dot/before': SpacingArm;
 	readonly 'for_in_clause/after': SpacingArm;
 	readonly 'for_in_clause/async_marker/after': SpacingArm;
 	readonly 'for_in_clause/before': SpacingArm;
@@ -2100,7 +2108,8 @@ export interface AddressLeaf {
 	readonly 'lambda_within_for_in_clause/colon/after': SpacingArm;
 	readonly 'lambda_within_for_in_clause/colon/before': SpacingArm;
 	readonly 'lambda_within_for_in_clause/lambda_keyword/after': SpacingArm;
-	readonly 'line_continuation/bslash/after': SpacingArm;
+	readonly 'line_continuation_arm1/bslash/after': SpacingArm;
+	readonly 'line_continuation_arm2/bslash/after': SpacingArm;
 	readonly 'list/after': SpacingArm;
 	readonly 'list/before': SpacingArm;
 	readonly 'list/lbrack/after': SpacingArm;

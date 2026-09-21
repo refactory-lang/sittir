@@ -22,19 +22,32 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
-const _leafRe_buildInteger =
-	/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u;
-const _leafRe_buildFloat =
-	/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildLineContinuation = /^(?:\\(?:(?:\r)?\n|\0))$/u;
+const _leafRe_buildIntegerArm4 = /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u;
+const _leafRe_buildFloatArm1 =
+	/^(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u;
+const _leafRe_buildFloatArm2 =
+	/^(?:(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u;
+const _leafRe_buildFloatArm3 = /^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u;
+const _leafRe_buildLineContinuationArm1 = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
 const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
-const _slotRe_buildEscapeSequence_content =
-	/^(?:(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+const _slotRe_buildEscapeSequenceArm1_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
+const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:U[a-fA-F\d]{8}))$/u;
+const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:x[a-fA-F\d]{2}))$/u;
+const _slotRe_buildEscapeSequenceArm4_content = /^(?:(?:\d{1,3}))$/u;
+const _slotRe_buildEscapeSequenceArm5_content = /^(?:(?:\r?\n))$/u;
+const _slotRe_buildEscapeSequenceArm6_content = /^(?:(?:['"abfrntv\\]))$/u;
+const _slotRe_buildEscapeSequenceArm7_content = /^(?:(?:N\{[^}]+\}))$/u;
+const _slotRe_buildIntegerArm1_prefix = /^(?:0x|0X)$/u;
+const _slotRe_buildIntegerArm1_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
+const _slotRe_buildIntegerArm2_prefix = /^(?:0o|0O)$/u;
+const _slotRe_buildIntegerArm2_content = /^(?:(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$/u;
+const _slotRe_buildIntegerArm3_prefix = /^(?:0b|0B)$/u;
+const _slotRe_buildIntegerArm3_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
 
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
 	const _statements = children;
@@ -3206,29 +3219,6 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
-export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
-	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
-		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequence as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequence(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built {
 	const _content = children;
 	return withMethods(
@@ -3254,34 +3244,6 @@ export function buildTypeConversion(text: string): T.TypeConversion.Built {
 	return withMethods(
 		{
 			$type: TSKindId.TypeConversion as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildInteger(text: string): T.Integer.Built {
-	if (text.length === 0) throw new Error(`integer: text must be non-empty`);
-	if (!_leafRe_buildInteger.test(text)) throw new Error(`integer: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Integer as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildFloat(text: string): T.Float.Built {
-	if (text.length === 0) throw new Error(`float: text must be non-empty`);
-	if (!_leafRe_buildFloat.test(text)) throw new Error(`float: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Float as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -3360,13 +3322,268 @@ export function buildComment(value: string): T.Comment.Built {
 	);
 }
 
-export function buildLineContinuation(text: string): T.LineContinuation.Built {
-	if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
-	if (!_leafRe_buildLineContinuation.test(text))
-		throw new Error(`line_continuation: text does not match pattern: ${text}`);
+export function buildPositionalSeparator(): TSKindId.PositionalSeparator {
+	return TSKindId.PositionalSeparator;
+}
+
+export function buildKeywordSeparator(): TSKindId.KeywordSeparator {
+	return TSKindId.KeywordSeparator;
+}
+
+export function buildEscapeSequenceArm1(value: string): T.EscapeSequenceArm1.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm1_content.test(_content))
+		throw new Error(`escape_sequence_arm1.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm1(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm2(value: string): T.EscapeSequenceArm2.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm2_content.test(_content))
+		throw new Error(`escape_sequence_arm2.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm2(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm3(value: string): T.EscapeSequenceArm3.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm3_content.test(_content))
+		throw new Error(`escape_sequence_arm3.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm3 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm3(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm4(value: string): T.EscapeSequenceArm4.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm4_content.test(_content))
+		throw new Error(`escape_sequence_arm4.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm4 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm4(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm5(value: string): T.EscapeSequenceArm5.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm5_content.test(_content))
+		throw new Error(`escape_sequence_arm5.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm5 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm5(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm6(value: string): T.EscapeSequenceArm6.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm6_content.test(_content))
+		throw new Error(`escape_sequence_arm6.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm6 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm6(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceArm7(value: string): T.EscapeSequenceArm7.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceArm7_content.test(_content))
+		throw new Error(`escape_sequence_arm7.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceArm7 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceArm7(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerArm1(config: T.IntegerArm1.Config): T.IntegerArm1.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerArm1_prefix.test(_prefix))
+		throw new Error(`integer_arm1.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerArm1_content.test(_content))
+		throw new Error(`integer_arm1.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerArm1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0x' | '0X') => buildIntegerArm1({ ...config, prefix: value }),
+					content: (value: string) => buildIntegerArm1({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerArm2(config: T.IntegerArm2.Config): T.IntegerArm2.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerArm2_prefix.test(_prefix))
+		throw new Error(`integer_arm2.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerArm2_content.test(_content))
+		throw new Error(`integer_arm2.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerArm2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0o' | '0O') => buildIntegerArm2({ ...config, prefix: value }),
+					content: (value: string) => buildIntegerArm2({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerArm3(config: T.IntegerArm3.Config): T.IntegerArm3.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerArm3_prefix.test(_prefix))
+		throw new Error(`integer_arm3.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildIntegerArm3_content.test(_content))
+		throw new Error(`integer_arm3.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerArm3 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0b' | '0B') => buildIntegerArm3({ ...config, prefix: value }),
+					content: (value: string) => buildIntegerArm3({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerArm4(text: string): T.IntegerArm4.Built {
+	if (text.length === 0) throw new Error(`integer_arm4: text must be non-empty`);
+	if (!_leafRe_buildIntegerArm4.test(text)) throw new Error(`integer_arm4: text does not match pattern: ${text}`);
 	return withMethods(
 		{
-			$type: TSKindId.LineContinuation as const,
+			$type: TSKindId.IntegerArm4 as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -3375,12 +3592,65 @@ export function buildLineContinuation(text: string): T.LineContinuation.Built {
 	);
 }
 
-export function buildPositionalSeparator(): TSKindId.PositionalSeparator {
-	return TSKindId.PositionalSeparator;
+export function buildFloatArm1(text: string): T.FloatArm1.Built {
+	if (text.length === 0) throw new Error(`float_arm1: text must be non-empty`);
+	if (!_leafRe_buildFloatArm1.test(text)) throw new Error(`float_arm1: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.FloatArm1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
 }
 
-export function buildKeywordSeparator(): TSKindId.KeywordSeparator {
-	return TSKindId.KeywordSeparator;
+export function buildFloatArm2(text: string): T.FloatArm2.Built {
+	if (text.length === 0) throw new Error(`float_arm2: text must be non-empty`);
+	if (!_leafRe_buildFloatArm2.test(text)) throw new Error(`float_arm2: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.FloatArm2 as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildFloatArm3(text: string): T.FloatArm3.Built {
+	if (text.length === 0) throw new Error(`float_arm3: text must be non-empty`);
+	if (!_leafRe_buildFloatArm3.test(text)) throw new Error(`float_arm3: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.FloatArm3 as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildLineContinuationArm1(text: string): T.LineContinuationArm1.Built {
+	if (text.length === 0) throw new Error(`line_continuation_arm1: text must be non-empty`);
+	if (!_leafRe_buildLineContinuationArm1.test(text))
+		throw new Error(`line_continuation_arm1: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.LineContinuationArm1 as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildLineContinuationArm2(): TSKindId.LineContinuationArm2 {
+	return TSKindId.LineContinuationArm2;
 }
 
 export function buildSimpleStatementsElements(
@@ -5031,20 +5301,32 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	string_content: T.StringContent.Built;
 	interpolation: T.Interpolation.Built;
-	escape_sequence: T.EscapeSequence.Built;
 	format_specifier: T.FormatSpecifier.Built;
 	type_conversion: T.TypeConversion;
-	integer: T.Integer;
-	float: T.Float;
 	identifier: T.Identifier;
 	true: T.True;
 	false: T.False;
 	none: T.None;
 	await: T.Await.Built;
 	comment: T.Comment.Built;
-	line_continuation: T.LineContinuation;
 	positional_separator: T.PositionalSeparator;
 	keyword_separator: T.KeywordSeparator;
+	escape_sequence_arm1: T.EscapeSequenceArm1.Built;
+	escape_sequence_arm2: T.EscapeSequenceArm2.Built;
+	escape_sequence_arm3: T.EscapeSequenceArm3.Built;
+	escape_sequence_arm4: T.EscapeSequenceArm4.Built;
+	escape_sequence_arm5: T.EscapeSequenceArm5.Built;
+	escape_sequence_arm6: T.EscapeSequenceArm6.Built;
+	escape_sequence_arm7: T.EscapeSequenceArm7.Built;
+	integer_arm1: T.IntegerArm1.Built;
+	integer_arm2: T.IntegerArm2.Built;
+	integer_arm3: T.IntegerArm3.Built;
+	integer_arm4: T.IntegerArm4;
+	float_arm1: T.FloatArm1;
+	float_arm2: T.FloatArm2;
+	float_arm3: T.FloatArm3;
+	line_continuation_arm1: T.LineContinuationArm1;
+	line_continuation_arm2: T.LineContinuationArm2;
 	simple_statements_elements: T.SimpleStatementsElements.Built;
 	subjects: T.Subjects.Built;
 	case_patterns: T.CasePatterns.Built;
@@ -5202,20 +5484,32 @@ export const _factoryMap = {
 	string: buildString,
 	string_content: buildStringContent,
 	interpolation: buildInterpolation,
-	escape_sequence: buildEscapeSequence,
 	format_specifier: buildFormatSpecifier,
 	type_conversion: buildTypeConversion,
-	integer: buildInteger,
-	float: buildFloat,
 	identifier: buildIdentifier,
 	true: buildTrue,
 	false: buildFalse,
 	none: buildNone,
 	await: buildAwait,
 	comment: buildComment,
-	line_continuation: buildLineContinuation,
 	positional_separator: buildPositionalSeparator,
 	keyword_separator: buildKeywordSeparator,
+	escape_sequence_arm1: buildEscapeSequenceArm1,
+	escape_sequence_arm2: buildEscapeSequenceArm2,
+	escape_sequence_arm3: buildEscapeSequenceArm3,
+	escape_sequence_arm4: buildEscapeSequenceArm4,
+	escape_sequence_arm5: buildEscapeSequenceArm5,
+	escape_sequence_arm6: buildEscapeSequenceArm6,
+	escape_sequence_arm7: buildEscapeSequenceArm7,
+	integer_arm1: buildIntegerArm1,
+	integer_arm2: buildIntegerArm2,
+	integer_arm3: buildIntegerArm3,
+	integer_arm4: buildIntegerArm4,
+	float_arm1: buildFloatArm1,
+	float_arm2: buildFloatArm2,
+	float_arm3: buildFloatArm3,
+	line_continuation_arm1: buildLineContinuationArm1,
+	line_continuation_arm2: buildLineContinuationArm2,
 	simple_statements_elements: buildSimpleStatementsElements,
 	subjects: buildSubjects,
 	case_patterns: buildCasePatterns,

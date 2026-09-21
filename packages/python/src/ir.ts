@@ -19,19 +19,6 @@ export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
-	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.buildInteger> | ReturnType<typeof F.buildFloat> {
-			return Number.isInteger(value) ? F.buildInteger(String(value)) : F.buildFloat(String(value));
-		},
-		{
-			integer(value: number): ReturnType<typeof F.buildInteger> {
-				return F.buildInteger(String(value));
-			},
-			float(value: number): ReturnType<typeof F.buildFloat> {
-				return F.buildFloat(String(value));
-			}
-		}
-	),
 	comment(text: string): ReturnType<typeof F.comment> {
 		return F.comment(text);
 	},
@@ -243,8 +230,6 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof F.string;
 	readonly concatenatedString: typeof F.concatenatedString;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
@@ -269,8 +254,6 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	string: F.string,
 	concatenatedString: F.concatenatedString,
-	integer: F.buildInteger,
-	float: F.buildFloat,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
@@ -321,10 +304,34 @@ export const fExpression: {
 	yield: F.yield_
 };
 
+export const integer: {
+	readonly arm4: typeof F.buildIntegerArm4;
+} = {
+	arm4: F.buildIntegerArm4
+};
+
+export const float: {
+	readonly arm1: typeof F.buildFloatArm1;
+	readonly arm2: typeof F.buildFloatArm2;
+	readonly arm3: typeof F.buildFloatArm3;
+} = {
+	arm1: F.buildFloatArm1,
+	arm2: F.buildFloatArm2,
+	arm3: F.buildFloatArm3
+};
+
 export const keywordIdentifier: {
 	readonly identifier: typeof F.buildIdentifier;
 } = {
 	identifier: F.buildIdentifier
+};
+
+export const lineContinuation: {
+	readonly arm1: typeof F.buildLineContinuationArm1;
+	readonly arm2: typeof F.buildLineContinuationArm2;
+} = {
+	arm1: F.buildLineContinuationArm1,
+	arm2: F.buildLineContinuationArm2
 };
 
 export const ir: {
@@ -432,7 +439,6 @@ export const ir: {
 	readonly string: typeof F.string;
 	readonly stringContent: typeof F.stringContent;
 	readonly interpolation: typeof F.interpolation;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
 	readonly comment: typeof F.comment;
@@ -473,15 +479,22 @@ export const ir: {
 	readonly none: typeof F.buildNone;
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
+	readonly lineContinuationArm2: typeof F.buildLineContinuationArm2;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly lineContinuation: typeof F.buildLineContinuation;
+	readonly integerArm4: typeof F.buildIntegerArm4;
+	readonly floatArm1: typeof F.buildFloatArm1;
+	readonly floatArm2: typeof F.buildFloatArm2;
+	readonly floatArm3: typeof F.buildFloatArm3;
+	readonly lineContinuationArm1: typeof F.buildLineContinuationArm1;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
+	readonly arm1: typeof F.buildFloatArm1;
+	readonly arm2: typeof F.buildFloatArm2;
+	readonly arm3: typeof F.buildFloatArm3;
+	readonly arm4: typeof F.buildIntegerArm4;
 	readonly as: typeof F.asPattern;
 	readonly assert: typeof F.assertStatement;
 	readonly bare: typeof F.withClauseBare;
@@ -540,7 +553,10 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
+	readonly integer: typeof integer;
+	readonly float: typeof float;
 	readonly keywordIdentifier: typeof keywordIdentifier;
+	readonly lineContinuation: typeof lineContinuation;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -648,7 +664,6 @@ export const ir: {
 	string: F.string,
 	stringContent: F.stringContent,
 	interpolation: F.interpolation,
-	escapeSequence: F.escapeSequence,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
 	comment: F.comment,
@@ -691,19 +706,26 @@ export const ir: {
 	none: F.buildNone,
 	positionalSeparator: F.buildPositionalSeparator,
 	keywordSeparator: F.buildKeywordSeparator,
+	lineContinuationArm2: F.buildLineContinuationArm2,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
 	typeConversion: F.buildTypeConversion,
-	integer: F.buildInteger,
-	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	lineContinuation: F.buildLineContinuation,
+	integerArm4: F.buildIntegerArm4,
+	floatArm1: F.buildFloatArm1,
+	floatArm2: F.buildFloatArm2,
+	floatArm3: F.buildFloatArm3,
+	lineContinuationArm1: F.buildLineContinuationArm1,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
 
 	// Supertype-stripped short aliases
+	arm1: F.buildFloatArm1,
+	arm2: F.buildFloatArm2,
+	arm3: F.buildFloatArm3,
+	arm4: F.buildIntegerArm4,
 	as: F.asPattern,
 	assert: F.assertStatement,
 	bare: F.withClauseBare,
@@ -764,6 +786,9 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
+	integer,
+	float,
 	keywordIdentifier,
+	lineContinuation,
 	synonym
 };

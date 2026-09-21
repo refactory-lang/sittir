@@ -16,19 +16,9 @@ import * as F from './factories/index.js';
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = {
-	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
-			return Number.isInteger(value) ? F.integerLiteral(String(value)) : F.buildFloatLiteral(String(value));
-		},
-		{
-			integer(value: number): ReturnType<typeof F.integerLiteral> {
-				return F.integerLiteral(String(value));
-			},
-			float(value: number): ReturnType<typeof F.buildFloatLiteral> {
-				return F.buildFloatLiteral(String(value));
-			}
-		}
-	),
+	number(value: number): ReturnType<typeof F.buildFloatLiteral> {
+		return F.buildFloatLiteral(String(value));
+	},
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
 		return F.buildTypeIdentifier(name);
 	},
@@ -170,8 +160,6 @@ export const tokens: {
 export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
@@ -181,8 +169,6 @@ export const nonSpecialToken: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	mutableSpecifier: F.buildMutableSpecifier,
@@ -264,8 +250,6 @@ export const expressionExceptRange: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -308,8 +292,6 @@ export const expressionExceptRange: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -354,8 +336,6 @@ export const expression: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -399,8 +379,6 @@ export const expression: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -478,8 +456,6 @@ export const condition: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -524,8 +500,6 @@ export const condition: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -562,8 +536,6 @@ export const condition: {
 export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -585,8 +557,6 @@ export const pattern: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral,
 	identifier: F.buildIdentifier,
@@ -610,29 +580,21 @@ export const pattern: {
 export const literal: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral
 };
 
 export const literalPattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
-	readonly char: typeof F.charLiteral;
-	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
-	char: F.charLiteral,
-	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
 };
@@ -775,11 +737,8 @@ export const ir: {
 	readonly capturedPattern: typeof F.capturedPattern;
 	readonly referencePattern: typeof F.referencePattern;
 	readonly negativeLiteral: typeof F.negativeLiteral;
-	readonly integerLiteral: typeof F.integerLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
-	readonly charLiteral: typeof F.charLiteral;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
 	readonly shebang: typeof F.shebang;
@@ -853,7 +812,6 @@ export const ir: {
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
 	readonly captured: typeof F.capturedPattern;
-	readonly char: typeof F.charLiteral;
 	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
 	readonly const: typeof F.constItem;
 	readonly continue: typeof F.continueExpression;
@@ -871,7 +829,6 @@ export const ir: {
 	readonly if: typeof F.ifExpression;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
-	readonly integer: typeof F.integerLiteral;
 	readonly let: typeof F.letDeclaration;
 	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
@@ -1045,11 +1002,8 @@ export const ir: {
 	capturedPattern: F.capturedPattern,
 	referencePattern: F.referencePattern,
 	negativeLiteral: F.negativeLiteral,
-	integerLiteral: F.integerLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
-	charLiteral: F.charLiteral,
-	escapeSequence: F.escapeSequence,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
 	shebang: F.shebang,
@@ -1129,7 +1083,6 @@ export const ir: {
 	break: F.breakExpression,
 	call: F.callExpression,
 	captured: F.capturedPattern,
-	char: F.charLiteral,
 	compoundAssignment: F.compoundAssignmentExpr,
 	const: F.constItem,
 	continue: F.continueExpression,
@@ -1147,7 +1100,6 @@ export const ir: {
 	if: F.ifExpression,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
-	integer: F.integerLiteral,
 	let: F.letDeclaration,
 	list: F.useList,
 	loop: F.loopExpression,

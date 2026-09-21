@@ -1548,16 +1548,33 @@ export interface NonNullExpressionTransport {
   _non_null_expression_after?: number
 }
 
+export interface NumberArm1Transport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface NumberArm3Transport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface NumberArm4Transport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface NumberArm5Transport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
 export interface NumberTransport {
   '$_trivia'?: TransportTrivia
   _operator: SlotValue<NumberOperatorEnum>
   _argument: SlotValue<NumberTransport>
-  _plus_before?: number
-  _plus_after?: number
-  _dash_before?: number
-  _dash_after?: number
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface ObjectAssignmentPatternTransport {

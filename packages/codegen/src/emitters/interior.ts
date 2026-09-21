@@ -17,12 +17,15 @@ export interface NodeInterior {
 
 const escapeRegex = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+export function interiorEnumArms(values: readonly string[]): string {
+	return [...values].sort((a, b) => b.length - a.length).map(escapeRegex).join('|');
+}
+
 export function interiorEntryPattern(entry: InteriorEntry): string {
 	if ('lit' in entry) return escapeRegex(entry.lit);
 	if ('flag' in entry) return `(?<${entry.flag}>${escapeRegex(entry.text)})?`;
 	if ('enum' in entry) {
-		const arms = [...entry.values].sort((a, b) => b.length - a.length).map(escapeRegex).join('|');
-		return `(?<${entry.enum}>${arms})${entry.optional ? '?' : ''}`;
+		return `(?<${entry.enum}>${interiorEnumArms(entry.values)})${entry.optional ? '?' : ''}`;
 	}
 	return `(?<${entry.slot}>${entry.pattern})`;
 }

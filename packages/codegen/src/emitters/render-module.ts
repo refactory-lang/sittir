@@ -2482,12 +2482,16 @@ function emitTriviaKindIdArm(id: number, variant: string, structName: string): s
 }
 
 function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const extrasKindNames = nodeMap.extras ?? new Set<string>();
 	const extrasNodes: AssembledNode[] = [];
-	for (const kindName of extrasKindNames) {
+	const seenExtras = new Set<string>();
+	const addExtra = (kindName: string): void => {
+		if (seenExtras.has(kindName)) return;
+		seenExtras.add(kindName);
 		const node = nodeMap.nodes.get(kindName);
-		if (node !== undefined) extrasNodes.push(node);
-	}
+		if (node instanceof AssembledSupertype) node.subtypeNames.forEach(addExtra);
+		else if (node !== undefined) extrasNodes.push(node);
+	};
+	(nodeMap.extras ?? new Set<string>()).forEach(addExtra);
 
 	const lines: string[] = [];
 	lines.push('#[derive(Debug, Clone)]');
@@ -3046,7 +3050,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,`);
 	if (defaultTextLiteral !== undefined) {
 		lines.push(`            // Raw kind_id: value-less leaf sent as its numeric kind tag.`);
-		lines.push(`            ::napi::ValueType::Number => ${JSON.stringify(defaultTextLiteral)}.to_string(),`);
+		lines.push(`            ::napi::ValueType::Number => ${rustStringLiteral(defaultTextLiteral)}.to_string(),`);
 	}
 	if (booleanLiteral !== undefined) {
 		lines.push(`            ::napi::ValueType::Boolean => {`);
@@ -3057,7 +3061,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 			)}));`
 		);
 		lines.push(`                }`);
-		lines.push(`                ${JSON.stringify(booleanLiteral)}.to_string()`);
+		lines.push(`                ${rustStringLiteral(booleanLiteral)}.to_string()`);
 		lines.push(`            }`);
 	}
 	lines.push(`            _ => {`);
@@ -3065,7 +3069,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`                __trivia = obj.get("$_trivia")?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `                obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
+			? `                obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string())`
 			: `                obj.get("$text")?.unwrap_or_default()`
 	);
 	lines.push(`            }`);
@@ -3103,7 +3107,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 		lines.push(`                }`);
 		lines.push(`                return Ok(Self {`);
 		for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`                    ${f.rustName}: None,`);
-		lines.push(`                    text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
+		lines.push(`                    text: ${rustStringLiteral(booleanLiteral)}.to_string(),`);
 		lines.push(`                });`);
 		lines.push(`            }`);
 		lines.push(`            _ => {}`);
@@ -3112,7 +3116,7 @@ function renderLeafTransportNapiImpls(structName: string, defaultTextLiteral?: s
 	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(
 		defaultTextLiteral !== undefined
-			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string());`
+			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${rustStringLiteral(defaultTextLiteral)}.to_string());`
 			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
 	);
 	for (const f of TRANSPORT_METADATA_FIELDS) lines.push(`        let ${f.rustName} = obj.get(${JSON.stringify(f.jsName)})?;`);

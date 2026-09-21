@@ -224,6 +224,32 @@
     ]
   },
   {
+    "type": "number",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "number_arm1",
+        "named": true
+      },
+      {
+        "type": "number_arm2",
+        "named": true
+      },
+      {
+        "type": "number_arm3",
+        "named": true
+      },
+      {
+        "type": "number_arm4",
+        "named": true
+      },
+      {
+        "type": "number_arm5",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "pattern",
     "named": true,
     "subtypes": [
@@ -7979,7 +8005,23 @@
     "named": false
   },
   {
-    "type": "number",
+    "type": "number_arm1",
+    "named": true
+  },
+  {
+    "type": "number_arm2",
+    "named": true
+  },
+  {
+    "type": "number_arm3",
+    "named": true
+  },
+  {
+    "type": "number_arm4",
+    "named": true
+  },
+  {
+    "type": "number_arm5",
     "named": true
   },
   {

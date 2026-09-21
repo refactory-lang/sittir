@@ -475,17 +475,17 @@ function reconstructWrapper(rule, newContent) {
     `reconstructWrapper: no native dsl reconstruction for wrapper type '${rule.type}' \u2014 this is a bug in the path-descent logic.`
   );
 }
-function carryOverProperties(rule, rebuilt) {
-  if (rebuilt.type !== rule.type) return rebuilt;
+function carryOverProperties(rule, rebuilt2) {
+  if (rebuilt2.type !== rule.type) return rebuilt2;
   const original = rule;
-  const out = rebuilt;
+  const out = rebuilt2;
   for (const key of Object.keys(original)) {
     if (key in out) continue;
     const value = original[key];
     if (value === void 0) continue;
     out[key] = value;
   }
-  return rebuilt;
+  return rebuilt2;
 }
 var PREC_VARIANT_MAP = {
   PREC_LEFT: "left",
@@ -1547,6 +1547,96 @@ function distinct(values) {
   return [...new Set(values)];
 }
 
+// packages/codegen/src/dsl/transform/token-forms.ts
+var typeOf = (rule) => rule.type ?? "";
+var membersOf2 = (rule) => rule.members ?? [];
+var contentOf2 = (rule) => rule.content;
+var rebuilt = (rule, patch) => ({ ...rule, ...patch });
+var isBlank = (rule) => typeOf(rule) === "BLANK";
+var isString = (rule) => typeOf(rule) === "STRING";
+function isTokenWrapper(rule) {
+  const t = typeOf(rule);
+  return t === "TOKEN" || t === "IMMEDIATE_TOKEN";
+}
+function classifyTokenChoice(choice2) {
+  const arms = membersOf2(choice2);
+  if (arms.some(isBlank)) return "presence";
+  if (arms.every(isString)) return "spelling";
+  return "forms";
+}
+function findOutermostForms(rule, path) {
+  const t = typeOf(rule);
+  if (isChoiceType(t)) {
+    const cls = classifyTokenChoice(rule);
+    if (cls === "forms") return { path, arms: membersOf2(rule) };
+    if (cls === "spelling") return void 0;
+    const live = membersOf2(rule).filter((m) => !isBlank(m));
+    const only = live.length === 1 ? live[0] : void 0;
+    if (only !== void 0 && isChoiceType(typeOf(only)) && classifyTokenChoice(only) === "forms") {
+      return { path, arms: [...membersOf2(only), membersOf2(rule).find(isBlank)] };
+    }
+    return void 0;
+  }
+  if (isSeqType(t)) {
+    const members = membersOf2(rule);
+    for (let i = 0; i < members.length; i++) {
+      const found = findOutermostForms(members[i], [...path, i]);
+      if (found) return found;
+    }
+    return void 0;
+  }
+  if (contentOf2(rule) !== void 0) return findOutermostForms(contentOf2(rule), [...path, 0]);
+  return void 0;
+}
+function replaceAt(rule, path, arm2) {
+  if (path.length === 0) return arm2;
+  const [head, ...rest] = path;
+  if (Array.isArray(rule.members)) {
+    const members = membersOf2(rule).map((m, i) => i === head ? replaceAt(m, rest, arm2) : m);
+    return rebuilt(rule, { members });
+  }
+  return rebuilt(rule, { content: replaceAt(contentOf2(rule), rest, arm2) });
+}
+var EMPTY_SEQ = { type: "SEQ", members: [] };
+function dropAt(rule, path) {
+  if (path.length === 0) return EMPTY_SEQ;
+  const [head, ...rest] = path;
+  if (Array.isArray(rule.members)) {
+    if (rest.length === 0) return rebuilt(rule, { members: membersOf2(rule).filter((_, i) => i !== head) });
+    return rebuilt(rule, { members: membersOf2(rule).map((m, i) => i === head ? dropAt(m, rest) : m) });
+  }
+  return rebuilt(rule, { content: dropAt(contentOf2(rule), rest) });
+}
+var canonical = (rule) => JSON.stringify(rule, (key, value) => key === "id" || key === "metadata" ? void 0 : value);
+function distributeTokenForms(rule, kind) {
+  const precStack = [];
+  let core = rule;
+  while (isPrecWrapper(core)) {
+    precStack.push(core);
+    core = contentOf2(core);
+  }
+  if (!isTokenWrapper(core)) return rule;
+  const body = contentOf2(core);
+  const site = findOutermostForms(body, []);
+  if (site === void 0) return rule;
+  const arms = site.arms.map((arm2) => isBlank(arm2) ? dropAt(body, site.path) : replaceAt(body, site.path, arm2));
+  const empty = arms.findIndex(matchesEmpty);
+  if (empty >= 0) throw new Error(`token forms: arm ${empty} of '${kind}' matches the empty string`);
+  const seen = /* @__PURE__ */ new Map();
+  arms.forEach((arm2, i) => {
+    const key = canonical(arm2);
+    const prior = seen.get(key);
+    if (prior !== void 0) throw new Error(`token forms: arms ${prior} and ${i} of '${kind}' are identical`);
+    seen.set(key, i);
+  });
+  let out = {
+    type: "CHOICE",
+    members: arms.map((arm2) => ({ ...core, content: arm2 }))
+  };
+  for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
+  return out;
+}
+
 // packages/codegen/src/dsl/enrich.ts
 function withContent(node, content) {
   return { ...node, content };
@@ -1588,6 +1678,17 @@ function enrich(baseInput) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
+  }
+  const externalNames = extractExternalNames(base2, hasWrapper);
+  const tokenFormParents = [];
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    const counter = { opt: 0, grp: 0, arm: 0, supertypeNames };
+    const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames);
+    if (hoisted === rule) continue;
+    enrichedRules[name] = hoisted;
+    tokenFormParents.push(name);
   }
   separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
   hiddenListPromotionNames = /* @__PURE__ */ new Map();
@@ -1648,6 +1749,7 @@ function enrich(baseInput) {
   });
   const clauseGroupNames = new Set(Object.keys(clauseGroupRules).filter((n) => !visibleGroupSources.has(n)));
   const result = hasWrapper ? { ...base2, grammar: { ...base2.grammar, rules: mergedRules } } : { ...base2, rules: mergedRules };
+  addSupertypes(hasWrapper ? result.grammar : result, tokenFormParents);
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
@@ -1724,6 +1826,44 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
   }
   return r;
 }
+function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames) {
+  if (externalNames.has(parentKind)) return rule;
+  const distributed = distributeTokenForms(rule, parentKind);
+  if (distributed === rule) return rule;
+  const precStack = [];
+  let core = distributed;
+  while (isPrecWrapper(core)) {
+    precStack.push(core);
+    core = core.content;
+  }
+  const arms = core.members;
+  const members = arms.map((arm2, i) => {
+    const minted = visibleGroupSynthName(arm2, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, void 0, void 0, "arm");
+    if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
+    visibleGroupSources.add(minted);
+    if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+    return makeGroupLiftSymbol(arm2, minted);
+  });
+  let out = { ...core, members };
+  for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i], content: out };
+  return out;
+}
+function addSupertypes(result, names) {
+  if (names.length === 0) return;
+  const current = result.supertypes;
+  if (typeof current === "function") {
+    const fn = current;
+    result.supertypes = (dollar, previous) => {
+      const base3 = fn(dollar, previous);
+      const listed2 = harvestSupertypeNames(base3);
+      return [...base3, ...names.filter((n) => !listed2.has(n)).map((n) => dollar[n])];
+    };
+    return;
+  }
+  const base2 = Array.isArray(current) ? current : [];
+  const listed = harvestSupertypeNames(base2);
+  result.supertypes = [...base2, ...names.filter((n) => !listed.has(n))];
+}
 function applyHoistAndUnalias(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupSources, clauseGroupOwners, unaliasSink) {
   let r = rule;
   const clauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
@@ -1768,6 +1908,24 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function extractExternalNames(base2, hasWrapper) {
+  const root = hasWrapper ? base2.grammar : base2;
+  const externals = root?.externals;
+  if (typeof externals !== "function") return Array.isArray(externals) ? harvestSupertypeNames(externals) : /* @__PURE__ */ new Set();
+  const dollar = new Proxy(
+    {},
+    {
+      get(_t, prop) {
+        return typeof prop === "string" ? { type: "SYMBOL", name: prop } : void 0;
+      }
+    }
+  );
+  try {
+    return harvestSupertypeNames(externals(dollar));
+  } catch {
+    return /* @__PURE__ */ new Set();
+  }
 }
 function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
   if (seen.has(name)) return false;
@@ -1903,11 +2061,11 @@ function promoteLiteralChoiceArms(choiceRule, mergedRules) {
       return arm2;
     }
     changed = true;
-    let rebuilt = symbol;
+    let rebuilt2 = symbol;
     for (let i = precStack.length - 1; i >= 0; i--) {
-      rebuilt = withContent(precStack[i], rebuilt);
+      rebuilt2 = withContent(precStack[i], rebuilt2);
     }
-    return rebuilt;
+    return rebuilt2;
   });
   if (!changed || declined) return null;
   return { ...choiceRule, members: newMembers };
@@ -2445,10 +2603,10 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
 function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
   let anyRepeatChanged = false;
   const result = members.map((m) => {
-    const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
-    if (rebuilt === null) return m;
+    const rebuilt2 = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
+    if (rebuilt2 === null) return m;
     anyRepeatChanged = true;
-    return rebuilt;
+    return rebuilt2;
   });
   if (!anyRepeatChanged) return members;
   return result;
@@ -2514,15 +2672,15 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
     return t.wrap(fieldNode);
   });
   if (!innerChanged) return null;
-  let rebuilt = { ...inner, members: newInnerMembers };
+  let rebuilt2 = { ...inner, members: newInnerMembers };
   for (let i = innerPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = withContent(innerPrecStack[i], rebuilt);
+    rebuilt2 = withContent(innerPrecStack[i], rebuilt2);
   }
-  rebuilt = withContent(cursor, rebuilt);
+  rebuilt2 = withContent(cursor, rebuilt2);
   for (let i = memberPrecStack.length - 1; i >= 0; i--) {
-    rebuilt = withContent(memberPrecStack[i], rebuilt);
+    rebuilt2 = withContent(memberPrecStack[i], rebuilt2);
   }
-  return rebuilt;
+  return rebuilt2;
 }
 function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
   if (!isRepeatType(cursor.type)) return rule;
@@ -4545,30 +4703,8 @@ function applyPathPatches(original, patches) {
     if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
   }
-  if (variantEntries.length > 0) {
-    rule = applyVariantPatches(hoistTokenChoiceForVariants(rule, variantEntries), variantEntries);
-  }
+  if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
   return rule;
-}
-function isStringLedSeq(arm2) {
-  const a = arm2;
-  return a.type === "SEQ" && Array.isArray(a.members) && a.members[0]?.type === "STRING";
-}
-function hoistTokenChoiceForVariants(rule, variantEntries) {
-  const wrapper = rule;
-  if (wrapper.type !== "TOKEN" && wrapper.type !== "IMMEDIATE_TOKEN") return rule;
-  const choice2 = wrapper.content;
-  if (choice2?.type !== "CHOICE" || !Array.isArray(choice2.members)) return rule;
-  const arms = choice2.members;
-  const named = variantEntries.map(([key]) => parsePath(key));
-  if (!named.every((segs) => segs.length === 1 && segs[0].kind === "index")) return rule;
-  const offending = arms.findIndex((arm2) => !isStringLedSeq(arm2));
-  if (offending >= 0) {
-    throw new Error(
-      `variant() on the arms of a token choice: arm ${offending} of '${wireGetCurrentRuleKind() ?? "(unknown)"}' is not a seq led by a string`
-    );
-  }
-  return { ...choice2, members: arms.map((arm2) => ({ ...wrapper, content: arm2 })) };
 }
 function assertChoiceArmPath(rule, key, segments) {
   applyPath(rule, segments.slice(0, -1), (parent) => {
@@ -4612,15 +4748,15 @@ function registerIfPureVariantChoice(rule) {
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind || wireIsExtraRule(parentKind)) return;
   let core = rule;
-  while (isPrecWrapper(core)) core = contentOf2(core);
+  while (isPrecWrapper(core)) core = contentOf3(core);
   if (!isChoiceType(core.type)) return;
-  const arms = membersOf2(core);
+  const arms = membersOf3(core);
   if (arms.length < 2 || !arms.every((arm2) => isMintedVariantArm(arm2, parentKind))) return;
   wireRegisterFlattenedParent(parentKind);
 }
 function isMintedVariantArm(arm2, parentKind) {
   let node = arm2;
-  while (isPrecWrapper(node)) node = contentOf2(node);
+  while (isPrecWrapper(node)) node = contentOf3(node);
   const symbol = node;
   if (symbol.type !== "SYMBOL" || typeof symbol.name !== "string" || symbol.annotations?.variantOf !== parentKind) return false;
   return wireHasDeposit(symbol.name) || wireHasAuthoredRule(symbol.name);
@@ -4649,7 +4785,7 @@ function planSiblingVariantHoist(rule, variantEntries, onBail = () => {
     );
   if (parsed.some((p) => p.throughOptional !== throughOptional))
     return bail("variant patches mix N/M and N/0/M paths \u2014 hoist needs all siblings addressed the same way");
-  const seqMembers = [...membersOf2(core)];
+  const seqMembers = [...membersOf3(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
   const hoistChoice = hoistChoiceOf(seqMembers[resolvedPos], throughOptional);
   if (!hoistChoice) return bail(`position ${resolvedPos} is '${seqMembers[resolvedPos]?.type}', not a hoistable choice`);
@@ -4683,16 +4819,16 @@ function planSiblingVariantHoist(rule, variantEntries, onBail = () => {
   }
   const scaffolding = seqMembers.filter((_, i) => i !== resolvedPos);
   const emptyArm = choiceMembers.findIndex(
-    (arm2) => (isBlank(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
+    (arm2) => (isBlank2(arm2) || matchesEmpty(arm2)) && scaffolding.every((m) => matchesEmpty(m))
   );
   if (emptyArm >= 0) return bail(`arm ${emptyArm} would hoist to a variant that matches the empty string`);
   const bareArm = choiceMembers.findIndex(
-    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank(arm2) ? [] : [arm2]] })
+    (arm2) => variantBranchIsUnmaterializable({ type: "SEQ", members: [...scaffolding, ...isBlank2(arm2) ? [] : [arm2]] })
   );
   if (bareArm >= 0) return bail(`arm ${bareArm} would hoist to a variant with no token of its own and at most one named child`);
   return { core, precStack, seqMembers, resolvedPos, choice: choice2, choiceMembers, parsed, lifted };
 }
-function isBlank(rule) {
+function isBlank2(rule) {
   return rule.type === "BLANK";
 }
 function hoistChoiceOf(rule, throughOptional) {
@@ -4700,18 +4836,18 @@ function hoistChoiceOf(rule, throughOptional) {
   const blank = { type: "BLANK" };
   const content = optionalContentOf(rule);
   if (content !== void 0) {
-    const members = throughOptional ? isChoiceType(content.type) ? [...membersOf2(content), blank] : null : [content, blank];
+    const members = throughOptional ? isChoiceType(content.type) ? [...membersOf3(content), blank] : null : [content, blank];
     if (members === null) return null;
     return { choice: { type: "CHOICE", members }, choiceMembers: members, absentIdx: members.length - 1 };
   }
   if (throughOptional || !isChoiceType(rule.type)) return null;
-  return { choice: rule, choiceMembers: [...membersOf2(rule)], absentIdx: void 0 };
+  return { choice: rule, choiceMembers: [...membersOf3(rule)], absentIdx: void 0 };
 }
 function optionalContentOf(rule) {
-  if (rule.type === "OPTIONAL") return contentOf2(rule);
+  if (rule.type === "OPTIONAL") return contentOf3(rule);
   if (!isChoiceType(rule.type)) return void 0;
-  const members = membersOf2(rule);
-  return members.length === 2 && isBlank(members[1]) && !isBlank(members[0]) ? members[0] : void 0;
+  const members = membersOf3(rule);
+  return members.length === 2 && isBlank2(members[1]) && !isBlank2(members[0]) ? members[0] : void 0;
 }
 function tryHoistSiblingVariants(rule, variantEntries) {
   const { bail } = peelPrecWrappersFromRule(rule);
@@ -4738,7 +4874,7 @@ function peelPrecWrappersFromRule(rule) {
   let core = rule;
   while (core && isPrecWrapper(core)) {
     precStack.push(core);
-    core = contentOf2(core);
+    core = contentOf3(core);
   }
   return { bail, precStack, core };
 }
@@ -4761,7 +4897,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
 }
 function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, lifted, parentKind, precStack) {
   const hoist = (altContent) => {
-    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank(altContent) ? [] : [altContent]);
+    const hoistedMembers = seqMembers.flatMap((m, i) => i !== resolvedPos ? [m] : isBlank2(altContent) ? [] : [altContent]);
     return wrapVariantBodyInParentPrec(withHoistedAnnotation(reconstructContainer(core, hoistedMembers)), precStack);
   };
   const refs = [];
@@ -4798,15 +4934,15 @@ function registerHoistedVariantConflicts(variantNames) {
     }
   }
 }
-var membersOf2 = (r) => r.members;
-var contentOf2 = (r) => r.content;
+var membersOf3 = (r) => r.members;
+var contentOf3 = (r) => r.content;
 function countBodyAnchors(rule) {
   const t = rule.type;
   if (t === "STRING" || t === "PATTERN" || t === "TOKEN") return { tokens: 1, named: 0 };
   if (t === "SYMBOL") return { tokens: 0, named: 1 };
   if (t === "BLANK") return { tokens: 0, named: 0 };
   if (isSeqType(rule.type) || isChoiceType(rule.type)) {
-    return membersOf2(rule).reduce(
+    return membersOf3(rule).reduce(
       (acc, m) => {
         const c = countBodyAnchors(m);
         return { tokens: acc.tokens + c.tokens, named: acc.named + c.named };
@@ -4844,7 +4980,7 @@ function variantBranchIsUnmaterializable(rule) {
   return tokens === 0 && named <= 1;
 }
 function deField(rule) {
-  const inner = isFieldLike(rule) ? contentOf2(rule) : rule;
+  const inner = isFieldLike(rule) ? contentOf3(rule) : rule;
   const stripPropagated = (r) => {
     const { fieldName: _drop, ...rest } = r;
     const content = rest.content;
@@ -4861,7 +4997,7 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
-    const members = membersOf2(original);
+    const members = membersOf3(original);
     let anyApplied = false;
     const newMembers = members.map((m) => {
       try {
@@ -4884,17 +5020,17 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesThroughPrec(original, patches);
   }
   if (isWrapperType(t)) {
-    const newContent = applyFlatPatches(contentOf2(original), patches);
+    const newContent = applyFlatPatches(contentOf3(original), patches);
     return reconstructWrapper(original, newContent);
   }
   return original;
 }
 function applyFlatPatchesThroughPrec(original, patches) {
-  const newContent = applyFlatPatches(contentOf2(original), patches);
+  const newContent = applyFlatPatches(contentOf3(original), patches);
   return reconstructPrec(original, newContent);
 }
 function applyFlatPatchesToSeq(original, patches) {
-  const members = [...membersOf2(original)];
+  const members = [...membersOf3(original)];
   for (const [key, patch] of Object.entries(patches)) {
     if (!/^\d+$/.test(key)) {
       throw new Error(
@@ -5224,18 +5360,18 @@ function extractNonEmpty(rule) {
     return { nonEmpty };
   }
   if (isOptionalType(t)) {
-    const inner = contentOf2(rule);
+    const inner = contentOf3(rule);
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
   if (isChoiceType(t)) {
-    const members = membersOf2(rule);
+    const members = membersOf3(rule);
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
   if (isSeqType(t)) {
-    const members = [...membersOf2(rule)];
+    const members = [...membersOf3(rule)];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
       if (factored) {
