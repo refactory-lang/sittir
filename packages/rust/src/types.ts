@@ -31,7 +31,7 @@ export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar
 export type LeafScalarMap = {
 	[TSKindId.TrueKeyword]: boolean;
 	[TSKindId.FalseKeyword]: boolean;
-	[TSKindId.IntegerLiteral]: number;
+	[TSKindId.IntegerLiteralDecimal]: number;
 	[TSKindId.FloatLiteral]: number;
 };
 
@@ -375,25 +375,25 @@ export enum TSKindId {
 	Crate = 128,
 	Metavariable = 129,
 	MoveKeyword = 130,
-	IntegerLiteralArm1 = 131,
-	IntegerLiteralArm2 = 132,
-	IntegerLiteralArm3 = 133,
-	IntegerLiteralArm4 = 134,
-	CharLiteralArm1 = 135,
-	CharLiteralArm2 = 136,
-	CharLiteralArm3 = 137,
-	EscapeSequenceArm1 = 138,
-	EscapeSequenceArm2 = 139,
-	EscapeSequenceArm3 = 140,
-	EscapeSequenceArm4 = 141,
-	Comma = 142,
-	DashGt = 143,
-	Underscore = 144,
-	DotDotEq = 145,
-	ModKeyword = 146,
-	PubKeyword = 147,
-	StructKeyword = 148,
-	StringLiteralOpen = 149,
+	Comma = 131,
+	DashGt = 132,
+	Underscore = 133,
+	DotDotEq = 134,
+	ModKeyword = 135,
+	PubKeyword = 136,
+	StructKeyword = 137,
+	StringLiteralOpen = 138,
+	IntegerLiteralDecimal = 139,
+	IntegerLiteralHex = 140,
+	IntegerLiteralBinary = 141,
+	IntegerLiteralOctal = 142,
+	CharLiteralEscaped = 143,
+	CharLiteralPlain = 144,
+	CharLiteralEmpty = 145,
+	EscapeSequenceSimple = 146,
+	EscapeSequenceUnicodeFixed = 147,
+	EscapeSequenceUnicodeBraced = 148,
+	EscapeSequenceHex = 149,
 	RawKeyword = 150,
 	LineCommentRegularDslashToken1 = 151,
 	LineCommentRegularDslashToken2 = 152,
@@ -845,25 +845,25 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'crate'],
 	[129, 'metavariable'],
 	[130, 'move_keyword'],
-	[131, 'integer_literal_arm1'],
-	[132, 'integer_literal_arm2'],
-	[133, 'integer_literal_arm3'],
-	[134, 'integer_literal_arm4'],
-	[135, 'char_literal_arm1'],
-	[136, 'char_literal_arm2'],
-	[137, 'char_literal_arm3'],
-	[138, 'escape_sequence_arm1'],
-	[139, 'escape_sequence_arm2'],
-	[140, 'escape_sequence_arm3'],
-	[141, 'escape_sequence_arm4'],
-	[142, 'comma'],
-	[143, 'dash_gt'],
-	[144, 'underscore'],
-	[145, 'dot_dot_eq'],
-	[146, 'mod_keyword'],
-	[147, 'pub_keyword'],
-	[148, 'struct_keyword'],
-	[149, '_string_literal_open'],
+	[131, 'comma'],
+	[132, 'dash_gt'],
+	[133, 'underscore'],
+	[134, 'dot_dot_eq'],
+	[135, 'mod_keyword'],
+	[136, 'pub_keyword'],
+	[137, 'struct_keyword'],
+	[138, '_string_literal_open'],
+	[139, 'integer_literal_decimal'],
+	[140, 'integer_literal_hex'],
+	[141, 'integer_literal_binary'],
+	[142, 'integer_literal_octal'],
+	[143, 'char_literal_escaped'],
+	[144, 'char_literal_plain'],
+	[145, 'char_literal_empty'],
+	[146, 'escape_sequence_simple'],
+	[147, 'escape_sequence_unicode_fixed'],
+	[148, 'escape_sequence_unicode_braced'],
+	[149, 'escape_sequence_hex'],
 	[150, 'raw_keyword'],
 	[151, 'line_comment_regular_dslash_token1'],
 	[152, 'line_comment_regular_dslash_token2'],
@@ -1317,25 +1317,25 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'crate'],
 	[129, 'metavariable'],
 	[130, 'move'],
-	[131, 'integer_literal_arm1'],
-	[132, 'integer_literal_arm2'],
-	[133, 'integer_literal_arm3'],
-	[134, 'integer_literal_arm4'],
-	[135, 'char_literal_arm1'],
-	[136, 'char_literal_arm2'],
-	[137, 'char_literal_arm3'],
-	[138, 'escape_sequence_arm1'],
-	[139, 'escape_sequence_arm2'],
-	[140, 'escape_sequence_arm3'],
-	[141, 'escape_sequence_arm4'],
-	[142, ','],
-	[143, '->'],
-	[144, '_'],
-	[145, '..='],
-	[146, 'mod'],
-	[147, 'pub'],
-	[148, 'struct'],
-	[149, 'string_open'],
+	[131, ','],
+	[132, '->'],
+	[133, '_'],
+	[134, '..='],
+	[135, 'mod'],
+	[136, 'pub'],
+	[137, 'struct'],
+	[138, 'string_open'],
+	[139, 'integer_literal_decimal'],
+	[140, 'integer_literal_hex'],
+	[141, 'integer_literal_binary'],
+	[142, 'integer_literal_octal'],
+	[143, 'char_literal_escaped'],
+	[144, 'char_literal_plain'],
+	[145, 'char_literal_empty'],
+	[146, 'escape_sequence_simple'],
+	[147, 'escape_sequence_unicode_fixed'],
+	[148, 'escape_sequence_unicode_braced'],
+	[149, 'escape_sequence_hex'],
 	[150, 'raw'],
 	[151, 'line_comment_regular_dslash_token1'],
 	[152, 'line_comment_regular_dslash_token2'],
@@ -1922,28 +1922,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Metavariable;
 		case 'move_keyword':
 			return TSKindId.MoveKeyword;
-		case 'integer_literal_arm1':
-			return TSKindId.IntegerLiteralArm1;
-		case 'integer_literal_arm2':
-			return TSKindId.IntegerLiteralArm2;
-		case 'integer_literal_arm3':
-			return TSKindId.IntegerLiteralArm3;
-		case 'integer_literal_arm4':
-			return TSKindId.IntegerLiteralArm4;
-		case 'char_literal_arm1':
-			return TSKindId.CharLiteralArm1;
-		case 'char_literal_arm2':
-			return TSKindId.CharLiteralArm2;
-		case 'char_literal_arm3':
-			return TSKindId.CharLiteralArm3;
-		case 'escape_sequence_arm1':
-			return TSKindId.EscapeSequenceArm1;
-		case 'escape_sequence_arm2':
-			return TSKindId.EscapeSequenceArm2;
-		case 'escape_sequence_arm3':
-			return TSKindId.EscapeSequenceArm3;
-		case 'escape_sequence_arm4':
-			return TSKindId.EscapeSequenceArm4;
 		case 'comma':
 			return TSKindId.Comma;
 		case 'dash_gt':
@@ -1960,6 +1938,28 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StructKeyword;
 		case '_string_literal_open':
 			return TSKindId.StringLiteralOpen;
+		case 'integer_literal_decimal':
+			return TSKindId.IntegerLiteralDecimal;
+		case 'integer_literal_hex':
+			return TSKindId.IntegerLiteralHex;
+		case 'integer_literal_binary':
+			return TSKindId.IntegerLiteralBinary;
+		case 'integer_literal_octal':
+			return TSKindId.IntegerLiteralOctal;
+		case 'char_literal_escaped':
+			return TSKindId.CharLiteralEscaped;
+		case 'char_literal_plain':
+			return TSKindId.CharLiteralPlain;
+		case 'char_literal_empty':
+			return TSKindId.CharLiteralEmpty;
+		case 'escape_sequence_simple':
+			return TSKindId.EscapeSequenceSimple;
+		case 'escape_sequence_unicode_fixed':
+			return TSKindId.EscapeSequenceUnicodeFixed;
+		case 'escape_sequence_unicode_braced':
+			return TSKindId.EscapeSequenceUnicodeBraced;
+		case 'escape_sequence_hex':
+			return TSKindId.EscapeSequenceHex;
 		case 'raw_keyword':
 			return TSKindId.RawKeyword;
 		case 'line_comment_regular_dslash_token1':
@@ -3298,22 +3298,23 @@ export enum LiteralPatternKind {
 }
 
 export enum IntegerLiteralKind {
-	IntegerLiteralArm1 = 'integer_literal_arm1',
-	IntegerLiteralArm2 = 'integer_literal_arm2',
-	IntegerLiteralArm3 = 'integer_literal_arm3',
-	IntegerLiteralArm4 = 'integer_literal_arm4'
+	IntegerLiteralDecimal = 'integer_literal_decimal',
+	IntegerLiteralHex = 'integer_literal_hex',
+	IntegerLiteralBinary = 'integer_literal_binary',
+	IntegerLiteralOctal = 'integer_literal_octal'
 }
 
 export enum CharLiteralKind {
-	CharLiteralArm1 = 'char_literal_arm1',
-	CharLiteralArm2 = 'char_literal_arm2'
+	CharLiteralEscaped = 'char_literal_escaped',
+	CharLiteralPlain = 'char_literal_plain',
+	CharLiteralEmpty = 'char_literal_empty'
 }
 
 export enum EscapeSequenceKind {
-	EscapeSequenceArm1 = 'escape_sequence_arm1',
-	EscapeSequenceArm2 = 'escape_sequence_arm2',
-	EscapeSequenceArm3 = 'escape_sequence_arm3',
-	EscapeSequenceArm4 = 'escape_sequence_arm4'
+	EscapeSequenceSimple = 'escape_sequence_simple',
+	EscapeSequenceUnicodeFixed = 'escape_sequence_unicode_fixed',
+	EscapeSequenceUnicodeBraced = 'escape_sequence_unicode_braced',
+	EscapeSequenceHex = 'escape_sequence_hex'
 }
 
 export enum PathKind {
@@ -6769,200 +6770,6 @@ export interface Metavariable {
 	name(): string;
 }
 
-export interface IntegerLiteralArm1 {
-	readonly $type: TSKindId.IntegerLiteralArm1;
-	readonly _content: string;
-	readonly _suffix?:
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64';
-	content(): string;
-	suffix():
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64'
-		| undefined;
-}
-
-export interface IntegerLiteralArm2 {
-	readonly $type: TSKindId.IntegerLiteralArm2;
-	readonly _content: string;
-	readonly _suffix?:
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64';
-	content(): string;
-	suffix():
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64'
-		| undefined;
-}
-
-export interface IntegerLiteralArm3 {
-	readonly $type: TSKindId.IntegerLiteralArm3;
-	readonly _content: string;
-	readonly _suffix?:
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64';
-	content(): string;
-	suffix():
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64'
-		| undefined;
-}
-
-export interface IntegerLiteralArm4 {
-	readonly $type: TSKindId.IntegerLiteralArm4;
-	readonly _content: string;
-	readonly _suffix?:
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64';
-	content(): string;
-	suffix():
-		| 'u8'
-		| 'i8'
-		| 'u16'
-		| 'i16'
-		| 'u32'
-		| 'i32'
-		| 'u64'
-		| 'i64'
-		| 'u128'
-		| 'i128'
-		| 'isize'
-		| 'usize'
-		| 'f32'
-		| 'f64'
-		| undefined;
-}
-
-export interface CharLiteralArm1 {
-	readonly $type: TSKindId.CharLiteralArm1;
-	readonly _b?: boolean;
-	readonly _content: string;
-	readonly __inputHints__?: {
-		readonly b?: BooleanKeyword<'b'>;
-	};
-	b(): boolean | undefined;
-	content(): string;
-}
-
-export interface CharLiteralArm2 {
-	readonly $type: TSKindId.CharLiteralArm2;
-	readonly _b?: boolean;
-	readonly _content: string;
-	readonly __inputHints__?: {
-		readonly b?: BooleanKeyword<'b'>;
-	};
-	b(): boolean | undefined;
-	content(): string;
-}
-
-export interface EscapeSequenceArm1 {
-	readonly $type: TSKindId.EscapeSequenceArm1;
-	readonly _content: string;
-	content(): string;
-}
-
-export interface EscapeSequenceArm2 {
-	readonly $type: TSKindId.EscapeSequenceArm2;
-	readonly _content: string;
-	content(): string;
-}
-
-export interface EscapeSequenceArm3 {
-	readonly $type: TSKindId.EscapeSequenceArm3;
-	readonly _content: string;
-	content(): string;
-}
-
-export interface EscapeSequenceArm4 {
-	readonly $type: TSKindId.EscapeSequenceArm4;
-	readonly _content: string;
-	content(): string;
-}
-
 export interface MacroRules {
 	readonly $type: TSKindId.MacroRules;
 	readonly _macro_rule: NonEmptyArray<MacroRule>;
@@ -7140,6 +6947,200 @@ export interface TupleExpressionElements {
 	readonly $type: TSKindId.TupleExpressionElements;
 	readonly _element: NonEmptyArray<Expression>;
 	elements(): NonEmptyArray<Expression>;
+}
+
+export interface IntegerLiteralDecimal {
+	readonly $type: TSKindId.IntegerLiteralDecimal;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralHex {
+	readonly $type: TSKindId.IntegerLiteralHex;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralBinary {
+	readonly $type: TSKindId.IntegerLiteralBinary;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface IntegerLiteralOctal {
+	readonly $type: TSKindId.IntegerLiteralOctal;
+	readonly _content: string;
+	readonly _suffix?:
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64';
+	content(): string;
+	suffix():
+		| 'u8'
+		| 'i8'
+		| 'u16'
+		| 'i16'
+		| 'u32'
+		| 'i32'
+		| 'u64'
+		| 'i64'
+		| 'u128'
+		| 'i128'
+		| 'isize'
+		| 'usize'
+		| 'f32'
+		| 'f64'
+		| undefined;
+}
+
+export interface CharLiteralEscaped {
+	readonly $type: TSKindId.CharLiteralEscaped;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface CharLiteralPlain {
+	readonly $type: TSKindId.CharLiteralPlain;
+	readonly _b?: boolean;
+	readonly _content: string;
+	readonly __inputHints__?: {
+		readonly b?: BooleanKeyword<'b'>;
+	};
+	b(): boolean | undefined;
+	content(): string;
+}
+
+export interface EscapeSequenceSimple {
+	readonly $type: TSKindId.EscapeSequenceSimple;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceUnicodeFixed {
+	readonly $type: TSKindId.EscapeSequenceUnicodeFixed;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceUnicodeBraced {
+	readonly $type: TSKindId.EscapeSequenceUnicodeBraced;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface EscapeSequenceHex {
+	readonly $type: TSKindId.EscapeSequenceHex;
+	readonly _content: string;
+	content(): string;
 }
 
 export interface ArrayExpressionSemi {
@@ -10338,6 +10339,7 @@ export type TokenKeywords =
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringLiteralOpen = HiddenLeaf<Terminal<TSKindId.StringLiteralOpen, string>>;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
+export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
@@ -10482,16 +10484,6 @@ export interface LineCommentTree extends TreeNode<'line_comment'> {}
 export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ShebangTree extends TreeNode<'shebang'> {}
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
-export interface IntegerLiteralArm1Tree extends TreeNode<'integer_literal_arm1'> {}
-export interface IntegerLiteralArm2Tree extends TreeNode<'integer_literal_arm2'> {}
-export interface IntegerLiteralArm3Tree extends TreeNode<'integer_literal_arm3'> {}
-export interface IntegerLiteralArm4Tree extends TreeNode<'integer_literal_arm4'> {}
-export interface CharLiteralArm1Tree extends TreeNode<'char_literal_arm1'> {}
-export interface CharLiteralArm2Tree extends TreeNode<'char_literal_arm2'> {}
-export interface EscapeSequenceArm1Tree extends TreeNode<'escape_sequence_arm1'> {}
-export interface EscapeSequenceArm2Tree extends TreeNode<'escape_sequence_arm2'> {}
-export interface EscapeSequenceArm3Tree extends TreeNode<'escape_sequence_arm3'> {}
-export interface EscapeSequenceArm4Tree extends TreeNode<'escape_sequence_arm4'> {}
 export interface MacroRulesTree extends TreeNode<'macro_rules'> {}
 export interface EnumVariantListElementsTree extends TreeNode<'enum_variant_list_elements'> {}
 export interface FieldDeclarationListElementsTree extends TreeNode<'field_declaration_list_elements'> {}
@@ -10516,6 +10508,16 @@ export interface TupleTypeElementsTree extends AnyTreeNode {
 export interface TupleExpressionElementsTree extends AnyTreeNode {
 	readonly type: '_tuple_expression_elements';
 }
+export interface IntegerLiteralDecimalTree extends TreeNode<'integer_literal_decimal'> {}
+export interface IntegerLiteralHexTree extends TreeNode<'integer_literal_hex'> {}
+export interface IntegerLiteralBinaryTree extends TreeNode<'integer_literal_binary'> {}
+export interface IntegerLiteralOctalTree extends TreeNode<'integer_literal_octal'> {}
+export interface CharLiteralEscapedTree extends TreeNode<'char_literal_escaped'> {}
+export interface CharLiteralPlainTree extends TreeNode<'char_literal_plain'> {}
+export interface EscapeSequenceSimpleTree extends TreeNode<'escape_sequence_simple'> {}
+export interface EscapeSequenceUnicodeFixedTree extends TreeNode<'escape_sequence_unicode_fixed'> {}
+export interface EscapeSequenceUnicodeBracedTree extends TreeNode<'escape_sequence_unicode_braced'> {}
+export interface EscapeSequenceHexTree extends TreeNode<'escape_sequence_hex'> {}
 export interface ArrayExpressionSemiTree extends TreeNode<'array_expression_semi'> {}
 export interface ArrayExpressionListTree extends TreeNode<'array_expression_list'> {}
 export interface AttributeInputTree extends TreeNode<'attribute_input'> {}
@@ -10682,6 +10684,7 @@ export interface StringLiteralOpenTree extends AnyTreeNode {
 export interface ImplItemUnsafeMarkerTree extends AnyTreeNode {
 	readonly type: '_impl_item_unsafe_marker';
 }
+export interface CharLiteralEmptyTree extends TreeNode<'char_literal_empty'> {}
 export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
 export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
@@ -11555,25 +11558,29 @@ export type LiteralPatternTree =
 	| FloatLiteralTree
 	| NegativeLiteralTree;
 
-export type IntegerLiteral = IntegerLiteralArm1 | IntegerLiteralArm2 | IntegerLiteralArm3 | IntegerLiteralArm4;
+export type IntegerLiteral = IntegerLiteralDecimal | IntegerLiteralHex | IntegerLiteralBinary | IntegerLiteralOctal;
 
 export type IntegerLiteralTree =
-	| IntegerLiteralArm1Tree
-	| IntegerLiteralArm2Tree
-	| IntegerLiteralArm3Tree
-	| IntegerLiteralArm4Tree;
+	| IntegerLiteralDecimalTree
+	| IntegerLiteralHexTree
+	| IntegerLiteralBinaryTree
+	| IntegerLiteralOctalTree;
 
-export type CharLiteral = CharLiteralArm1 | CharLiteralArm2;
+export type CharLiteral = CharLiteralEscaped | CharLiteralPlain | CharLiteralEmpty;
 
-export type CharLiteralTree = CharLiteralArm1Tree | CharLiteralArm2Tree;
+export type CharLiteralTree = CharLiteralEscapedTree | CharLiteralPlainTree | CharLiteralEmptyTree;
 
-export type EscapeSequence = EscapeSequenceArm1 | EscapeSequenceArm2 | EscapeSequenceArm3 | EscapeSequenceArm4;
+export type EscapeSequence =
+	| EscapeSequenceSimple
+	| EscapeSequenceUnicodeFixed
+	| EscapeSequenceUnicodeBraced
+	| EscapeSequenceHex;
 
 export type EscapeSequenceTree =
-	| EscapeSequenceArm1Tree
-	| EscapeSequenceArm2Tree
-	| EscapeSequenceArm3Tree
-	| EscapeSequenceArm4Tree;
+	| EscapeSequenceSimpleTree
+	| EscapeSequenceUnicodeFixedTree
+	| EscapeSequenceUnicodeBracedTree
+	| EscapeSequenceHexTree;
 
 export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier;
 
@@ -11774,16 +11781,6 @@ export type RustNode =
 	| BlockComment
 	| Shebang
 	| Metavariable
-	| IntegerLiteralArm1
-	| IntegerLiteralArm2
-	| IntegerLiteralArm3
-	| IntegerLiteralArm4
-	| CharLiteralArm1
-	| CharLiteralArm2
-	| EscapeSequenceArm1
-	| EscapeSequenceArm2
-	| EscapeSequenceArm3
-	| EscapeSequenceArm4
 	| MacroRules
 	| EnumVariantListElements
 	| FieldDeclarationListElements
@@ -11804,6 +11801,16 @@ export type RustNode =
 	| VisibilityModifierGroup
 	| TupleTypeElements
 	| TupleExpressionElements
+	| IntegerLiteralDecimal
+	| IntegerLiteralHex
+	| IntegerLiteralBinary
+	| IntegerLiteralOctal
+	| CharLiteralEscaped
+	| CharLiteralPlain
+	| EscapeSequenceSimple
+	| EscapeSequenceUnicodeFixed
+	| EscapeSequenceUnicodeBraced
+	| EscapeSequenceHex
 	| ArrayExpressionSemi
 	| ArrayExpressionList
 	| AttributeInput
@@ -11996,16 +12003,6 @@ export interface KindMap {
 	block_comment: BlockComment;
 	shebang: Shebang;
 	metavariable: Metavariable;
-	integer_literal_arm1: IntegerLiteralArm1;
-	integer_literal_arm2: IntegerLiteralArm2;
-	integer_literal_arm3: IntegerLiteralArm3;
-	integer_literal_arm4: IntegerLiteralArm4;
-	char_literal_arm1: CharLiteralArm1;
-	char_literal_arm2: CharLiteralArm2;
-	escape_sequence_arm1: EscapeSequenceArm1;
-	escape_sequence_arm2: EscapeSequenceArm2;
-	escape_sequence_arm3: EscapeSequenceArm3;
-	escape_sequence_arm4: EscapeSequenceArm4;
 	macro_rules: MacroRules;
 	enum_variant_list_elements: EnumVariantListElements;
 	field_declaration_list_elements: FieldDeclarationListElements;
@@ -12026,6 +12023,16 @@ export interface KindMap {
 	visibility_modifier_group: VisibilityModifierGroup;
 	_tuple_type_elements: TupleTypeElements;
 	_tuple_expression_elements: TupleExpressionElements;
+	integer_literal_decimal: IntegerLiteralDecimal;
+	integer_literal_hex: IntegerLiteralHex;
+	integer_literal_binary: IntegerLiteralBinary;
+	integer_literal_octal: IntegerLiteralOctal;
+	char_literal_escaped: CharLiteralEscaped;
+	char_literal_plain: CharLiteralPlain;
+	escape_sequence_simple: EscapeSequenceSimple;
+	escape_sequence_unicode_fixed: EscapeSequenceUnicodeFixed;
+	escape_sequence_unicode_braced: EscapeSequenceUnicodeBraced;
+	escape_sequence_hex: EscapeSequenceHex;
 	array_expression_semi: ArrayExpressionSemi;
 	array_expression_list: ArrayExpressionList;
 	attribute_input: AttributeInput;
@@ -12119,6 +12126,7 @@ export interface KindMap {
 	_wildcard_pattern: WildcardPattern;
 	_string_literal_open: StringLiteralOpen;
 	_impl_item_unsafe_marker: ImplItemUnsafeMarker;
+	char_literal_empty: CharLiteralEmpty;
 	line_comment_regular_dslash: LineCommentRegularDslash;
 	line_comment_content: LineCommentContent;
 	range_pattern_with_left_bare: RangePatternWithLeftBare;
@@ -13530,116 +13538,6 @@ export interface MetavariableNs extends NodeNs<
 	'name',
 	'metavariable'
 > {}
-export interface IntegerLiteralArm1Ns extends NodeNs<
-	IntegerLiteralArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntegerLiteralArm1.Built,
-	IntegerLiteralArm1.BuildArgs,
-	IntegerLiteralArm1.LooseArgs,
-	'content',
-	'integer_literal_arm1'
-> {}
-export interface IntegerLiteralArm2Ns extends NodeNs<
-	IntegerLiteralArm2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntegerLiteralArm2.Built,
-	IntegerLiteralArm2.BuildArgs,
-	IntegerLiteralArm2.LooseArgs,
-	'content',
-	'integer_literal_arm2'
-> {}
-export interface IntegerLiteralArm3Ns extends NodeNs<
-	IntegerLiteralArm3,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntegerLiteralArm3.Built,
-	IntegerLiteralArm3.BuildArgs,
-	IntegerLiteralArm3.LooseArgs,
-	'content',
-	'integer_literal_arm3'
-> {}
-export interface IntegerLiteralArm4Ns extends NodeNs<
-	IntegerLiteralArm4,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	IntegerLiteralArm4.Built,
-	IntegerLiteralArm4.BuildArgs,
-	IntegerLiteralArm4.LooseArgs,
-	'content',
-	'integer_literal_arm4'
-> {}
-export interface CharLiteralArm1Ns extends NodeNs<
-	CharLiteralArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	CharLiteralArm1.Built,
-	CharLiteralArm1.BuildArgs,
-	CharLiteralArm1.LooseArgs,
-	'content',
-	'char_literal_arm1'
-> {}
-export interface CharLiteralArm2Ns extends NodeNs<
-	CharLiteralArm2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	CharLiteralArm2.Built,
-	CharLiteralArm2.BuildArgs,
-	CharLiteralArm2.LooseArgs,
-	'content',
-	'char_literal_arm2'
-> {}
-export interface EscapeSequenceArm1Ns extends NodeNs<
-	EscapeSequenceArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	EscapeSequenceArm1.Built,
-	EscapeSequenceArm1.BuildArgs,
-	EscapeSequenceArm1.LooseArgs,
-	'content',
-	'escape_sequence_arm1'
-> {}
-export interface EscapeSequenceArm2Ns extends NodeNs<
-	EscapeSequenceArm2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	EscapeSequenceArm2.Built,
-	EscapeSequenceArm2.BuildArgs,
-	EscapeSequenceArm2.LooseArgs,
-	'content',
-	'escape_sequence_arm2'
-> {}
-export interface EscapeSequenceArm3Ns extends NodeNs<
-	EscapeSequenceArm3,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	EscapeSequenceArm3.Built,
-	EscapeSequenceArm3.BuildArgs,
-	EscapeSequenceArm3.LooseArgs,
-	'content',
-	'escape_sequence_arm3'
-> {}
-export interface EscapeSequenceArm4Ns extends NodeNs<
-	EscapeSequenceArm4,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	EscapeSequenceArm4.Built,
-	EscapeSequenceArm4.BuildArgs,
-	EscapeSequenceArm4.LooseArgs,
-	'content',
-	'escape_sequence_arm4'
-> {}
 export interface MacroRulesNs extends NodeNs<
 	MacroRules,
 	LeafScalarMap,
@@ -13859,6 +13757,116 @@ export interface TupleExpressionElementsNs extends NodeNs<
 	TupleExpressionElements.LooseArgs,
 	'element',
 	'_tuple_expression_elements'
+> {}
+export interface IntegerLiteralDecimalNs extends NodeNs<
+	IntegerLiteralDecimal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralDecimal.Built,
+	IntegerLiteralDecimal.BuildArgs,
+	IntegerLiteralDecimal.LooseArgs,
+	'content',
+	'integer_literal_decimal'
+> {}
+export interface IntegerLiteralHexNs extends NodeNs<
+	IntegerLiteralHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralHex.Built,
+	IntegerLiteralHex.BuildArgs,
+	IntegerLiteralHex.LooseArgs,
+	'content',
+	'integer_literal_hex'
+> {}
+export interface IntegerLiteralBinaryNs extends NodeNs<
+	IntegerLiteralBinary,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralBinary.Built,
+	IntegerLiteralBinary.BuildArgs,
+	IntegerLiteralBinary.LooseArgs,
+	'content',
+	'integer_literal_binary'
+> {}
+export interface IntegerLiteralOctalNs extends NodeNs<
+	IntegerLiteralOctal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	IntegerLiteralOctal.Built,
+	IntegerLiteralOctal.BuildArgs,
+	IntegerLiteralOctal.LooseArgs,
+	'content',
+	'integer_literal_octal'
+> {}
+export interface CharLiteralEscapedNs extends NodeNs<
+	CharLiteralEscaped,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralEscaped.Built,
+	CharLiteralEscaped.BuildArgs,
+	CharLiteralEscaped.LooseArgs,
+	'content',
+	'char_literal_escaped'
+> {}
+export interface CharLiteralPlainNs extends NodeNs<
+	CharLiteralPlain,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	CharLiteralPlain.Built,
+	CharLiteralPlain.BuildArgs,
+	CharLiteralPlain.LooseArgs,
+	'content',
+	'char_literal_plain'
+> {}
+export interface EscapeSequenceSimpleNs extends NodeNs<
+	EscapeSequenceSimple,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceSimple.Built,
+	EscapeSequenceSimple.BuildArgs,
+	EscapeSequenceSimple.LooseArgs,
+	'content',
+	'escape_sequence_simple'
+> {}
+export interface EscapeSequenceUnicodeFixedNs extends NodeNs<
+	EscapeSequenceUnicodeFixed,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceUnicodeFixed.Built,
+	EscapeSequenceUnicodeFixed.BuildArgs,
+	EscapeSequenceUnicodeFixed.LooseArgs,
+	'content',
+	'escape_sequence_unicode_fixed'
+> {}
+export interface EscapeSequenceUnicodeBracedNs extends NodeNs<
+	EscapeSequenceUnicodeBraced,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceUnicodeBraced.Built,
+	EscapeSequenceUnicodeBraced.BuildArgs,
+	EscapeSequenceUnicodeBraced.LooseArgs,
+	'content',
+	'escape_sequence_unicode_braced'
+> {}
+export interface EscapeSequenceHexNs extends NodeNs<
+	EscapeSequenceHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceHex.Built,
+	EscapeSequenceHex.BuildArgs,
+	EscapeSequenceHex.LooseArgs,
+	'content',
+	'escape_sequence_hex'
 > {}
 export interface ArrayExpressionSemiNs extends NodeNs<
 	ArrayExpressionSemi,
@@ -14646,6 +14654,13 @@ export interface StringLiteralOpenNs extends LeafNs<
 	StringLiteralOpenTree,
 	'_string_literal_open'
 > {}
+export interface CharLiteralEmptyNs extends LeafNs<
+	CharLiteralEmpty,
+	string,
+	CharLiteralEmpty.Built,
+	CharLiteralEmptyTree,
+	'char_literal_empty'
+> {}
 export interface LineCommentRegularDslashNs extends LeafNs<
 	LineCommentRegularDslash,
 	string,
@@ -14845,16 +14860,6 @@ export interface NamespaceMap {
 	[TSKindId.BlockComment]: BlockCommentNs;
 	[TSKindId.Shebang]: ShebangNs;
 	[TSKindId.Metavariable]: MetavariableNs;
-	[TSKindId.IntegerLiteralArm1]: IntegerLiteralArm1Ns;
-	[TSKindId.IntegerLiteralArm2]: IntegerLiteralArm2Ns;
-	[TSKindId.IntegerLiteralArm3]: IntegerLiteralArm3Ns;
-	[TSKindId.IntegerLiteralArm4]: IntegerLiteralArm4Ns;
-	[TSKindId.CharLiteralArm1]: CharLiteralArm1Ns;
-	[TSKindId.CharLiteralArm2]: CharLiteralArm2Ns;
-	[TSKindId.EscapeSequenceArm1]: EscapeSequenceArm1Ns;
-	[TSKindId.EscapeSequenceArm2]: EscapeSequenceArm2Ns;
-	[TSKindId.EscapeSequenceArm3]: EscapeSequenceArm3Ns;
-	[TSKindId.EscapeSequenceArm4]: EscapeSequenceArm4Ns;
 	[TSKindId.MacroRules]: MacroRulesNs;
 	[TSKindId.EnumVariantListElements]: EnumVariantListElementsNs;
 	[TSKindId.FieldDeclarationListElements]: FieldDeclarationListElementsNs;
@@ -14875,6 +14880,16 @@ export interface NamespaceMap {
 	[TSKindId.VisibilityModifierGroup]: VisibilityModifierGroupNs;
 	[TSKindId.TupleTypeElements]: TupleTypeElementsNs;
 	[TSKindId.TupleExpressionElements]: TupleExpressionElementsNs;
+	[TSKindId.IntegerLiteralDecimal]: IntegerLiteralDecimalNs;
+	[TSKindId.IntegerLiteralHex]: IntegerLiteralHexNs;
+	[TSKindId.IntegerLiteralBinary]: IntegerLiteralBinaryNs;
+	[TSKindId.IntegerLiteralOctal]: IntegerLiteralOctalNs;
+	[TSKindId.CharLiteralEscaped]: CharLiteralEscapedNs;
+	[TSKindId.CharLiteralPlain]: CharLiteralPlainNs;
+	[TSKindId.EscapeSequenceSimple]: EscapeSequenceSimpleNs;
+	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixedNs;
+	[TSKindId.EscapeSequenceUnicodeBraced]: EscapeSequenceUnicodeBracedNs;
+	[TSKindId.EscapeSequenceHex]: EscapeSequenceHexNs;
 	[TSKindId.ArrayExpressionSemi]: ArrayExpressionSemiNs;
 	[TSKindId.ArrayExpressionList]: ArrayExpressionListNs;
 	[TSKindId.AttributeInput]: AttributeInputNs;
@@ -14963,6 +14978,7 @@ export interface NamespaceMap {
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
+	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
 	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
 	[TSKindId.LineCommentContent]: LineCommentContentNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
@@ -17521,256 +17537,6 @@ export namespace Metavariable {
 	export type Tree = TreeFor<TSKindId.Metavariable>;
 	export type Kind = 'metavariable';
 }
-export namespace IntegerLiteralArm1 {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralArm1>;
-	export interface Built extends T.IntegerLiteralArm1, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.IntegerLiteralArm1.Built;
-			suffix(
-				value?:
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-			): T.IntegerLiteralArm1.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralArm1>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralArm1>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IntegerLiteralArm1, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IntegerLiteralArm1
-	];
-	export type Tree = TreeFor<TSKindId.IntegerLiteralArm1>;
-	export type Kind = 'integer_literal_arm1';
-}
-export namespace IntegerLiteralArm2 {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralArm2>;
-	export interface Built extends T.IntegerLiteralArm2, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.IntegerLiteralArm2.Built;
-			suffix(
-				value?:
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-			): T.IntegerLiteralArm2.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralArm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralArm2>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralArm2>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IntegerLiteralArm2, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IntegerLiteralArm2
-	];
-	export type Tree = TreeFor<TSKindId.IntegerLiteralArm2>;
-	export type Kind = 'integer_literal_arm2';
-}
-export namespace IntegerLiteralArm3 {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralArm3>;
-	export interface Built extends T.IntegerLiteralArm3, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.IntegerLiteralArm3.Built;
-			suffix(
-				value?:
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-			): T.IntegerLiteralArm3.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralArm3>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralArm3>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralArm3>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IntegerLiteralArm3, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IntegerLiteralArm3
-	];
-	export type Tree = TreeFor<TSKindId.IntegerLiteralArm3>;
-	export type Kind = 'integer_literal_arm3';
-}
-export namespace IntegerLiteralArm4 {
-	export type Config = ConfigFor<TSKindId.IntegerLiteralArm4>;
-	export interface Built extends T.IntegerLiteralArm4, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.IntegerLiteralArm4.Built;
-			suffix(
-				value?:
-					| 'u8'
-					| 'i8'
-					| 'u16'
-					| 'i16'
-					| 'u32'
-					| 'i32'
-					| 'u64'
-					| 'i64'
-					| 'u128'
-					| 'i128'
-					| 'isize'
-					| 'usize'
-					| 'f32'
-					| 'f64'
-			): T.IntegerLiteralArm4.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.IntegerLiteralArm4>;
-	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralArm4>;
-	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralArm4>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IntegerLiteralArm4, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IntegerLiteralArm4
-	];
-	export type Tree = TreeFor<TSKindId.IntegerLiteralArm4>;
-	export type Kind = 'integer_literal_arm4';
-}
-export namespace CharLiteralArm1 {
-	export type Config = ConfigFor<TSKindId.CharLiteralArm1>;
-	export interface Built extends T.CharLiteralArm1, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			b(value?: NonNullable<T.CharLiteralArm1.Config>['b']): T.CharLiteralArm1.Built;
-			content(value: string): T.CharLiteralArm1.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.CharLiteralArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralArm1>;
-	export type BuildArgs = [config: ConfigOf<T.CharLiteralArm1>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.CharLiteralArm1, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CharLiteralArm1
-	];
-	export type Tree = TreeFor<TSKindId.CharLiteralArm1>;
-	export type Kind = 'char_literal_arm1';
-}
-export namespace CharLiteralArm2 {
-	export type Config = ConfigFor<TSKindId.CharLiteralArm2>;
-	export interface Built extends T.CharLiteralArm2, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			b(value?: NonNullable<T.CharLiteralArm2.Config>['b']): T.CharLiteralArm2.Built;
-			content(value: string): T.CharLiteralArm2.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.CharLiteralArm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralArm2>;
-	export type BuildArgs = [config: ConfigOf<T.CharLiteralArm2>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.CharLiteralArm2, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CharLiteralArm2
-	];
-	export type Tree = TreeFor<TSKindId.CharLiteralArm2>;
-	export type Kind = 'char_literal_arm2';
-}
-export namespace EscapeSequenceArm1 {
-	export type Config = ConfigFor<TSKindId.EscapeSequenceArm1>;
-	export interface Built extends T.EscapeSequenceArm1, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.EscapeSequenceArm1.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.EscapeSequenceArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceArm1>;
-	export type BuildArgs = [value: string];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EscapeSequenceArm1>;
-	export type Kind = 'escape_sequence_arm1';
-}
-export namespace EscapeSequenceArm2 {
-	export type Config = ConfigFor<TSKindId.EscapeSequenceArm2>;
-	export interface Built extends T.EscapeSequenceArm2, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.EscapeSequenceArm2.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.EscapeSequenceArm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceArm2>;
-	export type BuildArgs = [value: string];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EscapeSequenceArm2>;
-	export type Kind = 'escape_sequence_arm2';
-}
-export namespace EscapeSequenceArm3 {
-	export type Config = ConfigFor<TSKindId.EscapeSequenceArm3>;
-	export interface Built extends T.EscapeSequenceArm3, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.EscapeSequenceArm3.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.EscapeSequenceArm3>;
-	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceArm3>;
-	export type BuildArgs = [value: string];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EscapeSequenceArm3>;
-	export type Kind = 'escape_sequence_arm3';
-}
-export namespace EscapeSequenceArm4 {
-	export type Config = ConfigFor<TSKindId.EscapeSequenceArm4>;
-	export interface Built extends T.EscapeSequenceArm4, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.EscapeSequenceArm4.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.EscapeSequenceArm4>;
-	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceArm4>;
-	export type BuildArgs = [value: string];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.EscapeSequenceArm4>;
-	export type Kind = 'escape_sequence_arm4';
-}
 export namespace MacroRules {
 	export type Config = ConfigFor<TSKindId.MacroRules>;
 	export interface Built extends T.MacroRules, NodeMethodsOf {
@@ -18381,6 +18147,258 @@ export namespace TupleExpressionElements {
 	];
 	export type Tree = TreeFor<TSKindId.TupleExpressionElements>;
 	export type Kind = '_tuple_expression_elements';
+}
+export namespace IntegerLiteralDecimal {
+	export type Config = ConfigFor<TSKindId.IntegerLiteralDecimal>;
+	export interface Built extends T.IntegerLiteralDecimal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.IntegerLiteralDecimal.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralDecimal.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.IntegerLiteralDecimal>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralDecimal>;
+	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralDecimal>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.IntegerLiteralDecimal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.IntegerLiteralDecimal
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralDecimal>;
+	export type Kind = 'integer_literal_decimal';
+}
+export namespace IntegerLiteralHex {
+	export type Config = ConfigFor<TSKindId.IntegerLiteralHex>;
+	export interface Built extends T.IntegerLiteralHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.IntegerLiteralHex.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralHex.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.IntegerLiteralHex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralHex>;
+	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralHex>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.IntegerLiteralHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.IntegerLiteralHex
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralHex>;
+	export type Kind = 'integer_literal_hex';
+}
+export namespace IntegerLiteralBinary {
+	export type Config = ConfigFor<TSKindId.IntegerLiteralBinary>;
+	export interface Built extends T.IntegerLiteralBinary, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.IntegerLiteralBinary.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralBinary.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.IntegerLiteralBinary>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralBinary>;
+	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralBinary>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.IntegerLiteralBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.IntegerLiteralBinary
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralBinary>;
+	export type Kind = 'integer_literal_binary';
+}
+export namespace IntegerLiteralOctal {
+	export type Config = ConfigFor<TSKindId.IntegerLiteralOctal>;
+	export interface Built extends T.IntegerLiteralOctal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.IntegerLiteralOctal.Built;
+			suffix(
+				value?:
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+			): T.IntegerLiteralOctal.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.IntegerLiteralOctal>;
+	export type LooseConfig = LooseConfigFor<TSKindId.IntegerLiteralOctal>;
+	export type BuildArgs = [config: ConfigOf<T.IntegerLiteralOctal>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.IntegerLiteralOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.IntegerLiteralOctal
+	];
+	export type Tree = TreeFor<TSKindId.IntegerLiteralOctal>;
+	export type Kind = 'integer_literal_octal';
+}
+export namespace CharLiteralEscaped {
+	export type Config = ConfigFor<TSKindId.CharLiteralEscaped>;
+	export interface Built extends T.CharLiteralEscaped, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralEscaped.Config>['b']): T.CharLiteralEscaped.Built;
+			content(value: string): T.CharLiteralEscaped.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralEscaped>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralEscaped>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralEscaped>];
+	export type LooseArgs = [
+		config:
+			| LooseConfigOf<T.CharLiteralEscaped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| T.CharLiteralEscaped
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralEscaped>;
+	export type Kind = 'char_literal_escaped';
+}
+export namespace CharLiteralPlain {
+	export type Config = ConfigFor<TSKindId.CharLiteralPlain>;
+	export interface Built extends T.CharLiteralPlain, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			b(value?: NonNullable<T.CharLiteralPlain.Config>['b']): T.CharLiteralPlain.Built;
+			content(value: string): T.CharLiteralPlain.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.CharLiteralPlain>;
+	export type LooseConfig = LooseConfigFor<TSKindId.CharLiteralPlain>;
+	export type BuildArgs = [config: ConfigOf<T.CharLiteralPlain>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.CharLiteralPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CharLiteralPlain
+	];
+	export type Tree = TreeFor<TSKindId.CharLiteralPlain>;
+	export type Kind = 'char_literal_plain';
+}
+export namespace EscapeSequenceSimple {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceSimple>;
+	export interface Built extends T.EscapeSequenceSimple, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceSimple.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceSimple>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceSimple>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceSimple>;
+	export type Kind = 'escape_sequence_simple';
+}
+export namespace EscapeSequenceUnicodeFixed {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export interface Built extends T.EscapeSequenceUnicodeFixed, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceUnicodeFixed.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceUnicodeFixed>;
+	export type Kind = 'escape_sequence_unicode_fixed';
+}
+export namespace EscapeSequenceUnicodeBraced {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export interface Built extends T.EscapeSequenceUnicodeBraced, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceUnicodeBraced.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceUnicodeBraced>;
+	export type Kind = 'escape_sequence_unicode_braced';
+}
+export namespace EscapeSequenceHex {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceHex>;
+	export interface Built extends T.EscapeSequenceHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.EscapeSequenceHex.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceHex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceHex>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.EscapeSequenceHex>;
+	export type Kind = 'escape_sequence_hex';
 }
 export namespace ArrayExpressionSemi {
 	export type Config = ConfigFor<TSKindId.ArrayExpressionSemi>;
@@ -20011,6 +20029,21 @@ export namespace StringLiteralOpen {
 	export type LooseArgs = StringLiteralOpenNs['LooseArgs'];
 	export type Tree = StringLiteralOpenNs['Tree'];
 	export type Kind = '_string_literal_open';
+}
+export namespace CharLiteralEmpty {
+	export type Config = CharLiteralEmptyNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = CharLiteralEmptyNs['Loose'];
+	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
+	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
+	export type LooseArgs = CharLiteralEmptyNs['LooseArgs'];
+	export type Tree = CharLiteralEmptyNs['Tree'];
+	export type Kind = 'char_literal_empty';
 }
 export namespace LineCommentRegularDslash {
 	export type Config = LineCommentRegularDslashNs['Config'];

@@ -5059,86 +5059,86 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "escape_sequence_arm1",
+          "name": "escape_sequence_unicode_fixed",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm1",
+            "variant": "unicode_fixed",
+            "variantOf": "escape_sequence"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "escape_sequence_unicode_wide",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "unicode_wide",
+            "variantOf": "escape_sequence"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "escape_sequence_hex",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "hex",
+            "variantOf": "escape_sequence"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "escape_sequence_octal",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "octal",
+            "variantOf": "escape_sequence"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "escape_sequence_line_break",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "line_break",
+            "variantOf": "escape_sequence"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "escape_sequence_simple",
+          "metadata": {
+            "author": "enrich",
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "simple",
             "variantOf": "escape_sequence",
             "default": true
           }
         },
         {
           "type": "SYMBOL",
-          "name": "escape_sequence_arm2",
+          "name": "escape_sequence_named",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm2",
-            "variantOf": "escape_sequence"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence_arm3",
-          "metadata": {
-            "author": "enrich",
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm3",
-            "variantOf": "escape_sequence"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence_arm4",
-          "metadata": {
-            "author": "enrich",
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm4",
-            "variantOf": "escape_sequence"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence_arm5",
-          "metadata": {
-            "author": "enrich",
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm5",
-            "variantOf": "escape_sequence"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence_arm6",
-          "metadata": {
-            "author": "enrich",
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm6",
-            "variantOf": "escape_sequence"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence_arm7",
-          "metadata": {
-            "author": "enrich",
-            "symbolSource": "group-lift"
-          },
-          "annotations": {
-            "variant": "arm7",
+            "variant": "named",
             "variantOf": "escape_sequence"
           }
         }
@@ -5197,49 +5197,49 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "integer_arm1",
+          "name": "integer_hex",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm1",
+            "variant": "hex",
             "variantOf": "integer"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "integer_arm2",
+          "name": "integer_octal",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm2",
+            "variant": "octal",
             "variantOf": "integer"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "integer_arm3",
+          "name": "integer_binary",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm3",
+            "variant": "binary",
             "variantOf": "integer"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "integer_arm4",
+          "name": "integer_decimal",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm4",
+            "variant": "decimal",
             "variantOf": "integer",
             "default": true
           }
@@ -5251,38 +5251,38 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "float_arm1",
+          "name": "float_point",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm1",
+            "variant": "point",
             "variantOf": "float",
             "default": true
           }
         },
         {
           "type": "SYMBOL",
-          "name": "float_arm2",
+          "name": "float_leading_point",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm2",
+            "variant": "leading_point",
             "variantOf": "float"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "float_arm3",
+          "name": "float_exponent",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm3",
+            "variant": "exponent",
             "variantOf": "float"
           }
         }
@@ -5402,26 +5402,26 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "line_continuation_arm1",
+          "name": "line_continuation_newline",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm1",
+            "variant": "newline",
             "variantOf": "line_continuation",
             "default": true
           }
         },
         {
           "type": "SYMBOL",
-          "name": "line_continuation_arm2",
+          "name": "line_continuation_nul",
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm2",
+            "variant": "nul",
             "variantOf": "line_continuation"
           }
         }
@@ -5459,6 +5459,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5482,6 +5483,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5505,6 +5507,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5528,6 +5531,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5551,6 +5555,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5574,6 +5579,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5597,6 +5603,7 @@
         }
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5640,6 +5647,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5683,6 +5691,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5726,6 +5735,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5773,6 +5783,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5851,6 +5862,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5929,6 +5941,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -5980,6 +5993,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -6016,6 +6030,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -6035,6 +6050,7 @@
         ]
       },
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       }
     },
@@ -7600,6 +7616,621 @@
         }
       ]
     },
+    "integer_hex": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "0x"
+              },
+              {
+                "type": "STRING",
+                "value": "0X"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[A-Fa-f0-9]+"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[Ll]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_octal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "0o"
+              },
+              {
+                "type": "STRING",
+                "value": "0O"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-7]+"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[Ll]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_binary": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "0b"
+              },
+              {
+                "type": "STRING",
+                "value": "0B"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "_?[0-1]+"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[Ll]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "integer_decimal": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "[0-9]+_?"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[Ll]"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[jJ]"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "float_point": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[0-9]+_?"
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]+_?"
+                    }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[eE][\\+-]?"
+                      },
+                      {
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[0-9]+_?"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[jJ]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "float_leading_point": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]+_?"
+                    }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[0-9]+_?"
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "PATTERN",
+                        "value": "[eE][\\+-]?"
+                      },
+                      {
+                        "type": "REPEAT1",
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[0-9]+_?"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[jJ]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "float_exponent": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[0-9]+_?"
+                }
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[eE][\\+-]?"
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]+_?"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[jJ]"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_unicode_fixed": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "u[a-fA-F\\d]{4}"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_unicode_wide": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "U[a-fA-F\\d]{8}"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_hex": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "x[a-fA-F\\d]{2}"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_octal": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\d{1,3}"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_line_break": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "\\r?\\n"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_simple": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "['\"abfrntv\\\\]"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "escape_sequence_named": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\\"
+            },
+            {
+              "type": "PATTERN",
+              "value": "N\\{[^}]+\\}"
+            }
+          ]
+        }
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "line_continuation_newline": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "\r"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "STRING",
+                "value": "\n"
+              }
+            ]
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
+    "line_continuation_nul": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "STRING",
+            "value": "\u0000"
+          }
+        ]
+      },
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      }
+    },
     "_kw_real": {
       "type": "STRING",
       "value": "-"
@@ -8147,11 +8778,11 @@
     },
     {
       "type": "SYMBOL",
-      "name": "line_continuation_arm1"
+      "name": "line_continuation_newline"
     },
     {
       "type": "SYMBOL",
-      "name": "line_continuation_arm2"
+      "name": "line_continuation_nul"
     }
   ],
   "conflicts": [
@@ -8209,115 +8840,115 @@
     ],
     [
       "escape_sequence",
-      "escape_sequence_arm1"
+      "escape_sequence_unicode_fixed"
     ],
     [
-      "escape_sequence_arm1"
-    ],
-    [
-      "escape_sequence",
-      "escape_sequence_arm2"
-    ],
-    [
-      "escape_sequence_arm2"
+      "escape_sequence_unicode_fixed"
     ],
     [
       "escape_sequence",
-      "escape_sequence_arm3"
+      "escape_sequence_unicode_wide"
     ],
     [
-      "escape_sequence_arm3"
-    ],
-    [
-      "escape_sequence",
-      "escape_sequence_arm4"
-    ],
-    [
-      "escape_sequence_arm4"
+      "escape_sequence_unicode_wide"
     ],
     [
       "escape_sequence",
-      "escape_sequence_arm5"
+      "escape_sequence_hex"
     ],
     [
-      "escape_sequence_arm5"
-    ],
-    [
-      "escape_sequence",
-      "escape_sequence_arm6"
-    ],
-    [
-      "escape_sequence_arm6"
+      "escape_sequence_hex"
     ],
     [
       "escape_sequence",
-      "escape_sequence_arm7"
+      "escape_sequence_octal"
     ],
     [
-      "escape_sequence_arm7"
+      "escape_sequence_octal"
+    ],
+    [
+      "escape_sequence",
+      "escape_sequence_line_break"
+    ],
+    [
+      "escape_sequence_line_break"
+    ],
+    [
+      "escape_sequence",
+      "escape_sequence_simple"
+    ],
+    [
+      "escape_sequence_simple"
+    ],
+    [
+      "escape_sequence",
+      "escape_sequence_named"
+    ],
+    [
+      "escape_sequence_named"
     ],
     [
       "integer",
-      "integer_arm1"
+      "integer_hex"
     ],
     [
-      "integer_arm1"
-    ],
-    [
-      "integer",
-      "integer_arm2"
-    ],
-    [
-      "integer_arm2"
+      "integer_hex"
     ],
     [
       "integer",
-      "integer_arm3"
+      "integer_octal"
     ],
     [
-      "integer_arm3"
+      "integer_octal"
     ],
     [
       "integer",
-      "integer_arm4"
+      "integer_binary"
     ],
     [
-      "integer_arm4"
+      "integer_binary"
+    ],
+    [
+      "integer",
+      "integer_decimal"
+    ],
+    [
+      "integer_decimal"
     ],
     [
       "float",
-      "float_arm1"
+      "float_point"
     ],
     [
-      "float_arm1"
-    ],
-    [
-      "float",
-      "float_arm2"
-    ],
-    [
-      "float_arm2"
+      "float_point"
     ],
     [
       "float",
-      "float_arm3"
+      "float_leading_point"
     ],
     [
-      "float_arm3"
+      "float_leading_point"
+    ],
+    [
+      "float",
+      "float_exponent"
+    ],
+    [
+      "float_exponent"
     ],
     [
       "line_continuation",
-      "line_continuation_arm1"
+      "line_continuation_newline"
     ],
     [
-      "line_continuation_arm1"
+      "line_continuation_newline"
     ],
     [
       "line_continuation",
-      "line_continuation_arm2"
+      "line_continuation_nul"
     ],
     [
-      "line_continuation_arm2"
+      "line_continuation_nul"
     ],
     [
       "_statement",

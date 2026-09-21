@@ -178,7 +178,7 @@ export function emitIr(config: EmitIrConfig): string {
 		for (const subKind of sup.subtypeNames) {
 			if (subKind.startsWith('_')) continue;
 			const sub = nodeMap.nodes.get(subKind);
-			if (!sub?.rawFactoryName || sub.factoryInline) continue;
+			if (!sub?.rawFactoryName || sub.factoryInline || sub.annotations?.tokenForm === true) continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
 			const alias = memberKeyFor(subKind, kind);
 			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
@@ -215,7 +215,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Keyword factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!isVisibleTextLeaf(node) || !isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
+		if (!isVisibleTextLeaf(node) || !isFlatLeafOrKeyword(kind, node, kindEntries) || node.annotations?.tokenForm === true) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 		irTypeMembers.push(`  readonly ${node.irKey}: typeof F.${node.rawFactoryName};`);
@@ -224,7 +224,7 @@ export function emitIr(config: EmitIrConfig): string {
 
 	irValueLines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledPattern)) continue;
+		if (!(node instanceof AssembledPattern) || node.annotations?.tokenForm === true) continue;
 		if (!isFlatLeafOrKeyword(kind, node, kindEntries)) continue;
 		if (usedGroupNames.has(node.irKey!)) continue;
 		irValueLines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);

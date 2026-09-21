@@ -752,7 +752,7 @@ function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
 function variant(name, options) {
-  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {} };
+  return { __sittirPlaceholder: "variant", name, ...options?.absent === true ? { absent: true } : {}, ...options?.default === true ? { default: true } : {} };
 }
 function variantMintName(v) {
   return [...v.nestedUnder ?? [], v.name].join("_");
@@ -1610,6 +1610,13 @@ function findOutermostForms(rule, path) {
     }
     return void 0;
   }
+  if (t === "OPTIONAL") {
+    const inner = contentOf2(rule);
+    if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === "forms") {
+      return { path, arms: [...membersOf2(inner), BLANK] };
+    }
+    return void 0;
+  }
   if (isSeqType(t)) {
     const members = membersOf2(rule);
     for (let i = 0; i < members.length; i++) {
@@ -1630,6 +1637,7 @@ function replaceAt(rule, path, arm2) {
   }
   return rebuilt(rule, { content: replaceAt(contentOf2(rule), rest, arm2) });
 }
+var BLANK = { type: "BLANK" };
 var EMPTY_SEQ = { type: "SEQ", members: [] };
 function dropAt(rule, path) {
   if (path.length === 0) return EMPTY_SEQ;
@@ -1873,7 +1881,7 @@ function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedu
   }
   const arms = core.members;
   const members = arms.map((arm2, i) => {
-    const minted = visibleGroupSynthName(arm2, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, void 0, void 0, "arm");
+    const minted = visibleGroupSynthName(withAnnotations(arm2, { tokenForm: true }), parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, void 0, void 0, "arm");
     if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
     visibleGroupSources.add(minted);
     if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
@@ -1898,9 +1906,10 @@ function replaceExtras(result, replacements) {
   const current = result.extras;
   const replaced = (entries, dollar) => entries.flatMap((entry) => {
     const isSymbol = entry?.type === "SYMBOL";
-    const arms = isSymbol ? replacements.get(entry.name) : void 0;
+    const named = typeof entry === "string" ? entry : isSymbol ? entry.name : void 0;
+    const arms = named === void 0 ? void 0 : replacements.get(named);
     if (arms === void 0) return [entry];
-    return arms.map((arm2) => dollar === void 0 ? { type: "SYMBOL", name: arm2 } : dollar[arm2]);
+    return arms.map((arm2) => typeof entry === "string" ? arm2 : dollar === void 0 ? { type: "SYMBOL", name: arm2 } : dollar[arm2]);
   });
   if (typeof current === "function") {
     const fn = current;
@@ -1930,18 +1939,32 @@ function annotateTokenFormArms(parent, rules) {
   rules[parent] = out;
 }
 function defaultTokenFormArm(members, rules) {
-  const leadsWithLiteral = (rule) => {
-    if (rule === void 0) return false;
+  const measure = (rule) => {
+    if (rule === void 0) return { leaves: 0, patterns: 0, enums: 0 };
     const t = rule.type ?? "";
-    if (t === "STRING") return true;
-    if (t === "SEQ") return leadsWithLiteral(rule.members[0]);
-    if (t === "CHOICE") return rule.members.every(leadsWithLiteral);
-    const inner = rule.content;
-    if (inner !== void 0) return leadsWithLiteral(inner);
-    return false;
+    if (t === "PATTERN") return { leaves: 1, patterns: 1, enums: 0 };
+    if (t === "STRING") return { leaves: 1, patterns: 0, enums: 0 };
+    const kids = rule.members ?? [rule.content];
+    const own = t === "CHOICE" && kids.every((kid) => kid?.type === "STRING") ? 1 : 0;
+    return kids.reduce(
+      (acc, kid) => {
+        const m = measure(kid);
+        return { leaves: acc.leaves + m.leaves, patterns: acc.patterns + m.patterns, enums: acc.enums + m.enums };
+      },
+      { leaves: 0, patterns: 0, enums: own }
+    );
   };
-  const open = members.findIndex((m) => !leadsWithLiteral(rules[m.name ?? ""]));
-  return open < 0 ? 0 : open;
+  let best = -1;
+  let bestScore = [Infinity, Infinity];
+  members.forEach((member, i) => {
+    const m = measure(rules[member.name ?? ""]);
+    if (m.patterns === 0) return;
+    if (m.enums < bestScore[0] || m.enums === bestScore[0] && m.leaves < bestScore[1]) {
+      best = i;
+      bestScore = [m.enums, m.leaves];
+    }
+  });
+  return best < 0 ? 0 : best;
 }
 function addSupertypes(result, names) {
   if (names.length === 0) return;
@@ -4135,7 +4158,7 @@ function wire(config, base2) {
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
   const renamedCallbacks = Object.fromEntries(
-    ["extras", "externals", "precedences"].filter((key) => key in cfg).map((key) => [key, renamingCallback(cfg[key], renameRule, context)])
+    ["extras", "externals", "precedences"].filter((key) => key in cfg || baseDeclares(baseArg, key)).map((key) => [key, renamingCallback(cfg[key], renameNameList, context)])
   );
   const wired = {
     ...cfg,
@@ -4161,6 +4184,10 @@ function renamingReserved(reserved, context) {
       typeof list === "function" ? renamingCallback(list, renameRule, context) : renameRule(list, context.symbolRenames)
     ])
   );
+}
+function baseDeclares(base2, key) {
+  const grammar2 = base2?.grammar ?? base2;
+  return grammar2?.[key] !== void 0;
 }
 function renamingCallback(user, rename, context) {
   return function renamed($, previous) {
@@ -4825,9 +4852,33 @@ function applyPathPatches(original, patches) {
     const segments = parsePath(String(key));
     if (isArmDefault(value)) assertChoiceArmPath(rule, String(key), segments);
     rule = applyPath(rule, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    if (isArmDefault(value)) rule = clearSiblingDefaults(rule, segments);
   }
   if (variantEntries.length > 0) rule = applyVariantPatches(rule, variantEntries);
+  for (const [key, value] of variantEntries) {
+    if (value.default === true) rule = clearSiblingDefaults(rule, parsePath(key));
+  }
   return rule;
+}
+function clearSiblingDefaults(rule, segments) {
+  const last = segments[segments.length - 1];
+  if (last?.kind !== "index") return rule;
+  return applyPath(rule, segments.slice(0, -1), (parent) => {
+    const members = parent.members;
+    if (members === void 0) return parent;
+    return {
+      ...parent,
+      members: members.map((m, i) => i === last.value || !isDefaultArm(m) ? m : dropDefault(m))
+    };
+  });
+}
+function dropDefault(rule) {
+  const strip = (node2) => {
+    const { default: _drop, ...rest } = node2.annotations ?? {};
+    return { ...node2, annotations: rest };
+  };
+  const node = rule;
+  return node.type === "ALIAS" && node.content !== void 0 ? { ...rule, content: strip(node.content) } : strip(rule);
 }
 function assertChoiceArmPath(rule, key, segments) {
   applyPath(rule, segments.slice(0, -1), (parent) => {
@@ -4862,7 +4913,12 @@ function applyVariantPatches(rule, variantEntries) {
   for (const [key, value] of ordered) {
     if (hoisted?.consumed.has(key)) continue;
     const segments = parsePath(key);
-    result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    try {
+      result = applyPath(result, segments, (member, precStack) => resolvePatch(value, member, precStack));
+    } catch (error) {
+      if (error instanceof Error) error.message = `${wireGetCurrentRuleKind()} patch ${key}: ${error.message}`;
+      throw error;
+    }
   }
   registerIfPureVariantChoice(result);
   return result;
@@ -5202,7 +5258,7 @@ function resolvePatch(patch, originalMember, precStack) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
     const name = polymorphVisibleName(parentKind, variantMintName(patch));
-    const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind);
+    const annotated = (rule) => withVariantAnnotation(rule, patch.name, parentKind, patch.default === true ? { annotations: { default: true } } : void 0);
     const lift = enrichLiftArmOf(originalMember);
     if (lift !== null) return annotated(renameEnrichLift(originalMember, lift, name, name));
     if (originalMember.type === "ALIAS") {
@@ -5815,6 +5871,13 @@ var grammar_sittir_default = grammar(
           "1/0/2": { type: "STRING", value: "*/" },
           0: variant("line"),
           1: variant("block")
+        },
+        number: {
+          0: variant("hex"),
+          1: variant("decimal", { default: true }),
+          2: variant("binary"),
+          3: variant("octal"),
+          4: variant("bigint")
         },
         hash_bang_line: { ".": regex(/#!(?<content>.*)/) },
         binary_expression: {

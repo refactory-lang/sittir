@@ -1,6 +1,6 @@
 # Token forms: a lexeme's alternation becomes parser kinds
 
-Status: Approved design, not implemented.
+Status: Implemented.
 
 ## Problem
 

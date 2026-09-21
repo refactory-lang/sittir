@@ -371,8 +371,8 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 
 	const renamedCallbacks = Object.fromEntries(
 		(['extras', 'externals', 'precedences'] as const)
-			.filter((key) => key in cfg)
-			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameRule, context)])
+			.filter((key) => key in cfg || baseDeclares(baseArg, key))
+			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameNameList, context)])
 	);
 
 	const wired = {
@@ -402,6 +402,11 @@ function renamingReserved(reserved: unknown, context: WireContext): unknown {
 				: renameRule(list, context.symbolRenames)
 		])
 	);
+}
+
+function baseDeclares(base: BaseArg | undefined, key: string): boolean {
+	const grammar = (base?.grammar ?? base) as Record<string, unknown> | undefined;
+	return grammar?.[key] !== undefined;
 }
 
 function renamingCallback<F extends (...args: never[]) => unknown>(

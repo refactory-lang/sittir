@@ -601,13 +601,11 @@ export const ir: {
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
-	readonly numberArm2: typeof F.buildNumberArm2;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly templateChars: typeof F.buildTemplateChars;
 	readonly abstractClass: typeof F.abstractClassDeclaration;
 	readonly ambient: typeof F.ambientDeclaration;
-	readonly arm2: typeof F.buildNumberArm2;
 	readonly as: typeof F.asExpression;
 	readonly assignment: typeof F.assignmentExpression;
 	readonly augmentedAssignment: typeof F.augmentedAssignmentExpression;
@@ -895,7 +893,6 @@ export const ir: {
 	unescapedSingleStringFragment: F.buildUnescapedSingleStringFragment,
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
-	numberArm2: F.buildNumberArm2,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 	templateChars: F.buildTemplateChars,
@@ -903,7 +900,6 @@ export const ir: {
 	// Supertype-stripped short aliases
 	abstractClass: F.abstractClassDeclaration,
 	ambient: F.ambientDeclaration,
-	arm2: F.buildNumberArm2,
 	as: F.asExpression,
 	assignment: F.assignmentExpression,
 	augmentedAssignment: F.augmentedAssignmentExpression,

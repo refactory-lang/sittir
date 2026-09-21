@@ -58,6 +58,12 @@ describe('distributeTokenForms', () => {
 			)
 		);
 	});
+	it('an OPTIONAL wrapping a form alternation hoists exactly as the choice-with-blank spelling does', () => {
+		const forms = choice(seq(S('\\'), P('[a-z]')), P("[^']"));
+		const viaChoice = distributeTokenForms(token(seq(S("'"), choice(forms, BLANK), S("'"))), 'c');
+		const viaOptional = distributeTokenForms(token(seq(S("'"), { type: 'OPTIONAL', content: forms } as unknown as RuntimeRule, S("'"))), 'c');
+		expect(shape(viaOptional)).toEqual(shape(viaChoice));
+	});
 	it('does not descend into an arm that is itself an alternation', () => {
 		const dec = choice(seq(P('\\d+'), S('.')), P('\\d+'));
 		const out = distributeTokenForms(token(choice(P('[a-z]+'), dec)), 'demo') as unknown as { members: RuntimeRule[] };

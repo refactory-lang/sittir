@@ -138,25 +138,25 @@ pub const SUPER: KindId = KindId(127);
 pub const CRATE: KindId = KindId(128);
 pub const METAVARIABLE: KindId = KindId(129);
 pub const MOVE_KEYWORD: KindId = KindId(130);
-pub const INTEGER_LITERAL_ARM1: KindId = KindId(131);
-pub const INTEGER_LITERAL_ARM2: KindId = KindId(132);
-pub const INTEGER_LITERAL_ARM3: KindId = KindId(133);
-pub const INTEGER_LITERAL_ARM4: KindId = KindId(134);
-pub const CHAR_LITERAL_ARM1: KindId = KindId(135);
-pub const CHAR_LITERAL_ARM2: KindId = KindId(136);
-pub const CHAR_LITERAL_ARM3: KindId = KindId(137);
-pub const ESCAPE_SEQUENCE_ARM1: KindId = KindId(138);
-pub const ESCAPE_SEQUENCE_ARM2: KindId = KindId(139);
-pub const ESCAPE_SEQUENCE_ARM3: KindId = KindId(140);
-pub const ESCAPE_SEQUENCE_ARM4: KindId = KindId(141);
-pub const COMMA: KindId = KindId(142);
-pub const DASH_GT: KindId = KindId(143);
-pub const UNDERSCORE: KindId = KindId(144);
-pub const DOT_DOT_EQ: KindId = KindId(145);
-pub const MOD_KEYWORD: KindId = KindId(146);
-pub const PUB_KEYWORD: KindId = KindId(147);
-pub const STRUCT_KEYWORD: KindId = KindId(148);
-pub const _STRING_LITERAL_OPEN: KindId = KindId(149);
+pub const COMMA: KindId = KindId(131);
+pub const DASH_GT: KindId = KindId(132);
+pub const UNDERSCORE: KindId = KindId(133);
+pub const DOT_DOT_EQ: KindId = KindId(134);
+pub const MOD_KEYWORD: KindId = KindId(135);
+pub const PUB_KEYWORD: KindId = KindId(136);
+pub const STRUCT_KEYWORD: KindId = KindId(137);
+pub const _STRING_LITERAL_OPEN: KindId = KindId(138);
+pub const INTEGER_LITERAL_DECIMAL: KindId = KindId(139);
+pub const INTEGER_LITERAL_HEX: KindId = KindId(140);
+pub const INTEGER_LITERAL_BINARY: KindId = KindId(141);
+pub const INTEGER_LITERAL_OCTAL: KindId = KindId(142);
+pub const CHAR_LITERAL_ESCAPED: KindId = KindId(143);
+pub const CHAR_LITERAL_PLAIN: KindId = KindId(144);
+pub const CHAR_LITERAL_EMPTY: KindId = KindId(145);
+pub const ESCAPE_SEQUENCE_SIMPLE: KindId = KindId(146);
+pub const ESCAPE_SEQUENCE_UNICODE_FIXED: KindId = KindId(147);
+pub const ESCAPE_SEQUENCE_UNICODE_BRACED: KindId = KindId(148);
+pub const ESCAPE_SEQUENCE_HEX: KindId = KindId(149);
 pub const RAW_KEYWORD: KindId = KindId(150);
 pub const LINE_COMMENT_REGULAR_DSLASH_TOKEN1: KindId = KindId(151);
 pub const LINE_COMMENT_REGULAR_DSLASH_TOKEN2: KindId = KindId(152);
@@ -610,25 +610,25 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         128 => "crate", // "crate"
         129 => "metavariable", // "metavariable"
         130 => "move", // "move_keyword"
-        131 => "integer_literal_arm1", // "integer_literal_arm1"
-        132 => "integer_literal_arm2", // "integer_literal_arm2"
-        133 => "integer_literal_arm3", // "integer_literal_arm3"
-        134 => "integer_literal_arm4", // "integer_literal_arm4"
-        135 => "char_literal_arm1", // "char_literal_arm1"
-        136 => "char_literal_arm2", // "char_literal_arm2"
-        137 => "char_literal_arm3", // "char_literal_arm3"
-        138 => "escape_sequence_arm1", // "escape_sequence_arm1"
-        139 => "escape_sequence_arm2", // "escape_sequence_arm2"
-        140 => "escape_sequence_arm3", // "escape_sequence_arm3"
-        141 => "escape_sequence_arm4", // "escape_sequence_arm4"
-        142 => ",", // "comma"
-        143 => "->", // "dash_gt"
-        144 => "_", // "underscore"
-        145 => "..=", // "dot_dot_eq"
-        146 => "mod", // "mod_keyword"
-        147 => "pub", // "pub_keyword"
-        148 => "struct", // "struct_keyword"
-        149 => "string_open", // "_string_literal_open"
+        131 => ",", // "comma"
+        132 => "->", // "dash_gt"
+        133 => "_", // "underscore"
+        134 => "..=", // "dot_dot_eq"
+        135 => "mod", // "mod_keyword"
+        136 => "pub", // "pub_keyword"
+        137 => "struct", // "struct_keyword"
+        138 => "string_open", // "_string_literal_open"
+        139 => "integer_literal_decimal", // "integer_literal_decimal"
+        140 => "integer_literal_hex", // "integer_literal_hex"
+        141 => "integer_literal_binary", // "integer_literal_binary"
+        142 => "integer_literal_octal", // "integer_literal_octal"
+        143 => "char_literal_escaped", // "char_literal_escaped"
+        144 => "char_literal_plain", // "char_literal_plain"
+        145 => "char_literal_empty", // "char_literal_empty"
+        146 => "escape_sequence_simple", // "escape_sequence_simple"
+        147 => "escape_sequence_unicode_fixed", // "escape_sequence_unicode_fixed"
+        148 => "escape_sequence_unicode_braced", // "escape_sequence_unicode_braced"
+        149 => "escape_sequence_hex", // "escape_sequence_hex"
         150 => "raw", // "raw_keyword"
         151 => "line_comment_regular_dslash_token1", // "line_comment_regular_dslash_token1"
         152 => "line_comment_regular_dslash_token2", // "line_comment_regular_dslash_token2"
@@ -955,7 +955,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 124 | 129 | 131 | 132 | 133 | 134 | 135 | 136 | 138 | 139 | 140 | 141 | 149 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 365 | 366 | 401 | 465 | 468)
+    matches!(kind.0, 1 | 124 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 149 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 365 | 366 | 401 | 465 | 468)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
@@ -967,25 +967,25 @@ pub fn is_text_kind(kind: KindId) -> bool {
 static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
     (211, "bounds", &[9]),
     (284, "right", &[75]),
-    (297, "parameters", &[142]),
+    (297, "parameters", &[131]),
     (341, "macro_rule", &[2]),
-    (342, "element", &[142]),
-    (343, "element", &[142]),
-    (344, "element", &[142]),
-    (345, "where_predicate", &[142]),
-    (346, "element", &[142]),
-    (347, "use_clause", &[142]),
-    (348, "element", &[142]),
-    (349, "lifetime", &[142]),
-    (350, "element", &[142]),
-    (351, "element", &[142]),
-    (352, "element", &[142]),
-    (353, "element", &[142]),
-    (354, "element", &[142]),
-    (355, "pattern", &[142]),
-    (356, "element", &[142]),
-    (363, "type", &[142]),
-    (364, "element", &[142]),
+    (342, "element", &[131]),
+    (343, "element", &[131]),
+    (344, "element", &[131]),
+    (345, "where_predicate", &[131]),
+    (346, "element", &[131]),
+    (347, "use_clause", &[131]),
+    (348, "element", &[131]),
+    (349, "lifetime", &[131]),
+    (350, "element", &[131]),
+    (351, "element", &[131]),
+    (352, "element", &[131]),
+    (353, "element", &[131]),
+    (354, "element", &[131]),
+    (355, "pattern", &[131]),
+    (356, "element", &[131]),
+    (363, "type", &[131]),
+    (364, "element", &[131]),
 ];
 
 pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {

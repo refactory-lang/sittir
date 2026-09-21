@@ -116,11 +116,11 @@ export function emitTests(config: EmitTestsConfig): string {
 				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
-				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
+				if (node.annotations?.tokenForm !== true) emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'keyword':
 			case 'punctuation':
-				if (isVisibleTextLeaf(node)) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
+				if (isVisibleTextLeaf(node) && node.annotations?.tokenForm !== true) emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
 				break;

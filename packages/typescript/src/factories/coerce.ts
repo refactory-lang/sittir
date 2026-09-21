@@ -184,11 +184,6 @@ export const _fromMap = {
 	union_type: coerceToUnionType,
 	intersection_type: coerceToIntersectionType,
 	function_type: coerceToFunctionType,
-	number_arm1: coerceToNumberArm1,
-	number_arm2: coerceToNumberArm2,
-	number_arm3: coerceToNumberArm3,
-	number_arm4: coerceToNumberArm4,
-	number_arm5: coerceToNumberArm5,
 	export_specifiers: coerceToExportSpecifiers,
 	import_specifiers: coerceToImportSpecifiers,
 	formal_parameters_elements: coerceToFormalParametersElements,
@@ -206,6 +201,11 @@ export const _fromMap = {
 	export_statement_equals_export: coerceToExportStatementEqualsExport,
 	comment_line: coerceToCommentLine,
 	comment_block: coerceToCommentBlock,
+	number_hex: coerceToNumberHex,
+	number_decimal: coerceToNumberDecimal,
+	number_binary: coerceToNumberBinary,
+	number_octal: coerceToNumberOctal,
+	number_bigint: coerceToNumberBigint,
 	binary_expression_in: coerceToBinaryExpressionIn,
 	class_body_method: coerceToClassBodyMethod,
 	class_body_method_sig: coerceToClassBodyMethodSig,
@@ -286,29 +286,28 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	undefined: { values: ['undefined'], factory: () => F.buildUndefined() },
 	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier() },
 	existential_type: { values: ['*'], factory: () => F.buildExistentialType() },
-	number_arm1: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_arm1'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberArm1(lexedConfig(text, TOKEN_INTERIORS['number_arm1'], 'number_arm1') as never)
-	},
-	number_arm2: {
-		pattern:
-			/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*)))$/u,
-		factory: F.buildNumberArm2
-	},
-	number_arm3: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_arm3'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberArm3(lexedConfig(text, TOKEN_INTERIORS['number_arm3'], 'number_arm3') as never)
-	},
-	number_arm4: {
-		pattern: new RegExp(TOKEN_INTERIORS['number_arm4'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberArm4(lexedConfig(text, TOKEN_INTERIORS['number_arm4'], 'number_arm4') as never)
-	},
-	number_arm5: { factory: (content: string) => _resolveByKind('number_arm5', content) },
 	comment_line: { factory: (content: string) => _resolveByKind('comment_line', content) },
 	comment_block: { factory: (content: string) => _resolveByKind('comment_block', content) },
+	number_hex: {
+		pattern: new RegExp(TOKEN_INTERIORS['number_hex'].regex, 'su'),
+		factory: (text: string) => F.buildNumberHex(lexedConfig(text, TOKEN_INTERIORS['number_hex'], 'number_hex') as never)
+	},
+	number_decimal: {
+		pattern:
+			/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*)))$/u,
+		factory: F.buildNumberDecimal
+	},
+	number_binary: {
+		pattern: new RegExp(TOKEN_INTERIORS['number_binary'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildNumberBinary(lexedConfig(text, TOKEN_INTERIORS['number_binary'], 'number_binary') as never)
+	},
+	number_octal: {
+		pattern: new RegExp(TOKEN_INTERIORS['number_octal'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildNumberOctal(lexedConfig(text, TOKEN_INTERIORS['number_octal'], 'number_octal') as never)
+	},
+	number_bigint: { factory: (content: string) => _resolveByKind('number_bigint', content) },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget() },
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta() },
 	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
@@ -318,9 +317,9 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'hash_bang_line',
 	'escape_sequence',
 	'private_property_identifier',
-	'number_arm5',
 	'comment_line',
-	'comment_block'
+	'comment_block',
+	'number_bigint'
 ]);
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
@@ -423,7 +422,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 92, 94, 99,
 	100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,
 	123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145,
-	146, 147, 148, 149, 155, 156, 159, 161, 163, 164, 165, 166, 167, 172, 174, 175, 176, 177, 178, 179, 187, 216, 244,
+	146, 147, 148, 149, 150, 151, 159, 161, 163, 164, 165, 166, 167, 172, 174, 175, 176, 177, 178, 179, 187, 216, 244,
 	310, 311, 348, 351, 368, 369, 370, 371, 372, 373, 374, 375, 385, 386, 424, 425, 456
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -441,7 +440,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	parenthesized_expression: new Set([1, 261, 270, 271, 403, 404]),
 	yield_expression: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
@@ -449,20 +448,20 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	call_expression: new Set([405, 406, 407]),
 	await_expression: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
 	spread_element: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
 	string: new Set([408, 409]),
 	template_substitution: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
@@ -470,19 +469,19 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	formal_parameters: new Set([312, 313, 378]),
 	rest_pattern: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 228, 231, 232, 234, 237, 239, 241, 245, 246, 247,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 228, 231, 232, 234, 237, 239, 241, 245, 246, 247,
 		248, 249, 251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406,
 		407, 408, 409, 410, 411, 424, 425, 456
 	]),
 	computed_property_name: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
 	non_null_expression: new Set([
 		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
-		121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248, 249,
 		251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 284, 289, 290, 291, 292, 300, 403, 404, 405, 406, 407, 408,
 		409, 410, 411, 424, 425, 456
 	]),
@@ -490,88 +489,88 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	ambient_declaration: new Set([197, 198, 200, 235, 238, 240, 287, 297, 298, 299, 300, 302, 304, 306, 309, 387, 388]),
 	enum_body: new Set([
 		1, 7, 44, 98, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
-		120, 121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248,
+		120, 121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248,
 		249, 251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 281, 284, 289, 290, 291, 292, 300, 308, 379, 403, 404,
 		405, 406, 407, 408, 409, 410, 411, 424, 425, 456
 	]),
 	omitting_type_annotation: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	adding_type_annotation: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	opting_type_annotation: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	type_annotation: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	asserts: new Set([1, 99, 336]),
 	asserts_annotation: new Set([1, 99, 321, 336]),
 	optional_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	rest_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	template_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	type_predicate_annotation: new Set([336]),
 	type_query: new Set([1, 99, 338, 339, 340, 341]),
 	index_type_query: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
-	literal_type: new Set([101, 102, 103, 104, 150, 151, 152, 153, 154, 262, 347, 408, 409]),
+	literal_type: new Set([101, 102, 103, 104, 154, 155, 156, 157, 158, 262, 347, 408, 409]),
 	flow_maybe_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	parenthesized_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	type_arguments: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 380, 382, 408, 409
 	]),
 	type_parameters: new Set([1, 357, 381]),
 	default_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	array_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	tuple_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	readonly_type: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
@@ -580,18 +579,18 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	formal_parameters_elements: new Set([312, 313]),
 	enum_body_elements: new Set([
 		1, 7, 44, 98, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119,
-		120, 121, 122, 123, 124, 125, 150, 151, 152, 153, 154, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248,
+		120, 121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 223, 226, 227, 231, 234, 237, 239, 241, 245, 246, 247, 248,
 		249, 251, 253, 257, 258, 259, 261, 262, 263, 265, 270, 271, 281, 284, 289, 290, 291, 292, 300, 308, 403, 404, 405,
 		406, 407, 408, 409, 410, 411, 424, 425, 456
 	]),
 	types: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
 	type_parameters_elements: new Set([1, 357]),
 	tuple_type_members: new Set([
-		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 150, 151, 152, 153, 154, 262, 303, 319,
+		1, 87, 99, 101, 102, 103, 104, 117, 118, 119, 120, 121, 123, 143, 144, 145, 154, 155, 156, 157, 158, 262, 303, 319,
 		320, 324, 325, 326, 327, 329, 332, 333, 334, 335, 338, 339, 340, 341, 342, 343, 344, 346, 347, 348, 349, 350, 351,
 		353, 362, 363, 364, 365, 366, 367, 382, 408, 409
 	]),
@@ -657,7 +656,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	143: ['predefined_type'],
 	144: ['predefined_type'],
 	145: ['predefined_type'],
-	155: ['__for_header_operator'],
+	150: ['__for_header_operator'],
 	163: ['_operator'],
 	164: ['_operator']
 };
@@ -873,7 +872,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	array_type: TSKindId.ArrayType,
 	tuple_type: TSKindId.TupleType,
 	readonly_type: TSKindId.ReadonlyType,
-	number_arm5: TSKindId.NumberArm5,
 	export_specifiers: TSKindId.ExportSpecifiers,
 	import_specifiers: TSKindId.ImportSpecifiers,
 	formal_parameters_elements: TSKindId.FormalParametersElements,
@@ -886,6 +884,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	comment_line: TSKindId.CommentLine,
 	comment_block: TSKindId.CommentBlock,
+	number_bigint: TSKindId.NumberBigint,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
 	string_double: TSKindId.StringDouble,
 	string_single: TSKindId.StringSingle,
@@ -986,11 +985,11 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'array_type',
 	'tuple_type',
 	'readonly_type',
-	'number_arm5',
 	'import_clause_group',
 	'ambient_declaration_global',
 	'comment_line',
 	'comment_block',
+	'number_bigint',
 	'parenthesized_expression_sequence',
 	'arrow_function_parameter',
 	'export_statement_default_from_star_from',
@@ -1134,8 +1133,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTupleType(children[0] as Parameters<typeof F.buildTupleType>[0]);
 		case 'readonly_type':
 			return F.buildReadonlyType(children[0] as Parameters<typeof F.buildReadonlyType>[0]);
-		case 'number_arm5':
-			return F.buildNumberArm5(children[0] as Parameters<typeof F.buildNumberArm5>[0]);
 		case 'export_specifiers':
 			return (coerceToExportSpecifiers as (...args: unknown[]) => unknown)(...children);
 		case 'import_specifiers':
@@ -1160,6 +1157,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCommentLine(children[0] as Parameters<typeof F.buildCommentLine>[0]);
 		case 'comment_block':
 			return F.buildCommentBlock(children[0] as Parameters<typeof F.buildCommentBlock>[0]);
+		case 'number_bigint':
+			return F.buildNumberBigint(children[0] as Parameters<typeof F.buildNumberBigint>[0]);
 		case 'parenthesized_expression_sequence':
 			return F.buildParenthesizedExpressionSequence(
 				children[0] as Parameters<typeof F.buildParenthesizedExpressionSequence>[0]
@@ -1344,7 +1343,7 @@ const _K7: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_arm2',
+	'number_decimal',
 	'true',
 	'false',
 	'null',
@@ -1360,10 +1359,10 @@ const _K8: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1393,7 +1392,7 @@ const _K9: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_arm2',
+	'number_decimal',
 	'true',
 	'false',
 	'null',
@@ -1412,10 +1411,10 @@ const _K10: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1455,10 +1454,10 @@ const _K13: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1501,10 +1500,10 @@ const _K18: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1550,10 +1549,10 @@ const _K24: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1582,10 +1581,10 @@ const _K26: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1604,7 +1603,7 @@ const _K27: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_arm2',
+	'number_decimal',
 	'true',
 	'false',
 	'null',
@@ -1643,14 +1642,14 @@ const _K36: readonly string[] = [
 	'array_pattern',
 	'non_null_expression'
 ];
-const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_arm2'];
+const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_decimal'];
 const _K38: readonly string[] = [
 	'private_property_identifier',
 	'string',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'computed_property_name'
 ];
 const _K39: readonly string[] = ['decorator_member_expression', 'decorator_call_expression'];
@@ -1734,8 +1733,8 @@ const _K56: readonly string[] = [
 	'_type_query_member_expression',
 	'_type_query_call_expression'
 ];
-const _K57: readonly string[] = ['predefined_type', 'number_arm2'];
-const _K58: readonly string[] = ['string', 'number_arm1', 'number_arm3', 'number_arm4', 'number_arm5'];
+const _K57: readonly string[] = ['predefined_type', 'number_decimal'];
+const _K58: readonly string[] = ['string', 'number_hex', 'number_binary', 'number_octal', 'number_bigint'];
 const _K59: readonly string[] = ['import', 'identifier'];
 const _K60: readonly string[] = ['_type_query_member_expression', '_type_query_subscript_expression'];
 const _K61: readonly string[] = [
@@ -1761,10 +1760,10 @@ const _K62: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K63: readonly string[] = ['number_arm2', 'true', 'false', 'null', 'undefined'];
-const _K64: readonly string[] = ['_number', 'number_arm1', 'number_arm3', 'number_arm4', 'number_arm5', 'string'];
-const _K65: readonly string[] = ['number_arm2'];
-const _K66: readonly string[] = ['number_arm1', 'number_arm3', 'number_arm4', 'number_arm5'];
+const _K63: readonly string[] = ['number_decimal', 'true', 'false', 'null', 'undefined'];
+const _K64: readonly string[] = ['_number', 'number_hex', 'number_binary', 'number_octal', 'number_bigint', 'string'];
+const _K65: readonly string[] = ['number_decimal'];
+const _K66: readonly string[] = ['number_hex', 'number_binary', 'number_octal', 'number_bigint'];
 const _K67: readonly string[] = [
 	'parenthesized_type',
 	'nested_type_identifier',
@@ -1793,10 +1792,10 @@ const _K67: readonly string[] = [
 const _K68: readonly string[] = [
 	'private_property_identifier',
 	'string',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'computed_property_name',
 	'enum_assignment'
 ];
@@ -1850,10 +1849,10 @@ const _K72: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -1894,10 +1893,10 @@ const _K75: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression',
-	'number_arm1',
-	'number_arm3',
-	'number_arm4',
-	'number_arm5',
+	'number_hex',
+	'number_binary',
+	'number_octal',
+	'number_bigint',
 	'string',
 	'template_string',
 	'regex',
@@ -7615,85 +7614,6 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
-export function resolveNumberArm1_prefix(value: T.NumberArm1.LooseConfig['prefix']): T.NumberArm1['_prefix'] {
-	return _resolveOne<'0x' | '0X'>(value, _K2, _K2);
-}
-
-export function resolveNumberArm1_content(value: T.NumberArm1.LooseConfig['content']): T.NumberArm1['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
-}
-
-export function coerceToNumberArm1(input: T.NumberArm1.Loose): ReturnType<typeof F.buildNumberArm1> {
-	if (!_isLooseConfig<T.NumberArm1.LooseConfig | string>(input))
-		return input as unknown as ReturnType<typeof F.buildNumberArm1>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberArm1.LooseConfig;
-	return F.buildNumberArm1({
-		prefix: _requireField('number_arm1', 'prefix', resolveNumberArm1_prefix(_cfg.prefix)),
-		content: _requireField('number_arm1', 'content', resolveNumberArm1_content(_cfg.content))
-	});
-}
-
-export function coerceToNumberArm2(input: T.NumberArm2.Loose): ReturnType<typeof F.buildNumberArm2> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberArm2>;
-	return F.buildNumberArm2(input as Parameters<typeof F.buildNumberArm2>[0]);
-}
-
-export function resolveNumberArm3_prefix(value: T.NumberArm3.LooseConfig['prefix']): T.NumberArm3['_prefix'] {
-	return _resolveOne<'0b' | '0B'>(value, _K2, _K2);
-}
-
-export function resolveNumberArm3_content(value: T.NumberArm3.LooseConfig['content']): T.NumberArm3['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
-}
-
-export function coerceToNumberArm3(input: T.NumberArm3.Loose): ReturnType<typeof F.buildNumberArm3> {
-	if (!_isLooseConfig<T.NumberArm3.LooseConfig | string>(input))
-		return input as unknown as ReturnType<typeof F.buildNumberArm3>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberArm3.LooseConfig;
-	return F.buildNumberArm3({
-		prefix: _requireField('number_arm3', 'prefix', resolveNumberArm3_prefix(_cfg.prefix)),
-		content: _requireField('number_arm3', 'content', resolveNumberArm3_content(_cfg.content))
-	});
-}
-
-export function resolveNumberArm4_prefix(value: T.NumberArm4.LooseConfig['prefix']): T.NumberArm4['_prefix'] {
-	return _resolveOne<'0o' | '0O'>(value, _K2, _K2);
-}
-
-export function resolveNumberArm4_content(value: T.NumberArm4.LooseConfig['content']): T.NumberArm4['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
-}
-
-export function coerceToNumberArm4(input: T.NumberArm4.Loose): ReturnType<typeof F.buildNumberArm4> {
-	if (!_isLooseConfig<T.NumberArm4.LooseConfig | string>(input))
-		return input as unknown as ReturnType<typeof F.buildNumberArm4>;
-	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberArm4.LooseConfig;
-	return F.buildNumberArm4({
-		prefix: _requireField('number_arm4', 'prefix', resolveNumberArm4_prefix(_cfg.prefix)),
-		content: _requireField('number_arm4', 'content', resolveNumberArm4_content(_cfg.content))
-	});
-}
-
-export function resolveNumberArm5_content(value: T.NumberArm5.LooseConfig['content']): T.NumberArm5['_content'] {
-	return _resolveOne<string>(value, _K2, _K2);
-}
-
-export function coerceToNumberArm5(input: T.NumberArm5.Loose): ReturnType<typeof F.buildNumberArm5> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberArm5)
-		return input as unknown as ReturnType<typeof F.buildNumberArm5>;
-	return F.buildNumberArm5(
-		_requireField(
-			'number_arm5',
-			'content',
-			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K2
-			)
-		)
-	);
-}
-
 export function coerceToExportSpecifiers(
 	...input:
 		| [
@@ -8437,6 +8357,85 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 	return F.buildCommentBlock(
 		_requireField(
 			'comment_block',
+			'content',
+			_resolveOne<string>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K2,
+				_K2
+			)
+		)
+	);
+}
+
+export function resolveNumberHex_prefix(value: T.NumberHex.LooseConfig['prefix']): T.NumberHex['_prefix'] {
+	return _resolveOne<'0x' | '0X'>(value, _K2, _K2);
+}
+
+export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): T.NumberHex['_content'] {
+	return _resolveOne<string>(value, _K2, _K2);
+}
+
+export function coerceToNumberHex(input: T.NumberHex.Loose): ReturnType<typeof F.buildNumberHex> {
+	if (!_isLooseConfig<T.NumberHex.LooseConfig | string>(input))
+		return input as unknown as ReturnType<typeof F.buildNumberHex>;
+	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberHex.LooseConfig;
+	return F.buildNumberHex({
+		prefix: _requireField('number_hex', 'prefix', resolveNumberHex_prefix(_cfg.prefix)),
+		content: _requireField('number_hex', 'content', resolveNumberHex_content(_cfg.content))
+	});
+}
+
+export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildNumberDecimal>;
+	return F.buildNumberDecimal(input as Parameters<typeof F.buildNumberDecimal>[0]);
+}
+
+export function resolveNumberBinary_prefix(value: T.NumberBinary.LooseConfig['prefix']): T.NumberBinary['_prefix'] {
+	return _resolveOne<'0b' | '0B'>(value, _K2, _K2);
+}
+
+export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['content']): T.NumberBinary['_content'] {
+	return _resolveOne<string>(value, _K2, _K2);
+}
+
+export function coerceToNumberBinary(input: T.NumberBinary.Loose): ReturnType<typeof F.buildNumberBinary> {
+	if (!_isLooseConfig<T.NumberBinary.LooseConfig | string>(input))
+		return input as unknown as ReturnType<typeof F.buildNumberBinary>;
+	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberBinary.LooseConfig;
+	return F.buildNumberBinary({
+		prefix: _requireField('number_binary', 'prefix', resolveNumberBinary_prefix(_cfg.prefix)),
+		content: _requireField('number_binary', 'content', resolveNumberBinary_content(_cfg.content))
+	});
+}
+
+export function resolveNumberOctal_prefix(value: T.NumberOctal.LooseConfig['prefix']): T.NumberOctal['_prefix'] {
+	return _resolveOne<'0o' | '0O'>(value, _K2, _K2);
+}
+
+export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['content']): T.NumberOctal['_content'] {
+	return _resolveOne<string>(value, _K2, _K2);
+}
+
+export function coerceToNumberOctal(input: T.NumberOctal.Loose): ReturnType<typeof F.buildNumberOctal> {
+	if (!_isLooseConfig<T.NumberOctal.LooseConfig | string>(input))
+		return input as unknown as ReturnType<typeof F.buildNumberOctal>;
+	const _cfg = (typeof input === 'string' ? { content: input } : input) as T.NumberOctal.LooseConfig;
+	return F.buildNumberOctal({
+		prefix: _requireField('number_octal', 'prefix', resolveNumberOctal_prefix(_cfg.prefix)),
+		content: _requireField('number_octal', 'content', resolveNumberOctal_content(_cfg.content))
+	});
+}
+
+export function resolveNumberBigint_content(value: T.NumberBigint.LooseConfig['content']): T.NumberBigint['_content'] {
+	return _resolveOne<string>(value, _K2, _K2);
+}
+
+export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<typeof F.buildNumberBigint> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBigint)
+		return input as unknown as ReturnType<typeof F.buildNumberBigint>;
+	return F.buildNumberBigint(
+		_requireField(
+			'number_bigint',
 			'content',
 			_resolveOne<string>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,

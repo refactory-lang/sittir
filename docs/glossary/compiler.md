@@ -2945,7 +2945,8 @@ runs once the metadata callbacks have been evaluated.
  *
  * tree-sitter's pattern: each callback receives `($, baseValue)`
  * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property.
+ * version of that property. Extras entries can be bare names (the base's
+ * own spelling in this pass) as well as rules; both land in the extras sink.
  */
 ```
 

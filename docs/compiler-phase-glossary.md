@@ -166,6 +166,12 @@ a field name shared by ≥2 distinct parent kinds; else `_<parent>_<field>`.
 The low precedence defers to whatever else the same literal could
 previously start, without a `conflicts:` entry per migrated occurrence.
 
+A whole-rule token whose body alternates between forms is distributed into
+one token kind per form (`hoistTokenForms`), so the parser lexes the forms
+as distinct symbols and the rule becomes their supertype; the arms carry
+polymorph annotations, with one default arm the parent's own factory builds
+(`defaultTokenFormArm`, overridden by `variant(name, { default: true })`).
+
 Reference: [glossary/dsl.md](glossary/dsl.md).
 
 ## Phase 1: Evaluate (`compiler/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)

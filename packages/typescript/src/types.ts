@@ -336,15 +336,15 @@ export enum TSKindId {
 	PipeRbrace = 147,
 	UsingKeyword = 148,
 	AccessorKeyword = 149,
-	NumberArm1 = 150,
-	NumberArm2 = 151,
-	NumberArm3 = 152,
-	NumberArm4 = 153,
-	NumberArm5 = 154,
-	OfKeyword = 155,
-	GlobalKeyword = 156,
-	CommentLine = 157,
-	CommentBlock = 158,
+	OfKeyword = 150,
+	GlobalKeyword = 151,
+	CommentLine = 152,
+	CommentBlock = 153,
+	NumberHex = 154,
+	NumberDecimal = 155,
+	NumberBinary = 156,
+	NumberOctal = 157,
+	NumberBigint = 158,
 	Dquote = 159,
 	Dquote2 = 160,
 	Squote = 161,
@@ -800,15 +800,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[147, 'pipe_rbrace'],
 	[148, 'using_keyword'],
 	[149, 'accessor_keyword'],
-	[150, 'number_arm1'],
-	[151, 'number_arm2'],
-	[152, 'number_arm3'],
-	[153, 'number_arm4'],
-	[154, 'number_arm5'],
-	[155, 'of_keyword'],
-	[156, 'global_keyword'],
-	[157, 'comment_line'],
-	[158, 'comment_block'],
+	[150, 'of_keyword'],
+	[151, 'global_keyword'],
+	[152, 'comment_line'],
+	[153, 'comment_block'],
+	[154, 'number_hex'],
+	[155, 'number_decimal'],
+	[156, 'number_binary'],
+	[157, 'number_octal'],
+	[158, 'number_bigint'],
 	[159, 'dquote'],
 	[160, 'dquote2'],
 	[161, 'squote'],
@@ -1266,15 +1266,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[147, '|}'],
 	[148, 'using'],
 	[149, 'accessor'],
-	[150, 'number_arm1'],
-	[151, 'number_arm2'],
-	[152, 'number_arm3'],
-	[153, 'number_arm4'],
-	[154, 'number_arm5'],
-	[155, 'of'],
-	[156, 'global'],
-	[157, 'comment_line'],
-	[158, 'comment_block'],
+	[150, 'of'],
+	[151, 'global'],
+	[152, 'comment_line'],
+	[153, 'comment_block'],
+	[154, 'number_hex'],
+	[155, 'number_decimal'],
+	[156, 'number_binary'],
+	[157, 'number_octal'],
+	[158, 'number_bigint'],
 	[159, '"'],
 	[160, '"'],
 	[161, "'"],
@@ -1887,16 +1887,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UsingKeyword;
 		case 'accessor_keyword':
 			return TSKindId.AccessorKeyword;
-		case 'number_arm1':
-			return TSKindId.NumberArm1;
-		case 'number_arm2':
-			return TSKindId.NumberArm2;
-		case 'number_arm3':
-			return TSKindId.NumberArm3;
-		case 'number_arm4':
-			return TSKindId.NumberArm4;
-		case 'number_arm5':
-			return TSKindId.NumberArm5;
 		case 'of_keyword':
 			return TSKindId.OfKeyword;
 		case 'global_keyword':
@@ -1905,6 +1895,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CommentLine;
 		case 'comment_block':
 			return TSKindId.CommentBlock;
+		case 'number_hex':
+			return TSKindId.NumberHex;
+		case 'number_decimal':
+			return TSKindId.NumberDecimal;
+		case 'number_binary':
+			return TSKindId.NumberBinary;
+		case 'number_octal':
+			return TSKindId.NumberOctal;
+		case 'number_bigint':
+			return TSKindId.NumberBigint;
 		case 'dquote':
 			return TSKindId.Dquote;
 		case 'dquote2':
@@ -2979,11 +2979,11 @@ export enum CommentKind {
 }
 
 export enum NumberKind {
-	NumberArm1 = 'number_arm1',
-	NumberArm2 = 'number_arm2',
-	NumberArm3 = 'number_arm3',
-	NumberArm4 = 'number_arm4',
-	NumberArm5 = 'number_arm5'
+	NumberHex = 'number_hex',
+	NumberDecimal = 'number_decimal',
+	NumberBinary = 'number_binary',
+	NumberOctal = 'number_octal',
+	NumberBigint = 'number_bigint'
 }
 
 export enum _IdentifierKind {
@@ -9899,36 +9899,6 @@ export interface FunctionType {
 	returnType(): Type | Asserts | TypePredicate;
 }
 
-export interface NumberArm1 {
-	readonly $type: TSKindId.NumberArm1;
-	readonly _prefix: '0x' | '0X';
-	readonly _content: string;
-	prefix(): '0x' | '0X';
-	content(): string;
-}
-
-export interface NumberArm3 {
-	readonly $type: TSKindId.NumberArm3;
-	readonly _prefix: '0b' | '0B';
-	readonly _content: string;
-	prefix(): '0b' | '0B';
-	content(): string;
-}
-
-export interface NumberArm4 {
-	readonly $type: TSKindId.NumberArm4;
-	readonly _prefix: '0o' | '0O';
-	readonly _content: string;
-	prefix(): '0o' | '0O';
-	content(): string;
-}
-
-export interface NumberArm5 {
-	readonly $type: TSKindId.NumberArm5;
-	readonly _content: string;
-	content(): string;
-}
-
 export interface ExportSpecifiers {
 	readonly $type: TSKindId.ExportSpecifiers;
 	readonly _export_specifier: NonEmptyArray<ExportSpecifier>;
@@ -10180,6 +10150,36 @@ export interface CommentLine {
 
 export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
+	readonly _content: string;
+	content(): string;
+}
+
+export interface NumberHex {
+	readonly $type: TSKindId.NumberHex;
+	readonly _prefix: '0x' | '0X';
+	readonly _content: string;
+	prefix(): '0x' | '0X';
+	content(): string;
+}
+
+export interface NumberBinary {
+	readonly $type: TSKindId.NumberBinary;
+	readonly _prefix: '0b' | '0B';
+	readonly _content: string;
+	prefix(): '0b' | '0B';
+	content(): string;
+}
+
+export interface NumberOctal {
+	readonly $type: TSKindId.NumberOctal;
+	readonly _prefix: '0o' | '0O';
+	readonly _content: string;
+	prefix(): '0o' | '0O';
+	content(): string;
+}
+
+export interface NumberBigint {
+	readonly $type: TSKindId.NumberBigint;
 	readonly _content: string;
 	content(): string;
 }
@@ -11761,7 +11761,6 @@ export type KwDeclareMarker = TSKindId.KwDeclareMarker;
 export type KwAbstractMarker = TSKindId.KwAbstractMarker;
 export type KwAccessorMarker = TSKindId.KwAccessorMarker;
 export type KwConstMarker = TSKindId.KwConstMarker;
-export type NumberArm2 = Terminal<TSKindId.NumberArm2, string>;
 export type Kind = TSKindId.LetKeyword | TSKindId.ConstKeyword;
 export type ForHeaderOperator = TSKindId.InKeyword | TSKindId.OfKeyword;
 export type AugmentedAssignmentExpressionOperator =
@@ -11790,6 +11789,7 @@ export type UnaryExpressionOperator =
 	| TSKindId.DeleteKeyword;
 export type NumberOperator = TSKindId.Dash | TSKindId.Plus;
 export type Operator = TSKindId.PlusPlus | TSKindId.DashDash;
+export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
@@ -11982,10 +11982,6 @@ export interface ReadonlyTypeTree extends TreeNode<'readonly_type'> {}
 export interface UnionTypeTree extends TreeNode<'union_type'> {}
 export interface IntersectionTypeTree extends TreeNode<'intersection_type'> {}
 export interface FunctionTypeTree extends TreeNode<'function_type'> {}
-export interface NumberArm1Tree extends TreeNode<'number_arm1'> {}
-export interface NumberArm3Tree extends TreeNode<'number_arm3'> {}
-export interface NumberArm4Tree extends TreeNode<'number_arm4'> {}
-export interface NumberArm5Tree extends TreeNode<'number_arm5'> {}
 export interface ExportSpecifiersTree extends TreeNode<'export_specifiers'> {}
 export interface ImportSpecifiersTree extends TreeNode<'import_specifiers'> {}
 export interface FormalParametersElementsTree extends TreeNode<'formal_parameters_elements'> {}
@@ -12003,6 +11999,10 @@ export interface ExportStatementTypeExportTree extends TreeNode<'export_statemen
 export interface ExportStatementEqualsExportTree extends TreeNode<'export_statement_equals_export'> {}
 export interface CommentLineTree extends TreeNode<'comment_line'> {}
 export interface CommentBlockTree extends TreeNode<'comment_block'> {}
+export interface NumberHexTree extends TreeNode<'number_hex'> {}
+export interface NumberBinaryTree extends TreeNode<'number_binary'> {}
+export interface NumberOctalTree extends TreeNode<'number_octal'> {}
+export interface NumberBigintTree extends TreeNode<'number_bigint'> {}
 export interface BinaryExpressionInTree extends TreeNode<'binary_expression_in'> {}
 export interface ClassBodyMethodTree extends TreeNode<'class_body_method'> {}
 export interface ClassBodyMethodSigTree extends TreeNode<'class_body_method_sig'> {}
@@ -12106,7 +12106,6 @@ export interface KwAccessorMarkerTree extends AnyTreeNode {
 export interface KwConstMarkerTree extends AnyTreeNode {
 	readonly type: '_kw_const_marker';
 }
-export interface NumberArm2Tree extends TreeNode<'number_arm2'> {}
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
 }
@@ -12125,6 +12124,7 @@ export interface NumberOperatorTree extends AnyTreeNode {
 export interface OperatorTree extends AnyTreeNode {
 	readonly type: '_operator';
 }
+export interface NumberDecimalTree extends TreeNode<'number_decimal'> {}
 export interface MetaPropertyNewTargetTree extends AnyTreeNode {
 	readonly type: 'meta_property_new_target';
 }
@@ -12608,9 +12608,9 @@ export type Comment = CommentLine | CommentBlock;
 
 export type CommentTree = CommentLineTree | CommentBlockTree;
 
-export type Number = NumberArm1 | NumberArm2 | NumberArm3 | NumberArm4 | NumberArm5;
+export type Number = NumberHex | NumberDecimal | NumberBinary | NumberOctal | NumberBigint;
 
-export type NumberTree = NumberArm1Tree | NumberArm2Tree | NumberArm3Tree | NumberArm4Tree | NumberArm5Tree;
+export type NumberTree = NumberHexTree | NumberDecimalTree | NumberBinaryTree | NumberOctalTree | NumberBigintTree;
 
 export type _Identifier = Undefined | Identifier;
 
@@ -12936,10 +12936,6 @@ export type TypescriptNode =
 	| UnionType
 	| IntersectionType
 	| FunctionType
-	| NumberArm1
-	| NumberArm3
-	| NumberArm4
-	| NumberArm5
 	| ExportSpecifiers
 	| ImportSpecifiers
 	| FormalParametersElements
@@ -12957,6 +12953,10 @@ export type TypescriptNode =
 	| ExportStatementEqualsExport
 	| CommentLine
 	| CommentBlock
+	| NumberHex
+	| NumberBinary
+	| NumberOctal
+	| NumberBigint
 	| BinaryExpressionIn
 	| ClassBodyMethod
 	| ClassBodyMethodSig
@@ -13148,10 +13148,6 @@ export interface KindMap {
 	union_type: UnionType;
 	intersection_type: IntersectionType;
 	function_type: FunctionType;
-	number_arm1: NumberArm1;
-	number_arm3: NumberArm3;
-	number_arm4: NumberArm4;
-	number_arm5: NumberArm5;
 	export_specifiers: ExportSpecifiers;
 	import_specifiers: ImportSpecifiers;
 	formal_parameters_elements: FormalParametersElements;
@@ -13169,6 +13165,10 @@ export interface KindMap {
 	export_statement_equals_export: ExportStatementEqualsExport;
 	comment_line: CommentLine;
 	comment_block: CommentBlock;
+	number_hex: NumberHex;
+	number_binary: NumberBinary;
+	number_octal: NumberOctal;
+	number_bigint: NumberBigint;
 	binary_expression_in: BinaryExpressionIn;
 	class_body_method: ClassBodyMethod;
 	class_body_method_sig: ClassBodyMethodSig;
@@ -13230,13 +13230,13 @@ export interface KindMap {
 	_kw_abstract_marker: KwAbstractMarker;
 	_kw_accessor_marker: KwAccessorMarker;
 	_kw_const_marker: KwConstMarker;
-	number_arm2: NumberArm2;
 	_kind: Kind;
 	__for_header_operator: ForHeaderOperator;
 	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;
 	_unary_expression_operator: UnaryExpressionOperator;
 	__number_operator: NumberOperator;
 	_operator: Operator;
+	number_decimal: NumberDecimal;
 	meta_property_new_target: MetaPropertyNewTarget;
 	meta_property_import_meta: MetaPropertyImportMeta;
 	html_comment: HtmlComment;
@@ -14964,50 +14964,6 @@ export interface FunctionTypeNs extends NodeNs<
 	never,
 	'function_type'
 > {}
-export interface NumberArm1Ns extends NodeNs<
-	NumberArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	NumberArm1.Built,
-	NumberArm1.BuildArgs,
-	NumberArm1.LooseArgs,
-	'content',
-	'number_arm1'
-> {}
-export interface NumberArm3Ns extends NodeNs<
-	NumberArm3,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	NumberArm3.Built,
-	NumberArm3.BuildArgs,
-	NumberArm3.LooseArgs,
-	'content',
-	'number_arm3'
-> {}
-export interface NumberArm4Ns extends NodeNs<
-	NumberArm4,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	NumberArm4.Built,
-	NumberArm4.BuildArgs,
-	NumberArm4.LooseArgs,
-	'content',
-	'number_arm4'
-> {}
-export interface NumberArm5Ns extends NodeNs<
-	NumberArm5,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	NumberArm5.Built,
-	NumberArm5.BuildArgs,
-	NumberArm5.LooseArgs,
-	'content',
-	'number_arm5'
-> {}
 export interface ExportSpecifiersNs extends NodeNs<
 	ExportSpecifiers,
 	LeafScalarMap,
@@ -15194,6 +15150,50 @@ export interface CommentBlockNs extends NodeNs<
 	CommentBlock.LooseArgs,
 	'content',
 	'comment_block'
+> {}
+export interface NumberHexNs extends NodeNs<
+	NumberHex,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NumberHex.Built,
+	NumberHex.BuildArgs,
+	NumberHex.LooseArgs,
+	'content',
+	'number_hex'
+> {}
+export interface NumberBinaryNs extends NodeNs<
+	NumberBinary,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NumberBinary.Built,
+	NumberBinary.BuildArgs,
+	NumberBinary.LooseArgs,
+	'content',
+	'number_binary'
+> {}
+export interface NumberOctalNs extends NodeNs<
+	NumberOctal,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NumberOctal.Built,
+	NumberOctal.BuildArgs,
+	NumberOctal.LooseArgs,
+	'content',
+	'number_octal'
+> {}
+export interface NumberBigintNs extends NodeNs<
+	NumberBigint,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	NumberBigint.Built,
+	NumberBigint.BuildArgs,
+	NumberBigint.LooseArgs,
+	'content',
+	'number_bigint'
 > {}
 export interface BinaryExpressionInNs extends NodeNs<
 	BinaryExpressionIn,
@@ -15675,7 +15675,13 @@ export interface TypeIdentifierNs extends LeafNs<
 	TypeIdentifierTree,
 	'_type_identifier'
 > {}
-export interface NumberArm2Ns extends LeafNs<NumberArm2, string, NumberArm2.Built, NumberArm2Tree, 'number_arm2'> {}
+export interface NumberDecimalNs extends LeafNs<
+	NumberDecimal,
+	string,
+	NumberDecimal.Built,
+	NumberDecimalTree,
+	'number_decimal'
+> {}
 export interface HtmlCommentNs extends LeafNs<
 	HtmlComment,
 	string,
@@ -15863,10 +15869,6 @@ export interface NamespaceMap {
 	[TSKindId.UnionType]: UnionTypeNs;
 	[TSKindId.IntersectionType]: IntersectionTypeNs;
 	[TSKindId.FunctionType]: FunctionTypeNs;
-	[TSKindId.NumberArm1]: NumberArm1Ns;
-	[TSKindId.NumberArm3]: NumberArm3Ns;
-	[TSKindId.NumberArm4]: NumberArm4Ns;
-	[TSKindId.NumberArm5]: NumberArm5Ns;
 	[TSKindId.ExportSpecifiers]: ExportSpecifiersNs;
 	[TSKindId.ImportSpecifiers]: ImportSpecifiersNs;
 	[TSKindId.FormalParametersElements]: FormalParametersElementsNs;
@@ -15884,6 +15886,10 @@ export interface NamespaceMap {
 	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExportNs;
 	[TSKindId.CommentLine]: CommentLineNs;
 	[TSKindId.CommentBlock]: CommentBlockNs;
+	[TSKindId.NumberHex]: NumberHexNs;
+	[TSKindId.NumberBinary]: NumberBinaryNs;
+	[TSKindId.NumberOctal]: NumberOctalNs;
+	[TSKindId.NumberBigint]: NumberBigintNs;
 	[TSKindId.BinaryExpressionIn]: BinaryExpressionInNs;
 	[TSKindId.ClassBodyMethod]: ClassBodyMethodNs;
 	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSigNs;
@@ -15945,7 +15951,7 @@ export interface NamespaceMap {
 	[TSKindId.RegexFlags]: RegexFlagsNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
-	[TSKindId.NumberArm2]: NumberArm2Ns;
+	[TSKindId.NumberDecimal]: NumberDecimalNs;
 	[TSKindId.HtmlComment]: HtmlCommentNs;
 	[TSKindId.JsxText]: JsxTextNs;
 	[TSKindId.TemplateChars]: TemplateCharsNs;
@@ -19330,79 +19336,6 @@ export namespace FunctionType {
 	export type Tree = TreeFor<TSKindId.FunctionType>;
 	export type Kind = 'function_type';
 }
-export namespace NumberArm1 {
-	export type Config = ConfigFor<TSKindId.NumberArm1>;
-	export interface Built extends T.NumberArm1, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			prefix(value: '0x' | '0X'): T.NumberArm1.Built;
-			content(value: string): T.NumberArm1.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.NumberArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberArm1>;
-	export type BuildArgs = [config: ConfigOf<T.NumberArm1>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberArm1, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberArm1
-	];
-	export type Tree = TreeFor<TSKindId.NumberArm1>;
-	export type Kind = 'number_arm1';
-}
-export namespace NumberArm3 {
-	export type Config = ConfigFor<TSKindId.NumberArm3>;
-	export interface Built extends T.NumberArm3, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			prefix(value: '0b' | '0B'): T.NumberArm3.Built;
-			content(value: string): T.NumberArm3.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.NumberArm3>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberArm3>;
-	export type BuildArgs = [config: ConfigOf<T.NumberArm3>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberArm3, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberArm3
-	];
-	export type Tree = TreeFor<TSKindId.NumberArm3>;
-	export type Kind = 'number_arm3';
-}
-export namespace NumberArm4 {
-	export type Config = ConfigFor<TSKindId.NumberArm4>;
-	export interface Built extends T.NumberArm4, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			prefix(value: '0o' | '0O'): T.NumberArm4.Built;
-			content(value: string): T.NumberArm4.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.NumberArm4>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberArm4>;
-	export type BuildArgs = [config: ConfigOf<T.NumberArm4>];
-	export type LooseArgs = [
-		config: LooseConfigOf<T.NumberArm4, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberArm4
-	];
-	export type Tree = TreeFor<TSKindId.NumberArm4>;
-	export type Kind = 'number_arm4';
-}
-export namespace NumberArm5 {
-	export type Config = ConfigFor<TSKindId.NumberArm5>;
-	export interface Built extends T.NumberArm5, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.NumberArm5.Built;
-		};
-	}
-	export type Loose = LooseFor<TSKindId.NumberArm5>;
-	export type LooseConfig = LooseConfigFor<TSKindId.NumberArm5>;
-	export type BuildArgs = [value: string];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Tree = TreeFor<TSKindId.NumberArm5>;
-	export type Kind = 'number_arm5';
-}
 export namespace ExportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ExportSpecifiers>;
 	export interface Built extends T.ExportSpecifiers, NodeMethodsOf {
@@ -19878,6 +19811,79 @@ export namespace CommentBlock {
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.CommentBlock>;
 	export type Kind = 'comment_block';
+}
+export namespace NumberHex {
+	export type Config = ConfigFor<TSKindId.NumberHex>;
+	export interface Built extends T.NumberHex, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			prefix(value: '0x' | '0X'): T.NumberHex.Built;
+			content(value: string): T.NumberHex.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NumberHex>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NumberHex>;
+	export type BuildArgs = [config: ConfigOf<T.NumberHex>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.NumberHex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberHex
+	];
+	export type Tree = TreeFor<TSKindId.NumberHex>;
+	export type Kind = 'number_hex';
+}
+export namespace NumberBinary {
+	export type Config = ConfigFor<TSKindId.NumberBinary>;
+	export interface Built extends T.NumberBinary, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			prefix(value: '0b' | '0B'): T.NumberBinary.Built;
+			content(value: string): T.NumberBinary.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NumberBinary>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NumberBinary>;
+	export type BuildArgs = [config: ConfigOf<T.NumberBinary>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.NumberBinary, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberBinary
+	];
+	export type Tree = TreeFor<TSKindId.NumberBinary>;
+	export type Kind = 'number_binary';
+}
+export namespace NumberOctal {
+	export type Config = ConfigFor<TSKindId.NumberOctal>;
+	export interface Built extends T.NumberOctal, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			prefix(value: '0o' | '0O'): T.NumberOctal.Built;
+			content(value: string): T.NumberOctal.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NumberOctal>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NumberOctal>;
+	export type BuildArgs = [config: ConfigOf<T.NumberOctal>];
+	export type LooseArgs = [
+		config: LooseConfigOf<T.NumberOctal, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NumberOctal
+	];
+	export type Tree = TreeFor<TSKindId.NumberOctal>;
+	export type Kind = 'number_octal';
+}
+export namespace NumberBigint {
+	export type Config = ConfigFor<TSKindId.NumberBigint>;
+	export interface Built extends T.NumberBigint, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: string): T.NumberBigint.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.NumberBigint>;
+	export type LooseConfig = LooseConfigFor<TSKindId.NumberBigint>;
+	export type BuildArgs = [value: string];
+	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId.NumberBigint>;
+	export type Kind = 'number_bigint';
 }
 export namespace BinaryExpressionIn {
 	export type Config = ConfigFor<TSKindId.BinaryExpressionIn>;
@@ -20999,20 +21005,20 @@ export namespace TypeIdentifier {
 	export type Tree = TypeIdentifierNs['Tree'];
 	export type Kind = '_type_identifier';
 }
-export namespace NumberArm2 {
-	export type Config = NumberArm2Ns['Config'];
+export namespace NumberDecimal {
+	export type Config = NumberDecimalNs['Config'];
 	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.NumberArm2;
+		readonly $type: TSKindId.NumberDecimal;
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
-	export type Loose = NumberArm2Ns['Loose'];
-	export type LooseConfig = NumberArm2Ns['LooseConfig'];
-	export type BuildArgs = NumberArm2Ns['BuildArgs'];
-	export type LooseArgs = NumberArm2Ns['LooseArgs'];
-	export type Tree = NumberArm2Ns['Tree'];
-	export type Kind = 'number_arm2';
+	export type Loose = NumberDecimalNs['Loose'];
+	export type LooseConfig = NumberDecimalNs['LooseConfig'];
+	export type BuildArgs = NumberDecimalNs['BuildArgs'];
+	export type LooseArgs = NumberDecimalNs['LooseArgs'];
+	export type Tree = NumberDecimalNs['Tree'];
+	export type Kind = 'number_decimal';
 }
 export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];

@@ -157,15 +157,15 @@ pub const LBRACE_PIPE: KindId = KindId(146);
 pub const PIPE_RBRACE: KindId = KindId(147);
 pub const USING_KEYWORD: KindId = KindId(148);
 pub const ACCESSOR_KEYWORD: KindId = KindId(149);
-pub const NUMBER_ARM1: KindId = KindId(150);
-pub const NUMBER_ARM2: KindId = KindId(151);
-pub const NUMBER_ARM3: KindId = KindId(152);
-pub const NUMBER_ARM4: KindId = KindId(153);
-pub const NUMBER_ARM5: KindId = KindId(154);
-pub const OF_KEYWORD: KindId = KindId(155);
-pub const GLOBAL_KEYWORD: KindId = KindId(156);
-pub const COMMENT_LINE: KindId = KindId(157);
-pub const COMMENT_BLOCK: KindId = KindId(158);
+pub const OF_KEYWORD: KindId = KindId(150);
+pub const GLOBAL_KEYWORD: KindId = KindId(151);
+pub const COMMENT_LINE: KindId = KindId(152);
+pub const COMMENT_BLOCK: KindId = KindId(153);
+pub const NUMBER_HEX: KindId = KindId(154);
+pub const NUMBER_DECIMAL: KindId = KindId(155);
+pub const NUMBER_BINARY: KindId = KindId(156);
+pub const NUMBER_OCTAL: KindId = KindId(157);
+pub const NUMBER_BIGINT: KindId = KindId(158);
 pub const DQUOTE: KindId = KindId(159);
 pub const DQUOTE2: KindId = KindId(160);
 pub const SQUOTE: KindId = KindId(161);
@@ -623,15 +623,15 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         147 => "|}", // "pipe_rbrace"
         148 => "using", // "using_keyword"
         149 => "accessor", // "accessor_keyword"
-        150 => "number_arm1", // "number_arm1"
-        151 => "number_arm2", // "number_arm2"
-        152 => "number_arm3", // "number_arm3"
-        153 => "number_arm4", // "number_arm4"
-        154 => "number_arm5", // "number_arm5"
-        155 => "of", // "of_keyword"
-        156 => "global", // "global_keyword"
-        157 => "comment_line", // "comment_line"
-        158 => "comment_block", // "comment_block"
+        150 => "of", // "of_keyword"
+        151 => "global", // "global_keyword"
+        152 => "comment_line", // "comment_line"
+        153 => "comment_block", // "comment_block"
+        154 => "number_hex", // "number_hex"
+        155 => "number_decimal", // "number_decimal"
+        156 => "number_binary", // "number_binary"
+        157 => "number_octal", // "number_octal"
+        158 => "number_bigint", // "number_bigint"
         159 => "\"", // "dquote"
         160 => "\"", // "dquote2"
         161 => "'", // "squote"
@@ -943,7 +943,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 96 | 97 | 98 | 150 | 151 | 152 | 153 | 154 | 157 | 158 | 168 | 169 | 170 | 171 | 173 | 310 | 351 | 385 | 386 | 456 | 462)
+    matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 96 | 97 | 98 | 152 | 153 | 154 | 155 | 156 | 157 | 158 | 168 | 169 | 170 | 171 | 173 | 310 | 351 | 385 | 386 | 456 | 462)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

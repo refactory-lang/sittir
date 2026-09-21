@@ -5129,7 +5129,9 @@ projects it through the token interior.
  *  (`integer_literal` in rust, `integer` in python), absent when the grammar
  *  has no such leaf. The one source for the runtime `_resolveScalar` and for
  *  the `LeafScalarMap` the loose surface widens those leaves through, so a
- *  scalar the resolver accepts is exactly a scalar the type admits. */
+ *  scalar the resolver accepts is exactly a scalar the type admits. A leaf
+ *  hoisted into a supertype of minted arms resolves to the supertype's
+ *  default arm, the arm its own factory builds from a bare value. */
 ```
 
 #### the boolean kinds come from the model, not a name
@@ -13388,6 +13390,8 @@ folds by text unconditionally.
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::emitTransparentSupertypeWrap`
+
+The kinds the wrapper accepts as a child are the supertype's direct subtypes plus everything reachable through nested supertypes (`transitiveParseKinds`): a parser node arrives under the concrete arm kind (`integer_literal_decimal`), never under the supertype that groups it, so a wrapper listing only direct subtypes returned the node empty.
 
 #### body
 

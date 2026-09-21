@@ -3358,8 +3358,8 @@ describe('method_definition sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.methodDefinition.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.methodDefinition.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0x',
@@ -3369,8 +3369,8 @@ describe('method_definition sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.methodDefinition.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.methodDefinition.decimal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
 			name: ['1']
@@ -3379,8 +3379,8 @@ describe('method_definition sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.methodDefinition.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.methodDefinition.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0b',
@@ -3390,8 +3390,8 @@ describe('method_definition sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.methodDefinition.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.methodDefinition.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0o',
@@ -3401,8 +3401,8 @@ describe('method_definition sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.methodDefinition.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.methodDefinition.bigint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
 			name: '1'
@@ -3468,8 +3468,8 @@ describe('pair sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.pair.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.pair.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -3478,8 +3478,8 @@ describe('pair sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.pair.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.pair.decimal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			key: ['1']
 		});
@@ -3487,8 +3487,8 @@ describe('pair sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.pair.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.pair.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -3497,8 +3497,8 @@ describe('pair sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.pair.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.pair.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -3507,8 +3507,8 @@ describe('pair sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.pair.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.pair.bigint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			key: '1'
 		});
@@ -3546,8 +3546,8 @@ describe('pair_pattern', () => {
 });
 
 describe('pair_pattern sub-factories', () => {
-	it('arm1 builds the parent', () => {
-		const node = ir.pairPattern.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.pairPattern.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -3556,8 +3556,8 @@ describe('pair_pattern sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.pairPattern.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.pairPattern.decimal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			key: ['1']
 		});
@@ -3565,8 +3565,8 @@ describe('pair_pattern sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.pairPattern.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.pairPattern.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -3575,8 +3575,8 @@ describe('pair_pattern sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.pairPattern.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.pairPattern.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -3585,8 +3585,8 @@ describe('pair_pattern sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.pairPattern.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.pairPattern.bigint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			key: '1'
 		});
@@ -3653,32 +3653,32 @@ describe('public_field_definition sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.Bang);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.publicFieldDefinition.arm1({ prefix: '0x', content: 'a' });
+	it('hex builds the parent', () => {
+		const node = ir.publicFieldDefinition.hex({ prefix: '0x', content: 'a' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.publicFieldDefinition.arm2({ name: ['1'] });
+	it('decimal builds the parent', () => {
+		const node = ir.publicFieldDefinition.decimal({ name: ['1'] });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.publicFieldDefinition.arm3({ prefix: '0b', content: '1' });
+	it('binary builds the parent', () => {
+		const node = ir.publicFieldDefinition.binary({ prefix: '0b', content: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.publicFieldDefinition.arm4({ prefix: '0o', content: '1' });
+	it('octal builds the parent', () => {
+		const node = ir.publicFieldDefinition.octal({ prefix: '0o', content: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.publicFieldDefinition.arm5({ name: '1' });
+	it('bigint builds the parent', () => {
+		const node = ir.publicFieldDefinition.bigint({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3756,8 +3756,8 @@ describe('method_signature sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.methodSignature.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.methodSignature.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -3766,8 +3766,8 @@ describe('method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.methodSignature.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.methodSignature.decimal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			name: ['1']
 		});
@@ -3775,8 +3775,8 @@ describe('method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.methodSignature.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.methodSignature.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -3785,8 +3785,8 @@ describe('method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.methodSignature.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.methodSignature.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -3795,8 +3795,8 @@ describe('method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.methodSignature.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.methodSignature.bigint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			name: '1'
 		});
@@ -3855,8 +3855,8 @@ describe('abstract_method_signature sub-factories', () => {
 		expect(seated?.$text ?? seated).toBe(TSKindId.Star);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.abstractMethodSignature.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.abstractMethodSignature.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -3865,8 +3865,8 @@ describe('abstract_method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.abstractMethodSignature.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.abstractMethodSignature.decimal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			name: ['1']
 		});
@@ -3874,8 +3874,8 @@ describe('abstract_method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.abstractMethodSignature.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.abstractMethodSignature.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -3884,8 +3884,8 @@ describe('abstract_method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.abstractMethodSignature.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.abstractMethodSignature.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -3894,8 +3894,8 @@ describe('abstract_method_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.abstractMethodSignature.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.abstractMethodSignature.bigint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			name: '1'
 		});
@@ -4585,8 +4585,8 @@ describe('enum_assignment sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.enumAssignment.arm1({
+	it('hex builds the parent', () => {
+		const node = ir.enumAssignment.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -4595,8 +4595,8 @@ describe('enum_assignment sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.enumAssignment.arm2({
+	it('decimal builds the parent', () => {
+		const node = ir.enumAssignment.decimal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			name: ['1']
 		});
@@ -4604,8 +4604,8 @@ describe('enum_assignment sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.enumAssignment.arm3({
+	it('binary builds the parent', () => {
+		const node = ir.enumAssignment.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -4614,8 +4614,8 @@ describe('enum_assignment sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.enumAssignment.arm4({
+	it('octal builds the parent', () => {
+		const node = ir.enumAssignment.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -4624,8 +4624,8 @@ describe('enum_assignment sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.enumAssignment.arm5({
+	it('bigint builds the parent', () => {
+		const node = ir.enumAssignment.bigint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
 			name: '1'
 		});
@@ -5445,14 +5445,14 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			index: { $type: TSKindId.NumberArm2, $text: 'test', $source: 2, $named: true } as any
+			index: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('subscriptExpression.arm1 builds the parent', () => {
-		const node = ir.typeQuery.subscriptExpression.arm1({
+	it('subscriptExpression.hex builds the parent', () => {
+		const node = ir.typeQuery.subscriptExpression.hex({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0x',
 			content: 'a'
@@ -5461,8 +5461,8 @@ describe('type_query sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('subscriptExpression.arm2 builds the parent', () => {
-		const node = ir.typeQuery.subscriptExpression.arm2({
+	it('subscriptExpression.decimal builds the parent', () => {
+		const node = ir.typeQuery.subscriptExpression.decimal({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			index: ['1']
 		});
@@ -5470,8 +5470,8 @@ describe('type_query sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('subscriptExpression.arm3 builds the parent', () => {
-		const node = ir.typeQuery.subscriptExpression.arm3({
+	it('subscriptExpression.binary builds the parent', () => {
+		const node = ir.typeQuery.subscriptExpression.binary({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0b',
 			content: '1'
@@ -5480,8 +5480,8 @@ describe('type_query sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('subscriptExpression.arm4 builds the parent', () => {
-		const node = ir.typeQuery.subscriptExpression.arm4({
+	it('subscriptExpression.octal builds the parent', () => {
+		const node = ir.typeQuery.subscriptExpression.octal({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			prefix: '0o',
 			content: '1'
@@ -5490,8 +5490,8 @@ describe('type_query sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('subscriptExpression.arm5 builds the parent', () => {
-		const node = ir.typeQuery.subscriptExpression.arm5({
+	it('subscriptExpression.bigint builds the parent', () => {
+		const node = ir.typeQuery.subscriptExpression.bigint({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			index: '1'
 		});
@@ -5663,68 +5663,68 @@ describe('literal_type sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.literalType.number({
 			operator: '-',
-			argument: { $type: TSKindId.NumberArm2, $text: 'test', $source: 2, $named: true } as any
+			argument: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.arm1 builds the parent', () => {
-		const node = ir.literalType.number.arm1({ operator: '-', prefix: '0x', content: 'a' });
+	it('number.hex builds the parent', () => {
+		const node = ir.literalType.number.hex({ operator: '-', prefix: '0x', content: 'a' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.arm2 builds the parent', () => {
-		const node = ir.literalType.number.arm2({ operator: '-', argument: ['1'] });
+	it('number.decimal builds the parent', () => {
+		const node = ir.literalType.number.decimal({ operator: '-', argument: ['1'] });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.arm3 builds the parent', () => {
-		const node = ir.literalType.number.arm3({ operator: '-', prefix: '0b', content: '1' });
+	it('number.binary builds the parent', () => {
+		const node = ir.literalType.number.binary({ operator: '-', prefix: '0b', content: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.arm4 builds the parent', () => {
-		const node = ir.literalType.number.arm4({ operator: '-', prefix: '0o', content: '1' });
+	it('number.octal builds the parent', () => {
+		const node = ir.literalType.number.octal({ operator: '-', prefix: '0o', content: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('number.arm5 builds the parent', () => {
-		const node = ir.literalType.number.arm5({ operator: '-', argument: '1' });
+	it('number.bigint builds the parent', () => {
+		const node = ir.literalType.number.bigint({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.literalType.arm1({ prefix: '0x', content: 'a' });
+	it('hex builds the parent', () => {
+		const node = ir.literalType.hex({ prefix: '0x', content: 'a' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.literalType.arm2('1');
+	it('decimal builds the parent', () => {
+		const node = ir.literalType.decimal('1');
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.literalType.arm3({ prefix: '0b', content: '1' });
+	it('binary builds the parent', () => {
+		const node = ir.literalType.binary({ prefix: '0b', content: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.literalType.arm4({ prefix: '0o', content: '1' });
+	it('octal builds the parent', () => {
+		const node = ir.literalType.octal({ prefix: '0o', content: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.literalType.arm5('1');
+	it('bigint builds the parent', () => {
+		const node = ir.literalType.bigint('1');
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6003,32 +6003,32 @@ describe('property_signature sub-factories', () => {
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm1 builds the parent', () => {
-		const node = ir.propertySignature.arm1({ prefix: '0x', content: 'a' });
+	it('hex builds the parent', () => {
+		const node = ir.propertySignature.hex({ prefix: '0x', content: 'a' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm2 builds the parent', () => {
-		const node = ir.propertySignature.arm2({ name: ['1'] });
+	it('decimal builds the parent', () => {
+		const node = ir.propertySignature.decimal({ name: ['1'] });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm3 builds the parent', () => {
-		const node = ir.propertySignature.arm3({ prefix: '0b', content: '1' });
+	it('binary builds the parent', () => {
+		const node = ir.propertySignature.binary({ prefix: '0b', content: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm4 builds the parent', () => {
-		const node = ir.propertySignature.arm4({ prefix: '0o', content: '1' });
+	it('octal builds the parent', () => {
+		const node = ir.propertySignature.octal({ prefix: '0o', content: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('arm5 builds the parent', () => {
-		const node = ir.propertySignature.arm5({ name: '1' });
+	it('bigint builds the parent', () => {
+		const node = ir.propertySignature.bigint({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6309,15 +6309,6 @@ describe('function_type sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.FunctionType);
 		expect((node as any).returnType()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('number_arm2', () => {
-	it('factory produces correct type', () => {
-		const node = ir.numberArm2('1');
-		expect(node.$type).toBe(TSKindId.NumberArm2);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('1');
 	});
 });
 

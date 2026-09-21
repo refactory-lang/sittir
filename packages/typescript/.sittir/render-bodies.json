@@ -5563,46 +5563,7 @@
 			"field": "non_null_expression_after"
 		}
 	],
-	"number_arm1": [
-		{
-			"kind": "slot",
-			"name": "prefix"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
-	"number_arm3": [
-		{
-			"kind": "slot",
-			"name": "prefix"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
-	"number_arm4": [
-		{
-			"kind": "slot",
-			"name": "prefix"
-		},
-		{
-			"kind": "adjacent"
-		},
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
-	"number_arm5": [
+	"number_bigint": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -5610,6 +5571,45 @@
 		{
 			"kind": "text",
 			"text": "n"
+		}
+	],
+	"number_binary": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"number_hex": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"number_octal": [
+		{
+			"kind": "slot",
+			"name": "prefix"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"object": [

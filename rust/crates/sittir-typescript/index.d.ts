@@ -1548,26 +1548,26 @@ export interface NonNullExpressionTransport {
   _non_null_expression_after?: number
 }
 
-export interface NumberArm1Transport {
+export interface NumberBigintTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface NumberBinaryTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
   _content: string
 }
 
-export interface NumberArm3Transport {
+export interface NumberHexTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
   _content: string
 }
 
-export interface NumberArm4Transport {
+export interface NumberOctalTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
-  _content: string
-}
-
-export interface NumberArm5Transport {
-  '$_trivia'?: TransportTrivia
   _content: string
 }
 

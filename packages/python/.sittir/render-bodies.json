@@ -1404,7 +1404,7 @@
 			"field": "else_clause_after"
 		}
 	],
-	"escape_sequence_arm1": [
+	"escape_sequence_hex": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1417,7 +1417,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm2": [
+	"escape_sequence_line_break": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1430,7 +1430,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm3": [
+	"escape_sequence_named": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1443,7 +1443,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm4": [
+	"escape_sequence_octal": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1456,7 +1456,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm5": [
+	"escape_sequence_simple": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1469,7 +1469,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm6": [
+	"escape_sequence_unicode_fixed": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -1482,7 +1482,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm7": [
+	"escape_sequence_unicode_wide": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2293,7 +2293,7 @@
 			"field": "import_statement_after"
 		}
 	],
-	"integer_arm1": [
+	"integer_binary": [
 		{
 			"kind": "slot",
 			"name": "prefix"
@@ -2306,7 +2306,7 @@
 			"name": "content"
 		}
 	],
-	"integer_arm2": [
+	"integer_hex": [
 		{
 			"kind": "slot",
 			"name": "prefix"
@@ -2319,7 +2319,7 @@
 			"name": "content"
 		}
 	],
-	"integer_arm3": [
+	"integer_octal": [
 		{
 			"kind": "slot",
 			"name": "prefix"

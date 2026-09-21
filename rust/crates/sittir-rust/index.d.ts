@@ -394,13 +394,13 @@ export interface CapturedPatternTransport {
   _captured_pattern_after?: number
 }
 
-export interface CharLiteralArm1Transport {
+export interface CharLiteralEscapedTransport {
   '$_trivia'?: TransportTrivia
   _b?: boolean
   _content: string
 }
 
-export interface CharLiteralArm2Transport {
+export interface CharLiteralPlainTransport {
   '$_trivia'?: TransportTrivia
   _b?: boolean
   _content: string
@@ -632,22 +632,22 @@ export interface EnumVariantTransport {
   _enum_variant_after?: number
 }
 
-export interface EscapeSequenceArm1Transport {
+export interface EscapeSequenceHexTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm2Transport {
+export interface EscapeSequenceSimpleTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm3Transport {
+export interface EscapeSequenceUnicodeBracedTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm4Transport {
+export interface EscapeSequenceUnicodeFixedTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
@@ -1048,25 +1048,25 @@ export interface InnerAttributeItemTransport {
   _inner_attribute_item_after?: number
 }
 
-export interface IntegerLiteralArm1Transport {
+export interface IntegerLiteralBinaryTransport {
   '$_trivia'?: TransportTrivia
   _content: string
   _suffix?: string
 }
 
-export interface IntegerLiteralArm2Transport {
+export interface IntegerLiteralDecimalTransport {
   '$_trivia'?: TransportTrivia
   _content: string
   _suffix?: string
 }
 
-export interface IntegerLiteralArm3Transport {
+export interface IntegerLiteralHexTransport {
   '$_trivia'?: TransportTrivia
   _content: string
   _suffix?: string
 }
 
-export interface IntegerLiteralArm4Transport {
+export interface IntegerLiteralOctalTransport {
   '$_trivia'?: TransportTrivia
   _content: string
   _suffix?: string

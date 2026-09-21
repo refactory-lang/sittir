@@ -29,7 +29,7 @@ const _leafRe_buildIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
 const _leafRe_buildTypeIdentifier =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _leafRe_buildNumberArm2 =
+const _leafRe_buildNumberDecimal =
 	/^(?:(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)\.(?:(?:\d(_?\d)*))?(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|\.(?:\d(_?\d)*)(?:(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*)|(?:\d(_?\d)*)))$/u;
 const _leafRe_buildHtmlComment = /^(?:(?:<!--[\s\S]*?-->))$/u;
 const _leafRe_buildJsxText = /^(?:(?:[^{}<>]+))$/u;
@@ -39,16 +39,16 @@ const _slotRe_buildEscapeSequence_content =
 	/^(?:(?:(?:[^xu0-7])|(?:[0-7]{1,3})|(?:x[0-9a-fA-F]{2})|(?:u[0-9a-fA-F]{4})|(?:u\{[0-9a-fA-F]+\})|(?:[\r?][\n\u2028\u2029])))$/u;
 const _slotRe_buildPrivatePropertyIdentifier_content =
 	/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u;
-const _slotRe_buildNumberArm1_prefix = /^(?:0x|0X)$/u;
-const _slotRe_buildNumberArm1_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
-const _slotRe_buildNumberArm3_prefix = /^(?:0b|0B)$/u;
-const _slotRe_buildNumberArm3_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
-const _slotRe_buildNumberArm4_prefix = /^(?:0o|0O)$/u;
-const _slotRe_buildNumberArm4_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
-const _slotRe_buildNumberArm5_content =
-	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*)))$/u;
 const _slotRe_buildCommentLine_content = /^(?:(?:[^\r\n\u2028\u2029]*))$/u;
 const _slotRe_buildCommentBlock_content = /^(?:(?:([^*]|\*+[^*/])*\**))$/u;
+const _slotRe_buildNumberHex_prefix = /^(?:0x|0X)$/u;
+const _slotRe_buildNumberHex_content = /^(?:(?:[\da-fA-F](_?[\da-fA-F])*))$/u;
+const _slotRe_buildNumberBinary_prefix = /^(?:0b|0B)$/u;
+const _slotRe_buildNumberBinary_content = /^(?:(?:[0-1](_?[0-1])*))$/u;
+const _slotRe_buildNumberOctal_prefix = /^(?:0o|0O)$/u;
+const _slotRe_buildNumberOctal_content = /^(?:(?:[0-7](_?[0-7])*))$/u;
+const _slotRe_buildNumberBigint_content =
+	/^(?:(?:(?:0x|0X)(?:[\da-fA-F](_?[\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\d(_?\d)*)))$/u;
 
 export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.Built {
 	const _hash_bang_line = config.hashBangLine;
@@ -5242,130 +5242,6 @@ export function buildTypeIdentifier(text: string): T.TypeIdentifier.Built {
 	);
 }
 
-export function buildNumberArm1(config: T.NumberArm1.Config): T.NumberArm1.Built {
-	const _prefix = config.prefix;
-	if (_prefix !== undefined && !_slotRe_buildNumberArm1_prefix.test(_prefix))
-		throw new Error(`number_arm1.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildNumberArm1_content.test(_content))
-		throw new Error(`number_arm1.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NumberArm1 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_prefix,
-				_content,
-				$with: {
-					prefix: (value: '0x' | '0X') => buildNumberArm1({ ...config, prefix: value }),
-					content: (value: string) => buildNumberArm1({ ...config, content: value })
-				}
-			},
-			{
-				prefix: () => _prefix,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildNumberArm2(text: string): T.NumberArm2.Built {
-	if (text.length === 0) throw new Error(`number_arm2: text must be non-empty`);
-	if (!_leafRe_buildNumberArm2.test(text)) throw new Error(`number_arm2: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.NumberArm2 as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildNumberArm3(config: T.NumberArm3.Config): T.NumberArm3.Built {
-	const _prefix = config.prefix;
-	if (_prefix !== undefined && !_slotRe_buildNumberArm3_prefix.test(_prefix))
-		throw new Error(`number_arm3.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildNumberArm3_content.test(_content))
-		throw new Error(`number_arm3.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NumberArm3 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_prefix,
-				_content,
-				$with: {
-					prefix: (value: '0b' | '0B') => buildNumberArm3({ ...config, prefix: value }),
-					content: (value: string) => buildNumberArm3({ ...config, content: value })
-				}
-			},
-			{
-				prefix: () => _prefix,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildNumberArm4(config: T.NumberArm4.Config): T.NumberArm4.Built {
-	const _prefix = config.prefix;
-	if (_prefix !== undefined && !_slotRe_buildNumberArm4_prefix.test(_prefix))
-		throw new Error(`number_arm4.prefix: text does not match pattern: ${_prefix}`);
-	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildNumberArm4_content.test(_content))
-		throw new Error(`number_arm4.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NumberArm4 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_prefix,
-				_content,
-				$with: {
-					prefix: (value: '0o' | '0O') => buildNumberArm4({ ...config, prefix: value }),
-					content: (value: string) => buildNumberArm4({ ...config, content: value })
-				}
-			},
-			{
-				prefix: () => _prefix,
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function buildNumberArm5(value: string): T.NumberArm5.Built {
-	const _content = value;
-	if (_content !== undefined && !_slotRe_buildNumberArm5_content.test(_content))
-		throw new Error(`number_arm5.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NumberArm5 as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildNumberArm5(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildExportSpecifiers(
 	...elements: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>
 ): ReturnType<typeof _buildExportSpecifiers>;
@@ -6156,6 +6032,130 @@ export function buildCommentBlock(value: string): T.CommentBlock.Built {
 				_content,
 				$with: {
 					content: (value: string) => buildCommentBlock(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberHex(config: T.NumberHex.Config): T.NumberHex.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
+		throw new Error(`number_hex.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildNumberHex_content.test(_content))
+		throw new Error(`number_hex.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberHex as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0x' | '0X') => buildNumberHex({ ...config, prefix: value }),
+					content: (value: string) => buildNumberHex({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberDecimal(text: string): T.NumberDecimal.Built {
+	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
+	if (!_leafRe_buildNumberDecimal.test(text)) throw new Error(`number_decimal: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.NumberDecimal as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildNumberBinary(config: T.NumberBinary.Config): T.NumberBinary.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
+		throw new Error(`number_binary.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildNumberBinary_content.test(_content))
+		throw new Error(`number_binary.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBinary as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0b' | '0B') => buildNumberBinary({ ...config, prefix: value }),
+					content: (value: string) => buildNumberBinary({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberOctal(config: T.NumberOctal.Config): T.NumberOctal.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
+		throw new Error(`number_octal.prefix: text does not match pattern: ${_prefix}`);
+	const _content = config.content;
+	if (_content !== undefined && !_slotRe_buildNumberOctal_content.test(_content))
+		throw new Error(`number_octal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberOctal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0o' | '0O') => buildNumberOctal({ ...config, prefix: value }),
+					content: (value: string) => buildNumberOctal({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildNumberBigint(value: string): T.NumberBigint.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildNumberBigint_content.test(_content))
+		throw new Error(`number_bigint.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.NumberBigint as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildNumberBigint(value)
 				}
 			},
 			{
@@ -7572,11 +7572,6 @@ export type FluentKindMap = {
 	intersection_type: T.IntersectionType.Built;
 	function_type: T.FunctionType.Built;
 	_type_identifier: T.TypeIdentifier;
-	number_arm1: T.NumberArm1.Built;
-	number_arm2: T.NumberArm2;
-	number_arm3: T.NumberArm3.Built;
-	number_arm4: T.NumberArm4.Built;
-	number_arm5: T.NumberArm5.Built;
 	export_specifiers: T.ExportSpecifiers.Built;
 	import_specifiers: T.ImportSpecifiers.Built;
 	formal_parameters_elements: T.FormalParametersElements.Built;
@@ -7594,6 +7589,11 @@ export type FluentKindMap = {
 	export_statement_equals_export: T.ExportStatementEqualsExport.Built;
 	comment_line: T.CommentLine.Built;
 	comment_block: T.CommentBlock.Built;
+	number_hex: T.NumberHex.Built;
+	number_decimal: T.NumberDecimal;
+	number_binary: T.NumberBinary.Built;
+	number_octal: T.NumberOctal.Built;
+	number_bigint: T.NumberBigint.Built;
 	binary_expression_in: T.BinaryExpressionIn.Built;
 	class_body_method: T.ClassBodyMethod.Built;
 	class_body_method_sig: T.ClassBodyMethodSig.Built;
@@ -7810,11 +7810,6 @@ export const _factoryMap = {
 	intersection_type: buildIntersectionType,
 	function_type: buildFunctionType,
 	_type_identifier: buildTypeIdentifier,
-	number_arm1: buildNumberArm1,
-	number_arm2: buildNumberArm2,
-	number_arm3: buildNumberArm3,
-	number_arm4: buildNumberArm4,
-	number_arm5: buildNumberArm5,
 	export_specifiers: buildExportSpecifiers,
 	import_specifiers: buildImportSpecifiers,
 	formal_parameters_elements: buildFormalParametersElements,
@@ -7832,6 +7827,11 @@ export const _factoryMap = {
 	export_statement_equals_export: buildExportStatementEqualsExport,
 	comment_line: buildCommentLine,
 	comment_block: buildCommentBlock,
+	number_hex: buildNumberHex,
+	number_decimal: buildNumberDecimal,
+	number_binary: buildNumberBinary,
+	number_octal: buildNumberOctal,
+	number_bigint: buildNumberBigint,
 	binary_expression_in: buildBinaryExpressionIn,
 	class_body_method: buildClassBodyMethod,
 	class_body_method_sig: buildClassBodyMethodSig,

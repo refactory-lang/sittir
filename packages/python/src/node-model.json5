@@ -70,22 +70,22 @@
     "assignment_eq": "assignment.eq",
     "assignment_type": "assignment.type",
     "assignment_typed": "assignment.typed",
-    "escape_sequence_arm1": "escapeSequence.arm1",
-    "escape_sequence_arm2": "escapeSequence.arm2",
-    "escape_sequence_arm3": "escapeSequence.arm3",
-    "escape_sequence_arm4": "escapeSequence.arm4",
-    "escape_sequence_arm5": "escapeSequence.arm5",
-    "escape_sequence_arm6": "escapeSequence.arm6",
-    "escape_sequence_arm7": "escapeSequence.arm7",
-    "float_arm1": "float.arm1",
-    "float_arm2": "float.arm2",
-    "float_arm3": "float.arm3",
-    "integer_arm1": "integer.arm1",
-    "integer_arm2": "integer.arm2",
-    "integer_arm3": "integer.arm3",
-    "integer_arm4": "integer.arm4",
-    "line_continuation_arm1": "lineContinuation.arm1",
-    "line_continuation_arm2": "lineContinuation.arm2",
+    "escape_sequence_hex": "escapeSequence.hex",
+    "escape_sequence_line_break": "escapeSequence.lineBreak",
+    "escape_sequence_named": "escapeSequence.named",
+    "escape_sequence_octal": "escapeSequence.octal",
+    "escape_sequence_simple": "escapeSequence.simple",
+    "escape_sequence_unicode_fixed": "escapeSequence.unicodeFixed",
+    "escape_sequence_unicode_wide": "escapeSequence.unicodeWide",
+    "float_exponent": "float.exponent",
+    "float_leading_point": "float.leadingPoint",
+    "float_point": "float.point",
+    "integer_binary": "integer.binary",
+    "integer_decimal": "integer.decimal",
+    "integer_hex": "integer.hex",
+    "integer_octal": "integer.octal",
+    "line_continuation_newline": "lineContinuation.newline",
+    "line_continuation_nul": "lineContinuation.nul",
     "suite_block": "suite.block",
     "suite_empty": "suite.empty",
     "suite_inline": "suite.inline",
@@ -269,13 +269,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -339,13 +339,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -388,13 +388,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -437,13 +437,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -983,13 +983,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -1169,13 +1169,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent"
         ]
       }
     },
@@ -1482,13 +1482,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -1623,13 +1623,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -1888,13 +1888,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -2033,13 +2033,13 @@
         "nonEmpty": false,
         "wireKeys": [
           "_escape_interpolation",
-          "_escape_sequence_arm1",
-          "_escape_sequence_arm2",
-          "_escape_sequence_arm3",
-          "_escape_sequence_arm4",
-          "_escape_sequence_arm5",
-          "_escape_sequence_arm6",
-          "_escape_sequence_arm7",
+          "_escape_sequence_unicode_fixed",
+          "_escape_sequence_unicode_wide",
+          "_escape_sequence_hex",
+          "_escape_sequence_octal",
+          "_escape_sequence_line_break",
+          "_escape_sequence_simple",
+          "_escape_sequence_named",
           "_not_escape_sequence",
           "_string_fragment"
         ]
@@ -2097,117 +2097,6 @@
       }
     },
     "comment": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm2": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm3": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm4": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm5": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm6": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm7": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_arm1": {
-      "prefix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_arm2": {
-      "prefix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_arm3": {
-      "prefix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -2287,13 +2176,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -2388,13 +2277,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -2534,6 +2423,117 @@
         "nonEmpty": false
       }
     },
+    "integer_hex": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_octal": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_binary": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_fixed": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_wide": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_hex": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_octal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_line_break": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_simple": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_named": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "simple_pattern_negative": {
       "sign": {
         "unnamed": false,
@@ -2549,13 +2549,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent"
         ]
       }
     },
@@ -2719,13 +2719,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -2764,13 +2764,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer_arm1",
-          "_integer_arm2",
-          "_integer_arm3",
-          "_integer_arm4",
-          "_float_arm1",
-          "_float_arm2",
-          "_float_arm3",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_exponent",
           "_true",
           "_false",
           "_none",
@@ -2882,15 +2882,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3542,15 +3542,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3610,15 +3610,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3776,19 +3776,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3981,15 +3981,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -4151,15 +4151,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
@@ -4227,15 +4227,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
@@ -4927,15 +4927,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -5894,15 +5894,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6714,15 +6714,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6887,15 +6887,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7038,15 +7038,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7165,15 +7165,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7247,15 +7247,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7522,19 +7522,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7618,23 +7618,24 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "escape_sequence_arm1",
-        "escape_sequence_arm2",
-        "escape_sequence_arm3",
-        "escape_sequence_arm4",
-        "escape_sequence_arm5",
-        "escape_sequence_arm6",
-        "escape_sequence_arm7"
+        "escape_sequence_hex",
+        "escape_sequence_line_break",
+        "escape_sequence_named",
+        "escape_sequence_octal",
+        "escape_sequence_simple",
+        "escape_sequence_unicode_fixed",
+        "escape_sequence_unicode_wide"
       ]
     },
     {
-      "kind": "escape_sequence_arm1",
+      "kind": "escape_sequence_hex",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm1",
-      "factoryName": "escapeSequenceArm1",
-      "irKey": "escapeSequenceArm1",
+      "typeName": "EscapeSequenceHex",
+      "factoryName": "escapeSequenceHex",
+      "irKey": "escapeSequenceHex",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -7655,111 +7656,7 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm1",
-      "interior": {
-        "entries": [
-          {
-            "lit": "\\"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:u[a-fA-F\\d]{4})"
-          }
-        ],
-        "regex": "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "escape_sequence_arm2",
-      "modelType": "branch",
-      "typeName": "EscapeSequenceArm2",
-      "factoryName": "escapeSequenceArm2",
-      "irKey": "escapeSequenceArm2",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "escape_sequence_arm2",
-      "interior": {
-        "entries": [
-          {
-            "lit": "\\"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:U[a-fA-F\\d]{8})"
-          }
-        ],
-        "regex": "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "escape_sequence_arm3",
-      "modelType": "branch",
-      "typeName": "EscapeSequenceArm3",
-      "factoryName": "escapeSequenceArm3",
-      "irKey": "escapeSequenceArm3",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "escape_sequence_arm3",
+      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -7784,13 +7681,14 @@
       ]
     },
     {
-      "kind": "escape_sequence_arm4",
+      "kind": "escape_sequence_line_break",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm4",
-      "factoryName": "escapeSequenceArm4",
-      "irKey": "escapeSequenceArm4",
+      "typeName": "EscapeSequenceLineBreak",
+      "factoryName": "escapeSequenceLineBreak",
+      "irKey": "escapeSequenceLineBreak",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -7811,59 +7709,7 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm4",
-      "interior": {
-        "entries": [
-          {
-            "lit": "\\"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:\\d{1,3})"
-          }
-        ],
-        "regex": "^\\\\(?<content>(?:\\d{1,3}))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "escape_sequence_arm5",
-      "modelType": "branch",
-      "typeName": "EscapeSequenceArm5",
-      "factoryName": "escapeSequenceArm5",
-      "irKey": "escapeSequenceArm5",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "escape_sequence_arm5",
+      "name": "escape_sequence_line_break",
       "interior": {
         "entries": [
           {
@@ -7888,13 +7734,14 @@
       ]
     },
     {
-      "kind": "escape_sequence_arm6",
+      "kind": "escape_sequence_named",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm6",
-      "factoryName": "escapeSequenceArm6",
-      "irKey": "escapeSequenceArm6",
+      "typeName": "EscapeSequenceNamed",
+      "factoryName": "escapeSequenceNamed",
+      "irKey": "escapeSequenceNamed",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -7915,7 +7762,113 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm6",
+      "name": "escape_sequence_named",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:N\\{[^}]+\\})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:N\\{[^}]+\\}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_octal",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceOctal",
+      "factoryName": "escapeSequenceOctal",
+      "irKey": "escapeSequenceOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_octal",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\d{1,3})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\d{1,3}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_simple",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceSimple",
+      "factoryName": "escapeSequenceSimple",
+      "irKey": "escapeSequenceSimple",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_simple",
       "interior": {
         "entries": [
           {
@@ -7940,13 +7893,14 @@
       ]
     },
     {
-      "kind": "escape_sequence_arm7",
+      "kind": "escape_sequence_unicode_fixed",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm7",
-      "factoryName": "escapeSequenceArm7",
-      "irKey": "escapeSequenceArm7",
+      "typeName": "EscapeSequenceUnicodeFixed",
+      "factoryName": "escapeSequenceUnicodeFixed",
+      "irKey": "escapeSequenceUnicodeFixed",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -7967,7 +7921,7 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm7",
+      "name": "escape_sequence_unicode_fixed",
       "interior": {
         "entries": [
           {
@@ -7975,10 +7929,63 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:N\\{[^}]+\\})"
+            "pattern": "(?:u[a-fA-F\\d]{4})"
           }
         ],
-        "regex": "^\\\\(?<content>(?:N\\{[^}]+\\}))$",
+        "regex": "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_unicode_wide",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceUnicodeWide",
+      "factoryName": "escapeSequenceUnicodeWide",
+      "irKey": "escapeSequenceUnicodeWide",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_unicode_wide",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:U[a-fA-F\\d]{8})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$",
         "slots": [
           {
             "name": "content",
@@ -8427,15 +8434,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8547,15 +8554,15 @@
         "expression_list",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8618,15 +8625,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8730,19 +8737,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8795,48 +8802,51 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "float_arm1",
-        "float_arm2",
-        "float_arm3"
+        "float_exponent",
+        "float_leading_point",
+        "float_point"
       ]
     },
     {
-      "kind": "float_arm1",
+      "kind": "float_exponent",
       "modelType": "pattern",
-      "typeName": "FloatArm1",
-      "factoryName": "floatArm1",
-      "irKey": "floatArm1",
+      "typeName": "FloatExponent",
+      "factoryName": "floatExponent",
+      "irKey": "floatExponent",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
-      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u",
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u",
       "factoryShape": "text"
     },
     {
-      "kind": "float_arm2",
+      "kind": "float_leading_point",
       "modelType": "pattern",
-      "typeName": "FloatArm2",
-      "factoryName": "floatArm2",
-      "irKey": "floatArm2",
+      "typeName": "FloatLeadingPoint",
+      "factoryName": "floatLeadingPoint",
+      "irKey": "floatLeadingPoint",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u",
       "factoryShape": "text"
     },
     {
-      "kind": "float_arm3",
+      "kind": "float_point",
       "modelType": "pattern",
-      "typeName": "FloatArm3",
-      "factoryName": "floatArm3",
-      "irKey": "floatArm3",
+      "typeName": "FloatPoint",
+      "factoryName": "floatPoint",
+      "irKey": "floatPoint",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
-      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+(?:(?:[jJ]))?)$/u",
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?(?:(?:[jJ]))?)$/u",
       "factoryShape": "text"
     },
     {
@@ -9591,15 +9601,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -9871,188 +9881,21 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4"
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal"
       ]
     },
     {
-      "kind": "integer_arm1",
+      "kind": "integer_binary",
       "modelType": "branch",
-      "typeName": "IntegerArm1",
-      "factoryName": "integerArm1",
-      "irKey": "integerArm1",
+      "typeName": "IntegerBinary",
+      "factoryName": "integerBinary",
+      "irKey": "integerBinary",
       "hidden": false,
       "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "prefix",
-          "propertyName": "prefix",
-          "paramName": "prefix",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "0x"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "0X"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "integer_arm1",
-      "interior": {
-        "entries": [
-          {
-            "enum": "prefix",
-            "values": [
-              "0x",
-              "0X"
-            ],
-            "optional": false
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?"
-          }
-        ],
-        "regex": "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$",
-        "slots": [
-          {
-            "name": "prefix",
-            "configKey": "prefix"
-          },
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "config",
-      "factoryFields": [
-        "prefix",
-        "content"
-      ]
-    },
-    {
-      "kind": "integer_arm2",
-      "modelType": "branch",
-      "typeName": "IntegerArm2",
-      "factoryName": "integerArm2",
-      "irKey": "integerArm2",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "prefix",
-          "propertyName": "prefix",
-          "paramName": "prefix",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "0o"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "0O"
-            }
-          ]
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "integer_arm2",
-      "interior": {
-        "entries": [
-          {
-            "enum": "prefix",
-            "values": [
-              "0o",
-              "0O"
-            ],
-            "optional": false
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:(?:_?[0-7]+))+(?:(?:[Ll]))?"
-          }
-        ],
-        "regex": "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$",
-        "slots": [
-          {
-            "name": "prefix",
-            "configKey": "prefix"
-          },
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "config",
-      "factoryFields": [
-        "prefix",
-        "content"
-      ]
-    },
-    {
-      "kind": "integer_arm3",
-      "modelType": "branch",
-      "typeName": "IntegerArm3",
-      "factoryName": "integerArm3",
-      "irKey": "integerArm3",
-      "hidden": false,
-      "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -10095,7 +9938,7 @@
           ]
         }
       ],
-      "name": "integer_arm3",
+      "name": "integer_binary",
       "interior": {
         "entries": [
           {
@@ -10130,17 +9973,188 @@
       ]
     },
     {
-      "kind": "integer_arm4",
+      "kind": "integer_decimal",
       "modelType": "pattern",
-      "typeName": "IntegerArm4",
-      "factoryName": "integerArm4",
-      "irKey": "integerArm4",
+      "typeName": "IntegerDecimal",
+      "factoryName": "integerDecimal",
+      "irKey": "integerDecimal",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "integer_hex",
+      "modelType": "branch",
+      "typeName": "IntegerHex",
+      "factoryName": "integerHex",
+      "irKey": "integerHex",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_hex",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_octal",
+      "modelType": "branch",
+      "typeName": "IntegerOctal",
+      "factoryName": "integerOctal",
+      "irKey": "integerOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_octal",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-7]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
     },
     {
       "kind": "interpolation",
@@ -10712,31 +10726,33 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "line_continuation_arm1",
-        "line_continuation_arm2"
+        "line_continuation_newline",
+        "line_continuation_nul"
       ]
     },
     {
-      "kind": "line_continuation_arm1",
+      "kind": "line_continuation_newline",
       "modelType": "pattern",
-      "typeName": "LineContinuationArm1",
-      "factoryName": "lineContinuationArm1",
-      "irKey": "lineContinuationArm1",
+      "typeName": "LineContinuationNewline",
+      "factoryName": "lineContinuationNewline",
+      "irKey": "lineContinuationNewline",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
       "factoryShape": "text"
     },
     {
-      "kind": "line_continuation_arm2",
+      "kind": "line_continuation_nul",
       "modelType": "punctuation",
-      "typeName": "LineContinuationArm2",
-      "factoryName": "lineContinuationArm2",
-      "irKey": "lineContinuationArm2",
+      "typeName": "LineContinuationNul",
+      "factoryName": "lineContinuationNul",
+      "irKey": "lineContinuationNul",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "isParameterless": true,
@@ -10797,15 +10813,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11024,15 +11040,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11546,15 +11562,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11778,15 +11794,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11867,15 +11883,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12212,15 +12228,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12359,15 +12375,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12607,15 +12623,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12700,15 +12716,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12906,19 +12922,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13124,15 +13140,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13519,15 +13535,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13650,15 +13666,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13837,19 +13853,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14063,15 +14079,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14225,16 +14241,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14390,16 +14406,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14613,16 +14629,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -15057,15 +15073,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -15145,15 +15161,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -15218,15 +15234,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -15301,15 +15317,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -15490,15 +15506,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float_arm1",
-        "float_arm2",
-        "float_arm3",
+        "float_exponent",
+        "float_leading_point",
+        "float_point",
         "generator_expression",
         "identifier",
-        "integer_arm1",
-        "integer_arm2",
-        "integer_arm3",
-        "integer_arm4",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",

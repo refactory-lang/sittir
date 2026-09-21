@@ -714,11 +714,11 @@ const _supertype_assignment_ids = new Set<number>([284, 285, 286]);
 const _supertype_leftHandSide_ids = new Set<number>([213]);
 const _supertype_rightHandSide_ids = new Set<number>([177, 212, 213, 215]);
 const _supertype_fExpression_ids = new Set<number>([177, 213, 215]);
-const _supertype_escapeSequence_ids = new Set<number>([75, 76, 77, 78, 79, 80, 81]);
-const _supertype_integer_ids = new Set<number>([82, 83, 84, 85]);
-const _supertype_float_ids = new Set<number>([86, 87, 88]);
+const _supertype_escapeSequence_ids = new Set<number>([97, 98, 99, 100, 101, 102, 103]);
+const _supertype_integer_ids = new Set<number>([90, 91, 92, 93]);
+const _supertype_float_ids = new Set<number>([94, 95, 96]);
 const _supertype_keywordIdentifier_ids = new Set<number>([1]);
-const _supertype_lineContinuation_ids = new Set<number>([89, 90]);
+const _supertype_lineContinuation_ids = new Set<number>([104, 105]);
 
 export const is = {
 	module: _g(TSKindId.Module),

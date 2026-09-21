@@ -184,30 +184,12 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
  * Returns `null` if the subtrees match, otherwise a short human-
  * readable diff path explaining the first mismatch.
  */
-/**
- * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
- * output (line continuations, comments) and therefore appear as children
- * in the strict structural compare. Render reads NodeData fields/children
- * — extras aren't part of the rule structure and don't surface there —
- * so the rendered output can never re-emit them. Filtering them from
- * BOTH sides keeps the compare focused on rule-structural content.
- *
- * Anonymous extras (whitespace regex patterns) are already invisible to
- * the compare's named-child filter. Only NAMED extras need explicit
- * exclusion. (016 Cluster I.)
- */
-export const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
-	rust: new Set(['line_comment', 'block_comment']),
-	typescript: new Set(['comment', 'html_comment']),
-	python: new Set(['comment', 'line_continuation'])
-};
-
-function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
+function collectVisibleChildren(n: TSNode): TSNode[] {
 	const out: TSNode[] = [];
 	for (let i = 0; i < n.childCount; i++) {
 		const c = n.child(i);
 		if (!c) continue;
-		if (c.isNamed && namedExtras.has(c.type)) continue;
+		if (c.isNamed && c.isExtra) continue;
 		out.push(c);
 	}
 	return out;
@@ -238,7 +220,6 @@ export function leafAliasKey(a: string, b: string): string {
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
-	namedExtras: ReadonlySet<string>,
 	path: string = '',
 	rootAliasPair?: readonly [string, string],
 	variantChildKinds?: ReadonlyMap<string, ReadonlySet<string>>,
@@ -272,8 +253,8 @@ export function astStructuralDiff(
 		}
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
-	const aChildren = collectVisibleChildren(a, namedExtras);
-	let bChildren = collectVisibleChildren(b, namedExtras);
+	const aChildren = collectVisibleChildren(a);
+	let bChildren = collectVisibleChildren(b);
 	// Group-lift transparency: sittir's enrich lifts choice arms of canonical
 	// rules into visible variant children (`call_expression` parses as
 	// `(call_expression (call_expression_call …))`; `parenthesized_expression`
@@ -294,7 +275,7 @@ export function astStructuralDiff(
 		const aTypes = new Set(aChildren.map((c) => c.type));
 		if (bChildren.some((c) => ownedVariants.has(c.type) && !aTypes.has(c.type))) {
 			bChildren = bChildren.flatMap((c) =>
-				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c, namedExtras) : [c]
+				ownedVariants.has(c.type) && !aTypes.has(c.type) ? collectVisibleChildren(c) : [c]
 			);
 		}
 	}
@@ -339,7 +320,6 @@ export function astStructuralDiff(
 		const sub = astStructuralDiff(
 			ac,
 			bc,
-			namedExtras,
 			`${path || a.type}[${i}].${ac.type}`,
 			undefined,
 			variantChildKinds,
@@ -925,7 +905,6 @@ export async function validateReadRenderParse(
 						// broken candidate for every WASM node and never set this flag.
 						kindHadCandidate = true;
 						kindOk = true;
-						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 						// AST comparison: only when we have a WASM source node to
 						// compare against (native path without $span skips this).
 						const rootAliasPair: readonly [string, string] | undefined =
@@ -934,7 +913,6 @@ export async function validateReadRenderParse(
 							? astStructuralDiff(
 									node1ForAst,
 									node2,
-									namedExtras,
 									'',
 									rootAliasPair,
 									variantChildKinds,

@@ -490,15 +490,15 @@
     "named": true,
     "subtypes": [
       {
-        "type": "char_literal_arm1",
+        "type": "char_literal_empty",
         "named": true
       },
       {
-        "type": "char_literal_arm2",
+        "type": "char_literal_escaped",
         "named": true
       },
       {
-        "type": "char_literal_arm3",
+        "type": "char_literal_plain",
         "named": true
       }
     ]
@@ -540,19 +540,19 @@
     "named": true,
     "subtypes": [
       {
-        "type": "escape_sequence_arm1",
+        "type": "escape_sequence_hex",
         "named": true
       },
       {
-        "type": "escape_sequence_arm2",
+        "type": "escape_sequence_simple",
         "named": true
       },
       {
-        "type": "escape_sequence_arm3",
+        "type": "escape_sequence_unicode_braced",
         "named": true
       },
       {
-        "type": "escape_sequence_arm4",
+        "type": "escape_sequence_unicode_fixed",
         "named": true
       }
     ]
@@ -604,19 +604,19 @@
     "named": true,
     "subtypes": [
       {
-        "type": "integer_literal_arm1",
+        "type": "integer_literal_binary",
         "named": true
       },
       {
-        "type": "integer_literal_arm2",
+        "type": "integer_literal_decimal",
         "named": true
       },
       {
-        "type": "integer_literal_arm3",
+        "type": "integer_literal_hex",
         "named": true
       },
       {
-        "type": "integer_literal_arm4",
+        "type": "integer_literal_octal",
         "named": true
       }
     ]
@@ -7710,15 +7710,15 @@
     "named": false
   },
   {
-    "type": "char_literal_arm1",
+    "type": "char_literal_empty",
     "named": true
   },
   {
-    "type": "char_literal_arm2",
+    "type": "char_literal_escaped",
     "named": true
   },
   {
-    "type": "char_literal_arm3",
+    "type": "char_literal_plain",
     "named": true
   },
   {
@@ -7754,19 +7754,19 @@
     "named": false
   },
   {
-    "type": "escape_sequence_arm1",
+    "type": "escape_sequence_hex",
     "named": true
   },
   {
-    "type": "escape_sequence_arm2",
+    "type": "escape_sequence_simple",
     "named": true
   },
   {
-    "type": "escape_sequence_arm3",
+    "type": "escape_sequence_unicode_braced",
     "named": true
   },
   {
-    "type": "escape_sequence_arm4",
+    "type": "escape_sequence_unicode_fixed",
     "named": true
   },
   {
@@ -7826,19 +7826,19 @@
     "named": false
   },
   {
-    "type": "integer_literal_arm1",
+    "type": "integer_literal_binary",
     "named": true
   },
   {
-    "type": "integer_literal_arm2",
+    "type": "integer_literal_decimal",
     "named": true
   },
   {
-    "type": "integer_literal_arm3",
+    "type": "integer_literal_hex",
     "named": true
   },
   {
-    "type": "integer_literal_arm4",
+    "type": "integer_literal_octal",
     "named": true
   },
   {

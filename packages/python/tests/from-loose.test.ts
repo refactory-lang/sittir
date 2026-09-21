@@ -42,7 +42,7 @@ describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 		// _resolveByKind.
 		const result = ir.assignment.eq({
 			left: 'x' as any,
-			right: { kind: 'integer', text: '42' } as any
+			right: { kind: 'integer_decimal', text: '42' } as any
 		}) as any;
 		expect(result.$type).toBe(TSKindId.AssignmentEq);
 	});
@@ -54,7 +54,7 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 		// pass a kind-tagged object — the resolver should route via
 		// _resolveByKind to the integer factory.
 		const result = ir.expressionStatement({
-			kind: 'integer',
+			kind: 'integer_decimal',
 			text: '1'
 		} as any) as any;
 		expect(result.$type).toBe(TSKindId.ExpressionStatement);

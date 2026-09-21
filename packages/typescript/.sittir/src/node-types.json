@@ -228,23 +228,23 @@
     "named": true,
     "subtypes": [
       {
-        "type": "number_arm1",
+        "type": "number_bigint",
         "named": true
       },
       {
-        "type": "number_arm2",
+        "type": "number_binary",
         "named": true
       },
       {
-        "type": "number_arm3",
+        "type": "number_decimal",
         "named": true
       },
       {
-        "type": "number_arm4",
+        "type": "number_hex",
         "named": true
       },
       {
-        "type": "number_arm5",
+        "type": "number_octal",
         "named": true
       }
     ]
@@ -8005,23 +8005,23 @@
     "named": false
   },
   {
-    "type": "number_arm1",
+    "type": "number_bigint",
     "named": true
   },
   {
-    "type": "number_arm2",
+    "type": "number_binary",
     "named": true
   },
   {
-    "type": "number_arm3",
+    "type": "number_decimal",
     "named": true
   },
   {
-    "type": "number_arm4",
+    "type": "number_hex",
     "named": true
   },
   {
-    "type": "number_arm5",
+    "type": "number_octal",
     "named": true
   },
   {

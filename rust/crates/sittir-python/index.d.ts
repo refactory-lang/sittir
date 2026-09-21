@@ -529,37 +529,37 @@ export interface EngineOptions {
   options?: Options
 }
 
-export interface EscapeSequenceArm1Transport {
+export interface EscapeSequenceHexTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm2Transport {
+export interface EscapeSequenceLineBreakTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm3Transport {
+export interface EscapeSequenceNamedTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm4Transport {
+export interface EscapeSequenceOctalTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm5Transport {
+export interface EscapeSequenceSimpleTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm6Transport {
+export interface EscapeSequenceUnicodeFixedTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
 
-export interface EscapeSequenceArm7Transport {
+export interface EscapeSequenceUnicodeWideTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
@@ -806,19 +806,19 @@ export interface ImportStatementTransport {
   _import_statement_after?: number
 }
 
-export interface IntegerArm1Transport {
+export interface IntegerBinaryTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
   _content: string
 }
 
-export interface IntegerArm2Transport {
+export interface IntegerHexTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
   _content: string
 }
 
-export interface IntegerArm3Transport {
+export interface IntegerOctalTransport {
   '$_trivia'?: TransportTrivia
   _prefix: string
   _content: string

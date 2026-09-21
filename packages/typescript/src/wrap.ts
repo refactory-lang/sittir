@@ -576,11 +576,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'this',
 		'super',
 		'number',
-		'number_arm1',
-		'number_arm2',
-		'number_arm3',
-		'number_arm4',
-		'number_arm5',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
 		'string',
 		'template_string',
 		'regex',
@@ -650,11 +650,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'this',
 		'super',
 		'number',
-		'number_arm1',
-		'number_arm2',
-		'number_arm3',
-		'number_arm4',
-		'number_arm5',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
 		'string',
 		'template_string',
 		'regex',
@@ -717,11 +717,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'this',
 		'super',
 		'number',
-		'number_arm1',
-		'number_arm2',
-		'number_arm3',
-		'number_arm4',
-		'number_arm5',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
 		'string',
 		'template_string',
 		'regex',
@@ -808,7 +808,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_destructuring_pattern: new Set(['object_pattern', 'array_pattern']),
 	update_expression: new Set(['update_expression_postfix', 'update_expression_prefix']),
 	comment: new Set(['comment_line', 'comment_block']),
-	number: new Set(['number_arm1', 'number_arm2', 'number_arm3', 'number_arm4', 'number_arm5']),
+	number: new Set(['number_hex', 'number_decimal', 'number_binary', 'number_octal', 'number_bigint']),
 	_identifier: new Set(['undefined', 'identifier']),
 	meta_property: new Set(['meta_property_new_target', 'meta_property_import_meta']),
 	pattern: new Set([
@@ -878,11 +878,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'private_property_identifier',
 		'string',
 		'number',
-		'number_arm1',
-		'number_arm2',
-		'number_arm3',
-		'number_arm4',
-		'number_arm5',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
 		'computed_property_name'
 	]),
 	_statement_identifier: new Set([
@@ -1414,13 +1414,17 @@ export function wrapExportStatement(
 		'_export_statement_default',
 		'_export_statement_type_export',
 		'_export_statement_equals_export',
-		'_export_statement_namespace_export'
+		'_export_statement_namespace_export',
+		'_export_statement_default_from',
+		'_export_statement_default_declaration'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'export_statement_default',
 		'export_statement_type_export',
 		'export_statement_equals_export',
-		'export_statement_namespace_export'
+		'export_statement_namespace_export',
+		'export_statement_default_from',
+		'export_statement_default_declaration'
 	]) as T.ExportStatement | readonly T.ExportStatement[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -1428,7 +1432,9 @@ export function wrapExportStatement(
 			'export_statement_default',
 			'export_statement_type_export',
 			'export_statement_equals_export',
-			'export_statement_namespace_export'
+			'export_statement_namespace_export',
+			'export_statement_default_from',
+			'export_statement_default_declaration'
 		]);
 	if (
 		filtered === undefined &&
@@ -1910,7 +1916,26 @@ export function wrapStatement(
 		'_return_statement',
 		'_throw_statement',
 		'_empty_statement',
-		'_labeled_statement'
+		'_labeled_statement',
+		'_export_statement_default_from',
+		'_export_statement_default_declaration',
+		'_export_statement_type_export',
+		'_export_statement_equals_export',
+		'_export_statement_namespace_export',
+		'_function_declaration',
+		'_generator_function_declaration',
+		'_class_declaration',
+		'_lexical_declaration',
+		'_variable_declaration',
+		'_function_signature',
+		'_abstract_class_declaration',
+		'_module',
+		'_internal_module',
+		'_type_alias_declaration',
+		'_enum_declaration',
+		'_interface_declaration',
+		'_import_alias',
+		'_ambient_declaration'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'export_statement',
@@ -1932,7 +1957,26 @@ export function wrapStatement(
 		'return_statement',
 		'throw_statement',
 		'empty_statement',
-		'labeled_statement'
+		'labeled_statement',
+		'export_statement_default_from',
+		'export_statement_default_declaration',
+		'export_statement_type_export',
+		'export_statement_equals_export',
+		'export_statement_namespace_export',
+		'function_declaration',
+		'generator_function_declaration',
+		'class_declaration',
+		'lexical_declaration',
+		'variable_declaration',
+		'function_signature',
+		'abstract_class_declaration',
+		'module',
+		'internal_module',
+		'type_alias_declaration',
+		'enum_declaration',
+		'interface_declaration',
+		'import_alias',
+		'ambient_declaration'
 	]) as T.Statement | readonly T.Statement[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -1956,7 +2000,26 @@ export function wrapStatement(
 			'return_statement',
 			'throw_statement',
 			'empty_statement',
-			'labeled_statement'
+			'labeled_statement',
+			'export_statement_default_from',
+			'export_statement_default_declaration',
+			'export_statement_type_export',
+			'export_statement_equals_export',
+			'export_statement_namespace_export',
+			'function_declaration',
+			'generator_function_declaration',
+			'class_declaration',
+			'lexical_declaration',
+			'variable_declaration',
+			'function_signature',
+			'abstract_class_declaration',
+			'module',
+			'internal_module',
+			'type_alias_declaration',
+			'enum_declaration',
+			'interface_declaration',
+			'import_alias',
+			'ambient_declaration'
 		]);
 	if (
 		filtered === undefined &&
@@ -3427,7 +3490,39 @@ export function wrapExpression(
 		'_ternary_expression',
 		'_update_expression',
 		'_new_expression',
-		'_yield_expression'
+		'_yield_expression',
+		'__reserved_identifier',
+		'_reserved_identifier',
+		'_subscript_expression',
+		'_member_expression',
+		'_parenthesized_expression',
+		'_undefined',
+		'_identifier',
+		'_this',
+		'_super',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint',
+		'_string',
+		'_template_string',
+		'_regex',
+		'_true',
+		'_false',
+		'_null',
+		'_object',
+		'_array',
+		'_function_expression',
+		'_arrow_function',
+		'_generator_function',
+		'_class',
+		'_meta_property_new_target',
+		'_meta_property_import_meta',
+		'_call_expression',
+		'_non_null_expression',
+		'_update_expression_postfix',
+		'_update_expression_prefix'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'as_expression',
@@ -3444,7 +3539,39 @@ export function wrapExpression(
 		'ternary_expression',
 		'update_expression',
 		'new_expression',
-		'yield_expression'
+		'yield_expression',
+		'_reserved_identifier',
+		'reserved_identifier',
+		'subscript_expression',
+		'member_expression',
+		'parenthesized_expression',
+		'undefined',
+		'identifier',
+		'this',
+		'super',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
+		'string',
+		'template_string',
+		'regex',
+		'true',
+		'false',
+		'null',
+		'object',
+		'array',
+		'function_expression',
+		'arrow_function',
+		'generator_function',
+		'class',
+		'meta_property_new_target',
+		'meta_property_import_meta',
+		'call_expression',
+		'non_null_expression',
+		'update_expression_postfix',
+		'update_expression_prefix'
 	]) as T.Expression | readonly T.Expression[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -3463,7 +3590,39 @@ export function wrapExpression(
 			'ternary_expression',
 			'update_expression',
 			'new_expression',
-			'yield_expression'
+			'yield_expression',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'subscript_expression',
+			'member_expression',
+			'parenthesized_expression',
+			'undefined',
+			'identifier',
+			'this',
+			'super',
+			'number_hex',
+			'number_decimal',
+			'number_binary',
+			'number_octal',
+			'number_bigint',
+			'string',
+			'template_string',
+			'regex',
+			'true',
+			'false',
+			'null',
+			'object',
+			'array',
+			'function_expression',
+			'arrow_function',
+			'generator_function',
+			'class',
+			'meta_property_new_target',
+			'meta_property_import_meta',
+			'call_expression',
+			'non_null_expression',
+			'update_expression_postfix',
+			'update_expression_prefix'
 		]);
 	if (
 		filtered === undefined &&
@@ -3512,7 +3671,14 @@ export function wrapPrimaryExpression(
 		'_class',
 		'_meta_property',
 		'_call_expression',
-		'_non_null_expression'
+		'_non_null_expression',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint',
+		'_meta_property_new_target',
+		'_meta_property_import_meta'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'subscript_expression',
@@ -3539,7 +3705,14 @@ export function wrapPrimaryExpression(
 		'class',
 		'meta_property',
 		'call_expression',
-		'non_null_expression'
+		'non_null_expression',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint',
+		'meta_property_new_target',
+		'meta_property_import_meta'
 	]) as T.PrimaryExpression | readonly T.PrimaryExpression[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -3568,7 +3741,14 @@ export function wrapPrimaryExpression(
 			'class',
 			'meta_property',
 			'call_expression',
-			'non_null_expression'
+			'non_null_expression',
+			'number_hex',
+			'number_decimal',
+			'number_binary',
+			'number_octal',
+			'number_bigint',
+			'meta_property_new_target',
+			'meta_property_import_meta'
 		]);
 	if (
 		filtered === undefined &&
@@ -6300,22 +6480,28 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
 export function wrapNumber(data: T.Number & { readonly $other?: T.Number | readonly T.Number[] }, tree: TreeHandle) {
 	if (typeof data === 'number') return data;
 	const node = _keepModelledSlots(data, [
-		'_number_arm1',
-		'_number_arm2',
-		'_number_arm3',
-		'_number_arm4',
-		'_number_arm5'
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'number_arm1',
-		'number_arm2',
-		'number_arm3',
-		'number_arm4',
-		'number_arm5'
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint'
 	]) as T.Number | readonly T.Number[] | undefined;
 	const filtered =
 		kindKeyed ??
-		_filterWrapChildrenByKind(node.$other, ['number_arm1', 'number_arm2', 'number_arm3', 'number_arm4', 'number_arm5']);
+		_filterWrapChildrenByKind(node.$other, [
+			'number_hex',
+			'number_decimal',
+			'number_binary',
+			'number_octal',
+			'number_bigint'
+		]);
 	if (
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
@@ -7454,7 +7640,12 @@ export function wrapPropertyName(
 		'_private_property_identifier',
 		'_string',
 		'_number',
-		'_computed_property_name'
+		'_computed_property_name',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'_property_identifier',
@@ -7462,7 +7653,12 @@ export function wrapPropertyName(
 		'private_property_identifier',
 		'string',
 		'number',
-		'computed_property_name'
+		'computed_property_name',
+		'number_hex',
+		'number_decimal',
+		'number_binary',
+		'number_octal',
+		'number_bigint'
 	]) as T.PropertyName | readonly T.PropertyName[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -7472,7 +7668,12 @@ export function wrapPropertyName(
 			'private_property_identifier',
 			'string',
 			'number',
-			'computed_property_name'
+			'computed_property_name',
+			'number_hex',
+			'number_decimal',
+			'number_binary',
+			'number_octal',
+			'number_bigint'
 		]);
 	if (
 		filtered === undefined &&
@@ -10373,7 +10574,26 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'__type_query_member_expression_in_type_annotation',
 		'_type_query_member_expression_in_type_annotation',
 		'__type_query_call_expression_in_type_annotation',
-		'_type_query_call_expression_in_type_annotation'
+		'_type_query_call_expression_in_type_annotation',
+		'_identifier',
+		'_this',
+		'_parenthesized_type',
+		'_predefined_type',
+		'_nested_type_identifier',
+		'_generic_type',
+		'_object_type',
+		'_array_type',
+		'_tuple_type',
+		'_flow_maybe_type',
+		'_type_query',
+		'_index_type_query',
+		'_existential_type',
+		'_literal_type',
+		'_lookup_type',
+		'_conditional_type',
+		'_template_literal_type',
+		'_intersection_type',
+		'_union_type'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'primary_type',
@@ -10384,7 +10604,26 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 		'_type_query_member_expression_in_type_annotation',
 		'type_query_member_expression_in_type_annotation',
 		'_type_query_call_expression_in_type_annotation',
-		'type_query_call_expression_in_type_annotation'
+		'type_query_call_expression_in_type_annotation',
+		'identifier',
+		'this',
+		'parenthesized_type',
+		'predefined_type',
+		'nested_type_identifier',
+		'generic_type',
+		'object_type',
+		'array_type',
+		'tuple_type',
+		'flow_maybe_type',
+		'type_query',
+		'index_type_query',
+		'existential_type',
+		'literal_type',
+		'lookup_type',
+		'conditional_type',
+		'template_literal_type',
+		'intersection_type',
+		'union_type'
 	]) as T.Type | readonly T.Type[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -10397,7 +10636,26 @@ export function wrapType(data: T.Type & { readonly $other?: T.Type | readonly T.
 			'_type_query_member_expression_in_type_annotation',
 			'type_query_member_expression_in_type_annotation',
 			'_type_query_call_expression_in_type_annotation',
-			'type_query_call_expression_in_type_annotation'
+			'type_query_call_expression_in_type_annotation',
+			'identifier',
+			'this',
+			'parenthesized_type',
+			'predefined_type',
+			'nested_type_identifier',
+			'generic_type',
+			'object_type',
+			'array_type',
+			'tuple_type',
+			'flow_maybe_type',
+			'type_query',
+			'index_type_query',
+			'existential_type',
+			'literal_type',
+			'lookup_type',
+			'conditional_type',
+			'template_literal_type',
+			'intersection_type',
+			'union_type'
 		]);
 	if (
 		filtered === undefined &&
@@ -10582,14 +10840,68 @@ export function wrapTupleTypeMember(
 		'_optional_tuple_parameter',
 		'_optional_type',
 		'_rest_type',
-		'_type'
+		'_type',
+		'__type_query_member_expression_in_type_annotation',
+		'_type_query_member_expression_in_type_annotation',
+		'__type_query_call_expression_in_type_annotation',
+		'_type_query_call_expression_in_type_annotation',
+		'_identifier',
+		'_this',
+		'_parenthesized_type',
+		'_predefined_type',
+		'_nested_type_identifier',
+		'_generic_type',
+		'_object_type',
+		'_array_type',
+		'_tuple_type',
+		'_flow_maybe_type',
+		'_type_query',
+		'_index_type_query',
+		'_existential_type',
+		'_literal_type',
+		'_lookup_type',
+		'_conditional_type',
+		'_template_literal_type',
+		'_intersection_type',
+		'_union_type',
+		'_function_type',
+		'_readonly_type',
+		'_constructor_type',
+		'_infer_type'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'tuple_parameter',
 		'optional_tuple_parameter',
 		'optional_type',
 		'rest_type',
-		'type'
+		'type',
+		'_type_query_member_expression_in_type_annotation',
+		'type_query_member_expression_in_type_annotation',
+		'_type_query_call_expression_in_type_annotation',
+		'type_query_call_expression_in_type_annotation',
+		'identifier',
+		'this',
+		'parenthesized_type',
+		'predefined_type',
+		'nested_type_identifier',
+		'generic_type',
+		'object_type',
+		'array_type',
+		'tuple_type',
+		'flow_maybe_type',
+		'type_query',
+		'index_type_query',
+		'existential_type',
+		'literal_type',
+		'lookup_type',
+		'conditional_type',
+		'template_literal_type',
+		'intersection_type',
+		'union_type',
+		'function_type',
+		'readonly_type',
+		'constructor_type',
+		'infer_type'
 	]) as T.TupleTypeMember | readonly T.TupleTypeMember[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -10598,7 +10910,34 @@ export function wrapTupleTypeMember(
 			'optional_tuple_parameter',
 			'optional_type',
 			'rest_type',
-			'type'
+			'type',
+			'_type_query_member_expression_in_type_annotation',
+			'type_query_member_expression_in_type_annotation',
+			'_type_query_call_expression_in_type_annotation',
+			'type_query_call_expression_in_type_annotation',
+			'identifier',
+			'this',
+			'parenthesized_type',
+			'predefined_type',
+			'nested_type_identifier',
+			'generic_type',
+			'object_type',
+			'array_type',
+			'tuple_type',
+			'flow_maybe_type',
+			'type_query',
+			'index_type_query',
+			'existential_type',
+			'literal_type',
+			'lookup_type',
+			'conditional_type',
+			'template_literal_type',
+			'intersection_type',
+			'union_type',
+			'function_type',
+			'readonly_type',
+			'constructor_type',
+			'infer_type'
 		]);
 	if (
 		filtered === undefined &&
@@ -11820,7 +12159,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_arm1?:
+		readonly _number_hex?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -11828,7 +12167,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_arm2?:
+		readonly _number_decimal?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -11836,7 +12175,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_arm3?:
+		readonly _number_binary?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -11844,7 +12183,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_arm4?:
+		readonly _number_octal?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -11852,7 +12191,7 @@ export function wrapLiteralType(
 			| TSKindId.False
 			| TSKindId.Null
 			| TSKindId.Undefined;
-		readonly _number_arm5?:
+		readonly _number_bigint?:
 			| T._Number
 			| T.Number
 			| T.String
@@ -11906,11 +12245,11 @@ export function wrapLiteralType(
 	data = _keepModelledSlots(data, [
 		'_content',
 		'_unary_expression',
-		'_number_arm1',
-		'_number_arm2',
-		'_number_arm3',
-		'_number_arm4',
-		'_number_arm5',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint',
 		'_string',
 		'_true',
 		'_false',
@@ -11923,11 +12262,11 @@ export function wrapLiteralType(
 			..._omitWrapKeys(data, [
 				'_false',
 				'_null',
-				'_number_arm1',
-				'_number_arm2',
-				'_number_arm3',
-				'_number_arm4',
-				'_number_arm5',
+				'_number_bigint',
+				'_number_binary',
+				'_number_decimal',
+				'_number_hex',
+				'_number_octal',
 				'_string',
 				'_true',
 				'_unary_expression',
@@ -11938,11 +12277,11 @@ export function wrapLiteralType(
 				normalizeSingularWrapSlot(
 					data._content ??
 						data._unary_expression ??
-						data._number_arm1 ??
-						data._number_arm2 ??
-						data._number_arm3 ??
-						data._number_arm4 ??
-						data._number_arm5 ??
+						data._number_hex ??
+						data._number_decimal ??
+						data._number_binary ??
+						data._number_octal ??
+						data._number_bigint ??
 						data._string ??
 						data._true ??
 						data._false ??
@@ -12971,143 +13310,6 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapNumberArm1(data: T.NumberArm1, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_prefix', '_content']);
-	data = _projectLexed(data, TOKEN_INTERIORS['number_arm1'], 'number_arm1');
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberArm1 as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NumberArm1 as const,
-			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'prefix',
-				span: (data as _NodeData).$span
-			}),
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
-
-			prefix() {
-				return drillIn<'0x' | '0X'>(this._prefix, tree);
-			},
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				prefix: (v: NonNullable<T.NumberArm1['_prefix']>) => wrapNumberArm1({ ...$edited(data), _prefix: v }, tree),
-				content: (v: NonNullable<T.NumberArm1['_content']>) => wrapNumberArm1({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapNumberArm3(data: T.NumberArm3, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_prefix', '_content']);
-	data = _projectLexed(data, TOKEN_INTERIORS['number_arm3'], 'number_arm3');
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberArm3 as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NumberArm3 as const,
-			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'prefix',
-				span: (data as _NodeData).$span
-			}),
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
-
-			prefix() {
-				return drillIn<'0b' | '0B'>(this._prefix, tree);
-			},
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				prefix: (v: NonNullable<T.NumberArm3['_prefix']>) => wrapNumberArm3({ ...$edited(data), _prefix: v }, tree),
-				content: (v: NonNullable<T.NumberArm3['_content']>) => wrapNumberArm3({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapNumberArm4(data: T.NumberArm4, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_prefix', '_content']);
-	data = _projectLexed(data, TOKEN_INTERIORS['number_arm4'], 'number_arm4');
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberArm4 as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NumberArm4 as const,
-			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'prefix',
-				span: (data as _NodeData).$span
-			}),
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
-
-			prefix() {
-				return drillIn<'0o' | '0O'>(this._prefix, tree);
-			},
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				prefix: (v: NonNullable<T.NumberArm4['_prefix']>) => wrapNumberArm4({ ...$edited(data), _prefix: v }, tree),
-				content: (v: NonNullable<T.NumberArm4['_content']>) => wrapNumberArm4({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapNumberArm5(data: T.NumberArm5, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_content']);
-	data = _projectLexed(data, TOKEN_INTERIORS['number_arm5'], 'number_arm5');
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NumberArm5 as const,
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
-
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				content: (v: NonNullable<T.NumberArm5['_content']>) => wrapNumberArm5({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
 export function wrapExportSpecifiers(
 	data: T.ExportSpecifiers & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
@@ -13238,35 +13440,35 @@ export function wrapEnumBodyElements(
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_arm1?:
+		readonly _number_hex?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_arm2?:
+		readonly _number_decimal?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_arm3?:
+		readonly _number_binary?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_arm4?:
+		readonly _number_octal?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _number_arm5?:
+		readonly _number_bigint?:
 			| T.EnumAssignment
 			| T._PropertyIdentifier
 			| T.PrivatePropertyIdentifier
@@ -13299,11 +13501,11 @@ export function wrapEnumBodyElements(
 		'_identifier',
 		'_private_property_identifier',
 		'_string',
-		'_number_arm1',
-		'_number_arm2',
-		'_number_arm3',
-		'_number_arm4',
-		'_number_arm5',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint',
 		'_computed_property_name',
 		'_enum_assignment'
 	]);
@@ -13316,11 +13518,11 @@ export function wrapEnumBodyElements(
 					['identifier', data._identifier],
 					['private_property_identifier', data._private_property_identifier],
 					['string', data._string],
-					['number_arm1', data._number_arm1],
-					['number_arm2', data._number_arm2],
-					['number_arm3', data._number_arm3],
-					['number_arm4', data._number_arm4],
-					['number_arm5', data._number_arm5],
+					['number_hex', data._number_hex],
+					['number_decimal', data._number_decimal],
+					['number_binary', data._number_binary],
+					['number_octal', data._number_octal],
+					['number_bigint', data._number_bigint],
 					['computed_property_name', data._computed_property_name],
 					['enum_assignment', data._enum_assignment]
 				]),
@@ -13335,11 +13537,11 @@ export function wrapEnumBodyElements(
 				'_enum_assignment',
 				'_identifier',
 				'_name',
-				'_number_arm1',
-				'_number_arm2',
-				'_number_arm3',
-				'_number_arm4',
-				'_number_arm5',
+				'_number_bigint',
+				'_number_binary',
+				'_number_decimal',
+				'_number_hex',
+				'_number_octal',
 				'_private_property_identifier',
 				'_reserved_identifier',
 				'_string'
@@ -14065,6 +14267,145 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapNumberHex(data: T.NumberHex, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_prefix', '_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_hex'], 'number_hex');
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberHex as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberHex as const,
+			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'prefix',
+				span: (data as _NodeData).$span
+			}),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			prefix() {
+				return drillIn<'0x' | '0X'>(this._prefix, tree);
+			},
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				prefix: (v: NonNullable<T.NumberHex['_prefix']>) => wrapNumberHex({ ...$edited(data), _prefix: v }, tree),
+				content: (v: NonNullable<T.NumberHex['_content']>) => wrapNumberHex({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberBinary(data: T.NumberBinary, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_prefix', '_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_binary'], 'number_binary');
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberBinary as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberBinary as const,
+			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'prefix',
+				span: (data as _NodeData).$span
+			}),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			prefix() {
+				return drillIn<'0b' | '0B'>(this._prefix, tree);
+			},
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				prefix: (v: NonNullable<T.NumberBinary['_prefix']>) => wrapNumberBinary({ ...$edited(data), _prefix: v }, tree),
+				content: (v: NonNullable<T.NumberBinary['_content']>) =>
+					wrapNumberBinary({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberOctal(data: T.NumberOctal, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_prefix', '_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_octal'], 'number_octal');
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NumberOctal as const }, _treeEngine(tree));
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberOctal as const,
+			_prefix: normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'prefix',
+				span: (data as _NodeData).$span
+			}),
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			prefix() {
+				return drillIn<'0o' | '0O'>(this._prefix, tree);
+			},
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				prefix: (v: NonNullable<T.NumberOctal['_prefix']>) => wrapNumberOctal({ ...$edited(data), _prefix: v }, tree),
+				content: (v: NonNullable<T.NumberOctal['_content']>) => wrapNumberOctal({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapNumberBigint(data: T.NumberBigint, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	data = _projectLexed(data, TOKEN_INTERIORS['number_bigint'], 'number_bigint');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.NumberBigint as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<string>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.NumberBigint['_content']>) =>
+					wrapNumberBigint({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_left', '_right']);
 	const _node = withMethods(
@@ -14741,11 +15082,11 @@ export function wrapParenthesizedExpressionTyped(
 		readonly _identifier?: T.Expression;
 		readonly _this?: T.Expression;
 		readonly _super?: T.Expression;
-		readonly _number_arm1?: T.Expression;
-		readonly _number_arm2?: T.Expression;
-		readonly _number_arm3?: T.Expression;
-		readonly _number_arm4?: T.Expression;
-		readonly _number_arm5?: T.Expression;
+		readonly _number_hex?: T.Expression;
+		readonly _number_decimal?: T.Expression;
+		readonly _number_binary?: T.Expression;
+		readonly _number_octal?: T.Expression;
+		readonly _number_bigint?: T.Expression;
 		readonly _string?: T.Expression;
 		readonly _template_string?: T.Expression;
 		readonly _regex?: T.Expression;
@@ -14791,11 +15132,11 @@ export function wrapParenthesizedExpressionTyped(
 		'_identifier',
 		'_this',
 		'_super',
-		'_number_arm1',
-		'_number_arm2',
-		'_number_arm3',
-		'_number_arm4',
-		'_number_arm5',
+		'_number_hex',
+		'_number_decimal',
+		'_number_binary',
+		'_number_octal',
+		'_number_bigint',
 		'_string',
 		'_template_string',
 		'_regex',
@@ -14847,11 +15188,11 @@ export function wrapParenthesizedExpressionTyped(
 				'_new_expression',
 				'_non_null_expression',
 				'_null',
-				'_number_arm1',
-				'_number_arm2',
-				'_number_arm3',
-				'_number_arm4',
-				'_number_arm5',
+				'_number_bigint',
+				'_number_binary',
+				'_number_decimal',
+				'_number_hex',
+				'_number_octal',
 				'_object',
 				'_parenthesized_expression',
 				'_regex',
@@ -14888,11 +15229,11 @@ export function wrapParenthesizedExpressionTyped(
 						data._identifier ??
 						data._this ??
 						data._super ??
-						data._number_arm1 ??
-						data._number_arm2 ??
-						data._number_arm3 ??
-						data._number_arm4 ??
-						data._number_arm5 ??
+						data._number_hex ??
+						data._number_decimal ??
+						data._number_binary ??
+						data._number_octal ??
+						data._number_bigint ??
 						data._string ??
 						data._template_string ??
 						data._regex ??
@@ -16166,7 +16507,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 142, of: 155 }
+				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -16292,7 +16633,7 @@ export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle)
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 142, of: 155 }
+				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -16403,7 +16744,7 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ in: 142, of: 155 }
+				{ in: 142, of: 150 }
 			),
 			_right: projectMixedEnumStorage(
 				normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -16797,11 +17138,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.KwAbstractMarker]: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
 	[TSKindId.KwAccessorMarker]: (d) => ({ ...d, $type: TSKindId.KwAccessorMarker as const }),
 	[TSKindId.KwConstMarker]: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
-	[TSKindId.NumberArm1]: (d, t) => wrapNumberArm1(d as unknown as T.NumberArm1, t),
-	[TSKindId.NumberArm2]: (d) => ({ ...d, $type: TSKindId.NumberArm2 as const }),
-	[TSKindId.NumberArm3]: (d, t) => wrapNumberArm3(d as unknown as T.NumberArm3, t),
-	[TSKindId.NumberArm4]: (d, t) => wrapNumberArm4(d as unknown as T.NumberArm4, t),
-	[TSKindId.NumberArm5]: (d, t) => wrapNumberArm5(d as unknown as T.NumberArm5, t),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
 	[TSKindId.FormalParametersElements]: (d, t) =>
@@ -16828,6 +17164,11 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
 	[TSKindId.CommentLine]: (d, t) => wrapCommentLine(d as unknown as T.CommentLine, t),
 	[TSKindId.CommentBlock]: (d, t) => wrapCommentBlock(d as unknown as T.CommentBlock, t),
+	[TSKindId.NumberHex]: (d, t) => wrapNumberHex(d as unknown as T.NumberHex, t),
+	[TSKindId.NumberDecimal]: (d) => ({ ...d, $type: TSKindId.NumberDecimal as const }),
+	[TSKindId.NumberBinary]: (d, t) => wrapNumberBinary(d as unknown as T.NumberBinary, t),
+	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
+	[TSKindId.NumberBigint]: (d, t) => wrapNumberBigint(d as unknown as T.NumberBigint, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
 	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
@@ -17104,11 +17445,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.KwAbstractMarker]: _NodeData & { readonly $type: TSKindId.KwAbstractMarker };
 	[TSKindId.KwAccessorMarker]: _NodeData & { readonly $type: TSKindId.KwAccessorMarker };
 	[TSKindId.KwConstMarker]: _NodeData & { readonly $type: TSKindId.KwConstMarker };
-	[TSKindId.NumberArm1]: ReturnType<typeof wrapNumberArm1>;
-	[TSKindId.NumberArm2]: _NodeData & { readonly $type: TSKindId.NumberArm2 };
-	[TSKindId.NumberArm3]: ReturnType<typeof wrapNumberArm3>;
-	[TSKindId.NumberArm4]: ReturnType<typeof wrapNumberArm4>;
-	[TSKindId.NumberArm5]: ReturnType<typeof wrapNumberArm5>;
 	[TSKindId.ExportSpecifiers]: ReturnType<typeof wrapExportSpecifiers>;
 	[TSKindId.ImportSpecifiers]: ReturnType<typeof wrapImportSpecifiers>;
 	[TSKindId.FormalParametersElements]: ReturnType<typeof wrapFormalParametersElements>;
@@ -17129,6 +17465,11 @@ interface _WrapReturnByKindId {
 	[TSKindId.ExportStatementEqualsExport]: ReturnType<typeof wrapExportStatementEqualsExport>;
 	[TSKindId.CommentLine]: ReturnType<typeof wrapCommentLine>;
 	[TSKindId.CommentBlock]: ReturnType<typeof wrapCommentBlock>;
+	[TSKindId.NumberHex]: ReturnType<typeof wrapNumberHex>;
+	[TSKindId.NumberDecimal]: _NodeData & { readonly $type: TSKindId.NumberDecimal };
+	[TSKindId.NumberBinary]: ReturnType<typeof wrapNumberBinary>;
+	[TSKindId.NumberOctal]: ReturnType<typeof wrapNumberOctal>;
+	[TSKindId.NumberBigint]: ReturnType<typeof wrapNumberBigint>;
 	[TSKindId.BinaryExpressionIn]: ReturnType<typeof wrapBinaryExpressionIn>;
 	[TSKindId.ClassBodyMethod]: ReturnType<typeof wrapClassBodyMethod>;
 	[TSKindId.ClassBodyMethodSig]: ReturnType<typeof wrapClassBodyMethodSig>;

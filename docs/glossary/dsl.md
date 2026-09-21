@@ -6255,6 +6255,14 @@ themselves.
 
 The unconditional token-form hoist, one pass over every rule before clause hoisting: the body is distributed over its outermost form alternation (`distributeTokenForms`); each arm is minted as a visible group of the `arm` flavor through `visibleGroupSynthName` and referenced by a group-lift symbol, so the arms are reachable by path patches through the lift and a `variant()` on the parent's top-level arms renames them (`renameEnrichLift`), exactly as for any other enrich-minted arm. The rule becomes a choice of the minted symbols and is reported to `addSupertypes`. Minted arms get a visible-group source entry and the parent as owner, like every other enrich mint, so `collapseSingletonMintOrdinals` drops the ordinal from a lone unnamed arm. A rule the grammar declares in `externals` is left alone: the scanner produces that token, and tree-sitter rejects a name that is both an external token and a non-terminal.
 
+### `packages/codegen/src/dsl/enrich.ts::annotateTokenFormArms`
+
+Stamps the polymorph annotations on a hoisted parent's arms once every mint is final: each arm gets `variant` (its name without the parent prefix), `variantOf` (the parent) and `default` on the one arm `defaultTokenFormArm` picks. A `variant()` patch later renames the arm through the lift and keeps these annotations; an authored default replaces the inferred one.
+
+### `packages/codegen/src/dsl/enrich.ts::defaultTokenFormArm`
+
+The arm a token-form parent's own factory builds from a bare value. Among the arms whose body holds at least one pattern, the one with the fewest enum choices (a choice of literals is a slot the caller must fill), then the fewest leaves; ties go to the first arm, and a parent with no pattern arm defaults to its first. It is a heuristic and the author overrides it with `variant(name, { default: true })`.
+
 ### `packages/codegen/src/dsl/enrich.ts::extractExternalNames`
 
 The names in the grammar's `externals`, whether it is an array or a `$ => [...]` function, harvested the way `extractSupertypeNames` harvests supertypes.
@@ -6265,12 +6273,12 @@ Appends rule names to the grammar's `supertypes`, whether it is an array of name
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameRule`
 
-Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over the callbacks it hands tree-sitter that hold rules (`extras`, `externals`, `precedences`, `reserved`), reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies.
+Applies a rename map to every `SYMBOL` in a value, however deep, following chains (`a` renamed to `b` renamed to `c` resolves to `c`). `wire()` runs it, at the end of its own assembly, over `reserved`; the list-shaped callbacks (`extras`, `externals`, `precedences`) go through `renameNameList`, since sittir's evaluate hands them base entries as bare names, reading the live rename map when the callback runs so it sees every rename registered while the rules evaluated. A rename registered by a `variant()` on an enrich-minted arm therefore reaches every reference, not only the rule bodies.
 
 ### `packages/codegen/src/dsl/wire/symbol-renames.ts::renameNameList`
 
-The same rename for the lists tree-sitter holds as names (`conflicts`, `inline`, `supertypes`): bare strings and symbol entries both. Callbacks are wrapped only for keys the config or the base defines, since tree-sitter rejects a callback for a property that must be an object (`reserved`) or that the grammar lacks.
+The same rename for the lists tree-sitter holds as names (`conflicts`, `inline`, `supertypes`): bare strings and symbol entries both. Callbacks are wrapped only for keys the config defines or the base grammar declares (`baseDeclares`), since tree-sitter rejects a callback for a property that must be an object (`reserved`) or that the grammar lacks; a wrapper for a key the config leaves out returns the base's value renamed.
 
 ### `packages/codegen/src/dsl/enrich.ts::replaceExtras`
 
-A token-form parent that the grammar lists in `extras` is replaced there by its minted arms (`tokenFormArms`, read from the parent's final members after ordinals collapse), for an array of rules or a `$ => [...]` function alike. The arms are then renamed with everything else when `variant()` names them, so a grammar no longer restates its extras to swap a parent for its arms.
+A token-form parent that the grammar lists in `extras` is replaced there by its minted arms (`tokenFormArms`, read from the parent's final members after ordinals collapse), for an array of rules, an array of bare names (what sittir's evaluate holds) or a `$ => [...]` function alike. The arms are then renamed with everything else when `variant()` names them, so a grammar no longer restates its extras to swap a parent for its arms.

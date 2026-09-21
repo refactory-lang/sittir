@@ -328,3 +328,8 @@ for the reader.
   members with adjacency marks and a lexed kind owns no seams and no kind edges, so the interior addresses that the
   old text leaf never used are gone from the options surface. The strict rebuild prints a text slot as its content.
 - **Transport.** A text slot is a `String` field of the typed transport; the reader keeps `$text` for a lexed kind.
+
+### Interior enums are text; forms are hoisted
+
+- An interior enum is text-stored and typed as the union of its spellings; an interior flag is a boolean. Neither carries a kind id, because tree-sitter issues no symbol for a literal inside a token. Rust's `integer_literal.suffix` previously borrowed the ids of `primitive_type`'s tokens; it no longer does.
+- A token whose body holds an alternation of forms is not one lexed compound: the DSL layer hoists the outermost alternation into one token kind per arm (see the token-form hoist design), and each arm is then a lexed compound of its own.

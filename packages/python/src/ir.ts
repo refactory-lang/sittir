@@ -476,22 +476,12 @@ export const ir: {
 	readonly none: typeof F.buildNone;
 	readonly positionalSeparator: typeof F.buildPositionalSeparator;
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
-	readonly lineContinuationArm2: typeof F.buildLineContinuationArm2;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly integerArm4: typeof F.buildIntegerArm4;
-	readonly floatArm1: typeof F.buildFloatArm1;
-	readonly floatArm2: typeof F.buildFloatArm2;
-	readonly floatArm3: typeof F.buildFloatArm3;
-	readonly lineContinuationArm1: typeof F.buildLineContinuationArm1;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
-	readonly arm1: typeof F.buildFloatArm1;
-	readonly arm2: typeof F.buildFloatArm2;
-	readonly arm3: typeof F.buildFloatArm3;
-	readonly arm4: typeof F.buildIntegerArm4;
 	readonly as: typeof F.asPattern;
 	readonly assert: typeof F.assertStatement;
 	readonly bare: typeof F.withClauseBare;
@@ -704,26 +694,16 @@ export const ir: {
 	none: F.buildNone,
 	positionalSeparator: F.buildPositionalSeparator,
 	keywordSeparator: F.buildKeywordSeparator,
-	lineContinuationArm2: F.buildLineContinuationArm2,
 
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
 	typeConversion: F.buildTypeConversion,
 	identifier: F.buildIdentifier,
-	integerArm4: F.buildIntegerArm4,
-	floatArm1: F.buildFloatArm1,
-	floatArm2: F.buildFloatArm2,
-	floatArm3: F.buildFloatArm3,
-	lineContinuationArm1: F.buildLineContinuationArm1,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
 
 	// Supertype-stripped short aliases
-	arm1: F.buildFloatArm1,
-	arm2: F.buildFloatArm2,
-	arm3: F.buildFloatArm3,
-	arm4: F.buildIntegerArm4,
 	as: F.asPattern,
 	assert: F.assertStatement,
 	bare: F.withClauseBare,

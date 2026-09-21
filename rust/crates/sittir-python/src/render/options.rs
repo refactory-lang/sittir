@@ -436,10 +436,10 @@ pub const SITE_FINALLY_CLAUSE_COLON_AFTER: usize = 427;
 pub const SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER: usize = 428;
 pub const SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_BEFORE: usize = 429;
 pub const SITE_FINALLY_CLAUSE_FINALLY_CLAUSE_AFTER: usize = 430;
-pub const SITE_FLOAT_ARM1_DOT_BEFORE: usize = 431;
-pub const SITE_FLOAT_ARM1_DOT_AFTER: usize = 432;
-pub const SITE_FLOAT_ARM2_DOT_BEFORE: usize = 433;
-pub const SITE_FLOAT_ARM2_DOT_AFTER: usize = 434;
+pub const SITE_FLOAT_LEADING_POINT_DOT_BEFORE: usize = 431;
+pub const SITE_FLOAT_LEADING_POINT_DOT_AFTER: usize = 432;
+pub const SITE_FLOAT_POINT_DOT_BEFORE: usize = 433;
+pub const SITE_FLOAT_POINT_DOT_AFTER: usize = 434;
 pub const SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER: usize = 435;
 pub const SITE_FOR_IN_CLAUSE_RIGHT_AS_PATTERN_AFTER: usize = 436;
 pub const SITE_FOR_IN_CLAUSE_RIGHT_ATTRIBUTE_AFTER: usize = 437;
@@ -567,8 +567,8 @@ pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_COLON_AFTER: usize = 558;
 pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER: usize = 559;
 pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_BEFORE: usize = 560;
 pub const SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_WITHIN_FOR_IN_CLAUSE_AFTER: usize = 561;
-pub const SITE_LINE_CONTINUATION_ARM1_BSLASH_AFTER: usize = 562;
-pub const SITE_LINE_CONTINUATION_ARM2_BSLASH_AFTER: usize = 563;
+pub const SITE_LINE_CONTINUATION_NEWLINE_BSLASH_AFTER: usize = 562;
+pub const SITE_LINE_CONTINUATION_NUL_BSLASH_AFTER: usize = 563;
 pub const SITE_LIST_LBRACK_AFTER: usize = 564;
 pub const SITE_LIST_RBRACK_BEFORE: usize = 565;
 pub const SITE_LIST_LIST_BEFORE: usize = 566;
@@ -1459,10 +1459,10 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[
     ("finally_clause", "finally_keyword_after", "finally_keyword_after", 121, &[120, 121, 113, 122, 123], 2),
     ("finally_clause", "finally_clause_before", "finally_clause_before", 121, &[120, 121, 113, 122, 123], 0),
     ("finally_clause", "finally_clause_after", "finally_clause_after", 121, &[120, 121, 113, 122, 123], 0),
-    ("float_arm1", "dot_before", "dot_before", 120, &[120, 121, 113, 122, 123], 2),
-    ("float_arm1", "dot_after", "dot_after", 120, &[120, 121, 113, 122, 123], 2),
-    ("float_arm2", "dot_before", "dot_before", 120, &[120, 121, 113, 122, 123], 2),
-    ("float_arm2", "dot_after", "dot_after", 120, &[120, 121, 113, 122, 123], 2),
+    ("float_leading_point", "dot_before", "dot_before", 120, &[120, 121, 113, 122, 123], 2),
+    ("float_leading_point", "dot_after", "dot_after", 120, &[120, 121, 113, 122, 123], 2),
+    ("float_point", "dot_before", "dot_before", 120, &[120, 121, 113, 122, 123], 2),
+    ("float_point", "dot_after", "dot_after", 120, &[120, 121, 113, 122, 123], 2),
     ("for_in_clause", "async_marker_after", "async_marker_after", 121, &[120, 121, 113, 122, 123], 2),
     ("for_in_clause", "right_as_pattern_after", "as_pattern_after", 121, &[120, 121, 113, 122, 123], 0),
     ("for_in_clause", "right_attribute_after", "attribute_after", 121, &[120, 121, 113, 122, 123], 0),
@@ -1590,8 +1590,8 @@ pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[
     ("lambda_within_for_in_clause", "lambda_keyword_after", "lambda_keyword_after", 121, &[120, 121, 113, 122, 123], 2),
     ("lambda_within_for_in_clause", "lambda_within_for_in_clause_before", "lambda_within_for_in_clause_before", 121, &[120, 121, 113, 122, 123], 0),
     ("lambda_within_for_in_clause", "lambda_within_for_in_clause_after", "lambda_within_for_in_clause_after", 121, &[120, 121, 113, 122, 123], 0),
-    ("line_continuation_arm1", "bslash_after", "bslash_after", 121, &[120, 121, 113, 122, 123], 0),
-    ("line_continuation_arm2", "bslash_after", "bslash_after", 121, &[120, 121, 113, 122, 123], 0),
+    ("line_continuation_newline", "bslash_after", "bslash_after", 121, &[120, 121, 113, 122, 123], 0),
+    ("line_continuation_nul", "bslash_after", "bslash_after", 121, &[120, 121, 113, 122, 123], 0),
     ("list", "lbrack_after", "lbrack_after", 120, &[120, 121, 113, 122, 123], 2),
     ("list", "rbrack_before", "rbrack_before", 120, &[120, 121, 113, 122, 123], 2),
     ("list", "list_before", "list_before", 120, &[120, 121, 113, 122, 123], 1),
@@ -2263,8 +2263,8 @@ pub struct Options {
     pub expression_list_expressions: Option<ExpressionListExpressionsOptions>,
     pub expression_statement_tuple: Option<ExpressionStatementTupleOptions>,
     pub finally_clause: Option<FinallyClauseOptions>,
-    pub float_arm1: Option<FloatArm1Options>,
-    pub float_arm2: Option<FloatArm2Options>,
+    pub float_leading_point: Option<FloatLeadingPointOptions>,
+    pub float_point: Option<FloatPointOptions>,
     pub for_in_clause: Option<ForInClauseOptions>,
     pub for_statement: Option<ForStatementOptions>,
     pub format_specifier: Option<FormatSpecifierOptions>,
@@ -2285,8 +2285,8 @@ pub struct Options {
     pub keyword_pattern: Option<KeywordPatternOptions>,
     pub lambda: Option<LambdaOptions>,
     pub lambda_within_for_in_clause: Option<LambdaWithinForInClauseOptions>,
-    pub line_continuation_arm1: Option<LineContinuationArm1Options>,
-    pub line_continuation_arm2: Option<LineContinuationArm2Options>,
+    pub line_continuation_newline: Option<LineContinuationNewlineOptions>,
+    pub line_continuation_nul: Option<LineContinuationNulOptions>,
     pub list: Option<ListOptions>,
     pub list_comprehension: Option<ListComprehensionOptions>,
     pub list_pattern: Option<ListPatternOptions>,
@@ -2355,7 +2355,7 @@ pub struct Options {
 impl ::napi::bindgen_prelude::FromNapiValue for Options {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "aliased_import", "argument_list", "argument_list_elements", "as_pattern", "assert_statement", "assignment_eq", "assignment_type", "assignment_typed", "attribute", "augmented_assignment", "augmented_assignment_operator", "await", "binary_operator", "block", "boolean_operator", "call", "case_as_pattern", "case_clause", "case_list_pattern", "case_patterns", "case_tuple_pattern", "chevron", "class_definition", "class_pattern", "collection_elements", "comparison_operator", "comparison_operator_comparator", "complex_pattern", "comprehension_clauses", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dict_pattern_elements", "dictionary", "dictionary_comprehension", "dictionary_elements", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "except_clause", "except_clause_exception_as", "except_clause_exception_list", "exec_statement", "expression_list", "expression_list_expressions", "expression_statement_tuple", "finally_clause", "float_arm1", "float_arm2", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "gap", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_list", "import_statement", "interpolation", "key_value_pattern", "keyword_argument", "keyword_pattern", "lambda", "lambda_within_for_in_clause", "line_continuation_arm1", "line_continuation_arm2", "list", "list_comprehension", "list_pattern", "list_pattern_case_patterns", "list_splat", "list_splat_pattern", "match_block_block", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_import_list", "parenthesized_list_splat", "pattern_list", "pattern_list_patterns", "patterns", "print_arguments", "print_chevron_arguments", "print_statement_chevron", "print_statement_plain", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "simple_pattern_negative", "simple_statements", "simple_statements_elements", "slice", "slice_group", "splat_pattern", "splat_type", "string", "subjects", "subscript", "subscripts", "suite_block", "suite_inline", "try_statement", "tuple", "tuple_pattern", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "types", "unary_operator", "unary_operator_operator", "union_pattern", "union_type", "while_statement", "with_clause_bare", "with_clause_paren", "with_clause_with_items", "with_statement", "yield", "yield_from_clause"], "")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["indent", "aliased_import", "argument_list", "argument_list_elements", "as_pattern", "assert_statement", "assignment_eq", "assignment_type", "assignment_typed", "attribute", "augmented_assignment", "augmented_assignment_operator", "await", "binary_operator", "block", "boolean_operator", "call", "case_as_pattern", "case_clause", "case_list_pattern", "case_patterns", "case_tuple_pattern", "chevron", "class_definition", "class_pattern", "collection_elements", "comparison_operator", "comparison_operator_comparator", "complex_pattern", "comprehension_clauses", "concatenated_string", "conditional_expression", "constrained_type", "decorated_definition", "decorator", "default_parameter", "delete_statement", "dict_pattern", "dict_pattern_elements", "dictionary", "dictionary_comprehension", "dictionary_elements", "dictionary_splat", "dictionary_splat_pattern", "dotted_name", "elif_clause", "else_clause", "except_clause", "except_clause_exception_as", "except_clause_exception_list", "exec_statement", "expression_list", "expression_list_expressions", "expression_statement_tuple", "finally_clause", "float_leading_point", "float_point", "for_in_clause", "for_statement", "format_specifier", "function_definition", "future_import_statement", "gap", "generator_expression", "generic_type", "global_statement", "if_clause", "if_statement", "import_from_statement", "import_list", "import_statement", "interpolation", "key_value_pattern", "keyword_argument", "keyword_pattern", "lambda", "lambda_within_for_in_clause", "line_continuation_newline", "line_continuation_nul", "list", "list_comprehension", "list_pattern", "list_pattern_case_patterns", "list_splat", "list_splat_pattern", "match_block_block", "match_statement", "member_type", "module", "named_expression", "nonlocal_statement", "not_operator", "pair", "parameters", "parenthesized_expression", "parenthesized_import_list", "parenthesized_list_splat", "pattern_list", "pattern_list_patterns", "patterns", "print_arguments", "print_chevron_arguments", "print_statement_chevron", "print_statement_plain", "raise_statement", "relative_import", "return_statement", "set", "set_comprehension", "simple_pattern_negative", "simple_statements", "simple_statements_elements", "slice", "slice_group", "splat_pattern", "splat_type", "string", "subjects", "subscript", "subscripts", "suite_block", "suite_inline", "try_statement", "tuple", "tuple_pattern", "type_alias_statement", "type_parameter", "typed_default_parameter", "typed_parameter", "types", "unary_operator", "unary_operator_operator", "union_pattern", "union_type", "while_statement", "with_clause_bare", "with_clause_paren", "with_clause_with_items", "with_statement", "yield", "yield_from_clause"], "")?;
         Ok(Self {
             indent: obj.get("indent")?,
             aliased_import: obj.get("aliased_import")?,
@@ -2412,8 +2412,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for Options {
             expression_list_expressions: obj.get("expression_list_expressions")?,
             expression_statement_tuple: obj.get("expression_statement_tuple")?,
             finally_clause: obj.get("finally_clause")?,
-            float_arm1: obj.get("float_arm1")?,
-            float_arm2: obj.get("float_arm2")?,
+            float_leading_point: obj.get("float_leading_point")?,
+            float_point: obj.get("float_point")?,
             for_in_clause: obj.get("for_in_clause")?,
             for_statement: obj.get("for_statement")?,
             format_specifier: obj.get("format_specifier")?,
@@ -2434,8 +2434,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for Options {
             keyword_pattern: obj.get("keyword_pattern")?,
             lambda: obj.get("lambda")?,
             lambda_within_for_in_clause: obj.get("lambda_within_for_in_clause")?,
-            line_continuation_arm1: obj.get("line_continuation_arm1")?,
-            line_continuation_arm2: obj.get("line_continuation_arm2")?,
+            line_continuation_newline: obj.get("line_continuation_newline")?,
+            line_continuation_nul: obj.get("line_continuation_nul")?,
             list: obj.get("list")?,
             list_comprehension: obj.get("list_comprehension")?,
             list_pattern: obj.get("list_pattern")?,
@@ -2561,8 +2561,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Options {
         obj.set("expression_list_expressions", val.expression_list_expressions)?;
         obj.set("expression_statement_tuple", val.expression_statement_tuple)?;
         obj.set("finally_clause", val.finally_clause)?;
-        obj.set("float_arm1", val.float_arm1)?;
-        obj.set("float_arm2", val.float_arm2)?;
+        obj.set("float_leading_point", val.float_leading_point)?;
+        obj.set("float_point", val.float_point)?;
         obj.set("for_in_clause", val.for_in_clause)?;
         obj.set("for_statement", val.for_statement)?;
         obj.set("format_specifier", val.format_specifier)?;
@@ -2583,8 +2583,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Options {
         obj.set("keyword_pattern", val.keyword_pattern)?;
         obj.set("lambda", val.lambda)?;
         obj.set("lambda_within_for_in_clause", val.lambda_within_for_in_clause)?;
-        obj.set("line_continuation_arm1", val.line_continuation_arm1)?;
-        obj.set("line_continuation_arm2", val.line_continuation_arm2)?;
+        obj.set("line_continuation_newline", val.line_continuation_newline)?;
+        obj.set("line_continuation_nul", val.line_continuation_nul)?;
         obj.set("list", val.list)?;
         obj.set("list_comprehension", val.list_comprehension)?;
         obj.set("list_pattern", val.list_pattern)?;
@@ -13104,15 +13104,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for FinallyClauseFinallyKeywordOptions
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct FloatArm1Options {
-    pub dot: Option<FloatArm1DotOptions>,
+pub struct FloatLeadingPointOptions {
+    pub dot: Option<FloatLeadingPointDotOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatArm1Options {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLeadingPointOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["dot"], "(float_arm1)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["dot"], "(float_leading_point)")?;
         Ok(Self {
             dot: obj.get("dot")?,
         })
@@ -13120,7 +13120,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatArm1Options {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatArm1Options {
+impl ::napi::bindgen_prelude::ToNapiValue for FloatLeadingPointOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("dot", val.dot)?;
@@ -13129,16 +13129,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatArm1Options {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct FloatArm1DotOptions {
+pub struct FloatLeadingPointDotOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatArm1DotOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatLeadingPointDotOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(float_arm1)/\".\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(float_leading_point)/\".\"")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
@@ -13147,7 +13147,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatArm1DotOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatArm1DotOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for FloatLeadingPointDotOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -13157,15 +13157,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatArm1DotOptions {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct FloatArm2Options {
-    pub dot: Option<FloatArm2DotOptions>,
+pub struct FloatPointOptions {
+    pub dot: Option<FloatPointDotOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatArm2Options {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatPointOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["dot"], "(float_arm2)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["dot"], "(float_point)")?;
         Ok(Self {
             dot: obj.get("dot")?,
         })
@@ -13173,7 +13173,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatArm2Options {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatArm2Options {
+impl ::napi::bindgen_prelude::ToNapiValue for FloatPointOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("dot", val.dot)?;
@@ -13182,16 +13182,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatArm2Options {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct FloatArm2DotOptions {
+pub struct FloatPointDotOptions {
     pub after: Option<u16>,
     pub before: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FloatArm2DotOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for FloatPointDotOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(float_arm2)/\".\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after", "before"], "(float_point)/\".\"")?;
         Ok(Self {
             after: obj.get("after")?,
             before: obj.get("before")?,
@@ -13200,7 +13200,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatArm2DotOptions {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FloatArm2DotOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for FloatPointDotOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -15937,15 +15937,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for LambdaWithinForInClauseLambdaKeywo
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct LineContinuationArm1Options {
-    pub bslash: Option<LineContinuationArm1BslashOptions>,
+pub struct LineContinuationNewlineOptions {
+    pub bslash: Option<LineContinuationNewlineBslashOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm1Options {
+impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["bslash"], "(line_continuation_arm1)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["bslash"], "(line_continuation_newline)")?;
         Ok(Self {
             bslash: obj.get("bslash")?,
         })
@@ -15953,7 +15953,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm1Options {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm1Options {
+impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationNewlineOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("bslash", val.bslash)?;
@@ -15962,15 +15962,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm1Options {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct LineContinuationArm1BslashOptions {
+pub struct LineContinuationNewlineBslashOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm1BslashOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNewlineBslashOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(line_continuation_arm1)/\"\\\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(line_continuation_newline)/\"\\\"")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -15978,7 +15978,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm1BslashOption
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm1BslashOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationNewlineBslashOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -15987,15 +15987,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm1BslashOptions 
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct LineContinuationArm2Options {
-    pub bslash: Option<LineContinuationArm2BslashOptions>,
+pub struct LineContinuationNulOptions {
+    pub bslash: Option<LineContinuationNulBslashOptions>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm2Options {
+impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["bslash"], "(line_continuation_arm2)")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["bslash"], "(line_continuation_nul)")?;
         Ok(Self {
             bslash: obj.get("bslash")?,
         })
@@ -16003,7 +16003,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm2Options {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm2Options {
+impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationNulOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("bslash", val.bslash)?;
@@ -16012,15 +16012,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm2Options {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct LineContinuationArm2BslashOptions {
+pub struct LineContinuationNulBslashOptions {
     pub after: Option<u16>,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm2BslashOptions {
+impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationNulBslashOptions {
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(line_continuation_arm2)/\"\\\"")?;
+        ::sittir_core::options::reject_unknown_keys(&obj, &["after"], "(line_continuation_nul)/\"\\\"")?;
         Ok(Self {
             after: obj.get("after")?,
         })
@@ -16028,7 +16028,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationArm2BslashOption
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationArm2BslashOptions {
+impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationNulBslashOptions {
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         let mut obj = ::napi::bindgen_prelude::Object::new(&::napi::Env::from_raw(env))?;
         obj.set("after", val.after)?;
@@ -28460,17 +28460,17 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     if let Some(v) = options.finally_clause.as_ref().and_then(|o| o.finally_keyword.as_ref()).and_then(|o| o.after) {
         set_spacing(&mut table, SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER, SPACING_SITES[SITE_FINALLY_CLAUSE_FINALLY_KEYWORD_AFTER].4, v, "(finally_clause)/\"finally\"/after")?;
     }
-    if let Some(v) = options.float_arm1.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_FLOAT_ARM1_DOT_AFTER, SPACING_SITES[SITE_FLOAT_ARM1_DOT_AFTER].4, v, "(float_arm1)/\".\"/after")?;
+    if let Some(v) = options.float_leading_point.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_FLOAT_LEADING_POINT_DOT_AFTER, SPACING_SITES[SITE_FLOAT_LEADING_POINT_DOT_AFTER].4, v, "(float_leading_point)/\".\"/after")?;
     }
-    if let Some(v) = options.float_arm1.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_FLOAT_ARM1_DOT_BEFORE, SPACING_SITES[SITE_FLOAT_ARM1_DOT_BEFORE].4, v, "(float_arm1)/\".\"/before")?;
+    if let Some(v) = options.float_leading_point.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_FLOAT_LEADING_POINT_DOT_BEFORE, SPACING_SITES[SITE_FLOAT_LEADING_POINT_DOT_BEFORE].4, v, "(float_leading_point)/\".\"/before")?;
     }
-    if let Some(v) = options.float_arm2.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_FLOAT_ARM2_DOT_AFTER, SPACING_SITES[SITE_FLOAT_ARM2_DOT_AFTER].4, v, "(float_arm2)/\".\"/after")?;
+    if let Some(v) = options.float_point.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_FLOAT_POINT_DOT_AFTER, SPACING_SITES[SITE_FLOAT_POINT_DOT_AFTER].4, v, "(float_point)/\".\"/after")?;
     }
-    if let Some(v) = options.float_arm2.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.before) {
-        set_spacing(&mut table, SITE_FLOAT_ARM2_DOT_BEFORE, SPACING_SITES[SITE_FLOAT_ARM2_DOT_BEFORE].4, v, "(float_arm2)/\".\"/before")?;
+    if let Some(v) = options.float_point.as_ref().and_then(|o| o.dot.as_ref()).and_then(|o| o.before) {
+        set_spacing(&mut table, SITE_FLOAT_POINT_DOT_BEFORE, SPACING_SITES[SITE_FLOAT_POINT_DOT_BEFORE].4, v, "(float_point)/\".\"/before")?;
     }
     if let Some(v) = options.for_in_clause.as_ref().and_then(|o| o.after) {
         set_spacing(&mut table, SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER, SPACING_SITES[SITE_FOR_IN_CLAUSE_FOR_IN_CLAUSE_AFTER].4, v, "(for_in_clause)/after")?;
@@ -28865,11 +28865,11 @@ pub fn resolve(options: &Options, base: &ResolvedOptions) -> Result<ResolvedOpti
     if let Some(v) = options.lambda_within_for_in_clause.as_ref().and_then(|o| o.lambda_keyword.as_ref()).and_then(|o| o.after) {
         set_spacing(&mut table, SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER, SPACING_SITES[SITE_LAMBDA_WITHIN_FOR_IN_CLAUSE_LAMBDA_KEYWORD_AFTER].4, v, "(lambda_within_for_in_clause)/\"lambda\"/after")?;
     }
-    if let Some(v) = options.line_continuation_arm1.as_ref().and_then(|o| o.bslash.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_LINE_CONTINUATION_ARM1_BSLASH_AFTER, SPACING_SITES[SITE_LINE_CONTINUATION_ARM1_BSLASH_AFTER].4, v, "(line_continuation_arm1)/\"\\\"/after")?;
+    if let Some(v) = options.line_continuation_newline.as_ref().and_then(|o| o.bslash.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_LINE_CONTINUATION_NEWLINE_BSLASH_AFTER, SPACING_SITES[SITE_LINE_CONTINUATION_NEWLINE_BSLASH_AFTER].4, v, "(line_continuation_newline)/\"\\\"/after")?;
     }
-    if let Some(v) = options.line_continuation_arm2.as_ref().and_then(|o| o.bslash.as_ref()).and_then(|o| o.after) {
-        set_spacing(&mut table, SITE_LINE_CONTINUATION_ARM2_BSLASH_AFTER, SPACING_SITES[SITE_LINE_CONTINUATION_ARM2_BSLASH_AFTER].4, v, "(line_continuation_arm2)/\"\\\"/after")?;
+    if let Some(v) = options.line_continuation_nul.as_ref().and_then(|o| o.bslash.as_ref()).and_then(|o| o.after) {
+        set_spacing(&mut table, SITE_LINE_CONTINUATION_NUL_BSLASH_AFTER, SPACING_SITES[SITE_LINE_CONTINUATION_NUL_BSLASH_AFTER].4, v, "(line_continuation_nul)/\"\\\"/after")?;
     }
     if let Some(v) = options.list.as_ref().and_then(|o| o.after) {
         set_spacing(&mut table, SITE_LIST_LIST_AFTER, SPACING_SITES[SITE_LIST_LIST_AFTER].4, v, "(list)/after")?;

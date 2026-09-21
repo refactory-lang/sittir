@@ -250,7 +250,7 @@ const LEAF_KINDS = [
 	'never_keyword',
 	'new_keyword',
 	'null',
-	'number_arm2',
+	'number_decimal',
 	'number_keyword',
 	'object_keyword',
 	'of_keyword',
@@ -632,15 +632,15 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	pipe_rbrace: 147,
 	using_keyword: 148,
 	accessor_keyword: 149,
-	number_arm1: 150,
-	number_arm2: 151,
-	number_arm3: 152,
-	number_arm4: 153,
-	number_arm5: 154,
-	of_keyword: 155,
-	global_keyword: 156,
-	comment_line: 157,
-	comment_block: 158,
+	of_keyword: 150,
+	global_keyword: 151,
+	comment_line: 152,
+	comment_block: 153,
+	number_hex: 154,
+	number_decimal: 155,
+	number_binary: 156,
+	number_octal: 157,
+	number_bigint: 158,
 	dquote: 159,
 	dquote2: 160,
 	squote: 161,
@@ -1096,15 +1096,15 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[147]: 'pipe_rbrace',
 	[148]: 'using_keyword',
 	[149]: 'accessor_keyword',
-	[150]: 'number_arm1',
-	[151]: 'number_arm2',
-	[152]: 'number_arm3',
-	[153]: 'number_arm4',
-	[154]: 'number_arm5',
-	[155]: 'of_keyword',
-	[156]: 'global_keyword',
-	[157]: 'comment_line',
-	[158]: 'comment_block',
+	[150]: 'of_keyword',
+	[151]: 'global_keyword',
+	[152]: 'comment_line',
+	[153]: 'comment_block',
+	[154]: 'number_hex',
+	[155]: 'number_decimal',
+	[156]: 'number_binary',
+	[157]: 'number_octal',
+	[158]: 'number_bigint',
 	[159]: 'dquote',
 	[160]: 'dquote2',
 	[161]: 'squote',
@@ -1575,15 +1575,15 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'pipe_rbrace', id: 147, enumName: 'AnonPipeRbrace', cName: 'anon_sym_PIPE_RBRACE' },
 	{ name: 'using_keyword', id: 148, enumName: 'AnonUsing', cName: 'anon_sym_using' },
 	{ name: 'accessor_keyword', id: 149, enumName: 'AnonAccessor', cName: 'anon_sym_accessor' },
-	{ name: 'number_arm1', id: 150, enumName: 'NumberArm1', cName: 'sym_number_arm1' },
-	{ name: 'number_arm2', id: 151, enumName: 'NumberArm2', cName: 'sym_number_arm2' },
-	{ name: 'number_arm3', id: 152, enumName: 'NumberArm3', cName: 'sym_number_arm3' },
-	{ name: 'number_arm4', id: 153, enumName: 'NumberArm4', cName: 'sym_number_arm4' },
-	{ name: 'number_arm5', id: 154, enumName: 'NumberArm5', cName: 'sym_number_arm5' },
-	{ name: 'of_keyword', id: 155, enumName: 'AnonOf', cName: 'anon_sym_of' },
-	{ name: 'global_keyword', id: 156, enumName: 'AnonGlobal', cName: 'anon_sym_global' },
-	{ name: 'comment_line', id: 157, enumName: 'CommentLine', cName: 'sym_comment_line' },
-	{ name: 'comment_block', id: 158, enumName: 'CommentBlock', cName: 'sym_comment_block' },
+	{ name: 'of_keyword', id: 150, enumName: 'AnonOf', cName: 'anon_sym_of' },
+	{ name: 'global_keyword', id: 151, enumName: 'AnonGlobal', cName: 'anon_sym_global' },
+	{ name: 'comment_line', id: 152, enumName: 'CommentLine', cName: 'sym_comment_line' },
+	{ name: 'comment_block', id: 153, enumName: 'CommentBlock', cName: 'sym_comment_block' },
+	{ name: 'number_hex', id: 154, enumName: 'NumberHex', cName: 'sym_number_hex' },
+	{ name: 'number_decimal', id: 155, enumName: 'NumberDecimal', cName: 'sym_number_decimal' },
+	{ name: 'number_binary', id: 156, enumName: 'NumberBinary', cName: 'sym_number_binary' },
+	{ name: 'number_octal', id: 157, enumName: 'NumberOctal', cName: 'sym_number_octal' },
+	{ name: 'number_bigint', id: 158, enumName: 'NumberBigint', cName: 'sym_number_bigint' },
 	{ name: 'dquote', id: 159, enumName: 'AnonDquote', cName: 'anon_sym_DQUOTE' },
 	{ name: 'dquote2', id: 160, enumName: 'AnonDquote2', cName: 'anon_sym_DQUOTE2' },
 	{ name: 'squote', id: 161, enumName: 'AnonSquote', cName: 'anon_sym_SQUOTE' },
@@ -2626,31 +2626,31 @@ export const TOKEN_INTERIORS = {
 		slots: [{ name: 'content', configKey: 'content' }]
 	},
 	hash_bang_line: { regex: '^#!(?<content>.*)$', slots: [{ name: 'content', configKey: 'content' }] },
-	number_arm1: {
-		regex: '^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
-		slots: [
-			{ name: 'prefix', configKey: 'prefix' },
-			{ name: 'content', configKey: 'content' }
-		]
+	number_bigint: {
+		regex:
+			'^(?<content>(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*)))n$',
+		slots: [{ name: 'content', configKey: 'content' }]
 	},
-	number_arm3: {
+	number_binary: {
 		regex: '^(?<prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$',
 		slots: [
 			{ name: 'prefix', configKey: 'prefix' },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
-	number_arm4: {
-		regex: '^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$',
+	number_hex: {
+		regex: '^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$',
 		slots: [
 			{ name: 'prefix', configKey: 'prefix' },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
-	number_arm5: {
-		regex:
-			'^(?<content>(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*)))n$',
-		slots: [{ name: 'content', configKey: 'content' }]
+	number_octal: {
+		regex: '^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$',
+		slots: [
+			{ name: 'prefix', configKey: 'prefix' },
+			{ name: 'content', configKey: 'content' }
+		]
 	},
 	private_property_identifier: {
 		regex:

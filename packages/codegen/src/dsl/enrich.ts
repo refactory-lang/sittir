@@ -298,7 +298,7 @@ function hoistTokenForms(
 	}
 	const arms = (core as unknown as { members: Rule[] }).members;
 	const members = arms.map((arm, i) => {
-		const minted = visibleGroupSynthName(arm, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, undefined, undefined, 'arm');
+		const minted = visibleGroupSynthName(withAnnotations(arm, { tokenForm: true }) as unknown as Rule, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, undefined, undefined, 'arm');
 		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
 		visibleGroupSources.add(minted);
 		if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
@@ -326,9 +326,10 @@ function replaceExtras(result: Record<string, unknown>, replacements: ReadonlyMa
 	const replaced = (entries: readonly unknown[], dollar: Record<string, unknown> | undefined): unknown[] =>
 		entries.flatMap((entry) => {
 			const isSymbol = (entry as { type?: string } | undefined)?.type === 'SYMBOL';
-			const arms = isSymbol ? replacements.get((entry as { name: string }).name) : undefined;
+			const named = typeof entry === 'string' ? entry : isSymbol ? (entry as { name: string }).name : undefined;
+			const arms = named === undefined ? undefined : replacements.get(named);
 			if (arms === undefined) return [entry];
-			return arms.map((arm) => (dollar === undefined ? { type: 'SYMBOL', name: arm } : dollar[arm]));
+			return arms.map((arm) => (typeof entry === 'string' ? arm : dollar === undefined ? { type: 'SYMBOL', name: arm } : dollar[arm]));
 		});
 	if (typeof current === 'function') {
 		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
@@ -360,18 +361,37 @@ function annotateTokenFormArms(parent: string, rules: Record<string, Rule>): voi
 }
 
 function defaultTokenFormArm(members: readonly Rule[], rules: Record<string, Rule>): number {
-	const leadsWithLiteral = (rule: RuntimeRule | undefined): boolean => {
-		if (rule === undefined) return false;
+	interface Measure {
+		leaves: number;
+		patterns: number;
+		enums: number;
+	}
+	const measure = (rule: RuntimeRule | undefined): Measure => {
+		if (rule === undefined) return { leaves: 0, patterns: 0, enums: 0 };
 		const t = (rule as { type?: string }).type ?? '';
-		if (t === 'STRING') return true;
-		if (t === 'SEQ') return leadsWithLiteral((rule as unknown as { members: RuntimeRule[] }).members[0]);
-		if (t === 'CHOICE') return (rule as unknown as { members: RuntimeRule[] }).members.every(leadsWithLiteral);
-		const inner = (rule as { content?: RuntimeRule }).content;
-		if (inner !== undefined) return leadsWithLiteral(inner);
-		return false;
+		if (t === 'PATTERN') return { leaves: 1, patterns: 1, enums: 0 };
+		if (t === 'STRING') return { leaves: 1, patterns: 0, enums: 0 };
+		const kids = (rule as unknown as { members?: RuntimeRule[] }).members ?? [(rule as unknown as { content?: RuntimeRule }).content];
+		const own = t === 'CHOICE' && kids.every((kid) => (kid as { type?: string } | undefined)?.type === 'STRING') ? 1 : 0;
+		return kids.reduce<Measure>(
+			(acc, kid) => {
+				const m = measure(kid);
+				return { leaves: acc.leaves + m.leaves, patterns: acc.patterns + m.patterns, enums: acc.enums + m.enums };
+			},
+			{ leaves: 0, patterns: 0, enums: own }
+		);
 	};
-	const open = members.findIndex((m) => !leadsWithLiteral(rules[(m as { name?: string }).name ?? ''] as unknown as RuntimeRule));
-	return open < 0 ? 0 : open;
+	let best = -1;
+	let bestScore: [number, number] = [Infinity, Infinity];
+	members.forEach((member, i) => {
+		const m = measure(rules[(member as { name?: string }).name ?? ''] as unknown as RuntimeRule);
+		if (m.patterns === 0) return;
+		if (m.enums < bestScore[0] || (m.enums === bestScore[0] && m.leaves < bestScore[1])) {
+			best = i;
+			bestScore = [m.enums, m.leaves];
+		}
+	});
+	return best < 0 ? 0 : best;
 }
 
 function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {

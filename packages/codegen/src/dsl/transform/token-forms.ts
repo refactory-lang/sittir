@@ -38,6 +38,13 @@ function findOutermostForms(rule: RuntimeRule, path: readonly number[]): Site | 
 		}
 		return undefined;
 	}
+	if (t === 'OPTIONAL') {
+		const inner = contentOf(rule);
+		if (isChoiceType(typeOf(inner)) && classifyTokenChoice(inner) === 'forms') {
+			return { path, arms: [...membersOf(inner), BLANK] };
+		}
+		return undefined;
+	}
 	if (isSeqType(t)) {
 		const members = membersOf(rule);
 		for (let i = 0; i < members.length; i++) {
@@ -60,6 +67,7 @@ function replaceAt(rule: RuntimeRule, path: readonly number[], arm: RuntimeRule)
 	return rebuilt(rule, { content: replaceAt(contentOf(rule), rest, arm) });
 }
 
+const BLANK = { type: 'BLANK' } as unknown as RuntimeRule;
 const EMPTY_SEQ = { type: 'SEQ', members: [] } as unknown as RuntimeRule;
 
 function dropAt(rule: RuntimeRule, path: readonly number[]): RuntimeRule {

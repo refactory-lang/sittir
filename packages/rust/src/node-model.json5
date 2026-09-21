@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 438,
+  "nodeCount": 439,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -123,27 +123,28 @@
   "variantRoutes": {
     "array_expression_list": "arrayExpression.list",
     "array_expression_semi": "arrayExpression.semi",
-    "char_literal_arm1": "charLiteral.arm1",
-    "char_literal_arm2": "charLiteral.arm2",
+    "char_literal_empty": "charLiteral.empty",
+    "char_literal_escaped": "charLiteral.escaped",
+    "char_literal_plain": "charLiteral.plain",
     "closure_expression_block": "closureExpression.block",
     "closure_expression_expr": "closureExpression.expr",
     "delim_token_tree_brace": "delimTokenTree.brace",
     "delim_token_tree_bracket": "delimTokenTree.bracket",
     "delim_token_tree_paren": "delimTokenTree.paren",
-    "escape_sequence_arm1": "escapeSequence.arm1",
-    "escape_sequence_arm2": "escapeSequence.arm2",
-    "escape_sequence_arm3": "escapeSequence.arm3",
-    "escape_sequence_arm4": "escapeSequence.arm4",
+    "escape_sequence_hex": "escapeSequence.hex",
+    "escape_sequence_simple": "escapeSequence.simple",
+    "escape_sequence_unicode_braced": "escapeSequence.unicodeBraced",
+    "escape_sequence_unicode_fixed": "escapeSequence.unicodeFixed",
     "field_pattern_named": "fieldPattern.named",
     "field_pattern_shorthand": "fieldPattern.shorthand",
     "foreign_mod_item_body": "foreignModItem.body",
     "foreign_mod_item_semi": "foreignModItem.semi",
     "impl_item_body": "implItem.body",
     "impl_item_semi": "implItem.semi",
-    "integer_literal_arm1": "integerLiteral.arm1",
-    "integer_literal_arm2": "integerLiteral.arm2",
-    "integer_literal_arm3": "integerLiteral.arm3",
-    "integer_literal_arm4": "integerLiteral.arm4",
+    "integer_literal_binary": "integerLiteral.binary",
+    "integer_literal_decimal": "integerLiteral.decimal",
+    "integer_literal_hex": "integerLiteral.hex",
+    "integer_literal_octal": "integerLiteral.octal",
     "macro_definition_brace": "macroDefinition.brace",
     "macro_definition_bracket": "macroDefinition.bracket",
     "macro_definition_paren": "macroDefinition.paren",
@@ -2313,13 +2314,14 @@
           "_yield_expression",
           "_string_literal",
           "_raw_string_literal",
-          "_char_literal_arm1",
-          "_char_literal_arm2",
+          "_char_literal_escaped",
+          "_char_literal_plain",
+          "_char_literal_empty",
           "_boolean_literal",
-          "_integer_literal_arm1",
-          "_integer_literal_arm2",
-          "_integer_literal_arm3",
-          "_integer_literal_arm4",
+          "_integer_literal_decimal",
+          "_integer_literal_hex",
+          "_integer_literal_binary",
+          "_integer_literal_octal",
           "_float_literal",
           "_identifier",
           "_self",
@@ -2693,138 +2695,6 @@
         "nonEmpty": false
       }
     },
-    "integer_literal_arm1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "suffix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_literal_arm2": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "suffix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_literal_arm3": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "suffix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "integer_literal_arm4": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "suffix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "char_literal_arm1": {
-      "b": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "char_literal_arm2": {
-      "b": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm2": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm3": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence_arm4": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "macro_rules": {
       "macro_rule": {
         "unnamed": false,
@@ -3009,6 +2879,138 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      }
+    },
+    "integer_literal_decimal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suffix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_literal_hex": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suffix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_literal_binary": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suffix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_literal_octal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "suffix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "char_literal_escaped": {
+      "b": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "char_literal_plain": {
+      "b": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_simple": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_fixed": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_braced": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_hex": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "array_expression_semi": {
@@ -4044,13 +4046,14 @@
           "_yield_expression",
           "_string_literal",
           "_raw_string_literal",
-          "_char_literal_arm1",
-          "_char_literal_arm2",
+          "_char_literal_escaped",
+          "_char_literal_plain",
+          "_char_literal_empty",
           "_boolean_literal",
-          "_integer_literal_arm1",
-          "_integer_literal_arm2",
-          "_integer_literal_arm3",
-          "_integer_literal_arm4",
+          "_integer_literal_decimal",
+          "_integer_literal_hex",
+          "_integer_literal_binary",
+          "_integer_literal_octal",
           "_float_literal",
           "_identifier",
           "_self",
@@ -4140,13 +4143,14 @@
           "_lifetime",
           "_string_literal",
           "_raw_string_literal",
-          "_char_literal_arm1",
-          "_char_literal_arm2",
+          "_char_literal_escaped",
+          "_char_literal_plain",
+          "_char_literal_empty",
           "_boolean_literal",
-          "_integer_literal_arm1",
-          "_integer_literal_arm2",
-          "_integer_literal_arm3",
-          "_integer_literal_arm4",
+          "_integer_literal_decimal",
+          "_integer_literal_hex",
+          "_integer_literal_binary",
+          "_integer_literal_octal",
           "_float_literal",
           "_block"
         ]
@@ -5644,8 +5648,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -5660,10 +5665,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -6102,8 +6107,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -6118,10 +6124,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -6195,8 +6201,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -6211,10 +6218,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -6933,8 +6940,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -6949,10 +6957,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -7061,8 +7069,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -7077,10 +7086,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -8201,18 +8210,34 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "char_literal_arm1",
-        "char_literal_arm2"
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain"
       ]
     },
     {
-      "kind": "char_literal_arm1",
-      "modelType": "branch",
-      "typeName": "CharLiteralArm1",
-      "factoryName": "charLiteralArm1",
-      "irKey": "charLiteralArm1",
+      "kind": "char_literal_empty",
+      "modelType": "pattern",
+      "typeName": "CharLiteralEmpty",
+      "factoryName": "charLiteralEmpty",
+      "irKey": "charLiteralEmpty",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:b)?'')$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "char_literal_escaped",
+      "modelType": "branch",
+      "typeName": "CharLiteralEscaped",
+      "factoryName": "charLiteralEscaped",
+      "irKey": "charLiteralEscaped",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -8250,7 +8275,7 @@
           ]
         }
       ],
-      "name": "char_literal_arm1",
+      "name": "char_literal_escaped",
       "interior": {
         "entries": [
           {
@@ -8262,13 +8287,13 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))?"
+            "pattern": "\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2}))"
           },
           {
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))?)'$",
+        "regex": "^(?<b>b)?'(?<content>\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))'$",
         "slots": [
           {
             "name": "b",
@@ -8288,13 +8313,14 @@
       ]
     },
     {
-      "kind": "char_literal_arm2",
+      "kind": "char_literal_plain",
       "modelType": "branch",
-      "typeName": "CharLiteralArm2",
-      "factoryName": "charLiteralArm2",
-      "irKey": "charLiteralArm2",
+      "typeName": "CharLiteralPlain",
+      "factoryName": "charLiteralPlain",
+      "irKey": "charLiteralPlain",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -8332,7 +8358,7 @@
           ]
         }
       ],
-      "name": "char_literal_arm2",
+      "name": "char_literal_plain",
       "interior": {
         "entries": [
           {
@@ -8344,13 +8370,13 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:(?:[^\\\\']))?"
+            "pattern": "(?:[^\\\\'])"
           },
           {
             "lit": "'"
           }
         ],
-        "regex": "^(?<b>b)?'(?<content>(?:(?:[^\\\\']))?)'$",
+        "regex": "^(?<b>b)?'(?<content>(?:[^\\\\']))'$",
         "slots": [
           {
             "name": "b",
@@ -9937,20 +9963,21 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "escape_sequence_arm1",
-        "escape_sequence_arm2",
-        "escape_sequence_arm3",
-        "escape_sequence_arm4"
+        "escape_sequence_hex",
+        "escape_sequence_simple",
+        "escape_sequence_unicode_braced",
+        "escape_sequence_unicode_fixed"
       ]
     },
     {
-      "kind": "escape_sequence_arm1",
+      "kind": "escape_sequence_hex",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm1",
-      "factoryName": "escapeSequenceArm1",
-      "irKey": "escapeSequenceArm1",
+      "typeName": "EscapeSequenceHex",
+      "factoryName": "escapeSequenceHex",
+      "irKey": "escapeSequenceHex",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -9971,7 +9998,60 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm1",
+      "name": "escape_sequence_hex",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:x[0-9a-fA-F]{2})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_simple",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceSimple",
+      "factoryName": "escapeSequenceSimple",
+      "irKey": "escapeSequenceSimple",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_simple",
       "interior": {
         "entries": [
           {
@@ -9996,13 +10076,14 @@
       ]
     },
     {
-      "kind": "escape_sequence_arm2",
+      "kind": "escape_sequence_unicode_braced",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm2",
-      "factoryName": "escapeSequenceArm2",
-      "irKey": "escapeSequenceArm2",
+      "typeName": "EscapeSequenceUnicodeBraced",
+      "factoryName": "escapeSequenceUnicodeBraced",
+      "irKey": "escapeSequenceUnicodeBraced",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -10023,59 +10104,7 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm2",
-      "interior": {
-        "entries": [
-          {
-            "lit": "\\"
-          },
-          {
-            "slot": "content",
-            "pattern": "(?:u[0-9a-fA-F]{4})"
-          }
-        ],
-        "regex": "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          }
-        ]
-      },
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ]
-    },
-    {
-      "kind": "escape_sequence_arm3",
-      "modelType": "branch",
-      "typeName": "EscapeSequenceArm3",
-      "factoryName": "escapeSequenceArm3",
-      "irKey": "escapeSequenceArm3",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        }
-      ],
-      "name": "escape_sequence_arm3",
+      "name": "escape_sequence_unicode_braced",
       "interior": {
         "entries": [
           {
@@ -10100,13 +10129,14 @@
       ]
     },
     {
-      "kind": "escape_sequence_arm4",
+      "kind": "escape_sequence_unicode_fixed",
       "modelType": "branch",
-      "typeName": "EscapeSequenceArm4",
-      "factoryName": "escapeSequenceArm4",
-      "irKey": "escapeSequenceArm4",
+      "typeName": "EscapeSequenceUnicodeFixed",
+      "factoryName": "escapeSequenceUnicodeFixed",
+      "irKey": "escapeSequenceUnicodeFixed",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -10127,7 +10157,7 @@
           ]
         }
       ],
-      "name": "escape_sequence_arm4",
+      "name": "escape_sequence_unicode_fixed",
       "interior": {
         "entries": [
           {
@@ -10135,10 +10165,10 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:x[0-9a-fA-F]{2})"
+            "pattern": "(?:u[0-9a-fA-F]{4})"
           }
         ],
-        "regex": "^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$",
+        "regex": "^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$",
         "slots": [
           {
             "name": "content",
@@ -10301,8 +10331,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -10318,10 +10349,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -10403,8 +10434,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -10419,10 +10451,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -10954,8 +10986,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -10972,10 +11005,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -11046,8 +11079,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -11063,10 +11097,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -13417,20 +13451,21 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4"
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal"
       ]
     },
     {
-      "kind": "integer_literal_arm1",
+      "kind": "integer_literal_binary",
       "modelType": "branch",
-      "typeName": "IntegerLiteralArm1",
-      "factoryName": "integerLiteralArm1",
-      "irKey": "integerLiteralArm1",
+      "typeName": "IntegerLiteralBinary",
+      "factoryName": "integerLiteralBinary",
+      "irKey": "integerLiteralBinary",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -13547,347 +13582,7 @@
           ]
         }
       ],
-      "name": "integer_literal_arm1",
-      "interior": {
-        "entries": [
-          {
-            "slot": "content",
-            "pattern": "(?:[0-9][0-9_]*)"
-          },
-          {
-            "enum": "suffix",
-            "values": [
-              "u8",
-              "i8",
-              "u16",
-              "i16",
-              "u32",
-              "i32",
-              "u64",
-              "i64",
-              "u128",
-              "i128",
-              "isize",
-              "usize",
-              "f32",
-              "f64"
-            ],
-            "optional": true
-          }
-        ],
-        "regex": "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          },
-          {
-            "name": "suffix",
-            "configKey": "suffix"
-          }
-        ]
-      },
-      "factoryShape": "config",
-      "factoryFields": [
-        "content",
-        "suffix"
-      ]
-    },
-    {
-      "kind": "integer_literal_arm2",
-      "modelType": "branch",
-      "typeName": "IntegerLiteralArm2",
-      "factoryName": "integerLiteralArm2",
-      "irKey": "integerLiteralArm2",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        },
-        {
-          "name": "suffix",
-          "propertyName": "suffix",
-          "paramName": "suffix",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "u8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "i8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "u16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "i16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "u32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "i32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "u64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "i64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "u128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "i128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "isize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "usize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "f32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "f64_keyword"
-            }
-          ]
-        }
-      ],
-      "name": "integer_literal_arm2",
-      "interior": {
-        "entries": [
-          {
-            "slot": "content",
-            "pattern": "(?:0x[0-9a-fA-F_]+)"
-          },
-          {
-            "enum": "suffix",
-            "values": [
-              "u8",
-              "i8",
-              "u16",
-              "i16",
-              "u32",
-              "i32",
-              "u64",
-              "i64",
-              "u128",
-              "i128",
-              "isize",
-              "usize",
-              "f32",
-              "f64"
-            ],
-            "optional": true
-          }
-        ],
-        "regex": "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$",
-        "slots": [
-          {
-            "name": "content",
-            "configKey": "content"
-          },
-          {
-            "name": "suffix",
-            "configKey": "suffix"
-          }
-        ]
-      },
-      "factoryShape": "config",
-      "factoryFields": [
-        "content",
-        "suffix"
-      ]
-    },
-    {
-      "kind": "integer_literal_arm3",
-      "modelType": "branch",
-      "typeName": "IntegerLiteralArm3",
-      "factoryName": "integerLiteralArm3",
-      "irKey": "integerLiteralArm3",
-      "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single"
-            }
-          ]
-        },
-        {
-          "name": "suffix",
-          "propertyName": "suffix",
-          "paramName": "suffix",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [],
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u8",
-              "parseKind": "u8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i8",
-              "parseKind": "i8_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u16",
-              "parseKind": "u16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i16",
-              "parseKind": "i16_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u32",
-              "parseKind": "u32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i32",
-              "parseKind": "i32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u64",
-              "parseKind": "u64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i64",
-              "parseKind": "i64_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "u128",
-              "parseKind": "u128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "i128",
-              "parseKind": "i128_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "isize",
-              "parseKind": "isize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "usize",
-              "parseKind": "usize_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f32",
-              "parseKind": "f32_keyword"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "f64",
-              "parseKind": "f64_keyword"
-            }
-          ]
-        }
-      ],
-      "name": "integer_literal_arm3",
+      "name": "integer_literal_binary",
       "interior": {
         "entries": [
           {
@@ -13934,13 +13629,14 @@
       ]
     },
     {
-      "kind": "integer_literal_arm4",
+      "kind": "integer_literal_decimal",
       "modelType": "branch",
-      "typeName": "IntegerLiteralArm4",
-      "factoryName": "integerLiteralArm4",
-      "irKey": "integerLiteralArm4",
+      "typeName": "IntegerLiteralDecimal",
+      "factoryName": "integerLiteralDecimal",
+      "irKey": "integerLiteralDecimal",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -14057,7 +13753,349 @@
           ]
         }
       ],
-      "name": "integer_literal_arm4",
+      "name": "integer_literal_decimal",
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:[0-9][0-9_]*)"
+          },
+          {
+            "enum": "suffix",
+            "values": [
+              "u8",
+              "i8",
+              "u16",
+              "i16",
+              "u32",
+              "i32",
+              "u64",
+              "i64",
+              "u128",
+              "i128",
+              "isize",
+              "usize",
+              "f32",
+              "f64"
+            ],
+            "optional": true
+          }
+        ],
+        "regex": "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          },
+          {
+            "name": "suffix",
+            "configKey": "suffix"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "suffix"
+      ]
+    },
+    {
+      "kind": "integer_literal_hex",
+      "modelType": "branch",
+      "typeName": "IntegerLiteralHex",
+      "factoryName": "integerLiteralHex",
+      "irKey": "integerLiteralHex",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "suffix",
+          "propertyName": "suffix",
+          "paramName": "suffix",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u8",
+              "parseKind": "u8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i8",
+              "parseKind": "i8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u16",
+              "parseKind": "u16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i16",
+              "parseKind": "i16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u32",
+              "parseKind": "u32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i32",
+              "parseKind": "i32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u64",
+              "parseKind": "u64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i64",
+              "parseKind": "i64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u128",
+              "parseKind": "u128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i128",
+              "parseKind": "i128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "isize",
+              "parseKind": "isize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "usize",
+              "parseKind": "usize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f32",
+              "parseKind": "f32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f64",
+              "parseKind": "f64_keyword"
+            }
+          ]
+        }
+      ],
+      "name": "integer_literal_hex",
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:0x[0-9a-fA-F_]+)"
+          },
+          {
+            "enum": "suffix",
+            "values": [
+              "u8",
+              "i8",
+              "u16",
+              "i16",
+              "u32",
+              "i32",
+              "u64",
+              "i64",
+              "u128",
+              "i128",
+              "isize",
+              "usize",
+              "f32",
+              "f64"
+            ],
+            "optional": true
+          }
+        ],
+        "regex": "^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          },
+          {
+            "name": "suffix",
+            "configKey": "suffix"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "content",
+        "suffix"
+      ]
+    },
+    {
+      "kind": "integer_literal_octal",
+      "modelType": "branch",
+      "typeName": "IntegerLiteralOctal",
+      "factoryName": "integerLiteralOctal",
+      "irKey": "integerLiteralOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "suffix",
+          "propertyName": "suffix",
+          "paramName": "suffix",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u8",
+              "parseKind": "u8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i8",
+              "parseKind": "i8_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u16",
+              "parseKind": "u16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i16",
+              "parseKind": "i16_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u32",
+              "parseKind": "u32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i32",
+              "parseKind": "i32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u64",
+              "parseKind": "u64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i64",
+              "parseKind": "i64_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "u128",
+              "parseKind": "u128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "i128",
+              "parseKind": "i128_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "isize",
+              "parseKind": "isize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "usize",
+              "parseKind": "usize_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f32",
+              "parseKind": "f32_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "f64",
+              "parseKind": "f64_keyword"
+            }
+          ]
+        }
+      ],
+      "name": "integer_literal_octal",
       "interior": {
         "entries": [
           {
@@ -15992,8 +16030,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -16001,10 +16040,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -16081,10 +16120,10 @@
       ],
       "bareAccepts": [
         "float_literal",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4"
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal"
       ]
     },
     {
@@ -16237,8 +16276,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -16246,10 +16286,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -16696,8 +16736,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -16712,10 +16753,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -16808,8 +16849,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -16817,10 +16859,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -17248,8 +17290,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -17264,10 +17307,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -17439,8 +17482,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -17455,10 +17499,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -17540,8 +17584,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -17556,10 +17601,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -18120,8 +18165,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -18129,10 +18175,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -18218,8 +18264,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -18234,10 +18281,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -18319,8 +18366,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -18335,10 +18383,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -18420,8 +18468,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -18436,10 +18485,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -18521,8 +18570,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -18537,10 +18587,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -18834,8 +18884,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -18850,10 +18901,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -19597,8 +19648,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -19606,10 +19658,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -21540,8 +21592,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -21556,10 +21609,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",
@@ -21708,8 +21761,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -21717,10 +21771,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -21771,8 +21825,9 @@
         "block",
         "boolean_literal",
         "captured_pattern",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "const_block",
@@ -21780,10 +21835,10 @@
         "float_literal",
         "generic_pattern",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "macro_invocation",
         "mut_pattern",
         "negative_literal",
@@ -22009,8 +22064,9 @@
         "boolean_literal",
         "bounded_type",
         "char_keyword",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "dynamic_type",
         "f32_keyword",
         "f64_keyword",
@@ -22025,10 +22081,10 @@
         "i64_keyword",
         "i8_keyword",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "isize_keyword",
         "lifetime",
         "macro_invocation",
@@ -22094,8 +22150,9 @@
         "boolean_literal",
         "bounded_type",
         "char_keyword",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "dynamic_type",
         "f32_keyword",
         "f64_keyword",
@@ -22110,10 +22167,10 @@
         "i64_keyword",
         "i8_keyword",
         "identifier",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "isize_keyword",
         "lifetime",
         "macro_invocation",
@@ -24086,8 +24143,9 @@
         "boolean_literal",
         "break_expression",
         "call_expression",
-        "char_literal_arm1",
-        "char_literal_arm2",
+        "char_literal_empty",
+        "char_literal_escaped",
+        "char_literal_plain",
         "closure_expression_block",
         "closure_expression_expr",
         "compound_assignment_expr",
@@ -24102,10 +24160,10 @@
         "identifier",
         "if_expression",
         "index_expression",
-        "integer_literal_arm1",
-        "integer_literal_arm2",
-        "integer_literal_arm3",
-        "integer_literal_arm4",
+        "integer_literal_binary",
+        "integer_literal_decimal",
+        "integer_literal_hex",
+        "integer_literal_octal",
         "label",
         "loop_expression",
         "macro_invocation",

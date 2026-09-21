@@ -852,9 +852,9 @@ const _supertype_rangePattern_ids = new Set<number>([423, 420]);
 const _supertype_orPattern_ids = new Set<number>([389, 390]);
 const _supertype_literal_ids = new Set<number>([327, 328, 331, 159]);
 const _supertype_literalPattern_ids = new Set<number>([327, 328, 331, 159, 325]);
-const _supertype_integerLiteral_ids = new Set<number>([131, 132, 133, 134]);
-const _supertype_charLiteral_ids = new Set<number>([135, 136]);
-const _supertype_escapeSequence_ids = new Set<number>([138, 139, 140, 141]);
+const _supertype_integerLiteral_ids = new Set<number>([139, 140, 141, 142]);
+const _supertype_charLiteral_ids = new Set<number>([143, 144, 145]);
+const _supertype_escapeSequence_ids = new Set<number>([146, 147, 148, 149]);
 const _supertype_path_ids = new Set<number>([126, 1, 129, 127, 128, 258]);
 
 export const is = {

@@ -185,6 +185,7 @@ const LEAF_KINDS = [
 	'boolean_literal',
 	'break_keyword',
 	'char_keyword',
+	'char_literal_empty',
 	'const_keyword',
 	'continue_keyword',
 	'crate',
@@ -580,25 +581,25 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	crate: 128,
 	metavariable: 129,
 	move_keyword: 130,
-	integer_literal_arm1: 131,
-	integer_literal_arm2: 132,
-	integer_literal_arm3: 133,
-	integer_literal_arm4: 134,
-	char_literal_arm1: 135,
-	char_literal_arm2: 136,
-	char_literal_arm3: 137,
-	escape_sequence_arm1: 138,
-	escape_sequence_arm2: 139,
-	escape_sequence_arm3: 140,
-	escape_sequence_arm4: 141,
-	comma: 142,
-	dash_gt: 143,
-	underscore: 144,
-	dot_dot_eq: 145,
-	mod_keyword: 146,
-	pub_keyword: 147,
-	struct_keyword: 148,
-	_string_literal_open: 149,
+	comma: 131,
+	dash_gt: 132,
+	underscore: 133,
+	dot_dot_eq: 134,
+	mod_keyword: 135,
+	pub_keyword: 136,
+	struct_keyword: 137,
+	_string_literal_open: 138,
+	integer_literal_decimal: 139,
+	integer_literal_hex: 140,
+	integer_literal_binary: 141,
+	integer_literal_octal: 142,
+	char_literal_escaped: 143,
+	char_literal_plain: 144,
+	char_literal_empty: 145,
+	escape_sequence_simple: 146,
+	escape_sequence_unicode_fixed: 147,
+	escape_sequence_unicode_braced: 148,
+	escape_sequence_hex: 149,
 	raw_keyword: 150,
 	line_comment_regular_dslash_token1: 151,
 	line_comment_regular_dslash_token2: 152,
@@ -1050,25 +1051,25 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[128]: 'crate',
 	[129]: 'metavariable',
 	[130]: 'move_keyword',
-	[131]: 'integer_literal_arm1',
-	[132]: 'integer_literal_arm2',
-	[133]: 'integer_literal_arm3',
-	[134]: 'integer_literal_arm4',
-	[135]: 'char_literal_arm1',
-	[136]: 'char_literal_arm2',
-	[137]: 'char_literal_arm3',
-	[138]: 'escape_sequence_arm1',
-	[139]: 'escape_sequence_arm2',
-	[140]: 'escape_sequence_arm3',
-	[141]: 'escape_sequence_arm4',
-	[142]: 'comma',
-	[143]: 'dash_gt',
-	[144]: 'underscore',
-	[145]: 'dot_dot_eq',
-	[146]: 'mod_keyword',
-	[147]: 'pub_keyword',
-	[148]: 'struct_keyword',
-	[149]: '_string_literal_open',
+	[131]: 'comma',
+	[132]: 'dash_gt',
+	[133]: 'underscore',
+	[134]: 'dot_dot_eq',
+	[135]: 'mod_keyword',
+	[136]: 'pub_keyword',
+	[137]: 'struct_keyword',
+	[138]: '_string_literal_open',
+	[139]: 'integer_literal_decimal',
+	[140]: 'integer_literal_hex',
+	[141]: 'integer_literal_binary',
+	[142]: 'integer_literal_octal',
+	[143]: 'char_literal_escaped',
+	[144]: 'char_literal_plain',
+	[145]: 'char_literal_empty',
+	[146]: 'escape_sequence_simple',
+	[147]: 'escape_sequence_unicode_fixed',
+	[148]: 'escape_sequence_unicode_braced',
+	[149]: 'escape_sequence_hex',
 	[150]: 'raw_keyword',
 	[151]: 'line_comment_regular_dslash_token1',
 	[152]: 'line_comment_regular_dslash_token2',
@@ -1525,25 +1526,35 @@ export const TREE_SITTER_KIND_ID_JSON = [
 	{ name: 'crate', id: 128, enumName: 'Crate', cName: 'sym_crate' },
 	{ name: 'metavariable', id: 129, enumName: 'Metavariable', cName: 'sym_metavariable' },
 	{ name: 'move_keyword', id: 130, enumName: 'AnonMove', cName: 'anon_sym_move' },
-	{ name: 'integer_literal_arm1', id: 131, enumName: 'IntegerLiteralArm1', cName: 'sym_integer_literal_arm1' },
-	{ name: 'integer_literal_arm2', id: 132, enumName: 'IntegerLiteralArm2', cName: 'sym_integer_literal_arm2' },
-	{ name: 'integer_literal_arm3', id: 133, enumName: 'IntegerLiteralArm3', cName: 'sym_integer_literal_arm3' },
-	{ name: 'integer_literal_arm4', id: 134, enumName: 'IntegerLiteralArm4', cName: 'sym_integer_literal_arm4' },
-	{ name: 'char_literal_arm1', id: 135, enumName: 'CharLiteralArm1', cName: 'sym_char_literal_arm1' },
-	{ name: 'char_literal_arm2', id: 136, enumName: 'CharLiteralArm2', cName: 'sym_char_literal_arm2' },
-	{ name: 'char_literal_arm3', id: 137, enumName: 'CharLiteralArm3', cName: 'sym_char_literal_arm3' },
-	{ name: 'escape_sequence_arm1', id: 138, enumName: 'EscapeSequenceArm1', cName: 'sym_escape_sequence_arm1' },
-	{ name: 'escape_sequence_arm2', id: 139, enumName: 'EscapeSequenceArm2', cName: 'sym_escape_sequence_arm2' },
-	{ name: 'escape_sequence_arm3', id: 140, enumName: 'EscapeSequenceArm3', cName: 'sym_escape_sequence_arm3' },
-	{ name: 'escape_sequence_arm4', id: 141, enumName: 'EscapeSequenceArm4', cName: 'sym_escape_sequence_arm4' },
-	{ name: 'comma', id: 142, enumName: 'AnonComma', cName: 'anon_sym_COMMA' },
-	{ name: 'dash_gt', id: 143, enumName: 'AnonDashGt', cName: 'anon_sym_DASH_GT' },
-	{ name: 'underscore', id: 144, enumName: 'Anon', cName: 'anon_sym__' },
-	{ name: 'dot_dot_eq', id: 145, enumName: 'AnonDotDotEq', cName: 'anon_sym_DOT_DOT_EQ' },
-	{ name: 'mod_keyword', id: 146, enumName: 'AnonMod', cName: 'anon_sym_mod' },
-	{ name: 'pub_keyword', id: 147, enumName: 'AnonPub', cName: 'anon_sym_pub' },
-	{ name: 'struct_keyword', id: 148, enumName: 'AnonStruct', cName: 'anon_sym_struct' },
-	{ name: '_string_literal_open', id: 149, enumName: 'StringLiteralOpen', cName: 'sym__string_literal_open' },
+	{ name: 'comma', id: 131, enumName: 'AnonComma', cName: 'anon_sym_COMMA' },
+	{ name: 'dash_gt', id: 132, enumName: 'AnonDashGt', cName: 'anon_sym_DASH_GT' },
+	{ name: 'underscore', id: 133, enumName: 'Anon', cName: 'anon_sym__' },
+	{ name: 'dot_dot_eq', id: 134, enumName: 'AnonDotDotEq', cName: 'anon_sym_DOT_DOT_EQ' },
+	{ name: 'mod_keyword', id: 135, enumName: 'AnonMod', cName: 'anon_sym_mod' },
+	{ name: 'pub_keyword', id: 136, enumName: 'AnonPub', cName: 'anon_sym_pub' },
+	{ name: 'struct_keyword', id: 137, enumName: 'AnonStruct', cName: 'anon_sym_struct' },
+	{ name: '_string_literal_open', id: 138, enumName: 'StringLiteralOpen', cName: 'sym__string_literal_open' },
+	{ name: 'integer_literal_decimal', id: 139, enumName: 'IntegerLiteralDecimal', cName: 'sym_integer_literal_decimal' },
+	{ name: 'integer_literal_hex', id: 140, enumName: 'IntegerLiteralHex', cName: 'sym_integer_literal_hex' },
+	{ name: 'integer_literal_binary', id: 141, enumName: 'IntegerLiteralBinary', cName: 'sym_integer_literal_binary' },
+	{ name: 'integer_literal_octal', id: 142, enumName: 'IntegerLiteralOctal', cName: 'sym_integer_literal_octal' },
+	{ name: 'char_literal_escaped', id: 143, enumName: 'CharLiteralEscaped', cName: 'sym_char_literal_escaped' },
+	{ name: 'char_literal_plain', id: 144, enumName: 'CharLiteralPlain', cName: 'sym_char_literal_plain' },
+	{ name: 'char_literal_empty', id: 145, enumName: 'CharLiteralEmpty', cName: 'sym_char_literal_empty' },
+	{ name: 'escape_sequence_simple', id: 146, enumName: 'EscapeSequenceSimple', cName: 'sym_escape_sequence_simple' },
+	{
+		name: 'escape_sequence_unicode_fixed',
+		id: 147,
+		enumName: 'EscapeSequenceUnicodeFixed',
+		cName: 'sym_escape_sequence_unicode_fixed'
+	},
+	{
+		name: 'escape_sequence_unicode_braced',
+		id: 148,
+		enumName: 'EscapeSequenceUnicodeBraced',
+		cName: 'sym_escape_sequence_unicode_braced'
+	},
+	{ name: 'escape_sequence_hex', id: 149, enumName: 'EscapeSequenceHex', cName: 'sym_escape_sequence_hex' },
 	{ name: 'raw_keyword', id: 150, enumName: 'AnonRaw', cName: 'anon_sym_raw' },
 	{
 		name: 'line_comment_regular_dslash_token1',
@@ -2564,56 +2575,55 @@ import type { TokenInterior } from '@sittir/common';
 
 /** Slot structure of every token whose lexed text carries literal affixes, flags or enums around its content. */
 export const TOKEN_INTERIORS = {
-	char_literal_arm1: {
-		regex:
-			"^(?<b>b)?'(?<content>(?:\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))?)'$",
+	char_literal_escaped: {
+		regex: "^(?<b>b)?'(?<content>\\\\(?:(?:[^xu])|(?:u[0-9a-fA-F]{4})|(?:u\\{[0-9a-fA-F]+\\})|(?:x[0-9a-fA-F]{2})))'$",
 		slots: [
 			{ name: 'b', configKey: 'b', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
-	char_literal_arm2: {
-		regex: "^(?<b>b)?'(?<content>(?:(?:[^\\\\']))?)'$",
+	char_literal_plain: {
+		regex: "^(?<b>b)?'(?<content>(?:[^\\\\']))'$",
 		slots: [
 			{ name: 'b', configKey: 'b', flag: true },
 			{ name: 'content', configKey: 'content' }
 		]
 	},
-	escape_sequence_arm1: { regex: '^\\\\(?<content>(?:[^xu]))$', slots: [{ name: 'content', configKey: 'content' }] },
-	escape_sequence_arm2: {
-		regex: '^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
-	},
-	escape_sequence_arm3: {
-		regex: '^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$',
-		slots: [{ name: 'content', configKey: 'content' }]
-	},
-	escape_sequence_arm4: {
+	escape_sequence_hex: {
 		regex: '^\\\\(?<content>(?:x[0-9a-fA-F]{2}))$',
 		slots: [{ name: 'content', configKey: 'content' }]
 	},
-	integer_literal_arm1: {
-		regex: '^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
-		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
-		]
+	escape_sequence_simple: { regex: '^\\\\(?<content>(?:[^xu]))$', slots: [{ name: 'content', configKey: 'content' }] },
+	escape_sequence_unicode_braced: {
+		regex: '^\\\\(?<content>(?:u\\{[0-9a-fA-F]+\\}))$',
+		slots: [{ name: 'content', configKey: 'content' }]
 	},
-	integer_literal_arm2: {
-		regex: '^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
-		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'suffix', configKey: 'suffix' }
-		]
+	escape_sequence_unicode_fixed: {
+		regex: '^\\\\(?<content>(?:u[0-9a-fA-F]{4}))$',
+		slots: [{ name: 'content', configKey: 'content' }]
 	},
-	integer_literal_arm3: {
+	integer_literal_binary: {
 		regex: '^(?<content>(?:0b[01_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
 			{ name: 'content', configKey: 'content' },
 			{ name: 'suffix', configKey: 'suffix' }
 		]
 	},
-	integer_literal_arm4: {
+	integer_literal_decimal: {
+		regex: '^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
+		slots: [
+			{ name: 'content', configKey: 'content' },
+			{ name: 'suffix', configKey: 'suffix' }
+		]
+	},
+	integer_literal_hex: {
+		regex: '^(?<content>(?:0x[0-9a-fA-F_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
+		slots: [
+			{ name: 'content', configKey: 'content' },
+			{ name: 'suffix', configKey: 'suffix' }
+		]
+	},
+	integer_literal_octal: {
 		regex: '^(?<content>(?:0o[0-7_]+))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$',
 		slots: [
 			{ name: 'content', configKey: 'content' },

@@ -304,7 +304,9 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		const members: Member[] = paths.length > 0 ? [kindMember([v])] : [];
 		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
 			if (LAYOUT.has(cm)) continue;
-			members.push(memberDecl(d, v, cm, f));
+			const decl = memberDecl(d, v, cm, f);
+			if (decl.type.k === 'kw' && decl.type.name === 'unknown') continue;
+			members.push(decl);
 		}
 		out.push({
 			k: 'interface',
@@ -416,9 +418,16 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 	return files;
 }
 
-const escapeSingle = (text: string): string =>
-	text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
-const str = (text: string) => ir.string.single.strict(ir.unescapedSingleStringFragment(escapeSingle(text)));
+const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
+const str = (text: string) =>
+	ir.string.single.strict(
+		...text
+			.split(/([\\'\n\r\t])/)
+			.filter((piece) => piece !== '')
+			.map((piece) =>
+				piece in ESCAPED_CONTENT ? ir.escapeSequence(ESCAPED_CONTENT[piece]!) : ir.unescapedSingleStringFragment(piece)
+			)
+	);
 
 function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.nestedIdentifier.strict> {
 	const [head, ...rest] = path;

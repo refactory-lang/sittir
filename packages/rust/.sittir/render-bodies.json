@@ -1185,7 +1185,7 @@
 			"field": "captured_pattern_after"
 		}
 	],
-	"char_literal_arm1": [
+	"char_literal_escaped": [
 		{
 			"kind": "slot",
 			"name": "b"
@@ -1206,7 +1206,7 @@
 			"text": "'"
 		}
 	],
-	"char_literal_arm2": [
+	"char_literal_plain": [
 		{
 			"kind": "slot",
 			"name": "b"
@@ -2071,7 +2071,7 @@
 			"field": "enum_variant_list_elements_after"
 		}
 	],
-	"escape_sequence_arm1": [
+	"escape_sequence_hex": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2084,7 +2084,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm2": [
+	"escape_sequence_simple": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2097,7 +2097,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm3": [
+	"escape_sequence_unicode_braced": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -2110,7 +2110,7 @@
 			"name": "content"
 		}
 	],
-	"escape_sequence_arm4": [
+	"escape_sequence_unicode_fixed": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -3758,7 +3758,7 @@
 			"field": "inner_attribute_item_after"
 		}
 	],
-	"integer_literal_arm1": [
+	"integer_literal_binary": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -3781,7 +3781,7 @@
 			]
 		}
 	],
-	"integer_literal_arm2": [
+	"integer_literal_decimal": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -3804,7 +3804,7 @@
 			]
 		}
 	],
-	"integer_literal_arm3": [
+	"integer_literal_hex": [
 		{
 			"kind": "slot",
 			"name": "content"
@@ -3827,7 +3827,7 @@
 			]
 		}
 	],
-	"integer_literal_arm4": [
+	"integer_literal_octal": [
 		{
 			"kind": "slot",
 			"name": "content"

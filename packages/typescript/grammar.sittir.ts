@@ -309,6 +309,13 @@ export default grammar(
 					0: variant('line'),
 					1: variant('block')
 				},
+				number: {
+					0: variant('hex'),
+					1: variant('decimal', { default: true }),
+					2: variant('binary'),
+					3: variant('octal'),
+					4: variant('bigint')
+				},
 				hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 				binary_expression: {
 					24: variant('in')

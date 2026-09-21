@@ -92,11 +92,11 @@ export type TypescriptGrammar = {
 		type: 'number';
 		named: true;
 		subtypes: [
-			{ type: 'number_arm1'; named: true },
-			{ type: 'number_arm2'; named: true },
-			{ type: 'number_arm3'; named: true },
-			{ type: 'number_arm4'; named: true },
-			{ type: 'number_arm5'; named: true }
+			{ type: 'number_bigint'; named: true },
+			{ type: 'number_binary'; named: true },
+			{ type: 'number_decimal'; named: true },
+			{ type: 'number_hex'; named: true },
+			{ type: 'number_octal'; named: true }
 		];
 	};
 	readonly pattern: {
@@ -2790,11 +2790,11 @@ export type TypescriptGrammar = {
 	readonly _anonymous_new: { type: 'new'; named: false };
 	readonly null: { type: 'null'; named: true };
 	readonly _anonymous_number: { type: 'number'; named: false };
-	readonly number_arm1: { type: 'number_arm1'; named: true };
-	readonly number_arm2: { type: 'number_arm2'; named: true };
-	readonly number_arm3: { type: 'number_arm3'; named: true };
-	readonly number_arm4: { type: 'number_arm4'; named: true };
-	readonly number_arm5: { type: 'number_arm5'; named: true };
+	readonly number_bigint: { type: 'number_bigint'; named: true };
+	readonly number_binary: { type: 'number_binary'; named: true };
+	readonly number_decimal: { type: 'number_decimal'; named: true };
+	readonly number_hex: { type: 'number_hex'; named: true };
+	readonly number_octal: { type: 'number_octal'; named: true };
 	readonly _anonymous_object: { type: 'object'; named: false };
 	readonly _anonymous_of: { type: 'of'; named: false };
 	readonly _anonymous_override: { type: 'override'; named: false };

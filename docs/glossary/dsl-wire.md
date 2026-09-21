@@ -1438,6 +1438,10 @@ are what the shape-free half of the load-time check can promise.
 // loose type unchanged.
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::baseDeclares`
+
+Whether the base grammar (the enriched base, with or without its `grammar` wrapper) declares a property. `wire()` wraps a callback for `extras`, `externals` or `precedences` when the config defines it or the base declares it, so a rename registered while the rules evaluated reaches the base's own entries even when the config never mentions the property.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wire`
 
 ```text

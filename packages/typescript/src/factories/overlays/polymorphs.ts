@@ -6254,7 +6254,7 @@ const methodDefinition$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
-const methodDefinition$arm1 =
+const methodDefinition$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6265,13 +6265,13 @@ const methodDefinition$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$arm2 =
+const methodDefinition$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodDefinition$arm3 =
+const methodDefinition$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6282,7 +6282,7 @@ const methodDefinition$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$arm4 =
+const methodDefinition$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6293,7 +6293,7 @@ const methodDefinition$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$arm5 =
+const methodDefinition$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -6308,7 +6308,7 @@ const methodDefinition$get$appliedCoerce: (
 	C.coerceToMethodDefinition,
 	TSKindId.GetKeyword
 );
-const methodDefinition$get$arm1 =
+const methodDefinition$get$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6319,13 +6319,13 @@ const methodDefinition$get$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$get$arm2 =
+const methodDefinition$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodDefinition$get$arm3 =
+const methodDefinition$get$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6336,7 +6336,7 @@ const methodDefinition$get$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$get$arm4 =
+const methodDefinition$get$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6347,7 +6347,7 @@ const methodDefinition$get$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$get$arm5 =
+const methodDefinition$get$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -6362,7 +6362,7 @@ const methodDefinition$set$appliedCoerce: (
 	C.coerceToMethodDefinition,
 	TSKindId.SetKeyword
 );
-const methodDefinition$set$arm1 =
+const methodDefinition$set$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6373,13 +6373,13 @@ const methodDefinition$set$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$set$arm2 =
+const methodDefinition$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodDefinition$set$arm3 =
+const methodDefinition$set$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6390,7 +6390,7 @@ const methodDefinition$set$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$set$arm4 =
+const methodDefinition$set$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6401,7 +6401,7 @@ const methodDefinition$set$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$set$arm5 =
+const methodDefinition$set$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -6413,7 +6413,7 @@ const methodDefinition$star$applied: (
 const methodDefinition$star$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 ) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star);
-const methodDefinition$star$arm1 =
+const methodDefinition$star$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6424,13 +6424,13 @@ const methodDefinition$star$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$star$arm2 =
+const methodDefinition$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodDefinition$star$arm3 =
+const methodDefinition$star$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6441,7 +6441,7 @@ const methodDefinition$star$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$star$arm4 =
+const methodDefinition$star$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6452,7 +6452,7 @@ const methodDefinition$star$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodDefinition$star$arm5 =
+const methodDefinition$star$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -6466,54 +6466,54 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
@@ -6525,54 +6525,54 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
@@ -6584,101 +6584,104 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
-	arm2: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
-		) => ReturnType<typeof F.buildMethodDefinition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
-			}
-		) => ReturnType<typeof C.coerceToMethodDefinition>;
-	};
-	arm3: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
-		) => ReturnType<typeof F.buildMethodDefinition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
-		) => ReturnType<typeof C.coerceToMethodDefinition>;
-	};
-	arm4: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
-		) => ReturnType<typeof F.buildMethodDefinition>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
-		) => ReturnType<typeof C.coerceToMethodDefinition>;
-	};
-	arm5: {
+	decimal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm5>[0];
+				name: ArgsOf<typeof F.buildNumberDecimal>;
 			}
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
@@ -6687,94 +6690,94 @@ export const methodDefinition: typeof B.methodDefinition & {
 	get: {
 		strict: methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword),
 		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword),
-		arm1: {
-			strict: methodDefinition$get$arm1(methodDefinition$get$applied, F.buildNumberArm1),
-			coerce: methodDefinition$get$arm1(methodDefinition$get$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodDefinition$get$hex(methodDefinition$get$applied, F.buildNumberHex),
+			coerce: methodDefinition$get$hex(methodDefinition$get$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodDefinition$get$arm2(methodDefinition$get$applied, F.buildNumberArm2),
-			coerce: methodDefinition$get$arm2(methodDefinition$get$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodDefinition$get$decimal(methodDefinition$get$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$get$decimal(methodDefinition$get$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodDefinition$get$arm3(methodDefinition$get$applied, F.buildNumberArm3),
-			coerce: methodDefinition$get$arm3(methodDefinition$get$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodDefinition$get$binary(methodDefinition$get$applied, F.buildNumberBinary),
+			coerce: methodDefinition$get$binary(methodDefinition$get$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodDefinition$get$arm4(methodDefinition$get$applied, F.buildNumberArm4),
-			coerce: methodDefinition$get$arm4(methodDefinition$get$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodDefinition$get$octal(methodDefinition$get$applied, F.buildNumberOctal),
+			coerce: methodDefinition$get$octal(methodDefinition$get$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodDefinition$get$arm5(methodDefinition$get$applied, F.buildNumberArm5),
-			coerce: methodDefinition$get$arm5(methodDefinition$get$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodDefinition$get$bigint(methodDefinition$get$applied, F.buildNumberBigint),
+			coerce: methodDefinition$get$bigint(methodDefinition$get$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	set: {
 		strict: methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword),
 		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword),
-		arm1: {
-			strict: methodDefinition$set$arm1(methodDefinition$set$applied, F.buildNumberArm1),
-			coerce: methodDefinition$set$arm1(methodDefinition$set$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodDefinition$set$hex(methodDefinition$set$applied, F.buildNumberHex),
+			coerce: methodDefinition$set$hex(methodDefinition$set$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodDefinition$set$arm2(methodDefinition$set$applied, F.buildNumberArm2),
-			coerce: methodDefinition$set$arm2(methodDefinition$set$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodDefinition$set$decimal(methodDefinition$set$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$set$decimal(methodDefinition$set$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodDefinition$set$arm3(methodDefinition$set$applied, F.buildNumberArm3),
-			coerce: methodDefinition$set$arm3(methodDefinition$set$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodDefinition$set$binary(methodDefinition$set$applied, F.buildNumberBinary),
+			coerce: methodDefinition$set$binary(methodDefinition$set$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodDefinition$set$arm4(methodDefinition$set$applied, F.buildNumberArm4),
-			coerce: methodDefinition$set$arm4(methodDefinition$set$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodDefinition$set$octal(methodDefinition$set$applied, F.buildNumberOctal),
+			coerce: methodDefinition$set$octal(methodDefinition$set$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodDefinition$set$arm5(methodDefinition$set$applied, F.buildNumberArm5),
-			coerce: methodDefinition$set$arm5(methodDefinition$set$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodDefinition$set$bigint(methodDefinition$set$applied, F.buildNumberBigint),
+			coerce: methodDefinition$set$bigint(methodDefinition$set$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	star: {
 		strict: methodDefinition$star(F.buildMethodDefinition, TSKindId.Star),
 		coerce: methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star),
-		arm1: {
-			strict: methodDefinition$star$arm1(methodDefinition$star$applied, F.buildNumberArm1),
-			coerce: methodDefinition$star$arm1(methodDefinition$star$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodDefinition$star$hex(methodDefinition$star$applied, F.buildNumberHex),
+			coerce: methodDefinition$star$hex(methodDefinition$star$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodDefinition$star$arm2(methodDefinition$star$applied, F.buildNumberArm2),
-			coerce: methodDefinition$star$arm2(methodDefinition$star$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodDefinition$star$decimal(methodDefinition$star$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$star$decimal(methodDefinition$star$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodDefinition$star$arm3(methodDefinition$star$applied, F.buildNumberArm3),
-			coerce: methodDefinition$star$arm3(methodDefinition$star$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodDefinition$star$binary(methodDefinition$star$applied, F.buildNumberBinary),
+			coerce: methodDefinition$star$binary(methodDefinition$star$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodDefinition$star$arm4(methodDefinition$star$applied, F.buildNumberArm4),
-			coerce: methodDefinition$star$arm4(methodDefinition$star$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodDefinition$star$octal(methodDefinition$star$applied, F.buildNumberOctal),
+			coerce: methodDefinition$star$octal(methodDefinition$star$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodDefinition$star$arm5(methodDefinition$star$applied, F.buildNumberArm5),
-			coerce: methodDefinition$star$arm5(methodDefinition$star$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodDefinition$star$bigint(methodDefinition$star$applied, F.buildNumberBigint),
+			coerce: methodDefinition$star$bigint(methodDefinition$star$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
-	arm1: {
-		strict: methodDefinition$arm1(F.buildMethodDefinition, F.buildNumberArm1),
-		coerce: methodDefinition$arm1(C.coerceToMethodDefinition, C.coerceToNumberArm1)
+	hex: {
+		strict: methodDefinition$hex(F.buildMethodDefinition, F.buildNumberHex),
+		coerce: methodDefinition$hex(C.coerceToMethodDefinition, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: methodDefinition$arm2(F.buildMethodDefinition, F.buildNumberArm2),
-		coerce: methodDefinition$arm2(C.coerceToMethodDefinition, C.coerceToNumberArm2)
+	decimal: {
+		strict: methodDefinition$decimal(F.buildMethodDefinition, F.buildNumberDecimal),
+		coerce: methodDefinition$decimal(C.coerceToMethodDefinition, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: methodDefinition$arm3(F.buildMethodDefinition, F.buildNumberArm3),
-		coerce: methodDefinition$arm3(C.coerceToMethodDefinition, C.coerceToNumberArm3)
+	binary: {
+		strict: methodDefinition$binary(F.buildMethodDefinition, F.buildNumberBinary),
+		coerce: methodDefinition$binary(C.coerceToMethodDefinition, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: methodDefinition$arm4(F.buildMethodDefinition, F.buildNumberArm4),
-		coerce: methodDefinition$arm4(C.coerceToMethodDefinition, C.coerceToNumberArm4)
+	octal: {
+		strict: methodDefinition$octal(F.buildMethodDefinition, F.buildNumberOctal),
+		coerce: methodDefinition$octal(C.coerceToMethodDefinition, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: methodDefinition$arm5(F.buildMethodDefinition, F.buildNumberArm5),
-		coerce: methodDefinition$arm5(C.coerceToMethodDefinition, C.coerceToNumberArm5)
+	bigint: {
+		strict: methodDefinition$bigint(F.buildMethodDefinition, F.buildNumberBigint),
+		coerce: methodDefinition$bigint(C.coerceToMethodDefinition, C.coerceToNumberBigint)
 	}
 };
 
@@ -6802,7 +6805,7 @@ const pair$stringSingle =
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const pair$arm1 =
+const pair$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6813,13 +6816,13 @@ const pair$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pair$arm2 =
+const pair$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const pair$arm3 =
+const pair$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6830,7 +6833,7 @@ const pair$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pair$arm4 =
+const pair$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6841,7 +6844,7 @@ const pair$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pair$arm5 =
+const pair$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
@@ -6890,44 +6893,44 @@ export const pair: typeof B.pair & {
 			) => ReturnType<typeof C.coerceToPair>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToPair>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm2> }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberDecimal> }
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm2> }
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberDecimal> }
 		) => ReturnType<typeof C.coerceToPair>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToPair>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToPair>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberBigint>[0] }
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberBigint>[0] }
 		) => ReturnType<typeof C.coerceToPair>;
 	};
 	computedPropertyName: {
@@ -6958,18 +6961,30 @@ export const pair: typeof B.pair & {
 			coerce: pair$stringSingle(C.coerceToPair, string.single.coerce)
 		}
 	},
-	arm1: { strict: pair$arm1(F.buildPair, F.buildNumberArm1), coerce: pair$arm1(C.coerceToPair, C.coerceToNumberArm1) },
-	arm2: { strict: pair$arm2(F.buildPair, F.buildNumberArm2), coerce: pair$arm2(C.coerceToPair, C.coerceToNumberArm2) },
-	arm3: { strict: pair$arm3(F.buildPair, F.buildNumberArm3), coerce: pair$arm3(C.coerceToPair, C.coerceToNumberArm3) },
-	arm4: { strict: pair$arm4(F.buildPair, F.buildNumberArm4), coerce: pair$arm4(C.coerceToPair, C.coerceToNumberArm4) },
-	arm5: { strict: pair$arm5(F.buildPair, F.buildNumberArm5), coerce: pair$arm5(C.coerceToPair, C.coerceToNumberArm5) },
+	hex: { strict: pair$hex(F.buildPair, F.buildNumberHex), coerce: pair$hex(C.coerceToPair, C.coerceToNumberHex) },
+	decimal: {
+		strict: pair$decimal(F.buildPair, F.buildNumberDecimal),
+		coerce: pair$decimal(C.coerceToPair, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: pair$binary(F.buildPair, F.buildNumberBinary),
+		coerce: pair$binary(C.coerceToPair, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: pair$octal(F.buildPair, F.buildNumberOctal),
+		coerce: pair$octal(C.coerceToPair, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: pair$bigint(F.buildPair, F.buildNumberBigint),
+		coerce: pair$bigint(C.coerceToPair, C.coerceToNumberBigint)
+	},
 	computedPropertyName: {
 		strict: pair$computedPropertyName(F.buildPair, F.buildComputedPropertyName),
 		coerce: pair$computedPropertyName(C.coerceToPair, C.coerceToComputedPropertyName)
 	}
 };
 
-const pairPattern$arm1 =
+const pairPattern$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6980,13 +6995,13 @@ const pairPattern$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pairPattern$arm2 =
+const pairPattern$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const pairPattern$arm3 =
+const pairPattern$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -6997,7 +7012,7 @@ const pairPattern$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pairPattern$arm4 =
+const pairPattern$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7008,74 +7023,76 @@ const pairPattern$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
-const pairPattern$arm5 =
+const pairPattern$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 export const pairPattern: typeof B.pairPattern & {
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm2> }
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberDecimal> }
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm2> }
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberDecimal> }
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberBigint>[0] }
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
 } = {
 	...B.pairPattern,
-	arm1: {
-		strict: pairPattern$arm1(F.buildPairPattern, F.buildNumberArm1),
-		coerce: pairPattern$arm1(C.coerceToPairPattern, C.coerceToNumberArm1)
+	hex: {
+		strict: pairPattern$hex(F.buildPairPattern, F.buildNumberHex),
+		coerce: pairPattern$hex(C.coerceToPairPattern, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: pairPattern$arm2(F.buildPairPattern, F.buildNumberArm2),
-		coerce: pairPattern$arm2(C.coerceToPairPattern, C.coerceToNumberArm2)
+	decimal: {
+		strict: pairPattern$decimal(F.buildPairPattern, F.buildNumberDecimal),
+		coerce: pairPattern$decimal(C.coerceToPairPattern, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: pairPattern$arm3(F.buildPairPattern, F.buildNumberArm3),
-		coerce: pairPattern$arm3(C.coerceToPairPattern, C.coerceToNumberArm3)
+	binary: {
+		strict: pairPattern$binary(F.buildPairPattern, F.buildNumberBinary),
+		coerce: pairPattern$binary(C.coerceToPairPattern, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: pairPattern$arm4(F.buildPairPattern, F.buildNumberArm4),
-		coerce: pairPattern$arm4(C.coerceToPairPattern, C.coerceToNumberArm4)
+	octal: {
+		strict: pairPattern$octal(F.buildPairPattern, F.buildNumberOctal),
+		coerce: pairPattern$octal(C.coerceToPairPattern, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: pairPattern$arm5(F.buildPairPattern, F.buildNumberArm5),
-		coerce: pairPattern$arm5(C.coerceToPairPattern, C.coerceToNumberArm5)
+	bigint: {
+		strict: pairPattern$bigint(F.buildPairPattern, F.buildNumberBigint),
+		coerce: pairPattern$bigint(C.coerceToPairPattern, C.coerceToNumberBigint)
 	}
 };
 
@@ -7087,7 +7104,7 @@ const publicFieldDefinition$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm1 =
+const publicFieldDefinition$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7098,13 +7115,13 @@ const publicFieldDefinition$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const publicFieldDefinition$arm2 =
+const publicFieldDefinition$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const publicFieldDefinition$arm3 =
+const publicFieldDefinition$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7115,7 +7132,7 @@ const publicFieldDefinition$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const publicFieldDefinition$arm4 =
+const publicFieldDefinition$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7126,115 +7143,117 @@ const publicFieldDefinition$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const publicFieldDefinition$arm5 =
+const publicFieldDefinition$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
-const publicFieldDefinition$arm1$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
-) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm1(
+const publicFieldDefinition$hex$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$hex(
 	F.buildPublicFieldDefinition,
-	F.buildNumberArm1
+	F.buildNumberHex
 );
-const publicFieldDefinition$arm1$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
-) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm1(
+const publicFieldDefinition$hex$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$hex(
 	C.coerceToPublicFieldDefinition,
-	C.coerceToNumberArm1
+	C.coerceToNumberHex
 );
-const publicFieldDefinition$arm1$qmark =
+const publicFieldDefinition$hex$qmark =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm1$bang =
+const publicFieldDefinition$hex$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm2$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
-) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm2(
-	F.buildPublicFieldDefinition,
-	F.buildNumberArm2
-);
-const publicFieldDefinition$arm2$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof C.coerceToNumberArm2>;
-	}
-) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm2(
-	C.coerceToPublicFieldDefinition,
-	C.coerceToNumberArm2
-);
-const publicFieldDefinition$arm2$qmark =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm2$bang =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm3$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
-) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm3(
-	F.buildPublicFieldDefinition,
-	F.buildNumberArm3
-);
-const publicFieldDefinition$arm3$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
-) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm3(
-	C.coerceToPublicFieldDefinition,
-	C.coerceToNumberArm3
-);
-const publicFieldDefinition$arm3$qmark =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm3$bang =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm4$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
-) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm4(
-	F.buildPublicFieldDefinition,
-	F.buildNumberArm4
-);
-const publicFieldDefinition$arm4$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
-) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm4(
-	C.coerceToPublicFieldDefinition,
-	C.coerceToNumberArm4
-);
-const publicFieldDefinition$arm4$qmark =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm4$bang =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm5$applied: (
+const publicFieldDefinition$decimal$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof F.buildNumberArm5>[0];
+		name: ArgsOf<typeof F.buildNumberDecimal>;
 	}
-) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm5(
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$decimal(
 	F.buildPublicFieldDefinition,
-	F.buildNumberArm5
+	F.buildNumberDecimal
 );
-const publicFieldDefinition$arm5$appliedCoerce: (
+const publicFieldDefinition$decimal$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+		name: ArgsOf<typeof C.coerceToNumberDecimal>;
 	}
-) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm5(
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$decimal(
 	C.coerceToPublicFieldDefinition,
-	C.coerceToNumberArm5
+	C.coerceToNumberDecimal
 );
-const publicFieldDefinition$arm5$qmark =
+const publicFieldDefinition$decimal$qmark =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
-const publicFieldDefinition$arm5$bang =
+const publicFieldDefinition$decimal$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$binary$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$binary(
+	F.buildPublicFieldDefinition,
+	F.buildNumberBinary
+);
+const publicFieldDefinition$binary$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$binary(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberBinary
+);
+const publicFieldDefinition$binary$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$binary$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$octal$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$octal(
+	F.buildPublicFieldDefinition,
+	F.buildNumberOctal
+);
+const publicFieldDefinition$octal$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$octal(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberOctal
+);
+const publicFieldDefinition$octal$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$octal$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$bigint$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof F.buildNumberBigint>[0];
+	}
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$bigint(
+	F.buildPublicFieldDefinition,
+	F.buildNumberBigint
+);
+const publicFieldDefinition$bigint$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+	}
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$bigint(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberBigint
+);
+const publicFieldDefinition$bigint$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$bigint$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
@@ -7255,135 +7274,135 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'optionalityMarker'>
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm1>[0]
+				ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm1$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm1$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$appliedCoerce>;
 		};
 		bang: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm1$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm1$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$appliedCoerce>;
 		};
 	};
-	arm2: {
+	decimal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm2>;
+				name: ArgsOf<typeof F.buildNumberDecimal>;
 			}
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm2$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm2$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$appliedCoerce>;
 		};
 		bang: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm2$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm2$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$appliedCoerce>;
 		};
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm3>[0]
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm3$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm3$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$appliedCoerce>;
 		};
 		bang: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm3$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm3$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$appliedCoerce>;
 		};
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm4>[0]
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm4$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm4$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$appliedCoerce>;
 		};
 		bang: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm4$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm4$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$appliedCoerce>;
 		};
 	};
-	arm5: {
+	bigint: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm5>[0];
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
 			}
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm5$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm5$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$appliedCoerce>;
 		};
 		bang: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$applied>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm5$applied>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$appliedCoerce>[0], 'optionalityMarker'>
-			) => ReturnType<typeof publicFieldDefinition$arm5$appliedCoerce>;
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$appliedCoerce>;
 		};
 	};
 } = {
@@ -7396,64 +7415,64 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 		strict: publicFieldDefinition$bang(F.buildPublicFieldDefinition, TSKindId.Bang),
 		coerce: publicFieldDefinition$bang(C.coerceToPublicFieldDefinition, TSKindId.Bang)
 	},
-	arm1: {
-		strict: publicFieldDefinition$arm1(F.buildPublicFieldDefinition, F.buildNumberArm1),
-		coerce: publicFieldDefinition$arm1(C.coerceToPublicFieldDefinition, C.coerceToNumberArm1),
+	hex: {
+		strict: publicFieldDefinition$hex(F.buildPublicFieldDefinition, F.buildNumberHex),
+		coerce: publicFieldDefinition$hex(C.coerceToPublicFieldDefinition, C.coerceToNumberHex),
 		qmark: {
-			strict: publicFieldDefinition$arm1$qmark(publicFieldDefinition$arm1$applied, TSKindId.Qmark),
-			coerce: publicFieldDefinition$arm1$qmark(publicFieldDefinition$arm1$appliedCoerce, TSKindId.Qmark)
+			strict: publicFieldDefinition$hex$qmark(publicFieldDefinition$hex$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$hex$qmark(publicFieldDefinition$hex$appliedCoerce, TSKindId.Qmark)
 		},
 		bang: {
-			strict: publicFieldDefinition$arm1$bang(publicFieldDefinition$arm1$applied, TSKindId.Bang),
-			coerce: publicFieldDefinition$arm1$bang(publicFieldDefinition$arm1$appliedCoerce, TSKindId.Bang)
+			strict: publicFieldDefinition$hex$bang(publicFieldDefinition$hex$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$hex$bang(publicFieldDefinition$hex$appliedCoerce, TSKindId.Bang)
 		}
 	},
-	arm2: {
-		strict: publicFieldDefinition$arm2(F.buildPublicFieldDefinition, F.buildNumberArm2),
-		coerce: publicFieldDefinition$arm2(C.coerceToPublicFieldDefinition, C.coerceToNumberArm2),
+	decimal: {
+		strict: publicFieldDefinition$decimal(F.buildPublicFieldDefinition, F.buildNumberDecimal),
+		coerce: publicFieldDefinition$decimal(C.coerceToPublicFieldDefinition, C.coerceToNumberDecimal),
 		qmark: {
-			strict: publicFieldDefinition$arm2$qmark(publicFieldDefinition$arm2$applied, TSKindId.Qmark),
-			coerce: publicFieldDefinition$arm2$qmark(publicFieldDefinition$arm2$appliedCoerce, TSKindId.Qmark)
+			strict: publicFieldDefinition$decimal$qmark(publicFieldDefinition$decimal$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$decimal$qmark(publicFieldDefinition$decimal$appliedCoerce, TSKindId.Qmark)
 		},
 		bang: {
-			strict: publicFieldDefinition$arm2$bang(publicFieldDefinition$arm2$applied, TSKindId.Bang),
-			coerce: publicFieldDefinition$arm2$bang(publicFieldDefinition$arm2$appliedCoerce, TSKindId.Bang)
+			strict: publicFieldDefinition$decimal$bang(publicFieldDefinition$decimal$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$decimal$bang(publicFieldDefinition$decimal$appliedCoerce, TSKindId.Bang)
 		}
 	},
-	arm3: {
-		strict: publicFieldDefinition$arm3(F.buildPublicFieldDefinition, F.buildNumberArm3),
-		coerce: publicFieldDefinition$arm3(C.coerceToPublicFieldDefinition, C.coerceToNumberArm3),
+	binary: {
+		strict: publicFieldDefinition$binary(F.buildPublicFieldDefinition, F.buildNumberBinary),
+		coerce: publicFieldDefinition$binary(C.coerceToPublicFieldDefinition, C.coerceToNumberBinary),
 		qmark: {
-			strict: publicFieldDefinition$arm3$qmark(publicFieldDefinition$arm3$applied, TSKindId.Qmark),
-			coerce: publicFieldDefinition$arm3$qmark(publicFieldDefinition$arm3$appliedCoerce, TSKindId.Qmark)
+			strict: publicFieldDefinition$binary$qmark(publicFieldDefinition$binary$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$binary$qmark(publicFieldDefinition$binary$appliedCoerce, TSKindId.Qmark)
 		},
 		bang: {
-			strict: publicFieldDefinition$arm3$bang(publicFieldDefinition$arm3$applied, TSKindId.Bang),
-			coerce: publicFieldDefinition$arm3$bang(publicFieldDefinition$arm3$appliedCoerce, TSKindId.Bang)
+			strict: publicFieldDefinition$binary$bang(publicFieldDefinition$binary$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$binary$bang(publicFieldDefinition$binary$appliedCoerce, TSKindId.Bang)
 		}
 	},
-	arm4: {
-		strict: publicFieldDefinition$arm4(F.buildPublicFieldDefinition, F.buildNumberArm4),
-		coerce: publicFieldDefinition$arm4(C.coerceToPublicFieldDefinition, C.coerceToNumberArm4),
+	octal: {
+		strict: publicFieldDefinition$octal(F.buildPublicFieldDefinition, F.buildNumberOctal),
+		coerce: publicFieldDefinition$octal(C.coerceToPublicFieldDefinition, C.coerceToNumberOctal),
 		qmark: {
-			strict: publicFieldDefinition$arm4$qmark(publicFieldDefinition$arm4$applied, TSKindId.Qmark),
-			coerce: publicFieldDefinition$arm4$qmark(publicFieldDefinition$arm4$appliedCoerce, TSKindId.Qmark)
+			strict: publicFieldDefinition$octal$qmark(publicFieldDefinition$octal$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$octal$qmark(publicFieldDefinition$octal$appliedCoerce, TSKindId.Qmark)
 		},
 		bang: {
-			strict: publicFieldDefinition$arm4$bang(publicFieldDefinition$arm4$applied, TSKindId.Bang),
-			coerce: publicFieldDefinition$arm4$bang(publicFieldDefinition$arm4$appliedCoerce, TSKindId.Bang)
+			strict: publicFieldDefinition$octal$bang(publicFieldDefinition$octal$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$octal$bang(publicFieldDefinition$octal$appliedCoerce, TSKindId.Bang)
 		}
 	},
-	arm5: {
-		strict: publicFieldDefinition$arm5(F.buildPublicFieldDefinition, F.buildNumberArm5),
-		coerce: publicFieldDefinition$arm5(C.coerceToPublicFieldDefinition, C.coerceToNumberArm5),
+	bigint: {
+		strict: publicFieldDefinition$bigint(F.buildPublicFieldDefinition, F.buildNumberBigint),
+		coerce: publicFieldDefinition$bigint(C.coerceToPublicFieldDefinition, C.coerceToNumberBigint),
 		qmark: {
-			strict: publicFieldDefinition$arm5$qmark(publicFieldDefinition$arm5$applied, TSKindId.Qmark),
-			coerce: publicFieldDefinition$arm5$qmark(publicFieldDefinition$arm5$appliedCoerce, TSKindId.Qmark)
+			strict: publicFieldDefinition$bigint$qmark(publicFieldDefinition$bigint$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$bigint$qmark(publicFieldDefinition$bigint$appliedCoerce, TSKindId.Qmark)
 		},
 		bang: {
-			strict: publicFieldDefinition$arm5$bang(publicFieldDefinition$arm5$applied, TSKindId.Bang),
-			coerce: publicFieldDefinition$arm5$bang(publicFieldDefinition$arm5$appliedCoerce, TSKindId.Bang)
+			strict: publicFieldDefinition$bigint$bang(publicFieldDefinition$bigint$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$bigint$bang(publicFieldDefinition$bigint$appliedCoerce, TSKindId.Bang)
 		}
 	}
 };
@@ -7470,7 +7489,7 @@ const methodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
-const methodSignature$arm1 =
+const methodSignature$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7481,13 +7500,13 @@ const methodSignature$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$arm2 =
+const methodSignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodSignature$arm3 =
+const methodSignature$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7498,7 +7517,7 @@ const methodSignature$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$arm4 =
+const methodSignature$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7509,7 +7528,7 @@ const methodSignature$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$arm5 =
+const methodSignature$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -7521,7 +7540,7 @@ const methodSignature$get$applied: (
 const methodSignature$get$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 ) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword);
-const methodSignature$get$arm1 =
+const methodSignature$get$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7532,13 +7551,13 @@ const methodSignature$get$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$get$arm2 =
+const methodSignature$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodSignature$get$arm3 =
+const methodSignature$get$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7549,7 +7568,7 @@ const methodSignature$get$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$get$arm4 =
+const methodSignature$get$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7560,7 +7579,7 @@ const methodSignature$get$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$get$arm5 =
+const methodSignature$get$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -7572,7 +7591,7 @@ const methodSignature$set$applied: (
 const methodSignature$set$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 ) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword);
-const methodSignature$set$arm1 =
+const methodSignature$set$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7583,13 +7602,13 @@ const methodSignature$set$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$set$arm2 =
+const methodSignature$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodSignature$set$arm3 =
+const methodSignature$set$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7600,7 +7619,7 @@ const methodSignature$set$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$set$arm4 =
+const methodSignature$set$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7611,7 +7630,7 @@ const methodSignature$set$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$set$arm5 =
+const methodSignature$set$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -7623,7 +7642,7 @@ const methodSignature$star$applied: (
 const methodSignature$star$appliedCoerce: (
 	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 ) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$star(C.coerceToMethodSignature, TSKindId.Star);
-const methodSignature$star$arm1 =
+const methodSignature$star$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7634,13 +7653,13 @@ const methodSignature$star$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$star$arm2 =
+const methodSignature$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const methodSignature$star$arm3 =
+const methodSignature$star$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7651,7 +7670,7 @@ const methodSignature$star$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$star$arm4 =
+const methodSignature$star$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -7662,7 +7681,7 @@ const methodSignature$star$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const methodSignature$star$arm5 =
+const methodSignature$star$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -7676,54 +7695,54 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
@@ -7735,54 +7754,54 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
@@ -7794,99 +7813,101 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberDecimal> }
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
@@ -7895,94 +7916,94 @@ export const methodSignature: typeof B.methodSignature & {
 	get: {
 		strict: methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword),
 		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword),
-		arm1: {
-			strict: methodSignature$get$arm1(methodSignature$get$applied, F.buildNumberArm1),
-			coerce: methodSignature$get$arm1(methodSignature$get$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodSignature$get$hex(methodSignature$get$applied, F.buildNumberHex),
+			coerce: methodSignature$get$hex(methodSignature$get$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodSignature$get$arm2(methodSignature$get$applied, F.buildNumberArm2),
-			coerce: methodSignature$get$arm2(methodSignature$get$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodSignature$get$decimal(methodSignature$get$applied, F.buildNumberDecimal),
+			coerce: methodSignature$get$decimal(methodSignature$get$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodSignature$get$arm3(methodSignature$get$applied, F.buildNumberArm3),
-			coerce: methodSignature$get$arm3(methodSignature$get$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodSignature$get$binary(methodSignature$get$applied, F.buildNumberBinary),
+			coerce: methodSignature$get$binary(methodSignature$get$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodSignature$get$arm4(methodSignature$get$applied, F.buildNumberArm4),
-			coerce: methodSignature$get$arm4(methodSignature$get$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodSignature$get$octal(methodSignature$get$applied, F.buildNumberOctal),
+			coerce: methodSignature$get$octal(methodSignature$get$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodSignature$get$arm5(methodSignature$get$applied, F.buildNumberArm5),
-			coerce: methodSignature$get$arm5(methodSignature$get$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodSignature$get$bigint(methodSignature$get$applied, F.buildNumberBigint),
+			coerce: methodSignature$get$bigint(methodSignature$get$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	set: {
 		strict: methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword),
 		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword),
-		arm1: {
-			strict: methodSignature$set$arm1(methodSignature$set$applied, F.buildNumberArm1),
-			coerce: methodSignature$set$arm1(methodSignature$set$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodSignature$set$hex(methodSignature$set$applied, F.buildNumberHex),
+			coerce: methodSignature$set$hex(methodSignature$set$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodSignature$set$arm2(methodSignature$set$applied, F.buildNumberArm2),
-			coerce: methodSignature$set$arm2(methodSignature$set$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodSignature$set$decimal(methodSignature$set$applied, F.buildNumberDecimal),
+			coerce: methodSignature$set$decimal(methodSignature$set$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodSignature$set$arm3(methodSignature$set$applied, F.buildNumberArm3),
-			coerce: methodSignature$set$arm3(methodSignature$set$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodSignature$set$binary(methodSignature$set$applied, F.buildNumberBinary),
+			coerce: methodSignature$set$binary(methodSignature$set$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodSignature$set$arm4(methodSignature$set$applied, F.buildNumberArm4),
-			coerce: methodSignature$set$arm4(methodSignature$set$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodSignature$set$octal(methodSignature$set$applied, F.buildNumberOctal),
+			coerce: methodSignature$set$octal(methodSignature$set$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodSignature$set$arm5(methodSignature$set$applied, F.buildNumberArm5),
-			coerce: methodSignature$set$arm5(methodSignature$set$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodSignature$set$bigint(methodSignature$set$applied, F.buildNumberBigint),
+			coerce: methodSignature$set$bigint(methodSignature$set$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	star: {
 		strict: methodSignature$star(F.buildMethodSignature, TSKindId.Star),
 		coerce: methodSignature$star(C.coerceToMethodSignature, TSKindId.Star),
-		arm1: {
-			strict: methodSignature$star$arm1(methodSignature$star$applied, F.buildNumberArm1),
-			coerce: methodSignature$star$arm1(methodSignature$star$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: methodSignature$star$hex(methodSignature$star$applied, F.buildNumberHex),
+			coerce: methodSignature$star$hex(methodSignature$star$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: methodSignature$star$arm2(methodSignature$star$applied, F.buildNumberArm2),
-			coerce: methodSignature$star$arm2(methodSignature$star$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: methodSignature$star$decimal(methodSignature$star$applied, F.buildNumberDecimal),
+			coerce: methodSignature$star$decimal(methodSignature$star$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: methodSignature$star$arm3(methodSignature$star$applied, F.buildNumberArm3),
-			coerce: methodSignature$star$arm3(methodSignature$star$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: methodSignature$star$binary(methodSignature$star$applied, F.buildNumberBinary),
+			coerce: methodSignature$star$binary(methodSignature$star$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: methodSignature$star$arm4(methodSignature$star$applied, F.buildNumberArm4),
-			coerce: methodSignature$star$arm4(methodSignature$star$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: methodSignature$star$octal(methodSignature$star$applied, F.buildNumberOctal),
+			coerce: methodSignature$star$octal(methodSignature$star$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: methodSignature$star$arm5(methodSignature$star$applied, F.buildNumberArm5),
-			coerce: methodSignature$star$arm5(methodSignature$star$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: methodSignature$star$bigint(methodSignature$star$applied, F.buildNumberBigint),
+			coerce: methodSignature$star$bigint(methodSignature$star$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
-	arm1: {
-		strict: methodSignature$arm1(F.buildMethodSignature, F.buildNumberArm1),
-		coerce: methodSignature$arm1(C.coerceToMethodSignature, C.coerceToNumberArm1)
+	hex: {
+		strict: methodSignature$hex(F.buildMethodSignature, F.buildNumberHex),
+		coerce: methodSignature$hex(C.coerceToMethodSignature, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: methodSignature$arm2(F.buildMethodSignature, F.buildNumberArm2),
-		coerce: methodSignature$arm2(C.coerceToMethodSignature, C.coerceToNumberArm2)
+	decimal: {
+		strict: methodSignature$decimal(F.buildMethodSignature, F.buildNumberDecimal),
+		coerce: methodSignature$decimal(C.coerceToMethodSignature, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: methodSignature$arm3(F.buildMethodSignature, F.buildNumberArm3),
-		coerce: methodSignature$arm3(C.coerceToMethodSignature, C.coerceToNumberArm3)
+	binary: {
+		strict: methodSignature$binary(F.buildMethodSignature, F.buildNumberBinary),
+		coerce: methodSignature$binary(C.coerceToMethodSignature, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: methodSignature$arm4(F.buildMethodSignature, F.buildNumberArm4),
-		coerce: methodSignature$arm4(C.coerceToMethodSignature, C.coerceToNumberArm4)
+	octal: {
+		strict: methodSignature$octal(F.buildMethodSignature, F.buildNumberOctal),
+		coerce: methodSignature$octal(C.coerceToMethodSignature, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: methodSignature$arm5(F.buildMethodSignature, F.buildNumberArm5),
-		coerce: methodSignature$arm5(C.coerceToMethodSignature, C.coerceToNumberArm5)
+	bigint: {
+		strict: methodSignature$bigint(F.buildMethodSignature, F.buildNumberBigint),
+		coerce: methodSignature$bigint(C.coerceToMethodSignature, C.coerceToNumberBigint)
 	}
 };
 
@@ -7998,7 +8019,7 @@ const abstractMethodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
-const abstractMethodSignature$arm1 =
+const abstractMethodSignature$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8009,13 +8030,13 @@ const abstractMethodSignature$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$arm2 =
+const abstractMethodSignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const abstractMethodSignature$arm3 =
+const abstractMethodSignature$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8026,7 +8047,7 @@ const abstractMethodSignature$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$arm4 =
+const abstractMethodSignature$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8037,7 +8058,7 @@ const abstractMethodSignature$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$arm5 =
+const abstractMethodSignature$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -8055,7 +8076,7 @@ const abstractMethodSignature$get$appliedCoerce: (
 	C.coerceToAbstractMethodSignature,
 	TSKindId.GetKeyword
 );
-const abstractMethodSignature$get$arm1 =
+const abstractMethodSignature$get$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8066,13 +8087,13 @@ const abstractMethodSignature$get$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$get$arm2 =
+const abstractMethodSignature$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const abstractMethodSignature$get$arm3 =
+const abstractMethodSignature$get$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8083,7 +8104,7 @@ const abstractMethodSignature$get$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$get$arm4 =
+const abstractMethodSignature$get$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8094,7 +8115,7 @@ const abstractMethodSignature$get$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$get$arm5 =
+const abstractMethodSignature$get$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -8112,7 +8133,7 @@ const abstractMethodSignature$set$appliedCoerce: (
 	C.coerceToAbstractMethodSignature,
 	TSKindId.SetKeyword
 );
-const abstractMethodSignature$set$arm1 =
+const abstractMethodSignature$set$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8123,13 +8144,13 @@ const abstractMethodSignature$set$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$set$arm2 =
+const abstractMethodSignature$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const abstractMethodSignature$set$arm3 =
+const abstractMethodSignature$set$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8140,7 +8161,7 @@ const abstractMethodSignature$set$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$set$arm4 =
+const abstractMethodSignature$set$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8151,7 +8172,7 @@ const abstractMethodSignature$set$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$set$arm5 =
+const abstractMethodSignature$set$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -8169,7 +8190,7 @@ const abstractMethodSignature$star$appliedCoerce: (
 	C.coerceToAbstractMethodSignature,
 	TSKindId.Star
 );
-const abstractMethodSignature$star$arm1 =
+const abstractMethodSignature$star$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8180,13 +8201,13 @@ const abstractMethodSignature$star$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$star$arm2 =
+const abstractMethodSignature$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const abstractMethodSignature$star$arm3 =
+const abstractMethodSignature$star$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8197,7 +8218,7 @@ const abstractMethodSignature$star$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$star$arm4 =
+const abstractMethodSignature$star$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -8208,7 +8229,7 @@ const abstractMethodSignature$star$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const abstractMethodSignature$star$arm5 =
+const abstractMethodSignature$star$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -8222,57 +8243,57 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm1>[0]
+					ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm3>[0]
+					ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm4>[0]
+					ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
@@ -8284,57 +8305,57 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm1>[0]
+					ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm3>[0]
+					ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm4>[0]
+					ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
@@ -8346,109 +8367,109 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
-		arm1: {
+		hex: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm1>[0]
+					ArgsOf<typeof F.buildNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm1>[0]
+					ArgsOf<typeof C.coerceToNumberHex>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm2>;
+					name: ArgsOf<typeof F.buildNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm2>;
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
 				}
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
-		arm3: {
+		binary: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm3>[0]
+					ArgsOf<typeof F.buildNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm3>[0]
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
-		arm4: {
+		octal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
-					ArgsOf<typeof F.buildNumberArm4>[0]
+					ArgsOf<typeof F.buildNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
-					ArgsOf<typeof C.coerceToNumberArm4>[0]
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberArm5>[0];
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 				}
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm1>[0]
+				ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm2>;
+				name: ArgsOf<typeof F.buildNumberDecimal>;
 			}
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm3>[0]
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
-				ArgsOf<typeof C.coerceToNumberArm4>[0]
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm5>[0];
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
 			}
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
@@ -8457,94 +8478,94 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 	get: {
 		strict: abstractMethodSignature$get(F.buildAbstractMethodSignature, TSKindId.GetKeyword),
 		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword),
-		arm1: {
-			strict: abstractMethodSignature$get$arm1(abstractMethodSignature$get$applied, F.buildNumberArm1),
-			coerce: abstractMethodSignature$get$arm1(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: abstractMethodSignature$get$hex(abstractMethodSignature$get$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$get$hex(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: abstractMethodSignature$get$arm2(abstractMethodSignature$get$applied, F.buildNumberArm2),
-			coerce: abstractMethodSignature$get$arm2(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: abstractMethodSignature$get$decimal(abstractMethodSignature$get$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$get$decimal(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: abstractMethodSignature$get$arm3(abstractMethodSignature$get$applied, F.buildNumberArm3),
-			coerce: abstractMethodSignature$get$arm3(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: abstractMethodSignature$get$binary(abstractMethodSignature$get$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$get$binary(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: abstractMethodSignature$get$arm4(abstractMethodSignature$get$applied, F.buildNumberArm4),
-			coerce: abstractMethodSignature$get$arm4(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: abstractMethodSignature$get$octal(abstractMethodSignature$get$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$get$octal(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: abstractMethodSignature$get$arm5(abstractMethodSignature$get$applied, F.buildNumberArm5),
-			coerce: abstractMethodSignature$get$arm5(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: abstractMethodSignature$get$bigint(abstractMethodSignature$get$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$get$bigint(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	set: {
 		strict: abstractMethodSignature$set(F.buildAbstractMethodSignature, TSKindId.SetKeyword),
 		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword),
-		arm1: {
-			strict: abstractMethodSignature$set$arm1(abstractMethodSignature$set$applied, F.buildNumberArm1),
-			coerce: abstractMethodSignature$set$arm1(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: abstractMethodSignature$set$hex(abstractMethodSignature$set$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$set$hex(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: abstractMethodSignature$set$arm2(abstractMethodSignature$set$applied, F.buildNumberArm2),
-			coerce: abstractMethodSignature$set$arm2(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: abstractMethodSignature$set$decimal(abstractMethodSignature$set$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$set$decimal(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: abstractMethodSignature$set$arm3(abstractMethodSignature$set$applied, F.buildNumberArm3),
-			coerce: abstractMethodSignature$set$arm3(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: abstractMethodSignature$set$binary(abstractMethodSignature$set$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$set$binary(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: abstractMethodSignature$set$arm4(abstractMethodSignature$set$applied, F.buildNumberArm4),
-			coerce: abstractMethodSignature$set$arm4(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: abstractMethodSignature$set$octal(abstractMethodSignature$set$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$set$octal(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: abstractMethodSignature$set$arm5(abstractMethodSignature$set$applied, F.buildNumberArm5),
-			coerce: abstractMethodSignature$set$arm5(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: abstractMethodSignature$set$bigint(abstractMethodSignature$set$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$set$bigint(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
 	star: {
 		strict: abstractMethodSignature$star(F.buildAbstractMethodSignature, TSKindId.Star),
 		coerce: abstractMethodSignature$star(C.coerceToAbstractMethodSignature, TSKindId.Star),
-		arm1: {
-			strict: abstractMethodSignature$star$arm1(abstractMethodSignature$star$applied, F.buildNumberArm1),
-			coerce: abstractMethodSignature$star$arm1(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm1)
+		hex: {
+			strict: abstractMethodSignature$star$hex(abstractMethodSignature$star$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$star$hex(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberHex)
 		},
-		arm2: {
-			strict: abstractMethodSignature$star$arm2(abstractMethodSignature$star$applied, F.buildNumberArm2),
-			coerce: abstractMethodSignature$star$arm2(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm2)
+		decimal: {
+			strict: abstractMethodSignature$star$decimal(abstractMethodSignature$star$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$star$decimal(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberDecimal)
 		},
-		arm3: {
-			strict: abstractMethodSignature$star$arm3(abstractMethodSignature$star$applied, F.buildNumberArm3),
-			coerce: abstractMethodSignature$star$arm3(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm3)
+		binary: {
+			strict: abstractMethodSignature$star$binary(abstractMethodSignature$star$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$star$binary(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberBinary)
 		},
-		arm4: {
-			strict: abstractMethodSignature$star$arm4(abstractMethodSignature$star$applied, F.buildNumberArm4),
-			coerce: abstractMethodSignature$star$arm4(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm4)
+		octal: {
+			strict: abstractMethodSignature$star$octal(abstractMethodSignature$star$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$star$octal(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberOctal)
 		},
-		arm5: {
-			strict: abstractMethodSignature$star$arm5(abstractMethodSignature$star$applied, F.buildNumberArm5),
-			coerce: abstractMethodSignature$star$arm5(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm5)
+		bigint: {
+			strict: abstractMethodSignature$star$bigint(abstractMethodSignature$star$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$star$bigint(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberBigint)
 		}
 	},
-	arm1: {
-		strict: abstractMethodSignature$arm1(F.buildAbstractMethodSignature, F.buildNumberArm1),
-		coerce: abstractMethodSignature$arm1(C.coerceToAbstractMethodSignature, C.coerceToNumberArm1)
+	hex: {
+		strict: abstractMethodSignature$hex(F.buildAbstractMethodSignature, F.buildNumberHex),
+		coerce: abstractMethodSignature$hex(C.coerceToAbstractMethodSignature, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: abstractMethodSignature$arm2(F.buildAbstractMethodSignature, F.buildNumberArm2),
-		coerce: abstractMethodSignature$arm2(C.coerceToAbstractMethodSignature, C.coerceToNumberArm2)
+	decimal: {
+		strict: abstractMethodSignature$decimal(F.buildAbstractMethodSignature, F.buildNumberDecimal),
+		coerce: abstractMethodSignature$decimal(C.coerceToAbstractMethodSignature, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: abstractMethodSignature$arm3(F.buildAbstractMethodSignature, F.buildNumberArm3),
-		coerce: abstractMethodSignature$arm3(C.coerceToAbstractMethodSignature, C.coerceToNumberArm3)
+	binary: {
+		strict: abstractMethodSignature$binary(F.buildAbstractMethodSignature, F.buildNumberBinary),
+		coerce: abstractMethodSignature$binary(C.coerceToAbstractMethodSignature, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: abstractMethodSignature$arm4(F.buildAbstractMethodSignature, F.buildNumberArm4),
-		coerce: abstractMethodSignature$arm4(C.coerceToAbstractMethodSignature, C.coerceToNumberArm4)
+	octal: {
+		strict: abstractMethodSignature$octal(F.buildAbstractMethodSignature, F.buildNumberOctal),
+		coerce: abstractMethodSignature$octal(C.coerceToAbstractMethodSignature, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: abstractMethodSignature$arm5(F.buildAbstractMethodSignature, F.buildNumberArm5),
-		coerce: abstractMethodSignature$arm5(C.coerceToAbstractMethodSignature, C.coerceToNumberArm5)
+	bigint: {
+		strict: abstractMethodSignature$bigint(F.buildAbstractMethodSignature, F.buildNumberBigint),
+		coerce: abstractMethodSignature$bigint(C.coerceToAbstractMethodSignature, C.coerceToNumberBigint)
 	}
 };
 
@@ -9024,7 +9045,7 @@ const enumAssignment$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const enumAssignment$arm1 =
+const enumAssignment$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9035,13 +9056,13 @@ const enumAssignment$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const enumAssignment$arm2 =
+const enumAssignment$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const enumAssignment$arm3 =
+const enumAssignment$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9052,7 +9073,7 @@ const enumAssignment$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const enumAssignment$arm4 =
+const enumAssignment$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9063,7 +9084,7 @@ const enumAssignment$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const enumAssignment$arm5 =
+const enumAssignment$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -9122,47 +9143,49 @@ export const enumAssignment: typeof B.enumAssignment & {
 			) => ReturnType<typeof C.coerceToEnumAssignment>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberDecimal> }
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
@@ -9196,25 +9219,25 @@ export const enumAssignment: typeof B.enumAssignment & {
 			coerce: enumAssignment$stringSingle(C.coerceToEnumAssignment, string.single.coerce)
 		}
 	},
-	arm1: {
-		strict: enumAssignment$arm1(F.buildEnumAssignment, F.buildNumberArm1),
-		coerce: enumAssignment$arm1(C.coerceToEnumAssignment, C.coerceToNumberArm1)
+	hex: {
+		strict: enumAssignment$hex(F.buildEnumAssignment, F.buildNumberHex),
+		coerce: enumAssignment$hex(C.coerceToEnumAssignment, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: enumAssignment$arm2(F.buildEnumAssignment, F.buildNumberArm2),
-		coerce: enumAssignment$arm2(C.coerceToEnumAssignment, C.coerceToNumberArm2)
+	decimal: {
+		strict: enumAssignment$decimal(F.buildEnumAssignment, F.buildNumberDecimal),
+		coerce: enumAssignment$decimal(C.coerceToEnumAssignment, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: enumAssignment$arm3(F.buildEnumAssignment, F.buildNumberArm3),
-		coerce: enumAssignment$arm3(C.coerceToEnumAssignment, C.coerceToNumberArm3)
+	binary: {
+		strict: enumAssignment$binary(F.buildEnumAssignment, F.buildNumberBinary),
+		coerce: enumAssignment$binary(C.coerceToEnumAssignment, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: enumAssignment$arm4(F.buildEnumAssignment, F.buildNumberArm4),
-		coerce: enumAssignment$arm4(C.coerceToEnumAssignment, C.coerceToNumberArm4)
+	octal: {
+		strict: enumAssignment$octal(F.buildEnumAssignment, F.buildNumberOctal),
+		coerce: enumAssignment$octal(C.coerceToEnumAssignment, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: enumAssignment$arm5(F.buildEnumAssignment, F.buildNumberArm5),
-		coerce: enumAssignment$arm5(C.coerceToEnumAssignment, C.coerceToNumberArm5)
+	bigint: {
+		strict: enumAssignment$bigint(F.buildEnumAssignment, F.buildNumberBigint),
+		coerce: enumAssignment$bigint(C.coerceToEnumAssignment, C.coerceToNumberBigint)
 	},
 	computedPropertyName: {
 		strict: enumAssignment$computedPropertyName(F.buildEnumAssignment, F.buildComputedPropertyName),
@@ -9681,7 +9704,7 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 	}
 };
 
-const typeQuerySubscriptExpression$arm1 =
+const typeQuerySubscriptExpression$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9692,13 +9715,13 @@ const typeQuerySubscriptExpression$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
-const typeQuerySubscriptExpression$arm2 =
+const typeQuerySubscriptExpression$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF> }): ReturnType<PF> => {
 		const { index: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(...seated) });
 	};
-const typeQuerySubscriptExpression$arm3 =
+const typeQuerySubscriptExpression$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9709,7 +9732,7 @@ const typeQuerySubscriptExpression$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
-const typeQuerySubscriptExpression$arm4 =
+const typeQuerySubscriptExpression$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -9720,88 +9743,88 @@ const typeQuerySubscriptExpression$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
-const typeQuerySubscriptExpression$arm5 =
+const typeQuerySubscriptExpression$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { index: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(seated) });
 	};
 export const typeQuerySubscriptExpression: typeof B.typeQuerySubscriptExpression & {
-	arm1: {
+	hex: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof F.buildNumberArm1>[0]
+				ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof C.coerceToNumberArm1>[0]
+				ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof F.buildNumberArm2>;
+				index: ArgsOf<typeof F.buildNumberDecimal>;
 			}
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof C.coerceToNumberArm2>;
+				index: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
-	arm3: {
+	binary: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof F.buildNumberArm3>[0]
+				ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof C.coerceToNumberArm3>[0]
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
-	arm4: {
+	octal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof F.buildNumberArm4>[0]
+				ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
-				ArgsOf<typeof C.coerceToNumberArm4>[0]
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof F.buildNumberArm5>[0];
+				index: ArgsOf<typeof F.buildNumberBigint>[0];
 			}
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				index: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
 } = {
 	...B.typeQuerySubscriptExpression,
-	arm1: {
-		strict: typeQuerySubscriptExpression$arm1(F.buildTypeQuerySubscriptExpression, F.buildNumberArm1),
-		coerce: typeQuerySubscriptExpression$arm1(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm1)
+	hex: {
+		strict: typeQuerySubscriptExpression$hex(F.buildTypeQuerySubscriptExpression, F.buildNumberHex),
+		coerce: typeQuerySubscriptExpression$hex(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: typeQuerySubscriptExpression$arm2(F.buildTypeQuerySubscriptExpression, F.buildNumberArm2),
-		coerce: typeQuerySubscriptExpression$arm2(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm2)
+	decimal: {
+		strict: typeQuerySubscriptExpression$decimal(F.buildTypeQuerySubscriptExpression, F.buildNumberDecimal),
+		coerce: typeQuerySubscriptExpression$decimal(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: typeQuerySubscriptExpression$arm3(F.buildTypeQuerySubscriptExpression, F.buildNumberArm3),
-		coerce: typeQuerySubscriptExpression$arm3(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm3)
+	binary: {
+		strict: typeQuerySubscriptExpression$binary(F.buildTypeQuerySubscriptExpression, F.buildNumberBinary),
+		coerce: typeQuerySubscriptExpression$binary(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: typeQuerySubscriptExpression$arm4(F.buildTypeQuerySubscriptExpression, F.buildNumberArm4),
-		coerce: typeQuerySubscriptExpression$arm4(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm4)
+	octal: {
+		strict: typeQuerySubscriptExpression$octal(F.buildTypeQuerySubscriptExpression, F.buildNumberOctal),
+		coerce: typeQuerySubscriptExpression$octal(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: typeQuerySubscriptExpression$arm5(F.buildTypeQuerySubscriptExpression, F.buildNumberArm5),
-		coerce: typeQuerySubscriptExpression$arm5(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm5)
+	bigint: {
+		strict: typeQuerySubscriptExpression$bigint(F.buildTypeQuerySubscriptExpression, F.buildNumberBigint),
+		coerce: typeQuerySubscriptExpression$bigint(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberBigint)
 	}
 };
 
@@ -9849,31 +9872,31 @@ const typeQueryCallExpression$typeQuerySubscriptExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
-const typeQueryCallExpression$numberArm1 =
+const typeQueryCallExpression$numberHex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryCallExpression$numberArm2 =
+const typeQueryCallExpression$numberDecimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryCallExpression$numberArm3 =
+const typeQueryCallExpression$numberBinary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryCallExpression$numberArm4 =
+const typeQueryCallExpression$numberOctal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryCallExpression$numberArm5 =
+const typeQueryCallExpression$numberBigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
@@ -9943,63 +9966,63 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
-		arm1: {
+		hex: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 		};
-		arm3: {
+		binary: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 		};
-		arm4: {
+		octal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
 		};
@@ -10047,54 +10070,54 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 			C.coerceToTypeQueryCallExpression,
 			C.coerceToTypeQuerySubscriptExpression
 		),
-		arm1: {
-			strict: typeQueryCallExpression$numberArm1(
+		hex: {
+			strict: typeQueryCallExpression$numberHex(
 				F.buildTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm1.strict
+				typeQuerySubscriptExpression.hex.strict
 			),
-			coerce: typeQueryCallExpression$numberArm1(
+			coerce: typeQueryCallExpression$numberHex(
 				C.coerceToTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm1.coerce
+				typeQuerySubscriptExpression.hex.coerce
 			)
 		},
-		arm2: {
-			strict: typeQueryCallExpression$numberArm2(
+		decimal: {
+			strict: typeQueryCallExpression$numberDecimal(
 				F.buildTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm2.strict
+				typeQuerySubscriptExpression.decimal.strict
 			),
-			coerce: typeQueryCallExpression$numberArm2(
+			coerce: typeQueryCallExpression$numberDecimal(
 				C.coerceToTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm2.coerce
+				typeQuerySubscriptExpression.decimal.coerce
 			)
 		},
-		arm3: {
-			strict: typeQueryCallExpression$numberArm3(
+		binary: {
+			strict: typeQueryCallExpression$numberBinary(
 				F.buildTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm3.strict
+				typeQuerySubscriptExpression.binary.strict
 			),
-			coerce: typeQueryCallExpression$numberArm3(
+			coerce: typeQueryCallExpression$numberBinary(
 				C.coerceToTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm3.coerce
+				typeQuerySubscriptExpression.binary.coerce
 			)
 		},
-		arm4: {
-			strict: typeQueryCallExpression$numberArm4(
+		octal: {
+			strict: typeQueryCallExpression$numberOctal(
 				F.buildTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm4.strict
+				typeQuerySubscriptExpression.octal.strict
 			),
-			coerce: typeQueryCallExpression$numberArm4(
+			coerce: typeQueryCallExpression$numberOctal(
 				C.coerceToTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm4.coerce
+				typeQuerySubscriptExpression.octal.coerce
 			)
 		},
-		arm5: {
-			strict: typeQueryCallExpression$numberArm5(
+		bigint: {
+			strict: typeQueryCallExpression$numberBigint(
 				F.buildTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm5.strict
+				typeQuerySubscriptExpression.bigint.strict
 			),
-			coerce: typeQueryCallExpression$numberArm5(
+			coerce: typeQueryCallExpression$numberBigint(
 				C.coerceToTypeQueryCallExpression,
-				typeQuerySubscriptExpression.arm5.coerce
+				typeQuerySubscriptExpression.bigint.coerce
 			)
 		}
 	}
@@ -10144,31 +10167,31 @@ const typeQueryInstantiationExpression$typeQuerySubscriptExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
-const typeQueryInstantiationExpression$numberArm1 =
+const typeQueryInstantiationExpression$numberHex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryInstantiationExpression$numberArm2 =
+const typeQueryInstantiationExpression$numberDecimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryInstantiationExpression$numberArm3 =
+const typeQueryInstantiationExpression$numberBinary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryInstantiationExpression$numberArm4 =
+const typeQueryInstantiationExpression$numberOctal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
-const typeQueryInstantiationExpression$numberArm5 =
+const typeQueryInstantiationExpression$numberBigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
 		const { function: seated, ...rest } = config;
@@ -10238,63 +10261,63 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
-		arm1: {
+		hex: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 		};
-		arm2: {
+		decimal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 		};
-		arm3: {
+		binary: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 		};
-		arm4: {
+		octal: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 		};
-		arm5: {
+		bigint: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>;
 				}
 			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
 			coerce: (
 				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
-					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>;
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>;
 				}
 			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
 		};
@@ -10351,54 +10374,54 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 			C.coerceToTypeQueryInstantiationExpression,
 			C.coerceToTypeQuerySubscriptExpression
 		),
-		arm1: {
-			strict: typeQueryInstantiationExpression$numberArm1(
+		hex: {
+			strict: typeQueryInstantiationExpression$numberHex(
 				F.buildTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm1.strict
+				typeQuerySubscriptExpression.hex.strict
 			),
-			coerce: typeQueryInstantiationExpression$numberArm1(
+			coerce: typeQueryInstantiationExpression$numberHex(
 				C.coerceToTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm1.coerce
+				typeQuerySubscriptExpression.hex.coerce
 			)
 		},
-		arm2: {
-			strict: typeQueryInstantiationExpression$numberArm2(
+		decimal: {
+			strict: typeQueryInstantiationExpression$numberDecimal(
 				F.buildTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm2.strict
+				typeQuerySubscriptExpression.decimal.strict
 			),
-			coerce: typeQueryInstantiationExpression$numberArm2(
+			coerce: typeQueryInstantiationExpression$numberDecimal(
 				C.coerceToTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm2.coerce
+				typeQuerySubscriptExpression.decimal.coerce
 			)
 		},
-		arm3: {
-			strict: typeQueryInstantiationExpression$numberArm3(
+		binary: {
+			strict: typeQueryInstantiationExpression$numberBinary(
 				F.buildTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm3.strict
+				typeQuerySubscriptExpression.binary.strict
 			),
-			coerce: typeQueryInstantiationExpression$numberArm3(
+			coerce: typeQueryInstantiationExpression$numberBinary(
 				C.coerceToTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm3.coerce
+				typeQuerySubscriptExpression.binary.coerce
 			)
 		},
-		arm4: {
-			strict: typeQueryInstantiationExpression$numberArm4(
+		octal: {
+			strict: typeQueryInstantiationExpression$numberOctal(
 				F.buildTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm4.strict
+				typeQuerySubscriptExpression.octal.strict
 			),
-			coerce: typeQueryInstantiationExpression$numberArm4(
+			coerce: typeQueryInstantiationExpression$numberOctal(
 				C.coerceToTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm4.coerce
+				typeQuerySubscriptExpression.octal.coerce
 			)
 		},
-		arm5: {
-			strict: typeQueryInstantiationExpression$numberArm5(
+		bigint: {
+			strict: typeQueryInstantiationExpression$numberBigint(
 				F.buildTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm5.strict
+				typeQuerySubscriptExpression.bigint.strict
 			),
-			coerce: typeQueryInstantiationExpression$numberArm5(
+			coerce: typeQueryInstantiationExpression$numberBigint(
 				C.coerceToTypeQueryInstantiationExpression,
-				typeQuerySubscriptExpression.arm5.coerce
+				typeQuerySubscriptExpression.bigint.coerce
 			)
 		}
 	}
@@ -10408,23 +10431,23 @@ const typeQuery$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const typeQuery$numberArm1 =
+const typeQuery$numberHex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const typeQuery$numberArm2 =
+const typeQuery$numberDecimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const typeQuery$numberArm3 =
+const typeQuery$numberBinary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const typeQuery$numberArm4 =
+const typeQuery$numberOctal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const typeQuery$numberArm5 =
+const typeQuery$numberBigint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -10468,25 +10491,41 @@ export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
-		arm1: {
-			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		hex: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>) => ReturnType<typeof F.buildTypeQuery>;
 		};
-		arm2: {
-			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		decimal: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
-		arm3: {
-			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		binary: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
-		arm4: {
-			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		octal: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
-		arm5: {
-			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		bigint: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
 	};
 	memberExpression: {
@@ -10538,25 +10577,25 @@ export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: typeQuery$subscriptExpression(F.buildTypeQuery, F.buildTypeQuerySubscriptExpression),
 		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression),
-		arm1: {
-			strict: typeQuery$numberArm1(F.buildTypeQuery, typeQuerySubscriptExpression.arm1.strict),
-			coerce: typeQuery$numberArm1(F.buildTypeQuery, typeQuerySubscriptExpression.arm1.coerce)
+		hex: {
+			strict: typeQuery$numberHex(F.buildTypeQuery, typeQuerySubscriptExpression.hex.strict),
+			coerce: typeQuery$numberHex(F.buildTypeQuery, typeQuerySubscriptExpression.hex.coerce)
 		},
-		arm2: {
-			strict: typeQuery$numberArm2(F.buildTypeQuery, typeQuerySubscriptExpression.arm2.strict),
-			coerce: typeQuery$numberArm2(F.buildTypeQuery, typeQuerySubscriptExpression.arm2.coerce)
+		decimal: {
+			strict: typeQuery$numberDecimal(F.buildTypeQuery, typeQuerySubscriptExpression.decimal.strict),
+			coerce: typeQuery$numberDecimal(F.buildTypeQuery, typeQuerySubscriptExpression.decimal.coerce)
 		},
-		arm3: {
-			strict: typeQuery$numberArm3(F.buildTypeQuery, typeQuerySubscriptExpression.arm3.strict),
-			coerce: typeQuery$numberArm3(F.buildTypeQuery, typeQuerySubscriptExpression.arm3.coerce)
+		binary: {
+			strict: typeQuery$numberBinary(F.buildTypeQuery, typeQuerySubscriptExpression.binary.strict),
+			coerce: typeQuery$numberBinary(F.buildTypeQuery, typeQuerySubscriptExpression.binary.coerce)
 		},
-		arm4: {
-			strict: typeQuery$numberArm4(F.buildTypeQuery, typeQuerySubscriptExpression.arm4.strict),
-			coerce: typeQuery$numberArm4(F.buildTypeQuery, typeQuerySubscriptExpression.arm4.coerce)
+		octal: {
+			strict: typeQuery$numberOctal(F.buildTypeQuery, typeQuerySubscriptExpression.octal.strict),
+			coerce: typeQuery$numberOctal(F.buildTypeQuery, typeQuerySubscriptExpression.octal.coerce)
 		},
-		arm5: {
-			strict: typeQuery$numberArm5(F.buildTypeQuery, typeQuerySubscriptExpression.arm5.strict),
-			coerce: typeQuery$numberArm5(F.buildTypeQuery, typeQuerySubscriptExpression.arm5.coerce)
+		bigint: {
+			strict: typeQuery$numberBigint(F.buildTypeQuery, typeQuerySubscriptExpression.bigint.strict),
+			coerce: typeQuery$numberBigint(F.buildTypeQuery, typeQuerySubscriptExpression.bigint.coerce)
 		}
 	},
 	memberExpression: {
@@ -10597,7 +10636,7 @@ export const typeQuery: typeof B.typeQuery & {
 	}
 };
 
-const _number$arm1 =
+const _number$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -10608,13 +10647,13 @@ const _number$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
-const _number$arm2 =
+const _number$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> }): ReturnType<PF> => {
 		const { argument: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) });
 	};
-const _number$arm3 =
+const _number$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -10625,7 +10664,7 @@ const _number$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
-const _number$arm4 =
+const _number$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -10636,78 +10675,80 @@ const _number$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
-const _number$arm5 =
+const _number$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { argument: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) });
 	};
 export const _number: typeof B._number & {
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
-	arm2: {
+	decimal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberArm2> }
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberDecimal> }
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToNumberArm2>;
+				argument: ArgsOf<typeof C.coerceToNumberDecimal>;
 			}
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
-	arm3: {
+	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberBinary>[0]
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
-	arm4: {
+	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberOctal>[0]
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
-	arm5: {
+	bigint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberArm5>[0] }
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				argument: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
 } = {
 	...B._number,
-	arm1: {
-		strict: _number$arm1(F.build_Number, F.buildNumberArm1),
-		coerce: _number$arm1(C.coerceTo_Number, C.coerceToNumberArm1)
+	hex: {
+		strict: _number$hex(F.build_Number, F.buildNumberHex),
+		coerce: _number$hex(C.coerceTo_Number, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: _number$arm2(F.build_Number, F.buildNumberArm2),
-		coerce: _number$arm2(C.coerceTo_Number, C.coerceToNumberArm2)
+	decimal: {
+		strict: _number$decimal(F.build_Number, F.buildNumberDecimal),
+		coerce: _number$decimal(C.coerceTo_Number, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: _number$arm3(F.build_Number, F.buildNumberArm3),
-		coerce: _number$arm3(C.coerceTo_Number, C.coerceToNumberArm3)
+	binary: {
+		strict: _number$binary(F.build_Number, F.buildNumberBinary),
+		coerce: _number$binary(C.coerceTo_Number, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: _number$arm4(F.build_Number, F.buildNumberArm4),
-		coerce: _number$arm4(C.coerceTo_Number, C.coerceToNumberArm4)
+	octal: {
+		strict: _number$octal(F.build_Number, F.buildNumberOctal),
+		coerce: _number$octal(C.coerceTo_Number, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: _number$arm5(F.build_Number, F.buildNumberArm5),
-		coerce: _number$arm5(C.coerceTo_Number, C.coerceToNumberArm5)
+	bigint: {
+		strict: _number$bigint(F.build_Number, F.buildNumberBigint),
+		coerce: _number$bigint(C.coerceTo_Number, C.coerceToNumberBigint)
 	}
 };
 
@@ -10715,43 +10756,43 @@ const literalType$number =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$numberArm1 =
+const literalType$numberHex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$numberArm2 =
+const literalType$numberDecimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$numberArm3 =
+const literalType$numberBinary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$numberArm4 =
+const literalType$numberOctal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$numberArm5 =
+const literalType$numberBigint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$arm1 =
+const literalType$hex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$arm2 =
+const literalType$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$arm3 =
+const literalType$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$arm4 =
+const literalType$octal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const literalType$arm5 =
+const literalType$bigint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -10787,46 +10828,46 @@ export const literalType: typeof B.literalType & {
 	number: {
 		strict: (...args: ArgsOf<typeof F.build_Number>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (...args: ArgsOf<typeof C.coerceTo_Number>) => ReturnType<typeof F.buildLiteralType>;
-		arm1: {
-			strict: (...args: ArgsOf<typeof _number.arm1.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof _number.arm1.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		hex: {
+			strict: (...args: ArgsOf<typeof _number.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
-		arm2: {
-			strict: (...args: ArgsOf<typeof _number.arm2.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof _number.arm2.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		decimal: {
+			strict: (...args: ArgsOf<typeof _number.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
-		arm3: {
-			strict: (...args: ArgsOf<typeof _number.arm3.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof _number.arm3.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		binary: {
+			strict: (...args: ArgsOf<typeof _number.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
-		arm4: {
-			strict: (...args: ArgsOf<typeof _number.arm4.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof _number.arm4.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		octal: {
+			strict: (...args: ArgsOf<typeof _number.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
-		arm5: {
-			strict: (...args: ArgsOf<typeof _number.arm5.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof _number.arm5.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		bigint: {
+			strict: (...args: ArgsOf<typeof _number.bigint.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.bigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
 	};
-	arm1: {
-		strict: (...args: ArgsOf<typeof F.buildNumberArm1>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm1>) => ReturnType<typeof F.buildLiteralType>;
+	hex: {
+		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
 	};
-	arm2: {
-		strict: (...args: ArgsOf<typeof F.buildNumberArm2>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm2>) => ReturnType<typeof F.buildLiteralType>;
+	decimal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
 	};
-	arm3: {
-		strict: (...args: ArgsOf<typeof F.buildNumberArm3>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm3>) => ReturnType<typeof F.buildLiteralType>;
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
 	};
-	arm4: {
-		strict: (...args: ArgsOf<typeof F.buildNumberArm4>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm4>) => ReturnType<typeof F.buildLiteralType>;
+	octal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
 	};
-	arm5: {
-		strict: (...args: ArgsOf<typeof F.buildNumberArm5>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm5>) => ReturnType<typeof F.buildLiteralType>;
+	bigint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
@@ -10861,46 +10902,46 @@ export const literalType: typeof B.literalType & {
 	number: {
 		strict: literalType$number(F.buildLiteralType, F.build_Number),
 		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number),
-		arm1: {
-			strict: literalType$numberArm1(F.buildLiteralType, _number.arm1.strict),
-			coerce: literalType$numberArm1(F.buildLiteralType, _number.arm1.coerce)
+		hex: {
+			strict: literalType$numberHex(F.buildLiteralType, _number.hex.strict),
+			coerce: literalType$numberHex(F.buildLiteralType, _number.hex.coerce)
 		},
-		arm2: {
-			strict: literalType$numberArm2(F.buildLiteralType, _number.arm2.strict),
-			coerce: literalType$numberArm2(F.buildLiteralType, _number.arm2.coerce)
+		decimal: {
+			strict: literalType$numberDecimal(F.buildLiteralType, _number.decimal.strict),
+			coerce: literalType$numberDecimal(F.buildLiteralType, _number.decimal.coerce)
 		},
-		arm3: {
-			strict: literalType$numberArm3(F.buildLiteralType, _number.arm3.strict),
-			coerce: literalType$numberArm3(F.buildLiteralType, _number.arm3.coerce)
+		binary: {
+			strict: literalType$numberBinary(F.buildLiteralType, _number.binary.strict),
+			coerce: literalType$numberBinary(F.buildLiteralType, _number.binary.coerce)
 		},
-		arm4: {
-			strict: literalType$numberArm4(F.buildLiteralType, _number.arm4.strict),
-			coerce: literalType$numberArm4(F.buildLiteralType, _number.arm4.coerce)
+		octal: {
+			strict: literalType$numberOctal(F.buildLiteralType, _number.octal.strict),
+			coerce: literalType$numberOctal(F.buildLiteralType, _number.octal.coerce)
 		},
-		arm5: {
-			strict: literalType$numberArm5(F.buildLiteralType, _number.arm5.strict),
-			coerce: literalType$numberArm5(F.buildLiteralType, _number.arm5.coerce)
+		bigint: {
+			strict: literalType$numberBigint(F.buildLiteralType, _number.bigint.strict),
+			coerce: literalType$numberBigint(F.buildLiteralType, _number.bigint.coerce)
 		}
 	},
-	arm1: {
-		strict: literalType$arm1(F.buildLiteralType, F.buildNumberArm1),
-		coerce: literalType$arm1(F.buildLiteralType, C.coerceToNumberArm1)
+	hex: {
+		strict: literalType$hex(F.buildLiteralType, F.buildNumberHex),
+		coerce: literalType$hex(F.buildLiteralType, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: literalType$arm2(F.buildLiteralType, F.buildNumberArm2),
-		coerce: literalType$arm2(F.buildLiteralType, C.coerceToNumberArm2)
+	decimal: {
+		strict: literalType$decimal(F.buildLiteralType, F.buildNumberDecimal),
+		coerce: literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: literalType$arm3(F.buildLiteralType, F.buildNumberArm3),
-		coerce: literalType$arm3(F.buildLiteralType, C.coerceToNumberArm3)
+	binary: {
+		strict: literalType$binary(F.buildLiteralType, F.buildNumberBinary),
+		coerce: literalType$binary(F.buildLiteralType, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: literalType$arm4(F.buildLiteralType, F.buildNumberArm4),
-		coerce: literalType$arm4(F.buildLiteralType, C.coerceToNumberArm4)
+	octal: {
+		strict: literalType$octal(F.buildLiteralType, F.buildNumberOctal),
+		coerce: literalType$octal(F.buildLiteralType, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: literalType$arm5(F.buildLiteralType, F.buildNumberArm5),
-		coerce: literalType$arm5(F.buildLiteralType, C.coerceToNumberArm5)
+	bigint: {
+		strict: literalType$bigint(F.buildLiteralType, F.buildNumberBigint),
+		coerce: literalType$bigint(F.buildLiteralType, C.coerceToNumberBigint)
 	},
 	string: {
 		strict: literalType$string(F.buildLiteralType, F.buildString),
@@ -11143,7 +11184,7 @@ const propertySignature$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const propertySignature$arm1 =
+const propertySignature$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -11154,13 +11195,13 @@ const propertySignature$arm1 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const propertySignature$arm2 =
+const propertySignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const propertySignature$arm3 =
+const propertySignature$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -11171,7 +11212,7 @@ const propertySignature$arm3 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const propertySignature$arm4 =
+const propertySignature$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
@@ -11182,7 +11223,7 @@ const propertySignature$arm4 =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
-const propertySignature$arm5 =
+const propertySignature$bigint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -11241,49 +11282,51 @@ export const propertySignature: typeof B.propertySignature & {
 			) => ReturnType<typeof C.coerceToPropertySignature>;
 		};
 	};
-	arm1: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
-	arm2: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
-		) => ReturnType<typeof F.buildPropertySignature>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm2>;
-			}
-		) => ReturnType<typeof C.coerceToPropertySignature>;
-	};
-	arm3: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
-		) => ReturnType<typeof F.buildPropertySignature>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
-		) => ReturnType<typeof C.coerceToPropertySignature>;
-	};
-	arm4: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
-		) => ReturnType<typeof F.buildPropertySignature>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
-		) => ReturnType<typeof C.coerceToPropertySignature>;
-	};
-	arm5: {
+	decimal: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberArm5>[0];
+				name: ArgsOf<typeof F.buildNumberDecimal>;
 			}
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
@@ -11320,25 +11363,25 @@ export const propertySignature: typeof B.propertySignature & {
 			coerce: propertySignature$stringSingle(C.coerceToPropertySignature, string.single.coerce)
 		}
 	},
-	arm1: {
-		strict: propertySignature$arm1(F.buildPropertySignature, F.buildNumberArm1),
-		coerce: propertySignature$arm1(C.coerceToPropertySignature, C.coerceToNumberArm1)
+	hex: {
+		strict: propertySignature$hex(F.buildPropertySignature, F.buildNumberHex),
+		coerce: propertySignature$hex(C.coerceToPropertySignature, C.coerceToNumberHex)
 	},
-	arm2: {
-		strict: propertySignature$arm2(F.buildPropertySignature, F.buildNumberArm2),
-		coerce: propertySignature$arm2(C.coerceToPropertySignature, C.coerceToNumberArm2)
+	decimal: {
+		strict: propertySignature$decimal(F.buildPropertySignature, F.buildNumberDecimal),
+		coerce: propertySignature$decimal(C.coerceToPropertySignature, C.coerceToNumberDecimal)
 	},
-	arm3: {
-		strict: propertySignature$arm3(F.buildPropertySignature, F.buildNumberArm3),
-		coerce: propertySignature$arm3(C.coerceToPropertySignature, C.coerceToNumberArm3)
+	binary: {
+		strict: propertySignature$binary(F.buildPropertySignature, F.buildNumberBinary),
+		coerce: propertySignature$binary(C.coerceToPropertySignature, C.coerceToNumberBinary)
 	},
-	arm4: {
-		strict: propertySignature$arm4(F.buildPropertySignature, F.buildNumberArm4),
-		coerce: propertySignature$arm4(C.coerceToPropertySignature, C.coerceToNumberArm4)
+	octal: {
+		strict: propertySignature$octal(F.buildPropertySignature, F.buildNumberOctal),
+		coerce: propertySignature$octal(C.coerceToPropertySignature, C.coerceToNumberOctal)
 	},
-	arm5: {
-		strict: propertySignature$arm5(F.buildPropertySignature, F.buildNumberArm5),
-		coerce: propertySignature$arm5(C.coerceToPropertySignature, C.coerceToNumberArm5)
+	bigint: {
+		strict: propertySignature$bigint(F.buildPropertySignature, F.buildNumberBigint),
+		coerce: propertySignature$bigint(C.coerceToPropertySignature, C.coerceToNumberBigint)
 	},
 	computedPropertyName: {
 		strict: propertySignature$computedPropertyName(F.buildPropertySignature, F.buildComputedPropertyName),
@@ -12565,21 +12608,21 @@ export const comment: {
 };
 
 export const number: {
-	readonly strict: typeof F.buildNumberArm2;
-	readonly coerce: typeof C.coerceToNumberArm2;
-	readonly arm1: { strict: typeof F.buildNumberArm1; coerce: typeof C.coerceToNumberArm1 };
-	readonly arm2: { strict: typeof F.buildNumberArm2; coerce: typeof C.coerceToNumberArm2 };
-	readonly arm3: { strict: typeof F.buildNumberArm3; coerce: typeof C.coerceToNumberArm3 };
-	readonly arm4: { strict: typeof F.buildNumberArm4; coerce: typeof C.coerceToNumberArm4 };
-	readonly arm5: { strict: typeof F.buildNumberArm5; coerce: typeof C.coerceToNumberArm5 };
+	readonly strict: typeof F.buildNumberDecimal;
+	readonly coerce: typeof C.coerceToNumberDecimal;
+	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
+	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
+	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
+	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
+	readonly bigint: { strict: typeof F.buildNumberBigint; coerce: typeof C.coerceToNumberBigint };
 } = {
-	strict: F.buildNumberArm2,
-	coerce: C.coerceToNumberArm2,
-	arm1: { strict: F.buildNumberArm1, coerce: C.coerceToNumberArm1 },
-	arm2: { strict: F.buildNumberArm2, coerce: C.coerceToNumberArm2 },
-	arm3: { strict: F.buildNumberArm3, coerce: C.coerceToNumberArm3 },
-	arm4: { strict: F.buildNumberArm4, coerce: C.coerceToNumberArm4 },
-	arm5: { strict: F.buildNumberArm5, coerce: C.coerceToNumberArm5 }
+	strict: F.buildNumberDecimal,
+	coerce: C.coerceToNumberDecimal,
+	hex: { strict: F.buildNumberHex, coerce: C.coerceToNumberHex },
+	decimal: { strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal },
+	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
+	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
+	bigint: { strict: F.buildNumberBigint, coerce: C.coerceToNumberBigint }
 };
 
 export const metaProperty: {

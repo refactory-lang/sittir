@@ -158,7 +158,7 @@ export function rebuildFormatGenerated() {
 									property: ir.identifier("length"),
 								}),
 								operator: TSKindId.EqEqEq,
-								right: ir.number.arm2("0"),
+								right: ir.number.decimal("0"),
 							}),
 						}),
 					}),
@@ -220,7 +220,7 @@ export function rebuildFormatGenerated() {
 										separator: TSKindId.Dot,
 										property: ir.identifier("max"),
 									}),
-									arguments: ir.arguments.strict(ir.number.arm2("0"), ir.callExpression.call.strict({
+									arguments: ir.arguments.strict(ir.number.decimal("0"), ir.callExpression.call.strict({
 										function: ir.memberExpression.strict({
 											object: ir.identifier("Math"),
 											separator: TSKindId.Dot,
@@ -250,7 +250,7 @@ export function rebuildFormatGenerated() {
 												separator: TSKindId.Dot,
 												property: ir.identifier("slice"),
 											}),
-											arguments: ir.arguments.strict(ir.number.arm2("0"), ir.identifier("offset")),
+											arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("offset")),
 										}),
 										operator: TSKindId.Plus,
 										right: ir.memberExpression.strict({
@@ -438,7 +438,7 @@ export function rebuildFormatGenerated() {
 												separator: TSKindId.Dot,
 												property: ir.identifier("max"),
 											}),
-											arguments: ir.arguments.strict(ir.number.arm2("0"), ir.identifier("newOffset")),
+											arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("newOffset")),
 										}),
 									})),
 									terminator: TSKindId.Semi,
