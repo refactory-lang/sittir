@@ -375,12 +375,11 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.TrueKeyword : TSKindId.FalseKeyword;
 	if (typeof v === 'number') {
-		if (Number.isInteger(v)) {
-			const e = _leafRegistry['integer_literal_decimal'];
-			return e ? e.factory(String(v)) : undefined;
+		const text = String(v);
+		for (const kind of ['integer_literal_decimal', 'float_literal']) {
+			const e = _leafRegistry[kind];
+			if (e?.pattern?.test(text)) return e.factory(text);
 		}
-		const e = _leafRegistry['float_literal'];
-		return e ? e.factory(String(v)) : undefined;
 	}
 	return undefined;
 }

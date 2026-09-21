@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "57a2e7e29edd89550aefffa3cb45b889d5843ea2ba79ee4adc202c8c9e09509b",
+  "source_hash": "620532f88cecc33fbcc0b72f2053ade7bf486bf946c78358c01f34bd3606ca28",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "6a3e9d7c3c6d5d9738f65777bf69725035e2f3187facfc34d25b598f4553b63c",
     "packages/typescript/.sittir/grammar.js": "d187b3bccf22ed6ec60e03b06ebf044e02aeb360e6fd3259abd458ddc3ac17be",
@@ -21,7 +21,7 @@
     "packages/typescript/src/consts.ts": "5135d1b3840b450dd1a415f423bdd5077b428bd803fa92e8aed14805916aa013",
     "packages/typescript/src/engine.ts": "9cf6d8e7475a6d72a1ef0684bb41ca817f7e2a7c382f5284f22418cc584ede0f",
     "packages/typescript/src/factories/bundle.ts": "95cc3caefa21d5a3c03c19c9baa4692e8abf76f143a5f0833f3fc448decdd941",
-    "packages/typescript/src/factories/coerce.ts": "e1c0c9c7ea69d446658e2cb6487b5270ace0f9322c92411007d8108ffaf7b806",
+    "packages/typescript/src/factories/coerce.ts": "27fe810668c0117c30cf03a2315280748ee1c0d3219285426044c969f9a85c6e",
     "packages/typescript/src/factories/index.ts": "a2c4f5c23b65c441b951d7d482be99bb86275ac10dd5caa6c6e80780f4b7428f",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "0cccce3ad5a14bce501c903d5a9707ba4c525b9d04cd50914fa010690d5f2055",
     "packages/typescript/src/factories/overlays/refines.ts": "1a89cdd227fdfd96b6ecc81e502b96f782d474a56ed47379aa2371040c2ff688",
@@ -35,7 +35,7 @@
     "packages/typescript/src/node-model.json5": "909c507222ab6be11317ea23b943400d0c15368e2d0c278635f90fbe34b5e2f7",
     "packages/typescript/src/options.ts": "f93bb4e62eda38f13422c6ca60826c96fc889d30ecab979bc357c53b73f0aee9",
     "packages/typescript/src/render-engine.ts": "c2b1e35bcd43cb1e69a8ad49475cb8b5fd9c64dcf6120681c44acb9c3c7dc33f",
-    "packages/typescript/src/types.ts": "f65fa8ae51914d7165e8c59b7194fc76f791e51244035d1e508733a4a86ec17b",
+    "packages/typescript/src/types.ts": "63cbe84790aa5cb98d3d5f37a04ba5dc7692a3eb70712b1d5910a3fd0e6d1f54",
     "packages/typescript/src/utils.ts": "6bd6b1759bbec5f56716f530c68e14e11bc110cc6b808595770b92c7b7a1f9da",
     "packages/typescript/src/wrap.ts": "d799bd86072b83bc61a71b64c268b90d6a612bfcbed0d1765ff260d046396b7b",
     "rust/crates/sittir-typescript/index.d.ts": "e64d2ee3e3be51dea5c69f18cd01b0aaecdd76034bdb03ee6df48fb466908dac",

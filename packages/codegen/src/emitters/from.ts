@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { interiorOf } from './interior.ts';
+import { interiorOf, numericLeafKinds } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -976,8 +976,8 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 }
 
-function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boolean): string {
-	return hasBool || hasInt || hasFloat ? 'v' : '_v';
+function resolveScalarParamName(hasBool: boolean, hasNumeric: boolean): string {
+	return hasBool || hasNumeric ? 'v' : '_v';
 }
 
 function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
@@ -1378,10 +1378,10 @@ function emitResolverHelpers(
 	lines.push('');
 
 	const scalars = scalarLeafKinds(nodeMap);
+	const numeric = numericLeafKinds(nodeMap);
 	const scalarParam = resolveScalarParamName(
 		scalars.boolean !== undefined && kindEntries !== undefined,
-		scalars.integer !== undefined,
-		scalars.float !== undefined
+		numeric.length > 0
 	);
 	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
 	const booleanMember = (kind: string): string | undefined =>
@@ -1391,18 +1391,13 @@ function emitResolverHelpers(
 	if (trueMember !== undefined && falseMember !== undefined) {
 		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
 	}
-	if (scalars.integer !== undefined || scalars.float !== undefined) {
+	if (numeric.length > 0) {
 		lines.push('  if (typeof v === "number") {');
-		if (scalars.integer !== undefined) {
-			lines.push(`    if (Number.isInteger(v)) {`);
-			lines.push(`      const e = _leafRegistry[${JSON.stringify(scalars.integer)}];`);
-			lines.push(`      return e ? e.factory(String(v)) : undefined;`);
-			lines.push(`    }`);
-		}
-		if (scalars.float !== undefined) {
-			lines.push(`    const e = _leafRegistry[${JSON.stringify(scalars.float)}];`);
-			lines.push(`    return e ? e.factory(String(v)) : undefined;`);
-		}
+		lines.push('    const text = String(v);');
+		lines.push(`    for (const kind of ${JSON.stringify(numeric)}) {`);
+		lines.push('      const e = _leafRegistry[kind];');
+		lines.push('      if (e?.pattern?.test(text)) return e.factory(text);');
+		lines.push('    }');
 		lines.push('  }');
 	}
 	lines.push('  return undefined;');

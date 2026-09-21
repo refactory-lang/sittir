@@ -688,8 +688,6 @@ export interface BooleanLeafKinds {
 
 export interface ScalarLeafKinds {
 	readonly boolean?: BooleanLeafKinds;
-	readonly integer?: string;
-	readonly float?: string;
 }
 
 const BOOLEAN_TEXTS = ['true', 'false'] as const;
@@ -711,22 +709,7 @@ function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
 }
 
 export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
-	const defaultArmOf = (kind: string): string => {
-		const node = nodeMap.nodes.get(kind);
-		if (!(node instanceof AssembledSupertype)) return kind;
-		const refs = node.variantSubtypes ?? [];
-		const chosen = refs.find((ref) => ref.default === true) ?? refs[0];
-		return chosen === undefined ? kind : storageKindOfRef(chosen.node);
-	};
-	const pick = (...names: readonly string[]): string | undefined => {
-		const found = names.find((name) => nodeMap.nodes.has(name));
-		return found === undefined ? undefined : defaultArmOf(found);
-	};
-	return {
-		boolean: booleanLeafKinds(nodeMap),
-		integer: pick('integer_literal', 'integer'),
-		float: pick('float_literal', 'float')
-	};
+	return { boolean: booleanLeafKinds(nodeMap) };
 }
 
 export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {

@@ -31,6 +31,10 @@ export type TreeNode<K extends NodeKind<TypescriptGrammar>> = BaseTreeNode<Types
 export type LeafScalarMap = {
 	[TSKindId.True]: boolean;
 	[TSKindId.False]: boolean;
+	[TSKindId.NumberDecimal]: number;
+	[TSKindId.NumberFloatPoint]: number;
+	[TSKindId.NumberFloatLeadingPoint]: number;
+	[TSKindId.NumberFloatScientific]: number;
 };
 
 export type LeafStringMap = {

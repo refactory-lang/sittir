@@ -3,6 +3,7 @@ import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/mo
 import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { numericLeafKinds } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -131,8 +132,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		scalarEntries.set(scalars.boolean.trueKind, 'boolean');
 		scalarEntries.set(scalars.boolean.falseKind, 'boolean');
 	}
-	if (scalars.integer !== undefined) scalarEntries.set(scalars.integer, 'number');
-	if (scalars.float !== undefined) scalarEntries.set(scalars.float, 'number');
+	for (const kind of numericLeafKinds(nodeMap)) scalarEntries.set(kind, 'number');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind);
 		if (node?.modelType === 'enum' && node.values.every((v) => /^\d+$/.test(v))) scalarEntries.set(kind, 'number');

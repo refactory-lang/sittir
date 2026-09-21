@@ -33,6 +33,8 @@ export type LeafScalarMap = {
 	[TSKindId.False]: boolean;
 	[TSKindId.IntegerDecimal]: number;
 	[TSKindId.FloatPoint]: number;
+	[TSKindId.FloatLeadingPoint]: number;
+	[TSKindId.FloatScientific]: number;
 };
 
 export type LeafStringMap = {

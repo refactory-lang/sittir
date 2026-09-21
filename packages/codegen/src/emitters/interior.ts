@@ -1,7 +1,15 @@
 import { CHOICE, PATTERN, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
-import { AbstractAssembledCompound, isRequired, type AssembledNode } from '../compiler/model/node-map.ts';
-import { slotLiteralValues } from './shared.ts';
+import {
+	AbstractAssembledCompound,
+	AssembledPattern,
+	AssembledSupertype,
+	isRequired,
+	storageKindOfRef,
+	type AssembledNode
+} from '../compiler/model/node-map.ts';
+import type { NodeMap } from '../compiler/types.ts';
+import { anchoredLeafRegex, slotLiteralValues } from './shared.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -112,4 +120,49 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 		if (interior !== undefined) out.set(kind, interior);
 	}
 	return out;
+}
+
+export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
+
+export const NUMBER_PROBES: Readonly<Record<NumberSignature, readonly string[]>> = {
+	decimal: ['255'],
+	hex: ['0xff', '0Xff'],
+	octal: ['0o377', '0O377'],
+	binary: ['0b11111111', '0B11111111'],
+	float: ['1.5', '.5', '1e5', '1.5e5']
+};
+
+const SIGNATURE_ORDER: readonly NumberSignature[] = ['decimal', 'hex', 'octal', 'binary', 'float'];
+
+export function numberSignature(pattern: RegExp): NumberSignature | undefined {
+	if (pattern.test('a') || pattern.test('')) return undefined;
+	return SIGNATURE_ORDER.find((signature) => NUMBER_PROBES[signature].some((text) => pattern.test(text)));
+}
+
+function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
+	if (!node.rawFactoryName || kind.startsWith('_')) return undefined;
+	const interior = interiorOf(node);
+	if (interior !== undefined) return new RegExp(interior.regex, 'su');
+	return node instanceof AssembledPattern ? anchoredLeafRegex(kind, node.textPattern) : undefined;
+}
+
+export function numberSignatures(nodeMap: NodeMap): ReadonlyMap<string, NumberSignature> {
+	const out = new Map<string, NumberSignature>();
+	for (const [kind, node] of nodeMap.nodes) {
+		const guard = leafGuard(kind, node);
+		const signature = guard === undefined ? undefined : numberSignature(guard);
+		if (signature !== undefined) out.set(kind, signature);
+	}
+	return out;
+}
+
+export function numericLeafKinds(nodeMap: NodeMap): readonly string[] {
+	const defaults = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AssembledSupertype)) continue;
+		const chosen = (node.variantSubtypes ?? []).find((ref) => ref.default === true);
+		if (chosen !== undefined) defaults.add(storageKindOfRef(chosen.node));
+	}
+	const found = [...numberSignatures(nodeMap)].filter(([, signature]) => signature === 'decimal' || signature === 'float').map(([kind]) => kind);
+	return [...found.filter((kind) => defaults.has(kind)), ...found.filter((kind) => !defaults.has(kind))];
 }

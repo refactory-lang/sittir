@@ -370,6 +370,18 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 
 function _resolveScalar(v: boolean | number): AnyNodeData | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
+	if (typeof v === 'number') {
+		const text = String(v);
+		for (const kind of [
+			'number_decimal',
+			'number_float_point',
+			'number_float_leading_point',
+			'number_float_scientific'
+		]) {
+			const e = _leafRegistry[kind];
+			if (e?.pattern?.test(text)) return e.factory(text);
+		}
+	}
 	return undefined;
 }
 

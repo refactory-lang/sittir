@@ -5123,16 +5123,16 @@ projects it through the token interior.
 ### `packages/codegen/src/emitters/shared.ts::scalarLeafKinds`
 
 ```text
-/** The leaf kinds a JavaScript scalar resolves to in this grammar — a
- *  boolean to the boolean literal, an integer to the integer literal, any
- *  other number to the float literal — by the grammar's own names for them
- *  (`integer_literal` in rust, `integer` in python), absent when the grammar
- *  has no such leaf. The one source for the runtime `_resolveScalar` and for
- *  the `LeafScalarMap` the loose surface widens those leaves through, so a
- *  scalar the resolver accepts is exactly a scalar the type admits. A leaf
- *  hoisted into a supertype of minted arms resolves to the supertype's
- *  default arm, the arm its own factory builds from a bare value. */
+/** The leaf kinds a JavaScript boolean resolves to in this grammar — the
+ *  grammar's own true and false leaves — absent when it has none. The one
+ *  source for the runtime `_resolveScalar` and for the `LeafScalarMap` the
+ *  loose surface widens those leaves through. A number is not resolved by
+ *  name: see `numericLeafKinds`. */
 ```
+
+### `packages/codegen/src/emitters/interior.ts::numericLeafKinds`
+
+The leaf kinds a bare JavaScript number can resolve to, found from each leaf's own guard pattern: a leaf counts when its anchored pattern (a lexed kind's composed interior regex, or a pattern leaf's text pattern) accepts a canonical numeral (`1`, `1.5`, `.5`, `1e5`) and rejects a letter and the empty string. A hex content pattern accepts letters and is excluded; a binary or octal content accepts digits and stays in. The list is ordered the default arms of hoisted parents first, then declaration order. The runtime resolver tests `String(value)` against each leaf's registered pattern in that order and builds the first that accepts it, so `1` reaches the default integer arm, `1.5` a point arm and `1e21` a scientific arm, in any grammar, with no leaf named in the emitter. The same list types the number-accepting leaves in `LeafScalarMap`.
 
 #### the boolean kinds come from the model, not a name
 
