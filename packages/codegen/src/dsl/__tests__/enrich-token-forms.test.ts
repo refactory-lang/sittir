@@ -52,6 +52,13 @@ describe('enrich: token forms', () => {
 		expect(arm.metadata).toMatchObject({ author: 'enrich', symbolSource: 'group-lift' });
 	});
 
+	it('leaves the grammar word rule alone: keyword extraction needs one token', () => {
+		const grammar = { ...grammarWith({ number: token(numberBody()) }), word: ($: any) => $.number };
+		const out = enrich(grammar);
+		expect(rulesOf(out).number.type).toBe('TOKEN');
+		expect((out as any).supertypes).toEqual([]);
+	});
+
 	it('leaves a rule the grammar declares as an external token alone', () => {
 		const grammar = { ...grammarWith({ number: token(numberBody()) }), externals: ($: any) => [$.number] };
 		const out = enrich(grammar);

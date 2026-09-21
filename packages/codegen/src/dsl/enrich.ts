@@ -111,13 +111,14 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
-	const externalNames = extractExternalNames(base, hasWrapper);
+	const wordName = extractWordName(grammarMeta?.word);
+	const unhoistableNames = new Set([...extractExternalNames(base, hasWrapper), ...(wordName === null ? [] : [wordName])]);
 	const tokenFormParents: string[] = [];
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-		const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames);
+		const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames);
 		if (hoisted === rule) continue;
 		enrichedRules[name] = hoisted;
 		tokenFormParents.push(name);
@@ -285,9 +286,9 @@ function hoistTokenForms(
 	counter: ClauseHoistCounter,
 	visibleGroupSources: Set<string>,
 	clauseGroupOwners: Map<string, string>,
-	externalNames: ReadonlySet<string>
+	unhoistableNames: ReadonlySet<string>
 ): Rule {
-	if (externalNames.has(parentKind)) return rule;
+	if (unhoistableNames.has(parentKind)) return rule;
 	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind) as unknown as Rule;
 	if (distributed === rule) return rule;
 	const precStack: Rule[] = [];

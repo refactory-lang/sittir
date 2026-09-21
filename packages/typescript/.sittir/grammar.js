@@ -1720,13 +1720,14 @@ function enrich(baseInput) {
     if (!rule) continue;
     enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
   }
-  const externalNames = extractExternalNames(base2, hasWrapper);
+  const wordName = extractWordName(grammarMeta?.word);
+  const unhoistableNames = /* @__PURE__ */ new Set([...extractExternalNames(base2, hasWrapper), ...wordName === null ? [] : [wordName]]);
   const tokenFormParents = [];
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
     const counter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-    const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames);
+    const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames);
     if (hoisted === rule) continue;
     enrichedRules[name] = hoisted;
     tokenFormParents.push(name);
@@ -1869,8 +1870,8 @@ function applyFieldWrapPasses(ruleName, rule, kwRules, supertypeNames, rulesBag,
   }
   return r;
 }
-function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, externalNames) {
-  if (externalNames.has(parentKind)) return rule;
+function hoistTokenForms(parentKind, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames) {
+  if (unhoistableNames.has(parentKind)) return rule;
   const distributed = distributeTokenForms(rule, parentKind);
   if (distributed === rule) return rule;
   const precStack = [];

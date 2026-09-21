@@ -148480,6 +148480,17 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
+    "sourceIn": "def e((a,b)):\n  return (a,b)\n\ndef e(*list: str):\n  pass\n\ndef e(**list: str):\n  pass\n\ndef f():\n  nonlocal a\n\ndef g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg\n\ndef h(*a):\n  i((*a))\n  j(((*a)))\n\ndef foo():\n    pass \\\n\\\n\\",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
+    "expectedReparseTree": "(module statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (tuple_pattern (patterns pattern: (identifier) pattern: (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (tuple (collection_elements element: (identifier) element: (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier))))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (nonlocal_statement names: (identifier))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (identifier) parameter: (identifier) parameter: (positional_separator) parameter: (identifier) parameter: (keyword_separator) parameter: (default_parameter name: (identifier) value: (integer_decimal)) parameter: (dictionary_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (return_statement (expression_list (identifier) tail: (expression_list_expressions (identifier) (identifier) (identifier) (identifier))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters (parameters_elements parameter: (list_splat_pattern (identifier)))) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (list_splat expression: (identifier)))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (parenthesized_list_splat (parenthesized_expression (list_splat expression: (identifier))))))))) (newline))))) statements: (function_definition name: (identifier) parameters: (parameters) body: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) (line_continuation_newline) (line_continuation_newline) (line_continuation_newline))",
+    "wrappedText": "def e((a,b)):\n    return (a,b)\n\n\ndef e(* list: str):\n    pass\n\n\ndef e(** list: str):\n    pass\n\n\ndef f():\n    nonlocal a\n\n\ndef g(h, i, /, j, *, k=100, ** kwarg):\n    return h,i,j,k,kwarg\n\n\ndef h(* a):\n    i((* a))\n    j(((* a)))\n\n\ndef foo():\n    pass\n\n\\\n\n\\\n\n\\\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
     "sourceIn": "def e((a,b)):\n  return (a,b)",
     "pattern": "function_definition",
     "edits": [],
@@ -161776,6 +161787,757 @@
     "expectedReparseTree": "(parameters)",
     "wrappedText": "def _f():\n    pass",
     "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "module",
+    "input": {
+      "$type": 124,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 126,
+          "$source": 0,
+          "$named": true,
+          "_simple_statements_elements": {
+            "$type": 256,
+            "$source": 0,
+            "$named": true,
+            "_simple_statement": [
+              {
+                "$type": 138,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 203,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": {
+                    "$type": 219,
+                    "$source": 0,
+                    "$named": true,
+                    "_function": {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "len",
+                      "$span": {
+                        "start": 0,
+                        "end": 3
+                      }
+                    },
+                    "_arguments": {
+                      "$type": 173,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments": {
+                        "$type": 261,
+                        "$source": 0,
+                        "$named": true,
+                        "_element": [
+                          {
+                            "$type": 243,
+                            "$source": 0,
+                            "$named": true,
+                            "_string_start": {
+                              "$type": 116,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 4,
+                                "end": 5
+                              }
+                            },
+                            "_content": [
+                              {
+                                "$type": 244,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": [
+                                  {
+                                    "$type": 117,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "a",
+                                    "$span": {
+                                      "start": 5,
+                                      "end": 6
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "_string_end": {
+                              "$type": 119,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 6,
+                                "end": 7
+                              }
+                            },
+                            "$slotOrder": [
+                              "string_start",
+                              "content",
+                              "string_end"
+                            ]
+                          }
+                        ],
+                        "_delimiter": 0
+                      },
+                      "$other": [
+                        {
+                          "$type": 33,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": "(",
+                          "$span": {
+                            "start": 3,
+                            "end": 4
+                          }
+                        },
+                        {
+                          "$type": 34,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": ")",
+                          "$span": {
+                            "start": 7,
+                            "end": 8
+                          }
+                        }
+                      ]
+                    },
+                    "$slotOrder": [
+                      "function",
+                      "arguments"
+                    ]
+                  },
+                  "_operator": 53,
+                  "_right": {
+                    "$type": 219,
+                    "$source": 0,
+                    "$named": true,
+                    "_function": {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "len",
+                      "$span": {
+                        "start": 14,
+                        "end": 17
+                      }
+                    },
+                    "_arguments": {
+                      "$type": 173,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments": {
+                        "$type": 261,
+                        "$source": 0,
+                        "$named": true,
+                        "_element": [
+                          {
+                            "$type": 243,
+                            "$source": 0,
+                            "$named": true,
+                            "_string_start": {
+                              "$type": 116,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 18,
+                                "end": 19
+                              }
+                            },
+                            "_content": [
+                              {
+                                "$type": 244,
+                                "$source": 0,
+                                "$named": true,
+                                "_content": [
+                                  {
+                                    "$type": 117,
+                                    "$source": 0,
+                                    "$named": true,
+                                    "$text": "aa",
+                                    "$span": {
+                                      "start": 19,
+                                      "end": 21
+                                    }
+                                  }
+                                ]
+                              }
+                            ],
+                            "_string_end": {
+                              "$type": 119,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "\"",
+                              "$span": {
+                                "start": 21,
+                                "end": 22
+                              }
+                            },
+                            "$slotOrder": [
+                              "string_start",
+                              "content",
+                              "string_end"
+                            ]
+                          }
+                        ],
+                        "_delimiter": 0
+                      },
+                      "$other": [
+                        {
+                          "$type": 33,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": "(",
+                          "$span": {
+                            "start": 17,
+                            "end": 18
+                          }
+                        },
+                        {
+                          "$type": 34,
+                          "$source": 0,
+                          "$named": false,
+                          "$text": ")",
+                          "$span": {
+                            "start": 22,
+                            "end": 23
+                          }
+                        }
+                      ]
+                    },
+                    "$_trivia": {
+                      "leading": [
+                        "\\\n"
+                      ]
+                    },
+                    "$slotOrder": [
+                      "function",
+                      "arguments"
+                    ]
+                  },
+                  "$slotOrder": [
+                    "left",
+                    "operator",
+                    "right"
+                  ]
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$slotOrder": [
+            "simple_statements_elements",
+            "newline"
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "len(\"a\") or \\\nlen(\"aa\")\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "len(\"a\") or \\\nlen(\"aa\")\n",
+    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation_newline) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))) (newline)))",
+    "wrappedText": "len(\"a\") or \\\nlen(\"aa\")\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "expression_statement",
+    "input": {
+      "$type": 138,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 203,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 219,
+          "$source": 0,
+          "$named": true,
+          "_function": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "len",
+            "$span": {
+              "start": 0,
+              "end": 3
+            }
+          },
+          "_arguments": {
+            "$type": 173,
+            "$source": 0,
+            "$named": true,
+            "_arguments": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_element": [
+                {
+                  "$type": 243,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": {
+                    "$type": 116,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\"",
+                    "$span": {
+                      "start": 4,
+                      "end": 5
+                    }
+                  },
+                  "_content": [
+                    {
+                      "$type": 244,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        {
+                          "$type": 117,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "a",
+                          "$span": {
+                            "start": 5,
+                            "end": 6
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "_string_end": {
+                    "$type": 119,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\"",
+                    "$span": {
+                      "start": 6,
+                      "end": 7
+                    }
+                  },
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              ],
+              "_delimiter": 0
+            },
+            "$other": [
+              {
+                "$type": 33,
+                "$source": 0,
+                "$named": false,
+                "$text": "(",
+                "$span": {
+                  "start": 3,
+                  "end": 4
+                }
+              },
+              {
+                "$type": 34,
+                "$source": 0,
+                "$named": false,
+                "$text": ")",
+                "$span": {
+                  "start": 7,
+                  "end": 8
+                }
+              }
+            ]
+          },
+          "$slotOrder": [
+            "function",
+            "arguments"
+          ]
+        },
+        "_operator": 53,
+        "_right": {
+          "$type": 219,
+          "$source": 0,
+          "$named": true,
+          "_function": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "len",
+            "$span": {
+              "start": 14,
+              "end": 17
+            }
+          },
+          "_arguments": {
+            "$type": 173,
+            "$source": 0,
+            "$named": true,
+            "_arguments": {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_element": [
+                {
+                  "$type": 243,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": {
+                    "$type": 116,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\"",
+                    "$span": {
+                      "start": 18,
+                      "end": 19
+                    }
+                  },
+                  "_content": [
+                    {
+                      "$type": 244,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": [
+                        {
+                          "$type": 117,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "aa",
+                          "$span": {
+                            "start": 19,
+                            "end": 21
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "_string_end": {
+                    "$type": 119,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "\"",
+                    "$span": {
+                      "start": 21,
+                      "end": 22
+                    }
+                  },
+                  "$slotOrder": [
+                    "string_start",
+                    "content",
+                    "string_end"
+                  ]
+                }
+              ],
+              "_delimiter": 0
+            },
+            "$other": [
+              {
+                "$type": 33,
+                "$source": 0,
+                "$named": false,
+                "$text": "(",
+                "$span": {
+                  "start": 17,
+                  "end": 18
+                }
+              },
+              {
+                "$type": 34,
+                "$source": 0,
+                "$named": false,
+                "$text": ")",
+                "$span": {
+                  "start": 22,
+                  "end": 23
+                }
+              }
+            ]
+          },
+          "$_trivia": {
+            "leading": [
+              "\\\n"
+            ]
+          },
+          "$slotOrder": [
+            "function",
+            "arguments"
+          ]
+        },
+        "$slotOrder": [
+          "left",
+          "operator",
+          "right"
+        ]
+      }
+    },
+    "expectedOutput": "len(\"a\") or \\\nlen(\"aa\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "len(\"a\") or \\\nlen(\"aa\")",
+    "expectedReparseTree": "(expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation_newline) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))))))",
+    "wrappedText": "len(\"a\") or \\\nlen(\"aa\")",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "boolean_operator",
+    "input": {
+      "$type": 203,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 219,
+        "$source": 0,
+        "$named": true,
+        "_function": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "len",
+          "$span": {
+            "start": 0,
+            "end": 3
+          }
+        },
+        "_arguments": {
+          "$type": 173,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_element": [
+              {
+                "$type": 243,
+                "$source": 0,
+                "$named": true,
+                "_string_start": {
+                  "$type": 116,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\"",
+                  "$span": {
+                    "start": 4,
+                    "end": 5
+                  }
+                },
+                "_content": [
+                  {
+                    "$type": 244,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": [
+                      {
+                        "$type": 117,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "a",
+                        "$span": {
+                          "start": 5,
+                          "end": 6
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "_string_end": {
+                  "$type": 119,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\"",
+                  "$span": {
+                    "start": 6,
+                    "end": 7
+                  }
+                },
+                "$slotOrder": [
+                  "string_start",
+                  "content",
+                  "string_end"
+                ]
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 33,
+              "$source": 0,
+              "$named": false,
+              "$text": "(",
+              "$span": {
+                "start": 3,
+                "end": 4
+              }
+            },
+            {
+              "$type": 34,
+              "$source": 0,
+              "$named": false,
+              "$text": ")",
+              "$span": {
+                "start": 7,
+                "end": 8
+              }
+            }
+          ]
+        },
+        "$slotOrder": [
+          "function",
+          "arguments"
+        ]
+      },
+      "_operator": 53,
+      "_right": {
+        "$type": 219,
+        "$source": 0,
+        "$named": true,
+        "_function": {
+          "$type": 1,
+          "$source": 0,
+          "$named": true,
+          "$text": "len",
+          "$span": {
+            "start": 14,
+            "end": 17
+          }
+        },
+        "_arguments": {
+          "$type": 173,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_element": [
+              {
+                "$type": 243,
+                "$source": 0,
+                "$named": true,
+                "_string_start": {
+                  "$type": 116,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\"",
+                  "$span": {
+                    "start": 18,
+                    "end": 19
+                  }
+                },
+                "_content": [
+                  {
+                    "$type": 244,
+                    "$source": 0,
+                    "$named": true,
+                    "_content": [
+                      {
+                        "$type": 117,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "aa",
+                        "$span": {
+                          "start": 19,
+                          "end": 21
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "_string_end": {
+                  "$type": 119,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\"",
+                  "$span": {
+                    "start": 21,
+                    "end": 22
+                  }
+                },
+                "$slotOrder": [
+                  "string_start",
+                  "content",
+                  "string_end"
+                ]
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 33,
+              "$source": 0,
+              "$named": false,
+              "$text": "(",
+              "$span": {
+                "start": 17,
+                "end": 18
+              }
+            },
+            {
+              "$type": 34,
+              "$source": 0,
+              "$named": false,
+              "$text": ")",
+              "$span": {
+                "start": 22,
+                "end": 23
+              }
+            }
+          ]
+        },
+        "$_trivia": {
+          "leading": [
+            "\\\n"
+          ]
+        },
+        "$slotOrder": [
+          "function",
+          "arguments"
+        ]
+      },
+      "$slotOrder": [
+        "left",
+        "operator",
+        "right"
+      ]
+    },
+    "expectedOutput": "len(\"a\") or \\\nlen(\"aa\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "len(\"a\") \\\nor len(\"aa\")",
+    "pattern": "boolean_operator",
+    "edits": [],
+    "expectedSourceOut": "len(\"a\") or \\\nlen(\"aa\")",
+    "expectedReparseTree": "(boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))) (line_continuation_newline) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))",
+    "wrappedText": "_ = len(\"a\") or \\\nlen(\"aa\")",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
