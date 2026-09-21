@@ -293,37 +293,46 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment_block: { factory: (content: string) => _resolveByKind('comment_block', content) },
 	number_hex: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_hex'].regex, 'su'),
-		factory: (text: string) => F.buildNumberHex(lexedConfig(text, TOKEN_INTERIORS['number_hex'], 'number_hex') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_hex'], 'number_hex');
+			return F.buildNumberHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	number_float_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberFloatPoint(lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point');
+			return F.buildNumberFloatPoint(cfg as never);
+		}
 	},
 	number_float_leading_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_leading_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberFloatLeadingPoint(
-				lexedConfig(text, TOKEN_INTERIORS['number_float_leading_point'], 'number_float_leading_point') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_leading_point'], 'number_float_leading_point');
+			return F.buildNumberFloatLeadingPoint(cfg as never);
+		}
 	},
 	number_float_scientific: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_scientific'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberFloatScientific(
-				lexedConfig(text, TOKEN_INTERIORS['number_float_scientific'], 'number_float_scientific') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_scientific'], 'number_float_scientific');
+			return F.buildNumberFloatScientific(cfg as never);
+		}
 	},
 	number_decimal: { pattern: /^(?:(?:\d(_?\d)*))$/u, factory: F.buildNumberDecimal },
 	number_binary: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_binary'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberBinary(lexedConfig(text, TOKEN_INTERIORS['number_binary'], 'number_binary') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_binary'], 'number_binary');
+			return F.buildNumberBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	number_octal: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_octal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildNumberOctal(lexedConfig(text, TOKEN_INTERIORS['number_octal'], 'number_octal') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_octal'], 'number_octal');
+			return F.buildNumberOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	number_bigint: { factory: (content: string) => _resolveByKind('number_bigint', content) },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget() },
@@ -914,6 +923,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	comment_line: TSKindId.CommentLine,
 	comment_block: TSKindId.CommentBlock,
+	number_hex: TSKindId.NumberHex,
+	number_binary: TSKindId.NumberBinary,
+	number_octal: TSKindId.NumberOctal,
 	number_bigint: TSKindId.NumberBigint,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
 	string_double: TSKindId.StringDouble,
@@ -1019,6 +1031,9 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'ambient_declaration_global',
 	'comment_line',
 	'comment_block',
+	'number_hex',
+	'number_binary',
+	'number_octal',
 	'number_bigint',
 	'parenthesized_expression_sequence',
 	'arrow_function_parameter',
@@ -1187,6 +1202,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCommentLine(children[0] as Parameters<typeof F.buildCommentLine>[0]);
 		case 'comment_block':
 			return F.buildCommentBlock(children[0] as Parameters<typeof F.buildCommentBlock>[0]);
+		case 'number_hex':
+			return F.buildNumberHex(children[0] as Parameters<typeof F.buildNumberHex>[0]);
+		case 'number_binary':
+			return F.buildNumberBinary(children[0] as Parameters<typeof F.buildNumberBinary>[0]);
+		case 'number_octal':
+			return F.buildNumberOctal(children[0] as Parameters<typeof F.buildNumberOctal>[0]);
 		case 'number_bigint':
 			return F.buildNumberBigint(children[0] as Parameters<typeof F.buildNumberBigint>[0]);
 		case 'parenthesized_expression_sequence':
@@ -8454,24 +8475,22 @@ export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<ty
 	);
 }
 
-export function resolveNumberHex_prefix(value: T.NumberHex.LooseConfig['prefix']): T.NumberHex['_prefix'] {
-	return _resolveOne<'0x' | '0X'>(value, _K2, _K2);
-}
-
 export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content']): T.NumberHex['_content'] {
 	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberHex(input: T.NumberHex.Loose): ReturnType<typeof F.buildNumberHex> {
-	if (!_isLooseConfig<T.NumberHex.LooseConfig | string | number>(input))
+export function coerceToNumberHex(
+	input: T.NumberHex.Loose,
+	options?: T.NumberHex.Spelling
+): ReturnType<typeof F.buildNumberHex> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberHex)
 		return input as unknown as ReturnType<typeof F.buildNumberHex>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.NumberHex.LooseConfig;
-	return F.buildNumberHex({
-		prefix: _requireField('number_hex', 'prefix', resolveNumberHex_prefix(_cfg.prefix)),
-		content: _requireField('number_hex', 'content', resolveNumberHex_content(_cfg.content))
-	});
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildNumberHex(
+		_requireField('number_hex', 'content', typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)),
+		options
+	);
 }
 
 export function resolveNumberFloatPoint_integer(
@@ -8623,44 +8642,48 @@ export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<
 	return F.buildNumberDecimal(input as Parameters<typeof F.buildNumberDecimal>[0]);
 }
 
-export function resolveNumberBinary_prefix(value: T.NumberBinary.LooseConfig['prefix']): T.NumberBinary['_prefix'] {
-	return _resolveOne<'0b' | '0B'>(value, _K2, _K2);
-}
-
 export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['content']): T.NumberBinary['_content'] {
 	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberBinary(input: T.NumberBinary.Loose): ReturnType<typeof F.buildNumberBinary> {
-	if (!_isLooseConfig<T.NumberBinary.LooseConfig | string | number>(input))
+export function coerceToNumberBinary(
+	input: T.NumberBinary.Loose,
+	options?: T.NumberBinary.Spelling
+): ReturnType<typeof F.buildNumberBinary> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBinary)
 		return input as unknown as ReturnType<typeof F.buildNumberBinary>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.NumberBinary.LooseConfig;
-	return F.buildNumberBinary({
-		prefix: _requireField('number_binary', 'prefix', resolveNumberBinary_prefix(_cfg.prefix)),
-		content: _requireField('number_binary', 'content', resolveNumberBinary_content(_cfg.content))
-	});
-}
-
-export function resolveNumberOctal_prefix(value: T.NumberOctal.LooseConfig['prefix']): T.NumberOctal['_prefix'] {
-	return _resolveOne<'0o' | '0O'>(value, _K2, _K2);
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildNumberBinary(
+		_requireField(
+			'number_binary',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
+		),
+		options
+	);
 }
 
 export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['content']): T.NumberOctal['_content'] {
 	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberOctal(input: T.NumberOctal.Loose): ReturnType<typeof F.buildNumberOctal> {
-	if (!_isLooseConfig<T.NumberOctal.LooseConfig | string | number>(input))
+export function coerceToNumberOctal(
+	input: T.NumberOctal.Loose,
+	options?: T.NumberOctal.Spelling
+): ReturnType<typeof F.buildNumberOctal> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberOctal)
 		return input as unknown as ReturnType<typeof F.buildNumberOctal>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.NumberOctal.LooseConfig;
-	return F.buildNumberOctal({
-		prefix: _requireField('number_octal', 'prefix', resolveNumberOctal_prefix(_cfg.prefix)),
-		content: _requireField('number_octal', 'content', resolveNumberOctal_content(_cfg.content))
-	});
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildNumberOctal(
+		_requireField(
+			'number_octal',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
+		),
+		options
+	);
 }
 
 export function resolveNumberBigint_content(value: T.NumberBigint.LooseConfig['content']): T.NumberBigint['_content'] {
@@ -8670,15 +8693,13 @@ export function resolveNumberBigint_content(value: T.NumberBigint.LooseConfig['c
 export function coerceToNumberBigint(input: T.NumberBigint.Loose): ReturnType<typeof F.buildNumberBigint> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBigint)
 		return input as unknown as ReturnType<typeof F.buildNumberBigint>;
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
 	return F.buildNumberBigint(
 		_requireField(
 			'number_bigint',
 			'content',
-			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K2
-			)
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K2, _K2)
 		)
 	);
 }

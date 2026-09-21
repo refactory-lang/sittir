@@ -278,31 +278,31 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	metavariable: { factory: (content: string) => _resolveByKind('metavariable', content) },
 	integer_literal_decimal: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_decimal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerLiteralDecimal(
-				lexedConfig(text, TOKEN_INTERIORS['integer_literal_decimal'], 'integer_literal_decimal') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_decimal'], 'integer_literal_decimal');
+			return F.buildIntegerLiteralDecimal(cfg as never);
+		}
 	},
 	integer_literal_hex: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_hex'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerLiteralHex(
-				lexedConfig(text, TOKEN_INTERIORS['integer_literal_hex'], 'integer_literal_hex') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_hex'], 'integer_literal_hex');
+			return F.buildIntegerLiteralHex(cfg as never);
+		}
 	},
 	integer_literal_binary: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_binary'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerLiteralBinary(
-				lexedConfig(text, TOKEN_INTERIORS['integer_literal_binary'], 'integer_literal_binary') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_binary'], 'integer_literal_binary');
+			return F.buildIntegerLiteralBinary(cfg as never);
+		}
 	},
 	integer_literal_octal: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_literal_octal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerLiteralOctal(
-				lexedConfig(text, TOKEN_INTERIORS['integer_literal_octal'], 'integer_literal_octal') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_literal_octal'], 'integer_literal_octal');
+			return F.buildIntegerLiteralOctal(cfg as never);
+		}
 	},
 	char_literal_escaped: { factory: (content: string) => _resolveByKind('char_literal_escaped', content) },
 	char_literal_plain: { factory: (content: string) => _resolveByKind('char_literal_plain', content) },

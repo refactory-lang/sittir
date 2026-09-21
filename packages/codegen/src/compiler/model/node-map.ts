@@ -1104,6 +1104,7 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
+	registeredOption?: boolean;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1575,8 +1576,13 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		return this._slots;
 	}
 
+	get configSlots(): readonly AssembledNonterminal[] {
+		return this._slots.filter((slot) => slot.registeredOption !== true);
+	}
+
 	get soleSlot(): AssembledNonterminal | undefined {
-		return this._slots.length === 1 ? this._slots[0] : undefined;
+		const slots = this.configSlots;
+		return slots.length === 1 ? slots[0] : undefined;
 	}
 
 	get keywordConstructibleText(): string | undefined {

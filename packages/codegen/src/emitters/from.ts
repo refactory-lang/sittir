@@ -57,7 +57,9 @@ import {
 	kindEnumTextMapExpr,
 	delimiterMembersFor,
 	listHasOptions,
+	registeredSlots,
 	separatedListSurface,
+	spellingTypeOf,
 	listOptionKeys
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
@@ -294,7 +296,10 @@ function emitBranchFrom(
 
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
-	const slots = node.slots;
+	const slots = node.slots.filter((slot) => slot.registeredOption !== true);
+	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
+	const optionsParam = spellingType === undefined ? '' : `, options?: T.${node.typeName}.Spelling`;
+	const optionsArg = spellingType === undefined ? '' : ', options';
 	// Loose optionality mirrors the strict surface's own derivation
 	// (`argumentOptional`, node-map.ts): a required field only blocks the
 	// no-argument call when it has no default-empty construction of its own
@@ -338,7 +343,7 @@ function emitBranchFrom(
 		resolverFor.has(f.propertyName)
 			? `${fieldResolverName(typeName, f)}(${valueExpr})`
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
-	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
+	lines.push(`export function ${fn}(input${opt}: ${inputType}${optionsParam}): ${returnType} {`);
 	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
 	const bareInterior = canDirectFactoryCall || slots.length === 0 ? undefined : bareInteriorText(node.kind, node);
 	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';
@@ -382,8 +387,10 @@ function emitBranchFrom(
 		}
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
-			const call = resolveFieldCall(
-				inputExpr,
+			const numeric = numericSlotShape(soleField) !== undefined;
+			if (numeric) lines.push(`  const _value = ${inputExpr};`);
+			const resolved = resolveFieldCall(
+				numeric ? '_value' : inputExpr,
 				soleField,
 				isMultiple(soleField),
 				nodeMap,
@@ -392,13 +399,14 @@ function emitBranchFrom(
 				undefined,
 				kindEntries
 			);
+			const call = numeric ? `(typeof _value === 'number' ? _value : ${resolved})` : resolved;
 			const directDefaultFactory = canDefaultToEmpty(soleField, nodeMap);
 			const guardedCall = directDefaultFactory
 				? `${call} ?? F.${directDefaultFactory}()`
 				: isRequired(soleField)
 					? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
 					: call;
-			lines.push(`  return ${factory}(${guardedCall});`);
+			lines.push(`  return ${factory}(${guardedCall}${optionsArg});`);
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of slots) {
@@ -418,7 +426,7 @@ function emitBranchFrom(
 					}
 				}
 			}
-			lines.push('  });');
+			lines.push(`  }${optionsArg});`);
 		}
 	} else {
 		emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
@@ -955,12 +963,12 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 			const interior = interiorOf(node)!;
 			const shape = classifyFactoryShape(node, nodeMap);
 			const config = `lexedConfig(text, TOKEN_INTERIORS[${JSON.stringify(kind)}], ${JSON.stringify(kind)})`;
-			const arg =
-				shape === 'direct'
-					? `${config}[${JSON.stringify(interior.slots.find((slot) => !slot.flag)!.configKey)}] as never`
-					: `${config} as never`;
+			const registered = registeredSlots(node);
+			const spelling = registered.length === 0 ? '' : `, { ${registered.map((slot) => `${slot.configKey}: cfg[${JSON.stringify(slot.configKey)}]`).join(', ')} } as never`;
+			const configSlot = interior.slots.find((slot) => !slot.flag && !registered.some((r) => r.configKey === slot.configKey));
+			const arg = shape === 'direct' ? `cfg[${JSON.stringify(configSlot!.configKey)}] as never` : 'cfg as never';
 			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => ${factory}(${arg}) },`
+				`  ${JSON.stringify(kind)}: { pattern: new RegExp(TOKEN_INTERIORS[${JSON.stringify(kind)}].regex, 'su'), factory: (text: string) => { const cfg = ${config}; return ${factory}(${arg}${spelling}); } },`
 			);
 		} else if (node instanceof AssembledPattern) {
 			const literal = anchoredLeafRegexLiteral(kind, node.textPattern);

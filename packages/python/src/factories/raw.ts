@@ -4317,11 +4317,11 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 	);
 }
 
-export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'content'>): T.IntegerHex.Built {
-	const _prefix = config.prefix;
+export function buildIntegerHex(value: string | number, options?: T.IntegerHex.Spelling): T.IntegerHex.Built {
+	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(16, '', config.content);
+	const _content = numberText(16, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4333,8 +4333,8 @@ export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'conte
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0x' | '0X') => buildIntegerHex({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerHex({ ...config, content: value })
+					content: (value: string | number) => buildIntegerHex(value, options),
+					prefix: (spelling: '0x' | '0X') => buildIntegerHex(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4346,11 +4346,11 @@ export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'conte
 	);
 }
 
-export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'content'>): T.IntegerOctal.Built {
-	const _prefix = config.prefix;
+export function buildIntegerOctal(value: string | number, options?: T.IntegerOctal.Spelling): T.IntegerOctal.Built {
+	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(8, '', config.content);
+	const _content = numberText(8, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4362,8 +4362,8 @@ export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'c
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0o' | '0O') => buildIntegerOctal({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerOctal({ ...config, content: value })
+					content: (value: string | number) => buildIntegerOctal(value, options),
+					prefix: (spelling: '0o' | '0O') => buildIntegerOctal(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4375,11 +4375,11 @@ export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'c
 	);
 }
 
-export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 'content'>): T.IntegerBinary.Built {
-	const _prefix = config.prefix;
+export function buildIntegerBinary(value: string | number, options?: T.IntegerBinary.Spelling): T.IntegerBinary.Built {
+	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
-	const _content = numberText(2, '', config.content);
+	const _content = numberText(2, '', value);
 	if (_content !== undefined && !_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${_content}`);
 	return withMethods(
@@ -4391,8 +4391,8 @@ export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 
 				_prefix,
 				_content,
 				$with: {
-					prefix: (value: '0b' | '0B') => buildIntegerBinary({ ...config, prefix: value }),
-					content: (value: string | number) => buildIntegerBinary({ ...config, content: value })
+					content: (value: string | number) => buildIntegerBinary(value, options),
+					prefix: (spelling: '0b' | '0B') => buildIntegerBinary(value, { ...options, prefix: spelling })
 				}
 			},
 			{
@@ -4629,7 +4629,7 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 	);
 }
 
-export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.Built {
+export function buildEscapeSequenceOctal(value: string | number): T.EscapeSequenceOctal.Built {
 	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${_content}`);
@@ -4641,7 +4641,7 @@ export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.B
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: string) => buildEscapeSequenceOctal(value)
+					content: (value: string | number) => buildEscapeSequenceOctal(value)
 				}
 			},
 			{

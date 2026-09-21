@@ -662,7 +662,7 @@ export function forwardedTargetKind(node: AssembledNode, nodeMap: NodeMap): stri
 export function resolveFactoryFieldNames(node: AssembledNode): readonly string[] | undefined {
 	if (node instanceof AbstractAssembledCompound) {
 		if (node.slots.length === 0) return undefined;
-		return node.slots.map((field) => field.name);
+		return node.configSlots.map((field) => field.name);
 	}
 	if (node instanceof AssembledList) return [canonicalSeparatedListField(node).name];
 	return undefined;

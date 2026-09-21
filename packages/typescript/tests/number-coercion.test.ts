@@ -12,9 +12,9 @@ describe('a number given to a number arm is written in the arm base', () => {
 	it('strict and loose alike', () => {
 		expect(ir.number.decimal.strict(255).$render()).toBe('255');
 		expect(ir.number.decimal(255).$render()).toBe('255');
-		expect(ir.number.hex.strict({ prefix: '0x', content: 255 }).$render()).toBe('0xff');
-		expect(ir.number.hex({ prefix: '0x', content: 255 }).$render()).toBe('0xff');
-		expect(ir.number.octal({ prefix: '0o', content: 8 }).$render()).toBe('0o10');
-		expect(ir.number.binary({ prefix: '0b', content: 5 }).$render()).toBe('0b101');
+		expect(ir.number.hex.strict(255).$render()).toBe('0xff');
+		expect(ir.number.hex(255).$render()).toBe('0xff');
+		expect(ir.number.octal(8).$render()).toBe('0o10');
+		expect(ir.number.binary(5).$render()).toBe('0b101');
 	});
 });

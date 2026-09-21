@@ -72,6 +72,8 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
+	omitRegistered,
+	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
 	hiddenTextLeafKinds,
@@ -1102,8 +1104,10 @@ function emitNamespaceSugarBlock(
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
-		lines.push(`  export type Config = ${widenNumericSlots(`ConfigFor<${nsKey}>`, node)};`);
+		lines.push(`  export type Config = ${widenNumericSlots(omitRegistered(`ConfigFor<${nsKey}>`, node), node)};`);
 	}
+	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
+	if (spelling !== undefined) lines.push(`  export type Spelling = ${spelling};`);
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
@@ -1113,12 +1117,12 @@ function emitNamespaceSugarBlock(
 		const bare = lexedContentSlot(node);
 		return (bare !== undefined && numericSlotShape(bare) !== undefined) || numericLeafShape(kind, node) !== undefined;
 	})();
-	const looseWidened = numericSlotKeys(node).length > 0 ? ` | ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)}` : '';
+	const looseWidened = numericSlotKeys(node).length > 0 ? ` | ${widenNumericSlots(omitRegistered(`LooseConfigFor<${nsKey}>`, node), node)}` : '';
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
 	const bareAnyNumber = bareNumeric || bareInterior?.number !== undefined;
 	lines.push(`  export type Loose = LooseFor<${nsKey}>${looseWidened}${bareText}${bareAnyNumber ? ' | number' : ''};`);
-	lines.push(`  export type LooseConfig = ${widenNumericSlots(`LooseConfigFor<${nsKey}>`, node)};`);
+	lines.push(`  export type LooseConfig = ${widenNumericSlots(omitRegistered(`LooseConfigFor<${nsKey}>`, node), node)};`);
 	if (surface !== undefined) {
 		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
 		lines.push(`  export type LooseArgs = ${surface.looseArgs};`);

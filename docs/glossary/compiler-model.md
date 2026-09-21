@@ -4239,6 +4239,18 @@ bakes in and the arm the renderer resolves have one source. Resolution runs
 before the emitters walk the model, and a slot with no stamp is one no option
 addressed.
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.registeredOption`
+
+Whether an `options:` declaration registered this slot as a spelling site: a slot whose values are literal text with no kind ids, such as `0x` and `0X`. A registered slot is no longer part of the configuration a caller supplies; its value is an option that defaults to `optionDefaultArm`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.configSlots`
+
+The slots a caller supplies, which is every slot except the ones registered as an option. The sole-slot classification reads this list, so a node with one real slot and one registered spelling takes that value directly.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::registerSpellingSite`
+
+Stamps the slot a declared spelling site names with its default arm and marks it registered. A spelling site has no kind ids, so it never joins the native option table.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal.optionDefaultArm`
 
 The arm an option declared for this slot, stamped once resolution has run.

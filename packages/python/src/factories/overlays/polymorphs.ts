@@ -3079,36 +3079,21 @@ export const splatPattern: typeof B.splatPattern & {
 
 const simplePatternNegative$hex =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'prefix' || key === 'content') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) });
 	};
 const simplePatternNegative$octal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'prefix' || key === 'content') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) });
 	};
 const simplePatternNegative$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'prefix' || key === 'content') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) });
 	};
 const simplePatternNegative$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3154,31 +3139,38 @@ const simplePatternNegative$scientific =
 const simplePatternNegative: {
 	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & ArgsOf<typeof F.buildIntegerHex>[0]
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildIntegerHex>[0];
+			}
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
-				ArgsOf<typeof C.coerceToIntegerHex>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToIntegerHex>[0];
+			}
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 	octal: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> &
-				ArgsOf<typeof F.buildIntegerOctal>[0]
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildIntegerOctal>[0];
+			}
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
-				ArgsOf<typeof C.coerceToIntegerOctal>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToIntegerOctal>[0];
+			}
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 	binary: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> &
-				ArgsOf<typeof F.buildIntegerBinary>[0]
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildIntegerBinary>[0];
+			}
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
-				ArgsOf<typeof C.coerceToIntegerBinary>[0]
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToIntegerBinary>[0];
+			}
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 	decimal: {

@@ -3362,8 +3362,7 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			name: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3415,8 +3414,7 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3426,8 +3424,7 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3503,8 +3500,7 @@ describe('pair sub-factories', () => {
 	it('hex builds the parent', () => {
 		const node = ir.pair.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			key: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3551,8 +3547,7 @@ describe('pair sub-factories', () => {
 	it('binary builds the parent', () => {
 		const node = ir.pair.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			key: '1'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3561,8 +3556,7 @@ describe('pair sub-factories', () => {
 	it('octal builds the parent', () => {
 		const node = ir.pair.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			key: '1'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3610,8 +3604,7 @@ describe('pair_pattern sub-factories', () => {
 	it('hex builds the parent', () => {
 		const node = ir.pairPattern.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			key: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3658,8 +3651,7 @@ describe('pair_pattern sub-factories', () => {
 	it('binary builds the parent', () => {
 		const node = ir.pairPattern.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			key: '1'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3668,8 +3660,7 @@ describe('pair_pattern sub-factories', () => {
 	it('octal builds the parent', () => {
 		const node = ir.pairPattern.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			key: '1'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3744,7 +3735,7 @@ describe('public_field_definition sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('hex builds the parent', () => {
-		const node = ir.publicFieldDefinition.hex({ prefix: '0x', content: 'a' });
+		const node = ir.publicFieldDefinition.hex({ name: 'a' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3774,13 +3765,13 @@ describe('public_field_definition sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binary builds the parent', () => {
-		const node = ir.publicFieldDefinition.binary({ prefix: '0b', content: '1' });
+		const node = ir.publicFieldDefinition.binary({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('octal builds the parent', () => {
-		const node = ir.publicFieldDefinition.octal({ prefix: '0o', content: '1' });
+		const node = ir.publicFieldDefinition.octal({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3867,8 +3858,7 @@ describe('method_signature sub-factories', () => {
 	it('hex builds the parent', () => {
 		const node = ir.methodSignature.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			name: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -3915,8 +3905,7 @@ describe('method_signature sub-factories', () => {
 	it('binary builds the parent', () => {
 		const node = ir.methodSignature.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -3925,8 +3914,7 @@ describe('method_signature sub-factories', () => {
 	it('octal builds the parent', () => {
 		const node = ir.methodSignature.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -3995,8 +3983,7 @@ describe('abstract_method_signature sub-factories', () => {
 	it('hex builds the parent', () => {
 		const node = ir.abstractMethodSignature.hex({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			name: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4043,8 +4030,7 @@ describe('abstract_method_signature sub-factories', () => {
 	it('binary builds the parent', () => {
 		const node = ir.abstractMethodSignature.binary({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4053,8 +4039,7 @@ describe('abstract_method_signature sub-factories', () => {
 	it('octal builds the parent', () => {
 		const node = ir.abstractMethodSignature.octal({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4754,8 +4739,7 @@ describe('enum_assignment sub-factories', () => {
 	it('hex builds the parent', () => {
 		const node = ir.enumAssignment.hex({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			name: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4802,8 +4786,7 @@ describe('enum_assignment sub-factories', () => {
 	it('binary builds the parent', () => {
 		const node = ir.enumAssignment.binary({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4812,8 +4795,7 @@ describe('enum_assignment sub-factories', () => {
 	it('octal builds the parent', () => {
 		const node = ir.enumAssignment.octal({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			name: '1'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -5649,8 +5631,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.hex builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.hex({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0x',
-			content: 'a'
+			index: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5697,8 +5678,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.binary builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.binary({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0b',
-			content: '1'
+			index: '1'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5707,8 +5687,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.octal builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.octal({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			prefix: '0o',
-			content: '1'
+			index: '1'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5894,7 +5873,7 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.hex builds the parent', () => {
-		const node = ir.literalType.number.hex({ operator: '-', prefix: '0x', content: 'a' });
+		const node = ir.literalType.number.hex({ operator: '-', argument: 'a' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5924,13 +5903,13 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.binary builds the parent', () => {
-		const node = ir.literalType.number.binary({ operator: '-', prefix: '0b', content: '1' });
+		const node = ir.literalType.number.binary({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.octal builds the parent', () => {
-		const node = ir.literalType.number.octal({ operator: '-', prefix: '0o', content: '1' });
+		const node = ir.literalType.number.octal({ operator: '-', argument: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5942,7 +5921,7 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('hex builds the parent', () => {
-		const node = ir.literalType.hex({ prefix: '0x', content: 'a' });
+		const node = ir.literalType.hex('a');
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5972,13 +5951,13 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binary builds the parent', () => {
-		const node = ir.literalType.binary({ prefix: '0b', content: '1' });
+		const node = ir.literalType.binary('1');
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('octal builds the parent', () => {
-		const node = ir.literalType.octal({ prefix: '0o', content: '1' });
+		const node = ir.literalType.octal('1');
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6264,7 +6243,7 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('hex builds the parent', () => {
-		const node = ir.propertySignature.hex({ prefix: '0x', content: 'a' });
+		const node = ir.propertySignature.hex({ name: 'a' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6294,13 +6273,13 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binary builds the parent', () => {
-		const node = ir.propertySignature.binary({ prefix: '0b', content: '1' });
+		const node = ir.propertySignature.binary({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('octal builds the parent', () => {
-		const node = ir.propertySignature.octal({ prefix: '0o', content: '1' });
+		const node = ir.propertySignature.octal({ name: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

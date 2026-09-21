@@ -17794,9 +17794,8 @@
           }
         ]
       },
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "prefix",
         "content"
       ]
     },
@@ -18369,9 +18368,8 @@
           }
         ]
       },
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "prefix",
         "content"
       ]
     },
@@ -18465,9 +18463,8 @@
           }
         ]
       },
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "prefix",
         "content"
       ]
     },

@@ -2897,19 +2897,19 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative.hex builds the parent', () => {
-		const node = ir.casePattern.negative.hex({ prefix: '0x', content: 'a' });
+		const node = ir.casePattern.negative.hex({ content: 'a' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative.octal builds the parent', () => {
-		const node = ir.casePattern.negative.octal({ prefix: '0o', content: '1' });
+		const node = ir.casePattern.negative.octal({ content: '1' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative.binary builds the parent', () => {
-		const node = ir.casePattern.negative.binary({ prefix: '0b', content: '1' });
+		const node = ir.casePattern.negative.binary({ content: '1' });
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3240,7 +3240,7 @@ describe('keyword_pattern sub-factories', () => {
 	it('negative.hex builds the parent', () => {
 		const node = ir.keywordPattern.negative.hex({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ prefix: '0x', content: 'a' }]
+			value: [{ content: 'a' }]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
@@ -3249,7 +3249,7 @@ describe('keyword_pattern sub-factories', () => {
 	it('negative.octal builds the parent', () => {
 		const node = ir.keywordPattern.negative.octal({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ prefix: '0o', content: '1' }]
+			value: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
@@ -3258,7 +3258,7 @@ describe('keyword_pattern sub-factories', () => {
 	it('negative.binary builds the parent', () => {
 		const node = ir.keywordPattern.negative.binary({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			value: [{ prefix: '0b', content: '1' }]
+			value: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();

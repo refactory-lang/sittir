@@ -5154,6 +5154,18 @@ The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
 
 The shape of a pattern leaf's own text pattern.
 
+### `packages/codegen/src/emitters/factories.ts::registeredSlots`
+
+The slots of a node that an `options:` declaration registered as spelling sites.
+
+### `packages/codegen/src/emitters/factories.ts::omitRegistered`
+
+Wraps a configuration type so it omits the registered slots' keys.
+
+### `packages/codegen/src/emitters/factories.ts::spellingTypeOf`
+
+The object type of a node's registered slots, each key optional and typed by the slot's literal arms; the type of the trailing options parameter and of the namespace's `Spelling`. Nothing when the node has no registered slot.
+
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
 
 Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric. A bare string is projected onto the kind's slots through its token interior.

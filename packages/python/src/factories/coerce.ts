@@ -216,18 +216,24 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
 	integer_hex: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_hex'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerHex(lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_hex'], 'integer_hex');
+			return F.buildIntegerHex(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_octal: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_octal'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerOctal(lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_octal'], 'integer_octal');
+			return F.buildIntegerOctal(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_binary: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_binary'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildIntegerBinary(lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['integer_binary'], 'integer_binary');
+			return F.buildIntegerBinary(cfg['content'] as never, { prefix: cfg['prefix'] } as never);
+		}
 	},
 	integer_decimal: {
 		pattern: /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u,
@@ -235,20 +241,24 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	},
 	float_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatPoint(lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_point'], 'float_point');
+			return F.buildFloatPoint(cfg as never);
+		}
 	},
 	float_leading_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_leading_point'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatLeadingPoint(
-				lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point') as never
-			)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point');
+			return F.buildFloatLeadingPoint(cfg as never);
+		}
 	},
 	float_scientific: {
 		pattern: new RegExp(TOKEN_INTERIORS['float_scientific'].regex, 'su'),
-		factory: (text: string) =>
-			F.buildFloatScientific(lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific') as never)
+		factory: (text: string) => {
+			const cfg = lexedConfig(text, TOKEN_INTERIORS['float_scientific'], 'float_scientific');
+			return F.buildFloatScientific(cfg as never);
+		}
 	},
 	escape_sequence_unicode_fixed: {
 		factory: (content: string) => _resolveByKind('escape_sequence_unicode_fixed', content)
@@ -862,6 +872,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
 	_parenthesized_import_list: TSKindId.ParenthesizedImportList,
+	integer_hex: TSKindId.IntegerHex,
+	integer_octal: TSKindId.IntegerOctal,
+	integer_binary: TSKindId.IntegerBinary,
 	escape_sequence_unicode_fixed: TSKindId.EscapeSequenceUnicodeFixed,
 	escape_sequence_unicode_wide: TSKindId.EscapeSequenceUnicodeWide,
 	escape_sequence_hex: TSKindId.EscapeSequenceHex,
@@ -982,6 +995,9 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'case_list_pattern',
 	'print_statement_plain',
 	'_parenthesized_import_list',
+	'integer_hex',
+	'integer_octal',
+	'integer_binary',
 	'escape_sequence_unicode_fixed',
 	'escape_sequence_unicode_wide',
 	'escape_sequence_hex',
@@ -1157,6 +1173,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
 		case '_parenthesized_import_list':
 			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
+		case 'integer_hex':
+			return F.buildIntegerHex(children[0] as Parameters<typeof F.buildIntegerHex>[0]);
+		case 'integer_octal':
+			return F.buildIntegerOctal(children[0] as Parameters<typeof F.buildIntegerOctal>[0]);
+		case 'integer_binary':
+			return F.buildIntegerBinary(children[0] as Parameters<typeof F.buildIntegerBinary>[0]);
 		case 'escape_sequence_unicode_fixed':
 			return F.buildEscapeSequenceUnicodeFixed(children[0] as Parameters<typeof F.buildEscapeSequenceUnicodeFixed>[0]);
 		case 'escape_sequence_unicode_wide':
@@ -5935,48 +5957,48 @@ export function coerceToParenthesizedImportList(
 	);
 }
 
-export function resolveIntegerHex_prefix(value: T.IntegerHex.LooseConfig['prefix']): T.IntegerHex['_prefix'] {
-	return _resolveOne<'0x' | '0X'>(value, _K0, _K0);
-}
-
 export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['content']): T.IntegerHex['_content'] {
 	return typeof value === 'number' ? numberText(16, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerHex(input: T.IntegerHex.Loose): ReturnType<typeof F.buildIntegerHex> {
-	if (!_isLooseConfig<T.IntegerHex.LooseConfig | string | number>(input))
+export function coerceToIntegerHex(
+	input: T.IntegerHex.Loose,
+	options?: T.IntegerHex.Spelling
+): ReturnType<typeof F.buildIntegerHex> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
 		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerHex.LooseConfig;
-	return F.buildIntegerHex({
-		prefix: _requireField('integer_hex', 'prefix', resolveIntegerHex_prefix(_cfg.prefix)),
-		content: _requireField('integer_hex', 'content', resolveIntegerHex_content(_cfg.content))
-	});
-}
-
-export function resolveIntegerOctal_prefix(value: T.IntegerOctal.LooseConfig['prefix']): T.IntegerOctal['_prefix'] {
-	return _resolveOne<'0o' | '0O'>(value, _K0, _K0);
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerHex(
+		_requireField(
+			'integer_hex',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['content']): T.IntegerOctal['_content'] {
 	return typeof value === 'number' ? numberText(8, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerOctal(input: T.IntegerOctal.Loose): ReturnType<typeof F.buildIntegerOctal> {
-	if (!_isLooseConfig<T.IntegerOctal.LooseConfig | string | number>(input))
+export function coerceToIntegerOctal(
+	input: T.IntegerOctal.Loose,
+	options?: T.IntegerOctal.Spelling
+): ReturnType<typeof F.buildIntegerOctal> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
 		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerOctal.LooseConfig;
-	return F.buildIntegerOctal({
-		prefix: _requireField('integer_octal', 'prefix', resolveIntegerOctal_prefix(_cfg.prefix)),
-		content: _requireField('integer_octal', 'content', resolveIntegerOctal_content(_cfg.content))
-	});
-}
-
-export function resolveIntegerBinary_prefix(value: T.IntegerBinary.LooseConfig['prefix']): T.IntegerBinary['_prefix'] {
-	return _resolveOne<'0b' | '0B'>(value, _K0, _K0);
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerOctal(
+		_requireField(
+			'integer_octal',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function resolveIntegerBinary_content(
@@ -5985,16 +6007,22 @@ export function resolveIntegerBinary_content(
 	return typeof value === 'number' ? numberText(2, '', value) : _resolveOne<string>(value, _K0, _K0);
 }
 
-export function coerceToIntegerBinary(input: T.IntegerBinary.Loose): ReturnType<typeof F.buildIntegerBinary> {
-	if (!_isLooseConfig<T.IntegerBinary.LooseConfig | string | number>(input))
+export function coerceToIntegerBinary(
+	input: T.IntegerBinary.Loose,
+	options?: T.IntegerBinary.Spelling
+): ReturnType<typeof F.buildIntegerBinary> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
 		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;
-	const _cfg = (
-		typeof input === 'string' || typeof input === 'number' ? { content: input } : input
-	) as T.IntegerBinary.LooseConfig;
-	return F.buildIntegerBinary({
-		prefix: _requireField('integer_binary', 'prefix', resolveIntegerBinary_prefix(_cfg.prefix)),
-		content: _requireField('integer_binary', 'content', resolveIntegerBinary_content(_cfg.content))
-	});
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
+	return F.buildIntegerBinary(
+		_requireField(
+			'integer_binary',
+			'content',
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
+		),
+		options
+	);
 }
 
 export function coerceToIntegerDecimal(input: T.IntegerDecimal.Loose): ReturnType<typeof F.buildIntegerDecimal> {
@@ -6212,15 +6240,13 @@ export function coerceToEscapeSequenceOctal(
 ): ReturnType<typeof F.buildEscapeSequenceOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.EscapeSequenceOctal)
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
+	const _value =
+		input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input;
 	return F.buildEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
 			'content',
-			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K0,
-				_K0
-			)
+			typeof _value === 'number' ? _value : _resolveOne<string>(_value, _K0, _K0)
 		)
 	);
 }

@@ -582,7 +582,10 @@ function fieldCarryingBuiltTypeSurface(
 		withTypeMembers = [`    ${spreadFacts.slot.propertyName}(...vs: ${surface.elementType!}[]): ${self};`];
 	} else if (singleField) {
 		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
-		withTypeMembers = [`    ${singleField.propertyName}(${setterValueSignature(singleField, setterType)}): ${self};`];
+		withTypeMembers = [
+			`    ${singleField.propertyName}(${setterValueSignature(singleField, setterType)}): ${self};`,
+			...registeredSlots(node).map((f) => setterTypeMember(f, `T.${node.typeName}.Config`, self, nodeMap, kindEntries))
+		];
 	} else {
 		const configType = surface.configType ?? `T.${node.typeName}.Config`;
 		withTypeMembers = slots.map((f) => setterTypeMember(f, configType, self, nodeMap, kindEntries));
@@ -724,6 +727,7 @@ interface FactorySurface {
 	readonly directParamOptional: boolean;
 	readonly configType?: string;
 	readonly opt: '' | '?';
+	readonly spellingType?: string;
 }
 
 export function declarationParams(params: string): string {
@@ -759,7 +763,42 @@ function looseValueOf(elementType: string): string {
 	return `LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 }
 
+export function registeredSlots(node: { readonly slots: readonly AssembledNonterminal[] }): readonly AssembledNonterminal[] {
+	return node.slots.filter((slot) => slot.registeredOption === true);
+}
+
+export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
+	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.configKey));
+	return keys.length === 0 ? type : `Omit<${type}, ${keys.join(' | ')}>`;
+}
+
+export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string | undefined {
+	const registered = registeredSlots(node);
+	if (registered.length === 0) return undefined;
+	return `{ ${registered.map((slot) => `readonly ${slot.configKey}?: ${constructionFieldElementType(slot, nodeMap, kindEntries)}`).join('; ')} }`;
+}
+
 function resolveFactorySurface(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries?: readonly KindEnumEntry[]
+): FactorySurface {
+	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
+	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
+	if (spellingType === undefined) return surface;
+	const trailing = `options?: T.${node.typeName}.Spelling`;
+	return {
+		...surface,
+		params: `${surface.params}, ${trailing}`,
+		looseParams: `${surface.looseParams}, ${trailing}`,
+		rowParams: `${surface.rowParams}, ${trailing}`,
+		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		args: `${surface.args}, options`,
+		spellingType
+	};
+}
+
+function resolveConfigFactorySurface(
 	node: FieldCarryingNode,
 	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
@@ -808,7 +847,8 @@ function resolveFactorySurface(
 		};
 	}
 	if (singleField) {
-		const elemType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
+		const baseType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
+		const elemType = numericSlotShape(singleField) === undefined ? baseType : `${baseType} | number`;
 		const param: FactoryParam = {
 			label: 'value',
 			optional: !isRequired(singleField),
@@ -847,8 +887,8 @@ function resolveFactorySurface(
 		rest: false,
 		strictType: allOptional ? `Partial<${widen(configType)}>` : widen(configType),
 		looseType: `T.${node.typeName}.Loose`,
-		rowStrictType: allOptional ? `Partial<${widen(`ConfigOf<T.${node.typeName}>`)}>` : widen(`ConfigOf<T.${node.typeName}>`),
-		rowLooseType: `${widen(`LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>`)} | T.${node.typeName}`,
+		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node)),
+		rowLooseType: `${widen(omitRegistered(`LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>`, node))} | T.${node.typeName}`,
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
@@ -966,6 +1006,9 @@ function emitFieldCarryingFactory(
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	let withLines: string[];
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
+	const registered = registeredSlots(node);
+	const spellingWith = (rebuild: (patch: string) => string): string[] =>
+		registered.map((f) => `      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${rebuild(`{ ...options, ${f.configKey}: spelling }`)},`);
 
 	if (spreadFacts) {
 		slotsToEmit = [spreadFacts.slot];
@@ -978,12 +1021,20 @@ function emitFieldCarryingFactory(
 		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
-		withLines = ['    $with: {', `      ${singleField.propertyName}: (${setterSig}) => ${fn}(value),`, '    },'];
+		const rebuildDirect = (options: string): string => `${fn}(value, ${options})`;
+		withLines = [
+			'    $with: {',
+			`      ${singleField.propertyName}: (${setterSig}) => ${registered.length === 0 ? `${fn}(value)` : `${fn}(value, options)`},`,
+			...spellingWith(rebuildDirect),
+			'    },'
+		];
 	} else {
 		const configAccess = 'config';
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
 		withLines = ['    $with: {'];
+		const optionsArg = registered.length === 0 ? '' : ', options';
 		for (const f of slots) {
+			if (f.registeredOption === true) continue;
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -991,15 +1042,15 @@ function emitFieldCarryingFactory(
 				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
 				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }${optionsArg}),`
 				);
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`);
+				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg}),`);
 			}
 		}
-		withLines.push('    },');
+		withLines.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`), '    },');
 	}
 
 	const lines: string[] = [signature];
@@ -1008,7 +1059,12 @@ function emitFieldCarryingFactory(
 	}
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
-		const source = shape === undefined ? valueSourceFor(f) : `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
+		const source =
+			f.registeredOption === true
+				? `options?.${f.configKey} ?? ${JSON.stringify(f.optionDefaultArm)}`
+				: shape === undefined
+					? valueSourceFor(f)
+					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
 		lines.push(`  const ${f.storageKey} = ${source};`);
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		if (guard !== undefined) {
