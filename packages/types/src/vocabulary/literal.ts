@@ -61,6 +61,10 @@ export namespace Literal {
 		export interface Float<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
 			// claimed by prt
 			readonly kind: 'literal.number.float';
+			readonly marker?: 'E' | 'e';
+			// t only
+			readonly sign?: '+' | '-';
+			// t only
 		}
 		export interface Integer<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.Number<G>>> {
 			// claimed by prt

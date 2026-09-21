@@ -1561,13 +1561,27 @@ export interface NumberBinaryTransport {
 
 export interface NumberFloatLeadingPointTransport {
   '$_trivia'?: TransportTrivia
-  _content: string
+  _fraction: string
+  _marker?: string
+  _sign?: string
+  _exponent?: string
 }
 
 export interface NumberFloatPointTransport {
   '$_trivia'?: TransportTrivia
-  _content: string
-  _content2: string
+  _integer: string
+  _fraction?: string
+  _marker?: string
+  _sign?: string
+  _exponent?: string
+}
+
+export interface NumberFloatScientificTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _marker: string
+  _sign?: string
+  _exponent: string
 }
 
 export interface NumberHexTransport {

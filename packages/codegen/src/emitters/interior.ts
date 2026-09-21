@@ -17,7 +17,9 @@ export type InteriorEntry =
 	| { readonly lit: string }
 	| { readonly flag: string; readonly text: string }
 	| { readonly enum: string; readonly values: readonly string[]; readonly optional: boolean }
-	| { readonly slot: string; readonly pattern: string };
+	| { readonly slot: string; readonly pattern: string; readonly optional?: true };
+
+type InteriorNode = InteriorEntry | { readonly group: readonly InteriorNode[] };
 
 export interface NodeInterior {
 	readonly entries: readonly InteriorEntry[];
@@ -37,7 +39,15 @@ export function interiorEntryPattern(entry: InteriorEntry): string {
 	if ('enum' in entry) {
 		return `(?<${entry.enum}>${interiorEnumArms(entry.values)})${entry.optional ? '?' : ''}`;
 	}
-	return `(?<${entry.slot}>${entry.pattern})`;
+	return `(?<${entry.slot}>${entry.pattern})${entry.optional === true ? '?' : ''}`;
+}
+
+function interiorNodePattern(node: InteriorNode): string {
+	return 'group' in node ? `(?:${node.group.map(interiorNodePattern).join('')})?` : interiorEntryPattern(node);
+}
+
+function flattenNodes(nodes: readonly InteriorNode[]): InteriorEntry[] {
+	return nodes.flatMap((node) => ('group' in node ? flattenNodes(node.group) : [node]));
 }
 
 function attrsOf(rule: RenderRule): { readonly fieldName?: string; readonly value?: string } {
@@ -81,26 +91,45 @@ function unsupported(kind: string, why: string): never {
 	throw new Error(`token interior: '${kind}' is a lexed kind but ${why}`);
 }
 
-export function interiorOf(node: AssembledNode): NodeInterior | undefined {
-	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
-	const rule = node.renderRule;
-	if (rule.type !== SEQ) unsupported(node.kind, `its render rule is a ${rule.type}, not a sequence of literals and slots`);
-	const entries: InteriorEntry[] = [];
-	for (const member of rule.members) {
+type RenderMember = RenderRule & { readonly content?: RenderRule; readonly members?: readonly RenderRule[] };
+
+function groupMembers(member: RenderMember): readonly RenderRule[] | undefined {
+	return member.type === SEQ ? member.members : undefined;
+}
+
+function walkInterior(node: AbstractAssembledCompound, members: readonly RenderRule[]): InteriorNode[] {
+	const out: InteriorNode[] = [];
+	for (const member of members) {
 		const { fieldName, value } = attrsOf(member);
 		if (fieldName === undefined) {
-			if (member.type !== STRING || value === undefined) unsupported(node.kind, `member of type ${member.type} is neither template text nor a slot`);
-			entries.push({ lit: value });
+			if (member.type === STRING && value !== undefined) {
+				out.push({ lit: value });
+				continue;
+			}
+			const inner = groupMembers(member as RenderMember);
+			if (inner === undefined) unsupported(node.kind, `member of type ${member.type} is neither template text nor a slot`);
+			out.push({ group: walkInterior(node, inner) });
 			continue;
 		}
 		const slot = node.slots.find((s) => s.name === fieldName);
 		if (slot === undefined) unsupported(node.kind, `member '${fieldName}' names no slot of the kind`);
-		if (member.type === PATTERN && value !== undefined) entries.push({ slot: slot.name, pattern: value });
-		else if (member.type === STRING && value !== undefined) entries.push({ flag: slot.name, text: value });
-		else if (member.type === CHOICE) {
-			entries.push({ enum: slot.name, values: [...new Set(slotLiteralValues(slot))], optional: !isRequired(slot) });
+		if (member.type === PATTERN && value !== undefined) out.push({ slot: slot.name, pattern: value, ...(isRequired(slot) ? {} : { optional: true as const }) });
+		else if (member.type === STRING && value !== undefined) out.push({ flag: slot.name, text: value });
+		else if (member.type === CHOICE && slot.values.length > 0 && slot.values.every(isPatternValue)) {
+			out.push({ slot: slot.name, pattern: slot.values[0]!.pattern, optional: true });
+		} else if (member.type === CHOICE) {
+			out.push({ enum: slot.name, values: [...new Set(slotLiteralValues(slot))], optional: !isRequired(slot) });
 		} else unsupported(node.kind, `member '${fieldName}' of type ${member.type} is not a pattern, a literal or an enum of literals`);
 	}
+	return out;
+}
+
+export function interiorOf(node: AssembledNode): NodeInterior | undefined {
+	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
+	const rule = node.renderRule;
+	if (rule.type !== SEQ) unsupported(node.kind, `its render rule is a ${rule.type}, not a sequence of literals and slots`);
+	const tree = walkInterior(node, rule.members);
+	const entries = flattenNodes(tree);
 	assertUnambiguous(node.kind, entries);
 	const configKeyOf = (name: string): string => node.slots.find((s) => s.name === name)!.configKey;
 	const slots = entries.flatMap((entry) =>
@@ -112,7 +141,7 @@ export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 					? [{ name: entry.enum, configKey: configKeyOf(entry.enum) }]
 					: [{ name: entry.slot, configKey: configKeyOf(entry.slot) }]
 	);
-	return { entries, regex: `^${entries.map(interiorEntryPattern).join('')}$`, slots };
+	return { entries, regex: `^${tree.map(interiorNodePattern).join('')}$`, slots };
 }
 
 export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, AssembledNode> }): Map<string, NodeInterior> {

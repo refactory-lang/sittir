@@ -5596,24 +5596,193 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "fraction"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
 		}
 	],
 	"number_float_point": [
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "integer"
 		},
 		{
 			"kind": "text",
 			"text": "."
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "fraction",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "fraction"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "marker",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "marker",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "marker"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "sign",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "sign"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "exponent",
+									"body": [
+										{
+											"kind": "adjacent"
+										},
+										{
+											"kind": "slot",
+											"name": "exponent"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"number_float_scientific": [
+		{
+			"kind": "slot",
+			"name": "integer"
+		},
+		{
 			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
-			"name": "content2"
+			"name": "marker"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "sign",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "sign"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "exponent"
 		}
 	],
 	"number_hex": [

@@ -3373,8 +3373,7 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.floatPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3384,7 +3383,7 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.floatLeadingPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			name: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3394,7 +3393,9 @@ describe('method_definition sub-factories', () => {
 		const node = ir.methodDefinition.floatScientific({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
 			body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any,
-			name: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodDefinition);
 		expect((node as any).name()).toBeDefined();
@@ -3512,8 +3513,7 @@ describe('pair sub-factories', () => {
 	it('floatPoint builds the parent', () => {
 		const node = ir.pair.floatPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3522,7 +3522,7 @@ describe('pair sub-factories', () => {
 	it('floatLeadingPoint builds the parent', () => {
 		const node = ir.pair.floatLeadingPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3531,7 +3531,9 @@ describe('pair sub-factories', () => {
 	it('floatScientific builds the parent', () => {
 		const node = ir.pair.floatScientific({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.Pair);
 		expect((node as any).key()).toBeDefined();
@@ -3618,8 +3620,7 @@ describe('pair_pattern sub-factories', () => {
 	it('floatPoint builds the parent', () => {
 		const node = ir.pairPattern.floatPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3628,7 +3629,7 @@ describe('pair_pattern sub-factories', () => {
 	it('floatLeadingPoint builds the parent', () => {
 		const node = ir.pairPattern.floatLeadingPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3637,7 +3638,9 @@ describe('pair_pattern sub-factories', () => {
 	it('floatScientific builds the parent', () => {
 		const node = ir.pairPattern.floatScientific({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			key: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.PairPattern);
 		expect((node as any).key()).toBeDefined();
@@ -3747,19 +3750,19 @@ describe('public_field_definition sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatPoint builds the parent', () => {
-		const node = ir.publicFieldDefinition.floatPoint({ content: '1', content2: '1' });
+		const node = ir.publicFieldDefinition.floatPoint({ integer: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatLeadingPoint builds the parent', () => {
-		const node = ir.publicFieldDefinition.floatLeadingPoint({ name: '1' });
+		const node = ir.publicFieldDefinition.floatLeadingPoint({ fraction: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatScientific builds the parent', () => {
-		const node = ir.publicFieldDefinition.floatScientific({ name: ['1e0'] });
+		const node = ir.publicFieldDefinition.floatScientific({ integer: '1', marker: 'e', exponent: '1' });
 		expect(node.$type).toBe(TSKindId.PublicFieldDefinition);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -3874,8 +3877,7 @@ describe('method_signature sub-factories', () => {
 	it('floatPoint builds the parent', () => {
 		const node = ir.methodSignature.floatPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -3884,7 +3886,7 @@ describe('method_signature sub-factories', () => {
 	it('floatLeadingPoint builds the parent', () => {
 		const node = ir.methodSignature.floatLeadingPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			name: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -3893,7 +3895,9 @@ describe('method_signature sub-factories', () => {
 	it('floatScientific builds the parent', () => {
 		const node = ir.methodSignature.floatScientific({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			name: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.MethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4001,8 +4005,7 @@ describe('abstract_method_signature sub-factories', () => {
 	it('floatPoint builds the parent', () => {
 		const node = ir.abstractMethodSignature.floatPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4011,7 +4014,7 @@ describe('abstract_method_signature sub-factories', () => {
 	it('floatLeadingPoint builds the parent', () => {
 		const node = ir.abstractMethodSignature.floatLeadingPoint({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			name: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4020,7 +4023,9 @@ describe('abstract_method_signature sub-factories', () => {
 	it('floatScientific builds the parent', () => {
 		const node = ir.abstractMethodSignature.floatScientific({
 			parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-			name: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.AbstractMethodSignature);
 		expect((node as any).name()).toBeDefined();
@@ -4759,8 +4764,7 @@ describe('enum_assignment sub-factories', () => {
 	it('floatPoint builds the parent', () => {
 		const node = ir.enumAssignment.floatPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4769,7 +4773,7 @@ describe('enum_assignment sub-factories', () => {
 	it('floatLeadingPoint builds the parent', () => {
 		const node = ir.enumAssignment.floatLeadingPoint({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -4778,7 +4782,9 @@ describe('enum_assignment sub-factories', () => {
 	it('floatScientific builds the parent', () => {
 		const node = ir.enumAssignment.floatScientific({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
-			name: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.EnumAssignment);
 		expect((node as any).name()).toBeDefined();
@@ -5634,7 +5640,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			index: { $type: TSKindId.NumberFloatScientific, $text: 'test', $source: 2, $named: true } as any
+			index: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5653,8 +5659,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.floatPoint builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.floatPoint({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			content: '1',
-			content2: '1'
+			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5663,7 +5668,7 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.floatLeadingPoint builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.floatLeadingPoint({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			index: '1'
+			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5672,7 +5677,9 @@ describe('type_query sub-factories', () => {
 	it('subscriptExpression.floatScientific builds the parent', () => {
 		const node = ir.typeQuery.subscriptExpression.floatScientific({
 			object: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			index: ['1e0']
+			integer: '1',
+			marker: 'e',
+			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.TypeQuery);
 		expect((node as any).content()).toBeDefined();
@@ -5880,7 +5887,7 @@ describe('literal_type sub-factories', () => {
 	it('number builds the parent', () => {
 		const node = ir.literalType.number({
 			operator: '-',
-			argument: { $type: TSKindId.NumberFloatScientific, $text: 'test', $source: 2, $named: true } as any
+			argument: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
@@ -5893,19 +5900,19 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.floatPoint builds the parent', () => {
-		const node = ir.literalType.number.floatPoint({ operator: '-', content: '1', content2: '1' });
+		const node = ir.literalType.number.floatPoint({ operator: '-', integer: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.floatLeadingPoint builds the parent', () => {
-		const node = ir.literalType.number.floatLeadingPoint({ operator: '-', argument: '1' });
+		const node = ir.literalType.number.floatLeadingPoint({ operator: '-', fraction: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('number.floatScientific builds the parent', () => {
-		const node = ir.literalType.number.floatScientific({ operator: '-', argument: ['1e0'] });
+		const node = ir.literalType.number.floatScientific({ operator: '-', integer: '1', marker: 'e', exponent: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -5941,19 +5948,19 @@ describe('literal_type sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatPoint builds the parent', () => {
-		const node = ir.literalType.floatPoint({ content: '1', content2: '1' });
+		const node = ir.literalType.floatPoint({ integer: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatLeadingPoint builds the parent', () => {
-		const node = ir.literalType.floatLeadingPoint('1');
+		const node = ir.literalType.floatLeadingPoint({ fraction: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatScientific builds the parent', () => {
-		const node = ir.literalType.floatScientific('1e0');
+		const node = ir.literalType.floatScientific({ integer: '1', marker: 'e', exponent: '1' });
 		expect(node.$type).toBe(TSKindId.LiteralType);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -6263,19 +6270,19 @@ describe('property_signature sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatPoint builds the parent', () => {
-		const node = ir.propertySignature.floatPoint({ content: '1', content2: '1' });
+		const node = ir.propertySignature.floatPoint({ integer: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatLeadingPoint builds the parent', () => {
-		const node = ir.propertySignature.floatLeadingPoint({ name: '1' });
+		const node = ir.propertySignature.floatLeadingPoint({ fraction: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatScientific builds the parent', () => {
-		const node = ir.propertySignature.floatScientific({ name: ['1e0'] });
+		const node = ir.propertySignature.floatScientific({ integer: '1', marker: 'e', exponent: '1' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);
 		expect((node as any).name()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);

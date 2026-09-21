@@ -93,3 +93,38 @@ describe('structureTokenInterior — bare patterns', () => {
 		expect(() => structured(pat('x*(?<name>[a-z]+)'))).toThrow(/not literal text/);
 	});
 });
+
+const named = (name: string, content: LinkRule): LinkRule => ({ type: FIELD, name, content }) as LinkRule;
+const optional = (content: LinkRule): LinkRule => ({ type: CHOICE, members: [content, { type: SEQ, members: [] } as LinkRule] }) as LinkRule;
+
+describe('structureTokenInterior — named parts inside nested structure', () => {
+	const exponent = seq(named('marker', choice(str('e'), str('E'))), seq(named('sign', optional(choice(str('-'), str('+')))), named('exponent', pat('\\d+'))));
+
+	it('flattens a nested sequence when the token names a part, so its members become slots', () => {
+		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), exponent))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['integer', 'marker', 'sign', 'exponent']);
+	});
+
+	it('makes a named choice of strings an enum slot under its own name', () => {
+		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), exponent))));
+		expect(members[1]).toMatchObject({ type: FIELD, name: 'marker', content: { type: CHOICE } });
+	});
+
+	it('keeps an optional group that holds named parts as a group and structures its members', () => {
+		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), str('.'), optional(exponent)))));
+		const group = members[2] as { type: string; members: { members?: LinkRule[] }[] };
+		expect(group.type).toBe(CHOICE);
+		const inner = group.members.find((m) => m.members !== undefined && m.members.length > 0)!.members!;
+		expect(inner.map((m) => (m as { name?: string }).name)).toEqual(['marker', 'sign', 'exponent']);
+	});
+
+	it('makes a named optional pattern an optional slot', () => {
+		const members = membersOf(structured(token(seq(named('integer', pat('\\d+')), str('.'), named('fraction', optional(pat('\\d+')))))));
+		expect(members[2]).toMatchObject({ type: FIELD, name: 'fraction', content: { type: OPTIONAL, content: { type: PATTERN } } });
+	});
+
+	it('leaves a token with no named part on the composed path, so its output does not change', () => {
+		const members = membersOf(structured(token(seq(pat('\\d+'), str('.'), seq(pat('\\d+'), choice(str('e'), str('E')))))));
+		expect(members.map((m) => (m as { name?: string }).name)).toEqual(['content', undefined, 'content2']);
+	});
+});

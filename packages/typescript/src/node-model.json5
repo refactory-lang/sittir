@@ -3754,23 +3754,95 @@
       }
     },
     "number_float_point": {
-      "content": {
+      "integer": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "content2": {
+      "fraction": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "number_float_leading_point": {
-      "content": {
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_scientific": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -17756,9 +17828,9 @@
       },
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17770,6 +17842,68 @@
               "multiplicity": "single"
             }
           ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
         }
       ],
       "name": "number_float_leading_point",
@@ -17779,21 +17913,57 @@
             "lit": "."
           },
           {
-            "slot": "content",
-            "pattern": "(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?"
+            "slot": "fraction",
+            "pattern": "(?:\\d(_?\\d)*)"
+          },
+          {
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
           }
         ],
-        "regex": "^\\.(?<content>(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$",
+        "regex": "^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$",
         "slots": [
           {
-            "name": "content",
-            "configKey": "content"
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
           }
         ]
       },
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
+        "fraction",
+        "marker",
+        "sign",
+        "exponent"
       ]
     },
     {
@@ -17809,9 +17979,9 @@
       },
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17825,9 +17995,232 @@
           ]
         },
         {
-          "name": "content2",
-          "propertyName": "content2",
-          "paramName": "content2",
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)"
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
+          },
+          {
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "sign",
+        "exponent"
+      ]
+    },
+    {
+      "kind": "number_float_scientific",
+      "modelType": "branch",
+      "typeName": "NumberFloatScientific",
+      "factoryName": "numberFloatScientific",
+      "irKey": "numberFloatScientific",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17841,52 +18234,61 @@
           ]
         }
       ],
-      "name": "number_float_point",
+      "name": "number_float_scientific",
       "interior": {
         "entries": [
           {
-            "slot": "content",
+            "slot": "integer",
             "pattern": "(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)"
           },
           {
-            "lit": "."
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": false
           },
           {
-            "slot": "content2",
-            "pattern": "(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?"
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)"
           }
         ],
-        "regex": "^(?<content>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<content2>(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$",
+        "regex": "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$",
         "slots": [
           {
-            "name": "content",
-            "configKey": "content"
+            "name": "integer",
+            "configKey": "integer"
           },
           {
-            "name": "content2",
-            "configKey": "content2"
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
           }
         ]
       },
       "factoryShape": "config",
       "factoryFields": [
-        "content",
-        "content2"
+        "integer",
+        "marker",
+        "sign",
+        "exponent"
       ]
-    },
-    {
-      "kind": "number_float_scientific",
-      "modelType": "pattern",
-      "typeName": "NumberFloatScientific",
-      "factoryName": "numberFloatScientific",
-      "irKey": "numberFloatScientific",
-      "hidden": false,
-      "annotations": {
-        "tokenForm": true,
-        "hoisted": true
-      },
-      "leafPattern": "/^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))$/u",
-      "factoryShape": "text"
     },
     {
       "kind": "number_hex",

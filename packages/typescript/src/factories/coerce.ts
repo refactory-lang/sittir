@@ -300,10 +300,19 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: (text: string) =>
 			F.buildNumberFloatPoint(lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point') as never)
 	},
-	number_float_leading_point: { factory: (content: string) => _resolveByKind('number_float_leading_point', content) },
+	number_float_leading_point: {
+		pattern: new RegExp(TOKEN_INTERIORS['number_float_leading_point'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildNumberFloatLeadingPoint(
+				lexedConfig(text, TOKEN_INTERIORS['number_float_leading_point'], 'number_float_leading_point') as never
+			)
+	},
 	number_float_scientific: {
-		pattern: /^(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\d(_?\d)*))?)(?:e|E)(?:(?:-|\+))?(?:\d(_?\d)*))$/u,
-		factory: F.buildNumberFloatScientific
+		pattern: new RegExp(TOKEN_INTERIORS['number_float_scientific'].regex, 'su'),
+		factory: (text: string) =>
+			F.buildNumberFloatScientific(
+				lexedConfig(text, TOKEN_INTERIORS['number_float_scientific'], 'number_float_scientific') as never
+			)
 	},
 	number_decimal: { pattern: /^(?:(?:\d(_?\d)*))$/u, factory: F.buildNumberDecimal },
 	number_binary: {
@@ -328,7 +337,6 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'private_property_identifier',
 	'comment_line',
 	'comment_block',
-	'number_float_leading_point',
 	'number_bigint'
 ]);
 
@@ -906,7 +914,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	comment_line: TSKindId.CommentLine,
 	comment_block: TSKindId.CommentBlock,
-	number_float_leading_point: TSKindId.NumberFloatLeadingPoint,
 	number_bigint: TSKindId.NumberBigint,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
 	string_double: TSKindId.StringDouble,
@@ -1012,7 +1019,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'ambient_declaration_global',
 	'comment_line',
 	'comment_block',
-	'number_float_leading_point',
 	'number_bigint',
 	'parenthesized_expression_sequence',
 	'arrow_function_parameter',
@@ -1181,8 +1187,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCommentLine(children[0] as Parameters<typeof F.buildCommentLine>[0]);
 		case 'comment_block':
 			return F.buildCommentBlock(children[0] as Parameters<typeof F.buildCommentBlock>[0]);
-		case 'number_float_leading_point':
-			return F.buildNumberFloatLeadingPoint(children[0] as Parameters<typeof F.buildNumberFloatLeadingPoint>[0]);
 		case 'number_bigint':
 			return F.buildNumberBigint(children[0] as Parameters<typeof F.buildNumberBigint>[0]);
 		case 'parenthesized_expression_sequence':
@@ -1369,7 +1373,6 @@ const _K7: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1389,6 +1392,7 @@ const _K8: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1421,7 +1425,6 @@ const _K9: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1444,6 +1447,7 @@ const _K10: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1489,6 +1493,7 @@ const _K13: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1537,6 +1542,7 @@ const _K18: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1588,6 +1594,7 @@ const _K24: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1622,6 +1629,7 @@ const _K26: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1643,7 +1651,6 @@ const _K27: readonly string[] = [
 	'_reserved_identifier',
 	'this',
 	'super',
-	'number_float_scientific',
 	'number_decimal',
 	'true',
 	'false',
@@ -1683,13 +1690,14 @@ const _K36: readonly string[] = [
 	'array_pattern',
 	'non_null_expression'
 ];
-const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_float_scientific', 'number_decimal'];
+const _K37: readonly string[] = ['identifier', '_reserved_identifier', 'number_decimal'];
 const _K38: readonly string[] = [
 	'private_property_identifier',
 	'string',
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1776,12 +1784,13 @@ const _K56: readonly string[] = [
 	'_type_query_member_expression',
 	'_type_query_call_expression'
 ];
-const _K57: readonly string[] = ['predefined_type', 'number_float_scientific', 'number_decimal'];
+const _K57: readonly string[] = ['predefined_type', 'number_decimal'];
 const _K58: readonly string[] = [
 	'string',
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint'
@@ -1811,22 +1820,24 @@ const _K62: readonly string[] = [
 	'intersection_type',
 	'union_type'
 ];
-const _K63: readonly string[] = ['number_float_scientific', 'number_decimal', 'true', 'false', 'null', 'undefined'];
+const _K63: readonly string[] = ['number_decimal', 'true', 'false', 'null', 'undefined'];
 const _K64: readonly string[] = [
 	'_number',
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
 	'string'
 ];
-const _K65: readonly string[] = ['number_float_scientific', 'number_decimal'];
+const _K65: readonly string[] = ['number_decimal'];
 const _K66: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint'
@@ -1862,6 +1873,7 @@ const _K68: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1921,6 +1933,7 @@ const _K72: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -1967,6 +1980,7 @@ const _K75: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
+	'number_float_scientific',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
@@ -8460,57 +8474,128 @@ export function coerceToNumberHex(input: T.NumberHex.Loose): ReturnType<typeof F
 	});
 }
 
-export function resolveNumberFloatPoint_content(
-	value: T.NumberFloatPoint.LooseConfig['content']
-): T.NumberFloatPoint['_content'] {
+export function resolveNumberFloatPoint_integer(
+	value: T.NumberFloatPoint.LooseConfig['integer']
+): T.NumberFloatPoint['_integer'] {
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function resolveNumberFloatPoint_content2(
-	value: T.NumberFloatPoint.LooseConfig['content2']
-): T.NumberFloatPoint['_content2'] {
-	return _resolveOne<string>(value, _K2, _K2);
+export function resolveNumberFloatPoint_fraction(
+	value: T.NumberFloatPoint.LooseConfig['fraction']
+): T.NumberFloatPoint['_fraction'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatPoint_marker(
+	value: T.NumberFloatPoint.LooseConfig['marker']
+): T.NumberFloatPoint['_marker'] {
+	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatPoint_sign(
+	value: T.NumberFloatPoint.LooseConfig['sign']
+): T.NumberFloatPoint['_sign'] {
+	return _resolveOne<'-' | '+'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatPoint_exponent(
+	value: T.NumberFloatPoint.LooseConfig['exponent']
+): T.NumberFloatPoint['_exponent'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatPoint(input: T.NumberFloatPoint.Loose): ReturnType<typeof F.buildNumberFloatPoint> {
 	if (!_isLooseConfig<T.NumberFloatPoint.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatPoint>;
 	return F.buildNumberFloatPoint({
-		content: _requireField('number_float_point', 'content', resolveNumberFloatPoint_content(input.content)),
-		content2: _requireField('number_float_point', 'content2', resolveNumberFloatPoint_content2(input.content2))
+		integer: _requireField('number_float_point', 'integer', resolveNumberFloatPoint_integer(input.integer)),
+		fraction: resolveNumberFloatPoint_fraction(input.fraction),
+		marker: resolveNumberFloatPoint_marker(input.marker),
+		sign: resolveNumberFloatPoint_sign(input.sign),
+		exponent: resolveNumberFloatPoint_exponent(input.exponent)
 	});
 }
 
-export function resolveNumberFloatLeadingPoint_content(
-	value: T.NumberFloatLeadingPoint.LooseConfig['content']
-): T.NumberFloatLeadingPoint['_content'] {
+export function resolveNumberFloatLeadingPoint_fraction(
+	value: T.NumberFloatLeadingPoint.LooseConfig['fraction']
+): T.NumberFloatLeadingPoint['_fraction'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatLeadingPoint_marker(
+	value: T.NumberFloatLeadingPoint.LooseConfig['marker']
+): T.NumberFloatLeadingPoint['_marker'] {
+	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatLeadingPoint_sign(
+	value: T.NumberFloatLeadingPoint.LooseConfig['sign']
+): T.NumberFloatLeadingPoint['_sign'] {
+	return _resolveOne<'-' | '+'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatLeadingPoint_exponent(
+	value: T.NumberFloatLeadingPoint.LooseConfig['exponent']
+): T.NumberFloatLeadingPoint['_exponent'] {
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatLeadingPoint(
 	input: T.NumberFloatLeadingPoint.Loose
 ): ReturnType<typeof F.buildNumberFloatLeadingPoint> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberFloatLeadingPoint)
+	if (!_isLooseConfig<T.NumberFloatLeadingPoint.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatLeadingPoint>;
-	return F.buildNumberFloatLeadingPoint(
-		_requireField(
+	return F.buildNumberFloatLeadingPoint({
+		fraction: _requireField(
 			'number_float_leading_point',
-			'content',
-			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
-				_K2,
-				_K2
-			)
-		)
-	);
+			'fraction',
+			resolveNumberFloatLeadingPoint_fraction(input.fraction)
+		),
+		marker: resolveNumberFloatLeadingPoint_marker(input.marker),
+		sign: resolveNumberFloatLeadingPoint_sign(input.sign),
+		exponent: resolveNumberFloatLeadingPoint_exponent(input.exponent)
+	});
+}
+
+export function resolveNumberFloatScientific_integer(
+	value: T.NumberFloatScientific.LooseConfig['integer']
+): T.NumberFloatScientific['_integer'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatScientific_marker(
+	value: T.NumberFloatScientific.LooseConfig['marker']
+): T.NumberFloatScientific['_marker'] {
+	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatScientific_sign(
+	value: T.NumberFloatScientific.LooseConfig['sign']
+): T.NumberFloatScientific['_sign'] {
+	return _resolveOne<'-' | '+'>(value, _K2, _K2);
+}
+
+export function resolveNumberFloatScientific_exponent(
+	value: T.NumberFloatScientific.LooseConfig['exponent']
+): T.NumberFloatScientific['_exponent'] {
+	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
 export function coerceToNumberFloatScientific(
 	input: T.NumberFloatScientific.Loose
 ): ReturnType<typeof F.buildNumberFloatScientific> {
-	if (typeof input !== 'string' && typeof input !== 'number')
+	if (!_isLooseConfig<T.NumberFloatScientific.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
-	return F.buildNumberFloatScientific(input as Parameters<typeof F.buildNumberFloatScientific>[0]);
+	return F.buildNumberFloatScientific({
+		integer: _requireField('number_float_scientific', 'integer', resolveNumberFloatScientific_integer(input.integer)),
+		marker: _requireField('number_float_scientific', 'marker', resolveNumberFloatScientific_marker(input.marker)),
+		sign: resolveNumberFloatScientific_sign(input.sign),
+		exponent: _requireField(
+			'number_float_scientific',
+			'exponent',
+			resolveNumberFloatScientific_exponent(input.exponent)
+		)
+	});
 }
 
 export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {

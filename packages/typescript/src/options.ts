@@ -141,7 +141,6 @@ export type AddressRoot =
 	| 'nested_type_identifier'
 	| 'new_expression'
 	| 'non_null_expression'
-	| 'number_float_scientific'
 	| 'number_operator'
 	| 'object'
 	| 'object_assignment_pattern'
@@ -950,9 +949,6 @@ export interface AddressBranch {
 	readonly 'new_expression/new_keyword': 'after';
 	readonly non_null_expression: 'after' | 'bang' | 'before';
 	readonly 'non_null_expression/bang': 'before';
-	readonly number_float_scientific: 'dash' | 'plus';
-	readonly 'number_float_scientific/dash': 'after' | 'before';
-	readonly 'number_float_scientific/plus': 'after' | 'before';
 	readonly number_operator: 'dash' | 'plus';
 	readonly 'number_operator/dash': 'after' | 'before';
 	readonly 'number_operator/plus': 'after' | 'before';
@@ -2540,10 +2536,6 @@ export interface AddressLeaf {
 	readonly 'non_null_expression/after': WhitespaceArm;
 	readonly 'non_null_expression/bang/before': WhitespaceArm;
 	readonly 'non_null_expression/before': WhitespaceArm;
-	readonly 'number_float_scientific/dash/after': WhitespaceArm;
-	readonly 'number_float_scientific/dash/before': WhitespaceArm;
-	readonly 'number_float_scientific/plus/after': WhitespaceArm;
-	readonly 'number_float_scientific/plus/before': WhitespaceArm;
 	readonly 'number_operator/dash/after': WhitespaceArm;
 	readonly 'number_operator/dash/before': WhitespaceArm;
 	readonly 'number_operator/plus/after': WhitespaceArm;
