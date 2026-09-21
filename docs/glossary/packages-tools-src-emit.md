@@ -34,7 +34,8 @@ which are compounds), `subtypes` (to expand a slot's supertypes the way the
 coercer's resolver tables are built), `slotDefaults` (the `arm.default`
 kind per slot), `bareAccepts` (what each single-slot wrapper or list admits
 bare, transitively), `forwardsTo`, `listDefaults` (the delimiter a list
-stamps when none is given) and `hoistedKinds`. `nested` is the caller's
+stamps when none is given), `listElementKinds` (each list's element kinds,
+for the elements the runtime resolves one by one) and `hoistedKinds`. `nested` is the caller's
 choice for a nested compound: its builder call, or a config object.
 
 ### `packages/tools/src/emit/factory-source.ts::PrintedFacts`
@@ -69,21 +70,62 @@ slot's one branch kind, or its declared default arm, is the envelope (or a
 direct wrapper whose sole slot is the envelope, which the runtime unwraps
 the same way). A text leaf is its bare string when the slot admits exactly
 one pattern kind, or when the one branch kind (or default) that a string
-can reach admits exactly one pattern kind. A config-shaped node with a flat
+can reach admits exactly one pattern kind at its content slot, or failing
+that in its transitive bare-accept set (`leafReachedThrough`). A raw kind id
+under a single-slot wrapper drops the wrapper when exactly one arm of the
+slot accepts that kind and no enum sits on the slot, since the runtime hoists
+an id the way it hoists a node (rule 5) but an enum on the slot would take
+the id directly. A config-shaped node with a flat
 `ir` key prints as its config object under `nested: 'configs'`: keyless when
 the slot has one branch kind, keyed `kind: TSKindId.<Member>` otherwise. A
 node carrying trivia keeps its call, since only a call takes `$trivia`.
 
 #### one element
 
-A list envelope with default options prints as its bare element when it holds exactly one element that prints as a call or text, and as the array otherwise. An element that prints as an object or an array keeps the array, since an object at a list slot is one element's config and an array is the elements.
+A list envelope with default options prints as its bare element when it holds exactly one element that prints as a call or text, and as the array otherwise. An element that prints as an object or an array keeps the array, since an object at a list slot is one element's config and an array is the elements. Each element is first hoisted out of its seat config (`hoistSeatElement`) and then loosened at the list's element kinds (`looseListElement`), so `[{ expression: ir.identifier("x") }]` prints as `"x"`.
 
-### `packages/tools/src/emit/factory-source.ts::solePatternKind`
+### `packages/tools/src/emit/factory-source.ts::leafKindsForText`
 
-The runtime's leaf registry carries no patterns: a bare string resolves to
-the FIRST pattern kind among a slot's leaf kinds whatever the text. A slot
-with exactly one pattern kind is therefore the only one where a bare
-string builds the leaf the strict spelling names.
+The leaf kinds among a slot's kinds that a bare string could become: the
+pattern leaves whose anchored regex (`leafPatterns`, stamped from the model)
+accepts the text, or, when no patterned leaf does, the leaves that carry no
+pattern at all. `soleLeafKind` is the unique such kind, or nothing; the
+printer spells a text bare only when that unique kind is the leaf the strict
+spelling names, since the runtime resolves a string by the first pattern in
+slot order and uniqueness is what makes first and only coincide.
+
+### `packages/tools/src/emit/factory-source.ts::listElementKinds`
+
+The kinds a list's elements resolve against on the loose surface, in the
+runtime's order of preference: the kinds of the list's element seats
+(`elementSeats`, the hidden transparent wrapper such as `_attributed_argument`)
+when it has any, else the model's `elementKinds` for the list, either expanded
+through the supertypes. A list carries no `slots` in the model, so this is
+the element slot the coercer's `_listElements` resolves through.
+
+### `packages/tools/src/emit/factory-source.ts::contentSlotKinds`
+
+For a kind with exactly one required, non-multiple slot, that slot's kinds
+expanded: the slot a bare value lands in when the kind's coercer takes the
+value bare, and the slot the list coercer resolves elements against when the
+kind is the list's transparent wrapper. Nothing for a kind with no such slot.
+
+### `packages/tools/src/emit/factory-source.ts::leafReachedThrough`
+
+The unique leaf a text becomes when routed through `target`: tested first
+against `target`'s content slot (`contentSlotKinds`), which is where the
+runtime resolves it, and only then against the transitive bare-accept set,
+which can collide on leaves reachable deeper down (`field_identifier` under
+an expression) that the content slot never offers. The order is what lets
+`arguments: ["source"]` print where the transitive set alone said ambiguous.
+
+### `packages/tools/src/emit/factory-source.ts::looseListElement`
+
+One list element's loose spelling: loosened at the list's element kinds
+(`listElementKinds`) and the list's `element` default arm, exactly as
+`loosenAt` loosens a slot's value. Both list paths call it, the list's own
+call when its options are not the default and the bare array a parent's slot
+prints, so an element spells the same in either.
 
 ### `packages/tools/src/emit/factory-source.ts::listOptionsAreDefault`
 
@@ -124,3 +166,12 @@ else.
 (`rebuild<Name>Generated` for strict, `rebuild<Name>Loose` for loose) and the
 derived file (`examples/<stem>.generated.ts`, `examples/<stem>-loose.generated.ts`).
 The spelling rule lives here alone; a consumer never rebuilds a name.
+
+### `packages/tools/src/emit/factory-source.ts::hoistSeatElement`
+
+A seated element whose config sets nothing but the seat's one required slot
+is that slot's value: the list builder takes the value bare and seats it
+itself, on the strict surface as on the loose one. An optional multiple slot
+given an empty array counts as unset, since the read projection spells an
+absent repeated slot as `[]` (`attributeItem: []` beside `expression`) and
+the strict factory builds the same node without it.

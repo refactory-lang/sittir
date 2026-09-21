@@ -19,12 +19,12 @@ export function rebuildFormatLoose() {
 				name: "applyFormat",
 				parameters: [ir.requiredParameter({
 					pattern: "canonicalRender",
-					type: ir.typeAnnotation(TSKindId.StringKeyword),
+					type: TSKindId.StringKeyword,
 				}), ir.requiredParameter({
 					pattern: "format",
 					type: "FormatRecord",
 				})],
-				returnType: ir.typeAnnotation(TSKindId.StringKeyword),
+				returnType: TSKindId.StringKeyword,
 				body: ir.statementBlock({
 					statements: [ir.lexicalDeclaration({
 						kind: TSKindId.LetKeyword,
@@ -63,12 +63,12 @@ export function rebuildFormatLoose() {
 			name: "applyBoundary",
 			parameters: [ir.requiredParameter({
 				pattern: "s",
-				type: ir.typeAnnotation(TSKindId.StringKeyword),
+				type: TSKindId.StringKeyword,
 			}), ir.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: ir.typeAnnotation(TSKindId.StringKeyword),
+			returnType: TSKindId.StringKeyword,
 			body: ir.statementBlock({
 				statements: [ir.lexicalDeclaration({
 					kind: TSKindId.ConstKeyword,
@@ -129,12 +129,12 @@ export function rebuildFormatLoose() {
 			name: "applyTrivia",
 			parameters: [ir.requiredParameter({
 				pattern: "s",
-				type: ir.typeAnnotation(TSKindId.StringKeyword),
+				type: TSKindId.StringKeyword,
 			}), ir.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: ir.typeAnnotation(TSKindId.StringKeyword),
+			returnType: TSKindId.StringKeyword,
 			body: ir.statementBlock({
 				statements: [ir.lexicalDeclaration({
 					kind: TSKindId.ConstKeyword,
@@ -295,10 +295,10 @@ export function rebuildFormatLoose() {
 					type: "FormatRecord",
 				}), ir.requiredParameter({
 					pattern: "editStart",
-					type: ir.typeAnnotation(TSKindId.NumberKeyword),
+					type: TSKindId.NumberKeyword,
 				}), ir.requiredParameter({
 					pattern: "delta",
-					type: ir.typeAnnotation(TSKindId.NumberKeyword),
+					type: TSKindId.NumberKeyword,
 				})],
 				returnType: ir.typeAnnotation("FormatRecord"),
 				body: ir.statementBlock({
@@ -368,10 +368,10 @@ export function rebuildFormatLoose() {
 				})),
 			}), ir.requiredParameter({
 				pattern: "editStart",
-				type: ir.typeAnnotation(TSKindId.NumberKeyword),
+				type: TSKindId.NumberKeyword,
 			}), ir.requiredParameter({
 				pattern: "delta",
-				type: ir.typeAnnotation(TSKindId.NumberKeyword),
+				type: TSKindId.NumberKeyword,
 			})],
 			returnType: ir.unionType({
 				left: ir.arrayType("FormatTrivia"),
@@ -463,21 +463,21 @@ export function rebuildFormatLoose() {
 				type: ir.unionType({
 					left: ir.genericType({
 						name: "Record",
-						typeArguments: [TSKindId.StringKeyword, ir.identifier("FormatRecord")],
+						typeArguments: [TSKindId.StringKeyword, "FormatRecord"],
 					}),
 					right: ir.literalType(TSKindId.Undefined),
 				}),
 			}), ir.requiredParameter({
 				pattern: "editStart",
-				type: ir.typeAnnotation(TSKindId.NumberKeyword),
+				type: TSKindId.NumberKeyword,
 			}), ir.requiredParameter({
 				pattern: "delta",
-				type: ir.typeAnnotation(TSKindId.NumberKeyword),
+				type: TSKindId.NumberKeyword,
 			})],
 			returnType: ir.unionType({
 				left: ir.genericType({
 					name: "Record",
-					typeArguments: [TSKindId.StringKeyword, ir.identifier("FormatRecord")],
+					typeArguments: [TSKindId.StringKeyword, "FormatRecord"],
 				}),
 				right: ir.literalType(TSKindId.Undefined),
 			}),
@@ -499,7 +499,7 @@ export function rebuildFormatLoose() {
 						name: "result",
 						type: ir.genericType({
 							name: "Record",
-							typeArguments: [TSKindId.StringKeyword, ir.identifier("FormatRecord")],
+							typeArguments: [TSKindId.StringKeyword, "FormatRecord"],
 						}),
 						value: ir.object(),
 					})],
