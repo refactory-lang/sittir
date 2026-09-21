@@ -1,4 +1,4 @@
-import { withHoistedAnnotation } from './annotations.ts';
+import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
@@ -168,6 +168,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
+	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
 	for (const name of Object.keys(mergedRules)) {
 		const rule = mergedRules[name];
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -335,6 +336,42 @@ function replaceExtras(result: Record<string, unknown>, replacements: ReadonlyMa
 		return;
 	}
 	if (Array.isArray(current)) result.extras = replaced(current, undefined);
+}
+
+function annotateTokenFormArms(parent: string, rules: Record<string, Rule>): void {
+	const stack: Rule[] = [];
+	let core = rules[parent];
+	while (core !== undefined && isPrecWrapper(core as { type: string })) {
+		stack.push(core);
+		core = (core as unknown as { content: Rule }).content;
+	}
+	const members = (core as unknown as { members?: Rule[] } | undefined)?.members;
+	if (core === undefined || members === undefined) return;
+	const base = parent.replace(/^_+/, '');
+	const preferred = defaultTokenFormArm(members, rules);
+	const annotated = members.map((member, i) => {
+		const name = (member as { name?: string }).name ?? '';
+		const variant = name.startsWith(`${base}_`) ? name.slice(base.length + 1) : name;
+		return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) }) as unknown as Rule;
+	});
+	let out = { ...core, members: annotated } as unknown as Rule;
+	for (let i = stack.length - 1; i >= 0; i--) out = { ...stack[i]!, content: out } as unknown as Rule;
+	rules[parent] = out;
+}
+
+function defaultTokenFormArm(members: readonly Rule[], rules: Record<string, Rule>): number {
+	const leadsWithLiteral = (rule: RuntimeRule | undefined): boolean => {
+		if (rule === undefined) return false;
+		const t = (rule as { type?: string }).type ?? '';
+		if (t === 'STRING') return true;
+		if (t === 'SEQ') return leadsWithLiteral((rule as unknown as { members: RuntimeRule[] }).members[0]);
+		if (t === 'CHOICE') return (rule as unknown as { members: RuntimeRule[] }).members.every(leadsWithLiteral);
+		const inner = (rule as { content?: RuntimeRule }).content;
+		if (inner !== undefined) return leadsWithLiteral(inner);
+		return false;
+	};
+	const open = members.findIndex((m) => !leadsWithLiteral(rules[(m as { name?: string }).name ?? ''] as unknown as RuntimeRule));
+	return open < 0 ? 0 : open;
 }
 
 function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {

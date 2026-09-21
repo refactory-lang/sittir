@@ -16,9 +16,19 @@ import * as F from './factories/index.js';
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = {
-	number(value: number): ReturnType<typeof F.buildFloatLiteral> {
-		return F.buildFloatLiteral(String(value));
-	},
+	number: Object.assign(
+		function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.buildFloatLiteral> {
+			return Number.isInteger(value) ? F.integerLiteral(String(value)) : F.buildFloatLiteral(String(value));
+		},
+		{
+			integer(value: number): ReturnType<typeof F.integerLiteral> {
+				return F.integerLiteral(String(value));
+			},
+			float(value: number): ReturnType<typeof F.buildFloatLiteral> {
+				return F.buildFloatLiteral(String(value));
+			}
+		}
+	),
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
 		return F.buildTypeIdentifier(name);
 	},
@@ -160,6 +170,8 @@ export const tokens: {
 export const nonSpecialToken: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
@@ -169,6 +181,8 @@ export const nonSpecialToken: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	mutableSpecifier: F.buildMutableSpecifier,
@@ -250,6 +264,8 @@ export const expressionExceptRange: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -292,6 +308,8 @@ export const expressionExceptRange: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -336,6 +354,8 @@ export const expression: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -379,6 +399,8 @@ export const expression: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -456,6 +478,8 @@ export const condition: {
 	readonly yield: typeof F.yieldExpression;
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly self: typeof F.buildSelf;
@@ -500,6 +524,8 @@ export const condition: {
 	yield: F.yieldExpression,
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	identifier: F.buildIdentifier,
 	self: F.buildSelf,
@@ -536,6 +562,8 @@ export const condition: {
 export const pattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 	readonly identifier: typeof F.buildIdentifier;
@@ -557,6 +585,8 @@ export const pattern: {
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral,
 	identifier: F.buildIdentifier,
@@ -580,21 +610,29 @@ export const pattern: {
 export const literal: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral
 };
 
 export const literalPattern: {
 	readonly string: typeof F.stringLiteral;
 	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
 	readonly float: typeof F.buildFloatLiteral;
 	readonly negative: typeof F.negativeLiteral;
 } = {
 	string: F.stringLiteral,
 	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
 	float: F.buildFloatLiteral,
 	negative: F.negativeLiteral
 };
@@ -739,6 +777,8 @@ export const ir: {
 	readonly negativeLiteral: typeof F.negativeLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
+	readonly lineComment: typeof F.lineComment;
+	readonly blockComment: typeof F.blockComment;
 	readonly shebang: typeof F.shebang;
 	readonly metavariable: typeof F.metavariable;
 	readonly macroRules: typeof F.macroRules;
@@ -776,6 +816,9 @@ export const ir: {
 	readonly fieldPattern: typeof F.fieldPattern;
 	readonly rangePattern: typeof F.rangePattern;
 	readonly orPattern: typeof F.orPattern;
+	readonly integerLiteral: typeof F.integerLiteral;
+	readonly charLiteral: typeof F.charLiteral;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -788,9 +831,13 @@ export const ir: {
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly stringLiteralOpen: typeof F.buildStringLiteralOpen;
+	readonly lineCommentRegularDslash: typeof F.buildLineCommentRegularDslash;
+	readonly lineCommentContent: typeof F.buildLineCommentContent;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
+	readonly lineDocContent: typeof F.buildLineDocContent;
+	readonly blockCommentContent: typeof F.buildBlockCommentContent;
 	readonly rawStringLiteralStart: typeof F.buildRawStringLiteralStart;
 	readonly rawStringLiteralEnd: typeof F.buildRawStringLiteralEnd;
 	readonly abstract: typeof F.abstractType;
@@ -998,6 +1045,8 @@ export const ir: {
 	negativeLiteral: F.negativeLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
+	lineComment: F.lineComment,
+	blockComment: F.blockComment,
 	shebang: F.shebang,
 	metavariable: F.metavariable,
 	macroRules: F.macroRules,
@@ -1035,6 +1084,9 @@ export const ir: {
 	fieldPattern: F.fieldPattern,
 	rangePattern: F.rangePattern,
 	orPattern: F.orPattern,
+	integerLiteral: F.integerLiteral,
+	charLiteral: F.charLiteral,
+	escapeSequence: F.escapeSequence,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1051,9 +1103,13 @@ export const ir: {
 	// Leaf node factories
 	identifier: F.buildIdentifier,
 	stringLiteralOpen: F.buildStringLiteralOpen,
+	lineCommentRegularDslash: F.buildLineCommentRegularDslash,
+	lineCommentContent: F.buildLineCommentContent,
 	floatLiteral: F.buildFloatLiteral,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
+	lineDocContent: F.buildLineDocContent,
+	blockCommentContent: F.buildBlockCommentContent,
 	rawStringLiteralStart: F.buildRawStringLiteralStart,
 	rawStringLiteralEnd: F.buildRawStringLiteralEnd,
 

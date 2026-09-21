@@ -404,10 +404,10 @@ export enum TSKindId {
 	RawStringLiteralContent = 157,
 	RawStringLiteralEnd = 158,
 	FloatLiteral = 159,
-	_OuterBlockDocCommentMarker = 160,
-	_InnerBlockDocCommentMarker = 161,
-	_BlockCommentContent = 162,
-	_LineDocContent = 163,
+	OuterBlockDocCommentMarker = 160,
+	InnerBlockDocCommentMarker = 161,
+	BlockCommentContent = 162,
+	LineDocContent = 163,
 	ErrorSentinel = 164,
 	Tight = 165,
 	Space = 166,
@@ -577,8 +577,8 @@ export enum TSKindId {
 	EscapeSequence = 330,
 	BooleanLiteral = 331,
 	LineComment = 332,
-	_InnerLineDocCommentMarker = 333,
-	_OuterLineDocCommentMarker = 334,
+	InnerLineDocCommentMarker = 333,
+	OuterLineDocCommentMarker = 334,
 	BlockComment = 335,
 	KwRefMarker = 336,
 	KwUnsafeMarker = 337,
@@ -1981,13 +1981,13 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'float_literal':
 			return TSKindId.FloatLiteral;
 		case '_outer_block_doc_comment_marker':
-			return TSKindId._OuterBlockDocCommentMarker;
+			return TSKindId.OuterBlockDocCommentMarker;
 		case '_inner_block_doc_comment_marker':
-			return TSKindId._InnerBlockDocCommentMarker;
+			return TSKindId.InnerBlockDocCommentMarker;
 		case '_block_comment_content':
-			return TSKindId._BlockCommentContent;
+			return TSKindId.BlockCommentContent;
 		case '_line_doc_content':
-			return TSKindId._LineDocContent;
+			return TSKindId.LineDocContent;
 		case '_error_sentinel':
 			return TSKindId.ErrorSentinel;
 		case '_tight':
@@ -2327,9 +2327,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'line_comment':
 			return TSKindId.LineComment;
 		case '_inner_line_doc_comment_marker':
-			return TSKindId._InnerLineDocCommentMarker;
+			return TSKindId.InnerLineDocCommentMarker;
 		case '_outer_line_doc_comment_marker':
-			return TSKindId._OuterLineDocCommentMarker;
+			return TSKindId.OuterLineDocCommentMarker;
 		case 'block_comment':
 			return TSKindId.BlockComment;
 		case '_kw_ref_marker':
@@ -2823,11 +2823,11 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'raw_string_literal_end':
 			return TSKindId.RawStringLiteralEnd;
 		case 'outer_doc_comment_marker':
-			return TSKindId._OuterBlockDocCommentMarker;
+			return TSKindId.OuterBlockDocCommentMarker;
 		case 'inner_doc_comment_marker':
-			return TSKindId._InnerBlockDocCommentMarker;
+			return TSKindId.InnerBlockDocCommentMarker;
 		case 'doc_comment':
-			return TSKindId._LineDocContent;
+			return TSKindId.LineDocContent;
 		case 'non_special_token':
 			return TSKindId._NonSpecialToken;
 		case 'let_chain':
@@ -6745,6 +6745,18 @@ export interface RawStringLiteral {
 	rawStringLiteralEnd(): RawStringLiteralEnd;
 }
 
+export interface LineComment {
+	readonly $type: TSKindId.LineComment;
+	readonly _content: LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
+	content(): LineCommentRegularDslash | LineCommentDocOuter | LineCommentDocInner | LineCommentContent;
+}
+
+export interface BlockComment {
+	readonly $type: TSKindId.BlockComment;
+	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent;
+	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
+}
+
 export interface Shebang {
 	readonly $type: TSKindId.Shebang;
 	readonly _content: string;
@@ -7776,6 +7788,30 @@ export interface MatchArmBlockEnding {
 		| LoopExpression
 		| ForExpression
 		| ConstBlock;
+}
+
+export interface LineCommentDocOuter {
+	readonly $type: TSKindId.LineCommentDocOuter;
+	readonly _doc: LineDocContent;
+	doc(): LineDocContent;
+}
+
+export interface LineCommentDocInner {
+	readonly $type: TSKindId.LineCommentDocInner;
+	readonly _doc: LineDocContent;
+	doc(): LineDocContent;
+}
+
+export interface BlockCommentDocOuter {
+	readonly $type: TSKindId.BlockCommentDocOuter;
+	readonly _doc?: BlockCommentContent;
+	doc(): BlockCommentContent | undefined;
+}
+
+export interface BlockCommentDocInner {
+	readonly $type: TSKindId.BlockCommentDocInner;
+	readonly _doc?: BlockCommentContent;
+	doc(): BlockCommentContent | undefined;
 }
 
 export interface TokenTreePatternParen {
@@ -10302,10 +10338,14 @@ export type TokenKeywords =
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type StringLiteralOpen = HiddenLeaf<Terminal<TSKindId.StringLiteralOpen, string>>;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
+export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
+export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
+export type LineDocContent = HiddenLeaf<Terminal<TSKindId.LineDocContent, string>>;
+export type BlockCommentContent = HiddenLeaf<Terminal<TSKindId.BlockCommentContent, string>>;
 export type RawStringLiteralStart = HiddenLeaf<Terminal<TSKindId.RawStringLiteralStart, string>>;
 export type RawStringLiteralEnd = HiddenLeaf<Terminal<TSKindId.RawStringLiteralEnd, string>>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
@@ -10438,6 +10478,8 @@ export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
 export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
 export interface StringLiteralTree extends TreeNode<'string_literal'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
+export interface LineCommentTree extends TreeNode<'line_comment'> {}
+export interface BlockCommentTree extends TreeNode<'block_comment'> {}
 export interface ShebangTree extends TreeNode<'shebang'> {}
 export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface IntegerLiteralArm1Tree extends TreeNode<'integer_literal_arm1'> {}
@@ -10505,6 +10547,10 @@ export interface ForeignModItemSemiTree extends TreeNode<'foreign_mod_item_semi'
 export interface ForeignModItemBodyTree extends TreeNode<'foreign_mod_item_body'> {}
 export interface MatchArmWithCommaTree extends TreeNode<'match_arm_with_comma'> {}
 export interface MatchArmBlockEndingTree extends TreeNode<'match_arm_block_ending'> {}
+export interface LineCommentDocOuterTree extends TreeNode<'line_comment_doc_outer'> {}
+export interface LineCommentDocInnerTree extends TreeNode<'line_comment_doc_inner'> {}
+export interface BlockCommentDocOuterTree extends TreeNode<'block_comment_doc_outer'> {}
+export interface BlockCommentDocInnerTree extends TreeNode<'block_comment_doc_inner'> {}
 export interface TokenTreePatternParenTree extends TreeNode<'token_tree_pattern_paren'> {}
 export interface TokenTreePatternBracketTree extends TreeNode<'token_tree_pattern_bracket'> {}
 export interface TokenTreePatternBraceTree extends TreeNode<'token_tree_pattern_brace'> {}
@@ -10636,6 +10682,8 @@ export interface StringLiteralOpenTree extends AnyTreeNode {
 export interface ImplItemUnsafeMarkerTree extends AnyTreeNode {
 	readonly type: '_impl_item_unsafe_marker';
 }
+export interface LineCommentRegularDslashTree extends TreeNode<'line_comment_regular_dslash'> {}
+export interface LineCommentContentTree extends TreeNode<'line_comment_content'> {}
 export interface RangePatternWithLeftBareTree extends AnyTreeNode {
 	readonly type: 'range_pattern_with_left_bare';
 }
@@ -10643,6 +10691,12 @@ export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
+}
+export interface LineDocContentTree extends AnyTreeNode {
+	readonly type: '_line_doc_content';
+}
+export interface BlockCommentContentTree extends AnyTreeNode {
+	readonly type: '_block_comment_content';
 }
 export interface RawStringLiteralStartTree extends AnyTreeNode {
 	readonly type: '_raw_string_literal_start';
@@ -11716,6 +11770,8 @@ export type RustNode =
 	| NegativeLiteral
 	| StringLiteral
 	| RawStringLiteral
+	| LineComment
+	| BlockComment
 	| Shebang
 	| Metavariable
 	| IntegerLiteralArm1
@@ -11779,6 +11835,10 @@ export type RustNode =
 	| ForeignModItemBody
 	| MatchArmWithComma
 	| MatchArmBlockEnding
+	| LineCommentDocOuter
+	| LineCommentDocInner
+	| BlockCommentDocOuter
+	| BlockCommentDocInner
 	| TokenTreePatternParen
 	| TokenTreePatternBracket
 	| TokenTreePatternBrace
@@ -11932,6 +11992,8 @@ export interface KindMap {
 	negative_literal: NegativeLiteral;
 	string_literal: StringLiteral;
 	raw_string_literal: RawStringLiteral;
+	line_comment: LineComment;
+	block_comment: BlockComment;
 	shebang: Shebang;
 	metavariable: Metavariable;
 	integer_literal_arm1: IntegerLiteralArm1;
@@ -11995,6 +12057,10 @@ export interface KindMap {
 	foreign_mod_item_body: ForeignModItemBody;
 	match_arm_with_comma: MatchArmWithComma;
 	match_arm_block_ending: MatchArmBlockEnding;
+	line_comment_doc_outer: LineCommentDocOuter;
+	line_comment_doc_inner: LineCommentDocInner;
+	block_comment_doc_outer: BlockCommentDocOuter;
+	block_comment_doc_inner: BlockCommentDocInner;
 	token_tree_pattern_paren: TokenTreePatternParen;
 	token_tree_pattern_bracket: TokenTreePatternBracket;
 	token_tree_pattern_brace: TokenTreePatternBrace;
@@ -12053,10 +12119,14 @@ export interface KindMap {
 	_wildcard_pattern: WildcardPattern;
 	_string_literal_open: StringLiteralOpen;
 	_impl_item_unsafe_marker: ImplItemUnsafeMarker;
+	line_comment_regular_dslash: LineCommentRegularDslash;
+	line_comment_content: LineCommentContent;
 	range_pattern_with_left_bare: RangePatternWithLeftBare;
 	float_literal: FloatLiteral;
 	string_content: StringContent;
 	raw_string_literal_content: RawStringLiteralContent;
+	_line_doc_content: LineDocContent;
+	_block_comment_content: BlockCommentContent;
 	_raw_string_literal_start: RawStringLiteralStart;
 	_raw_string_literal_end: RawStringLiteralEnd;
 	_error_sentinel: ErrorSentinel;
@@ -13416,6 +13486,28 @@ export interface RawStringLiteralNs extends NodeNs<
 	never,
 	'raw_string_literal'
 > {}
+export interface LineCommentNs extends NodeNs<
+	LineComment,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LineComment.Built,
+	LineComment.BuildArgs,
+	LineComment.LooseArgs,
+	'content',
+	'line_comment'
+> {}
+export interface BlockCommentNs extends NodeNs<
+	BlockComment,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BlockComment.Built,
+	BlockComment.BuildArgs,
+	BlockComment.LooseArgs,
+	'content',
+	'block_comment'
+> {}
 export interface ShebangNs extends NodeNs<
 	Shebang,
 	LeafScalarMap,
@@ -14109,6 +14201,50 @@ export interface MatchArmBlockEndingNs extends NodeNs<
 	never,
 	'match_arm_block_ending'
 > {}
+export interface LineCommentDocOuterNs extends NodeNs<
+	LineCommentDocOuter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LineCommentDocOuter.Built,
+	LineCommentDocOuter.BuildArgs,
+	LineCommentDocOuter.LooseArgs,
+	'doc',
+	'line_comment_doc_outer'
+> {}
+export interface LineCommentDocInnerNs extends NodeNs<
+	LineCommentDocInner,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	LineCommentDocInner.Built,
+	LineCommentDocInner.BuildArgs,
+	LineCommentDocInner.LooseArgs,
+	'doc',
+	'line_comment_doc_inner'
+> {}
+export interface BlockCommentDocOuterNs extends NodeNs<
+	BlockCommentDocOuter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BlockCommentDocOuter.Built,
+	BlockCommentDocOuter.BuildArgs,
+	BlockCommentDocOuter.LooseArgs,
+	'doc',
+	'block_comment_doc_outer'
+> {}
+export interface BlockCommentDocInnerNs extends NodeNs<
+	BlockCommentDocInner,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BlockCommentDocInner.Built,
+	BlockCommentDocInner.BuildArgs,
+	BlockCommentDocInner.LooseArgs,
+	'doc',
+	'block_comment_doc_inner'
+> {}
 export interface TokenTreePatternParenNs extends NodeNs<
 	TokenTreePatternParen,
 	LeafScalarMap,
@@ -14510,6 +14646,20 @@ export interface StringLiteralOpenNs extends LeafNs<
 	StringLiteralOpenTree,
 	'_string_literal_open'
 > {}
+export interface LineCommentRegularDslashNs extends LeafNs<
+	LineCommentRegularDslash,
+	string,
+	LineCommentRegularDslash.Built,
+	LineCommentRegularDslashTree,
+	'line_comment_regular_dslash'
+> {}
+export interface LineCommentContentNs extends LeafNs<
+	LineCommentContent,
+	string,
+	LineCommentContent.Built,
+	LineCommentContentTree,
+	'line_comment_content'
+> {}
 export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral,
 	string,
@@ -14530,6 +14680,20 @@ export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContent.Built,
 	RawStringLiteralContentTree,
 	'raw_string_literal_content'
+> {}
+export interface LineDocContentNs extends LeafNs<
+	LineDocContent,
+	string,
+	LineDocContent.Built,
+	LineDocContentTree,
+	'_line_doc_content'
+> {}
+export interface BlockCommentContentNs extends LeafNs<
+	BlockCommentContent,
+	string,
+	BlockCommentContent.Built,
+	BlockCommentContentTree,
+	'_block_comment_content'
 > {}
 export interface RawStringLiteralStartNs extends LeafNs<
 	RawStringLiteralStart,
@@ -14677,6 +14841,8 @@ export interface NamespaceMap {
 	[TSKindId.NegativeLiteral]: NegativeLiteralNs;
 	[TSKindId.StringLiteral]: StringLiteralNs;
 	[TSKindId.RawStringLiteral]: RawStringLiteralNs;
+	[TSKindId.LineComment]: LineCommentNs;
+	[TSKindId.BlockComment]: BlockCommentNs;
 	[TSKindId.Shebang]: ShebangNs;
 	[TSKindId.Metavariable]: MetavariableNs;
 	[TSKindId.IntegerLiteralArm1]: IntegerLiteralArm1Ns;
@@ -14740,6 +14906,10 @@ export interface NamespaceMap {
 	[TSKindId.ForeignModItemBody]: ForeignModItemBodyNs;
 	[TSKindId.MatchArmWithComma]: MatchArmWithCommaNs;
 	[TSKindId.MatchArmBlockEnding]: MatchArmBlockEndingNs;
+	[TSKindId.LineCommentDocOuter]: LineCommentDocOuterNs;
+	[TSKindId.LineCommentDocInner]: LineCommentDocInnerNs;
+	[TSKindId.BlockCommentDocOuter]: BlockCommentDocOuterNs;
+	[TSKindId.BlockCommentDocInner]: BlockCommentDocInnerNs;
 	[TSKindId.TokenTreePatternParen]: TokenTreePatternParenNs;
 	[TSKindId.TokenTreePatternBracket]: TokenTreePatternBracketNs;
 	[TSKindId.TokenTreePatternBrace]: TokenTreePatternBraceNs;
@@ -14793,9 +14963,13 @@ export interface NamespaceMap {
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
 	[TSKindId.StringLiteralOpen]: StringLiteralOpenNs;
+	[TSKindId.LineCommentRegularDslash]: LineCommentRegularDslashNs;
+	[TSKindId.LineCommentContent]: LineCommentContentNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
+	[TSKindId.LineDocContent]: LineDocContentNs;
+	[TSKindId.BlockCommentContent]: BlockCommentContentNs;
 	[TSKindId.RawStringLiteralStart]: RawStringLiteralStartNs;
 	[TSKindId.RawStringLiteralEnd]: RawStringLiteralEndNs;
 	[TSKindId.ErrorSentinel]: ErrorSentinelNs;
@@ -17263,6 +17437,58 @@ export namespace RawStringLiteral {
 	export type Tree = TreeFor<TSKindId.RawStringLiteral>;
 	export type Kind = 'raw_string_literal';
 }
+export namespace LineComment {
+	export type Config = ConfigFor<TSKindId.LineComment>;
+	export interface Built extends T.LineComment, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+			): T.LineComment.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LineComment>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LineComment>;
+	export type BuildArgs = [
+		value: T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+	];
+	export type LooseArgs = [
+		value: LooseValue<
+			T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.LineComment>;
+	export type Kind = 'line_comment';
+}
+export namespace BlockComment {
+	export type Config = ConfigFor<TSKindId.BlockComment>;
+	export interface Built extends T.BlockComment, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(
+				value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string
+			): T.BlockComment.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.BlockComment>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
+	export type BuildArgs = [value?: (T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string];
+	export type LooseArgs = [
+		value?: LooseValue<
+			(T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) | string,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>
+	];
+	export type Tree = TreeFor<TSKindId.BlockComment>;
+	export type Kind = 'block_comment';
+}
 export namespace Shebang {
 	export type Config = ConfigFor<TSKindId.Shebang>;
 	export interface Built extends T.Shebang, NodeMethodsOf {
@@ -18781,6 +19007,78 @@ export namespace MatchArmBlockEnding {
 	export type Tree = TreeFor<TSKindId.MatchArmBlockEnding>;
 	export type Kind = 'match_arm_block_ending';
 }
+export namespace LineCommentDocOuter {
+	export type Config = ConfigFor<TSKindId.LineCommentDocOuter>;
+	export interface Built extends T.LineCommentDocOuter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			doc(value: T.LineDocContent | string): T.LineCommentDocOuter.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LineCommentDocOuter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocOuter>;
+	export type BuildArgs = [value: T.LineDocContent | string];
+	export type LooseArgs = [
+		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.LineCommentDocOuter>;
+	export type Kind = 'line_comment_doc_outer';
+}
+export namespace LineCommentDocInner {
+	export type Config = ConfigFor<TSKindId.LineCommentDocInner>;
+	export interface Built extends T.LineCommentDocInner, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			doc(value: T.LineDocContent | string): T.LineCommentDocInner.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.LineCommentDocInner>;
+	export type LooseConfig = LooseConfigFor<TSKindId.LineCommentDocInner>;
+	export type BuildArgs = [value: T.LineDocContent | string];
+	export type LooseArgs = [
+		value: LooseValue<T.LineDocContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.LineCommentDocInner>;
+	export type Kind = 'line_comment_doc_inner';
+}
+export namespace BlockCommentDocOuter {
+	export type Config = ConfigFor<TSKindId.BlockCommentDocOuter>;
+	export interface Built extends T.BlockCommentDocOuter, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocOuter.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.BlockCommentDocOuter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocOuter>;
+	export type BuildArgs = [value?: T.BlockCommentContent | string];
+	export type LooseArgs = [
+		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.BlockCommentDocOuter>;
+	export type Kind = 'block_comment_doc_outer';
+}
+export namespace BlockCommentDocInner {
+	export type Config = ConfigFor<TSKindId.BlockCommentDocInner>;
+	export interface Built extends T.BlockCommentDocInner, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			doc(value?: T.BlockCommentContent | string): T.BlockCommentDocInner.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId.BlockCommentDocInner>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BlockCommentDocInner>;
+	export type BuildArgs = [value?: T.BlockCommentContent | string];
+	export type LooseArgs = [
+		value?: LooseValue<T.BlockCommentContent | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Tree = TreeFor<TSKindId.BlockCommentDocInner>;
+	export type Kind = 'block_comment_doc_inner';
+}
 export namespace TokenTreePatternParen {
 	export type Config = ConfigFor<TSKindId.TokenTreePatternParen>;
 	export interface Built extends T.TokenTreePatternParen, NodeMethodsOf {
@@ -19714,6 +20012,36 @@ export namespace StringLiteralOpen {
 	export type Tree = StringLiteralOpenNs['Tree'];
 	export type Kind = '_string_literal_open';
 }
+export namespace LineCommentRegularDslash {
+	export type Config = LineCommentRegularDslashNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineCommentRegularDslash;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = LineCommentRegularDslashNs['Loose'];
+	export type LooseConfig = LineCommentRegularDslashNs['LooseConfig'];
+	export type BuildArgs = LineCommentRegularDslashNs['BuildArgs'];
+	export type LooseArgs = LineCommentRegularDslashNs['LooseArgs'];
+	export type Tree = LineCommentRegularDslashNs['Tree'];
+	export type Kind = 'line_comment_regular_dslash';
+}
+export namespace LineCommentContent {
+	export type Config = LineCommentContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineCommentContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = LineCommentContentNs['Loose'];
+	export type LooseConfig = LineCommentContentNs['LooseConfig'];
+	export type BuildArgs = LineCommentContentNs['BuildArgs'];
+	export type LooseArgs = LineCommentContentNs['LooseArgs'];
+	export type Tree = LineCommentContentNs['Tree'];
+	export type Kind = 'line_comment_content';
+}
 export namespace FloatLiteral {
 	export type Config = FloatLiteralNs['Config'];
 	export interface Built extends NodeMethodsOf {
@@ -19758,6 +20086,36 @@ export namespace RawStringLiteralContent {
 	export type LooseArgs = RawStringLiteralContentNs['LooseArgs'];
 	export type Tree = RawStringLiteralContentNs['Tree'];
 	export type Kind = 'raw_string_literal_content';
+}
+export namespace LineDocContent {
+	export type Config = LineDocContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.LineDocContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = LineDocContentNs['Loose'];
+	export type LooseConfig = LineDocContentNs['LooseConfig'];
+	export type BuildArgs = LineDocContentNs['BuildArgs'];
+	export type LooseArgs = LineDocContentNs['LooseArgs'];
+	export type Tree = LineDocContentNs['Tree'];
+	export type Kind = '_line_doc_content';
+}
+export namespace BlockCommentContent {
+	export type Config = BlockCommentContentNs['Config'];
+	export interface Built extends NodeMethodsOf {
+		readonly $type: TSKindId.BlockCommentContent;
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export type Loose = BlockCommentContentNs['Loose'];
+	export type LooseConfig = BlockCommentContentNs['LooseConfig'];
+	export type BuildArgs = BlockCommentContentNs['BuildArgs'];
+	export type LooseArgs = BlockCommentContentNs['LooseArgs'];
+	export type Tree = BlockCommentContentNs['Tree'];
+	export type Kind = '_block_comment_content';
 }
 export namespace RawStringLiteralStart {
 	export type Config = RawStringLiteralStartNs['Config'];

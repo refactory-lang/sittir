@@ -18,6 +18,7 @@ const NODE_KINDS = [
 	'base_field_initializer',
 	'binary_expression',
 	'block',
+	'block_comment',
 	'bounded_type',
 	'bracketed_type',
 	'break_expression',
@@ -68,6 +69,7 @@ const NODE_KINDS = [
 	'lifetime',
 	'lifetime_parameter',
 	'lifetimes',
+	'line_comment',
 	'loop_expression',
 	'macro_invocation',
 	'macro_rule',
@@ -151,6 +153,7 @@ const NODE_KINDS = [
 
 /** All leaf/terminal node kind strings. */
 const LEAF_KINDS = [
+	'_block_comment_content',
 	'_compound_assignment_expr_operator',
 	'_error_sentinel',
 	'_field_identifier',
@@ -164,6 +167,7 @@ const LEAF_KINDS = [
 	'_kw_static_marker',
 	'_kw_unsafe',
 	'_kw_unsafe_marker',
+	'_line_doc_content',
 	'_primitive_type',
 	'_raw_string_literal_end',
 	'_raw_string_literal_start',
@@ -214,6 +218,8 @@ const LEAF_KINDS = [
 	'item_keyword',
 	'let_keyword',
 	'lifetime_keyword',
+	'line_comment_content',
+	'line_comment_regular_dslash',
 	'literal_keyword',
 	'loop_keyword',
 	'match_keyword',
@@ -368,7 +374,11 @@ export const OPERATORS = [
 	'_blankline',
 	'_dedent',
 	'_indent',
+	'_inner_block_doc_comment_marker',
+	'_inner_line_doc_comment_marker',
 	'_newline',
+	'_outer_block_doc_comment_marker',
+	'_outer_line_doc_comment_marker',
 	'_range_expression_bare',
 	'_space',
 	'_tight',
@@ -422,9 +432,12 @@ export const OPERATORS = [
 	'semi',
 	'slash',
 	'slash_eq',
+	'slash_slash',
+	'slash_star',
 	'squote',
 	'star',
-	'star_eq'
+	'star_eq',
+	'star_slash'
 ] as const;
 
 export type NodeKind = (typeof NODE_KINDS)[number];
@@ -2238,6 +2251,7 @@ export enum TSFieldId {
 	FieldDeclarations = 15,
 	FieldDefaultType = 16,
 	FieldDelimTokens = 17,
+	FieldDoc = 18,
 	FieldElement = 19,
 	FieldElements = 20,
 	FieldEnd = 21,
@@ -2316,6 +2330,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	declarations: TSFieldId.FieldDeclarations,
 	default_type: TSFieldId.FieldDefaultType,
 	delim_tokens: TSFieldId.FieldDelimTokens,
+	doc: TSFieldId.FieldDoc,
 	element: TSFieldId.FieldElement,
 	elements: TSFieldId.FieldElements,
 	end: TSFieldId.FieldEnd,
@@ -2394,6 +2409,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldDeclarations]: 'declarations',
 	[TSFieldId.FieldDefaultType]: 'default_type',
 	[TSFieldId.FieldDelimTokens]: 'delim_tokens',
+	[TSFieldId.FieldDoc]: 'doc',
 	[TSFieldId.FieldElement]: 'element',
 	[TSFieldId.FieldElements]: 'elements',
 	[TSFieldId.FieldEnd]: 'end',
@@ -2472,6 +2488,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'declarations', id: 15, enumName: 'FieldDeclarations', cName: 'field_declarations' },
 	{ name: 'default_type', id: 16, enumName: 'FieldDefaultType', cName: 'field_default_type' },
 	{ name: 'delim_tokens', id: 17, enumName: 'FieldDelimTokens', cName: 'field_delim_tokens' },
+	{ name: 'doc', id: 18, enumName: 'FieldDoc', cName: 'field_doc' },
 	{ name: 'element', id: 19, enumName: 'FieldElement', cName: 'field_element' },
 	{ name: 'elements', id: 20, enumName: 'FieldElements', cName: 'field_elements' },
 	{ name: 'end', id: 21, enumName: 'FieldEnd', cName: 'field_end' },

@@ -417,6 +417,12 @@ export interface IsGuards {
 	rawStringLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringLiteral };
+	lineComment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LineComment };
+	blockComment<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockComment };
 	shebang<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Shebang };
@@ -701,6 +707,8 @@ export interface AssertGuards {
 	negativeLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.NegativeLiteral };
 	stringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.StringLiteral };
 	rawStringLiteral(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.RawStringLiteral };
+	lineComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.LineComment };
+	blockComment(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.BlockComment };
 	shebang(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Shebang };
 	metavariable(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.Metavariable };
 	macroRules(v: { readonly $type: number } | number): asserts v is { readonly $type: TSKindId.MacroRules };
@@ -973,6 +981,8 @@ export const is = {
 	negativeLiteral: _g(TSKindId.NegativeLiteral),
 	stringLiteral: _g(TSKindId.StringLiteral),
 	rawStringLiteral: _g(TSKindId.RawStringLiteral),
+	lineComment: _g(TSKindId.LineComment),
+	blockComment: _g(TSKindId.BlockComment),
 	shebang: _g(TSKindId.Shebang),
 	metavariable: _g(TSKindId.Metavariable),
 	macroRules: _g(TSKindId.MacroRules),
@@ -1183,6 +1193,8 @@ export const assert = {
 	negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
 	stringLiteral: _makeAssert('stringLiteral', is.stringLiteral as _AnyGuard),
 	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
+	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
+	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
 	shebang: _makeAssert('shebang', is.shebang as _AnyGuard),
 	metavariable: _makeAssert('metavariable', is.metavariable as _AnyGuard),
 	macroRules: _makeAssert('macroRules', is.macroRules as _AnyGuard),

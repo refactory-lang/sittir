@@ -202,6 +202,7 @@ export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistRou
 export const forHeader: Hoisted<typeof O.forHeader> = hoistRoutes(O.forHeader);
 export const updateExpression: Hoisted<typeof O.updateExpression> = hoistRoutes(O.updateExpression);
 export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
+export const number: Hoisted<typeof O.number> = hoistRoutes(O.number);
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistRoutes(O.metaProperty);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistRoutes(O.indexSignature);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoistRoutes(O.exportStatementDefault);

@@ -526,9 +526,9 @@ function toIr(t: TypeExpr, base: boolean): Type {
 const typeParams = () =>
 	ir.typeParameters.strict(
 		{ delimiter: Delimiter.None },
-		ir.typeParameter.strict({
-			name: ir.identifier('G'),
-			constraint: ir.constraint.strict({ type: ir.identifier('GrammarContext'), content: TSKindId.ExtendsKeyword })
+		ir.typeParameter({
+			name: 'G',
+			constraint: { type: 'GrammarContext', content: TSKindId.ExtendsKeyword }
 		})
 	);
 const keyParams = () =>
@@ -610,7 +610,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
-			? ir.importClause.strict(ir.namespaceImport.strict(ir.identifier(imp.namespace)))
+			? ir.importClause.namespaceImport(imp.namespace)
 			: ir.importClause.strict(
 					first ? ir.namedImports.strict({ delimiter: Delimiter.None }, first, ...rest) : ir.namedImports.strict()
 				);

@@ -670,6 +670,7 @@ export default grammar(
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
+			extras: ($, previous) => [...(previous ?? [])],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),

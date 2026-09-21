@@ -12,13 +12,25 @@ function resolveName(name: string, renames: SymbolRenames): string {
 
 export function renameRule(value: unknown, renames: SymbolRenames): unknown {
 	if (renames.size === 0) return value;
-	if (Array.isArray(value)) return value.map((entry) => renameRule(entry, renames));
+	if (Array.isArray(value)) {
+		const mapped = value.map((entry) => renameRule(entry, renames));
+		return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
+	}
 	if (value === null || typeof value !== 'object') return value;
 	const record = value as Record<string, unknown>;
-	const out: Record<string, unknown> = {};
-	for (const [key, entry] of Object.entries(record)) out[key] = renameRule(entry, renames);
-	if (record.type === 'SYMBOL' && typeof record.name === 'string') out.name = resolveName(record.name, renames);
-	return out;
+	const changes: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(record)) {
+		const next = renameRule(entry, renames);
+		if (next !== entry) changes[key] = next;
+	}
+	if (record.type === 'SYMBOL' && typeof record.name === 'string') {
+		const name = resolveName(record.name, renames);
+		if (name !== record.name) changes.name = name;
+	}
+	if (Object.keys(changes).length === 0) return value;
+	const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value)) as Record<string, unknown>;
+	for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
+	return copy;
 }
 
 export function renameNameList(value: unknown, renames: SymbolRenames): unknown {

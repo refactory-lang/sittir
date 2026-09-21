@@ -12,7 +12,7 @@ import type {
 	Hoisted,
 	OmitEach
 } from '@sittir/types';
-import type { NamespaceMap } from './types.js';
+import type { BlockComment, LineComment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import {
 	withMethods as withCommonMethods,
@@ -59,10 +59,13 @@ export const methodsEngine = {
  *  `$trivia` call site. */
 export interface TriviaSetterOf<Self> {
 	(
-		...args: ((AnyNodeData | string) | { leading?: (AnyNodeData | string)[]; trailing?: (AnyNodeData | string)[] })[]
+		...args: (
+			| (BlockComment | LineComment | string)
+			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
+		)[]
 	): Self;
-	leading(...items: (AnyNodeData | string)[]): Self;
-	trailing(...items: (AnyNodeData | string)[]): Self;
+	leading(...items: (BlockComment | LineComment | string)[]): Self;
+	trailing(...items: (BlockComment | LineComment | string)[]): Self;
 }
 
 export interface NodeMethodsOf {

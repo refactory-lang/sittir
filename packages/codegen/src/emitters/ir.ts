@@ -331,13 +331,29 @@ function toCamel(snake: string): string {
 	);
 }
 
-function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
+function isPolymorphTextParent(node: AssembledNode): boolean {
+	return node instanceof AssembledSupertype && node.irKey !== undefined && node.annotations?.hoisted !== true;
+}
+
+function isTextRoleTarget(node: AssembledNode): boolean {
+	return isLeafFactory(node) || isPolymorphTextParent(node);
+}
+
+function roleFactoryRef(node: AssembledNode): string {
+	return isPolymorphTextParent(node) ? `F.${node.irKey}` : factoryRef(node);
+}
+
+function roleReturnType(node: AssembledNode): string {
+	return `ReturnType<typeof ${roleFactoryRef(node)}>`;
+}
+
+function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap, includePolymorphParents = false): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
 	const nodes: AssembledNode[] = [];
 	const seen = new Set<string>();
 	for (const kind of kindNames) {
 		const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
-		if (node && node.rawFactoryName && !seen.has(node.kind)) {
+		if (node && (node.rawFactoryName || (includePolymorphParents && isPolymorphTextParent(node))) && !seen.has(node.kind)) {
 			seen.add(node.kind);
 			nodes.push(node);
 		}
@@ -413,11 +429,11 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 }
 
 function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
-	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
-	const leafNodes = nodes.filter(isLeafFactory);
+	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap, true);
+	const leafNodes = nodes.filter(isTextRoleTarget);
 	if (leafNodes.length === 0) return;
 
-	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap).filter(isLeafFactory);
+	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap, true).filter(isTextRoleTarget);
 	const floatSet = new Set(floatNodes.map((n) => n.kind));
 	const intNodes = leafNodes.filter((n) => !floatSet.has(n.kind));
 
@@ -425,27 +441,27 @@ function emitSynonymNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: st
 	const floatNode = floatNodes[0];
 
 	if (intNode && floatNode) {
-		const retType = `${returnTypeExpr(intNode)} | ${returnTypeExpr(floatNode)}`;
+		const retType = `${roleReturnType(intNode)} | ${roleReturnType(floatNode)}`;
 		fns.push(`  number: Object.assign(`);
 		fns.push(`    function number(value: number): ${retType} {`);
 		fns.push(`      return Number.isInteger(value)`);
-		fns.push(`        ? ${factoryRef(intNode)}(String(value))`);
-		fns.push(`        : ${factoryRef(floatNode)}(String(value));`);
+		fns.push(`        ? ${roleFactoryRef(intNode)}(String(value))`);
+		fns.push(`        : ${roleFactoryRef(floatNode)}(String(value));`);
 		fns.push(`    },`);
 		fns.push(`    {`);
 		fns.push(
-			`      integer(value: number): ${returnTypeExpr(intNode)} { return ${factoryRef(intNode)}(String(value)); },`
+			`      integer(value: number): ${roleReturnType(intNode)} { return ${roleFactoryRef(intNode)}(String(value)); },`
 		);
 		fns.push(
-			`      float(value: number): ${returnTypeExpr(floatNode)} { return ${factoryRef(floatNode)}(String(value)); },`
+			`      float(value: number): ${roleReturnType(floatNode)} { return ${roleFactoryRef(floatNode)}(String(value)); },`
 		);
 		fns.push(`    }`);
 		fns.push(`  ),`);
 	} else {
 		const node = intNode ?? floatNode ?? leafNodes[0];
 		if (!node) return;
-		fns.push(`  number(value: number): ${returnTypeExpr(node)} {`);
-		fns.push(`    return ${factoryRef(node)}(String(value));`);
+		fns.push(`  number(value: number): ${roleReturnType(node)} {`);
+		fns.push(`    return ${roleFactoryRef(node)}(String(value));`);
 		fns.push('  },');
 	}
 }

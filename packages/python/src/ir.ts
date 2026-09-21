@@ -19,6 +19,19 @@ export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
+	number: Object.assign(
+		function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+			return Number.isInteger(value) ? F.integer(String(value)) : F.float(String(value));
+		},
+		{
+			integer(value: number): ReturnType<typeof F.integer> {
+				return F.integer(String(value));
+			},
+			float(value: number): ReturnType<typeof F.float> {
+				return F.float(String(value));
+			}
+		}
+	),
 	comment(text: string): ReturnType<typeof F.comment> {
 		return F.comment(text);
 	},
@@ -230,6 +243,8 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof F.string;
 	readonly concatenatedString: typeof F.concatenatedString;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
@@ -254,6 +269,8 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	string: F.string,
 	concatenatedString: F.concatenatedString,
+	integer: F.integer,
+	float: F.float,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
@@ -304,34 +321,10 @@ export const fExpression: {
 	yield: F.yield_
 };
 
-export const integer: {
-	readonly arm4: typeof F.buildIntegerArm4;
-} = {
-	arm4: F.buildIntegerArm4
-};
-
-export const float: {
-	readonly arm1: typeof F.buildFloatArm1;
-	readonly arm2: typeof F.buildFloatArm2;
-	readonly arm3: typeof F.buildFloatArm3;
-} = {
-	arm1: F.buildFloatArm1,
-	arm2: F.buildFloatArm2,
-	arm3: F.buildFloatArm3
-};
-
 export const keywordIdentifier: {
 	readonly identifier: typeof F.buildIdentifier;
 } = {
 	identifier: F.buildIdentifier
-};
-
-export const lineContinuation: {
-	readonly arm1: typeof F.buildLineContinuationArm1;
-	readonly arm2: typeof F.buildLineContinuationArm2;
-} = {
-	arm1: F.buildLineContinuationArm1,
-	arm2: F.buildLineContinuationArm2
 };
 
 export const ir: {
@@ -469,6 +462,10 @@ export const ir: {
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
+	readonly escapeSequence: typeof F.escapeSequence;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
+	readonly lineContinuation: typeof F.lineContinuation;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -553,10 +550,7 @@ export const ir: {
 	readonly leftHandSide: typeof leftHandSide;
 	readonly rightHandSide: typeof rightHandSide;
 	readonly fExpression: typeof fExpression;
-	readonly integer: typeof integer;
-	readonly float: typeof float;
 	readonly keywordIdentifier: typeof keywordIdentifier;
-	readonly lineContinuation: typeof lineContinuation;
 	readonly synonym: typeof synonym;
 } = {
 	// Node factories
@@ -694,6 +688,10 @@ export const ir: {
 	withClause: F.withClause,
 	suite: F.suite,
 	assignment: F.assignment,
+	escapeSequence: F.escapeSequence,
+	integer: F.integer,
+	float: F.float,
+	lineContinuation: F.lineContinuation,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -786,9 +784,6 @@ export const ir: {
 	leftHandSide,
 	rightHandSide,
 	fExpression,
-	integer,
-	float,
 	keywordIdentifier,
-	lineContinuation,
 	synonym
 };

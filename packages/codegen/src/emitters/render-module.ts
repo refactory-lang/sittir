@@ -2482,12 +2482,16 @@ function emitTriviaKindIdArm(id: number, variant: string, structName: string): s
 }
 
 function renderTriviaTransportSupport(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const extrasKindNames = nodeMap.extras ?? new Set<string>();
 	const extrasNodes: AssembledNode[] = [];
-	for (const kindName of extrasKindNames) {
+	const seenExtras = new Set<string>();
+	const addExtra = (kindName: string): void => {
+		if (seenExtras.has(kindName)) return;
+		seenExtras.add(kindName);
 		const node = nodeMap.nodes.get(kindName);
-		if (node !== undefined) extrasNodes.push(node);
-	}
+		if (node instanceof AssembledSupertype) node.subtypeNames.forEach(addExtra);
+		else if (node !== undefined) extrasNodes.push(node);
+	};
+	(nodeMap.extras ?? new Set<string>()).forEach(addExtra);
 
 	const lines: string[] = [];
 	lines.push('#[derive(Debug, Clone)]');

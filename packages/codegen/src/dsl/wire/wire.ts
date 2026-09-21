@@ -369,10 +369,9 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
-	const inheritedKeys = baseArg === undefined ? {} : ((baseArg.grammar ?? baseArg) as Record<string, unknown>);
 	const renamedCallbacks = Object.fromEntries(
 		(['extras', 'externals', 'precedences'] as const)
-			.filter((key) => key in cfg || inheritedKeys[key] !== undefined)
+			.filter((key) => key in cfg)
 			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameRule, context)])
 	);
 

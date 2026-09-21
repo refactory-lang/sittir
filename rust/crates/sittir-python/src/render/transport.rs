@@ -1923,12 +1923,18 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
 
 #[derive(Debug, Clone)]
 pub enum TriviaTransport {
+    Comment(CommentTransport),
+    LineContinuationArm1(LineContinuationArm1Transport),
+    LineContinuationArm2(LineContinuationArm2Transport),
     Verbatim(VerbatimTransport),
 }
 
 impl ::sittir_core::prepare::Prepare for TriviaTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
+            TriviaTransport::Comment(t) => t.prepare(ctx),
+            TriviaTransport::LineContinuationArm1(t) => t.prepare(ctx),
+            TriviaTransport::LineContinuationArm2(t) => t.prepare(ctx),
             TriviaTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -1937,6 +1943,9 @@ impl ::sittir_core::prepare::Prepare for TriviaTransport {
 impl ::sittir_core::render::Render for TriviaTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
+            TriviaTransport::Comment(t) => t.render(w),
+            TriviaTransport::LineContinuationArm1(t) => t.render(w),
+            TriviaTransport::LineContinuationArm2(t) => t.render(w),
             TriviaTransport::Verbatim(t) => t.render(w),
         }
     }
@@ -1951,6 +1960,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    74 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
+                    89 => Ok(Self::LineContinuationArm1(LineContinuationArm1Transport::from_napi_value(env, napi_val)?)),
+                    90 => Ok(Self::LineContinuationArm2(LineContinuationArm2Transport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),
@@ -1962,6 +1974,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                     ::napi::Error::from_reason("$type property missing in TriviaTransport")
                 )?;
                 match kind_id {
+                    74 => Ok(Self::Comment(CommentTransport::from_napi_value(env, napi_val)?)),
+                    89 => Ok(Self::LineContinuationArm1(LineContinuationArm1Transport::from_napi_value(env, napi_val)?)),
+                    90 => Ok(Self::LineContinuationArm2(LineContinuationArm2Transport::from_napi_value(env, napi_val)?)),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TriviaTransport",
                     ))),

@@ -6254,6 +6254,210 @@ const methodDefinition$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const methodDefinition$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword);
+const methodDefinition$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$get(
+	C.coerceToMethodDefinition,
+	TSKindId.GetKeyword
+);
+const methodDefinition$get$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$get$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword);
+const methodDefinition$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$set(
+	C.coerceToMethodDefinition,
+	TSKindId.SetKeyword
+);
+const methodDefinition$set$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$set$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$star(F.buildMethodDefinition, TSKindId.Star);
+const methodDefinition$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star);
+const methodDefinition$star$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$star$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const methodDefinition: typeof B.methodDefinition & {
 	get: {
 		strict: (
@@ -6262,6 +6466,57 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6270,6 +6525,57 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6277,21 +6583,198 @@ export const methodDefinition: typeof B.methodDefinition & {
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm5>[0];
+			}
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
 } = {
 	...B.methodDefinition,
 	get: {
 		strict: methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword),
-		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword)
+		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword),
+		arm1: {
+			strict: methodDefinition$get$arm1(methodDefinition$get$applied, F.buildNumberArm1),
+			coerce: methodDefinition$get$arm1(methodDefinition$get$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodDefinition$get$arm2(methodDefinition$get$applied, F.buildNumberArm2),
+			coerce: methodDefinition$get$arm2(methodDefinition$get$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodDefinition$get$arm3(methodDefinition$get$applied, F.buildNumberArm3),
+			coerce: methodDefinition$get$arm3(methodDefinition$get$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodDefinition$get$arm4(methodDefinition$get$applied, F.buildNumberArm4),
+			coerce: methodDefinition$get$arm4(methodDefinition$get$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodDefinition$get$arm5(methodDefinition$get$applied, F.buildNumberArm5),
+			coerce: methodDefinition$get$arm5(methodDefinition$get$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	set: {
 		strict: methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword),
-		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword)
+		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword),
+		arm1: {
+			strict: methodDefinition$set$arm1(methodDefinition$set$applied, F.buildNumberArm1),
+			coerce: methodDefinition$set$arm1(methodDefinition$set$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodDefinition$set$arm2(methodDefinition$set$applied, F.buildNumberArm2),
+			coerce: methodDefinition$set$arm2(methodDefinition$set$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodDefinition$set$arm3(methodDefinition$set$applied, F.buildNumberArm3),
+			coerce: methodDefinition$set$arm3(methodDefinition$set$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodDefinition$set$arm4(methodDefinition$set$applied, F.buildNumberArm4),
+			coerce: methodDefinition$set$arm4(methodDefinition$set$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodDefinition$set$arm5(methodDefinition$set$applied, F.buildNumberArm5),
+			coerce: methodDefinition$set$arm5(methodDefinition$set$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	star: {
 		strict: methodDefinition$star(F.buildMethodDefinition, TSKindId.Star),
-		coerce: methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star)
+		coerce: methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star),
+		arm1: {
+			strict: methodDefinition$star$arm1(methodDefinition$star$applied, F.buildNumberArm1),
+			coerce: methodDefinition$star$arm1(methodDefinition$star$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodDefinition$star$arm2(methodDefinition$star$applied, F.buildNumberArm2),
+			coerce: methodDefinition$star$arm2(methodDefinition$star$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodDefinition$star$arm3(methodDefinition$star$applied, F.buildNumberArm3),
+			coerce: methodDefinition$star$arm3(methodDefinition$star$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodDefinition$star$arm4(methodDefinition$star$applied, F.buildNumberArm4),
+			coerce: methodDefinition$star$arm4(methodDefinition$star$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodDefinition$star$arm5(methodDefinition$star$applied, F.buildNumberArm5),
+			coerce: methodDefinition$star$arm5(methodDefinition$star$appliedCoerce, C.coerceToNumberArm5)
+		}
+	},
+	arm1: {
+		strict: methodDefinition$arm1(F.buildMethodDefinition, F.buildNumberArm1),
+		coerce: methodDefinition$arm1(C.coerceToMethodDefinition, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: methodDefinition$arm2(F.buildMethodDefinition, F.buildNumberArm2),
+		coerce: methodDefinition$arm2(C.coerceToMethodDefinition, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: methodDefinition$arm3(F.buildMethodDefinition, F.buildNumberArm3),
+		coerce: methodDefinition$arm3(C.coerceToMethodDefinition, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: methodDefinition$arm4(F.buildMethodDefinition, F.buildNumberArm4),
+		coerce: methodDefinition$arm4(C.coerceToMethodDefinition, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: methodDefinition$arm5(F.buildMethodDefinition, F.buildNumberArm5),
+		coerce: methodDefinition$arm5(C.coerceToMethodDefinition, C.coerceToNumberArm5)
 	}
 };
 
@@ -6318,6 +6801,51 @@ const pair$stringSingle =
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const pair$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const pair$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const pair$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6362,6 +6890,46 @@ export const pair: typeof B.pair & {
 			) => ReturnType<typeof C.coerceToPair>;
 		};
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm2> }
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm5>[0] }
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm5>[0] }
+		) => ReturnType<typeof C.coerceToPair>;
+	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildComputedPropertyName>[0] }
@@ -6390,9 +6958,124 @@ export const pair: typeof B.pair & {
 			coerce: pair$stringSingle(C.coerceToPair, string.single.coerce)
 		}
 	},
+	arm1: { strict: pair$arm1(F.buildPair, F.buildNumberArm1), coerce: pair$arm1(C.coerceToPair, C.coerceToNumberArm1) },
+	arm2: { strict: pair$arm2(F.buildPair, F.buildNumberArm2), coerce: pair$arm2(C.coerceToPair, C.coerceToNumberArm2) },
+	arm3: { strict: pair$arm3(F.buildPair, F.buildNumberArm3), coerce: pair$arm3(C.coerceToPair, C.coerceToNumberArm3) },
+	arm4: { strict: pair$arm4(F.buildPair, F.buildNumberArm4), coerce: pair$arm4(C.coerceToPair, C.coerceToNumberArm4) },
+	arm5: { strict: pair$arm5(F.buildPair, F.buildNumberArm5), coerce: pair$arm5(C.coerceToPair, C.coerceToNumberArm5) },
 	computedPropertyName: {
 		strict: pair$computedPropertyName(F.buildPair, F.buildComputedPropertyName),
 		coerce: pair$computedPropertyName(C.coerceToPair, C.coerceToComputedPropertyName)
+	}
+};
+
+const pairPattern$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const pairPattern$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
+	};
+export const pairPattern: typeof B.pairPattern & {
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm2> }
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberArm5>[0] }
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberArm5>[0] }
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+} = {
+	...B.pairPattern,
+	arm1: {
+		strict: pairPattern$arm1(F.buildPairPattern, F.buildNumberArm1),
+		coerce: pairPattern$arm1(C.coerceToPairPattern, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: pairPattern$arm2(F.buildPairPattern, F.buildNumberArm2),
+		coerce: pairPattern$arm2(C.coerceToPairPattern, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: pairPattern$arm3(F.buildPairPattern, F.buildNumberArm3),
+		coerce: pairPattern$arm3(C.coerceToPairPattern, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: pairPattern$arm4(F.buildPairPattern, F.buildNumberArm4),
+		coerce: pairPattern$arm4(C.coerceToPairPattern, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: pairPattern$arm5(F.buildPairPattern, F.buildNumberArm5),
+		coerce: pairPattern$arm5(C.coerceToPairPattern, C.coerceToNumberArm5)
 	}
 };
 
@@ -6401,6 +7084,157 @@ const publicFieldDefinition$qmark =
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
 const publicFieldDefinition$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const publicFieldDefinition$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const publicFieldDefinition$arm1$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm1(
+	F.buildPublicFieldDefinition,
+	F.buildNumberArm1
+);
+const publicFieldDefinition$arm1$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm1(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberArm1
+);
+const publicFieldDefinition$arm1$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm1$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm2$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm2(
+	F.buildPublicFieldDefinition,
+	F.buildNumberArm2
+);
+const publicFieldDefinition$arm2$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof C.coerceToNumberArm2>;
+	}
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm2(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberArm2
+);
+const publicFieldDefinition$arm2$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm2$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm3$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm3(
+	F.buildPublicFieldDefinition,
+	F.buildNumberArm3
+);
+const publicFieldDefinition$arm3$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm3(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberArm3
+);
+const publicFieldDefinition$arm3$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm3$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm4$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm4(
+	F.buildPublicFieldDefinition,
+	F.buildNumberArm4
+);
+const publicFieldDefinition$arm4$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm4(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberArm4
+);
+const publicFieldDefinition$arm4$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm4$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm5$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof F.buildNumberArm5>[0];
+	}
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$arm5(
+	F.buildPublicFieldDefinition,
+	F.buildNumberArm5
+);
+const publicFieldDefinition$arm5$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+	}
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$arm5(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberArm5
+);
+const publicFieldDefinition$arm5$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$arm5$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
@@ -6421,6 +7255,137 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'optionalityMarker'>
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm1$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm1$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm1$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm1$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm1$appliedCoerce>;
+		};
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm2>;
+			}
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm2$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm2$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm2$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm2$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm2$appliedCoerce>;
+		};
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm3$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm3$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm3$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm3$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm3$appliedCoerce>;
+		};
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm4$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm4$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm4$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm4$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm4$appliedCoerce>;
+		};
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm5>[0];
+			}
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm5$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm5$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm5$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$arm5$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$arm5$appliedCoerce>;
+		};
+	};
 } = {
 	...B.publicFieldDefinition,
 	qmark: {
@@ -6430,6 +7395,66 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 	bang: {
 		strict: publicFieldDefinition$bang(F.buildPublicFieldDefinition, TSKindId.Bang),
 		coerce: publicFieldDefinition$bang(C.coerceToPublicFieldDefinition, TSKindId.Bang)
+	},
+	arm1: {
+		strict: publicFieldDefinition$arm1(F.buildPublicFieldDefinition, F.buildNumberArm1),
+		coerce: publicFieldDefinition$arm1(C.coerceToPublicFieldDefinition, C.coerceToNumberArm1),
+		qmark: {
+			strict: publicFieldDefinition$arm1$qmark(publicFieldDefinition$arm1$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$arm1$qmark(publicFieldDefinition$arm1$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$arm1$bang(publicFieldDefinition$arm1$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$arm1$bang(publicFieldDefinition$arm1$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	arm2: {
+		strict: publicFieldDefinition$arm2(F.buildPublicFieldDefinition, F.buildNumberArm2),
+		coerce: publicFieldDefinition$arm2(C.coerceToPublicFieldDefinition, C.coerceToNumberArm2),
+		qmark: {
+			strict: publicFieldDefinition$arm2$qmark(publicFieldDefinition$arm2$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$arm2$qmark(publicFieldDefinition$arm2$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$arm2$bang(publicFieldDefinition$arm2$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$arm2$bang(publicFieldDefinition$arm2$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	arm3: {
+		strict: publicFieldDefinition$arm3(F.buildPublicFieldDefinition, F.buildNumberArm3),
+		coerce: publicFieldDefinition$arm3(C.coerceToPublicFieldDefinition, C.coerceToNumberArm3),
+		qmark: {
+			strict: publicFieldDefinition$arm3$qmark(publicFieldDefinition$arm3$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$arm3$qmark(publicFieldDefinition$arm3$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$arm3$bang(publicFieldDefinition$arm3$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$arm3$bang(publicFieldDefinition$arm3$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	arm4: {
+		strict: publicFieldDefinition$arm4(F.buildPublicFieldDefinition, F.buildNumberArm4),
+		coerce: publicFieldDefinition$arm4(C.coerceToPublicFieldDefinition, C.coerceToNumberArm4),
+		qmark: {
+			strict: publicFieldDefinition$arm4$qmark(publicFieldDefinition$arm4$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$arm4$qmark(publicFieldDefinition$arm4$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$arm4$bang(publicFieldDefinition$arm4$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$arm4$bang(publicFieldDefinition$arm4$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	arm5: {
+		strict: publicFieldDefinition$arm5(F.buildPublicFieldDefinition, F.buildNumberArm5),
+		coerce: publicFieldDefinition$arm5(C.coerceToPublicFieldDefinition, C.coerceToNumberArm5),
+		qmark: {
+			strict: publicFieldDefinition$arm5$qmark(publicFieldDefinition$arm5$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$arm5$qmark(publicFieldDefinition$arm5$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$arm5$bang(publicFieldDefinition$arm5$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$arm5$bang(publicFieldDefinition$arm5$appliedCoerce, TSKindId.Bang)
+		}
 	}
 };
 
@@ -6445,6 +7470,204 @@ const methodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const methodSignature$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword);
+const methodSignature$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword);
+const methodSignature$get$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$get$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword);
+const methodSignature$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword);
+const methodSignature$set$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$set$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$star(F.buildMethodSignature, TSKindId.Star);
+const methodSignature$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$star(C.coerceToMethodSignature, TSKindId.Star);
+const methodSignature$star$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$star$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const methodSignature: typeof B.methodSignature & {
 	get: {
 		strict: (
@@ -6453,6 +7676,57 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6461,6 +7735,57 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6468,21 +7793,196 @@ export const methodSignature: typeof B.methodSignature & {
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm5>[0] }
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
 } = {
 	...B.methodSignature,
 	get: {
 		strict: methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword),
-		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword)
+		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword),
+		arm1: {
+			strict: methodSignature$get$arm1(methodSignature$get$applied, F.buildNumberArm1),
+			coerce: methodSignature$get$arm1(methodSignature$get$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodSignature$get$arm2(methodSignature$get$applied, F.buildNumberArm2),
+			coerce: methodSignature$get$arm2(methodSignature$get$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodSignature$get$arm3(methodSignature$get$applied, F.buildNumberArm3),
+			coerce: methodSignature$get$arm3(methodSignature$get$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodSignature$get$arm4(methodSignature$get$applied, F.buildNumberArm4),
+			coerce: methodSignature$get$arm4(methodSignature$get$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodSignature$get$arm5(methodSignature$get$applied, F.buildNumberArm5),
+			coerce: methodSignature$get$arm5(methodSignature$get$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	set: {
 		strict: methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword),
-		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword)
+		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword),
+		arm1: {
+			strict: methodSignature$set$arm1(methodSignature$set$applied, F.buildNumberArm1),
+			coerce: methodSignature$set$arm1(methodSignature$set$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodSignature$set$arm2(methodSignature$set$applied, F.buildNumberArm2),
+			coerce: methodSignature$set$arm2(methodSignature$set$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodSignature$set$arm3(methodSignature$set$applied, F.buildNumberArm3),
+			coerce: methodSignature$set$arm3(methodSignature$set$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodSignature$set$arm4(methodSignature$set$applied, F.buildNumberArm4),
+			coerce: methodSignature$set$arm4(methodSignature$set$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodSignature$set$arm5(methodSignature$set$applied, F.buildNumberArm5),
+			coerce: methodSignature$set$arm5(methodSignature$set$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	star: {
 		strict: methodSignature$star(F.buildMethodSignature, TSKindId.Star),
-		coerce: methodSignature$star(C.coerceToMethodSignature, TSKindId.Star)
+		coerce: methodSignature$star(C.coerceToMethodSignature, TSKindId.Star),
+		arm1: {
+			strict: methodSignature$star$arm1(methodSignature$star$applied, F.buildNumberArm1),
+			coerce: methodSignature$star$arm1(methodSignature$star$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: methodSignature$star$arm2(methodSignature$star$applied, F.buildNumberArm2),
+			coerce: methodSignature$star$arm2(methodSignature$star$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: methodSignature$star$arm3(methodSignature$star$applied, F.buildNumberArm3),
+			coerce: methodSignature$star$arm3(methodSignature$star$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: methodSignature$star$arm4(methodSignature$star$applied, F.buildNumberArm4),
+			coerce: methodSignature$star$arm4(methodSignature$star$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: methodSignature$star$arm5(methodSignature$star$applied, F.buildNumberArm5),
+			coerce: methodSignature$star$arm5(methodSignature$star$appliedCoerce, C.coerceToNumberArm5)
+		}
+	},
+	arm1: {
+		strict: methodSignature$arm1(F.buildMethodSignature, F.buildNumberArm1),
+		coerce: methodSignature$arm1(C.coerceToMethodSignature, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: methodSignature$arm2(F.buildMethodSignature, F.buildNumberArm2),
+		coerce: methodSignature$arm2(C.coerceToMethodSignature, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: methodSignature$arm3(F.buildMethodSignature, F.buildNumberArm3),
+		coerce: methodSignature$arm3(C.coerceToMethodSignature, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: methodSignature$arm4(F.buildMethodSignature, F.buildNumberArm4),
+		coerce: methodSignature$arm4(C.coerceToMethodSignature, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: methodSignature$arm5(F.buildMethodSignature, F.buildNumberArm5),
+		coerce: methodSignature$arm5(C.coerceToMethodSignature, C.coerceToNumberArm5)
 	}
 };
 
@@ -6498,6 +7998,222 @@ const abstractMethodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const abstractMethodSignature$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$get(
+	F.buildAbstractMethodSignature,
+	TSKindId.GetKeyword
+);
+const abstractMethodSignature$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$get(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.GetKeyword
+);
+const abstractMethodSignature$get$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$get$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$set(
+	F.buildAbstractMethodSignature,
+	TSKindId.SetKeyword
+);
+const abstractMethodSignature$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$set(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.SetKeyword
+);
+const abstractMethodSignature$set$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$set$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$star(
+	F.buildAbstractMethodSignature,
+	TSKindId.Star
+);
+const abstractMethodSignature$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$star(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.Star
+);
+const abstractMethodSignature$star$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$star$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 	get: {
 		strict: (
@@ -6506,6 +8222,60 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6514,6 +8284,60 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6521,21 +8345,206 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm1>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm2>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm3>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberArm4>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm2>;
+			}
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm5>[0];
+			}
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
 } = {
 	...B.abstractMethodSignature,
 	get: {
 		strict: abstractMethodSignature$get(F.buildAbstractMethodSignature, TSKindId.GetKeyword),
-		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword)
+		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword),
+		arm1: {
+			strict: abstractMethodSignature$get$arm1(abstractMethodSignature$get$applied, F.buildNumberArm1),
+			coerce: abstractMethodSignature$get$arm1(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: abstractMethodSignature$get$arm2(abstractMethodSignature$get$applied, F.buildNumberArm2),
+			coerce: abstractMethodSignature$get$arm2(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: abstractMethodSignature$get$arm3(abstractMethodSignature$get$applied, F.buildNumberArm3),
+			coerce: abstractMethodSignature$get$arm3(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: abstractMethodSignature$get$arm4(abstractMethodSignature$get$applied, F.buildNumberArm4),
+			coerce: abstractMethodSignature$get$arm4(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: abstractMethodSignature$get$arm5(abstractMethodSignature$get$applied, F.buildNumberArm5),
+			coerce: abstractMethodSignature$get$arm5(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	set: {
 		strict: abstractMethodSignature$set(F.buildAbstractMethodSignature, TSKindId.SetKeyword),
-		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword)
+		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword),
+		arm1: {
+			strict: abstractMethodSignature$set$arm1(abstractMethodSignature$set$applied, F.buildNumberArm1),
+			coerce: abstractMethodSignature$set$arm1(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: abstractMethodSignature$set$arm2(abstractMethodSignature$set$applied, F.buildNumberArm2),
+			coerce: abstractMethodSignature$set$arm2(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: abstractMethodSignature$set$arm3(abstractMethodSignature$set$applied, F.buildNumberArm3),
+			coerce: abstractMethodSignature$set$arm3(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: abstractMethodSignature$set$arm4(abstractMethodSignature$set$applied, F.buildNumberArm4),
+			coerce: abstractMethodSignature$set$arm4(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: abstractMethodSignature$set$arm5(abstractMethodSignature$set$applied, F.buildNumberArm5),
+			coerce: abstractMethodSignature$set$arm5(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberArm5)
+		}
 	},
 	star: {
 		strict: abstractMethodSignature$star(F.buildAbstractMethodSignature, TSKindId.Star),
-		coerce: abstractMethodSignature$star(C.coerceToAbstractMethodSignature, TSKindId.Star)
+		coerce: abstractMethodSignature$star(C.coerceToAbstractMethodSignature, TSKindId.Star),
+		arm1: {
+			strict: abstractMethodSignature$star$arm1(abstractMethodSignature$star$applied, F.buildNumberArm1),
+			coerce: abstractMethodSignature$star$arm1(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm1)
+		},
+		arm2: {
+			strict: abstractMethodSignature$star$arm2(abstractMethodSignature$star$applied, F.buildNumberArm2),
+			coerce: abstractMethodSignature$star$arm2(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm2)
+		},
+		arm3: {
+			strict: abstractMethodSignature$star$arm3(abstractMethodSignature$star$applied, F.buildNumberArm3),
+			coerce: abstractMethodSignature$star$arm3(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm3)
+		},
+		arm4: {
+			strict: abstractMethodSignature$star$arm4(abstractMethodSignature$star$applied, F.buildNumberArm4),
+			coerce: abstractMethodSignature$star$arm4(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm4)
+		},
+		arm5: {
+			strict: abstractMethodSignature$star$arm5(abstractMethodSignature$star$applied, F.buildNumberArm5),
+			coerce: abstractMethodSignature$star$arm5(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberArm5)
+		}
+	},
+	arm1: {
+		strict: abstractMethodSignature$arm1(F.buildAbstractMethodSignature, F.buildNumberArm1),
+		coerce: abstractMethodSignature$arm1(C.coerceToAbstractMethodSignature, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: abstractMethodSignature$arm2(F.buildAbstractMethodSignature, F.buildNumberArm2),
+		coerce: abstractMethodSignature$arm2(C.coerceToAbstractMethodSignature, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: abstractMethodSignature$arm3(F.buildAbstractMethodSignature, F.buildNumberArm3),
+		coerce: abstractMethodSignature$arm3(C.coerceToAbstractMethodSignature, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: abstractMethodSignature$arm4(F.buildAbstractMethodSignature, F.buildNumberArm4),
+		coerce: abstractMethodSignature$arm4(C.coerceToAbstractMethodSignature, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: abstractMethodSignature$arm5(F.buildAbstractMethodSignature, F.buildNumberArm5),
+		coerce: abstractMethodSignature$arm5(C.coerceToAbstractMethodSignature, C.coerceToNumberArm5)
 	}
 };
 
@@ -7015,6 +9024,51 @@ const enumAssignment$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
+const enumAssignment$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const enumAssignment$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 const enumAssignment$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -7068,6 +9122,50 @@ export const enumAssignment: typeof B.enumAssignment & {
 			) => ReturnType<typeof C.coerceToEnumAssignment>;
 		};
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm5>[0] }
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
@@ -7097,6 +9195,26 @@ export const enumAssignment: typeof B.enumAssignment & {
 			strict: enumAssignment$stringSingle(F.buildEnumAssignment, string.single.strict),
 			coerce: enumAssignment$stringSingle(C.coerceToEnumAssignment, string.single.coerce)
 		}
+	},
+	arm1: {
+		strict: enumAssignment$arm1(F.buildEnumAssignment, F.buildNumberArm1),
+		coerce: enumAssignment$arm1(C.coerceToEnumAssignment, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: enumAssignment$arm2(F.buildEnumAssignment, F.buildNumberArm2),
+		coerce: enumAssignment$arm2(C.coerceToEnumAssignment, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: enumAssignment$arm3(F.buildEnumAssignment, F.buildNumberArm3),
+		coerce: enumAssignment$arm3(C.coerceToEnumAssignment, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: enumAssignment$arm4(F.buildEnumAssignment, F.buildNumberArm4),
+		coerce: enumAssignment$arm4(C.coerceToEnumAssignment, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: enumAssignment$arm5(F.buildEnumAssignment, F.buildNumberArm5),
+		coerce: enumAssignment$arm5(C.coerceToEnumAssignment, C.coerceToNumberArm5)
 	},
 	computedPropertyName: {
 		strict: enumAssignment$computedPropertyName(F.buildEnumAssignment, F.buildComputedPropertyName),
@@ -7563,6 +9681,130 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 	}
 };
 
+const typeQuerySubscriptExpression$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF> }): ReturnType<PF> => {
+		const { index: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(...seated) });
+	};
+const typeQuerySubscriptExpression$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { index: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(seated) });
+	};
+export const typeQuerySubscriptExpression: typeof B.typeQuerySubscriptExpression & {
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof F.buildNumberArm2>;
+			}
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof F.buildNumberArm5>[0];
+			}
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+} = {
+	...B.typeQuerySubscriptExpression,
+	arm1: {
+		strict: typeQuerySubscriptExpression$arm1(F.buildTypeQuerySubscriptExpression, F.buildNumberArm1),
+		coerce: typeQuerySubscriptExpression$arm1(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: typeQuerySubscriptExpression$arm2(F.buildTypeQuerySubscriptExpression, F.buildNumberArm2),
+		coerce: typeQuerySubscriptExpression$arm2(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: typeQuerySubscriptExpression$arm3(F.buildTypeQuerySubscriptExpression, F.buildNumberArm3),
+		coerce: typeQuerySubscriptExpression$arm3(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: typeQuerySubscriptExpression$arm4(F.buildTypeQuerySubscriptExpression, F.buildNumberArm4),
+		coerce: typeQuerySubscriptExpression$arm4(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: typeQuerySubscriptExpression$arm5(F.buildTypeQuerySubscriptExpression, F.buildNumberArm5),
+		coerce: typeQuerySubscriptExpression$arm5(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberArm5)
+	}
+};
+
 const typeQueryCallExpression$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
@@ -7606,6 +9848,36 @@ const typeQueryCallExpression$typeQuerySubscriptExpression =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryCallExpression$numberArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberArm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
 export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 	import: {
@@ -7671,6 +9943,66 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
 	};
 } = {
 	...B.typeQueryCallExpression,
@@ -7714,7 +10046,57 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 		coerce: typeQueryCallExpression$typeQuerySubscriptExpression(
 			C.coerceToTypeQueryCallExpression,
 			C.coerceToTypeQuerySubscriptExpression
-		)
+		),
+		arm1: {
+			strict: typeQueryCallExpression$numberArm1(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm1.strict
+			),
+			coerce: typeQueryCallExpression$numberArm1(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm1.coerce
+			)
+		},
+		arm2: {
+			strict: typeQueryCallExpression$numberArm2(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm2.strict
+			),
+			coerce: typeQueryCallExpression$numberArm2(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm2.coerce
+			)
+		},
+		arm3: {
+			strict: typeQueryCallExpression$numberArm3(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm3.strict
+			),
+			coerce: typeQueryCallExpression$numberArm3(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm3.coerce
+			)
+		},
+		arm4: {
+			strict: typeQueryCallExpression$numberArm4(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm4.strict
+			),
+			coerce: typeQueryCallExpression$numberArm4(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm4.coerce
+			)
+		},
+		arm5: {
+			strict: typeQueryCallExpression$numberArm5(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm5.strict
+			),
+			coerce: typeQueryCallExpression$numberArm5(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.arm5.coerce
+			)
+		}
 	}
 };
 
@@ -7761,6 +10143,36 @@ const typeQueryInstantiationExpression$typeQuerySubscriptExpression =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryInstantiationExpression$numberArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberArm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
 export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationExpression & {
 	import: {
@@ -7826,6 +10238,66 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		arm5: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
 	};
 } = {
 	...B.typeQueryInstantiationExpression,
@@ -7878,11 +10350,81 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 		coerce: typeQueryInstantiationExpression$typeQuerySubscriptExpression(
 			C.coerceToTypeQueryInstantiationExpression,
 			C.coerceToTypeQuerySubscriptExpression
-		)
+		),
+		arm1: {
+			strict: typeQueryInstantiationExpression$numberArm1(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm1.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberArm1(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm1.coerce
+			)
+		},
+		arm2: {
+			strict: typeQueryInstantiationExpression$numberArm2(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm2.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberArm2(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm2.coerce
+			)
+		},
+		arm3: {
+			strict: typeQueryInstantiationExpression$numberArm3(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm3.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberArm3(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm3.coerce
+			)
+		},
+		arm4: {
+			strict: typeQueryInstantiationExpression$numberArm4(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm4.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberArm4(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm4.coerce
+			)
+		},
+		arm5: {
+			strict: typeQueryInstantiationExpression$numberArm5(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm5.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberArm5(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.arm5.coerce
+			)
+		}
 	}
 };
 
 const typeQuery$subscriptExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberArm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberArm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberArm3 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberArm4 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberArm5 =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -7926,6 +10468,26 @@ export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
+		arm1: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm1.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm1.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		arm2: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm2.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm2.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		arm3: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm3.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm3.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		arm4: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm4.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm4.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		arm5: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm5.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.arm5.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
 	};
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryMemberExpression>) => ReturnType<typeof F.buildTypeQuery>;
@@ -7975,7 +10537,27 @@ export const typeQuery: typeof B.typeQuery & {
 	...B.typeQuery,
 	subscriptExpression: {
 		strict: typeQuery$subscriptExpression(F.buildTypeQuery, F.buildTypeQuerySubscriptExpression),
-		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression)
+		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression),
+		arm1: {
+			strict: typeQuery$numberArm1(F.buildTypeQuery, typeQuerySubscriptExpression.arm1.strict),
+			coerce: typeQuery$numberArm1(F.buildTypeQuery, typeQuerySubscriptExpression.arm1.coerce)
+		},
+		arm2: {
+			strict: typeQuery$numberArm2(F.buildTypeQuery, typeQuerySubscriptExpression.arm2.strict),
+			coerce: typeQuery$numberArm2(F.buildTypeQuery, typeQuerySubscriptExpression.arm2.coerce)
+		},
+		arm3: {
+			strict: typeQuery$numberArm3(F.buildTypeQuery, typeQuerySubscriptExpression.arm3.strict),
+			coerce: typeQuery$numberArm3(F.buildTypeQuery, typeQuerySubscriptExpression.arm3.coerce)
+		},
+		arm4: {
+			strict: typeQuery$numberArm4(F.buildTypeQuery, typeQuerySubscriptExpression.arm4.strict),
+			coerce: typeQuery$numberArm4(F.buildTypeQuery, typeQuerySubscriptExpression.arm4.coerce)
+		},
+		arm5: {
+			strict: typeQuery$numberArm5(F.buildTypeQuery, typeQuerySubscriptExpression.arm5.strict),
+			coerce: typeQuery$numberArm5(F.buildTypeQuery, typeQuerySubscriptExpression.arm5.coerce)
+		}
 	},
 	memberExpression: {
 		strict: typeQuery$memberExpression(F.buildTypeQuery, F.buildTypeQueryMemberExpression),
@@ -8015,7 +10597,161 @@ export const typeQuery: typeof B.typeQuery & {
 	}
 };
 
+const _number$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> }): ReturnType<PF> => {
+		const { argument: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) });
+	};
+const _number$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { argument: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) });
+	};
+export const _number: typeof B._number & {
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberArm5>[0] }
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+} = {
+	...B._number,
+	arm1: {
+		strict: _number$arm1(F.build_Number, F.buildNumberArm1),
+		coerce: _number$arm1(C.coerceTo_Number, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: _number$arm2(F.build_Number, F.buildNumberArm2),
+		coerce: _number$arm2(C.coerceTo_Number, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: _number$arm3(F.build_Number, F.buildNumberArm3),
+		coerce: _number$arm3(C.coerceTo_Number, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: _number$arm4(F.build_Number, F.buildNumberArm4),
+		coerce: _number$arm4(C.coerceTo_Number, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: _number$arm5(F.build_Number, F.buildNumberArm5),
+		coerce: _number$arm5(C.coerceTo_Number, C.coerceToNumberArm5)
+	}
+};
+
 const literalType$number =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberArm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberArm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberArm3 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberArm4 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberArm5 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$arm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$arm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$arm3 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$arm4 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$arm5 =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -8051,6 +10787,46 @@ export const literalType: typeof B.literalType & {
 	number: {
 		strict: (...args: ArgsOf<typeof F.build_Number>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (...args: ArgsOf<typeof C.coerceTo_Number>) => ReturnType<typeof F.buildLiteralType>;
+		arm1: {
+			strict: (...args: ArgsOf<typeof _number.arm1.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.arm1.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		arm2: {
+			strict: (...args: ArgsOf<typeof _number.arm2.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.arm2.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		arm3: {
+			strict: (...args: ArgsOf<typeof _number.arm3.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.arm3.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		arm4: {
+			strict: (...args: ArgsOf<typeof _number.arm4.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.arm4.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		arm5: {
+			strict: (...args: ArgsOf<typeof _number.arm5.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.arm5.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+	};
+	arm1: {
+		strict: (...args: ArgsOf<typeof F.buildNumberArm1>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm1>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	arm2: {
+		strict: (...args: ArgsOf<typeof F.buildNumberArm2>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm2>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	arm3: {
+		strict: (...args: ArgsOf<typeof F.buildNumberArm3>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm3>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	arm4: {
+		strict: (...args: ArgsOf<typeof F.buildNumberArm4>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm4>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	arm5: {
+		strict: (...args: ArgsOf<typeof F.buildNumberArm5>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberArm5>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
@@ -8084,7 +10860,47 @@ export const literalType: typeof B.literalType & {
 	...B.literalType,
 	number: {
 		strict: literalType$number(F.buildLiteralType, F.build_Number),
-		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number)
+		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number),
+		arm1: {
+			strict: literalType$numberArm1(F.buildLiteralType, _number.arm1.strict),
+			coerce: literalType$numberArm1(F.buildLiteralType, _number.arm1.coerce)
+		},
+		arm2: {
+			strict: literalType$numberArm2(F.buildLiteralType, _number.arm2.strict),
+			coerce: literalType$numberArm2(F.buildLiteralType, _number.arm2.coerce)
+		},
+		arm3: {
+			strict: literalType$numberArm3(F.buildLiteralType, _number.arm3.strict),
+			coerce: literalType$numberArm3(F.buildLiteralType, _number.arm3.coerce)
+		},
+		arm4: {
+			strict: literalType$numberArm4(F.buildLiteralType, _number.arm4.strict),
+			coerce: literalType$numberArm4(F.buildLiteralType, _number.arm4.coerce)
+		},
+		arm5: {
+			strict: literalType$numberArm5(F.buildLiteralType, _number.arm5.strict),
+			coerce: literalType$numberArm5(F.buildLiteralType, _number.arm5.coerce)
+		}
+	},
+	arm1: {
+		strict: literalType$arm1(F.buildLiteralType, F.buildNumberArm1),
+		coerce: literalType$arm1(F.buildLiteralType, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: literalType$arm2(F.buildLiteralType, F.buildNumberArm2),
+		coerce: literalType$arm2(F.buildLiteralType, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: literalType$arm3(F.buildLiteralType, F.buildNumberArm3),
+		coerce: literalType$arm3(F.buildLiteralType, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: literalType$arm4(F.buildLiteralType, F.buildNumberArm4),
+		coerce: literalType$arm4(F.buildLiteralType, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: literalType$arm5(F.buildLiteralType, F.buildNumberArm5),
+		coerce: literalType$arm5(F.buildLiteralType, C.coerceToNumberArm5)
 	},
 	string: {
 		strict: literalType$string(F.buildLiteralType, F.buildString),
@@ -8327,6 +11143,51 @@ const propertySignature$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
+const propertySignature$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const propertySignature$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$arm5 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 const propertySignature$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -8380,6 +11241,52 @@ export const propertySignature: typeof B.propertySignature & {
 			) => ReturnType<typeof C.coerceToPropertySignature>;
 		};
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm1>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm1>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberArm2> }
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm2>;
+			}
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm3>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm3>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberArm4>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberArm4>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	arm5: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberArm5>[0];
+			}
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberArm5>[0];
+			}
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
 	computedPropertyName: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
@@ -8412,6 +11319,26 @@ export const propertySignature: typeof B.propertySignature & {
 			strict: propertySignature$stringSingle(F.buildPropertySignature, string.single.strict),
 			coerce: propertySignature$stringSingle(C.coerceToPropertySignature, string.single.coerce)
 		}
+	},
+	arm1: {
+		strict: propertySignature$arm1(F.buildPropertySignature, F.buildNumberArm1),
+		coerce: propertySignature$arm1(C.coerceToPropertySignature, C.coerceToNumberArm1)
+	},
+	arm2: {
+		strict: propertySignature$arm2(F.buildPropertySignature, F.buildNumberArm2),
+		coerce: propertySignature$arm2(C.coerceToPropertySignature, C.coerceToNumberArm2)
+	},
+	arm3: {
+		strict: propertySignature$arm3(F.buildPropertySignature, F.buildNumberArm3),
+		coerce: propertySignature$arm3(C.coerceToPropertySignature, C.coerceToNumberArm3)
+	},
+	arm4: {
+		strict: propertySignature$arm4(F.buildPropertySignature, F.buildNumberArm4),
+		coerce: propertySignature$arm4(C.coerceToPropertySignature, C.coerceToNumberArm4)
+	},
+	arm5: {
+		strict: propertySignature$arm5(F.buildPropertySignature, F.buildNumberArm5),
+		coerce: propertySignature$arm5(C.coerceToPropertySignature, C.coerceToNumberArm5)
 	},
 	computedPropertyName: {
 		strict: propertySignature$computedPropertyName(F.buildPropertySignature, F.buildComputedPropertyName),
@@ -9626,11 +12553,33 @@ export const updateExpression: {
 };
 
 export const comment: {
+	readonly strict: typeof F.buildCommentLine;
+	readonly coerce: typeof C.coerceToCommentLine;
 	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
 	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
 } = {
+	strict: F.buildCommentLine,
+	coerce: C.coerceToCommentLine,
 	line: { strict: F.buildCommentLine, coerce: C.coerceToCommentLine },
 	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
+};
+
+export const number: {
+	readonly strict: typeof F.buildNumberArm2;
+	readonly coerce: typeof C.coerceToNumberArm2;
+	readonly arm1: { strict: typeof F.buildNumberArm1; coerce: typeof C.coerceToNumberArm1 };
+	readonly arm2: { strict: typeof F.buildNumberArm2; coerce: typeof C.coerceToNumberArm2 };
+	readonly arm3: { strict: typeof F.buildNumberArm3; coerce: typeof C.coerceToNumberArm3 };
+	readonly arm4: { strict: typeof F.buildNumberArm4; coerce: typeof C.coerceToNumberArm4 };
+	readonly arm5: { strict: typeof F.buildNumberArm5; coerce: typeof C.coerceToNumberArm5 };
+} = {
+	strict: F.buildNumberArm2,
+	coerce: C.coerceToNumberArm2,
+	arm1: { strict: F.buildNumberArm1, coerce: C.coerceToNumberArm1 },
+	arm2: { strict: F.buildNumberArm2, coerce: C.coerceToNumberArm2 },
+	arm3: { strict: F.buildNumberArm3, coerce: C.coerceToNumberArm3 },
+	arm4: { strict: F.buildNumberArm4, coerce: C.coerceToNumberArm4 },
+	arm5: { strict: F.buildNumberArm5, coerce: C.coerceToNumberArm5 }
 };
 
 export const metaProperty: {

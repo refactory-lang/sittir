@@ -1643,6 +1643,46 @@ describe('const_parameter sub-factories', () => {
 		expect((node as any).value()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('negativeLiteral.arm1 builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.arm1({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.arm2 builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.arm2({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.arm3 builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.arm3({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.arm4 builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.arm4({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('negativeLiteral.floatLiteral builds the parent', () => {
 		const node = ir.constParameter.negativeLiteral.floatLiteral({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
@@ -2694,6 +2734,130 @@ describe('generic_function sub-factories', () => {
 			} as any,
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm1 builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.arm1({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm2 builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.arm2({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0x1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm3 builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.arm3({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0b0' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm4 builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.arm4({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0o0' }
+			]
 		});
 		expect(node.$type).toBe(TSKindId.GenericFunction);
 		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
@@ -4775,6 +4939,50 @@ describe('call_expression sub-factories', () => {
 		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('fieldExpression.arm1 builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.arm1({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm2 builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.arm2({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0x1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm3 builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.arm3({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0b0' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.arm4 builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.arm4({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0o0' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('awaitExpression builds the parent', () => {
 		const node = ir.callExpression.awaitExpression({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
@@ -5467,6 +5675,546 @@ describe('field_initializer sub-factories', () => {
 		expect((node as any).field()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('arm1 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.isize builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.isize builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.isize builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.isize builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.usize builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.usize builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.usize builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.usize builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm1.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2 builds the parent', () => {
+		const node = ir.fieldInitializer.arm2({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0x1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3 builds the parent', () => {
+		const node = ir.fieldInitializer.arm3({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0b0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4 builds the parent', () => {
+		const node = ir.fieldInitializer.arm4({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0o0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('base_field_initializer', () => {
@@ -5882,6 +6630,546 @@ describe('field_expression sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
 		expect((node as any).field()?.$type).toBe(TSKindId.Identifier);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1 builds the parent', () => {
+		const node = ir.fieldExpression.arm1({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u8 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u8 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u8 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u8 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i8 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i8 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i8 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i8 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u16 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u16 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u16 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u16 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i16 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i16 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i16 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i16 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u32 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u32 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u32 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u32 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i32 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i32 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i32 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i32 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u64 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u64 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u64 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u64 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i64 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i64 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i64 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i64 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u128 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u128 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u128 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u128 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i128 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i128 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i128 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i128 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.isize builds the parent', () => {
+		const node = ir.fieldExpression.arm1.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.isize builds the parent', () => {
+		const node = ir.fieldExpression.arm2.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.isize builds the parent', () => {
+		const node = ir.fieldExpression.arm3.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.isize builds the parent', () => {
+		const node = ir.fieldExpression.arm4.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.usize builds the parent', () => {
+		const node = ir.fieldExpression.arm1.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.usize builds the parent', () => {
+		const node = ir.fieldExpression.arm2.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.usize builds the parent', () => {
+		const node = ir.fieldExpression.arm3.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.usize builds the parent', () => {
+		const node = ir.fieldExpression.arm4.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f32 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f32 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f32 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f32 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f64 builds the parent', () => {
+		const node = ir.fieldExpression.arm1.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f64 builds the parent', () => {
+		const node = ir.fieldExpression.arm2.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f64 builds the parent', () => {
+		const node = ir.fieldExpression.arm3.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f64 builds the parent', () => {
+		const node = ir.fieldExpression.arm4.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2 builds the parent', () => {
+		const node = ir.fieldExpression.arm2({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0x1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3 builds the parent', () => {
+		const node = ir.fieldExpression.arm3({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0b0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4 builds the parent', () => {
+		const node = ir.fieldExpression.arm4({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0o0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralArm4);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -6405,6 +7693,366 @@ describe('negative_literal', () => {
 });
 
 describe('negative_literal sub-factories', () => {
+	it('arm1 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.u8({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.u8({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.u8({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.u8({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.i8({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.i8({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.i8({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.i8({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.u16({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.u16({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.u16({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.u16({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.i16({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.i16({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.i16({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.i16({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.u32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.u32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.u32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.u32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.i32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.i32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.i32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.i32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.u64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.u64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.u64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.u64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.i64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.i64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.i64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.i64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.u128({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.u128({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.u128({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.u128({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.i128({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.i128({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.i128({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.i128({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.isize builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.isize({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.isize builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.isize({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.isize builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.isize({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.isize builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.isize({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.usize builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.usize({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.usize builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.usize({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.usize builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.usize({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.usize builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.usize({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.f32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.f32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.f32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.f32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm1.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm1.f64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm1);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2.f64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3.f64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4.f64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm2 builds the parent', () => {
+		const node = ir.negativeLiteral.arm2({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm2);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm3 builds the parent', () => {
+		const node = ir.negativeLiteral.arm3({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm3);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arm4 builds the parent', () => {
+		const node = ir.negativeLiteral.arm4({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralArm4);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('floatLiteral builds the parent', () => {
 		const node = ir.negativeLiteral.floatLiteral('1.0');
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
@@ -6445,6 +8093,108 @@ describe('raw_string_literal', () => {
 			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
 			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
 		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('line_comment', () => {
+	it('factory produces correct type', () => {
+		const node = ir.lineComment({
+			$type: TSKindId.LineCommentRegularDslash,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.lineComment({
+			$type: TSKindId.LineCommentRegularDslash,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('line_comment sub-factories', () => {
+	it('regularDslash builds the parent', () => {
+		const node = ir.lineComment.regularDslash('// a');
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentRegularDslash);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('docOuter builds the parent', () => {
+		const node = ir.lineComment.docOuter({
+			$type: TSKindId.LineDocContent,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentDocOuter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('docInner builds the parent', () => {
+		const node = ir.lineComment.docInner({
+			$type: TSKindId.LineDocContent,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentDocInner);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('content builds the parent', () => {
+		const node = ir.lineComment.content('test');
+		expect(node.$type).toBe(TSKindId.LineComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.LineCommentContent);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('block_comment', () => {
+	it('factory produces correct type', () => {
+		const node = ir.blockComment();
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect(node.$source).toBe(2);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.blockComment();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('block_comment sub-factories', () => {
+	it('docOuter builds the parent', () => {
+		const node = ir.blockComment.docOuter({
+			$type: TSKindId.BlockCommentContent,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentDocOuter);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('docInner builds the parent', () => {
+		const node = ir.blockComment.docInner({
+			$type: TSKindId.BlockCommentContent,
+			$text: 'test',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentDocInner);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('content builds the parent', () => {
+		const node = ir.blockComment.content('test');
+		expect(node.$type).toBe(TSKindId.BlockComment);
+		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentContent);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -6496,6 +8246,410 @@ describe('metavariable', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.metavariable('test');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_arm1 sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.u8.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.i8.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.u16.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.i16.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.u32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.i32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.u64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.i64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.u128.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.i128.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.arm1.isize.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.arm1.usize.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.f32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.arm1.f64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm1);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_arm2 sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.u8.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.i8.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.u16.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.i16.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.u32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.i32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.u64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.i64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.u128.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.i128.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.arm2.isize.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.arm2.usize.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.f32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.arm2.f64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm2);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_arm3 sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.u8.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.i8.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.u16.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.i16.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.u32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.i32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.u64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.i64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.u128.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.i128.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.arm3.isize.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.arm3.usize.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.f32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.arm3.f64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm3);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_arm4 sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.u8.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.i8.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.u16.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.i16.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.u32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.i32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.u64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.i64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.u128.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.i128.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.arm4.isize.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.arm4.usize.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.f32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.arm4.f64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralArm4);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -8119,6 +10273,24 @@ describe('match_arm_block_ending sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.MatchArmBlockEnding);
 		expect((node as any).value()?.$type).toBe(TSKindId.ConstBlock);
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('line_comment_regular_dslash', () => {
+	it('factory produces correct type', () => {
+		const node = ir.lineCommentRegularDslash('// a');
+		expect(node.$type).toBe(TSKindId.LineCommentRegularDslash);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('// a');
+	});
+});
+
+describe('line_comment_content', () => {
+	it('factory produces correct type', () => {
+		const node = ir.lineCommentContent('test');
+		expect(node.$type).toBe(TSKindId.LineCommentContent);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
 	});
 });
 

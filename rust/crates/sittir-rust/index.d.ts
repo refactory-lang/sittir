@@ -310,6 +310,27 @@ export interface BinaryExpressionTransport {
   _binary_expression_after?: number
 }
 
+export interface BlockCommentDocInnerTransport {
+  '$_trivia'?: TransportTrivia
+  _doc?: SlotValue<BlockCommentContentTransport, true>
+  _block_comment_doc_inner_after?: number
+}
+
+export interface BlockCommentDocOuterTransport {
+  '$_trivia'?: TransportTrivia
+  _doc?: SlotValue<BlockCommentContentTransport, true>
+  _block_comment_doc_outer_after?: number
+}
+
+export interface BlockCommentTransport {
+  '$_trivia'?: TransportTrivia
+  _content?: SlotValue<BlockCommentContentTransportSlot, true>
+  _star_slash_before?: number
+  _slash_star_after?: number
+  _block_comment_before?: number
+  _block_comment_after?: number
+}
+
 export interface BlockTransport {
   '$_trivia'?: TransportTrivia
   _label?: SlotValue<LabelTransport>
@@ -1143,6 +1164,25 @@ export interface LifetimeTransport {
   _squote_after?: number
   _lifetime_before?: number
   _lifetime_after?: number
+}
+
+export interface LineCommentDocInnerTransport {
+  '$_trivia'?: TransportTrivia
+  _doc: SlotValue<LineDocContentTransport, true>
+  _line_comment_doc_inner_after?: number
+}
+
+export interface LineCommentDocOuterTransport {
+  '$_trivia'?: TransportTrivia
+  _doc: SlotValue<LineDocContentTransport, true>
+  _line_comment_doc_outer_after?: number
+}
+
+export interface LineCommentTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<LineCommentContentTransportSlot>
+  _line_comment_before?: number
+  _line_comment_after?: number
 }
 
 export interface LoopExpressionTransport {

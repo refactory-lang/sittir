@@ -2896,6 +2896,48 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('negative.integerArm1 builds the parent', () => {
+		const node = ir.casePattern.negative.integerArm1({ prefix: '0x', content: 'a' });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.integerArm2 builds the parent', () => {
+		const node = ir.casePattern.negative.integerArm2({ prefix: '0o', content: '1' });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.integerArm3 builds the parent', () => {
+		const node = ir.casePattern.negative.integerArm3({ prefix: '0b', content: '1' });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.arm4 builds the parent', () => {
+		const node = ir.casePattern.negative.arm4({ content: ['1'] });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm1 builds the parent', () => {
+		const node = ir.casePattern.negative.floatArm1({ content: ['1.0'] });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm2 builds the parent', () => {
+		const node = ir.casePattern.negative.floatArm2({ content: ['1.0'] });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm3 builds the parent', () => {
+		const node = ir.casePattern.negative.floatArm3({ content: ['1e0'] });
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('complexPattern builds the parent', () => {
 		const node = ir.casePattern.complexPattern({
 			imaginary: { $type: TSKindId.IntegerArm4, $text: 'test', $source: 2, $named: true } as any,
@@ -3190,6 +3232,69 @@ describe('keyword_pattern sub-factories', () => {
 		const node = ir.keywordPattern.negative({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			content: { $type: TSKindId.IntegerArm4, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.integerArm1 builds the parent', () => {
+		const node = ir.keywordPattern.negative.integerArm1({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ prefix: '0x', content: 'a' }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.integerArm2 builds the parent', () => {
+		const node = ir.keywordPattern.negative.integerArm2({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ prefix: '0o', content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.integerArm3 builds the parent', () => {
+		const node = ir.keywordPattern.negative.integerArm3({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ prefix: '0b', content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.arm4 builds the parent', () => {
+		const node = ir.keywordPattern.negative.arm4({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['1'] }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm1 builds the parent', () => {
+		const node = ir.keywordPattern.negative.floatArm1({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['1.0'] }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm2 builds the parent', () => {
+		const node = ir.keywordPattern.negative.floatArm2({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['1.0'] }]
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negative.floatArm3 builds the parent', () => {
+		const node = ir.keywordPattern.negative.floatArm3({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			value: [{ content: ['1e0'] }]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).value()).toBeDefined();
@@ -6479,11 +6584,29 @@ describe('with_clause_bare', () => {
 	});
 });
 
+describe('string_start', () => {
+	it('factory produces correct type', () => {
+		const node = ir.stringStart('a"');
+		expect(node.$type).toBe(TSKindId.StringStart);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('a"');
+	});
+});
+
 describe('escape_interpolation', () => {
 	it('factory produces correct type', () => {
 		const node = ir.escapeInterpolation('{{');
 		expect(node.$type).toBe(TSKindId.EscapeInterpolation);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('{{');
+	});
+});
+
+describe('string_end', () => {
+	it('factory produces correct type', () => {
+		const node = ir.stringEnd('"');
+		expect(node.$type).toBe(TSKindId.StringEnd);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('"');
 	});
 });

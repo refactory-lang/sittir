@@ -36,6 +36,9 @@ export type AddressRoot =
 	| 'base_field_initializer'
 	| 'binary_expression'
 	| 'block'
+	| 'block_comment'
+	| 'block_comment_doc_inner'
+	| 'block_comment_doc_outer'
 	| 'body'
 	| 'bounded_type'
 	| 'bracketed_type'
@@ -104,6 +107,9 @@ export type AddressRoot =
 	| 'lifetime'
 	| 'lifetime_parameter'
 	| 'lifetimes'
+	| 'line_comment'
+	| 'line_comment_doc_inner'
+	| 'line_comment_doc_outer'
 	| 'loop_expression'
 	| 'macro_definition_brace'
 	| 'macro_definition_bracket'
@@ -372,6 +378,11 @@ export interface AddressBranch {
 	readonly 'block/statements/unsafe_block': 'after';
 	readonly 'block/statements/use_declaration': 'after';
 	readonly 'block/statements/while_expression': 'after';
+	readonly block_comment: 'after' | 'before' | 'slash_star' | 'star_slash';
+	readonly 'block_comment/slash_star': 'after';
+	readonly 'block_comment/star_slash': 'before';
+	readonly block_comment_doc_inner: 'after';
+	readonly block_comment_doc_outer: 'after';
 	readonly body: 'after' | 'before';
 	readonly bounded_type: 'after' | 'before' | 'plus';
 	readonly 'bounded_type/plus': 'after' | 'before';
@@ -859,6 +870,9 @@ export interface AddressBranch {
 	readonly 'lifetimes/lifetime/lifetime': 'after';
 	readonly 'lifetimes/lifetime/separator': 'comma';
 	readonly 'lifetimes/lifetime/separator/comma': 'after' | 'before';
+	readonly line_comment: 'after' | 'before';
+	readonly line_comment_doc_inner: 'after';
+	readonly line_comment_doc_outer: 'after';
 	readonly loop_expression: 'after' | 'before' | 'colon' | 'loop_keyword';
 	readonly 'loop_expression/colon': 'after' | 'before';
 	readonly 'loop_expression/loop_keyword': 'after' | 'before';
@@ -2021,6 +2035,12 @@ export interface AddressLeaf {
 	readonly 'block/statements/unsafe_block/after': WhitespaceArm;
 	readonly 'block/statements/use_declaration/after': WhitespaceArm;
 	readonly 'block/statements/while_expression/after': WhitespaceArm;
+	readonly 'block_comment/after': WhitespaceArm;
+	readonly 'block_comment/before': WhitespaceArm;
+	readonly 'block_comment/slash_star/after': WhitespaceArm;
+	readonly 'block_comment/star_slash/before': WhitespaceArm;
+	readonly 'block_comment_doc_inner/after': WhitespaceArm;
+	readonly 'block_comment_doc_outer/after': WhitespaceArm;
 	readonly 'body/after': WhitespaceArm;
 	readonly 'body/before': WhitespaceArm;
 	readonly 'bounded_type/after': WhitespaceArm;
@@ -2488,6 +2508,10 @@ export interface AddressLeaf {
 	readonly 'lifetimes/lifetime/separator/comma/after': SpacingArm;
 	readonly 'lifetimes/lifetime/separator/comma/before': SpacingArm;
 	readonly 'lifetimes/lifetime/start': WhitespaceArm;
+	readonly 'line_comment/after': WhitespaceArm;
+	readonly 'line_comment/before': WhitespaceArm;
+	readonly 'line_comment_doc_inner/after': WhitespaceArm;
+	readonly 'line_comment_doc_outer/after': WhitespaceArm;
 	readonly 'loop_expression/after': WhitespaceArm;
 	readonly 'loop_expression/before': WhitespaceArm;
 	readonly 'loop_expression/colon/after': WhitespaceArm;

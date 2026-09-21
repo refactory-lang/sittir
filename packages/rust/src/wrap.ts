@@ -10241,6 +10241,115 @@ export function wrapEscapeSequence(
 	);
 }
 
+export function wrapLineComment(
+	data: T.LineComment & {
+		readonly _line_comment_regular_dslash?:
+			| T.LineCommentRegularDslash
+			| T.LineCommentDocOuter
+			| T.LineCommentDocInner
+			| T.LineCommentContent;
+		readonly _line_comment_doc_outer?:
+			| T.LineCommentRegularDslash
+			| T.LineCommentDocOuter
+			| T.LineCommentDocInner
+			| T.LineCommentContent;
+		readonly _line_comment_doc_inner?:
+			| T.LineCommentRegularDslash
+			| T.LineCommentDocOuter
+			| T.LineCommentDocInner
+			| T.LineCommentContent;
+		readonly _line_comment_content?:
+			| T.LineCommentRegularDslash
+			| T.LineCommentDocOuter
+			| T.LineCommentDocInner
+			| T.LineCommentContent;
+	},
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_line_comment_regular_dslash',
+		'_line_comment_doc_outer',
+		'_line_comment_doc_inner',
+		'_line_comment_content'
+	]);
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, [
+				'_line_comment_content',
+				'_line_comment_doc_inner',
+				'_line_comment_doc_outer',
+				'_line_comment_regular_dslash'
+			]),
+			$type: TSKindId.LineComment as const,
+			_content: normalizeSingularWrapSlot(
+				data._content ??
+					data._line_comment_regular_dslash ??
+					data._line_comment_doc_outer ??
+					data._line_comment_doc_inner ??
+					data._line_comment_content,
+				'content',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+
+			content() {
+				return drillIn<
+					T.LineCommentRegularDslash | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentContent
+				>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.LineComment['_content']>) => wrapLineComment({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapBlockComment(
+	data: T.BlockComment & {
+		readonly _block_comment_doc_outer?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+		readonly _block_comment_doc_inner?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+		readonly _block_comment_content?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent;
+	},
+	tree: TreeHandle
+) {
+	data = _keepModelledSlots(data, [
+		'_content',
+		'_block_comment_doc_outer',
+		'_block_comment_doc_inner',
+		'_block_comment_content'
+	]);
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, ['_block_comment_content', '_block_comment_doc_inner', '_block_comment_doc_outer']),
+			$type: TSKindId.BlockComment as const,
+			_content: normalizeSingularWrapSlot(
+				data._content ?? data._block_comment_doc_outer ?? data._block_comment_doc_inner ?? data._block_comment_content,
+				'content',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+
+			content() {
+				return drillIn<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent | undefined>(
+					this._content,
+					tree
+				);
+			},
+			$with: {
+				content: (v: NonNullable<T.BlockComment['_content']>) =>
+					wrapBlockComment({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapShebang(data: T.Shebang, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['shebang'], 'shebang');
@@ -12917,6 +13026,110 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 					wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
 				value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
 					wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_doc']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.LineCommentDocOuter as const,
+			_doc: normalizeSingularWrapSlot(data._doc, 'doc', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'doc',
+				span: (data as _NodeData).$span
+			}),
+
+			doc() {
+				return drillIn<T.LineDocContent>(this._doc, tree);
+			},
+			$with: {
+				doc: (v: NonNullable<T.LineCommentDocOuter['_doc']>) =>
+					wrapLineCommentDocOuter({ ...$edited(data), _doc: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_doc']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.LineCommentDocInner as const,
+			_doc: normalizeSingularWrapSlot(data._doc, 'doc', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'doc',
+				span: (data as _NodeData).$span
+			}),
+
+			doc() {
+				return drillIn<T.LineDocContent>(this._doc, tree);
+			},
+			$with: {
+				doc: (v: NonNullable<T.LineCommentDocInner['_doc']>) =>
+					wrapLineCommentDocInner({ ...$edited(data), _doc: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapBlockCommentDocOuter(data: T.BlockCommentDocOuter, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_doc']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.BlockCommentDocOuter as const,
+			_doc: normalizeSingularWrapSlot(data._doc, 'doc', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'doc',
+				span: (data as _NodeData).$span
+			}),
+
+			doc() {
+				return drillIn<T.BlockCommentContent | undefined>(this._doc, tree);
+			},
+			$with: {
+				doc: (v: NonNullable<T.BlockCommentDocOuter['_doc']>) =>
+					wrapBlockCommentDocOuter({ ...$edited(data), _doc: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapBlockCommentDocInner(data: T.BlockCommentDocInner, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_doc']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.BlockCommentDocInner as const,
+			_doc: normalizeSingularWrapSlot(data._doc, 'doc', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'doc',
+				span: (data as _NodeData).$span
+			}),
+
+			doc() {
+				return drillIn<T.BlockCommentContent | undefined>(this._doc, tree);
+			},
+			$with: {
+				doc: (v: NonNullable<T.BlockCommentDocInner['_doc']>) =>
+					wrapBlockCommentDocInner({ ...$edited(data), _doc: v }, tree)
 			}
 		},
 		_treeEngine(tree)
@@ -15915,6 +16128,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.CharLiteral]: (d, t) => wrapCharLiteral(d as unknown as T.CharLiteral, t),
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
 	[TSKindId.BooleanLiteral]: (d) => ({ ...d, $type: TSKindId.BooleanLiteral as const }),
+	[TSKindId.LineComment]: (d, t) => wrapLineComment(d as unknown as T.LineComment, t),
+	[TSKindId.BlockComment]: (d, t) => wrapBlockComment(d as unknown as T.BlockComment, t),
 	[TSKindId.Identifier]: (d) => ({ ...d, $type: TSKindId.Identifier as const }),
 	[TSKindId.Shebang]: (d, t) => wrapShebang(d as unknown as T.Shebang, t),
 	[TSKindId.TypeIdentifier]: (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
@@ -16009,6 +16224,12 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ForeignModItemBody]: (d, t) => wrapForeignModItemBody(d as unknown as T.ForeignModItemBody, t),
 	[TSKindId.MatchArmWithComma]: (d, t) => wrapMatchArmWithComma(d as unknown as T.MatchArmWithComma, t),
 	[TSKindId.MatchArmBlockEnding]: (d, t) => wrapMatchArmBlockEnding(d as unknown as T.MatchArmBlockEnding, t),
+	[TSKindId.LineCommentRegularDslash]: (d) => ({ ...d, $type: TSKindId.LineCommentRegularDslash as const }),
+	[TSKindId.LineCommentDocOuter]: (d, t) => wrapLineCommentDocOuter(d as unknown as T.LineCommentDocOuter, t),
+	[TSKindId.LineCommentDocInner]: (d, t) => wrapLineCommentDocInner(d as unknown as T.LineCommentDocInner, t),
+	[TSKindId.LineCommentContent]: (d) => ({ ...d, $type: TSKindId.LineCommentContent as const }),
+	[TSKindId.BlockCommentDocOuter]: (d, t) => wrapBlockCommentDocOuter(d as unknown as T.BlockCommentDocOuter, t),
+	[TSKindId.BlockCommentDocInner]: (d, t) => wrapBlockCommentDocInner(d as unknown as T.BlockCommentDocInner, t),
 	[TSKindId.TokenTreePatternParen]: (d, t) => wrapTokenTreePatternParen(d as unknown as T.TokenTreePatternParen, t),
 	[TSKindId.TokenTreePatternBracket]: (d, t) =>
 		wrapTokenTreePatternBracket(d as unknown as T.TokenTreePatternBracket, t),
@@ -16045,6 +16266,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FloatLiteral]: (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
 	[TSKindId.StringContent]: (d) => ({ ...d, $type: TSKindId.StringContent as const }),
 	[TSKindId.RawStringLiteralContent]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
+	[TSKindId.LineDocContent]: (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
+	[TSKindId.BlockCommentContent]: (d) => ({ ...d, $type: TSKindId.BlockCommentContent as const }),
 	[TSKindId.RawStringLiteralStart]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralStart as const }),
 	[TSKindId.RawStringLiteralEnd]: (d) => ({ ...d, $type: TSKindId.RawStringLiteralEnd as const }),
 	[TSKindId.ErrorSentinel]: (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const })
@@ -16213,6 +16436,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.CharLiteral]: ReturnType<typeof wrapCharLiteral>;
 	[TSKindId.EscapeSequence]: ReturnType<typeof wrapEscapeSequence>;
 	[TSKindId.BooleanLiteral]: _NodeData & { readonly $type: TSKindId.BooleanLiteral };
+	[TSKindId.LineComment]: ReturnType<typeof wrapLineComment>;
+	[TSKindId.BlockComment]: ReturnType<typeof wrapBlockComment>;
 	[TSKindId.Identifier]: _NodeData & { readonly $type: TSKindId.Identifier };
 	[TSKindId.Shebang]: ReturnType<typeof wrapShebang>;
 	[TSKindId.TypeIdentifier]: _NodeData & { readonly $type: TSKindId.TypeIdentifier };
@@ -16296,6 +16521,12 @@ interface _WrapReturnByKindId {
 	[TSKindId.ForeignModItemBody]: ReturnType<typeof wrapForeignModItemBody>;
 	[TSKindId.MatchArmWithComma]: ReturnType<typeof wrapMatchArmWithComma>;
 	[TSKindId.MatchArmBlockEnding]: ReturnType<typeof wrapMatchArmBlockEnding>;
+	[TSKindId.LineCommentRegularDslash]: _NodeData & { readonly $type: TSKindId.LineCommentRegularDslash };
+	[TSKindId.LineCommentDocOuter]: ReturnType<typeof wrapLineCommentDocOuter>;
+	[TSKindId.LineCommentDocInner]: ReturnType<typeof wrapLineCommentDocInner>;
+	[TSKindId.LineCommentContent]: _NodeData & { readonly $type: TSKindId.LineCommentContent };
+	[TSKindId.BlockCommentDocOuter]: ReturnType<typeof wrapBlockCommentDocOuter>;
+	[TSKindId.BlockCommentDocInner]: ReturnType<typeof wrapBlockCommentDocInner>;
 	[TSKindId.TokenTreePatternParen]: ReturnType<typeof wrapTokenTreePatternParen>;
 	[TSKindId.TokenTreePatternBracket]: ReturnType<typeof wrapTokenTreePatternBracket>;
 	[TSKindId.TokenTreePatternBrace]: ReturnType<typeof wrapTokenTreePatternBrace>;
@@ -16328,6 +16559,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.FloatLiteral]: _NodeData & { readonly $type: TSKindId.FloatLiteral };
 	[TSKindId.StringContent]: _NodeData & { readonly $type: TSKindId.StringContent };
 	[TSKindId.RawStringLiteralContent]: _NodeData & { readonly $type: TSKindId.RawStringLiteralContent };
+	[TSKindId.LineDocContent]: _NodeData & { readonly $type: TSKindId.LineDocContent };
+	[TSKindId.BlockCommentContent]: _NodeData & { readonly $type: TSKindId.BlockCommentContent };
 	[TSKindId.RawStringLiteralStart]: _NodeData & { readonly $type: TSKindId.RawStringLiteralStart };
 	[TSKindId.RawStringLiteralEnd]: _NodeData & { readonly $type: TSKindId.RawStringLiteralEnd };
 	[TSKindId.ErrorSentinel]: _NodeData & { readonly $type: TSKindId.ErrorSentinel };

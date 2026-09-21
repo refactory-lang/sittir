@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 421,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -102,22 +102,48 @@
         "range_expression_prefix": "prefix",
         "range_expression_bare": "bare"
       }
+    },
+    "line_comment": {
+      "definedBy": "override",
+      "childKind": {
+        "line_comment_regular_dslash": "regular_dslash",
+        "line_comment_doc_outer": "doc_outer",
+        "line_comment_doc_inner": "doc_inner",
+        "line_comment_content": "content"
+      }
+    },
+    "block_comment": {
+      "definedBy": "override",
+      "childKind": {
+        "block_comment_doc_outer": "doc_outer",
+        "block_comment_doc_inner": "doc_inner"
+      }
     }
   },
   "variantRoutes": {
     "array_expression_list": "arrayExpression.list",
     "array_expression_semi": "arrayExpression.semi",
+    "char_literal_arm1": "charLiteral.arm1",
+    "char_literal_arm2": "charLiteral.arm2",
     "closure_expression_block": "closureExpression.block",
     "closure_expression_expr": "closureExpression.expr",
     "delim_token_tree_brace": "delimTokenTree.brace",
     "delim_token_tree_bracket": "delimTokenTree.bracket",
     "delim_token_tree_paren": "delimTokenTree.paren",
+    "escape_sequence_arm1": "escapeSequence.arm1",
+    "escape_sequence_arm2": "escapeSequence.arm2",
+    "escape_sequence_arm3": "escapeSequence.arm3",
+    "escape_sequence_arm4": "escapeSequence.arm4",
     "field_pattern_named": "fieldPattern.named",
     "field_pattern_shorthand": "fieldPattern.shorthand",
     "foreign_mod_item_body": "foreignModItem.body",
     "foreign_mod_item_semi": "foreignModItem.semi",
     "impl_item_body": "implItem.body",
     "impl_item_semi": "implItem.semi",
+    "integer_literal_arm1": "integerLiteral.arm1",
+    "integer_literal_arm2": "integerLiteral.arm2",
+    "integer_literal_arm3": "integerLiteral.arm3",
+    "integer_literal_arm4": "integerLiteral.arm4",
     "macro_definition_brace": "macroDefinition.brace",
     "macro_definition_bracket": "macroDefinition.bracket",
     "macro_definition_paren": "macroDefinition.paren",
@@ -362,6 +388,12 @@
     "pointer_type_mut.type": {
       "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
+    },
+    "block_comment_doc_outer.doc": {
+      "doc_comment": "_block_comment_content"
+    },
+    "block_comment_doc_inner.doc": {
+      "doc_comment": "_block_comment_content"
     },
     "token_tree_pattern_paren.token_patterns": {
       "primitive_type": "_primitive_type"
@@ -2614,6 +2646,35 @@
         "nonEmpty": false
       }
     },
+    "line_comment": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_line_comment_regular_dslash",
+          "_line_comment_doc_outer",
+          "_line_comment_doc_inner",
+          "_line_comment_content"
+        ]
+      }
+    },
+    "block_comment": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_block_comment_doc_outer",
+          "_block_comment_doc_inner",
+          "_block_comment_content"
+        ]
+      }
+    },
     "shebang": {
       "content": {
         "unnamed": false,
@@ -3478,6 +3539,42 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "line_comment_doc_outer": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "line_comment_doc_inner": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "block_comment_doc_outer": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "block_comment_doc_inner": {
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4518,6 +4615,17 @@
       "text": "\n\n"
     },
     {
+      "kind": "_block_comment_content",
+      "modelType": "pattern",
+      "typeName": "BlockCommentContent",
+      "factoryName": "blockCommentContent",
+      "irKey": "blockCommentContent",
+      "hidden": false,
+      "pattern": "[^]*",
+      "leafPattern": "/^(?:(?:[^]*))$/u",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_compound_assignment_expr_operator",
       "modelType": "enum",
       "typeName": "CompoundAssignmentExprOperator",
@@ -4824,6 +4932,26 @@
       "text": "﷐\n"
     },
     {
+      "kind": "_inner_block_doc_comment_marker",
+      "modelType": "punctuation",
+      "typeName": "InnerBlockDocCommentMarker",
+      "irKey": "innerBlockDocCommentMarker",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
+      "text": "!"
+    },
+    {
+      "kind": "_inner_line_doc_comment_marker",
+      "modelType": "punctuation",
+      "typeName": "InnerLineDocCommentMarker",
+      "irKey": "innerLineDocCommentMarker",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
+      "text": "!"
+    },
+    {
       "kind": "_kw_async",
       "modelType": "keyword",
       "typeName": "KwAsync",
@@ -5008,6 +5136,17 @@
       ]
     },
     {
+      "kind": "_line_doc_content",
+      "modelType": "pattern",
+      "typeName": "LineDocContent",
+      "factoryName": "lineDocContent",
+      "irKey": "lineDocContent",
+      "hidden": false,
+      "pattern": ".*",
+      "leafPattern": "/^(?:(?:.*))$/u",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_literal",
       "modelType": "supertype",
       "typeName": "Literal",
@@ -5145,6 +5284,26 @@
         "string_literal",
         "super"
       ]
+    },
+    {
+      "kind": "_outer_block_doc_comment_marker",
+      "modelType": "punctuation",
+      "typeName": "OuterBlockDocCommentMarker",
+      "irKey": "outerBlockDocCommentMarker",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*\" as const",
+      "text": "*"
+    },
+    {
+      "kind": "_outer_line_doc_comment_marker",
+      "modelType": "punctuation",
+      "typeName": "OuterLineDocCommentMarker",
+      "irKey": "outerLineDocCommentMarker",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/\" as const",
+      "text": "/"
     },
     {
       "kind": "_path",
@@ -7211,6 +7370,155 @@
         "label",
         "statements",
         "trailing_expression"
+      ]
+    },
+    {
+      "kind": "block_comment",
+      "modelType": "polymorph",
+      "typeName": "BlockComment",
+      "factoryName": "blockComment",
+      "irKey": "blockComment",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "block_comment_doc_outer",
+            "block_comment_doc_inner",
+            "_block_comment_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "block_comment_doc_outer",
+              "parseKind": "block_comment_doc_outer",
+              "seat": {
+                "kind": "block_comment_doc_outer",
+                "shape": "arm",
+                "mount": "docOuter",
+                "seated": true
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "block_comment_doc_inner",
+              "parseKind": "block_comment_doc_inner",
+              "seat": {
+                "kind": "block_comment_doc_inner",
+                "shape": "arm",
+                "mount": "docInner",
+                "seated": true
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "_block_comment_content"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_block_comment_content",
+        "block_comment_doc_inner",
+        "block_comment_doc_outer"
+      ]
+    },
+    {
+      "kind": "block_comment_doc_inner",
+      "modelType": "envelope",
+      "typeName": "BlockCommentDocInner",
+      "factoryName": "blockCommentDocInner",
+      "irKey": "blockCommentDocInner",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_block_comment_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "doc_comment"
+            }
+          ]
+        }
+      ],
+      "name": "block_comment_doc_inner",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_block_comment_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "bareAccepts": [
+        "_block_comment_content"
+      ]
+    },
+    {
+      "kind": "block_comment_doc_outer",
+      "modelType": "envelope",
+      "typeName": "BlockCommentDocOuter",
+      "factoryName": "blockCommentDocOuter",
+      "irKey": "blockCommentDocOuter",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_block_comment_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "doc_comment"
+            }
+          ]
+        }
+      ],
+      "name": "block_comment_doc_outer",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_block_comment_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "bareAccepts": [
+        "_block_comment_content"
       ]
     },
     {
@@ -14297,6 +14605,201 @@
       ]
     },
     {
+      "kind": "line_comment",
+      "modelType": "polymorph",
+      "typeName": "LineComment",
+      "factoryName": "lineComment",
+      "irKey": "lineComment",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "line_comment_regular_dslash",
+            "line_comment_doc_outer",
+            "line_comment_doc_inner",
+            "line_comment_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "line_comment_regular_dslash",
+              "parseKind": "line_comment_regular_dslash",
+              "seat": {
+                "kind": "line_comment_regular_dslash",
+                "shape": "arm",
+                "mount": "regularDslash"
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "line_comment_doc_outer",
+              "parseKind": "line_comment_doc_outer",
+              "seat": {
+                "kind": "line_comment_doc_outer",
+                "shape": "arm",
+                "mount": "docOuter",
+                "seated": true
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "line_comment_doc_inner",
+              "parseKind": "line_comment_doc_inner",
+              "seat": {
+                "kind": "line_comment_doc_inner",
+                "shape": "arm",
+                "mount": "docInner",
+                "seated": true
+              }
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "line_comment_content",
+              "parseKind": "line_comment_content",
+              "seat": {
+                "kind": "line_comment_content",
+                "shape": "arm",
+                "mount": "content"
+              }
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_line_doc_content",
+        "line_comment_content",
+        "line_comment_doc_inner",
+        "line_comment_doc_outer",
+        "line_comment_regular_dslash"
+      ]
+    },
+    {
+      "kind": "line_comment_content",
+      "modelType": "pattern",
+      "typeName": "LineCommentContent",
+      "factoryName": "lineCommentContent",
+      "irKey": "lineCommentContent",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "pattern": ".*",
+      "leafPattern": "/^(?:(?:.*))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "line_comment_doc_inner",
+      "modelType": "envelope",
+      "typeName": "LineCommentDocInner",
+      "factoryName": "lineCommentDocInner",
+      "irKey": "lineCommentDocInner",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_line_doc_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_line_doc_content",
+              "parseKind": "doc_comment"
+            }
+          ]
+        }
+      ],
+      "name": "line_comment_doc_inner",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_line_doc_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "bareAccepts": [
+        "_line_doc_content"
+      ]
+    },
+    {
+      "kind": "line_comment_doc_outer",
+      "modelType": "envelope",
+      "typeName": "LineCommentDocOuter",
+      "factoryName": "lineCommentDocOuter",
+      "irKey": "lineCommentDocOuter",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "_line_doc_content"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_line_doc_content",
+              "parseKind": "doc_comment"
+            }
+          ]
+        }
+      ],
+      "name": "line_comment_doc_outer",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_line_doc_content",
+      "factoryFields": [
+        "doc"
+      ],
+      "bareAccepts": [
+        "_line_doc_content"
+      ]
+    },
+    {
+      "kind": "line_comment_regular_dslash",
+      "modelType": "pattern",
+      "typeName": "LineCommentRegularDslash",
+      "factoryName": "lineCommentRegularDslash",
+      "irKey": "lineCommentRegularDslash",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:\\/\\/)(?:.*))$/u",
+      "factoryShape": "text"
+    },
+    {
       "kind": "literal_keyword",
       "modelType": "keyword",
       "typeName": "LiteralKeyword",
@@ -19036,6 +19539,26 @@
       "text": "/="
     },
     {
+      "kind": "slash_slash",
+      "modelType": "punctuation",
+      "typeName": "SlashSlash",
+      "irKey": "slashSlash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"//\" as const",
+      "text": "//"
+    },
+    {
+      "kind": "slash_star",
+      "modelType": "punctuation",
+      "typeName": "SlashStar",
+      "irKey": "slashStar",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/*\" as const",
+      "text": "/*"
+    },
+    {
       "kind": "slice_pattern",
       "modelType": "envelope",
       "typeName": "SlicePattern",
@@ -19200,6 +19723,16 @@
       "isParameterless": true,
       "stampExpression": "\"*=\" as const",
       "text": "*="
+    },
+    {
+      "kind": "star_slash",
+      "modelType": "punctuation",
+      "typeName": "StarSlash",
+      "irKey": "starSlash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*/\" as const",
+      "text": "*/"
     },
     {
       "kind": "static_item",

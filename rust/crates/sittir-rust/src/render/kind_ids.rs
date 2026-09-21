@@ -955,7 +955,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 124 | 129 | 131 | 132 | 133 | 134 | 135 | 136 | 138 | 139 | 140 | 141 | 149 | 155 | 156 | 157 | 158 | 159 | 164 | 181 | 331 | 365 | 366 | 465 | 468)
+    matches!(kind.0, 1 | 124 | 129 | 131 | 132 | 133 | 134 | 135 | 136 | 138 | 139 | 140 | 141 | 149 | 153 | 155 | 156 | 157 | 158 | 159 | 162 | 163 | 164 | 181 | 331 | 365 | 366 | 401 | 465 | 468)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

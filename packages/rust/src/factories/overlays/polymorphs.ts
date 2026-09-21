@@ -2611,17 +2611,1649 @@ export const wherePredicate: typeof B.wherePredicate & {
 	}
 };
 
+const integerLiteralArm1$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm1: {
+	u8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	};
+} = {
+	u8: {
+		strict: integerLiteralArm1$u8(F.buildIntegerLiteralArm1, 'u8'),
+		coerce: integerLiteralArm1$u8(C.coerceToIntegerLiteralArm1, 'u8')
+	},
+	i8: {
+		strict: integerLiteralArm1$i8(F.buildIntegerLiteralArm1, 'i8'),
+		coerce: integerLiteralArm1$i8(C.coerceToIntegerLiteralArm1, 'i8')
+	},
+	u16: {
+		strict: integerLiteralArm1$u16(F.buildIntegerLiteralArm1, 'u16'),
+		coerce: integerLiteralArm1$u16(C.coerceToIntegerLiteralArm1, 'u16')
+	},
+	i16: {
+		strict: integerLiteralArm1$i16(F.buildIntegerLiteralArm1, 'i16'),
+		coerce: integerLiteralArm1$i16(C.coerceToIntegerLiteralArm1, 'i16')
+	},
+	u32: {
+		strict: integerLiteralArm1$u32(F.buildIntegerLiteralArm1, 'u32'),
+		coerce: integerLiteralArm1$u32(C.coerceToIntegerLiteralArm1, 'u32')
+	},
+	i32: {
+		strict: integerLiteralArm1$i32(F.buildIntegerLiteralArm1, 'i32'),
+		coerce: integerLiteralArm1$i32(C.coerceToIntegerLiteralArm1, 'i32')
+	},
+	u64: {
+		strict: integerLiteralArm1$u64(F.buildIntegerLiteralArm1, 'u64'),
+		coerce: integerLiteralArm1$u64(C.coerceToIntegerLiteralArm1, 'u64')
+	},
+	i64: {
+		strict: integerLiteralArm1$i64(F.buildIntegerLiteralArm1, 'i64'),
+		coerce: integerLiteralArm1$i64(C.coerceToIntegerLiteralArm1, 'i64')
+	},
+	u128: {
+		strict: integerLiteralArm1$u128(F.buildIntegerLiteralArm1, 'u128'),
+		coerce: integerLiteralArm1$u128(C.coerceToIntegerLiteralArm1, 'u128')
+	},
+	i128: {
+		strict: integerLiteralArm1$i128(F.buildIntegerLiteralArm1, 'i128'),
+		coerce: integerLiteralArm1$i128(C.coerceToIntegerLiteralArm1, 'i128')
+	},
+	isize: {
+		strict: integerLiteralArm1$isize(F.buildIntegerLiteralArm1, 'isize'),
+		coerce: integerLiteralArm1$isize(C.coerceToIntegerLiteralArm1, 'isize')
+	},
+	usize: {
+		strict: integerLiteralArm1$usize(F.buildIntegerLiteralArm1, 'usize'),
+		coerce: integerLiteralArm1$usize(C.coerceToIntegerLiteralArm1, 'usize')
+	},
+	f32: {
+		strict: integerLiteralArm1$f32(F.buildIntegerLiteralArm1, 'f32'),
+		coerce: integerLiteralArm1$f32(C.coerceToIntegerLiteralArm1, 'f32')
+	},
+	f64: {
+		strict: integerLiteralArm1$f64(F.buildIntegerLiteralArm1, 'f64'),
+		coerce: integerLiteralArm1$f64(C.coerceToIntegerLiteralArm1, 'f64')
+	}
+};
+
+const integerLiteralArm2$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm2: {
+	u8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	};
+} = {
+	u8: {
+		strict: integerLiteralArm2$u8(F.buildIntegerLiteralArm2, 'u8'),
+		coerce: integerLiteralArm2$u8(C.coerceToIntegerLiteralArm2, 'u8')
+	},
+	i8: {
+		strict: integerLiteralArm2$i8(F.buildIntegerLiteralArm2, 'i8'),
+		coerce: integerLiteralArm2$i8(C.coerceToIntegerLiteralArm2, 'i8')
+	},
+	u16: {
+		strict: integerLiteralArm2$u16(F.buildIntegerLiteralArm2, 'u16'),
+		coerce: integerLiteralArm2$u16(C.coerceToIntegerLiteralArm2, 'u16')
+	},
+	i16: {
+		strict: integerLiteralArm2$i16(F.buildIntegerLiteralArm2, 'i16'),
+		coerce: integerLiteralArm2$i16(C.coerceToIntegerLiteralArm2, 'i16')
+	},
+	u32: {
+		strict: integerLiteralArm2$u32(F.buildIntegerLiteralArm2, 'u32'),
+		coerce: integerLiteralArm2$u32(C.coerceToIntegerLiteralArm2, 'u32')
+	},
+	i32: {
+		strict: integerLiteralArm2$i32(F.buildIntegerLiteralArm2, 'i32'),
+		coerce: integerLiteralArm2$i32(C.coerceToIntegerLiteralArm2, 'i32')
+	},
+	u64: {
+		strict: integerLiteralArm2$u64(F.buildIntegerLiteralArm2, 'u64'),
+		coerce: integerLiteralArm2$u64(C.coerceToIntegerLiteralArm2, 'u64')
+	},
+	i64: {
+		strict: integerLiteralArm2$i64(F.buildIntegerLiteralArm2, 'i64'),
+		coerce: integerLiteralArm2$i64(C.coerceToIntegerLiteralArm2, 'i64')
+	},
+	u128: {
+		strict: integerLiteralArm2$u128(F.buildIntegerLiteralArm2, 'u128'),
+		coerce: integerLiteralArm2$u128(C.coerceToIntegerLiteralArm2, 'u128')
+	},
+	i128: {
+		strict: integerLiteralArm2$i128(F.buildIntegerLiteralArm2, 'i128'),
+		coerce: integerLiteralArm2$i128(C.coerceToIntegerLiteralArm2, 'i128')
+	},
+	isize: {
+		strict: integerLiteralArm2$isize(F.buildIntegerLiteralArm2, 'isize'),
+		coerce: integerLiteralArm2$isize(C.coerceToIntegerLiteralArm2, 'isize')
+	},
+	usize: {
+		strict: integerLiteralArm2$usize(F.buildIntegerLiteralArm2, 'usize'),
+		coerce: integerLiteralArm2$usize(C.coerceToIntegerLiteralArm2, 'usize')
+	},
+	f32: {
+		strict: integerLiteralArm2$f32(F.buildIntegerLiteralArm2, 'f32'),
+		coerce: integerLiteralArm2$f32(C.coerceToIntegerLiteralArm2, 'f32')
+	},
+	f64: {
+		strict: integerLiteralArm2$f64(F.buildIntegerLiteralArm2, 'f64'),
+		coerce: integerLiteralArm2$f64(C.coerceToIntegerLiteralArm2, 'f64')
+	}
+};
+
+const integerLiteralArm3$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm3: {
+	u8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
+	};
+} = {
+	u8: {
+		strict: integerLiteralArm3$u8(F.buildIntegerLiteralArm3, 'u8'),
+		coerce: integerLiteralArm3$u8(C.coerceToIntegerLiteralArm3, 'u8')
+	},
+	i8: {
+		strict: integerLiteralArm3$i8(F.buildIntegerLiteralArm3, 'i8'),
+		coerce: integerLiteralArm3$i8(C.coerceToIntegerLiteralArm3, 'i8')
+	},
+	u16: {
+		strict: integerLiteralArm3$u16(F.buildIntegerLiteralArm3, 'u16'),
+		coerce: integerLiteralArm3$u16(C.coerceToIntegerLiteralArm3, 'u16')
+	},
+	i16: {
+		strict: integerLiteralArm3$i16(F.buildIntegerLiteralArm3, 'i16'),
+		coerce: integerLiteralArm3$i16(C.coerceToIntegerLiteralArm3, 'i16')
+	},
+	u32: {
+		strict: integerLiteralArm3$u32(F.buildIntegerLiteralArm3, 'u32'),
+		coerce: integerLiteralArm3$u32(C.coerceToIntegerLiteralArm3, 'u32')
+	},
+	i32: {
+		strict: integerLiteralArm3$i32(F.buildIntegerLiteralArm3, 'i32'),
+		coerce: integerLiteralArm3$i32(C.coerceToIntegerLiteralArm3, 'i32')
+	},
+	u64: {
+		strict: integerLiteralArm3$u64(F.buildIntegerLiteralArm3, 'u64'),
+		coerce: integerLiteralArm3$u64(C.coerceToIntegerLiteralArm3, 'u64')
+	},
+	i64: {
+		strict: integerLiteralArm3$i64(F.buildIntegerLiteralArm3, 'i64'),
+		coerce: integerLiteralArm3$i64(C.coerceToIntegerLiteralArm3, 'i64')
+	},
+	u128: {
+		strict: integerLiteralArm3$u128(F.buildIntegerLiteralArm3, 'u128'),
+		coerce: integerLiteralArm3$u128(C.coerceToIntegerLiteralArm3, 'u128')
+	},
+	i128: {
+		strict: integerLiteralArm3$i128(F.buildIntegerLiteralArm3, 'i128'),
+		coerce: integerLiteralArm3$i128(C.coerceToIntegerLiteralArm3, 'i128')
+	},
+	isize: {
+		strict: integerLiteralArm3$isize(F.buildIntegerLiteralArm3, 'isize'),
+		coerce: integerLiteralArm3$isize(C.coerceToIntegerLiteralArm3, 'isize')
+	},
+	usize: {
+		strict: integerLiteralArm3$usize(F.buildIntegerLiteralArm3, 'usize'),
+		coerce: integerLiteralArm3$usize(C.coerceToIntegerLiteralArm3, 'usize')
+	},
+	f32: {
+		strict: integerLiteralArm3$f32(F.buildIntegerLiteralArm3, 'f32'),
+		coerce: integerLiteralArm3$f32(C.coerceToIntegerLiteralArm3, 'f32')
+	},
+	f64: {
+		strict: integerLiteralArm3$f64(F.buildIntegerLiteralArm3, 'f64'),
+		coerce: integerLiteralArm3$f64(C.coerceToIntegerLiteralArm3, 'f64')
+	}
+};
+
+const integerLiteralArm4$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
+const integerLiteralArm4: {
+	u8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
+		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
+	};
+} = {
+	u8: {
+		strict: integerLiteralArm4$u8(F.buildIntegerLiteralArm4, 'u8'),
+		coerce: integerLiteralArm4$u8(C.coerceToIntegerLiteralArm4, 'u8')
+	},
+	i8: {
+		strict: integerLiteralArm4$i8(F.buildIntegerLiteralArm4, 'i8'),
+		coerce: integerLiteralArm4$i8(C.coerceToIntegerLiteralArm4, 'i8')
+	},
+	u16: {
+		strict: integerLiteralArm4$u16(F.buildIntegerLiteralArm4, 'u16'),
+		coerce: integerLiteralArm4$u16(C.coerceToIntegerLiteralArm4, 'u16')
+	},
+	i16: {
+		strict: integerLiteralArm4$i16(F.buildIntegerLiteralArm4, 'i16'),
+		coerce: integerLiteralArm4$i16(C.coerceToIntegerLiteralArm4, 'i16')
+	},
+	u32: {
+		strict: integerLiteralArm4$u32(F.buildIntegerLiteralArm4, 'u32'),
+		coerce: integerLiteralArm4$u32(C.coerceToIntegerLiteralArm4, 'u32')
+	},
+	i32: {
+		strict: integerLiteralArm4$i32(F.buildIntegerLiteralArm4, 'i32'),
+		coerce: integerLiteralArm4$i32(C.coerceToIntegerLiteralArm4, 'i32')
+	},
+	u64: {
+		strict: integerLiteralArm4$u64(F.buildIntegerLiteralArm4, 'u64'),
+		coerce: integerLiteralArm4$u64(C.coerceToIntegerLiteralArm4, 'u64')
+	},
+	i64: {
+		strict: integerLiteralArm4$i64(F.buildIntegerLiteralArm4, 'i64'),
+		coerce: integerLiteralArm4$i64(C.coerceToIntegerLiteralArm4, 'i64')
+	},
+	u128: {
+		strict: integerLiteralArm4$u128(F.buildIntegerLiteralArm4, 'u128'),
+		coerce: integerLiteralArm4$u128(C.coerceToIntegerLiteralArm4, 'u128')
+	},
+	i128: {
+		strict: integerLiteralArm4$i128(F.buildIntegerLiteralArm4, 'i128'),
+		coerce: integerLiteralArm4$i128(C.coerceToIntegerLiteralArm4, 'i128')
+	},
+	isize: {
+		strict: integerLiteralArm4$isize(F.buildIntegerLiteralArm4, 'isize'),
+		coerce: integerLiteralArm4$isize(C.coerceToIntegerLiteralArm4, 'isize')
+	},
+	usize: {
+		strict: integerLiteralArm4$usize(F.buildIntegerLiteralArm4, 'usize'),
+		coerce: integerLiteralArm4$usize(C.coerceToIntegerLiteralArm4, 'usize')
+	},
+	f32: {
+		strict: integerLiteralArm4$f32(F.buildIntegerLiteralArm4, 'f32'),
+		coerce: integerLiteralArm4$f32(C.coerceToIntegerLiteralArm4, 'f32')
+	},
+	f64: {
+		strict: integerLiteralArm4$f64(F.buildIntegerLiteralArm4, 'f64'),
+		coerce: integerLiteralArm4$f64(C.coerceToIntegerLiteralArm4, 'f64')
+	}
+};
+
+const negativeLiteral$arm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1U8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2U8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3U8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4U8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1I8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2I8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3I8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4I8 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1U16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2U16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3U16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4U16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1I16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2I16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3I16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4I16 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1U32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2U32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3U32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4U32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1I32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2I32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3I32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4I32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1U64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2U64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3U64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4U64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1I64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2I64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3I64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4I64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1U128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2U128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3U128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4U128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1I128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2I128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3I128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4I128 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1Isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2Isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3Isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4Isize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1Usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2Usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3Usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4Usize =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1F32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2F32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3F32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4F32 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm1F64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2F64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3F64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4F64 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm3 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const negativeLiteral$arm4 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const negativeLiteral$floatLiteral =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const negativeLiteral: typeof B.negativeLiteral & {
+	arm1: {
+		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralArm1>) => ReturnType<typeof F.buildNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralArm1>) => ReturnType<typeof F.buildNegativeLiteral>;
+		u8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.u8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.u8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.i8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.i8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.u16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.u16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.i16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.i16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.u32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.u32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.i32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.i32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.u64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.u64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.i64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.i64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.u128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.u128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.i128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.i128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		isize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.isize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.isize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		usize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.usize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.usize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.f32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.f32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm1.f64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm1.f64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+	};
+	arm2: {
+		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralArm2>) => ReturnType<typeof F.buildNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralArm2>) => ReturnType<typeof F.buildNegativeLiteral>;
+		u8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.u8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.u8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.i8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.i8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.u16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.u16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.i16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.i16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.u32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.u32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.i32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.i32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.u64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.u64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.i64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.i64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.u128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.u128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.i128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.i128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		isize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.isize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.isize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		usize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.usize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.usize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.f32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.f32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm2.f64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm2.f64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+	};
+	arm3: {
+		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralArm3>) => ReturnType<typeof F.buildNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralArm3>) => ReturnType<typeof F.buildNegativeLiteral>;
+		u8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.u8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.u8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.i8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.i8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.u16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.u16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.i16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.i16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.u32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.u32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.i32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.i32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.u64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.u64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.i64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.i64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.u128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.u128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.i128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.i128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		isize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.isize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.isize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		usize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.usize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.usize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.f32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.f32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm3.f64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm3.f64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+	};
+	arm4: {
+		strict: (...args: ArgsOf<typeof F.buildIntegerLiteralArm4>) => ReturnType<typeof F.buildNegativeLiteral>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIntegerLiteralArm4>) => ReturnType<typeof F.buildNegativeLiteral>;
+		u8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.u8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.u8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i8: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.i8.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.i8.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.u16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.u16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i16: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.i16.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.i16.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.u32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.u32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.i32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.i32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.u64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.u64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.i64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.i64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		u128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.u128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.u128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		i128: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.i128.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.i128.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		isize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.isize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.isize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		usize: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.usize.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.usize.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f32: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.f32.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.f32.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+		f64: {
+			strict: (...args: ArgsOf<typeof integerLiteralArm4.f64.strict>) => ReturnType<typeof F.buildNegativeLiteral>;
+			coerce: (...args: ArgsOf<typeof integerLiteralArm4.f64.coerce>) => ReturnType<typeof F.buildNegativeLiteral>;
+		};
+	};
 	floatLiteral: {
 		strict: (...args: ArgsOf<typeof F.buildFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
 		coerce: (...args: ArgsOf<typeof C.coerceToFloatLiteral>) => ReturnType<typeof F.buildNegativeLiteral>;
 	};
 } = {
 	...B.negativeLiteral,
+	arm1: {
+		strict: negativeLiteral$arm1(F.buildNegativeLiteral, F.buildIntegerLiteralArm1),
+		coerce: negativeLiteral$arm1(F.buildNegativeLiteral, C.coerceToIntegerLiteralArm1),
+		u8: {
+			strict: negativeLiteral$arm1U8(F.buildNegativeLiteral, integerLiteralArm1.u8.strict),
+			coerce: negativeLiteral$arm1U8(F.buildNegativeLiteral, integerLiteralArm1.u8.coerce)
+		},
+		i8: {
+			strict: negativeLiteral$arm1I8(F.buildNegativeLiteral, integerLiteralArm1.i8.strict),
+			coerce: negativeLiteral$arm1I8(F.buildNegativeLiteral, integerLiteralArm1.i8.coerce)
+		},
+		u16: {
+			strict: negativeLiteral$arm1U16(F.buildNegativeLiteral, integerLiteralArm1.u16.strict),
+			coerce: negativeLiteral$arm1U16(F.buildNegativeLiteral, integerLiteralArm1.u16.coerce)
+		},
+		i16: {
+			strict: negativeLiteral$arm1I16(F.buildNegativeLiteral, integerLiteralArm1.i16.strict),
+			coerce: negativeLiteral$arm1I16(F.buildNegativeLiteral, integerLiteralArm1.i16.coerce)
+		},
+		u32: {
+			strict: negativeLiteral$arm1U32(F.buildNegativeLiteral, integerLiteralArm1.u32.strict),
+			coerce: negativeLiteral$arm1U32(F.buildNegativeLiteral, integerLiteralArm1.u32.coerce)
+		},
+		i32: {
+			strict: negativeLiteral$arm1I32(F.buildNegativeLiteral, integerLiteralArm1.i32.strict),
+			coerce: negativeLiteral$arm1I32(F.buildNegativeLiteral, integerLiteralArm1.i32.coerce)
+		},
+		u64: {
+			strict: negativeLiteral$arm1U64(F.buildNegativeLiteral, integerLiteralArm1.u64.strict),
+			coerce: negativeLiteral$arm1U64(F.buildNegativeLiteral, integerLiteralArm1.u64.coerce)
+		},
+		i64: {
+			strict: negativeLiteral$arm1I64(F.buildNegativeLiteral, integerLiteralArm1.i64.strict),
+			coerce: negativeLiteral$arm1I64(F.buildNegativeLiteral, integerLiteralArm1.i64.coerce)
+		},
+		u128: {
+			strict: negativeLiteral$arm1U128(F.buildNegativeLiteral, integerLiteralArm1.u128.strict),
+			coerce: negativeLiteral$arm1U128(F.buildNegativeLiteral, integerLiteralArm1.u128.coerce)
+		},
+		i128: {
+			strict: negativeLiteral$arm1I128(F.buildNegativeLiteral, integerLiteralArm1.i128.strict),
+			coerce: negativeLiteral$arm1I128(F.buildNegativeLiteral, integerLiteralArm1.i128.coerce)
+		},
+		isize: {
+			strict: negativeLiteral$arm1Isize(F.buildNegativeLiteral, integerLiteralArm1.isize.strict),
+			coerce: negativeLiteral$arm1Isize(F.buildNegativeLiteral, integerLiteralArm1.isize.coerce)
+		},
+		usize: {
+			strict: negativeLiteral$arm1Usize(F.buildNegativeLiteral, integerLiteralArm1.usize.strict),
+			coerce: negativeLiteral$arm1Usize(F.buildNegativeLiteral, integerLiteralArm1.usize.coerce)
+		},
+		f32: {
+			strict: negativeLiteral$arm1F32(F.buildNegativeLiteral, integerLiteralArm1.f32.strict),
+			coerce: negativeLiteral$arm1F32(F.buildNegativeLiteral, integerLiteralArm1.f32.coerce)
+		},
+		f64: {
+			strict: negativeLiteral$arm1F64(F.buildNegativeLiteral, integerLiteralArm1.f64.strict),
+			coerce: negativeLiteral$arm1F64(F.buildNegativeLiteral, integerLiteralArm1.f64.coerce)
+		}
+	},
+	arm2: {
+		strict: negativeLiteral$arm2(F.buildNegativeLiteral, F.buildIntegerLiteralArm2),
+		coerce: negativeLiteral$arm2(F.buildNegativeLiteral, C.coerceToIntegerLiteralArm2),
+		u8: {
+			strict: negativeLiteral$arm2U8(F.buildNegativeLiteral, integerLiteralArm2.u8.strict),
+			coerce: negativeLiteral$arm2U8(F.buildNegativeLiteral, integerLiteralArm2.u8.coerce)
+		},
+		i8: {
+			strict: negativeLiteral$arm2I8(F.buildNegativeLiteral, integerLiteralArm2.i8.strict),
+			coerce: negativeLiteral$arm2I8(F.buildNegativeLiteral, integerLiteralArm2.i8.coerce)
+		},
+		u16: {
+			strict: negativeLiteral$arm2U16(F.buildNegativeLiteral, integerLiteralArm2.u16.strict),
+			coerce: negativeLiteral$arm2U16(F.buildNegativeLiteral, integerLiteralArm2.u16.coerce)
+		},
+		i16: {
+			strict: negativeLiteral$arm2I16(F.buildNegativeLiteral, integerLiteralArm2.i16.strict),
+			coerce: negativeLiteral$arm2I16(F.buildNegativeLiteral, integerLiteralArm2.i16.coerce)
+		},
+		u32: {
+			strict: negativeLiteral$arm2U32(F.buildNegativeLiteral, integerLiteralArm2.u32.strict),
+			coerce: negativeLiteral$arm2U32(F.buildNegativeLiteral, integerLiteralArm2.u32.coerce)
+		},
+		i32: {
+			strict: negativeLiteral$arm2I32(F.buildNegativeLiteral, integerLiteralArm2.i32.strict),
+			coerce: negativeLiteral$arm2I32(F.buildNegativeLiteral, integerLiteralArm2.i32.coerce)
+		},
+		u64: {
+			strict: negativeLiteral$arm2U64(F.buildNegativeLiteral, integerLiteralArm2.u64.strict),
+			coerce: negativeLiteral$arm2U64(F.buildNegativeLiteral, integerLiteralArm2.u64.coerce)
+		},
+		i64: {
+			strict: negativeLiteral$arm2I64(F.buildNegativeLiteral, integerLiteralArm2.i64.strict),
+			coerce: negativeLiteral$arm2I64(F.buildNegativeLiteral, integerLiteralArm2.i64.coerce)
+		},
+		u128: {
+			strict: negativeLiteral$arm2U128(F.buildNegativeLiteral, integerLiteralArm2.u128.strict),
+			coerce: negativeLiteral$arm2U128(F.buildNegativeLiteral, integerLiteralArm2.u128.coerce)
+		},
+		i128: {
+			strict: negativeLiteral$arm2I128(F.buildNegativeLiteral, integerLiteralArm2.i128.strict),
+			coerce: negativeLiteral$arm2I128(F.buildNegativeLiteral, integerLiteralArm2.i128.coerce)
+		},
+		isize: {
+			strict: negativeLiteral$arm2Isize(F.buildNegativeLiteral, integerLiteralArm2.isize.strict),
+			coerce: negativeLiteral$arm2Isize(F.buildNegativeLiteral, integerLiteralArm2.isize.coerce)
+		},
+		usize: {
+			strict: negativeLiteral$arm2Usize(F.buildNegativeLiteral, integerLiteralArm2.usize.strict),
+			coerce: negativeLiteral$arm2Usize(F.buildNegativeLiteral, integerLiteralArm2.usize.coerce)
+		},
+		f32: {
+			strict: negativeLiteral$arm2F32(F.buildNegativeLiteral, integerLiteralArm2.f32.strict),
+			coerce: negativeLiteral$arm2F32(F.buildNegativeLiteral, integerLiteralArm2.f32.coerce)
+		},
+		f64: {
+			strict: negativeLiteral$arm2F64(F.buildNegativeLiteral, integerLiteralArm2.f64.strict),
+			coerce: negativeLiteral$arm2F64(F.buildNegativeLiteral, integerLiteralArm2.f64.coerce)
+		}
+	},
+	arm3: {
+		strict: negativeLiteral$arm3(F.buildNegativeLiteral, F.buildIntegerLiteralArm3),
+		coerce: negativeLiteral$arm3(F.buildNegativeLiteral, C.coerceToIntegerLiteralArm3),
+		u8: {
+			strict: negativeLiteral$arm3U8(F.buildNegativeLiteral, integerLiteralArm3.u8.strict),
+			coerce: negativeLiteral$arm3U8(F.buildNegativeLiteral, integerLiteralArm3.u8.coerce)
+		},
+		i8: {
+			strict: negativeLiteral$arm3I8(F.buildNegativeLiteral, integerLiteralArm3.i8.strict),
+			coerce: negativeLiteral$arm3I8(F.buildNegativeLiteral, integerLiteralArm3.i8.coerce)
+		},
+		u16: {
+			strict: negativeLiteral$arm3U16(F.buildNegativeLiteral, integerLiteralArm3.u16.strict),
+			coerce: negativeLiteral$arm3U16(F.buildNegativeLiteral, integerLiteralArm3.u16.coerce)
+		},
+		i16: {
+			strict: negativeLiteral$arm3I16(F.buildNegativeLiteral, integerLiteralArm3.i16.strict),
+			coerce: negativeLiteral$arm3I16(F.buildNegativeLiteral, integerLiteralArm3.i16.coerce)
+		},
+		u32: {
+			strict: negativeLiteral$arm3U32(F.buildNegativeLiteral, integerLiteralArm3.u32.strict),
+			coerce: negativeLiteral$arm3U32(F.buildNegativeLiteral, integerLiteralArm3.u32.coerce)
+		},
+		i32: {
+			strict: negativeLiteral$arm3I32(F.buildNegativeLiteral, integerLiteralArm3.i32.strict),
+			coerce: negativeLiteral$arm3I32(F.buildNegativeLiteral, integerLiteralArm3.i32.coerce)
+		},
+		u64: {
+			strict: negativeLiteral$arm3U64(F.buildNegativeLiteral, integerLiteralArm3.u64.strict),
+			coerce: negativeLiteral$arm3U64(F.buildNegativeLiteral, integerLiteralArm3.u64.coerce)
+		},
+		i64: {
+			strict: negativeLiteral$arm3I64(F.buildNegativeLiteral, integerLiteralArm3.i64.strict),
+			coerce: negativeLiteral$arm3I64(F.buildNegativeLiteral, integerLiteralArm3.i64.coerce)
+		},
+		u128: {
+			strict: negativeLiteral$arm3U128(F.buildNegativeLiteral, integerLiteralArm3.u128.strict),
+			coerce: negativeLiteral$arm3U128(F.buildNegativeLiteral, integerLiteralArm3.u128.coerce)
+		},
+		i128: {
+			strict: negativeLiteral$arm3I128(F.buildNegativeLiteral, integerLiteralArm3.i128.strict),
+			coerce: negativeLiteral$arm3I128(F.buildNegativeLiteral, integerLiteralArm3.i128.coerce)
+		},
+		isize: {
+			strict: negativeLiteral$arm3Isize(F.buildNegativeLiteral, integerLiteralArm3.isize.strict),
+			coerce: negativeLiteral$arm3Isize(F.buildNegativeLiteral, integerLiteralArm3.isize.coerce)
+		},
+		usize: {
+			strict: negativeLiteral$arm3Usize(F.buildNegativeLiteral, integerLiteralArm3.usize.strict),
+			coerce: negativeLiteral$arm3Usize(F.buildNegativeLiteral, integerLiteralArm3.usize.coerce)
+		},
+		f32: {
+			strict: negativeLiteral$arm3F32(F.buildNegativeLiteral, integerLiteralArm3.f32.strict),
+			coerce: negativeLiteral$arm3F32(F.buildNegativeLiteral, integerLiteralArm3.f32.coerce)
+		},
+		f64: {
+			strict: negativeLiteral$arm3F64(F.buildNegativeLiteral, integerLiteralArm3.f64.strict),
+			coerce: negativeLiteral$arm3F64(F.buildNegativeLiteral, integerLiteralArm3.f64.coerce)
+		}
+	},
+	arm4: {
+		strict: negativeLiteral$arm4(F.buildNegativeLiteral, F.buildIntegerLiteralArm4),
+		coerce: negativeLiteral$arm4(F.buildNegativeLiteral, C.coerceToIntegerLiteralArm4),
+		u8: {
+			strict: negativeLiteral$arm4U8(F.buildNegativeLiteral, integerLiteralArm4.u8.strict),
+			coerce: negativeLiteral$arm4U8(F.buildNegativeLiteral, integerLiteralArm4.u8.coerce)
+		},
+		i8: {
+			strict: negativeLiteral$arm4I8(F.buildNegativeLiteral, integerLiteralArm4.i8.strict),
+			coerce: negativeLiteral$arm4I8(F.buildNegativeLiteral, integerLiteralArm4.i8.coerce)
+		},
+		u16: {
+			strict: negativeLiteral$arm4U16(F.buildNegativeLiteral, integerLiteralArm4.u16.strict),
+			coerce: negativeLiteral$arm4U16(F.buildNegativeLiteral, integerLiteralArm4.u16.coerce)
+		},
+		i16: {
+			strict: negativeLiteral$arm4I16(F.buildNegativeLiteral, integerLiteralArm4.i16.strict),
+			coerce: negativeLiteral$arm4I16(F.buildNegativeLiteral, integerLiteralArm4.i16.coerce)
+		},
+		u32: {
+			strict: negativeLiteral$arm4U32(F.buildNegativeLiteral, integerLiteralArm4.u32.strict),
+			coerce: negativeLiteral$arm4U32(F.buildNegativeLiteral, integerLiteralArm4.u32.coerce)
+		},
+		i32: {
+			strict: negativeLiteral$arm4I32(F.buildNegativeLiteral, integerLiteralArm4.i32.strict),
+			coerce: negativeLiteral$arm4I32(F.buildNegativeLiteral, integerLiteralArm4.i32.coerce)
+		},
+		u64: {
+			strict: negativeLiteral$arm4U64(F.buildNegativeLiteral, integerLiteralArm4.u64.strict),
+			coerce: negativeLiteral$arm4U64(F.buildNegativeLiteral, integerLiteralArm4.u64.coerce)
+		},
+		i64: {
+			strict: negativeLiteral$arm4I64(F.buildNegativeLiteral, integerLiteralArm4.i64.strict),
+			coerce: negativeLiteral$arm4I64(F.buildNegativeLiteral, integerLiteralArm4.i64.coerce)
+		},
+		u128: {
+			strict: negativeLiteral$arm4U128(F.buildNegativeLiteral, integerLiteralArm4.u128.strict),
+			coerce: negativeLiteral$arm4U128(F.buildNegativeLiteral, integerLiteralArm4.u128.coerce)
+		},
+		i128: {
+			strict: negativeLiteral$arm4I128(F.buildNegativeLiteral, integerLiteralArm4.i128.strict),
+			coerce: negativeLiteral$arm4I128(F.buildNegativeLiteral, integerLiteralArm4.i128.coerce)
+		},
+		isize: {
+			strict: negativeLiteral$arm4Isize(F.buildNegativeLiteral, integerLiteralArm4.isize.strict),
+			coerce: negativeLiteral$arm4Isize(F.buildNegativeLiteral, integerLiteralArm4.isize.coerce)
+		},
+		usize: {
+			strict: negativeLiteral$arm4Usize(F.buildNegativeLiteral, integerLiteralArm4.usize.strict),
+			coerce: negativeLiteral$arm4Usize(F.buildNegativeLiteral, integerLiteralArm4.usize.coerce)
+		},
+		f32: {
+			strict: negativeLiteral$arm4F32(F.buildNegativeLiteral, integerLiteralArm4.f32.strict),
+			coerce: negativeLiteral$arm4F32(F.buildNegativeLiteral, integerLiteralArm4.f32.coerce)
+		},
+		f64: {
+			strict: negativeLiteral$arm4F64(F.buildNegativeLiteral, integerLiteralArm4.f64.strict),
+			coerce: negativeLiteral$arm4F64(F.buildNegativeLiteral, integerLiteralArm4.f64.coerce)
+		}
+	},
 	floatLiteral: {
 		strict: negativeLiteral$floatLiteral(F.buildNegativeLiteral, F.buildFloatLiteral),
 		coerce: negativeLiteral$floatLiteral(F.buildNegativeLiteral, C.coerceToFloatLiteral)
@@ -2650,6 +4282,30 @@ const constParameter$negativeLiteral =
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF>[0] }): ReturnType<PF> => {
 		const { value: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(seated) });
+	};
+const constParameter$integerLiteralArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const constParameter$integerLiteralArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const constParameter$integerLiteralArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const constParameter$integerLiteralArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const constParameter$floatLiteral =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -2687,6 +4343,54 @@ export const constParameter: typeof B.constParameter & {
 				value: ArgsOf<typeof C.coerceToNegativeLiteral>[0];
 			}
 		) => ReturnType<typeof C.coerceToConstParameter>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildConstParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToConstParameter>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildConstParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToConstParameter>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildConstParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToConstParameter>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildConstParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToConstParameter>[0], 'value'> & {
+					value: ArgsOf<typeof negativeLiteral.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToConstParameter>;
+		};
 		floatLiteral: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildConstParameter>[0], 'value'> & {
@@ -2713,6 +4417,22 @@ export const constParameter: typeof B.constParameter & {
 	negativeLiteral: {
 		strict: constParameter$negativeLiteral(F.buildConstParameter, F.buildNegativeLiteral),
 		coerce: constParameter$negativeLiteral(C.coerceToConstParameter, C.coerceToNegativeLiteral),
+		arm1: {
+			strict: constParameter$integerLiteralArm1(F.buildConstParameter, negativeLiteral.arm1.strict),
+			coerce: constParameter$integerLiteralArm1(C.coerceToConstParameter, negativeLiteral.arm1.coerce)
+		},
+		arm2: {
+			strict: constParameter$integerLiteralArm2(F.buildConstParameter, negativeLiteral.arm2.strict),
+			coerce: constParameter$integerLiteralArm2(C.coerceToConstParameter, negativeLiteral.arm2.coerce)
+		},
+		arm3: {
+			strict: constParameter$integerLiteralArm3(F.buildConstParameter, negativeLiteral.arm3.strict),
+			coerce: constParameter$integerLiteralArm3(C.coerceToConstParameter, negativeLiteral.arm3.coerce)
+		},
+		arm4: {
+			strict: constParameter$integerLiteralArm4(F.buildConstParameter, negativeLiteral.arm4.strict),
+			coerce: constParameter$integerLiteralArm4(C.coerceToConstParameter, negativeLiteral.arm4.coerce)
+		},
 		floatLiteral: {
 			strict: constParameter$floatLiteral(F.buildConstParameter, negativeLiteral.floatLiteral.strict),
 			coerce: constParameter$floatLiteral(C.coerceToConstParameter, negativeLiteral.floatLiteral.coerce)
@@ -4328,6 +6048,386 @@ const fieldExpression$identifier =
 		const { field: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
 	};
+const fieldExpression$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldExpression$arm1U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm1F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm3F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm4F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldExpression$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldExpression$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldExpression$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
 export const fieldExpression: typeof B.fieldExpression & {
 	identifier: {
 		strict: (
@@ -4339,11 +6439,959 @@ export const fieldExpression: typeof B.fieldExpression & {
 			}
 		) => ReturnType<typeof C.coerceToFieldExpression>;
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm1>[0]
+		) => ReturnType<typeof F.buildFieldExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0]
+		) => ReturnType<typeof C.coerceToFieldExpression>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm2>[0]
+		) => ReturnType<typeof F.buildFieldExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0]
+		) => ReturnType<typeof C.coerceToFieldExpression>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm3>[0]
+		) => ReturnType<typeof F.buildFieldExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0]
+		) => ReturnType<typeof C.coerceToFieldExpression>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm4>[0]
+		) => ReturnType<typeof F.buildFieldExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0]
+		) => ReturnType<typeof C.coerceToFieldExpression>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldExpression>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldExpression>;
+		};
+	};
 } = {
 	...B.fieldExpression,
 	identifier: {
 		strict: fieldExpression$identifier(F.buildFieldExpression, F.buildIdentifier),
 		coerce: fieldExpression$identifier(C.coerceToFieldExpression, C.coerceToIdentifier)
+	},
+	arm1: {
+		strict: fieldExpression$arm1(F.buildFieldExpression, F.buildIntegerLiteralArm1),
+		coerce: fieldExpression$arm1(C.coerceToFieldExpression, C.coerceToIntegerLiteralArm1),
+		u8: {
+			strict: fieldExpression$arm1U8(F.buildFieldExpression, integerLiteralArm1.u8.strict),
+			coerce: fieldExpression$arm1U8(C.coerceToFieldExpression, integerLiteralArm1.u8.coerce)
+		},
+		i8: {
+			strict: fieldExpression$arm1I8(F.buildFieldExpression, integerLiteralArm1.i8.strict),
+			coerce: fieldExpression$arm1I8(C.coerceToFieldExpression, integerLiteralArm1.i8.coerce)
+		},
+		u16: {
+			strict: fieldExpression$arm1U16(F.buildFieldExpression, integerLiteralArm1.u16.strict),
+			coerce: fieldExpression$arm1U16(C.coerceToFieldExpression, integerLiteralArm1.u16.coerce)
+		},
+		i16: {
+			strict: fieldExpression$arm1I16(F.buildFieldExpression, integerLiteralArm1.i16.strict),
+			coerce: fieldExpression$arm1I16(C.coerceToFieldExpression, integerLiteralArm1.i16.coerce)
+		},
+		u32: {
+			strict: fieldExpression$arm1U32(F.buildFieldExpression, integerLiteralArm1.u32.strict),
+			coerce: fieldExpression$arm1U32(C.coerceToFieldExpression, integerLiteralArm1.u32.coerce)
+		},
+		i32: {
+			strict: fieldExpression$arm1I32(F.buildFieldExpression, integerLiteralArm1.i32.strict),
+			coerce: fieldExpression$arm1I32(C.coerceToFieldExpression, integerLiteralArm1.i32.coerce)
+		},
+		u64: {
+			strict: fieldExpression$arm1U64(F.buildFieldExpression, integerLiteralArm1.u64.strict),
+			coerce: fieldExpression$arm1U64(C.coerceToFieldExpression, integerLiteralArm1.u64.coerce)
+		},
+		i64: {
+			strict: fieldExpression$arm1I64(F.buildFieldExpression, integerLiteralArm1.i64.strict),
+			coerce: fieldExpression$arm1I64(C.coerceToFieldExpression, integerLiteralArm1.i64.coerce)
+		},
+		u128: {
+			strict: fieldExpression$arm1U128(F.buildFieldExpression, integerLiteralArm1.u128.strict),
+			coerce: fieldExpression$arm1U128(C.coerceToFieldExpression, integerLiteralArm1.u128.coerce)
+		},
+		i128: {
+			strict: fieldExpression$arm1I128(F.buildFieldExpression, integerLiteralArm1.i128.strict),
+			coerce: fieldExpression$arm1I128(C.coerceToFieldExpression, integerLiteralArm1.i128.coerce)
+		},
+		isize: {
+			strict: fieldExpression$arm1Isize(F.buildFieldExpression, integerLiteralArm1.isize.strict),
+			coerce: fieldExpression$arm1Isize(C.coerceToFieldExpression, integerLiteralArm1.isize.coerce)
+		},
+		usize: {
+			strict: fieldExpression$arm1Usize(F.buildFieldExpression, integerLiteralArm1.usize.strict),
+			coerce: fieldExpression$arm1Usize(C.coerceToFieldExpression, integerLiteralArm1.usize.coerce)
+		},
+		f32: {
+			strict: fieldExpression$arm1F32(F.buildFieldExpression, integerLiteralArm1.f32.strict),
+			coerce: fieldExpression$arm1F32(C.coerceToFieldExpression, integerLiteralArm1.f32.coerce)
+		},
+		f64: {
+			strict: fieldExpression$arm1F64(F.buildFieldExpression, integerLiteralArm1.f64.strict),
+			coerce: fieldExpression$arm1F64(C.coerceToFieldExpression, integerLiteralArm1.f64.coerce)
+		}
+	},
+	arm2: {
+		strict: fieldExpression$arm2(F.buildFieldExpression, F.buildIntegerLiteralArm2),
+		coerce: fieldExpression$arm2(C.coerceToFieldExpression, C.coerceToIntegerLiteralArm2),
+		u8: {
+			strict: fieldExpression$arm2U8(F.buildFieldExpression, integerLiteralArm2.u8.strict),
+			coerce: fieldExpression$arm2U8(C.coerceToFieldExpression, integerLiteralArm2.u8.coerce)
+		},
+		i8: {
+			strict: fieldExpression$arm2I8(F.buildFieldExpression, integerLiteralArm2.i8.strict),
+			coerce: fieldExpression$arm2I8(C.coerceToFieldExpression, integerLiteralArm2.i8.coerce)
+		},
+		u16: {
+			strict: fieldExpression$arm2U16(F.buildFieldExpression, integerLiteralArm2.u16.strict),
+			coerce: fieldExpression$arm2U16(C.coerceToFieldExpression, integerLiteralArm2.u16.coerce)
+		},
+		i16: {
+			strict: fieldExpression$arm2I16(F.buildFieldExpression, integerLiteralArm2.i16.strict),
+			coerce: fieldExpression$arm2I16(C.coerceToFieldExpression, integerLiteralArm2.i16.coerce)
+		},
+		u32: {
+			strict: fieldExpression$arm2U32(F.buildFieldExpression, integerLiteralArm2.u32.strict),
+			coerce: fieldExpression$arm2U32(C.coerceToFieldExpression, integerLiteralArm2.u32.coerce)
+		},
+		i32: {
+			strict: fieldExpression$arm2I32(F.buildFieldExpression, integerLiteralArm2.i32.strict),
+			coerce: fieldExpression$arm2I32(C.coerceToFieldExpression, integerLiteralArm2.i32.coerce)
+		},
+		u64: {
+			strict: fieldExpression$arm2U64(F.buildFieldExpression, integerLiteralArm2.u64.strict),
+			coerce: fieldExpression$arm2U64(C.coerceToFieldExpression, integerLiteralArm2.u64.coerce)
+		},
+		i64: {
+			strict: fieldExpression$arm2I64(F.buildFieldExpression, integerLiteralArm2.i64.strict),
+			coerce: fieldExpression$arm2I64(C.coerceToFieldExpression, integerLiteralArm2.i64.coerce)
+		},
+		u128: {
+			strict: fieldExpression$arm2U128(F.buildFieldExpression, integerLiteralArm2.u128.strict),
+			coerce: fieldExpression$arm2U128(C.coerceToFieldExpression, integerLiteralArm2.u128.coerce)
+		},
+		i128: {
+			strict: fieldExpression$arm2I128(F.buildFieldExpression, integerLiteralArm2.i128.strict),
+			coerce: fieldExpression$arm2I128(C.coerceToFieldExpression, integerLiteralArm2.i128.coerce)
+		},
+		isize: {
+			strict: fieldExpression$arm2Isize(F.buildFieldExpression, integerLiteralArm2.isize.strict),
+			coerce: fieldExpression$arm2Isize(C.coerceToFieldExpression, integerLiteralArm2.isize.coerce)
+		},
+		usize: {
+			strict: fieldExpression$arm2Usize(F.buildFieldExpression, integerLiteralArm2.usize.strict),
+			coerce: fieldExpression$arm2Usize(C.coerceToFieldExpression, integerLiteralArm2.usize.coerce)
+		},
+		f32: {
+			strict: fieldExpression$arm2F32(F.buildFieldExpression, integerLiteralArm2.f32.strict),
+			coerce: fieldExpression$arm2F32(C.coerceToFieldExpression, integerLiteralArm2.f32.coerce)
+		},
+		f64: {
+			strict: fieldExpression$arm2F64(F.buildFieldExpression, integerLiteralArm2.f64.strict),
+			coerce: fieldExpression$arm2F64(C.coerceToFieldExpression, integerLiteralArm2.f64.coerce)
+		}
+	},
+	arm3: {
+		strict: fieldExpression$arm3(F.buildFieldExpression, F.buildIntegerLiteralArm3),
+		coerce: fieldExpression$arm3(C.coerceToFieldExpression, C.coerceToIntegerLiteralArm3),
+		u8: {
+			strict: fieldExpression$arm3U8(F.buildFieldExpression, integerLiteralArm3.u8.strict),
+			coerce: fieldExpression$arm3U8(C.coerceToFieldExpression, integerLiteralArm3.u8.coerce)
+		},
+		i8: {
+			strict: fieldExpression$arm3I8(F.buildFieldExpression, integerLiteralArm3.i8.strict),
+			coerce: fieldExpression$arm3I8(C.coerceToFieldExpression, integerLiteralArm3.i8.coerce)
+		},
+		u16: {
+			strict: fieldExpression$arm3U16(F.buildFieldExpression, integerLiteralArm3.u16.strict),
+			coerce: fieldExpression$arm3U16(C.coerceToFieldExpression, integerLiteralArm3.u16.coerce)
+		},
+		i16: {
+			strict: fieldExpression$arm3I16(F.buildFieldExpression, integerLiteralArm3.i16.strict),
+			coerce: fieldExpression$arm3I16(C.coerceToFieldExpression, integerLiteralArm3.i16.coerce)
+		},
+		u32: {
+			strict: fieldExpression$arm3U32(F.buildFieldExpression, integerLiteralArm3.u32.strict),
+			coerce: fieldExpression$arm3U32(C.coerceToFieldExpression, integerLiteralArm3.u32.coerce)
+		},
+		i32: {
+			strict: fieldExpression$arm3I32(F.buildFieldExpression, integerLiteralArm3.i32.strict),
+			coerce: fieldExpression$arm3I32(C.coerceToFieldExpression, integerLiteralArm3.i32.coerce)
+		},
+		u64: {
+			strict: fieldExpression$arm3U64(F.buildFieldExpression, integerLiteralArm3.u64.strict),
+			coerce: fieldExpression$arm3U64(C.coerceToFieldExpression, integerLiteralArm3.u64.coerce)
+		},
+		i64: {
+			strict: fieldExpression$arm3I64(F.buildFieldExpression, integerLiteralArm3.i64.strict),
+			coerce: fieldExpression$arm3I64(C.coerceToFieldExpression, integerLiteralArm3.i64.coerce)
+		},
+		u128: {
+			strict: fieldExpression$arm3U128(F.buildFieldExpression, integerLiteralArm3.u128.strict),
+			coerce: fieldExpression$arm3U128(C.coerceToFieldExpression, integerLiteralArm3.u128.coerce)
+		},
+		i128: {
+			strict: fieldExpression$arm3I128(F.buildFieldExpression, integerLiteralArm3.i128.strict),
+			coerce: fieldExpression$arm3I128(C.coerceToFieldExpression, integerLiteralArm3.i128.coerce)
+		},
+		isize: {
+			strict: fieldExpression$arm3Isize(F.buildFieldExpression, integerLiteralArm3.isize.strict),
+			coerce: fieldExpression$arm3Isize(C.coerceToFieldExpression, integerLiteralArm3.isize.coerce)
+		},
+		usize: {
+			strict: fieldExpression$arm3Usize(F.buildFieldExpression, integerLiteralArm3.usize.strict),
+			coerce: fieldExpression$arm3Usize(C.coerceToFieldExpression, integerLiteralArm3.usize.coerce)
+		},
+		f32: {
+			strict: fieldExpression$arm3F32(F.buildFieldExpression, integerLiteralArm3.f32.strict),
+			coerce: fieldExpression$arm3F32(C.coerceToFieldExpression, integerLiteralArm3.f32.coerce)
+		},
+		f64: {
+			strict: fieldExpression$arm3F64(F.buildFieldExpression, integerLiteralArm3.f64.strict),
+			coerce: fieldExpression$arm3F64(C.coerceToFieldExpression, integerLiteralArm3.f64.coerce)
+		}
+	},
+	arm4: {
+		strict: fieldExpression$arm4(F.buildFieldExpression, F.buildIntegerLiteralArm4),
+		coerce: fieldExpression$arm4(C.coerceToFieldExpression, C.coerceToIntegerLiteralArm4),
+		u8: {
+			strict: fieldExpression$arm4U8(F.buildFieldExpression, integerLiteralArm4.u8.strict),
+			coerce: fieldExpression$arm4U8(C.coerceToFieldExpression, integerLiteralArm4.u8.coerce)
+		},
+		i8: {
+			strict: fieldExpression$arm4I8(F.buildFieldExpression, integerLiteralArm4.i8.strict),
+			coerce: fieldExpression$arm4I8(C.coerceToFieldExpression, integerLiteralArm4.i8.coerce)
+		},
+		u16: {
+			strict: fieldExpression$arm4U16(F.buildFieldExpression, integerLiteralArm4.u16.strict),
+			coerce: fieldExpression$arm4U16(C.coerceToFieldExpression, integerLiteralArm4.u16.coerce)
+		},
+		i16: {
+			strict: fieldExpression$arm4I16(F.buildFieldExpression, integerLiteralArm4.i16.strict),
+			coerce: fieldExpression$arm4I16(C.coerceToFieldExpression, integerLiteralArm4.i16.coerce)
+		},
+		u32: {
+			strict: fieldExpression$arm4U32(F.buildFieldExpression, integerLiteralArm4.u32.strict),
+			coerce: fieldExpression$arm4U32(C.coerceToFieldExpression, integerLiteralArm4.u32.coerce)
+		},
+		i32: {
+			strict: fieldExpression$arm4I32(F.buildFieldExpression, integerLiteralArm4.i32.strict),
+			coerce: fieldExpression$arm4I32(C.coerceToFieldExpression, integerLiteralArm4.i32.coerce)
+		},
+		u64: {
+			strict: fieldExpression$arm4U64(F.buildFieldExpression, integerLiteralArm4.u64.strict),
+			coerce: fieldExpression$arm4U64(C.coerceToFieldExpression, integerLiteralArm4.u64.coerce)
+		},
+		i64: {
+			strict: fieldExpression$arm4I64(F.buildFieldExpression, integerLiteralArm4.i64.strict),
+			coerce: fieldExpression$arm4I64(C.coerceToFieldExpression, integerLiteralArm4.i64.coerce)
+		},
+		u128: {
+			strict: fieldExpression$arm4U128(F.buildFieldExpression, integerLiteralArm4.u128.strict),
+			coerce: fieldExpression$arm4U128(C.coerceToFieldExpression, integerLiteralArm4.u128.coerce)
+		},
+		i128: {
+			strict: fieldExpression$arm4I128(F.buildFieldExpression, integerLiteralArm4.i128.strict),
+			coerce: fieldExpression$arm4I128(C.coerceToFieldExpression, integerLiteralArm4.i128.coerce)
+		},
+		isize: {
+			strict: fieldExpression$arm4Isize(F.buildFieldExpression, integerLiteralArm4.isize.strict),
+			coerce: fieldExpression$arm4Isize(C.coerceToFieldExpression, integerLiteralArm4.isize.coerce)
+		},
+		usize: {
+			strict: fieldExpression$arm4Usize(F.buildFieldExpression, integerLiteralArm4.usize.strict),
+			coerce: fieldExpression$arm4Usize(C.coerceToFieldExpression, integerLiteralArm4.usize.coerce)
+		},
+		f32: {
+			strict: fieldExpression$arm4F32(F.buildFieldExpression, integerLiteralArm4.f32.strict),
+			coerce: fieldExpression$arm4F32(C.coerceToFieldExpression, integerLiteralArm4.f32.coerce)
+		},
+		f64: {
+			strict: fieldExpression$arm4F64(F.buildFieldExpression, integerLiteralArm4.f64.strict),
+			coerce: fieldExpression$arm4F64(C.coerceToFieldExpression, integerLiteralArm4.f64.coerce)
+		}
 	}
 };
 
@@ -4375,6 +7423,30 @@ const genericFunction$fieldExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
+const genericFunction$integerLiteralArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const genericFunction$integerLiteralArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const genericFunction$integerLiteralArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const genericFunction$integerLiteralArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
 export const genericFunction: typeof B.genericFunction & {
 	identifier: {
 		strict: (
@@ -4405,6 +7477,54 @@ export const genericFunction: typeof B.genericFunction & {
 			config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> &
 				ArgsOf<typeof C.coerceToFieldExpression>[0]
 		) => ReturnType<typeof C.coerceToGenericFunction>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildGenericFunction>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToGenericFunction>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildGenericFunction>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToGenericFunction>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildGenericFunction>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToGenericFunction>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildGenericFunction>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToGenericFunction>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToGenericFunction>;
+		};
 	};
 } = {
 	...B.genericFunction,
@@ -4418,7 +7538,23 @@ export const genericFunction: typeof B.genericFunction & {
 	},
 	fieldExpression: {
 		strict: genericFunction$fieldExpression(F.buildGenericFunction, F.buildFieldExpression),
-		coerce: genericFunction$fieldExpression(C.coerceToGenericFunction, C.coerceToFieldExpression)
+		coerce: genericFunction$fieldExpression(C.coerceToGenericFunction, C.coerceToFieldExpression),
+		arm1: {
+			strict: genericFunction$integerLiteralArm1(F.buildGenericFunction, fieldExpression.arm1.strict),
+			coerce: genericFunction$integerLiteralArm1(C.coerceToGenericFunction, fieldExpression.arm1.coerce)
+		},
+		arm2: {
+			strict: genericFunction$integerLiteralArm2(F.buildGenericFunction, fieldExpression.arm2.strict),
+			coerce: genericFunction$integerLiteralArm2(C.coerceToGenericFunction, fieldExpression.arm2.coerce)
+		},
+		arm3: {
+			strict: genericFunction$integerLiteralArm3(F.buildGenericFunction, fieldExpression.arm3.strict),
+			coerce: genericFunction$integerLiteralArm3(C.coerceToGenericFunction, fieldExpression.arm3.coerce)
+		},
+		arm4: {
+			strict: genericFunction$integerLiteralArm4(F.buildGenericFunction, fieldExpression.arm4.strict),
+			coerce: genericFunction$integerLiteralArm4(C.coerceToGenericFunction, fieldExpression.arm4.coerce)
+		}
 	}
 };
 
@@ -6644,6 +9780,30 @@ const callExpression$fieldExpression =
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
 	};
+const callExpression$integerLiteralArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const callExpression$integerLiteralArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const callExpression$integerLiteralArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const callExpression$integerLiteralArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
 const callExpression$awaitExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF>[0] }): ReturnType<PF> => {
@@ -7402,6 +10562,54 @@ export const callExpression: typeof B.callExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToFieldExpression>[0]
 		) => ReturnType<typeof C.coerceToCallExpression>;
+		arm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		arm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		arm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof fieldExpression.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToCallExpression>;
+		};
 	};
 	awaitExpression: {
 		strict: (
@@ -7952,7 +11160,23 @@ export const callExpression: typeof B.callExpression & {
 	},
 	fieldExpression: {
 		strict: callExpression$fieldExpression(F.buildCallExpression, F.buildFieldExpression),
-		coerce: callExpression$fieldExpression(C.coerceToCallExpression, C.coerceToFieldExpression)
+		coerce: callExpression$fieldExpression(C.coerceToCallExpression, C.coerceToFieldExpression),
+		arm1: {
+			strict: callExpression$integerLiteralArm1(F.buildCallExpression, fieldExpression.arm1.strict),
+			coerce: callExpression$integerLiteralArm1(C.coerceToCallExpression, fieldExpression.arm1.coerce)
+		},
+		arm2: {
+			strict: callExpression$integerLiteralArm2(F.buildCallExpression, fieldExpression.arm2.strict),
+			coerce: callExpression$integerLiteralArm2(C.coerceToCallExpression, fieldExpression.arm2.coerce)
+		},
+		arm3: {
+			strict: callExpression$integerLiteralArm3(F.buildCallExpression, fieldExpression.arm3.strict),
+			coerce: callExpression$integerLiteralArm3(C.coerceToCallExpression, fieldExpression.arm3.coerce)
+		},
+		arm4: {
+			strict: callExpression$integerLiteralArm4(F.buildCallExpression, fieldExpression.arm4.strict),
+			coerce: callExpression$integerLiteralArm4(C.coerceToCallExpression, fieldExpression.arm4.coerce)
+		}
 	},
 	awaitExpression: {
 		strict: callExpression$awaitExpression(F.buildCallExpression, F.buildAwaitExpression),
@@ -8134,6 +11358,386 @@ const fieldInitializer$identifier =
 		const { field: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
 	};
+const fieldInitializer$arm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldInitializer$arm1U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4U8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4I8 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4U16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4I16 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4U32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4I32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4U64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4I64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4U128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4I128 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4Isize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4Usize =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4F32 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm1F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm3F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm4F64 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & { field: ArgsOf<CF> }): ReturnType<PF> => {
+		const { field: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(...seated) });
+	};
+const fieldInitializer$arm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldInitializer$arm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
+const fieldInitializer$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'field'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'content' || key === 'suffix') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, field: _c(child)(inner) });
+	};
 export const fieldInitializer: typeof B.fieldInitializer & {
 	identifier: {
 		strict: (
@@ -8145,11 +11749,959 @@ export const fieldInitializer: typeof B.fieldInitializer & {
 			}
 		) => ReturnType<typeof C.coerceToFieldInitializer>;
 	};
+	arm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm1>[0]
+		) => ReturnType<typeof F.buildFieldInitializer>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0]
+		) => ReturnType<typeof C.coerceToFieldInitializer>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm1.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+	};
+	arm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm2>[0]
+		) => ReturnType<typeof F.buildFieldInitializer>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0]
+		) => ReturnType<typeof C.coerceToFieldInitializer>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm2.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+	};
+	arm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm3>[0]
+		) => ReturnType<typeof F.buildFieldInitializer>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0]
+		) => ReturnType<typeof C.coerceToFieldInitializer>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm3.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & ArgsOf<typeof F.buildIntegerLiteralArm4>[0]
+		) => ReturnType<typeof F.buildFieldInitializer>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> &
+				ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0]
+		) => ReturnType<typeof C.coerceToFieldInitializer>;
+		u8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i8: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i8.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i8.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i16: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i16.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i16.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		u128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.u128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		i128: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i128.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.i128.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		isize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.isize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.isize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		usize: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.usize.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.usize.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f32: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f32.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f32.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+		f64: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f64.strict>;
+				}
+			) => ReturnType<typeof F.buildFieldInitializer>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToFieldInitializer>[0], 'field'> & {
+					field: ArgsOf<typeof integerLiteralArm4.f64.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToFieldInitializer>;
+		};
+	};
 } = {
 	...B.fieldInitializer,
 	identifier: {
 		strict: fieldInitializer$identifier(F.buildFieldInitializer, F.buildIdentifier),
 		coerce: fieldInitializer$identifier(C.coerceToFieldInitializer, C.coerceToIdentifier)
+	},
+	arm1: {
+		strict: fieldInitializer$arm1(F.buildFieldInitializer, F.buildIntegerLiteralArm1),
+		coerce: fieldInitializer$arm1(C.coerceToFieldInitializer, C.coerceToIntegerLiteralArm1),
+		u8: {
+			strict: fieldInitializer$arm1U8(F.buildFieldInitializer, integerLiteralArm1.u8.strict),
+			coerce: fieldInitializer$arm1U8(C.coerceToFieldInitializer, integerLiteralArm1.u8.coerce)
+		},
+		i8: {
+			strict: fieldInitializer$arm1I8(F.buildFieldInitializer, integerLiteralArm1.i8.strict),
+			coerce: fieldInitializer$arm1I8(C.coerceToFieldInitializer, integerLiteralArm1.i8.coerce)
+		},
+		u16: {
+			strict: fieldInitializer$arm1U16(F.buildFieldInitializer, integerLiteralArm1.u16.strict),
+			coerce: fieldInitializer$arm1U16(C.coerceToFieldInitializer, integerLiteralArm1.u16.coerce)
+		},
+		i16: {
+			strict: fieldInitializer$arm1I16(F.buildFieldInitializer, integerLiteralArm1.i16.strict),
+			coerce: fieldInitializer$arm1I16(C.coerceToFieldInitializer, integerLiteralArm1.i16.coerce)
+		},
+		u32: {
+			strict: fieldInitializer$arm1U32(F.buildFieldInitializer, integerLiteralArm1.u32.strict),
+			coerce: fieldInitializer$arm1U32(C.coerceToFieldInitializer, integerLiteralArm1.u32.coerce)
+		},
+		i32: {
+			strict: fieldInitializer$arm1I32(F.buildFieldInitializer, integerLiteralArm1.i32.strict),
+			coerce: fieldInitializer$arm1I32(C.coerceToFieldInitializer, integerLiteralArm1.i32.coerce)
+		},
+		u64: {
+			strict: fieldInitializer$arm1U64(F.buildFieldInitializer, integerLiteralArm1.u64.strict),
+			coerce: fieldInitializer$arm1U64(C.coerceToFieldInitializer, integerLiteralArm1.u64.coerce)
+		},
+		i64: {
+			strict: fieldInitializer$arm1I64(F.buildFieldInitializer, integerLiteralArm1.i64.strict),
+			coerce: fieldInitializer$arm1I64(C.coerceToFieldInitializer, integerLiteralArm1.i64.coerce)
+		},
+		u128: {
+			strict: fieldInitializer$arm1U128(F.buildFieldInitializer, integerLiteralArm1.u128.strict),
+			coerce: fieldInitializer$arm1U128(C.coerceToFieldInitializer, integerLiteralArm1.u128.coerce)
+		},
+		i128: {
+			strict: fieldInitializer$arm1I128(F.buildFieldInitializer, integerLiteralArm1.i128.strict),
+			coerce: fieldInitializer$arm1I128(C.coerceToFieldInitializer, integerLiteralArm1.i128.coerce)
+		},
+		isize: {
+			strict: fieldInitializer$arm1Isize(F.buildFieldInitializer, integerLiteralArm1.isize.strict),
+			coerce: fieldInitializer$arm1Isize(C.coerceToFieldInitializer, integerLiteralArm1.isize.coerce)
+		},
+		usize: {
+			strict: fieldInitializer$arm1Usize(F.buildFieldInitializer, integerLiteralArm1.usize.strict),
+			coerce: fieldInitializer$arm1Usize(C.coerceToFieldInitializer, integerLiteralArm1.usize.coerce)
+		},
+		f32: {
+			strict: fieldInitializer$arm1F32(F.buildFieldInitializer, integerLiteralArm1.f32.strict),
+			coerce: fieldInitializer$arm1F32(C.coerceToFieldInitializer, integerLiteralArm1.f32.coerce)
+		},
+		f64: {
+			strict: fieldInitializer$arm1F64(F.buildFieldInitializer, integerLiteralArm1.f64.strict),
+			coerce: fieldInitializer$arm1F64(C.coerceToFieldInitializer, integerLiteralArm1.f64.coerce)
+		}
+	},
+	arm2: {
+		strict: fieldInitializer$arm2(F.buildFieldInitializer, F.buildIntegerLiteralArm2),
+		coerce: fieldInitializer$arm2(C.coerceToFieldInitializer, C.coerceToIntegerLiteralArm2),
+		u8: {
+			strict: fieldInitializer$arm2U8(F.buildFieldInitializer, integerLiteralArm2.u8.strict),
+			coerce: fieldInitializer$arm2U8(C.coerceToFieldInitializer, integerLiteralArm2.u8.coerce)
+		},
+		i8: {
+			strict: fieldInitializer$arm2I8(F.buildFieldInitializer, integerLiteralArm2.i8.strict),
+			coerce: fieldInitializer$arm2I8(C.coerceToFieldInitializer, integerLiteralArm2.i8.coerce)
+		},
+		u16: {
+			strict: fieldInitializer$arm2U16(F.buildFieldInitializer, integerLiteralArm2.u16.strict),
+			coerce: fieldInitializer$arm2U16(C.coerceToFieldInitializer, integerLiteralArm2.u16.coerce)
+		},
+		i16: {
+			strict: fieldInitializer$arm2I16(F.buildFieldInitializer, integerLiteralArm2.i16.strict),
+			coerce: fieldInitializer$arm2I16(C.coerceToFieldInitializer, integerLiteralArm2.i16.coerce)
+		},
+		u32: {
+			strict: fieldInitializer$arm2U32(F.buildFieldInitializer, integerLiteralArm2.u32.strict),
+			coerce: fieldInitializer$arm2U32(C.coerceToFieldInitializer, integerLiteralArm2.u32.coerce)
+		},
+		i32: {
+			strict: fieldInitializer$arm2I32(F.buildFieldInitializer, integerLiteralArm2.i32.strict),
+			coerce: fieldInitializer$arm2I32(C.coerceToFieldInitializer, integerLiteralArm2.i32.coerce)
+		},
+		u64: {
+			strict: fieldInitializer$arm2U64(F.buildFieldInitializer, integerLiteralArm2.u64.strict),
+			coerce: fieldInitializer$arm2U64(C.coerceToFieldInitializer, integerLiteralArm2.u64.coerce)
+		},
+		i64: {
+			strict: fieldInitializer$arm2I64(F.buildFieldInitializer, integerLiteralArm2.i64.strict),
+			coerce: fieldInitializer$arm2I64(C.coerceToFieldInitializer, integerLiteralArm2.i64.coerce)
+		},
+		u128: {
+			strict: fieldInitializer$arm2U128(F.buildFieldInitializer, integerLiteralArm2.u128.strict),
+			coerce: fieldInitializer$arm2U128(C.coerceToFieldInitializer, integerLiteralArm2.u128.coerce)
+		},
+		i128: {
+			strict: fieldInitializer$arm2I128(F.buildFieldInitializer, integerLiteralArm2.i128.strict),
+			coerce: fieldInitializer$arm2I128(C.coerceToFieldInitializer, integerLiteralArm2.i128.coerce)
+		},
+		isize: {
+			strict: fieldInitializer$arm2Isize(F.buildFieldInitializer, integerLiteralArm2.isize.strict),
+			coerce: fieldInitializer$arm2Isize(C.coerceToFieldInitializer, integerLiteralArm2.isize.coerce)
+		},
+		usize: {
+			strict: fieldInitializer$arm2Usize(F.buildFieldInitializer, integerLiteralArm2.usize.strict),
+			coerce: fieldInitializer$arm2Usize(C.coerceToFieldInitializer, integerLiteralArm2.usize.coerce)
+		},
+		f32: {
+			strict: fieldInitializer$arm2F32(F.buildFieldInitializer, integerLiteralArm2.f32.strict),
+			coerce: fieldInitializer$arm2F32(C.coerceToFieldInitializer, integerLiteralArm2.f32.coerce)
+		},
+		f64: {
+			strict: fieldInitializer$arm2F64(F.buildFieldInitializer, integerLiteralArm2.f64.strict),
+			coerce: fieldInitializer$arm2F64(C.coerceToFieldInitializer, integerLiteralArm2.f64.coerce)
+		}
+	},
+	arm3: {
+		strict: fieldInitializer$arm3(F.buildFieldInitializer, F.buildIntegerLiteralArm3),
+		coerce: fieldInitializer$arm3(C.coerceToFieldInitializer, C.coerceToIntegerLiteralArm3),
+		u8: {
+			strict: fieldInitializer$arm3U8(F.buildFieldInitializer, integerLiteralArm3.u8.strict),
+			coerce: fieldInitializer$arm3U8(C.coerceToFieldInitializer, integerLiteralArm3.u8.coerce)
+		},
+		i8: {
+			strict: fieldInitializer$arm3I8(F.buildFieldInitializer, integerLiteralArm3.i8.strict),
+			coerce: fieldInitializer$arm3I8(C.coerceToFieldInitializer, integerLiteralArm3.i8.coerce)
+		},
+		u16: {
+			strict: fieldInitializer$arm3U16(F.buildFieldInitializer, integerLiteralArm3.u16.strict),
+			coerce: fieldInitializer$arm3U16(C.coerceToFieldInitializer, integerLiteralArm3.u16.coerce)
+		},
+		i16: {
+			strict: fieldInitializer$arm3I16(F.buildFieldInitializer, integerLiteralArm3.i16.strict),
+			coerce: fieldInitializer$arm3I16(C.coerceToFieldInitializer, integerLiteralArm3.i16.coerce)
+		},
+		u32: {
+			strict: fieldInitializer$arm3U32(F.buildFieldInitializer, integerLiteralArm3.u32.strict),
+			coerce: fieldInitializer$arm3U32(C.coerceToFieldInitializer, integerLiteralArm3.u32.coerce)
+		},
+		i32: {
+			strict: fieldInitializer$arm3I32(F.buildFieldInitializer, integerLiteralArm3.i32.strict),
+			coerce: fieldInitializer$arm3I32(C.coerceToFieldInitializer, integerLiteralArm3.i32.coerce)
+		},
+		u64: {
+			strict: fieldInitializer$arm3U64(F.buildFieldInitializer, integerLiteralArm3.u64.strict),
+			coerce: fieldInitializer$arm3U64(C.coerceToFieldInitializer, integerLiteralArm3.u64.coerce)
+		},
+		i64: {
+			strict: fieldInitializer$arm3I64(F.buildFieldInitializer, integerLiteralArm3.i64.strict),
+			coerce: fieldInitializer$arm3I64(C.coerceToFieldInitializer, integerLiteralArm3.i64.coerce)
+		},
+		u128: {
+			strict: fieldInitializer$arm3U128(F.buildFieldInitializer, integerLiteralArm3.u128.strict),
+			coerce: fieldInitializer$arm3U128(C.coerceToFieldInitializer, integerLiteralArm3.u128.coerce)
+		},
+		i128: {
+			strict: fieldInitializer$arm3I128(F.buildFieldInitializer, integerLiteralArm3.i128.strict),
+			coerce: fieldInitializer$arm3I128(C.coerceToFieldInitializer, integerLiteralArm3.i128.coerce)
+		},
+		isize: {
+			strict: fieldInitializer$arm3Isize(F.buildFieldInitializer, integerLiteralArm3.isize.strict),
+			coerce: fieldInitializer$arm3Isize(C.coerceToFieldInitializer, integerLiteralArm3.isize.coerce)
+		},
+		usize: {
+			strict: fieldInitializer$arm3Usize(F.buildFieldInitializer, integerLiteralArm3.usize.strict),
+			coerce: fieldInitializer$arm3Usize(C.coerceToFieldInitializer, integerLiteralArm3.usize.coerce)
+		},
+		f32: {
+			strict: fieldInitializer$arm3F32(F.buildFieldInitializer, integerLiteralArm3.f32.strict),
+			coerce: fieldInitializer$arm3F32(C.coerceToFieldInitializer, integerLiteralArm3.f32.coerce)
+		},
+		f64: {
+			strict: fieldInitializer$arm3F64(F.buildFieldInitializer, integerLiteralArm3.f64.strict),
+			coerce: fieldInitializer$arm3F64(C.coerceToFieldInitializer, integerLiteralArm3.f64.coerce)
+		}
+	},
+	arm4: {
+		strict: fieldInitializer$arm4(F.buildFieldInitializer, F.buildIntegerLiteralArm4),
+		coerce: fieldInitializer$arm4(C.coerceToFieldInitializer, C.coerceToIntegerLiteralArm4),
+		u8: {
+			strict: fieldInitializer$arm4U8(F.buildFieldInitializer, integerLiteralArm4.u8.strict),
+			coerce: fieldInitializer$arm4U8(C.coerceToFieldInitializer, integerLiteralArm4.u8.coerce)
+		},
+		i8: {
+			strict: fieldInitializer$arm4I8(F.buildFieldInitializer, integerLiteralArm4.i8.strict),
+			coerce: fieldInitializer$arm4I8(C.coerceToFieldInitializer, integerLiteralArm4.i8.coerce)
+		},
+		u16: {
+			strict: fieldInitializer$arm4U16(F.buildFieldInitializer, integerLiteralArm4.u16.strict),
+			coerce: fieldInitializer$arm4U16(C.coerceToFieldInitializer, integerLiteralArm4.u16.coerce)
+		},
+		i16: {
+			strict: fieldInitializer$arm4I16(F.buildFieldInitializer, integerLiteralArm4.i16.strict),
+			coerce: fieldInitializer$arm4I16(C.coerceToFieldInitializer, integerLiteralArm4.i16.coerce)
+		},
+		u32: {
+			strict: fieldInitializer$arm4U32(F.buildFieldInitializer, integerLiteralArm4.u32.strict),
+			coerce: fieldInitializer$arm4U32(C.coerceToFieldInitializer, integerLiteralArm4.u32.coerce)
+		},
+		i32: {
+			strict: fieldInitializer$arm4I32(F.buildFieldInitializer, integerLiteralArm4.i32.strict),
+			coerce: fieldInitializer$arm4I32(C.coerceToFieldInitializer, integerLiteralArm4.i32.coerce)
+		},
+		u64: {
+			strict: fieldInitializer$arm4U64(F.buildFieldInitializer, integerLiteralArm4.u64.strict),
+			coerce: fieldInitializer$arm4U64(C.coerceToFieldInitializer, integerLiteralArm4.u64.coerce)
+		},
+		i64: {
+			strict: fieldInitializer$arm4I64(F.buildFieldInitializer, integerLiteralArm4.i64.strict),
+			coerce: fieldInitializer$arm4I64(C.coerceToFieldInitializer, integerLiteralArm4.i64.coerce)
+		},
+		u128: {
+			strict: fieldInitializer$arm4U128(F.buildFieldInitializer, integerLiteralArm4.u128.strict),
+			coerce: fieldInitializer$arm4U128(C.coerceToFieldInitializer, integerLiteralArm4.u128.coerce)
+		},
+		i128: {
+			strict: fieldInitializer$arm4I128(F.buildFieldInitializer, integerLiteralArm4.i128.strict),
+			coerce: fieldInitializer$arm4I128(C.coerceToFieldInitializer, integerLiteralArm4.i128.coerce)
+		},
+		isize: {
+			strict: fieldInitializer$arm4Isize(F.buildFieldInitializer, integerLiteralArm4.isize.strict),
+			coerce: fieldInitializer$arm4Isize(C.coerceToFieldInitializer, integerLiteralArm4.isize.coerce)
+		},
+		usize: {
+			strict: fieldInitializer$arm4Usize(F.buildFieldInitializer, integerLiteralArm4.usize.strict),
+			coerce: fieldInitializer$arm4Usize(C.coerceToFieldInitializer, integerLiteralArm4.usize.coerce)
+		},
+		f32: {
+			strict: fieldInitializer$arm4F32(F.buildFieldInitializer, integerLiteralArm4.f32.strict),
+			coerce: fieldInitializer$arm4F32(C.coerceToFieldInitializer, integerLiteralArm4.f32.coerce)
+		},
+		f64: {
+			strict: fieldInitializer$arm4F64(F.buildFieldInitializer, integerLiteralArm4.f64.strict),
+			coerce: fieldInitializer$arm4F64(C.coerceToFieldInitializer, integerLiteralArm4.f64.coerce)
+		}
 	}
 };
 
@@ -8793,915 +13345,97 @@ export const structPattern: typeof B.structPattern & {
 	coerce: structPattern$seatedCoerce
 };
 
-const integerLiteralArm1$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm1: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+const lineComment$regularDslash =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$docOuter =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$docInner =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$content =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const lineComment: typeof B.lineComment & {
+	regularDslash: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentRegularDslash>) => ReturnType<typeof F.buildLineComment>;
 	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	docOuter: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocOuter>) => ReturnType<typeof F.buildLineComment>;
 	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	docInner: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentDocInner>) => ReturnType<typeof F.buildLineComment>;
 	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm1>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm1>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm1>;
+	content: {
+		strict: (...args: ArgsOf<typeof F.buildLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLineCommentContent>) => ReturnType<typeof F.buildLineComment>;
 	};
 } = {
-	u8: {
-		strict: integerLiteralArm1$u8(F.buildIntegerLiteralArm1, 'u8'),
-		coerce: integerLiteralArm1$u8(C.coerceToIntegerLiteralArm1, 'u8')
+	...B.lineComment,
+	regularDslash: {
+		strict: lineComment$regularDslash(F.buildLineComment, F.buildLineCommentRegularDslash),
+		coerce: lineComment$regularDslash(F.buildLineComment, C.coerceToLineCommentRegularDslash)
 	},
-	i8: {
-		strict: integerLiteralArm1$i8(F.buildIntegerLiteralArm1, 'i8'),
-		coerce: integerLiteralArm1$i8(C.coerceToIntegerLiteralArm1, 'i8')
+	docOuter: {
+		strict: lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter),
+		coerce: lineComment$docOuter(F.buildLineComment, C.coerceToLineCommentDocOuter)
 	},
-	u16: {
-		strict: integerLiteralArm1$u16(F.buildIntegerLiteralArm1, 'u16'),
-		coerce: integerLiteralArm1$u16(C.coerceToIntegerLiteralArm1, 'u16')
+	docInner: {
+		strict: lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner),
+		coerce: lineComment$docInner(F.buildLineComment, C.coerceToLineCommentDocInner)
 	},
-	i16: {
-		strict: integerLiteralArm1$i16(F.buildIntegerLiteralArm1, 'i16'),
-		coerce: integerLiteralArm1$i16(C.coerceToIntegerLiteralArm1, 'i16')
-	},
-	u32: {
-		strict: integerLiteralArm1$u32(F.buildIntegerLiteralArm1, 'u32'),
-		coerce: integerLiteralArm1$u32(C.coerceToIntegerLiteralArm1, 'u32')
-	},
-	i32: {
-		strict: integerLiteralArm1$i32(F.buildIntegerLiteralArm1, 'i32'),
-		coerce: integerLiteralArm1$i32(C.coerceToIntegerLiteralArm1, 'i32')
-	},
-	u64: {
-		strict: integerLiteralArm1$u64(F.buildIntegerLiteralArm1, 'u64'),
-		coerce: integerLiteralArm1$u64(C.coerceToIntegerLiteralArm1, 'u64')
-	},
-	i64: {
-		strict: integerLiteralArm1$i64(F.buildIntegerLiteralArm1, 'i64'),
-		coerce: integerLiteralArm1$i64(C.coerceToIntegerLiteralArm1, 'i64')
-	},
-	u128: {
-		strict: integerLiteralArm1$u128(F.buildIntegerLiteralArm1, 'u128'),
-		coerce: integerLiteralArm1$u128(C.coerceToIntegerLiteralArm1, 'u128')
-	},
-	i128: {
-		strict: integerLiteralArm1$i128(F.buildIntegerLiteralArm1, 'i128'),
-		coerce: integerLiteralArm1$i128(C.coerceToIntegerLiteralArm1, 'i128')
-	},
-	isize: {
-		strict: integerLiteralArm1$isize(F.buildIntegerLiteralArm1, 'isize'),
-		coerce: integerLiteralArm1$isize(C.coerceToIntegerLiteralArm1, 'isize')
-	},
-	usize: {
-		strict: integerLiteralArm1$usize(F.buildIntegerLiteralArm1, 'usize'),
-		coerce: integerLiteralArm1$usize(C.coerceToIntegerLiteralArm1, 'usize')
-	},
-	f32: {
-		strict: integerLiteralArm1$f32(F.buildIntegerLiteralArm1, 'f32'),
-		coerce: integerLiteralArm1$f32(C.coerceToIntegerLiteralArm1, 'f32')
-	},
-	f64: {
-		strict: integerLiteralArm1$f64(F.buildIntegerLiteralArm1, 'f64'),
-		coerce: integerLiteralArm1$f64(C.coerceToIntegerLiteralArm1, 'f64')
+	content: {
+		strict: lineComment$content(F.buildLineComment, F.buildLineCommentContent),
+		coerce: lineComment$content(F.buildLineComment, C.coerceToLineCommentContent)
 	}
 };
 
-const integerLiteralArm2$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm2: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+const blockComment$docOuter =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$docInner =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$content =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+export const blockComment: typeof B.blockComment & {
+	docOuter: {
+		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
 	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	docInner: {
+		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm2>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm2>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm2>;
+	content: {
+		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
 	};
 } = {
-	u8: {
-		strict: integerLiteralArm2$u8(F.buildIntegerLiteralArm2, 'u8'),
-		coerce: integerLiteralArm2$u8(C.coerceToIntegerLiteralArm2, 'u8')
+	...B.blockComment,
+	docOuter: {
+		strict: blockComment$docOuter(F.buildBlockComment, F.buildBlockCommentDocOuter),
+		coerce: blockComment$docOuter(F.buildBlockComment, C.coerceToBlockCommentDocOuter)
 	},
-	i8: {
-		strict: integerLiteralArm2$i8(F.buildIntegerLiteralArm2, 'i8'),
-		coerce: integerLiteralArm2$i8(C.coerceToIntegerLiteralArm2, 'i8')
+	docInner: {
+		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
+		coerce: blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner)
 	},
-	u16: {
-		strict: integerLiteralArm2$u16(F.buildIntegerLiteralArm2, 'u16'),
-		coerce: integerLiteralArm2$u16(C.coerceToIntegerLiteralArm2, 'u16')
-	},
-	i16: {
-		strict: integerLiteralArm2$i16(F.buildIntegerLiteralArm2, 'i16'),
-		coerce: integerLiteralArm2$i16(C.coerceToIntegerLiteralArm2, 'i16')
-	},
-	u32: {
-		strict: integerLiteralArm2$u32(F.buildIntegerLiteralArm2, 'u32'),
-		coerce: integerLiteralArm2$u32(C.coerceToIntegerLiteralArm2, 'u32')
-	},
-	i32: {
-		strict: integerLiteralArm2$i32(F.buildIntegerLiteralArm2, 'i32'),
-		coerce: integerLiteralArm2$i32(C.coerceToIntegerLiteralArm2, 'i32')
-	},
-	u64: {
-		strict: integerLiteralArm2$u64(F.buildIntegerLiteralArm2, 'u64'),
-		coerce: integerLiteralArm2$u64(C.coerceToIntegerLiteralArm2, 'u64')
-	},
-	i64: {
-		strict: integerLiteralArm2$i64(F.buildIntegerLiteralArm2, 'i64'),
-		coerce: integerLiteralArm2$i64(C.coerceToIntegerLiteralArm2, 'i64')
-	},
-	u128: {
-		strict: integerLiteralArm2$u128(F.buildIntegerLiteralArm2, 'u128'),
-		coerce: integerLiteralArm2$u128(C.coerceToIntegerLiteralArm2, 'u128')
-	},
-	i128: {
-		strict: integerLiteralArm2$i128(F.buildIntegerLiteralArm2, 'i128'),
-		coerce: integerLiteralArm2$i128(C.coerceToIntegerLiteralArm2, 'i128')
-	},
-	isize: {
-		strict: integerLiteralArm2$isize(F.buildIntegerLiteralArm2, 'isize'),
-		coerce: integerLiteralArm2$isize(C.coerceToIntegerLiteralArm2, 'isize')
-	},
-	usize: {
-		strict: integerLiteralArm2$usize(F.buildIntegerLiteralArm2, 'usize'),
-		coerce: integerLiteralArm2$usize(C.coerceToIntegerLiteralArm2, 'usize')
-	},
-	f32: {
-		strict: integerLiteralArm2$f32(F.buildIntegerLiteralArm2, 'f32'),
-		coerce: integerLiteralArm2$f32(C.coerceToIntegerLiteralArm2, 'f32')
-	},
-	f64: {
-		strict: integerLiteralArm2$f64(F.buildIntegerLiteralArm2, 'f64'),
-		coerce: integerLiteralArm2$f64(C.coerceToIntegerLiteralArm2, 'f64')
-	}
-};
-
-const integerLiteralArm3$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm3: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm3>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm3>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm3>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralArm3$u8(F.buildIntegerLiteralArm3, 'u8'),
-		coerce: integerLiteralArm3$u8(C.coerceToIntegerLiteralArm3, 'u8')
-	},
-	i8: {
-		strict: integerLiteralArm3$i8(F.buildIntegerLiteralArm3, 'i8'),
-		coerce: integerLiteralArm3$i8(C.coerceToIntegerLiteralArm3, 'i8')
-	},
-	u16: {
-		strict: integerLiteralArm3$u16(F.buildIntegerLiteralArm3, 'u16'),
-		coerce: integerLiteralArm3$u16(C.coerceToIntegerLiteralArm3, 'u16')
-	},
-	i16: {
-		strict: integerLiteralArm3$i16(F.buildIntegerLiteralArm3, 'i16'),
-		coerce: integerLiteralArm3$i16(C.coerceToIntegerLiteralArm3, 'i16')
-	},
-	u32: {
-		strict: integerLiteralArm3$u32(F.buildIntegerLiteralArm3, 'u32'),
-		coerce: integerLiteralArm3$u32(C.coerceToIntegerLiteralArm3, 'u32')
-	},
-	i32: {
-		strict: integerLiteralArm3$i32(F.buildIntegerLiteralArm3, 'i32'),
-		coerce: integerLiteralArm3$i32(C.coerceToIntegerLiteralArm3, 'i32')
-	},
-	u64: {
-		strict: integerLiteralArm3$u64(F.buildIntegerLiteralArm3, 'u64'),
-		coerce: integerLiteralArm3$u64(C.coerceToIntegerLiteralArm3, 'u64')
-	},
-	i64: {
-		strict: integerLiteralArm3$i64(F.buildIntegerLiteralArm3, 'i64'),
-		coerce: integerLiteralArm3$i64(C.coerceToIntegerLiteralArm3, 'i64')
-	},
-	u128: {
-		strict: integerLiteralArm3$u128(F.buildIntegerLiteralArm3, 'u128'),
-		coerce: integerLiteralArm3$u128(C.coerceToIntegerLiteralArm3, 'u128')
-	},
-	i128: {
-		strict: integerLiteralArm3$i128(F.buildIntegerLiteralArm3, 'i128'),
-		coerce: integerLiteralArm3$i128(C.coerceToIntegerLiteralArm3, 'i128')
-	},
-	isize: {
-		strict: integerLiteralArm3$isize(F.buildIntegerLiteralArm3, 'isize'),
-		coerce: integerLiteralArm3$isize(C.coerceToIntegerLiteralArm3, 'isize')
-	},
-	usize: {
-		strict: integerLiteralArm3$usize(F.buildIntegerLiteralArm3, 'usize'),
-		coerce: integerLiteralArm3$usize(C.coerceToIntegerLiteralArm3, 'usize')
-	},
-	f32: {
-		strict: integerLiteralArm3$f32(F.buildIntegerLiteralArm3, 'f32'),
-		coerce: integerLiteralArm3$f32(C.coerceToIntegerLiteralArm3, 'f32')
-	},
-	f64: {
-		strict: integerLiteralArm3$f64(F.buildIntegerLiteralArm3, 'f64'),
-		coerce: integerLiteralArm3$f64(C.coerceToIntegerLiteralArm3, 'f64')
-	}
-};
-
-const integerLiteralArm4$u8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$i8 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$u16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$i16 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$u32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$i32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$u64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$i64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$u128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$i128 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$isize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$usize =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$f32 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4$f64 =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suffix'>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ ...config, suffix: value });
-const integerLiteralArm4: {
-	u8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	i8: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	u16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	i16: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	u32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	i32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	u64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	i64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	u128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	i128: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	isize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	usize: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	f32: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-	f64: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof F.buildIntegerLiteralArm4>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToIntegerLiteralArm4>[0], 'suffix'>
-		) => ReturnType<typeof C.coerceToIntegerLiteralArm4>;
-	};
-} = {
-	u8: {
-		strict: integerLiteralArm4$u8(F.buildIntegerLiteralArm4, 'u8'),
-		coerce: integerLiteralArm4$u8(C.coerceToIntegerLiteralArm4, 'u8')
-	},
-	i8: {
-		strict: integerLiteralArm4$i8(F.buildIntegerLiteralArm4, 'i8'),
-		coerce: integerLiteralArm4$i8(C.coerceToIntegerLiteralArm4, 'i8')
-	},
-	u16: {
-		strict: integerLiteralArm4$u16(F.buildIntegerLiteralArm4, 'u16'),
-		coerce: integerLiteralArm4$u16(C.coerceToIntegerLiteralArm4, 'u16')
-	},
-	i16: {
-		strict: integerLiteralArm4$i16(F.buildIntegerLiteralArm4, 'i16'),
-		coerce: integerLiteralArm4$i16(C.coerceToIntegerLiteralArm4, 'i16')
-	},
-	u32: {
-		strict: integerLiteralArm4$u32(F.buildIntegerLiteralArm4, 'u32'),
-		coerce: integerLiteralArm4$u32(C.coerceToIntegerLiteralArm4, 'u32')
-	},
-	i32: {
-		strict: integerLiteralArm4$i32(F.buildIntegerLiteralArm4, 'i32'),
-		coerce: integerLiteralArm4$i32(C.coerceToIntegerLiteralArm4, 'i32')
-	},
-	u64: {
-		strict: integerLiteralArm4$u64(F.buildIntegerLiteralArm4, 'u64'),
-		coerce: integerLiteralArm4$u64(C.coerceToIntegerLiteralArm4, 'u64')
-	},
-	i64: {
-		strict: integerLiteralArm4$i64(F.buildIntegerLiteralArm4, 'i64'),
-		coerce: integerLiteralArm4$i64(C.coerceToIntegerLiteralArm4, 'i64')
-	},
-	u128: {
-		strict: integerLiteralArm4$u128(F.buildIntegerLiteralArm4, 'u128'),
-		coerce: integerLiteralArm4$u128(C.coerceToIntegerLiteralArm4, 'u128')
-	},
-	i128: {
-		strict: integerLiteralArm4$i128(F.buildIntegerLiteralArm4, 'i128'),
-		coerce: integerLiteralArm4$i128(C.coerceToIntegerLiteralArm4, 'i128')
-	},
-	isize: {
-		strict: integerLiteralArm4$isize(F.buildIntegerLiteralArm4, 'isize'),
-		coerce: integerLiteralArm4$isize(C.coerceToIntegerLiteralArm4, 'isize')
-	},
-	usize: {
-		strict: integerLiteralArm4$usize(F.buildIntegerLiteralArm4, 'usize'),
-		coerce: integerLiteralArm4$usize(C.coerceToIntegerLiteralArm4, 'usize')
-	},
-	f32: {
-		strict: integerLiteralArm4$f32(F.buildIntegerLiteralArm4, 'f32'),
-		coerce: integerLiteralArm4$f32(C.coerceToIntegerLiteralArm4, 'f32')
-	},
-	f64: {
-		strict: integerLiteralArm4$f64(F.buildIntegerLiteralArm4, 'f64'),
-		coerce: integerLiteralArm4$f64(C.coerceToIntegerLiteralArm4, 'f64')
+	content: {
+		strict: blockComment$content(F.buildBlockComment, F.buildBlockCommentContent),
+		coerce: blockComment$content(F.buildBlockComment, C.coerceToBlockCommentContent)
 	}
 };
 
@@ -9984,6 +13718,30 @@ const _attributedTypeParameter$negativeLiteral =
 		const { content: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
 	};
+const _attributedTypeParameter$integerLiteralArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const _attributedTypeParameter$integerLiteralArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const _attributedTypeParameter$integerLiteralArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const _attributedTypeParameter$integerLiteralArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
 const _attributedTypeParameter$floatLiteral =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
@@ -10068,6 +13826,54 @@ const _attributedTypeParameter: {
 				}
 			) => ReturnType<typeof C.coerceToAttributedTypeParameter>;
 		};
+		integerLiteralArm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm1.strict>;
+				}
+			) => ReturnType<typeof F.buildAttributedTypeParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAttributedTypeParameter>;
+		};
+		integerLiteralArm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm2.strict>;
+				}
+			) => ReturnType<typeof F.buildAttributedTypeParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAttributedTypeParameter>;
+		};
+		integerLiteralArm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm3.strict>;
+				}
+			) => ReturnType<typeof F.buildAttributedTypeParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAttributedTypeParameter>;
+		};
+		integerLiteralArm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildAttributedTypeParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAttributedTypeParameter>[0], 'content'> & {
+					content: ArgsOf<typeof constParameter.negativeLiteral.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToAttributedTypeParameter>;
+		};
 		floatLiteral: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildAttributedTypeParameter>[0], 'content'> & {
@@ -10113,6 +13919,46 @@ const _attributedTypeParameter: {
 			coerce: _attributedTypeParameter$negativeLiteral(
 				C.coerceToAttributedTypeParameter,
 				constParameter.negativeLiteral.coerce
+			)
+		},
+		integerLiteralArm1: {
+			strict: _attributedTypeParameter$integerLiteralArm1(
+				F.buildAttributedTypeParameter,
+				constParameter.negativeLiteral.arm1.strict
+			),
+			coerce: _attributedTypeParameter$integerLiteralArm1(
+				C.coerceToAttributedTypeParameter,
+				constParameter.negativeLiteral.arm1.coerce
+			)
+		},
+		integerLiteralArm2: {
+			strict: _attributedTypeParameter$integerLiteralArm2(
+				F.buildAttributedTypeParameter,
+				constParameter.negativeLiteral.arm2.strict
+			),
+			coerce: _attributedTypeParameter$integerLiteralArm2(
+				C.coerceToAttributedTypeParameter,
+				constParameter.negativeLiteral.arm2.coerce
+			)
+		},
+		integerLiteralArm3: {
+			strict: _attributedTypeParameter$integerLiteralArm3(
+				F.buildAttributedTypeParameter,
+				constParameter.negativeLiteral.arm3.strict
+			),
+			coerce: _attributedTypeParameter$integerLiteralArm3(
+				C.coerceToAttributedTypeParameter,
+				constParameter.negativeLiteral.arm3.coerce
+			)
+		},
+		integerLiteralArm4: {
+			strict: _attributedTypeParameter$integerLiteralArm4(
+				F.buildAttributedTypeParameter,
+				constParameter.negativeLiteral.arm4.strict
+			),
+			coerce: _attributedTypeParameter$integerLiteralArm4(
+				C.coerceToAttributedTypeParameter,
+				constParameter.negativeLiteral.arm4.coerce
 			)
 		},
 		floatLiteral: {
@@ -13167,4 +17013,60 @@ export const orPattern: {
 } = {
 	binary: { strict: F.buildOrPatternBinary, coerce: C.coerceToOrPatternBinary },
 	prefix: { strict: F.buildOrPatternPrefix, coerce: C.coerceToOrPatternPrefix }
+};
+
+export const integerLiteral: {
+	readonly strict: typeof F.buildIntegerLiteralArm1;
+	readonly coerce: typeof C.coerceToIntegerLiteralArm1;
+	readonly arm1: {
+		strict: typeof F.buildIntegerLiteralArm1;
+		coerce: typeof C.coerceToIntegerLiteralArm1;
+	} & typeof integerLiteralArm1;
+	readonly arm2: {
+		strict: typeof F.buildIntegerLiteralArm2;
+		coerce: typeof C.coerceToIntegerLiteralArm2;
+	} & typeof integerLiteralArm2;
+	readonly arm3: {
+		strict: typeof F.buildIntegerLiteralArm3;
+		coerce: typeof C.coerceToIntegerLiteralArm3;
+	} & typeof integerLiteralArm3;
+	readonly arm4: {
+		strict: typeof F.buildIntegerLiteralArm4;
+		coerce: typeof C.coerceToIntegerLiteralArm4;
+	} & typeof integerLiteralArm4;
+} = {
+	strict: F.buildIntegerLiteralArm1,
+	coerce: C.coerceToIntegerLiteralArm1,
+	arm1: { strict: F.buildIntegerLiteralArm1, coerce: C.coerceToIntegerLiteralArm1, ...integerLiteralArm1 },
+	arm2: { strict: F.buildIntegerLiteralArm2, coerce: C.coerceToIntegerLiteralArm2, ...integerLiteralArm2 },
+	arm3: { strict: F.buildIntegerLiteralArm3, coerce: C.coerceToIntegerLiteralArm3, ...integerLiteralArm3 },
+	arm4: { strict: F.buildIntegerLiteralArm4, coerce: C.coerceToIntegerLiteralArm4, ...integerLiteralArm4 }
+};
+
+export const charLiteral: {
+	readonly strict: typeof F.buildCharLiteralArm1;
+	readonly coerce: typeof C.coerceToCharLiteralArm1;
+	readonly arm1: { strict: typeof F.buildCharLiteralArm1; coerce: typeof C.coerceToCharLiteralArm1 };
+	readonly arm2: { strict: typeof F.buildCharLiteralArm2; coerce: typeof C.coerceToCharLiteralArm2 };
+} = {
+	strict: F.buildCharLiteralArm1,
+	coerce: C.coerceToCharLiteralArm1,
+	arm1: { strict: F.buildCharLiteralArm1, coerce: C.coerceToCharLiteralArm1 },
+	arm2: { strict: F.buildCharLiteralArm2, coerce: C.coerceToCharLiteralArm2 }
+};
+
+export const escapeSequence: {
+	readonly strict: typeof F.buildEscapeSequenceArm1;
+	readonly coerce: typeof C.coerceToEscapeSequenceArm1;
+	readonly arm1: { strict: typeof F.buildEscapeSequenceArm1; coerce: typeof C.coerceToEscapeSequenceArm1 };
+	readonly arm2: { strict: typeof F.buildEscapeSequenceArm2; coerce: typeof C.coerceToEscapeSequenceArm2 };
+	readonly arm3: { strict: typeof F.buildEscapeSequenceArm3; coerce: typeof C.coerceToEscapeSequenceArm3 };
+	readonly arm4: { strict: typeof F.buildEscapeSequenceArm4; coerce: typeof C.coerceToEscapeSequenceArm4 };
+} = {
+	strict: F.buildEscapeSequenceArm1,
+	coerce: C.coerceToEscapeSequenceArm1,
+	arm1: { strict: F.buildEscapeSequenceArm1, coerce: C.coerceToEscapeSequenceArm1 },
+	arm2: { strict: F.buildEscapeSequenceArm2, coerce: C.coerceToEscapeSequenceArm2 },
+	arm3: { strict: F.buildEscapeSequenceArm3, coerce: C.coerceToEscapeSequenceArm3 },
+	arm4: { strict: F.buildEscapeSequenceArm4, coerce: C.coerceToEscapeSequenceArm4 }
 };

@@ -7278,6 +7278,11 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm1",
+            "variantOf": "integer_literal",
+            "default": true
           }
         },
         {
@@ -7286,6 +7291,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm2",
+            "variantOf": "integer_literal"
           }
         },
         {
@@ -7294,6 +7303,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm3",
+            "variantOf": "integer_literal"
           }
         },
         {
@@ -7302,6 +7315,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm4",
+            "variantOf": "integer_literal"
           }
         }
       ]
@@ -7419,6 +7436,11 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm1",
+            "variantOf": "char_literal",
+            "default": true
           }
         },
         {
@@ -7427,6 +7449,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm2",
+            "variantOf": "char_literal"
           }
         },
         {
@@ -7435,6 +7461,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm3",
+            "variantOf": "char_literal"
           }
         }
       ]
@@ -7448,6 +7478,11 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm1",
+            "variantOf": "escape_sequence",
+            "default": true
           }
         },
         {
@@ -7456,6 +7491,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm2",
+            "variantOf": "escape_sequence"
           }
         },
         {
@@ -7464,6 +7503,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm3",
+            "variantOf": "escape_sequence"
           }
         },
         {
@@ -7472,6 +7515,10 @@
           "metadata": {
             "author": "enrich",
             "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "arm4",
+            "variantOf": "escape_sequence"
           }
         }
       ]

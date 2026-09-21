@@ -139,3 +139,7 @@ export const withClauseBare: Hoisted<typeof O.withClauseBare> = hoist(O.withClau
 export const withClause: Hoisted<typeof O.withClause> = hoistRoutes(O.withClause);
 export const suite: Hoisted<typeof O.suite> = hoistRoutes(O.suite);
 export const assignment: Hoisted<typeof O.assignment> = hoistRoutes(O.assignment);
+export const escapeSequence: Hoisted<typeof O.escapeSequence> = hoistRoutes(O.escapeSequence);
+export const integer: Hoisted<typeof O.integer> = hoistRoutes(O.integer);
+export const float: Hoisted<typeof O.float> = hoistRoutes(O.float);
+export const lineContinuation: Hoisted<typeof O.lineContinuation> = hoistRoutes(O.lineContinuation);

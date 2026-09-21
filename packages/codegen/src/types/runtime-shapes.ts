@@ -105,6 +105,105 @@ export function patternAcceptsEmpty(source: string): boolean {
 	return 'regex' in compiled && compiled.regex.test('');
 }
 
+type SampleState = { readonly source: string; index: number };
+
+const SAMPLE_FILLERS = ['a', '1', '_', 'x', ' ', '.', '0'];
+
+function sampleClass(state: SampleState): string {
+	const negated = state.source[state.index] === '^';
+	if (negated) state.index++;
+	const members: string[] = [];
+	while (state.index < state.source.length && state.source[state.index] !== ']') {
+		let ch = state.source[state.index++]!;
+		if (ch === '\\') {
+			const escaped = state.source[state.index++]!;
+			members.push(escaped === 'd' ? '0' : escaped === 'w' ? 'a' : escaped === 's' ? ' ' : escaped === 'n' ? '\n' : escaped);
+			continue;
+		}
+		if (state.source[state.index] === '-' && state.source[state.index + 1] !== ']' && state.index + 1 < state.source.length) {
+			state.index++;
+			if (state.source[state.index] === '\\') state.index++;
+			state.index++;
+		}
+		members.push(ch);
+	}
+	state.index++;
+	if (!negated) return members[0] ?? 'a';
+	return SAMPLE_FILLERS.find((f) => !members.includes(f)) ?? 'a';
+}
+
+function sampleAtom(state: SampleState): string {
+	const ch = state.source[state.index++]!;
+	if (ch === '[') return sampleClass(state);
+	if (ch === '(') {
+		if (state.source.startsWith('?:', state.index)) state.index += 2;
+		else if (state.source[state.index] === '?' && state.source[state.index + 1] === '<') state.index = state.source.indexOf('>', state.index) + 1;
+		const inner = sampleAlternation(state);
+		state.index++;
+		return inner;
+	}
+	if (ch === '\\') {
+		const escaped = state.source[state.index++]!;
+		if (escaped === 'd') return '0';
+		if (escaped === 'w') return 'a';
+		if (escaped === 's') return ' ';
+		if (escaped === 'n') return '\n';
+		if (escaped === 'r') return '\r';
+		if (escaped === 't') return '\t';
+		return escaped;
+	}
+	if (ch === '.') return 'a';
+	return ch;
+}
+
+function sampleQuantified(state: SampleState): string {
+	const atom = sampleAtom(state);
+	const q = state.source[state.index];
+	if (q === '+' || q === '{') {
+		state.index++;
+		if (q === '{') {
+			const close = state.source.indexOf('}', state.index);
+			const min = Number.parseInt(state.source.slice(state.index, close), 10);
+			state.index = close + 1;
+			return atom.repeat(Number.isNaN(min) ? 1 : Math.max(min, 0));
+		}
+		return atom;
+	}
+	if (q === '*' || q === '?') {
+		state.index++;
+		return q === '*' ? atom : '';
+	}
+	return atom;
+}
+
+function sampleSequence(state: SampleState): string {
+	let out = '';
+	while (state.index < state.source.length && state.source[state.index] !== '|' && state.source[state.index] !== ')') {
+		out += sampleQuantified(state);
+	}
+	return out;
+}
+
+function sampleAlternation(state: SampleState): string {
+	const first = sampleSequence(state);
+	while (state.source[state.index] === '|') {
+		state.index++;
+		sampleSequence(state);
+	}
+	return first;
+}
+
+export function samplePattern(source: string): string | null {
+	const compiled = compileAnchoredPattern(source);
+	if (!('regex' in compiled)) return null;
+	try {
+		const sample = sampleAlternation({ source, index: 0 });
+		return compiled.regex.test(sample) ? sample : null;
+	} catch {
+		return null;
+	}
+}
+
 export function matchesEmpty(rule: RuntimeRule): boolean {
 	const t = rule.type;
 	if (isBlankType(t) || isOptionalType(t) || isPlainRepeatType(t)) return true;

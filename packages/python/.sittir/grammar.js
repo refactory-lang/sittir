@@ -779,13 +779,25 @@ function resolveName(name, renames) {
 }
 function renameRule(value, renames) {
   if (renames.size === 0) return value;
-  if (Array.isArray(value)) return value.map((entry) => renameRule(entry, renames));
+  if (Array.isArray(value)) {
+    const mapped = value.map((entry) => renameRule(entry, renames));
+    return mapped.every((entry, index) => entry === value[index]) ? value : mapped;
+  }
   if (value === null || typeof value !== "object") return value;
   const record = value;
-  const out = {};
-  for (const [key, entry] of Object.entries(record)) out[key] = renameRule(entry, renames);
-  if (record.type === "SYMBOL" && typeof record.name === "string") out.name = resolveName(record.name, renames);
-  return out;
+  const changes = {};
+  for (const [key, entry] of Object.entries(record)) {
+    const next = renameRule(entry, renames);
+    if (next !== entry) changes[key] = next;
+  }
+  if (record.type === "SYMBOL" && typeof record.name === "string") {
+    const name = resolveName(record.name, renames);
+    if (name !== record.name) changes.name = name;
+  }
+  if (Object.keys(changes).length === 0) return value;
+  const copy = Object.create(Object.getPrototypeOf(value), Object.getOwnPropertyDescriptors(value));
+  for (const [key, entry] of Object.entries(changes)) copy[key] = entry;
+  return copy;
 }
 function renameNameList(value, renames) {
   if (renames.size === 0) return value;
@@ -1763,6 +1775,7 @@ function enrich(baseInput) {
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
+  for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
   for (const name of Object.keys(mergedRules)) {
     const rule = mergedRules[name];
     if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -1901,6 +1914,40 @@ function replaceExtras(result, replacements) {
     return;
   }
   if (Array.isArray(current)) result.extras = replaced(current, void 0);
+}
+function annotateTokenFormArms(parent, rules) {
+  const stack = [];
+  let core = rules[parent];
+  while (core !== void 0 && isPrecWrapper(core)) {
+    stack.push(core);
+    core = core.content;
+  }
+  const members = core?.members;
+  if (core === void 0 || members === void 0) return;
+  const base2 = parent.replace(/^_+/, "");
+  const preferred = defaultTokenFormArm(members, rules);
+  const annotated = members.map((member, i) => {
+    const name = member.name ?? "";
+    const variant2 = name.startsWith(`${base2}_`) ? name.slice(base2.length + 1) : name;
+    return withAnnotations(member, { variant: variant2, variantOf: parent, ...i === preferred ? { default: true } : {} });
+  });
+  let out = { ...core, members: annotated };
+  for (let i = stack.length - 1; i >= 0; i--) out = { ...stack[i], content: out };
+  rules[parent] = out;
+}
+function defaultTokenFormArm(members, rules) {
+  const leadsWithLiteral = (rule) => {
+    if (rule === void 0) return false;
+    const t = rule.type ?? "";
+    if (t === "STRING") return true;
+    if (t === "SEQ") return leadsWithLiteral(rule.members[0]);
+    if (t === "CHOICE") return rule.members.every(leadsWithLiteral);
+    const inner = rule.content;
+    if (inner !== void 0) return leadsWithLiteral(inner);
+    return false;
+  };
+  const open = members.findIndex((m) => !leadsWithLiteral(rules[m.name ?? ""]));
+  return open < 0 ? 0 : open;
 }
 function addSupertypes(result, names) {
   if (names.length === 0) return;
@@ -4088,9 +4135,8 @@ function wire(config, base2) {
   const conflicts = wrapConflictsCallback(cfg.conflicts, context);
   const inline = wrapInlineCallback(cfg.inline, context);
   const supertypes = wrapSupertypesCallback(cfg.supertypes, context);
-  const inheritedKeys = baseArg === void 0 ? {} : baseArg.grammar ?? baseArg;
   const renamedCallbacks = Object.fromEntries(
-    ["extras", "externals", "precedences"].filter((key) => key in cfg || inheritedKeys[key] !== void 0).map((key) => [key, renamingCallback(cfg[key], renameRule, context)])
+    ["extras", "externals", "precedences"].filter((key) => key in cfg).map((key) => [key, renamingCallback(cfg[key], renameRule, context)])
   );
   const wired = {
     ...cfg,

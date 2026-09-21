@@ -1,4 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
+import { samplePattern } from '../types/runtime-shapes.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
@@ -29,6 +30,7 @@ import {
 	keywordPresenceKind,
 	kindEnumTextIdPairs,
 	resolveFieldStorageInfo,
+	isTextEnum,
 	soleSlotFacts,
 	type SoleSlotFacts,
 	escForSource
@@ -570,7 +572,7 @@ function pickSampleForPattern(pattern: string | undefined): string | null {
 	for (const c of candidates) {
 		if (re.test(c)) return c;
 	}
-	return null;
+	return samplePattern(pattern);
 }
 
 function emitKeywordTest(
@@ -632,6 +634,9 @@ function dummyValueForField(
 	const patternDummy = patternSlotDummy(field);
 	if (patternDummy !== undefined) return patternDummy;
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	if (isTextEnum(storageInfo)) {
+		return JSON.stringify(storageInfo.texts[0]);
+	}
 	if (depth === 0) {
 		if (storageInfo.kind === 'boolean') return 'true';
 		if (storageInfo.kind === 'bitflag') return '0 as never';

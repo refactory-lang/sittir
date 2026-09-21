@@ -3077,6 +3077,170 @@ export const splatPattern: typeof B.splatPattern & {
 	}
 };
 
+const simplePatternNegative$integerArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const simplePatternNegative$integerArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const simplePatternNegative$integerArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
+	};
+const simplePatternNegative$arm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const simplePatternNegative$floatArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const simplePatternNegative$floatArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const simplePatternNegative$floatArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	};
+const simplePatternNegative: {
+	integerArm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & ArgsOf<typeof F.buildIntegerArm1>[0]
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToIntegerArm1>[0]
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	integerArm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & ArgsOf<typeof F.buildIntegerArm2>[0]
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToIntegerArm2>[0]
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	integerArm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & ArgsOf<typeof F.buildIntegerArm3>[0]
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToIntegerArm3>[0]
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	arm4: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildIntegerArm4>;
+			}
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToIntegerArm4>;
+			}
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	floatArm1: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildFloatArm1>;
+			}
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToFloatArm1>;
+			}
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	floatArm2: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildFloatArm2>;
+			}
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToFloatArm2>;
+			}
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+	floatArm3: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildFloatArm3>;
+			}
+		) => ReturnType<typeof F.buildSimplePatternNegative>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToFloatArm3>;
+			}
+		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
+	};
+} = {
+	integerArm1: {
+		strict: simplePatternNegative$integerArm1(F.buildSimplePatternNegative, F.buildIntegerArm1),
+		coerce: simplePatternNegative$integerArm1(C.coerceToSimplePatternNegative, C.coerceToIntegerArm1)
+	},
+	integerArm2: {
+		strict: simplePatternNegative$integerArm2(F.buildSimplePatternNegative, F.buildIntegerArm2),
+		coerce: simplePatternNegative$integerArm2(C.coerceToSimplePatternNegative, C.coerceToIntegerArm2)
+	},
+	integerArm3: {
+		strict: simplePatternNegative$integerArm3(F.buildSimplePatternNegative, F.buildIntegerArm3),
+		coerce: simplePatternNegative$integerArm3(C.coerceToSimplePatternNegative, C.coerceToIntegerArm3)
+	},
+	arm4: {
+		strict: simplePatternNegative$arm4(F.buildSimplePatternNegative, F.buildIntegerArm4),
+		coerce: simplePatternNegative$arm4(C.coerceToSimplePatternNegative, C.coerceToIntegerArm4)
+	},
+	floatArm1: {
+		strict: simplePatternNegative$floatArm1(F.buildSimplePatternNegative, F.buildFloatArm1),
+		coerce: simplePatternNegative$floatArm1(C.coerceToSimplePatternNegative, C.coerceToFloatArm1)
+	},
+	floatArm2: {
+		strict: simplePatternNegative$floatArm2(F.buildSimplePatternNegative, F.buildFloatArm2),
+		coerce: simplePatternNegative$floatArm2(C.coerceToSimplePatternNegative, C.coerceToFloatArm2)
+	},
+	floatArm3: {
+		strict: simplePatternNegative$floatArm3(F.buildSimplePatternNegative, F.buildFloatArm3),
+		coerce: simplePatternNegative$floatArm3(C.coerceToSimplePatternNegative, C.coerceToFloatArm3)
+	}
+};
+
 const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
@@ -3231,6 +3395,48 @@ const keywordPattern$negative =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(inner) });
+	};
+const keywordPattern$integerArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$integerArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$integerArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$integerArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$floatArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$floatArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
+	};
+const keywordPattern$floatArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }): ReturnType<PF> => {
+		const { value: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, value: _c(child)(...seated) });
 	};
 const keywordPattern$complexPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3413,6 +3619,90 @@ export const keywordPattern: typeof B.keywordPattern & {
 			config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> &
 				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
 		) => ReturnType<typeof C.coerceToKeywordPattern>;
+		integerArm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm1.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		integerArm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm2.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		integerArm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm3.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.integerArm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		floatArm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm1.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		floatArm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm2.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
+		floatArm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm3.strict>;
+				}
+			) => ReturnType<typeof F.buildKeywordPattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'value'> & {
+					value: ArgsOf<typeof simplePatternNegative.floatArm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeywordPattern>;
+		};
 	};
 	complexPattern: {
 		strict: (
@@ -3520,7 +3810,35 @@ export const keywordPattern: typeof B.keywordPattern & {
 	},
 	negative: {
 		strict: keywordPattern$negative(F.buildKeywordPattern, F.buildSimplePatternNegative),
-		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative)
+		coerce: keywordPattern$negative(C.coerceToKeywordPattern, C.coerceToSimplePatternNegative),
+		integerArm1: {
+			strict: keywordPattern$integerArm1(F.buildKeywordPattern, simplePatternNegative.integerArm1.strict),
+			coerce: keywordPattern$integerArm1(C.coerceToKeywordPattern, simplePatternNegative.integerArm1.coerce)
+		},
+		integerArm2: {
+			strict: keywordPattern$integerArm2(F.buildKeywordPattern, simplePatternNegative.integerArm2.strict),
+			coerce: keywordPattern$integerArm2(C.coerceToKeywordPattern, simplePatternNegative.integerArm2.coerce)
+		},
+		integerArm3: {
+			strict: keywordPattern$integerArm3(F.buildKeywordPattern, simplePatternNegative.integerArm3.strict),
+			coerce: keywordPattern$integerArm3(C.coerceToKeywordPattern, simplePatternNegative.integerArm3.coerce)
+		},
+		arm4: {
+			strict: keywordPattern$integerArm4(F.buildKeywordPattern, simplePatternNegative.arm4.strict),
+			coerce: keywordPattern$integerArm4(C.coerceToKeywordPattern, simplePatternNegative.arm4.coerce)
+		},
+		floatArm1: {
+			strict: keywordPattern$floatArm1(F.buildKeywordPattern, simplePatternNegative.floatArm1.strict),
+			coerce: keywordPattern$floatArm1(C.coerceToKeywordPattern, simplePatternNegative.floatArm1.coerce)
+		},
+		floatArm2: {
+			strict: keywordPattern$floatArm2(F.buildKeywordPattern, simplePatternNegative.floatArm2.strict),
+			coerce: keywordPattern$floatArm2(C.coerceToKeywordPattern, simplePatternNegative.floatArm2.coerce)
+		},
+		floatArm3: {
+			strict: keywordPattern$floatArm3(F.buildKeywordPattern, simplePatternNegative.floatArm3.strict),
+			coerce: keywordPattern$floatArm3(C.coerceToKeywordPattern, simplePatternNegative.floatArm3.coerce)
+		}
 	},
 	complexPattern: {
 		strict: keywordPattern$complexPattern(F.buildKeywordPattern, F.buildComplexPattern),
@@ -3597,6 +3915,34 @@ const casePattern$none =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const casePattern$simplePatternNegative =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$integerArm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$integerArm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$integerArm3 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$integerArm4 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$floatArm1 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$floatArm2 =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const casePattern$floatArm3 =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -3720,6 +4066,46 @@ export const casePattern: typeof B.casePattern & {
 	negative: {
 		strict: (...args: ArgsOf<typeof F.buildSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToSimplePatternNegative>) => ReturnType<typeof F.buildCasePattern>;
+		integerArm1: {
+			strict: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm1.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm1.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		integerArm2: {
+			strict: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm2.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm2.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		integerArm3: {
+			strict: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm3.strict>
+			) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (
+				...args: ArgsOf<typeof simplePatternNegative.integerArm3.coerce>
+			) => ReturnType<typeof F.buildCasePattern>;
+		};
+		arm4: {
+			strict: (...args: ArgsOf<typeof simplePatternNegative.arm4.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePatternNegative.arm4.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		floatArm1: {
+			strict: (...args: ArgsOf<typeof simplePatternNegative.floatArm1.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePatternNegative.floatArm1.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		floatArm2: {
+			strict: (...args: ArgsOf<typeof simplePatternNegative.floatArm2.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePatternNegative.floatArm2.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
+		floatArm3: {
+			strict: (...args: ArgsOf<typeof simplePatternNegative.floatArm3.strict>) => ReturnType<typeof F.buildCasePattern>;
+			coerce: (...args: ArgsOf<typeof simplePatternNegative.floatArm3.coerce>) => ReturnType<typeof F.buildCasePattern>;
+		};
 	};
 } = {
 	...B.casePattern,
@@ -3809,7 +4195,35 @@ export const casePattern: typeof B.casePattern & {
 	},
 	negative: {
 		strict: casePattern$negative(F.buildCasePattern, F.buildSimplePatternNegative),
-		coerce: casePattern$negative(F.buildCasePattern, C.coerceToSimplePatternNegative)
+		coerce: casePattern$negative(F.buildCasePattern, C.coerceToSimplePatternNegative),
+		integerArm1: {
+			strict: casePattern$integerArm1(F.buildCasePattern, simplePatternNegative.integerArm1.strict),
+			coerce: casePattern$integerArm1(F.buildCasePattern, simplePatternNegative.integerArm1.coerce)
+		},
+		integerArm2: {
+			strict: casePattern$integerArm2(F.buildCasePattern, simplePatternNegative.integerArm2.strict),
+			coerce: casePattern$integerArm2(F.buildCasePattern, simplePatternNegative.integerArm2.coerce)
+		},
+		integerArm3: {
+			strict: casePattern$integerArm3(F.buildCasePattern, simplePatternNegative.integerArm3.strict),
+			coerce: casePattern$integerArm3(F.buildCasePattern, simplePatternNegative.integerArm3.coerce)
+		},
+		arm4: {
+			strict: casePattern$integerArm4(F.buildCasePattern, simplePatternNegative.arm4.strict),
+			coerce: casePattern$integerArm4(F.buildCasePattern, simplePatternNegative.arm4.coerce)
+		},
+		floatArm1: {
+			strict: casePattern$floatArm1(F.buildCasePattern, simplePatternNegative.floatArm1.strict),
+			coerce: casePattern$floatArm1(F.buildCasePattern, simplePatternNegative.floatArm1.coerce)
+		},
+		floatArm2: {
+			strict: casePattern$floatArm2(F.buildCasePattern, simplePatternNegative.floatArm2.strict),
+			coerce: casePattern$floatArm2(F.buildCasePattern, simplePatternNegative.floatArm2.coerce)
+		},
+		floatArm3: {
+			strict: casePattern$floatArm3(F.buildCasePattern, simplePatternNegative.floatArm3.strict),
+			coerce: casePattern$floatArm3(F.buildCasePattern, simplePatternNegative.floatArm3.coerce)
+		}
 	}
 };
 
@@ -3910,6 +4324,48 @@ const keyValuePattern$negative =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const keyValuePattern$integerArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$integerArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$integerArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$integerArm4 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$floatArm1 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$floatArm2 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const keyValuePattern$floatArm3 =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
 const keyValuePattern$complexPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4079,6 +4535,90 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 			config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
 				ArgsOf<typeof C.coerceToSimplePatternNegative>[0]
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		integerArm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm1.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		integerArm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm2.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		integerArm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm3.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.integerArm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		arm4: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.arm4.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.arm4.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		floatArm1: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm1.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm1.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		floatArm2: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm2.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm2.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
+		floatArm3: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm3.strict>;
+				}
+			) => ReturnType<typeof F.buildKeyValuePattern>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
+					key: ArgsOf<typeof simplePatternNegative.floatArm3.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToKeyValuePattern>;
+		};
 	};
 	complexPattern: {
 		strict: (
@@ -4186,7 +4726,35 @@ export const keyValuePattern: typeof B.keyValuePattern & {
 	},
 	negative: {
 		strict: keyValuePattern$negative(F.buildKeyValuePattern, F.buildSimplePatternNegative),
-		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative)
+		coerce: keyValuePattern$negative(C.coerceToKeyValuePattern, C.coerceToSimplePatternNegative),
+		integerArm1: {
+			strict: keyValuePattern$integerArm1(F.buildKeyValuePattern, simplePatternNegative.integerArm1.strict),
+			coerce: keyValuePattern$integerArm1(C.coerceToKeyValuePattern, simplePatternNegative.integerArm1.coerce)
+		},
+		integerArm2: {
+			strict: keyValuePattern$integerArm2(F.buildKeyValuePattern, simplePatternNegative.integerArm2.strict),
+			coerce: keyValuePattern$integerArm2(C.coerceToKeyValuePattern, simplePatternNegative.integerArm2.coerce)
+		},
+		integerArm3: {
+			strict: keyValuePattern$integerArm3(F.buildKeyValuePattern, simplePatternNegative.integerArm3.strict),
+			coerce: keyValuePattern$integerArm3(C.coerceToKeyValuePattern, simplePatternNegative.integerArm3.coerce)
+		},
+		arm4: {
+			strict: keyValuePattern$integerArm4(F.buildKeyValuePattern, simplePatternNegative.arm4.strict),
+			coerce: keyValuePattern$integerArm4(C.coerceToKeyValuePattern, simplePatternNegative.arm4.coerce)
+		},
+		floatArm1: {
+			strict: keyValuePattern$floatArm1(F.buildKeyValuePattern, simplePatternNegative.floatArm1.strict),
+			coerce: keyValuePattern$floatArm1(C.coerceToKeyValuePattern, simplePatternNegative.floatArm1.coerce)
+		},
+		floatArm2: {
+			strict: keyValuePattern$floatArm2(F.buildKeyValuePattern, simplePatternNegative.floatArm2.strict),
+			coerce: keyValuePattern$floatArm2(C.coerceToKeyValuePattern, simplePatternNegative.floatArm2.coerce)
+		},
+		floatArm3: {
+			strict: keyValuePattern$floatArm3(F.buildKeyValuePattern, simplePatternNegative.floatArm3.strict),
+			coerce: keyValuePattern$floatArm3(C.coerceToKeyValuePattern, simplePatternNegative.floatArm3.coerce)
+		}
 	},
 	complexPattern: {
 		strict: keyValuePattern$complexPattern(F.buildKeyValuePattern, F.buildComplexPattern),
@@ -5735,4 +6303,68 @@ export const assignment: {
 	eq: { strict: F.buildAssignmentEq, coerce: C.coerceToAssignmentEq, ...assignmentEq },
 	type: { strict: F.buildAssignmentType, coerce: C.coerceToAssignmentType, ...assignmentType },
 	typed: { strict: F.buildAssignmentTyped, coerce: C.coerceToAssignmentTyped, ...assignmentTyped }
+};
+
+export const escapeSequence: {
+	readonly strict: typeof F.buildEscapeSequenceArm1;
+	readonly coerce: typeof C.coerceToEscapeSequenceArm1;
+	readonly arm1: { strict: typeof F.buildEscapeSequenceArm1; coerce: typeof C.coerceToEscapeSequenceArm1 };
+	readonly arm2: { strict: typeof F.buildEscapeSequenceArm2; coerce: typeof C.coerceToEscapeSequenceArm2 };
+	readonly arm3: { strict: typeof F.buildEscapeSequenceArm3; coerce: typeof C.coerceToEscapeSequenceArm3 };
+	readonly arm4: { strict: typeof F.buildEscapeSequenceArm4; coerce: typeof C.coerceToEscapeSequenceArm4 };
+	readonly arm5: { strict: typeof F.buildEscapeSequenceArm5; coerce: typeof C.coerceToEscapeSequenceArm5 };
+	readonly arm6: { strict: typeof F.buildEscapeSequenceArm6; coerce: typeof C.coerceToEscapeSequenceArm6 };
+	readonly arm7: { strict: typeof F.buildEscapeSequenceArm7; coerce: typeof C.coerceToEscapeSequenceArm7 };
+} = {
+	strict: F.buildEscapeSequenceArm1,
+	coerce: C.coerceToEscapeSequenceArm1,
+	arm1: { strict: F.buildEscapeSequenceArm1, coerce: C.coerceToEscapeSequenceArm1 },
+	arm2: { strict: F.buildEscapeSequenceArm2, coerce: C.coerceToEscapeSequenceArm2 },
+	arm3: { strict: F.buildEscapeSequenceArm3, coerce: C.coerceToEscapeSequenceArm3 },
+	arm4: { strict: F.buildEscapeSequenceArm4, coerce: C.coerceToEscapeSequenceArm4 },
+	arm5: { strict: F.buildEscapeSequenceArm5, coerce: C.coerceToEscapeSequenceArm5 },
+	arm6: { strict: F.buildEscapeSequenceArm6, coerce: C.coerceToEscapeSequenceArm6 },
+	arm7: { strict: F.buildEscapeSequenceArm7, coerce: C.coerceToEscapeSequenceArm7 }
+};
+
+export const integer: {
+	readonly strict: typeof F.buildIntegerArm4;
+	readonly coerce: typeof C.coerceToIntegerArm4;
+	readonly arm1: { strict: typeof F.buildIntegerArm1; coerce: typeof C.coerceToIntegerArm1 };
+	readonly arm2: { strict: typeof F.buildIntegerArm2; coerce: typeof C.coerceToIntegerArm2 };
+	readonly arm3: { strict: typeof F.buildIntegerArm3; coerce: typeof C.coerceToIntegerArm3 };
+	readonly arm4: { strict: typeof F.buildIntegerArm4; coerce: typeof C.coerceToIntegerArm4 };
+} = {
+	strict: F.buildIntegerArm4,
+	coerce: C.coerceToIntegerArm4,
+	arm1: { strict: F.buildIntegerArm1, coerce: C.coerceToIntegerArm1 },
+	arm2: { strict: F.buildIntegerArm2, coerce: C.coerceToIntegerArm2 },
+	arm3: { strict: F.buildIntegerArm3, coerce: C.coerceToIntegerArm3 },
+	arm4: { strict: F.buildIntegerArm4, coerce: C.coerceToIntegerArm4 }
+};
+
+export const float: {
+	readonly strict: typeof F.buildFloatArm1;
+	readonly coerce: typeof C.coerceToFloatArm1;
+	readonly arm1: { strict: typeof F.buildFloatArm1; coerce: typeof C.coerceToFloatArm1 };
+	readonly arm2: { strict: typeof F.buildFloatArm2; coerce: typeof C.coerceToFloatArm2 };
+	readonly arm3: { strict: typeof F.buildFloatArm3; coerce: typeof C.coerceToFloatArm3 };
+} = {
+	strict: F.buildFloatArm1,
+	coerce: C.coerceToFloatArm1,
+	arm1: { strict: F.buildFloatArm1, coerce: C.coerceToFloatArm1 },
+	arm2: { strict: F.buildFloatArm2, coerce: C.coerceToFloatArm2 },
+	arm3: { strict: F.buildFloatArm3, coerce: C.coerceToFloatArm3 }
+};
+
+export const lineContinuation: {
+	readonly strict: typeof F.buildLineContinuationArm1;
+	readonly coerce: typeof C.coerceToLineContinuationArm1;
+	readonly arm1: { strict: typeof F.buildLineContinuationArm1; coerce: typeof C.coerceToLineContinuationArm1 };
+	readonly arm2: { strict: typeof F.buildLineContinuationArm2; coerce: typeof C.coerceToLineContinuationArm2 };
+} = {
+	strict: F.buildLineContinuationArm1,
+	coerce: C.coerceToLineContinuationArm1,
+	arm1: { strict: F.buildLineContinuationArm1, coerce: C.coerceToLineContinuationArm1 },
+	arm2: { strict: F.buildLineContinuationArm2, coerce: C.coerceToLineContinuationArm2 }
 };
