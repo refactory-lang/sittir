@@ -157,21 +157,25 @@ function emitBranchTest(
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 
-	const hasRenderContent = renderConfigArg !== '{}';
+	pushRenderTest(lines, key, renderConfigArg);
+
+	lines.push('});');
+	lines.push('');
+}
+
+function pushRenderTest(lines: string[], key: string, renderArg: string): void {
+	const hasRenderContent = renderArg !== '{}' && renderArg !== '';
 	if (hasRenderContent) {
 		lines.push(`  it('render produces non-empty string', () => {`);
-		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
+		lines.push(`    const node = ir.${key}(${renderArg});`);
 		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		lines.push('  });');
 	} else {
 		lines.push(`  it('render does not throw on minimal config', () => {`);
-		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
+		lines.push(`    const node = ir.${key}(${renderArg});`);
 		lines.push(`    expect(() => node.$render!()).not.toThrow();`);
 		lines.push('  });');
 	}
-
-	lines.push('});');
-	lines.push('');
 }
 
 function factoryCallArgs(
@@ -217,7 +221,9 @@ function soleSlotDummyKind(
 		.map((v) => (isNodeRef(v) ? storageKindOfRef(v.node) : undefined) ?? v.parseKind?.name)
 		.filter((n) => n !== undefined);
 	const firstKindName =
-		candidateKindNames.length > 0 ? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries) : undefined;
+		candidateKindNames.length > 0
+			? resolveConcreteKind(candidateKindNames, nodeMap, kindEntries, new Set([node.kind]))
+			: undefined;
 	return { facts, firstKindName };
 }
 
@@ -464,6 +470,7 @@ function emitChildrenTest(
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
+	pushRenderTest(lines, key, placeholder);
 	lines.push('});');
 	lines.push('');
 }
@@ -586,7 +593,8 @@ function emitKeywordTest(
 function resolveConcreteKind(
 	candidates: readonly string[],
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	onPath: ReadonlySet<string>
 ): string {
 	const seen = new Set<string>();
 	const enumCandidates: string[] = [];
@@ -608,7 +616,8 @@ function resolveConcreteKind(
 		if (node.modelType === 'enum') enumCandidates.push(current);
 		else nonLeafCandidates.push(current);
 	}
-	return nonLeafCandidates[0] ?? enumCandidates[0] ?? candidates[0] ?? '';
+	const offPath = nonLeafCandidates.find((k) => !onPath.has(k));
+	return offPath ?? enumCandidates[0] ?? nonLeafCandidates[0] ?? candidates[0] ?? '';
 }
 
 const MAX_DUMMY_DEPTH = 6;
@@ -645,7 +654,7 @@ function dummyValueForField(
 
 	const kinds = slotKindNames(field);
 	if (kinds.length === 0) return "'test' as any";
-	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries);
+	const concrete = resolveConcreteKind(kinds, nodeMap, kindEntries, visiting);
 	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting);
 }
 

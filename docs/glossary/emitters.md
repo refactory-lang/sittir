@@ -6103,6 +6103,8 @@ its parent, or `undefined` when the kind has no public path.
 
 ### `packages/codegen/src/emitters/test.ts::resolveConcreteKind`
 
+The chooser also takes `onPath`: the kinds already on the stub being built (the sole slot's owner, and every compound above the current field). A non-leaf candidate off that path wins over one on it. A stub stamped with the owner's own kind is node data of the target kind, which the coercer's identity rule hands back unbuilt, so the placeholder would never render. A self-recursive arm is chosen only when every non-leaf candidate is on the path and no enum leaf exists.
+
 ```text
 /**
  * Resolve a slot's candidate kind names to the first one reachable that has
@@ -12340,6 +12342,8 @@ preference; the literal texts are not part of the surface.
 
 ### `packages/codegen/src/emitters/test.ts::soleSlotDummyKind`
 
+The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that admits its owner (python's `parenthesized_list_splat` admits itself and `list_splat`) stubs the other arm.
+
 ```text
 /** The kind a sole slot's dummy stub is built as: the value's STORAGE kind
  *  first, its parse alias only when there is no node behind it. A stub
@@ -12380,7 +12384,13 @@ preference; the literal texts are not part of the surface.
 // a type tag.
 ```
 
+### `packages/codegen/src/emitters/test.ts::pushRenderTest`
+
+The render test shared by the config-shaped and children-constructed blocks. An argument that carries content (`emitBranchTest`'s render config with required slots, or a children placeholder) asserts a non-empty render. An empty argument, or `{}` for a kind whose slots are all optional, legitimately renders empty, so that case asserts only that render does not throw.
+
 ### `packages/codegen/src/emitters/test.ts::emitChildrenTest`
+
+The block carries the shared render test (`pushRenderTest`) after the type test, so a children-constructed kind asserts a non-empty render the way a config-shaped one does.
 
 #### body
 
@@ -14824,6 +14834,8 @@ parent's route is written. A child emitted later would leave its route as a
 bare `{ strict, coerce }` pair and its own entry unreferenced.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
+
+A positional parent (one direct slot) wraps with the raw builder in both flavors. The wrapping step's input is always the built child, and the parent's coercer would hand that child back unbuilt when it is of the parent's own kind (a self-recursive arm such as python's `parenthesized_list_splat.parenthesizedListSplat`), collapsing one level of nesting. A config-shaped parent keeps its coercer, since its residual slots arrive loose. Whether a route has a coerce flavor at all is unchanged: it still requires both the parent's and the child's coercer to exist.
 
 Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), config seat (a path-empty config-shaped arm that does not merge, `seatsConfigChild`: the child's config object sits whole under the slot key, `{ function: { macro, arguments }, arguments }`), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
 

@@ -24,10 +24,6 @@ export default grammar(
 				return [...(prev ?? []), $._tight, $._space, $._blankline, $._double_newline];
 			},
 			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
-			expectTestFailures: {
-				'parenthesized_list_splat.parenthesizedListSplat':
-					'dummy stub — the aliased inner parenthesized_list_splat is stubbed with an identifier content the transport rejects'
-			},
 			conflicts: ($, previous) => [
 				...(previous ?? []),
 				[$.expression_statement, $.expression_statement_tuple],

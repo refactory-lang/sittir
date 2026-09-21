@@ -32,21 +32,21 @@ const string$single =
 export const string: typeof B.string & {
 	double: {
 		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildString>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof C.coerceToString>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildString>;
 	};
 	single: {
 		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildString>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof C.coerceToString>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildString>;
 	};
 } = {
 	...B.string,
 	double: {
 		strict: string$double(F.buildString, F.buildStringDouble),
-		coerce: string$double(C.coerceToString, C.coerceToStringDouble)
+		coerce: string$double(F.buildString, C.coerceToStringDouble)
 	},
 	single: {
 		strict: string$single(F.buildString, F.buildStringSingle),
-		coerce: string$single(C.coerceToString, C.coerceToStringSingle)
+		coerce: string$single(F.buildString, C.coerceToStringSingle)
 	}
 };
 
@@ -69,36 +69,36 @@ const namespaceExport$stringSingle =
 export const namespaceExport: typeof B.namespaceExport & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildNamespaceExport>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToNamespaceExport>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildNamespaceExport>;
 	};
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildNamespaceExport>;
-		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof C.coerceToNamespaceExport>;
+		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildNamespaceExport>;
 		double: {
 			strict: (...args: ArgsOf<typeof string.double.strict>) => ReturnType<typeof F.buildNamespaceExport>;
-			coerce: (...args: ArgsOf<typeof string.double.coerce>) => ReturnType<typeof C.coerceToNamespaceExport>;
+			coerce: (...args: ArgsOf<typeof string.double.coerce>) => ReturnType<typeof F.buildNamespaceExport>;
 		};
 		single: {
 			strict: (...args: ArgsOf<typeof string.single.strict>) => ReturnType<typeof F.buildNamespaceExport>;
-			coerce: (...args: ArgsOf<typeof string.single.coerce>) => ReturnType<typeof C.coerceToNamespaceExport>;
+			coerce: (...args: ArgsOf<typeof string.single.coerce>) => ReturnType<typeof F.buildNamespaceExport>;
 		};
 	};
 } = {
 	...B.namespaceExport,
 	identifier: {
 		strict: namespaceExport$identifier(F.buildNamespaceExport, F.buildIdentifier),
-		coerce: namespaceExport$identifier(C.coerceToNamespaceExport, C.coerceToIdentifier)
+		coerce: namespaceExport$identifier(F.buildNamespaceExport, C.coerceToIdentifier)
 	},
 	string: {
 		strict: namespaceExport$string(F.buildNamespaceExport, F.buildString),
-		coerce: namespaceExport$string(C.coerceToNamespaceExport, C.coerceToString),
+		coerce: namespaceExport$string(F.buildNamespaceExport, C.coerceToString),
 		double: {
 			strict: namespaceExport$stringDouble(F.buildNamespaceExport, string.double.strict),
-			coerce: namespaceExport$stringDouble(C.coerceToNamespaceExport, string.double.coerce)
+			coerce: namespaceExport$stringDouble(F.buildNamespaceExport, string.double.coerce)
 		},
 		single: {
 			strict: namespaceExport$stringSingle(F.buildNamespaceExport, string.single.strict),
-			coerce: namespaceExport$stringSingle(C.coerceToNamespaceExport, string.single.coerce)
+			coerce: namespaceExport$stringSingle(F.buildNamespaceExport, string.single.coerce)
 		}
 	}
 };
@@ -178,20 +178,20 @@ const importClauseGroup$namedImports =
 const importClauseGroup: {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof C.coerceToImportClauseGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
 	namedImports: {
 		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof C.coerceToImportClauseGroup>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
 } = {
 	namespaceImport: {
 		strict: importClauseGroup$namespaceImport(F.buildImportClauseGroup, F.buildNamespaceImport),
-		coerce: importClauseGroup$namespaceImport(C.coerceToImportClauseGroup, C.coerceToNamespaceImport)
+		coerce: importClauseGroup$namespaceImport(F.buildImportClauseGroup, C.coerceToNamespaceImport)
 	},
 	namedImports: {
 		strict: importClauseGroup$namedImports(F.buildImportClauseGroup, F.buildNamedImports),
-		coerce: importClauseGroup$namedImports(C.coerceToImportClauseGroup, C.coerceToNamedImports)
+		coerce: importClauseGroup$namedImports(F.buildImportClauseGroup, C.coerceToNamedImports)
 	}
 };
 
@@ -565,29 +565,29 @@ const importClause$type$namedImports =
 export const importClause: typeof B.importClause & {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof C.coerceToImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
 	};
 	namedImports: {
 		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof C.coerceToImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClause>;
 	};
 	defaultImport: {
 		strict: (...args: ArgsOf<typeof F.buildImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImportClauseDefaultImport>) => ReturnType<typeof C.coerceToImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
 		identifier: {
 			strict: (
 				...args: ArgsOf<typeof importClauseDefaultImport.identifier.strict>
 			) => ReturnType<typeof F.buildImportClause>;
 			coerce: (
 				...args: ArgsOf<typeof importClauseDefaultImport.identifier.coerce>
-			) => ReturnType<typeof C.coerceToImportClause>;
+			) => ReturnType<typeof F.buildImportClause>;
 			importClauseGroup: {
 				strict: (
 					...args: ArgsOf<typeof importClauseDefaultImport.identifier.importClauseGroup.strict>
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.identifier.importClauseGroup.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 			namespaceImport: {
 				strict: (
@@ -595,7 +595,7 @@ export const importClause: typeof B.importClause & {
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.identifier.namespaceImport.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 			namedImports: {
 				strict: (
@@ -603,21 +603,19 @@ export const importClause: typeof B.importClause & {
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.identifier.namedImports.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 		};
 		type: {
 			strict: (...args: ArgsOf<typeof importClauseDefaultImport.type.strict>) => ReturnType<typeof F.buildImportClause>;
-			coerce: (
-				...args: ArgsOf<typeof importClauseDefaultImport.type.coerce>
-			) => ReturnType<typeof C.coerceToImportClause>;
+			coerce: (...args: ArgsOf<typeof importClauseDefaultImport.type.coerce>) => ReturnType<typeof F.buildImportClause>;
 			importClauseGroup: {
 				strict: (
 					...args: ArgsOf<typeof importClauseDefaultImport.type.importClauseGroup.strict>
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.type.importClauseGroup.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 			namespaceImport: {
 				strict: (
@@ -625,7 +623,7 @@ export const importClause: typeof B.importClause & {
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.type.namespaceImport.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 			namedImports: {
 				strict: (
@@ -633,7 +631,7 @@ export const importClause: typeof B.importClause & {
 				) => ReturnType<typeof F.buildImportClause>;
 				coerce: (
 					...args: ArgsOf<typeof importClauseDefaultImport.type.namedImports.coerce>
-				) => ReturnType<typeof C.coerceToImportClause>;
+				) => ReturnType<typeof F.buildImportClause>;
 			};
 		};
 		importClauseGroup: {
@@ -642,32 +640,32 @@ export const importClause: typeof B.importClause & {
 			) => ReturnType<typeof F.buildImportClause>;
 			coerce: (
 				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>
-			) => ReturnType<typeof C.coerceToImportClause>;
+			) => ReturnType<typeof F.buildImportClause>;
 		};
 	};
 } = {
 	...B.importClause,
 	namespaceImport: {
 		strict: importClause$namespaceImport(F.buildImportClause, F.buildNamespaceImport),
-		coerce: importClause$namespaceImport(C.coerceToImportClause, C.coerceToNamespaceImport)
+		coerce: importClause$namespaceImport(F.buildImportClause, C.coerceToNamespaceImport)
 	},
 	namedImports: {
 		strict: importClause$namedImports(F.buildImportClause, F.buildNamedImports),
-		coerce: importClause$namedImports(C.coerceToImportClause, C.coerceToNamedImports)
+		coerce: importClause$namedImports(F.buildImportClause, C.coerceToNamedImports)
 	},
 	defaultImport: {
 		strict: importClause$defaultImport(F.buildImportClause, F.buildImportClauseDefaultImport),
-		coerce: importClause$defaultImport(C.coerceToImportClause, C.coerceToImportClauseDefaultImport),
+		coerce: importClause$defaultImport(F.buildImportClause, C.coerceToImportClauseDefaultImport),
 		identifier: {
 			strict: importClause$identifier(F.buildImportClause, importClauseDefaultImport.identifier.strict),
-			coerce: importClause$identifier(C.coerceToImportClause, importClauseDefaultImport.identifier.coerce),
+			coerce: importClause$identifier(F.buildImportClause, importClauseDefaultImport.identifier.coerce),
 			importClauseGroup: {
 				strict: importClause$identifier$importClauseGroup(
 					F.buildImportClause,
 					importClauseDefaultImport.identifier.importClauseGroup.strict
 				),
 				coerce: importClause$identifier$importClauseGroup(
-					C.coerceToImportClause,
+					F.buildImportClause,
 					importClauseDefaultImport.identifier.importClauseGroup.coerce
 				)
 			},
@@ -677,7 +675,7 @@ export const importClause: typeof B.importClause & {
 					importClauseDefaultImport.identifier.namespaceImport.strict
 				),
 				coerce: importClause$identifier$namespaceImport(
-					C.coerceToImportClause,
+					F.buildImportClause,
 					importClauseDefaultImport.identifier.namespaceImport.coerce
 				)
 			},
@@ -687,21 +685,21 @@ export const importClause: typeof B.importClause & {
 					importClauseDefaultImport.identifier.namedImports.strict
 				),
 				coerce: importClause$identifier$namedImports(
-					C.coerceToImportClause,
+					F.buildImportClause,
 					importClauseDefaultImport.identifier.namedImports.coerce
 				)
 			}
 		},
 		type: {
 			strict: importClause$type(F.buildImportClause, importClauseDefaultImport.type.strict),
-			coerce: importClause$type(C.coerceToImportClause, importClauseDefaultImport.type.coerce),
+			coerce: importClause$type(F.buildImportClause, importClauseDefaultImport.type.coerce),
 			importClauseGroup: {
 				strict: importClause$type$importClauseGroup(
 					F.buildImportClause,
 					importClauseDefaultImport.type.importClauseGroup.strict
 				),
 				coerce: importClause$type$importClauseGroup(
-					C.coerceToImportClause,
+					F.buildImportClause,
 					importClauseDefaultImport.type.importClauseGroup.coerce
 				)
 			},
@@ -711,21 +709,18 @@ export const importClause: typeof B.importClause & {
 					importClauseDefaultImport.type.namespaceImport.strict
 				),
 				coerce: importClause$type$namespaceImport(
-					C.coerceToImportClause,
+					F.buildImportClause,
 					importClauseDefaultImport.type.namespaceImport.coerce
 				)
 			},
 			namedImports: {
 				strict: importClause$type$namedImports(F.buildImportClause, importClauseDefaultImport.type.namedImports.strict),
-				coerce: importClause$type$namedImports(
-					C.coerceToImportClause,
-					importClauseDefaultImport.type.namedImports.coerce
-				)
+				coerce: importClause$type$namedImports(F.buildImportClause, importClauseDefaultImport.type.namedImports.coerce)
 			}
 		},
 		importClauseGroup: {
 			strict: importClause$group(F.buildImportClause, importClauseDefaultImport.importClauseGroup.strict),
-			coerce: importClause$group(C.coerceToImportClause, importClauseDefaultImport.importClauseGroup.coerce)
+			coerce: importClause$group(F.buildImportClause, importClauseDefaultImport.importClauseGroup.coerce)
 		}
 	}
 };
@@ -1504,7 +1499,7 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>
-		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		) => ReturnType<typeof F.buildParenthesizedExpression>;
 	};
 	sequence: {
 		strict: (
@@ -1512,11 +1507,11 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToParenthesizedExpressionSequence>
-		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		) => ReturnType<typeof F.buildParenthesizedExpression>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildParenthesizedExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildParenthesizedExpression>;
 	};
 	decoratorMemberExpression: {
 		strict: (
@@ -1524,7 +1519,7 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToDecoratorMemberExpression>
-		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		) => ReturnType<typeof F.buildParenthesizedExpression>;
 	};
 	decoratorCallExpression: {
 		strict: (
@@ -1532,24 +1527,21 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 		) => ReturnType<typeof F.buildParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToDecoratorCallExpression>
-		) => ReturnType<typeof C.coerceToParenthesizedExpression>;
+		) => ReturnType<typeof F.buildParenthesizedExpression>;
 	};
 } = {
 	...B.parenthesizedExpression,
 	typed: {
 		strict: parenthesizedExpression$typed(F.buildParenthesizedExpression, F.buildParenthesizedExpressionTyped),
-		coerce: parenthesizedExpression$typed(C.coerceToParenthesizedExpression, C.coerceToParenthesizedExpressionTyped)
+		coerce: parenthesizedExpression$typed(F.buildParenthesizedExpression, C.coerceToParenthesizedExpressionTyped)
 	},
 	sequence: {
 		strict: parenthesizedExpression$sequence(F.buildParenthesizedExpression, F.buildParenthesizedExpressionSequence),
-		coerce: parenthesizedExpression$sequence(
-			C.coerceToParenthesizedExpression,
-			C.coerceToParenthesizedExpressionSequence
-		)
+		coerce: parenthesizedExpression$sequence(F.buildParenthesizedExpression, C.coerceToParenthesizedExpressionSequence)
 	},
 	identifier: {
 		strict: parenthesizedExpression$identifier(F.buildParenthesizedExpression, F.buildIdentifier),
-		coerce: parenthesizedExpression$identifier(C.coerceToParenthesizedExpression, C.coerceToIdentifier)
+		coerce: parenthesizedExpression$identifier(F.buildParenthesizedExpression, C.coerceToIdentifier)
 	},
 	decoratorMemberExpression: {
 		strict: parenthesizedExpression$decoratorMemberExpression(
@@ -1557,7 +1549,7 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 			F.buildDecoratorMemberExpression
 		),
 		coerce: parenthesizedExpression$decoratorMemberExpression(
-			C.coerceToParenthesizedExpression,
+			F.buildParenthesizedExpression,
 			C.coerceToDecoratorMemberExpression
 		)
 	},
@@ -1567,7 +1559,7 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 			F.buildDecoratorCallExpression
 		),
 		coerce: parenthesizedExpression$decoratorCallExpression(
-			C.coerceToParenthesizedExpression,
+			F.buildParenthesizedExpression,
 			C.coerceToDecoratorCallExpression
 		)
 	}
@@ -1682,23 +1674,21 @@ const classHeritage$implementsClause =
 export const classHeritage: typeof B.classHeritage & {
 	extendsClause: {
 		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToClassHeritageExtendsClause>
-		) => ReturnType<typeof C.coerceToClassHeritage>;
+		coerce: (...args: ArgsOf<typeof C.coerceToClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
 	};
 	implementsClause: {
 		strict: (...args: ArgsOf<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof C.coerceToClassHeritage>;
+		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
 	};
 } = {
 	...B.classHeritage,
 	extendsClause: {
 		strict: classHeritage$extendsClause(F.buildClassHeritage, F.buildClassHeritageExtendsClause),
-		coerce: classHeritage$extendsClause(C.coerceToClassHeritage, C.coerceToClassHeritageExtendsClause)
+		coerce: classHeritage$extendsClause(F.buildClassHeritage, C.coerceToClassHeritageExtendsClause)
 	},
 	implementsClause: {
 		strict: classHeritage$implementsClause(F.buildClassHeritage, F.buildImplementsClause),
-		coerce: classHeritage$implementsClause(C.coerceToClassHeritage, C.coerceToImplementsClause)
+		coerce: classHeritage$implementsClause(F.buildClassHeritage, C.coerceToImplementsClause)
 	}
 };
 
@@ -1758,27 +1748,27 @@ const asserts$this =
 export const asserts: typeof B.asserts & {
 	typePredicate: {
 		strict: (...args: ArgsOf<typeof F.buildTypePredicate>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypePredicate>) => ReturnType<typeof C.coerceToAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypePredicate>) => ReturnType<typeof F.buildAsserts>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildAsserts>;
 	};
 	this: {
 		strict: (...args: ArgsOf<typeof F.buildThis>) => ReturnType<typeof F.buildAsserts>;
-		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof C.coerceToAsserts>;
+		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof F.buildAsserts>;
 	};
 } = {
 	...B.asserts,
 	typePredicate: {
 		strict: asserts$typePredicate(F.buildAsserts, F.buildTypePredicate),
-		coerce: asserts$typePredicate(C.coerceToAsserts, C.coerceToTypePredicate)
+		coerce: asserts$typePredicate(F.buildAsserts, C.coerceToTypePredicate)
 	},
 	identifier: {
 		strict: asserts$identifier(F.buildAsserts, F.buildIdentifier),
-		coerce: asserts$identifier(C.coerceToAsserts, C.coerceToIdentifier)
+		coerce: asserts$identifier(F.buildAsserts, C.coerceToIdentifier)
 	},
-	this: { strict: asserts$this(F.buildAsserts, F.buildThis), coerce: asserts$this(C.coerceToAsserts, C.coerceToThis) }
+	this: { strict: asserts$this(F.buildAsserts, F.buildThis), coerce: asserts$this(F.buildAsserts, C.coerceToThis) }
 };
 
 const assertsAnnotation$typePredicate =
@@ -1796,29 +1786,29 @@ const assertsAnnotation$this =
 export const assertsAnnotation: typeof B.assertsAnnotation & {
 	typePredicate: {
 		strict: (...args: ArgsOf<typeof asserts.typePredicate.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
-		coerce: (...args: ArgsOf<typeof asserts.typePredicate.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.typePredicate.coerce>) => ReturnType<typeof F.buildAssertsAnnotation>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof asserts.identifier.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
-		coerce: (...args: ArgsOf<typeof asserts.identifier.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.identifier.coerce>) => ReturnType<typeof F.buildAssertsAnnotation>;
 	};
 	this: {
 		strict: (...args: ArgsOf<typeof asserts.this.strict>) => ReturnType<typeof F.buildAssertsAnnotation>;
-		coerce: (...args: ArgsOf<typeof asserts.this.coerce>) => ReturnType<typeof C.coerceToAssertsAnnotation>;
+		coerce: (...args: ArgsOf<typeof asserts.this.coerce>) => ReturnType<typeof F.buildAssertsAnnotation>;
 	};
 } = {
 	...B.assertsAnnotation,
 	typePredicate: {
 		strict: assertsAnnotation$typePredicate(F.buildAssertsAnnotation, asserts.typePredicate.strict),
-		coerce: assertsAnnotation$typePredicate(C.coerceToAssertsAnnotation, asserts.typePredicate.coerce)
+		coerce: assertsAnnotation$typePredicate(F.buildAssertsAnnotation, asserts.typePredicate.coerce)
 	},
 	identifier: {
 		strict: assertsAnnotation$identifier(F.buildAssertsAnnotation, asserts.identifier.strict),
-		coerce: assertsAnnotation$identifier(C.coerceToAssertsAnnotation, asserts.identifier.coerce)
+		coerce: assertsAnnotation$identifier(F.buildAssertsAnnotation, asserts.identifier.coerce)
 	},
 	this: {
 		strict: assertsAnnotation$this(F.buildAssertsAnnotation, asserts.this.strict),
-		coerce: assertsAnnotation$this(C.coerceToAssertsAnnotation, asserts.this.coerce)
+		coerce: assertsAnnotation$this(F.buildAssertsAnnotation, asserts.this.coerce)
 	}
 };
 
@@ -1837,21 +1827,21 @@ export const typePredicateAnnotation: typeof B.typePredicateAnnotation & {
 		) => ReturnType<typeof F.buildTypePredicateAnnotation>;
 		coerce: (
 			...args: ArgsOf<typeof typePredicate.identifier.coerce>
-		) => ReturnType<typeof C.coerceToTypePredicateAnnotation>;
+		) => ReturnType<typeof F.buildTypePredicateAnnotation>;
 	};
 	this: {
 		strict: (...args: ArgsOf<typeof typePredicate.this.strict>) => ReturnType<typeof F.buildTypePredicateAnnotation>;
-		coerce: (...args: ArgsOf<typeof typePredicate.this.coerce>) => ReturnType<typeof C.coerceToTypePredicateAnnotation>;
+		coerce: (...args: ArgsOf<typeof typePredicate.this.coerce>) => ReturnType<typeof F.buildTypePredicateAnnotation>;
 	};
 } = {
 	...B.typePredicateAnnotation,
 	identifier: {
 		strict: typePredicateAnnotation$identifier(F.buildTypePredicateAnnotation, typePredicate.identifier.strict),
-		coerce: typePredicateAnnotation$identifier(C.coerceToTypePredicateAnnotation, typePredicate.identifier.coerce)
+		coerce: typePredicateAnnotation$identifier(F.buildTypePredicateAnnotation, typePredicate.identifier.coerce)
 	},
 	this: {
 		strict: typePredicateAnnotation$this(F.buildTypePredicateAnnotation, typePredicate.this.strict),
-		coerce: typePredicateAnnotation$this(C.coerceToTypePredicateAnnotation, typePredicate.this.coerce)
+		coerce: typePredicateAnnotation$this(F.buildTypePredicateAnnotation, typePredicate.this.coerce)
 	}
 };
 
@@ -2688,12 +2678,12 @@ const arrowFunctionParameter$identifier =
 const arrowFunctionParameter: {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToArrowFunctionParameter>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
 	};
 } = {
 	identifier: {
 		strict: arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, F.buildIdentifier),
-		coerce: arrowFunctionParameter$identifier(C.coerceToArrowFunctionParameter, C.coerceToIdentifier)
+		coerce: arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, C.coerceToIdentifier)
 	}
 };
 
@@ -2815,51 +2805,49 @@ const callExpression$member =
 export const callExpression: typeof B.callExpression & {
 	call: {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionCall>) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionCall>) => ReturnType<typeof C.coerceToCallExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionCall>) => ReturnType<typeof F.buildCallExpression>;
 		import: {
 			strict: (...args: ArgsOf<typeof callExpressionCall.import.strict>) => ReturnType<typeof F.buildCallExpression>;
-			coerce: (...args: ArgsOf<typeof callExpressionCall.import.coerce>) => ReturnType<typeof C.coerceToCallExpression>;
+			coerce: (...args: ArgsOf<typeof callExpressionCall.import.coerce>) => ReturnType<typeof F.buildCallExpression>;
 		};
 	};
 	templateCall: {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionTemplateCall>) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToCallExpressionTemplateCall>
-		) => ReturnType<typeof C.coerceToCallExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionTemplateCall>) => ReturnType<typeof F.buildCallExpression>;
 		newExpression: {
 			strict: (
 				...args: ArgsOf<typeof callExpressionTemplateCall.newExpression.strict>
 			) => ReturnType<typeof F.buildCallExpression>;
 			coerce: (
 				...args: ArgsOf<typeof callExpressionTemplateCall.newExpression.coerce>
-			) => ReturnType<typeof C.coerceToCallExpression>;
+			) => ReturnType<typeof F.buildCallExpression>;
 		};
 	};
 	member: {
 		strict: (...args: ArgsOf<typeof F.buildCallExpressionMember>) => ReturnType<typeof F.buildCallExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionMember>) => ReturnType<typeof C.coerceToCallExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToCallExpressionMember>) => ReturnType<typeof F.buildCallExpression>;
 	};
 } = {
 	...B.callExpression,
 	call: {
 		strict: callExpression$call(F.buildCallExpression, F.buildCallExpressionCall),
-		coerce: callExpression$call(C.coerceToCallExpression, C.coerceToCallExpressionCall),
+		coerce: callExpression$call(F.buildCallExpression, C.coerceToCallExpressionCall),
 		import: {
 			strict: callExpression$import(F.buildCallExpression, callExpressionCall.import.strict),
-			coerce: callExpression$import(C.coerceToCallExpression, callExpressionCall.import.coerce)
+			coerce: callExpression$import(F.buildCallExpression, callExpressionCall.import.coerce)
 		}
 	},
 	templateCall: {
 		strict: callExpression$templateCall(F.buildCallExpression, F.buildCallExpressionTemplateCall),
-		coerce: callExpression$templateCall(C.coerceToCallExpression, C.coerceToCallExpressionTemplateCall),
+		coerce: callExpression$templateCall(F.buildCallExpression, C.coerceToCallExpressionTemplateCall),
 		newExpression: {
 			strict: callExpression$newExpression(F.buildCallExpression, callExpressionTemplateCall.newExpression.strict),
-			coerce: callExpression$newExpression(C.coerceToCallExpression, callExpressionTemplateCall.newExpression.coerce)
+			coerce: callExpression$newExpression(F.buildCallExpression, callExpressionTemplateCall.newExpression.coerce)
 		}
 	},
 	member: {
 		strict: callExpression$member(F.buildCallExpression, F.buildCallExpressionMember),
-		coerce: callExpression$member(C.coerceToCallExpression, C.coerceToCallExpressionMember)
+		coerce: callExpression$member(F.buildCallExpression, C.coerceToCallExpressionMember)
 	}
 };
 
@@ -5226,13 +5214,13 @@ const templateSubstitution$sequenceExpression =
 export const templateSubstitution: typeof B.templateSubstitution & {
 	sequenceExpression: {
 		strict: (...args: ArgsOf<typeof F.buildSequenceExpression>) => ReturnType<typeof F.buildTemplateSubstitution>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSequenceExpression>) => ReturnType<typeof C.coerceToTemplateSubstitution>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSequenceExpression>) => ReturnType<typeof F.buildTemplateSubstitution>;
 	};
 } = {
 	...B.templateSubstitution,
 	sequenceExpression: {
 		strict: templateSubstitution$sequenceExpression(F.buildTemplateSubstitution, F.buildSequenceExpression),
-		coerce: templateSubstitution$sequenceExpression(C.coerceToTemplateSubstitution, C.coerceToSequenceExpression)
+		coerce: templateSubstitution$sequenceExpression(F.buildTemplateSubstitution, C.coerceToSequenceExpression)
 	}
 };
 
@@ -5253,7 +5241,7 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToIdentifier>
-		) => ReturnType<typeof C.coerceToDecoratorParenthesizedExpression>;
+		) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 	};
 	decoratorMemberExpression: {
 		strict: (
@@ -5261,7 +5249,7 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 		) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToDecoratorMemberExpression>
-		) => ReturnType<typeof C.coerceToDecoratorParenthesizedExpression>;
+		) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 	};
 	decoratorCallExpression: {
 		strict: (
@@ -5269,16 +5257,13 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 		) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToDecoratorCallExpression>
-		) => ReturnType<typeof C.coerceToDecoratorParenthesizedExpression>;
+		) => ReturnType<typeof F.buildDecoratorParenthesizedExpression>;
 	};
 } = {
 	...B.decoratorParenthesizedExpression,
 	identifier: {
 		strict: decoratorParenthesizedExpression$identifier(F.buildDecoratorParenthesizedExpression, F.buildIdentifier),
-		coerce: decoratorParenthesizedExpression$identifier(
-			C.coerceToDecoratorParenthesizedExpression,
-			C.coerceToIdentifier
-		)
+		coerce: decoratorParenthesizedExpression$identifier(F.buildDecoratorParenthesizedExpression, C.coerceToIdentifier)
 	},
 	decoratorMemberExpression: {
 		strict: decoratorParenthesizedExpression$decoratorMemberExpression(
@@ -5286,7 +5271,7 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 			F.buildDecoratorMemberExpression
 		),
 		coerce: decoratorParenthesizedExpression$decoratorMemberExpression(
-			C.coerceToDecoratorParenthesizedExpression,
+			F.buildDecoratorParenthesizedExpression,
 			C.coerceToDecoratorMemberExpression
 		)
 	},
@@ -5296,7 +5281,7 @@ export const decoratorParenthesizedExpression: typeof B.decoratorParenthesizedEx
 			F.buildDecoratorCallExpression
 		),
 		coerce: decoratorParenthesizedExpression$decoratorCallExpression(
-			C.coerceToDecoratorParenthesizedExpression,
+			F.buildDecoratorParenthesizedExpression,
 			C.coerceToDecoratorCallExpression
 		)
 	}
@@ -5321,39 +5306,37 @@ const decorator$parenthesizedExpression =
 export const decorator: typeof B.decorator & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildDecorator>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToDecorator>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildDecorator>;
 	};
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildDecoratorMemberExpression>) => ReturnType<typeof F.buildDecorator>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDecoratorMemberExpression>) => ReturnType<typeof C.coerceToDecorator>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDecoratorMemberExpression>) => ReturnType<typeof F.buildDecorator>;
 	};
 	callExpression: {
 		strict: (...args: ArgsOf<typeof F.buildDecoratorCallExpression>) => ReturnType<typeof F.buildDecorator>;
-		coerce: (...args: ArgsOf<typeof C.coerceToDecoratorCallExpression>) => ReturnType<typeof C.coerceToDecorator>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDecoratorCallExpression>) => ReturnType<typeof F.buildDecorator>;
 	};
 	parenthesizedExpression: {
 		strict: (...args: ArgsOf<typeof F.buildDecoratorParenthesizedExpression>) => ReturnType<typeof F.buildDecorator>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToDecoratorParenthesizedExpression>
-		) => ReturnType<typeof C.coerceToDecorator>;
+		coerce: (...args: ArgsOf<typeof C.coerceToDecoratorParenthesizedExpression>) => ReturnType<typeof F.buildDecorator>;
 	};
 } = {
 	...B.decorator,
 	identifier: {
 		strict: decorator$identifier(F.buildDecorator, F.buildIdentifier),
-		coerce: decorator$identifier(C.coerceToDecorator, C.coerceToIdentifier)
+		coerce: decorator$identifier(F.buildDecorator, C.coerceToIdentifier)
 	},
 	memberExpression: {
 		strict: decorator$memberExpression(F.buildDecorator, F.buildDecoratorMemberExpression),
-		coerce: decorator$memberExpression(C.coerceToDecorator, C.coerceToDecoratorMemberExpression)
+		coerce: decorator$memberExpression(F.buildDecorator, C.coerceToDecoratorMemberExpression)
 	},
 	callExpression: {
 		strict: decorator$callExpression(F.buildDecorator, F.buildDecoratorCallExpression),
-		coerce: decorator$callExpression(C.coerceToDecorator, C.coerceToDecoratorCallExpression)
+		coerce: decorator$callExpression(F.buildDecorator, C.coerceToDecoratorCallExpression)
 	},
 	parenthesizedExpression: {
 		strict: decorator$parenthesizedExpression(F.buildDecorator, F.buildDecoratorParenthesizedExpression),
-		coerce: decorator$parenthesizedExpression(C.coerceToDecorator, C.coerceToDecoratorParenthesizedExpression)
+		coerce: decorator$parenthesizedExpression(F.buildDecorator, C.coerceToDecoratorParenthesizedExpression)
 	}
 };
 
@@ -6185,79 +6168,77 @@ const restPattern$nonNullExpression =
 export const restPattern: typeof B.restPattern & {
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
 		dot: {
 			strict: (...args: ArgsOf<typeof memberExpression.dot.strict>) => ReturnType<typeof F.buildRestPattern>;
-			coerce: (...args: ArgsOf<typeof memberExpression.dot.coerce>) => ReturnType<typeof C.coerceToRestPattern>;
+			coerce: (...args: ArgsOf<typeof memberExpression.dot.coerce>) => ReturnType<typeof F.buildRestPattern>;
 		};
 		optionalChain: {
 			strict: (...args: ArgsOf<typeof memberExpression.optionalChain.strict>) => ReturnType<typeof F.buildRestPattern>;
-			coerce: (
-				...args: ArgsOf<typeof memberExpression.optionalChain.coerce>
-			) => ReturnType<typeof C.coerceToRestPattern>;
+			coerce: (...args: ArgsOf<typeof memberExpression.optionalChain.coerce>) => ReturnType<typeof F.buildRestPattern>;
 		};
 	};
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	undefined: {
 		strict: (...args: ArgsOf<typeof F.buildUndefined>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUndefined>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUndefined>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	objectPattern: {
 		strict: (...args: ArgsOf<typeof F.buildObjectPattern>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToObjectPattern>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToObjectPattern>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	arrayPattern: {
 		strict: (...args: ArgsOf<typeof F.buildArrayPattern>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToArrayPattern>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToArrayPattern>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	nonNullExpression: {
 		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof C.coerceToRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
 	};
 } = {
 	...B.restPattern,
 	memberExpression: {
 		strict: restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression),
-		coerce: restPattern$memberExpression(C.coerceToRestPattern, C.coerceToMemberExpression),
+		coerce: restPattern$memberExpression(F.buildRestPattern, C.coerceToMemberExpression),
 		dot: {
 			strict: restPattern$dot(F.buildRestPattern, memberExpression.dot.strict),
-			coerce: restPattern$dot(C.coerceToRestPattern, memberExpression.dot.coerce)
+			coerce: restPattern$dot(F.buildRestPattern, memberExpression.dot.coerce)
 		},
 		optionalChain: {
 			strict: restPattern$optionalChain(F.buildRestPattern, memberExpression.optionalChain.strict),
-			coerce: restPattern$optionalChain(C.coerceToRestPattern, memberExpression.optionalChain.coerce)
+			coerce: restPattern$optionalChain(F.buildRestPattern, memberExpression.optionalChain.coerce)
 		}
 	},
 	subscriptExpression: {
 		strict: restPattern$subscriptExpression(F.buildRestPattern, F.buildSubscriptExpression),
-		coerce: restPattern$subscriptExpression(C.coerceToRestPattern, C.coerceToSubscriptExpression)
+		coerce: restPattern$subscriptExpression(F.buildRestPattern, C.coerceToSubscriptExpression)
 	},
 	undefined: {
 		strict: restPattern$undefined(F.buildRestPattern, F.buildUndefined),
-		coerce: restPattern$undefined(C.coerceToRestPattern, C.coerceToUndefined)
+		coerce: restPattern$undefined(F.buildRestPattern, C.coerceToUndefined)
 	},
 	identifier: {
 		strict: restPattern$identifier(F.buildRestPattern, F.buildIdentifier),
-		coerce: restPattern$identifier(C.coerceToRestPattern, C.coerceToIdentifier)
+		coerce: restPattern$identifier(F.buildRestPattern, C.coerceToIdentifier)
 	},
 	objectPattern: {
 		strict: restPattern$objectPattern(F.buildRestPattern, F.buildObjectPattern),
-		coerce: restPattern$objectPattern(C.coerceToRestPattern, C.coerceToObjectPattern)
+		coerce: restPattern$objectPattern(F.buildRestPattern, C.coerceToObjectPattern)
 	},
 	arrayPattern: {
 		strict: restPattern$arrayPattern(F.buildRestPattern, F.buildArrayPattern),
-		coerce: restPattern$arrayPattern(C.coerceToRestPattern, C.coerceToArrayPattern)
+		coerce: restPattern$arrayPattern(F.buildRestPattern, C.coerceToArrayPattern)
 	},
 	nonNullExpression: {
 		strict: restPattern$nonNullExpression(F.buildRestPattern, F.buildNonNullExpression),
-		coerce: restPattern$nonNullExpression(C.coerceToRestPattern, C.coerceToNonNullExpression)
+		coerce: restPattern$nonNullExpression(F.buildRestPattern, C.coerceToNonNullExpression)
 	}
 };
 
@@ -6673,20 +6654,20 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 		strict: (...args: ArgsOf<typeof F.buildAmbientDeclarationGlobal>) => ReturnType<typeof F.buildAmbientDeclaration>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToAmbientDeclarationGlobal>
-		) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	module: {
 		strict: (...args: ArgsOf<typeof F.buildAmbientDeclarationModule>) => ReturnType<typeof F.buildAmbientDeclaration>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToAmbientDeclarationModule>
-		) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+		) => ReturnType<typeof F.buildAmbientDeclaration>;
 		automaticSemicolon: {
 			strict: (
 				...args: ArgsOf<typeof ambientDeclarationModule.automaticSemicolon.strict>
 			) => ReturnType<typeof F.buildAmbientDeclaration>;
 			coerce: (
 				...args: ArgsOf<typeof ambientDeclarationModule.automaticSemicolon.coerce>
-			) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
 		};
 		semi: {
 			strict: (
@@ -6694,31 +6675,31 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 			) => ReturnType<typeof F.buildAmbientDeclaration>;
 			coerce: (
 				...args: ArgsOf<typeof ambientDeclarationModule.semi.coerce>
-			) => ReturnType<typeof C.coerceToAmbientDeclaration>;
+			) => ReturnType<typeof F.buildAmbientDeclaration>;
 		};
 	};
 } = {
 	...B.ambientDeclaration,
 	global: {
 		strict: ambientDeclaration$global(F.buildAmbientDeclaration, F.buildAmbientDeclarationGlobal),
-		coerce: ambientDeclaration$global(C.coerceToAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
+		coerce: ambientDeclaration$global(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
 	},
 	module: {
 		strict: ambientDeclaration$module(F.buildAmbientDeclaration, F.buildAmbientDeclarationModule),
-		coerce: ambientDeclaration$module(C.coerceToAmbientDeclaration, C.coerceToAmbientDeclarationModule),
+		coerce: ambientDeclaration$module(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationModule),
 		automaticSemicolon: {
 			strict: ambientDeclaration$automaticSemicolon(
 				F.buildAmbientDeclaration,
 				ambientDeclarationModule.automaticSemicolon.strict
 			),
 			coerce: ambientDeclaration$automaticSemicolon(
-				C.coerceToAmbientDeclaration,
+				F.buildAmbientDeclaration,
 				ambientDeclarationModule.automaticSemicolon.coerce
 			)
 		},
 		semi: {
 			strict: ambientDeclaration$semi(F.buildAmbientDeclaration, ambientDeclarationModule.semi.strict),
-			coerce: ambientDeclaration$semi(C.coerceToAmbientDeclaration, ambientDeclarationModule.semi.coerce)
+			coerce: ambientDeclaration$semi(F.buildAmbientDeclaration, ambientDeclarationModule.semi.coerce)
 		}
 	}
 };
@@ -7499,13 +7480,13 @@ const templateType$inferType =
 export const templateType: typeof B.templateType & {
 	inferType: {
 		strict: (...args: ArgsOf<typeof F.buildInferType>) => ReturnType<typeof F.buildTemplateType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToInferType>) => ReturnType<typeof C.coerceToTemplateType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToInferType>) => ReturnType<typeof F.buildTemplateType>;
 	};
 } = {
 	...B.templateType,
 	inferType: {
 		strict: templateType$inferType(F.buildTemplateType, F.buildInferType),
-		coerce: templateType$inferType(C.coerceToTemplateType, C.coerceToInferType)
+		coerce: templateType$inferType(F.buildTemplateType, C.coerceToInferType)
 	}
 };
 
@@ -7977,14 +7958,14 @@ const typeQuery$this =
 export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
 	};
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryMemberExpression>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryMemberExpression>) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryMemberExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		dot: {
 			strict: (...args: ArgsOf<typeof typeQueryMemberExpression.dot.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQueryMemberExpression.dot.coerce>) => ReturnType<typeof C.coerceToTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQueryMemberExpression.dot.coerce>) => ReturnType<typeof F.buildTypeQuery>;
 		};
 		qmarkDot: {
 			strict: (
@@ -7992,83 +7973,78 @@ export const typeQuery: typeof B.typeQuery & {
 			) => ReturnType<typeof F.buildTypeQuery>;
 			coerce: (
 				...args: ArgsOf<typeof typeQueryMemberExpression.qmarkDot.coerce>
-			) => ReturnType<typeof C.coerceToTypeQuery>;
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
 	};
 	callExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryCallExpression>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryCallExpression>) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryCallExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		import: {
 			strict: (...args: ArgsOf<typeof typeQueryCallExpression.import.strict>) => ReturnType<typeof F.buildTypeQuery>;
-			coerce: (...args: ArgsOf<typeof typeQueryCallExpression.import.coerce>) => ReturnType<typeof C.coerceToTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQueryCallExpression.import.coerce>) => ReturnType<typeof F.buildTypeQuery>;
 		};
 	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildTypeQuery>;
 	};
 	instantiationExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryInstantiationExpression>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (
-			...args: ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>
-		) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		import: {
 			strict: (
 				...args: ArgsOf<typeof typeQueryInstantiationExpression.import.strict>
 			) => ReturnType<typeof F.buildTypeQuery>;
 			coerce: (
 				...args: ArgsOf<typeof typeQueryInstantiationExpression.import.coerce>
-			) => ReturnType<typeof C.coerceToTypeQuery>;
+			) => ReturnType<typeof F.buildTypeQuery>;
 		};
 	};
 	this: {
 		strict: (...args: ArgsOf<typeof F.buildThis>) => ReturnType<typeof F.buildTypeQuery>;
-		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof C.coerceToTypeQuery>;
+		coerce: (...args: ArgsOf<typeof C.coerceToThis>) => ReturnType<typeof F.buildTypeQuery>;
 	};
 } = {
 	...B.typeQuery,
 	subscriptExpression: {
 		strict: typeQuery$subscriptExpression(F.buildTypeQuery, F.buildTypeQuerySubscriptExpression),
-		coerce: typeQuery$subscriptExpression(C.coerceToTypeQuery, C.coerceToTypeQuerySubscriptExpression)
+		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression)
 	},
 	memberExpression: {
 		strict: typeQuery$memberExpression(F.buildTypeQuery, F.buildTypeQueryMemberExpression),
-		coerce: typeQuery$memberExpression(C.coerceToTypeQuery, C.coerceToTypeQueryMemberExpression),
+		coerce: typeQuery$memberExpression(F.buildTypeQuery, C.coerceToTypeQueryMemberExpression),
 		dot: {
 			strict: typeQuery$dot(F.buildTypeQuery, typeQueryMemberExpression.dot.strict),
-			coerce: typeQuery$dot(C.coerceToTypeQuery, typeQueryMemberExpression.dot.coerce)
+			coerce: typeQuery$dot(F.buildTypeQuery, typeQueryMemberExpression.dot.coerce)
 		},
 		qmarkDot: {
 			strict: typeQuery$qmarkDot(F.buildTypeQuery, typeQueryMemberExpression.qmarkDot.strict),
-			coerce: typeQuery$qmarkDot(C.coerceToTypeQuery, typeQueryMemberExpression.qmarkDot.coerce)
+			coerce: typeQuery$qmarkDot(F.buildTypeQuery, typeQueryMemberExpression.qmarkDot.coerce)
 		}
 	},
 	callExpression: {
 		strict: typeQuery$callExpression(F.buildTypeQuery, F.buildTypeQueryCallExpression),
-		coerce: typeQuery$callExpression(C.coerceToTypeQuery, C.coerceToTypeQueryCallExpression),
+		coerce: typeQuery$callExpression(F.buildTypeQuery, C.coerceToTypeQueryCallExpression),
 		import: {
 			strict: typeQuery$callExpressionImport(F.buildTypeQuery, typeQueryCallExpression.import.strict),
-			coerce: typeQuery$callExpressionImport(C.coerceToTypeQuery, typeQueryCallExpression.import.coerce)
+			coerce: typeQuery$callExpressionImport(F.buildTypeQuery, typeQueryCallExpression.import.coerce)
 		}
 	},
 	identifier: {
 		strict: typeQuery$identifier(F.buildTypeQuery, F.buildIdentifier),
-		coerce: typeQuery$identifier(C.coerceToTypeQuery, C.coerceToIdentifier)
+		coerce: typeQuery$identifier(F.buildTypeQuery, C.coerceToIdentifier)
 	},
 	instantiationExpression: {
 		strict: typeQuery$instantiationExpression(F.buildTypeQuery, F.buildTypeQueryInstantiationExpression),
-		coerce: typeQuery$instantiationExpression(C.coerceToTypeQuery, C.coerceToTypeQueryInstantiationExpression),
+		coerce: typeQuery$instantiationExpression(F.buildTypeQuery, C.coerceToTypeQueryInstantiationExpression),
 		import: {
 			strict: typeQuery$instantiationExpressionImport(F.buildTypeQuery, typeQueryInstantiationExpression.import.strict),
-			coerce: typeQuery$instantiationExpressionImport(
-				C.coerceToTypeQuery,
-				typeQueryInstantiationExpression.import.coerce
-			)
+			coerce: typeQuery$instantiationExpressionImport(F.buildTypeQuery, typeQueryInstantiationExpression.import.coerce)
 		}
 	},
 	this: {
 		strict: typeQuery$this(F.buildTypeQuery, F.buildThis),
-		coerce: typeQuery$this(C.coerceToTypeQuery, C.coerceToThis)
+		coerce: typeQuery$this(F.buildTypeQuery, C.coerceToThis)
 	}
 };
 
@@ -8103,61 +8079,61 @@ const literalType$undefined =
 export const literalType: typeof B.literalType & {
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof C.coerceToLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildLiteralType>;
 		double: {
 			strict: (...args: ArgsOf<typeof string.double.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof string.double.coerce>) => ReturnType<typeof C.coerceToLiteralType>;
+			coerce: (...args: ArgsOf<typeof string.double.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
 		single: {
 			strict: (...args: ArgsOf<typeof string.single.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof string.single.coerce>) => ReturnType<typeof C.coerceToLiteralType>;
+			coerce: (...args: ArgsOf<typeof string.single.coerce>) => ReturnType<typeof F.buildLiteralType>;
 		};
 	};
 	true: {
 		strict: (...args: ArgsOf<typeof F.buildTrue>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToTrue>) => ReturnType<typeof C.coerceToLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTrue>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	false: {
 		strict: (...args: ArgsOf<typeof F.buildFalse>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToFalse>) => ReturnType<typeof C.coerceToLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToFalse>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	null: {
 		strict: (...args: ArgsOf<typeof F.buildNull>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNull>) => ReturnType<typeof C.coerceToLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNull>) => ReturnType<typeof F.buildLiteralType>;
 	};
 	undefined: {
 		strict: (...args: ArgsOf<typeof F.buildUndefined>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToUndefined>) => ReturnType<typeof C.coerceToLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUndefined>) => ReturnType<typeof F.buildLiteralType>;
 	};
 } = {
 	...B.literalType,
 	string: {
 		strict: literalType$string(F.buildLiteralType, F.buildString),
-		coerce: literalType$string(C.coerceToLiteralType, C.coerceToString),
+		coerce: literalType$string(F.buildLiteralType, C.coerceToString),
 		double: {
 			strict: literalType$stringDouble(F.buildLiteralType, string.double.strict),
-			coerce: literalType$stringDouble(C.coerceToLiteralType, string.double.coerce)
+			coerce: literalType$stringDouble(F.buildLiteralType, string.double.coerce)
 		},
 		single: {
 			strict: literalType$stringSingle(F.buildLiteralType, string.single.strict),
-			coerce: literalType$stringSingle(C.coerceToLiteralType, string.single.coerce)
+			coerce: literalType$stringSingle(F.buildLiteralType, string.single.coerce)
 		}
 	},
 	true: {
 		strict: literalType$true(F.buildLiteralType, F.buildTrue),
-		coerce: literalType$true(C.coerceToLiteralType, C.coerceToTrue)
+		coerce: literalType$true(F.buildLiteralType, C.coerceToTrue)
 	},
 	false: {
 		strict: literalType$false(F.buildLiteralType, F.buildFalse),
-		coerce: literalType$false(C.coerceToLiteralType, C.coerceToFalse)
+		coerce: literalType$false(F.buildLiteralType, C.coerceToFalse)
 	},
 	null: {
 		strict: literalType$null(F.buildLiteralType, F.buildNull),
-		coerce: literalType$null(C.coerceToLiteralType, C.coerceToNull)
+		coerce: literalType$null(F.buildLiteralType, C.coerceToNull)
 	},
 	undefined: {
 		strict: literalType$undefined(F.buildLiteralType, F.buildUndefined),
-		coerce: literalType$undefined(C.coerceToLiteralType, C.coerceToUndefined)
+		coerce: literalType$undefined(F.buildLiteralType, C.coerceToUndefined)
 	}
 };
 
@@ -8869,7 +8845,7 @@ const exportStatementDefaultFromStarFrom: {
 		) => ReturnType<typeof F.buildExportStatementDefaultFromStarFrom>;
 		coerce: (
 			...args: ArgsOf<typeof string.double.coerce>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultFromStarFrom>;
+		) => ReturnType<typeof F.buildExportStatementDefaultFromStarFrom>;
 	};
 	stringSingle: {
 		strict: (
@@ -8877,7 +8853,7 @@ const exportStatementDefaultFromStarFrom: {
 		) => ReturnType<typeof F.buildExportStatementDefaultFromStarFrom>;
 		coerce: (
 			...args: ArgsOf<typeof string.single.coerce>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultFromStarFrom>;
+		) => ReturnType<typeof F.buildExportStatementDefaultFromStarFrom>;
 	};
 } = {
 	stringDouble: {
@@ -8886,7 +8862,7 @@ const exportStatementDefaultFromStarFrom: {
 			string.double.strict
 		),
 		coerce: exportStatementDefaultFromStarFrom$stringDouble(
-			C.coerceToExportStatementDefaultFromStarFrom,
+			F.buildExportStatementDefaultFromStarFrom,
 			string.double.coerce
 		)
 	},
@@ -8896,7 +8872,7 @@ const exportStatementDefaultFromStarFrom: {
 			string.single.strict
 		),
 		coerce: exportStatementDefaultFromStarFrom$stringSingle(
-			C.coerceToExportStatementDefaultFromStarFrom,
+			F.buildExportStatementDefaultFromStarFrom,
 			string.single.coerce
 		)
 	}
@@ -9456,14 +9432,14 @@ const exportStatementDefaultDeclarationDefaultKw: {
 		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		coerce: (
 			...args: ArgsOf<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>
-		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKw>;
+		) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		automaticSemicolon: {
 			strict: (
 				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict>
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 			coerce: (
 				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKw>;
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 		semi: {
 			strict: (
@@ -9471,7 +9447,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 			coerce: (
 				...args: ArgsOf<typeof exportStatementDefaultDeclarationDefaultKwValue.semi.coerce>
-			) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKw>;
+			) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
 		};
 	};
 } = {
@@ -9481,7 +9457,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 			F.buildExportStatementDefaultDeclarationDefaultKwValue
 		),
 		coerce: exportStatementDefaultDeclarationDefaultKw$value(
-			C.coerceToExportStatementDefaultDeclarationDefaultKw,
+			F.buildExportStatementDefaultDeclarationDefaultKw,
 			C.coerceToExportStatementDefaultDeclarationDefaultKwValue
 		),
 		automaticSemicolon: {
@@ -9490,7 +9466,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 				exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict
 			),
 			coerce: exportStatementDefaultDeclarationDefaultKw$automaticSemicolon(
-				C.coerceToExportStatementDefaultDeclarationDefaultKw,
+				F.buildExportStatementDefaultDeclarationDefaultKw,
 				exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce
 			)
 		},
@@ -9500,7 +9476,7 @@ const exportStatementDefaultDeclarationDefaultKw: {
 				exportStatementDefaultDeclarationDefaultKwValue.semi.strict
 			),
 			coerce: exportStatementDefaultDeclarationDefaultKw$semi(
-				C.coerceToExportStatementDefaultDeclarationDefaultKw,
+				F.buildExportStatementDefaultDeclarationDefaultKw,
 				exportStatementDefaultDeclarationDefaultKwValue.semi.coerce
 			)
 		}
