@@ -6271,22 +6271,33 @@ const methodDefinition$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6348,22 +6359,33 @@ const methodDefinition$get$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$get$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$get$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6425,22 +6447,33 @@ const methodDefinition$set$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$set$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$set$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6499,22 +6532,33 @@ const methodDefinition$star$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$star$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$star$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodDefinition$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6579,26 +6623,22 @@ export const methodDefinition: typeof B.methodDefinition & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
 		};
 		decimal: {
@@ -6672,26 +6712,22 @@ export const methodDefinition: typeof B.methodDefinition & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
 		};
 		decimal: {
@@ -6765,26 +6801,22 @@ export const methodDefinition: typeof B.methodDefinition & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
 		};
 		decimal: {
@@ -6850,26 +6882,22 @@ export const methodDefinition: typeof B.methodDefinition & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
 	decimal: {
@@ -7109,22 +7137,33 @@ const pair$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pair$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pair$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pair$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7221,22 +7260,18 @@ export const pair: typeof B.pair & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0] }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToPair>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberFloatScientific> }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToPair>;
 	};
 	decimal: {
@@ -7351,22 +7386,33 @@ const pairPattern$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pairPattern$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pairPattern$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
 	};
 const pairPattern$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7421,26 +7467,20 @@ export const pairPattern: typeof B.pairPattern & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & {
-				key: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & {
-				key: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildPairPattern>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToPairPattern>;
 	};
 	decimal: {
@@ -7538,22 +7578,33 @@ const publicFieldDefinition$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const publicFieldDefinition$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const publicFieldDefinition$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const publicFieldDefinition$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7631,17 +7682,15 @@ const publicFieldDefinition$floatPoint$bang =
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
 const publicFieldDefinition$floatLeadingPoint$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-	}
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 ) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$floatLeadingPoint(
 	F.buildPublicFieldDefinition,
 	F.buildNumberFloatLeadingPoint
 );
 const publicFieldDefinition$floatLeadingPoint$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-	}
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 ) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$floatLeadingPoint(
 	C.coerceToPublicFieldDefinition,
 	C.coerceToNumberFloatLeadingPoint
@@ -7655,17 +7704,15 @@ const publicFieldDefinition$floatLeadingPoint$bang =
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
 const publicFieldDefinition$floatScientific$applied: (
-	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof F.buildNumberFloatScientific>;
-	}
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof F.buildNumberFloatScientific>[0]
 ) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$floatScientific(
 	F.buildPublicFieldDefinition,
 	F.buildNumberFloatScientific
 );
 const publicFieldDefinition$floatScientific$appliedCoerce: (
-	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-		name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-	}
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 ) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$floatScientific(
 	C.coerceToPublicFieldDefinition,
 	C.coerceToNumberFloatScientific
@@ -7836,14 +7883,12 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
@@ -7864,14 +7909,12 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildPublicFieldDefinition>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 		qmark: {
 			strict: (
@@ -8154,22 +8197,33 @@ const methodSignature$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8228,22 +8282,33 @@ const methodSignature$get$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$get$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$get$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8302,22 +8367,33 @@ const methodSignature$set$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$set$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$set$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8376,22 +8452,33 @@ const methodSignature$star$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$star$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$star$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const methodSignature$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8456,26 +8543,22 @@ export const methodSignature: typeof B.methodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
 		};
 		decimal: {
@@ -8549,26 +8632,22 @@ export const methodSignature: typeof B.methodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
 		};
 		decimal: {
@@ -8642,26 +8721,22 @@ export const methodSignature: typeof B.methodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
 		};
 		decimal: {
@@ -8726,26 +8801,22 @@ export const methodSignature: typeof B.methodSignature & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
 	decimal: {
@@ -8968,22 +9039,33 @@ const abstractMethodSignature$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -9048,22 +9130,33 @@ const abstractMethodSignature$get$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$get$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$get$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$get$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -9128,22 +9221,33 @@ const abstractMethodSignature$set$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$set$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$set$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$set$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -9208,22 +9312,33 @@ const abstractMethodSignature$star$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$star$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$star$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const abstractMethodSignature$star$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -9289,26 +9404,22 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
 		};
 		decimal: {
@@ -9385,26 +9496,22 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
 		};
 		decimal: {
@@ -9481,26 +9588,22 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		};
 		floatLeadingPoint: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
 		floatScientific: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
-					name: ArgsOf<typeof F.buildNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
-					name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-				}
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
 		};
 		decimal: {
@@ -9569,26 +9672,22 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
 	decimal: {
@@ -10318,22 +10417,33 @@ const enumAssignment$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const enumAssignment$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const enumAssignment$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const enumAssignment$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -10441,26 +10551,21 @@ export const enumAssignment: typeof B.enumAssignment & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
 	decimal: {
@@ -11045,22 +11150,33 @@ const typeQuerySubscriptExpression$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
 const typeQuerySubscriptExpression$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { index: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
 const typeQuerySubscriptExpression$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF> }): ReturnType<PF> => {
-		const { index: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
 	};
 const typeQuerySubscriptExpression$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -11119,26 +11235,22 @@ export const typeQuerySubscriptExpression: typeof B.typeQuerySubscriptExpression
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
-				index: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
 	};
 	decimal: {
@@ -12277,22 +12389,33 @@ const _number$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const _number$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const _number$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> }): ReturnType<PF> => {
-		const { argument: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
 	};
 const _number$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -12347,26 +12470,20 @@ export const _number: typeof B._number & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.build_Number>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
-				argument: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceTo_Number>;
 	};
 	decimal: {
@@ -12964,22 +13081,33 @@ const propertySignature$floatPoint =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'content' || key === 'content2') inner[key] = value;
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const propertySignature$floatLeadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const propertySignature$floatScientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
 	};
 const propertySignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -13087,26 +13215,22 @@ export const propertySignature: typeof B.propertySignature & {
 	};
 	floatLeadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0];
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
 	floatScientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumberFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
 	decimal: {

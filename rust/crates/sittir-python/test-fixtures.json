@@ -14836,7 +14836,8 @@
                     "$span": {
                       "start": 0,
                       "end": 2
-                    }
+                    },
+                    "_fraction": "1"
                   },
                   "_operator": 50,
                   "_right": {
@@ -14847,7 +14848,8 @@
                     "$span": {
                       "start": 3,
                       "end": 5
-                    }
+                    },
+                    "_fraction": "0"
                   },
                   "$slotOrder": [
                     "left",
@@ -14889,7 +14891,8 @@
                     "$span": {
                       "start": 6,
                       "end": 8
-                    }
+                    },
+                    "_fraction": "1"
                   },
                   "_operator": 49,
                   "_right": {
@@ -14900,7 +14903,8 @@
                     "$span": {
                       "start": 9,
                       "end": 11
-                    }
+                    },
+                    "_fraction": "0"
                   },
                   "$slotOrder": [
                     "left",
@@ -14942,7 +14946,8 @@
                     "$span": {
                       "start": 12,
                       "end": 14
-                    }
+                    },
+                    "_fraction": "1"
                   },
                   "_operator": 50,
                   "_right": {
@@ -14995,7 +15000,8 @@
                     "$span": {
                       "start": 17,
                       "end": 19
-                    }
+                    },
+                    "_fraction": "1"
                   },
                   "_operator": 49,
                   "_right": {
@@ -15059,7 +15065,8 @@
                     "$span": {
                       "start": 25,
                       "end": 27
-                    }
+                    },
+                    "_fraction": "0"
                   },
                   "$slotOrder": [
                     "left",
@@ -15112,7 +15119,8 @@
                     "$span": {
                       "start": 30,
                       "end": 32
-                    }
+                    },
+                    "_fraction": "0"
                   },
                   "$slotOrder": [
                     "left",
@@ -15164,7 +15172,8 @@
           "$span": {
             "start": 0,
             "end": 2
-          }
+          },
+          "_fraction": "1"
         },
         "_operator": 50,
         "_right": {
@@ -15175,7 +15184,8 @@
           "$span": {
             "start": 3,
             "end": 5
-          }
+          },
+          "_fraction": "0"
         },
         "$slotOrder": [
           "left",
@@ -15217,7 +15227,8 @@
           "$span": {
             "start": 6,
             "end": 8
-          }
+          },
+          "_fraction": "1"
         },
         "_operator": 49,
         "_right": {
@@ -15228,7 +15239,8 @@
           "$span": {
             "start": 9,
             "end": 11
-          }
+          },
+          "_fraction": "0"
         },
         "$slotOrder": [
           "left",
@@ -15270,7 +15282,8 @@
           "$span": {
             "start": 12,
             "end": 14
-          }
+          },
+          "_fraction": "1"
         },
         "_operator": 50,
         "_right": {
@@ -15323,7 +15336,8 @@
           "$span": {
             "start": 17,
             "end": 19
-          }
+          },
+          "_fraction": "1"
         },
         "_operator": 49,
         "_right": {
@@ -15387,7 +15401,8 @@
           "$span": {
             "start": 25,
             "end": 27
-          }
+          },
+          "_fraction": "0"
         },
         "$slotOrder": [
           "left",
@@ -15440,7 +15455,8 @@
           "$span": {
             "start": 30,
             "end": 32
-          }
+          },
+          "_fraction": "0"
         },
         "$slotOrder": [
           "left",
@@ -15478,7 +15494,8 @@
         "$span": {
           "start": 0,
           "end": 2
-        }
+        },
+        "_fraction": "1"
       },
       "_operator": 50,
       "_right": {
@@ -15489,7 +15506,8 @@
         "$span": {
           "start": 3,
           "end": 5
-        }
+        },
+        "_fraction": "0"
       },
       "$slotOrder": [
         "left",
@@ -15526,7 +15544,8 @@
         "$span": {
           "start": 6,
           "end": 8
-        }
+        },
+        "_fraction": "1"
       },
       "_operator": 49,
       "_right": {
@@ -15537,7 +15556,8 @@
         "$span": {
           "start": 9,
           "end": 11
-        }
+        },
+        "_fraction": "0"
       },
       "$slotOrder": [
         "left",
@@ -15574,7 +15594,8 @@
         "$span": {
           "start": 12,
           "end": 14
-        }
+        },
+        "_fraction": "1"
       },
       "_operator": 50,
       "_right": {
@@ -15622,7 +15643,8 @@
         "$span": {
           "start": 17,
           "end": 19
-        }
+        },
+        "_fraction": "1"
       },
       "_operator": 49,
       "_right": {
@@ -15681,7 +15703,8 @@
         "$span": {
           "start": 25,
           "end": 27
-        }
+        },
+        "_fraction": "0"
       },
       "$slotOrder": [
         "left",
@@ -15729,7 +15752,8 @@
         "$span": {
           "start": 30,
           "end": 32
-        }
+        },
+        "_fraction": "0"
       },
       "$slotOrder": [
         "left",
@@ -15748,6 +15772,230 @@
     "expectedSourceOut": "1 + .0",
     "expectedReparseTree": "(binary_operator left: (integer_decimal) right: (float_leading_point))",
     "wrappedText": "_ = 1 + .0",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".1",
+      "$span": {
+        "start": 0,
+        "end": 2
+      },
+      "_fraction": "1"
+    },
+    "expectedOutput": ".1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".1",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".1",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".0",
+      "$span": {
+        "start": 3,
+        "end": 5
+      },
+      "_fraction": "0"
+    },
+    "expectedOutput": ".0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".0",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".0",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .0",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".1",
+      "$span": {
+        "start": 6,
+        "end": 8
+      },
+      "_fraction": "1"
+    },
+    "expectedOutput": ".1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".1",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".1",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".0",
+      "$span": {
+        "start": 9,
+        "end": 11
+      },
+      "_fraction": "0"
+    },
+    "expectedOutput": ".0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".0",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".0",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .0",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".1",
+      "$span": {
+        "start": 12,
+        "end": 14
+      },
+      "_fraction": "1"
+    },
+    "expectedOutput": ".1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".1",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".1",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".1",
+      "$span": {
+        "start": 17,
+        "end": 19
+      },
+      "_fraction": "1"
+    },
+    "expectedOutput": ".1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".1",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".1",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".0",
+      "$span": {
+        "start": 25,
+        "end": 27
+      },
+      "_fraction": "0"
+    },
+    "expectedOutput": ".0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".0",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".0",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .0",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".0",
+      "$span": {
+        "start": 30,
+        "end": 32
+      },
+      "_fraction": "0"
+    },
+    "expectedOutput": ".0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".0",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".0",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .0",
     "wrappedOffset": 4
   },
   {
@@ -24942,7 +25190,9 @@
                     "$span": {
                       "start": 56,
                       "end": 59
-                    }
+                    },
+                    "_integer": "2",
+                    "_fraction": "2"
                   },
                   "$slotOrder": [
                     "left",
@@ -25641,7 +25891,9 @@
           "$span": {
             "start": 56,
             "end": 59
-          }
+          },
+          "_integer": "2",
+          "_fraction": "2"
         },
         "$slotOrder": [
           "left",
@@ -25927,6 +26179,35 @@
     "expectedReparseTree": "(expression_statement (augmented_assignment left: (identifier) right: (integer_decimal)))",
     "wrappedText": "n **= 3",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "2.2",
+      "$span": {
+        "start": 56,
+        "end": 59
+      },
+      "_integer": "2",
+      "_fraction": "2"
+    },
+    "expectedOutput": "2.2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "2.2",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "2.2",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 2.2",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -46164,7 +46445,8 @@
                     "$span": {
                       "start": 1,
                       "end": 5
-                    }
+                    },
+                    "_fraction": "6_6"
                   },
                   "$slotOrder": [
                     "operator",
@@ -46206,7 +46488,8 @@
                     "$span": {
                       "start": 7,
                       "end": 11
-                    }
+                    },
+                    "_fraction": "1_1"
                   },
                   "$slotOrder": [
                     "operator",
@@ -46243,7 +46526,9 @@
                   "$span": {
                     "start": 12,
                     "end": 20
-                  }
+                  },
+                  "_integer": "123",
+                  "_fraction": "4123"
                 }
               }
             ],
@@ -46275,7 +46560,10 @@
                   "$span": {
                     "start": 21,
                     "end": 29
-                  }
+                  },
+                  "_integer": "123",
+                  "_fraction": "123",
+                  "_imaginary": "J"
                 }
               }
             ],
@@ -46307,7 +46595,9 @@
                   "$span": {
                     "start": 30,
                     "end": 37
-                  }
+                  },
+                  "_integer": "1_1",
+                  "_fraction": "3_1"
                 }
               }
             ],
@@ -46339,7 +46629,8 @@
                   "$span": {
                     "start": 38,
                     "end": 42
-                  }
+                  },
+                  "_integer": "1_1"
                 }
               }
             ],
@@ -46371,7 +46662,11 @@
                   "$span": {
                     "start": 43,
                     "end": 50
-                  }
+                  },
+                  "_integer": "1",
+                  "_marker": "e+",
+                  "_exponent": "3_4",
+                  "_imaginary": "j"
                 }
               }
             ],
@@ -46403,7 +46698,10 @@
                   "$span": {
                     "start": 51,
                     "end": 57
-                  }
+                  },
+                  "_fraction": "3",
+                  "_marker": "e",
+                  "_exponent": "1_4"
                 }
               }
             ],
@@ -46450,7 +46748,8 @@
           "$span": {
             "start": 1,
             "end": 5
-          }
+          },
+          "_fraction": "6_6"
         },
         "$slotOrder": [
           "operator",
@@ -46492,7 +46791,8 @@
           "$span": {
             "start": 7,
             "end": 11
-          }
+          },
+          "_fraction": "1_1"
         },
         "$slotOrder": [
           "operator",
@@ -46529,7 +46829,9 @@
         "$span": {
           "start": 12,
           "end": 20
-        }
+        },
+        "_integer": "123",
+        "_fraction": "4123"
       }
     },
     "expectedOutput": "123.4123"
@@ -46561,7 +46863,10 @@
         "$span": {
           "start": 21,
           "end": 29
-        }
+        },
+        "_integer": "123",
+        "_fraction": "123",
+        "_imaginary": "J"
       }
     },
     "expectedOutput": "123.123J"
@@ -46593,7 +46898,9 @@
         "$span": {
           "start": 30,
           "end": 37
-        }
+        },
+        "_integer": "1_1",
+        "_fraction": "3_1"
       }
     },
     "expectedOutput": "1_1.3_1"
@@ -46625,7 +46932,8 @@
         "$span": {
           "start": 38,
           "end": 42
-        }
+        },
+        "_integer": "1_1"
       }
     },
     "expectedOutput": "1_1."
@@ -46657,7 +46965,11 @@
         "$span": {
           "start": 43,
           "end": 50
-        }
+        },
+        "_integer": "1",
+        "_marker": "e+",
+        "_exponent": "3_4",
+        "_imaginary": "j"
       }
     },
     "expectedOutput": "1e+3_4j"
@@ -46689,7 +47001,10 @@
         "$span": {
           "start": 51,
           "end": 57
-        }
+        },
+        "_fraction": "3",
+        "_marker": "e",
+        "_exponent": "1_4"
       }
     },
     "expectedOutput": ".3e1_4"
@@ -46722,7 +47037,8 @@
         "$span": {
           "start": 1,
           "end": 5
-        }
+        },
+        "_fraction": "6_6"
       },
       "$slotOrder": [
         "operator",
@@ -46759,7 +47075,8 @@
         "$span": {
           "start": 7,
           "end": 11
-        }
+        },
+        "_fraction": "1_1"
       },
       "$slotOrder": [
         "operator",
@@ -46777,6 +47094,239 @@
     "expectedSourceOut": "+ .1_1",
     "expectedReparseTree": "(unary_operator argument: (float_leading_point))",
     "wrappedText": "_ = + .1_1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".6_6",
+      "$span": {
+        "start": 1,
+        "end": 5
+      },
+      "_fraction": "6_6"
+    },
+    "expectedOutput": ".6_6"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".6_6",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".6_6",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .6_6",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".1_1",
+      "$span": {
+        "start": 7,
+        "end": 11
+      },
+      "_fraction": "1_1"
+    },
+    "expectedOutput": ".1_1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".1_1",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".1_1",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .1_1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_leading_point",
+    "input": {
+      "$type": 95,
+      "$source": 0,
+      "$named": true,
+      "$text": ".3e1_4",
+      "$span": {
+        "start": 51,
+        "end": 57
+      },
+      "_fraction": "3",
+      "_marker": "e",
+      "_exponent": "1_4"
+    },
+    "expectedOutput": ".3e1_4"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": ".3e1_4",
+    "pattern": "float_leading_point",
+    "edits": [],
+    "expectedSourceOut": ".3e1_4",
+    "expectedReparseTree": "(float_leading_point)",
+    "wrappedText": "_ = .3e1_4",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "123.4123",
+      "$span": {
+        "start": 12,
+        "end": 20
+      },
+      "_integer": "123",
+      "_fraction": "4123"
+    },
+    "expectedOutput": "123.4123"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "123.4123",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "123.4123",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 123.4123",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "123.123J",
+      "$span": {
+        "start": 21,
+        "end": 29
+      },
+      "_integer": "123",
+      "_fraction": "123",
+      "_imaginary": "J"
+    },
+    "expectedOutput": "123.123J"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "123.123J",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "123.123J",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 123.123J",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1_1.3_1",
+      "$span": {
+        "start": 30,
+        "end": 37
+      },
+      "_integer": "1_1",
+      "_fraction": "3_1"
+    },
+    "expectedOutput": "1_1.3_1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1_1.3_1",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1_1.3_1",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1_1.3_1",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1_1.",
+      "$span": {
+        "start": 38,
+        "end": 42
+      },
+      "_integer": "1_1"
+    },
+    "expectedOutput": "1_1."
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1_1.",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1_1.",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1_1.",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_scientific",
+    "input": {
+      "$type": 96,
+      "$source": 0,
+      "$named": true,
+      "$text": "1e+3_4j",
+      "$span": {
+        "start": 43,
+        "end": 50
+      },
+      "_integer": "1",
+      "_marker": "e+",
+      "_exponent": "3_4",
+      "_imaginary": "j"
+    },
+    "expectedOutput": "1e+3_4j"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1e+3_4j",
+    "pattern": "float_scientific",
+    "edits": [],
+    "expectedSourceOut": "1e+3_4j",
+    "expectedReparseTree": "(float_scientific)",
+    "wrappedText": "_ = 1e+3_4j",
     "wrappedOffset": 4
   },
   {
@@ -46809,7 +47359,10 @@
                   "$span": {
                     "start": 0,
                     "end": 5
-                  }
+                  },
+                  "_integer": "1",
+                  "_marker": "e",
+                  "_exponent": "322"
                 }
               }
             ],
@@ -46841,7 +47394,10 @@
                   "$span": {
                     "start": 6,
                     "end": 10
-                  }
+                  },
+                  "_integer": "1",
+                  "_marker": "e-",
+                  "_exponent": "3"
                 }
               }
             ],
@@ -46873,7 +47429,10 @@
                   "$span": {
                     "start": 11,
                     "end": 15
-                  }
+                  },
+                  "_integer": "1",
+                  "_marker": "e+",
+                  "_exponent": "3"
                 }
               }
             ],
@@ -46905,7 +47464,11 @@
                   "$span": {
                     "start": 16,
                     "end": 22
-                  }
+                  },
+                  "_integer": "1",
+                  "_fraction": "8",
+                  "_marker": "e",
+                  "_exponent": "10"
                 }
               }
             ],
@@ -46937,7 +47500,10 @@
                   "$span": {
                     "start": 23,
                     "end": 28
-                  }
+                  },
+                  "_integer": "1",
+                  "_marker": "e",
+                  "_exponent": "10"
                 }
               }
             ],
@@ -46974,7 +47540,10 @@
                     "$span": {
                       "start": 30,
                       "end": 34
-                    }
+                    },
+                    "_integer": "1",
+                    "_marker": "e",
+                    "_exponent": "10"
                   },
                   "$slotOrder": [
                     "operator",
@@ -47021,7 +47590,10 @@
         "$span": {
           "start": 0,
           "end": 5
-        }
+        },
+        "_integer": "1",
+        "_marker": "e",
+        "_exponent": "322"
       }
     },
     "expectedOutput": "1e322"
@@ -47053,7 +47625,10 @@
         "$span": {
           "start": 6,
           "end": 10
-        }
+        },
+        "_integer": "1",
+        "_marker": "e-",
+        "_exponent": "3"
       }
     },
     "expectedOutput": "1e-3"
@@ -47085,7 +47660,10 @@
         "$span": {
           "start": 11,
           "end": 15
-        }
+        },
+        "_integer": "1",
+        "_marker": "e+",
+        "_exponent": "3"
       }
     },
     "expectedOutput": "1e+3"
@@ -47117,7 +47695,11 @@
         "$span": {
           "start": 16,
           "end": 22
-        }
+        },
+        "_integer": "1",
+        "_fraction": "8",
+        "_marker": "e",
+        "_exponent": "10"
       }
     },
     "expectedOutput": "1.8e10"
@@ -47149,7 +47731,10 @@
         "$span": {
           "start": 23,
           "end": 28
-        }
+        },
+        "_integer": "1",
+        "_marker": "e",
+        "_exponent": "10"
       }
     },
     "expectedOutput": "1.e10"
@@ -47186,7 +47771,10 @@
           "$span": {
             "start": 30,
             "end": 34
-          }
+          },
+          "_integer": "1",
+          "_marker": "e",
+          "_exponent": "10"
         },
         "$slotOrder": [
           "operator",
@@ -47210,6 +47798,187 @@
   {
     "kind": "render",
     "grammar": "python",
+    "pattern": "float_scientific",
+    "input": {
+      "$type": 96,
+      "$source": 0,
+      "$named": true,
+      "$text": "1e322",
+      "$span": {
+        "start": 0,
+        "end": 5
+      },
+      "_integer": "1",
+      "_marker": "e",
+      "_exponent": "322"
+    },
+    "expectedOutput": "1e322"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1e322",
+    "pattern": "float_scientific",
+    "edits": [],
+    "expectedSourceOut": "1e322",
+    "expectedReparseTree": "(float_scientific)",
+    "wrappedText": "_ = 1e322",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_scientific",
+    "input": {
+      "$type": 96,
+      "$source": 0,
+      "$named": true,
+      "$text": "1e-3",
+      "$span": {
+        "start": 6,
+        "end": 10
+      },
+      "_integer": "1",
+      "_marker": "e-",
+      "_exponent": "3"
+    },
+    "expectedOutput": "1e-3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1e-3",
+    "pattern": "float_scientific",
+    "edits": [],
+    "expectedSourceOut": "1e-3",
+    "expectedReparseTree": "(float_scientific)",
+    "wrappedText": "_ = 1e-3",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_scientific",
+    "input": {
+      "$type": 96,
+      "$source": 0,
+      "$named": true,
+      "$text": "1e+3",
+      "$span": {
+        "start": 11,
+        "end": 15
+      },
+      "_integer": "1",
+      "_marker": "e+",
+      "_exponent": "3"
+    },
+    "expectedOutput": "1e+3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1e+3",
+    "pattern": "float_scientific",
+    "edits": [],
+    "expectedSourceOut": "1e+3",
+    "expectedReparseTree": "(float_scientific)",
+    "wrappedText": "_ = 1e+3",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_scientific",
+    "input": {
+      "$type": 96,
+      "$source": 0,
+      "$named": true,
+      "$text": "1e10",
+      "$span": {
+        "start": 30,
+        "end": 34
+      },
+      "_integer": "1",
+      "_marker": "e",
+      "_exponent": "10"
+    },
+    "expectedOutput": "1e10"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1e10",
+    "pattern": "float_scientific",
+    "edits": [],
+    "expectedSourceOut": "1e10",
+    "expectedReparseTree": "(float_scientific)",
+    "wrappedText": "_ = 1e10",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1.8e10",
+      "$span": {
+        "start": 16,
+        "end": 22
+      },
+      "_integer": "1",
+      "_fraction": "8",
+      "_marker": "e",
+      "_exponent": "10"
+    },
+    "expectedOutput": "1.8e10"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1.8e10",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1.8e10",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1.8e10",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1.e10",
+      "$span": {
+        "start": 23,
+        "end": 28
+      },
+      "_integer": "1",
+      "_marker": "e",
+      "_exponent": "10"
+    },
+    "expectedOutput": "1.e10"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1.e10",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1.e10",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1.e10",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
     "pattern": "unary_operator",
     "input": {
       "$type": 205,
@@ -47224,7 +47993,10 @@
         "$span": {
           "start": 30,
           "end": 34
-        }
+        },
+        "_integer": "1",
+        "_marker": "e",
+        "_exponent": "10"
       },
       "$slotOrder": [
         "operator",
@@ -106218,7 +106990,9 @@
                                 "$span": {
                                   "start": 121,
                                   "end": 124
-                                }
+                                },
+                                "_integer": "1",
+                                "_fraction": "0"
                               }
                             },
                             {
@@ -106238,7 +107012,9 @@
                                 "$span": {
                                   "start": 128,
                                   "end": 131
-                                }
+                                },
+                                "_integer": "1",
+                                "_fraction": "0"
                               }
                             }
                           ],
@@ -106876,6 +107652,64 @@
     "expectedSourceOut": "\"something\"\"else\"",
     "expectedReparseTree": "(concatenated_string (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)))",
     "wrappedText": "_ = \"something\"\"else\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1.0",
+      "$span": {
+        "start": 121,
+        "end": 124
+      },
+      "_integer": "1",
+      "_fraction": "0"
+    },
+    "expectedOutput": "1.0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1.0",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1.0",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1.0",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "1.0",
+      "$span": {
+        "start": 128,
+        "end": 131
+      },
+      "_integer": "1",
+      "_fraction": "0"
+    },
+    "expectedOutput": "1.0"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "1.0",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "1.0",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 1.0",
     "wrappedOffset": 4
   },
   {
@@ -129662,7 +130496,8 @@
                             "$span": {
                               "start": 137,
                               "end": 139
-                            }
+                            },
+                            "_integer": "3"
                           },
                           "_operator": 49,
                           "$slotOrder": [
@@ -129793,7 +130628,9 @@
                             "$span": {
                               "start": 173,
                               "end": 176
-                            }
+                            },
+                            "_integer": "5",
+                            "_imaginary": "j"
                           }
                         }
                       }
@@ -129910,6 +130747,63 @@
     "expectedReparseTree": "(module statements: (match_statement (subjects subject: (identifier)) body: (block (match_block_block alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (case_as_pattern (case_pattern (simple_pattern_negative (integer_decimal))) (identifier))) case_pattern: (case_pattern (case_as_pattern (case_pattern (complex_pattern imaginary: (integer_decimal) (integer_decimal))) (identifier)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (float_point) (integer_decimal)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline))))) alternative: (case_clause (case_patterns case_pattern: (case_pattern (complex_pattern imaginary: (integer_decimal) (float_point)))) consequence: (suite_block (block statements: (simple_statements (simple_statements_elements simple_statement: (pass_statement)) (newline)))))))))",
     "wrappedText": "match x:\n    case - 3 + 5j:\n        pass\n    case - 3 + 5j as b2:\n        pass\n    case 3j as b1, - 3 + 5j as b2:\n        pass\n    case - 3. + 5j:\n        pass\n    case 3 - 5.j:\n        pass\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "3.",
+      "$span": {
+        "start": 137,
+        "end": 139
+      },
+      "_integer": "3"
+    },
+    "expectedOutput": "3."
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "3.",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "3.",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 3.",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "pattern": "float_point",
+    "input": {
+      "$type": 94,
+      "$source": 0,
+      "$named": true,
+      "$text": "5.j",
+      "$span": {
+        "start": 173,
+        "end": 176
+      },
+      "_integer": "5",
+      "_imaginary": "j"
+    },
+    "expectedOutput": "5.j"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "5.j",
+    "pattern": "float_point",
+    "edits": [],
+    "expectedSourceOut": "5.j",
+    "expectedReparseTree": "(float_point)",
+    "wrappedText": "_ = 5.j",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",

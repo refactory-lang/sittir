@@ -483,11 +483,7 @@ function extractExternalNames(base: unknown, hasWrapper: boolean): ReadonlySet<s
 			}
 		}
 	);
-	try {
-		return harvestSupertypeNames((externals as (proxy: unknown) => unknown)(dollar));
-	} catch {
-		return new Set();
-	}
+	return harvestSupertypeNames((externals as (proxy: unknown) => unknown)(dollar));
 }
 
 function isAnonymousLiteralShapedRule(name: string, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {

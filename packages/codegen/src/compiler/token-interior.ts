@@ -1,4 +1,4 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
+import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../types/rule.ts';
 import { makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { composeTokenText } from '../dsl/rule-patterns.ts';
@@ -9,7 +9,7 @@ const CONTENT_SLOT = 'content';
 const PREFIX_SLOT = 'prefix';
 const SUFFIX_SLOT = 'suffix';
 
-type Member = 'template' | 'flag' | 'enum' | 'slot';
+type Member = 'template' | 'flag' | 'enum' | 'slot' | 'group';
 
 function isBlank(rule: LinkRule): boolean {
 	return (rule.type === CHOICE || rule.type === SEQ) && rule.members.length === 0;
@@ -31,8 +31,26 @@ function containsPattern(rule: LinkRule): boolean {
 		case CHOICE:
 			return rule.members.some(containsPattern);
 		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
 		case FIELD:
 			return containsPattern(rule.content);
+		default:
+			return false;
+	}
+}
+
+function containsField(rule: LinkRule): boolean {
+	switch (rule.type) {
+		case FIELD:
+			return true;
+		case SEQ:
+		case CHOICE:
+			return rule.members.some(containsField);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return containsField(rule.content);
 		default:
 			return false;
 	}
@@ -42,8 +60,31 @@ function isField(rule: LinkRule): rule is LinkRule & { type: typeof FIELD } {
 	return rule.type === FIELD;
 }
 
+function groupArm(rule: LinkRule): (LinkRule & { type: typeof SEQ }) | undefined {
+	const arm =
+		rule.type === OPTIONAL
+			? rule.content
+			: rule.type === CHOICE && rule.members.some(isBlank)
+				? (() => {
+						const live = rule.members.filter((m) => !isBlank(m));
+						return live.length === 1 ? live[0] : undefined;
+					})()
+			: undefined;
+	return arm !== undefined && arm.type === SEQ && containsField(arm) ? (arm as LinkRule & { type: typeof SEQ }) : undefined;
+}
+
+function optionalArm(rule: LinkRule): LinkRule | undefined {
+	if (rule.type === REPEAT) return { ...rule, type: REPEAT1 } as LinkRule;
+	if (rule.type === OPTIONAL) return rule.content;
+	if (rule.type !== CHOICE || !rule.members.some(isBlank)) return undefined;
+	const live = rule.members.filter((m) => !isBlank(m));
+	return live.length === 1 ? live[0] : undefined;
+}
+
 function memberClass(rule: LinkRule): Member {
 	if (rule.type === STRING) return 'template';
+	if (groupArm(rule) !== undefined) return 'group';
+	if (rule.type === FIELD) return isEnumOfStrings(rule.content) || (rule.content.type === OPTIONAL && isEnumOfStrings(rule.content.content)) ? 'enum' : 'slot';
 	if (rule.type === OPTIONAL && rule.content.type === STRING) return 'flag';
 	if (rule.type === CHOICE && rule.members.length === 2 && rule.members.some(isBlank)) {
 		const arm = rule.members.find((m) => !isBlank(m));
@@ -73,24 +114,51 @@ function fieldOf(name: string, content: LinkRule, id: LinkRule['id']): LinkRule 
 	} as LinkRule;
 }
 
-function structureSeq(
-	seq: LinkRule & { type: typeof SEQ },
-	lookup: (name: string) => LinkRule | undefined
-): LinkRule | undefined {
-	const classes = seq.members.map(memberClass);
-	if (!seq.members.some((m, i) => classes[i] === 'slot' && containsPattern(m))) return undefined;
-	if (!classes.some((c) => c === 'template' || c === 'flag' || c === 'enum')) return undefined;
-	const slotCount = classes.filter(
-		(c, i) => c === 'slot' && !isField(seq.members[i]!) && (classes[i - 1] !== 'slot' || isField(seq.members[i - 1]!))
-	).length;
+function flattenMembers(members: readonly LinkRule[]): LinkRule[] {
+	return members.flatMap((member) =>
+		member.type === SEQ && !(member as { lexed?: boolean }).lexed ? flattenMembers(member.members) : [member]
+	);
+}
+
+interface InteriorState {
+	slotSeen: boolean;
+	readonly slotCount: number;
+}
+
+function unnamedInGroup(kind: string): never {
+	throw new Error(`token interior: '${kind}' names a part inside an optional group next to an unnamed pattern; name every pattern in the group`);
+}
+
+function structureMembers(
+	kind: string,
+	rawMembers: readonly LinkRule[],
+	lookup: (name: string) => LinkRule | undefined,
+	state: InteriorState,
+	inGroup: boolean
+): LinkRule[] | undefined {
+	const members = [...rawMembers];
+	const classes = members.map(memberClass);
 	const out: LinkRule[] = [];
-	let slotSeen = false;
-	for (let i = 0; i < seq.members.length; ) {
+	for (let i = 0; i < members.length; ) {
 		const cls = classes[i]!;
-		const member = seq.members[i]!;
+		const member = members[i]!;
+		if (cls === 'group') {
+			const arm = groupArm(member)!;
+			const inner = structureMembers(kind, flattenMembers(arm.members), lookup, state, true);
+			if (inner === undefined) return undefined;
+			const rebuilt = { ...arm, members: inner } as LinkRule;
+			out.push(
+				member.type === OPTIONAL
+					? ({ ...member, content: rebuilt } as LinkRule)
+					: ({ ...member, members: (member as LinkRule & { type: typeof CHOICE }).members.map((m) => (isBlank(m) ? m : rebuilt)) } as LinkRule)
+			);
+			i += 1;
+			continue;
+		}
 		if (cls === 'enum') {
-			const name = slotSeen ? SUFFIX_SLOT : PREFIX_SLOT;
-			out.push(fieldOf(name, member, member.id));
+			const named = isField(member);
+			const name = named ? member.name : state.slotSeen ? SUFFIX_SLOT : PREFIX_SLOT;
+			out.push(named ? member : fieldOf(name, member, member.id));
 			i += 1;
 			continue;
 		}
@@ -106,27 +174,47 @@ function structureSeq(
 		}
 		let end = i + 1;
 		if (!isField(member)) {
-			while (end < seq.members.length && classes[end] === 'slot' && !isField(seq.members[end]!)) end += 1;
+			if (inGroup) unnamedInGroup(kind);
+			while (end < members.length && classes[end] === 'slot' && !isField(members[end]!)) end += 1;
 		}
-		const run = seq.members.slice(i, end);
+		const run = members.slice(i, end);
+		const fieldArm = isField(member) ? optionalArm(member.content as LinkRule) : undefined;
 		const composed = composeTokenText(
-			isField(member) ? (member.content as LinkRule) : ({ ...seq, members: run } as LinkRule),
+			isField(member) ? (fieldArm ?? (member.content as LinkRule)) : ({ type: SEQ, members: run } as LinkRule),
 			lookup
 		);
 		if (composed === undefined) return undefined;
-		const name = isField(member) ? member.name : slotCount === 1 || !slotSeen ? CONTENT_SLOT : `${CONTENT_SLOT}${out.length}`;
-		out.push(fieldOf(name, { type: PATTERN, value: composed, id: run[0]!.id } as LinkRule, run[0]!.id));
-		slotSeen = true;
+		const name = isField(member) ? member.name : state.slotCount === 1 || !state.slotSeen ? CONTENT_SLOT : `${CONTENT_SLOT}${out.length}`;
+		const pattern = { type: PATTERN, value: composed, id: run[0]!.id } as LinkRule;
+		out.push(fieldOf(name, fieldArm === undefined ? pattern : ({ type: OPTIONAL, content: pattern } as LinkRule), run[0]!.id));
+		state.slotSeen = true;
 		i = end;
 	}
-	return { ...seq, members: out };
+	return out;
+}
+
+function structureSeq(
+	kind: string,
+	seq: LinkRule & { type: typeof SEQ },
+	lookup: (name: string) => LinkRule | undefined
+): LinkRule | undefined {
+	const members = containsField(seq) ? flattenMembers(seq.members) : seq.members;
+	const classes = members.map(memberClass);
+	if (!members.some((m, i) => (classes[i] === 'slot' || classes[i] === 'group') && containsPattern(m))) return undefined;
+	if (!containsField(seq) && !classes.some((c) => c === 'template' || c === 'flag' || c === 'enum' || c === 'group')) return undefined;
+	const slotCount = classes.filter(
+		(c, i) => c === 'slot' && !isField(members[i]!) && (classes[i - 1] !== 'slot' || isField(members[i - 1]!))
+	).length;
+	const out = structureMembers(kind, members, lookup, { slotSeen: false, slotCount }, false);
+	return out === undefined ? undefined : { ...seq, members: out };
 }
 
 function structureInterior(
+	kind: string,
 	content: LinkRule,
 	lookup: (name: string) => LinkRule | undefined
 ): LinkRule | undefined {
-	if (content.type === SEQ) return structureSeq(content as LinkRule & { type: typeof SEQ }, lookup);
+	if (content.type === SEQ) return structureSeq(kind, content as LinkRule & { type: typeof SEQ }, lookup);
 	return undefined;
 }
 
@@ -207,7 +295,7 @@ export function structureTokenInterior(rules: Record<string, LinkRule>): void {
 			continue;
 		}
 		if (rule.type !== TOKEN) continue;
-		const structured = structureInterior(rule.content, lookup);
+		const structured = structureInterior(kind, rule.content, lookup);
 		if (structured !== undefined) rules[kind] = { ...rule, content: structured } as LinkRule;
 	}
 }

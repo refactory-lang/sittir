@@ -251,7 +251,6 @@ const LEAF_KINDS = [
 	'new_keyword',
 	'null',
 	'number_decimal',
-	'number_float_scientific',
 	'number_keyword',
 	'object_keyword',
 	'of_keyword',
@@ -2654,15 +2653,33 @@ export const TOKEN_INTERIORS = {
 		]
 	},
 	number_float_leading_point: {
-		regex: '^\\.(?<content>(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$',
-		slots: [{ name: 'content', configKey: 'content' }]
+		regex: '^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
+		slots: [
+			{ name: 'fraction', configKey: 'fraction' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
+			{ name: 'exponent', configKey: 'exponent' }
+		]
 	},
 	number_float_point: {
 		regex:
-			'^(?<content>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<content2>(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?)$',
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$',
 		slots: [
-			{ name: 'content', configKey: 'content' },
-			{ name: 'content2', configKey: 'content2' }
+			{ name: 'integer', configKey: 'integer' },
+			{ name: 'fraction', configKey: 'fraction' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
+			{ name: 'exponent', configKey: 'exponent' }
+		]
+	},
+	number_float_scientific: {
+		regex:
+			'^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$',
+		slots: [
+			{ name: 'integer', configKey: 'integer' },
+			{ name: 'marker', configKey: 'marker' },
+			{ name: 'sign', configKey: 'sign' },
+			{ name: 'exponent', configKey: 'exponent' }
 		]
 	},
 	number_hex: {

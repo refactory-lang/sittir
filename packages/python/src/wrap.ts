@@ -9672,6 +9672,206 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_integer', '_fraction', '_marker', '_exponent', '_imaginary']);
+	data = _projectLexed(data, TOKEN_INTERIORS['float_point'], 'float_point');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.FloatPoint as const,
+			_integer: normalizeSingularWrapSlot(data._integer, 'integer', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'integer',
+				span: (data as _NodeData).$span
+			}),
+			_fraction: normalizeSingularWrapSlot(data._fraction, 'fraction', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'fraction',
+				span: (data as _NodeData).$span
+			}),
+			_marker: normalizeSingularWrapSlot(data._marker, 'marker', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'marker',
+				span: (data as _NodeData).$span
+			}),
+			_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'exponent',
+				span: (data as _NodeData).$span
+			}),
+			_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'imaginary',
+				span: (data as _NodeData).$span
+			}),
+
+			integer() {
+				return drillIn<string>(this._integer, tree);
+			},
+			fraction() {
+				return drillIn<string | undefined>(this._fraction, tree);
+			},
+			marker() {
+				return drillIn<string | undefined>(this._marker, tree);
+			},
+			exponent() {
+				return drillIn<string | undefined>(this._exponent, tree);
+			},
+			imaginary() {
+				return drillIn<string | undefined>(this._imaginary, tree);
+			},
+			$with: {
+				integer: (v: NonNullable<T.FloatPoint['_integer']>) => wrapFloatPoint({ ...$edited(data), _integer: v }, tree),
+				fraction: (v: NonNullable<T.FloatPoint['_fraction']>) =>
+					wrapFloatPoint({ ...$edited(data), _fraction: v }, tree),
+				marker: (v: NonNullable<T.FloatPoint['_marker']>) => wrapFloatPoint({ ...$edited(data), _marker: v }, tree),
+				exponent: (v: NonNullable<T.FloatPoint['_exponent']>) =>
+					wrapFloatPoint({ ...$edited(data), _exponent: v }, tree),
+				imaginary: (v: NonNullable<T.FloatPoint['_imaginary']>) =>
+					wrapFloatPoint({ ...$edited(data), _imaginary: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_integer', '_fraction', '_marker', '_exponent', '_imaginary']);
+	data = _projectLexed(data, TOKEN_INTERIORS['float_leading_point'], 'float_leading_point');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.FloatLeadingPoint as const,
+			_integer: normalizeSingularWrapSlot(data._integer, 'integer', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'integer',
+				span: (data as _NodeData).$span
+			}),
+			_fraction: normalizeSingularWrapSlot(data._fraction, 'fraction', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'fraction',
+				span: (data as _NodeData).$span
+			}),
+			_marker: normalizeSingularWrapSlot(data._marker, 'marker', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'marker',
+				span: (data as _NodeData).$span
+			}),
+			_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'exponent',
+				span: (data as _NodeData).$span
+			}),
+			_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'imaginary',
+				span: (data as _NodeData).$span
+			}),
+
+			integer() {
+				return drillIn<string | undefined>(this._integer, tree);
+			},
+			fraction() {
+				return drillIn<string>(this._fraction, tree);
+			},
+			marker() {
+				return drillIn<string | undefined>(this._marker, tree);
+			},
+			exponent() {
+				return drillIn<string | undefined>(this._exponent, tree);
+			},
+			imaginary() {
+				return drillIn<string | undefined>(this._imaginary, tree);
+			},
+			$with: {
+				integer: (v: NonNullable<T.FloatLeadingPoint['_integer']>) =>
+					wrapFloatLeadingPoint({ ...$edited(data), _integer: v }, tree),
+				fraction: (v: NonNullable<T.FloatLeadingPoint['_fraction']>) =>
+					wrapFloatLeadingPoint({ ...$edited(data), _fraction: v }, tree),
+				marker: (v: NonNullable<T.FloatLeadingPoint['_marker']>) =>
+					wrapFloatLeadingPoint({ ...$edited(data), _marker: v }, tree),
+				exponent: (v: NonNullable<T.FloatLeadingPoint['_exponent']>) =>
+					wrapFloatLeadingPoint({ ...$edited(data), _exponent: v }, tree),
+				imaginary: (v: NonNullable<T.FloatLeadingPoint['_imaginary']>) =>
+					wrapFloatLeadingPoint({ ...$edited(data), _imaginary: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_integer', '_marker', '_exponent', '_imaginary']);
+	data = _projectLexed(data, TOKEN_INTERIORS['float_scientific'], 'float_scientific');
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.FloatScientific as const,
+			_integer: normalizeSingularWrapSlot(data._integer, 'integer', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'integer',
+				span: (data as _NodeData).$span
+			}),
+			_marker: normalizeSingularWrapSlot(data._marker, 'marker', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'marker',
+				span: (data as _NodeData).$span
+			}),
+			_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'exponent',
+				span: (data as _NodeData).$span
+			}),
+			_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'imaginary',
+				span: (data as _NodeData).$span
+			}),
+
+			integer() {
+				return drillIn<string>(this._integer, tree);
+			},
+			marker() {
+				return drillIn<string>(this._marker, tree);
+			},
+			exponent() {
+				return drillIn<string>(this._exponent, tree);
+			},
+			imaginary() {
+				return drillIn<string | undefined>(this._imaginary, tree);
+			},
+			$with: {
+				integer: (v: NonNullable<T.FloatScientific['_integer']>) =>
+					wrapFloatScientific({ ...$edited(data), _integer: v }, tree),
+				marker: (v: NonNullable<T.FloatScientific['_marker']>) =>
+					wrapFloatScientific({ ...$edited(data), _marker: v }, tree),
+				exponent: (v: NonNullable<T.FloatScientific['_exponent']>) =>
+					wrapFloatScientific({ ...$edited(data), _exponent: v }, tree),
+				imaginary: (v: NonNullable<T.FloatScientific['_imaginary']>) =>
+					wrapFloatScientific({ ...$edited(data), _imaginary: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 export function wrapEscapeSequenceUnicodeFixed(data: T.EscapeSequenceUnicodeFixed, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence_unicode_fixed'], 'escape_sequence_unicode_fixed');
@@ -10883,9 +11083,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.IntegerOctal]: (d, t) => wrapIntegerOctal(d as unknown as T.IntegerOctal, t),
 	[TSKindId.IntegerBinary]: (d, t) => wrapIntegerBinary(d as unknown as T.IntegerBinary, t),
 	[TSKindId.IntegerDecimal]: (d) => ({ ...d, $type: TSKindId.IntegerDecimal as const }),
-	[TSKindId.FloatPoint]: (d) => ({ ...d, $type: TSKindId.FloatPoint as const }),
-	[TSKindId.FloatLeadingPoint]: (d) => ({ ...d, $type: TSKindId.FloatLeadingPoint as const }),
-	[TSKindId.FloatScientific]: (d) => ({ ...d, $type: TSKindId.FloatScientific as const }),
+	[TSKindId.FloatPoint]: (d, t) => wrapFloatPoint(d as unknown as T.FloatPoint, t),
+	[TSKindId.FloatLeadingPoint]: (d, t) => wrapFloatLeadingPoint(d as unknown as T.FloatLeadingPoint, t),
+	[TSKindId.FloatScientific]: (d, t) => wrapFloatScientific(d as unknown as T.FloatScientific, t),
 	[TSKindId.EscapeSequenceUnicodeFixed]: (d, t) =>
 		wrapEscapeSequenceUnicodeFixed(d as unknown as T.EscapeSequenceUnicodeFixed, t),
 	[TSKindId.EscapeSequenceUnicodeWide]: (d, t) =>
@@ -11090,9 +11290,9 @@ interface _WrapReturnByKindId {
 	[TSKindId.IntegerOctal]: ReturnType<typeof wrapIntegerOctal>;
 	[TSKindId.IntegerBinary]: ReturnType<typeof wrapIntegerBinary>;
 	[TSKindId.IntegerDecimal]: _NodeData & { readonly $type: TSKindId.IntegerDecimal };
-	[TSKindId.FloatPoint]: _NodeData & { readonly $type: TSKindId.FloatPoint };
-	[TSKindId.FloatLeadingPoint]: _NodeData & { readonly $type: TSKindId.FloatLeadingPoint };
-	[TSKindId.FloatScientific]: _NodeData & { readonly $type: TSKindId.FloatScientific };
+	[TSKindId.FloatPoint]: ReturnType<typeof wrapFloatPoint>;
+	[TSKindId.FloatLeadingPoint]: ReturnType<typeof wrapFloatLeadingPoint>;
+	[TSKindId.FloatScientific]: ReturnType<typeof wrapFloatScientific>;
 	[TSKindId.EscapeSequenceUnicodeFixed]: ReturnType<typeof wrapEscapeSequenceUnicodeFixed>;
 	[TSKindId.EscapeSequenceUnicodeWide]: ReturnType<typeof wrapEscapeSequenceUnicodeWide>;
 	[TSKindId.EscapeSequenceHex]: ReturnType<typeof wrapEscapeSequenceHex>;

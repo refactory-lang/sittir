@@ -4014,6 +4014,46 @@ export interface IntegerBinary {
 	content(): string;
 }
 
+export interface FloatPoint {
+	readonly $type: TSKindId.FloatPoint;
+	readonly _integer: string;
+	readonly _fraction?: string;
+	readonly _marker?: string;
+	readonly _exponent?: string;
+	readonly _imaginary?: string;
+	integer(): string;
+	fraction(): string | undefined;
+	marker(): string | undefined;
+	exponent(): string | undefined;
+	imaginary(): string | undefined;
+}
+
+export interface FloatLeadingPoint {
+	readonly $type: TSKindId.FloatLeadingPoint;
+	readonly _integer?: string;
+	readonly _fraction: string;
+	readonly _marker?: string;
+	readonly _exponent?: string;
+	readonly _imaginary?: string;
+	integer(): string | undefined;
+	fraction(): string;
+	marker(): string | undefined;
+	exponent(): string | undefined;
+	imaginary(): string | undefined;
+}
+
+export interface FloatScientific {
+	readonly $type: TSKindId.FloatScientific;
+	readonly _integer: string;
+	readonly _marker: string;
+	readonly _exponent: string;
+	readonly _imaginary?: string;
+	integer(): string;
+	marker(): string;
+	exponent(): string;
+	imaginary(): string | undefined;
+}
+
 export interface EscapeSequenceUnicodeFixed {
 	readonly $type: TSKindId.EscapeSequenceUnicodeFixed;
 	readonly _content: string;
@@ -4261,9 +4301,6 @@ export type AugmentedAssignmentOperator =
 	| TSKindId.PipeEq;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimal = Terminal<TSKindId.IntegerDecimal, string>;
-export type FloatPoint = Terminal<TSKindId.FloatPoint, string>;
-export type FloatLeadingPoint = Terminal<TSKindId.FloatLeadingPoint, string>;
-export type FloatScientific = Terminal<TSKindId.FloatScientific, string>;
 export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string>;
 export type LineContinuationNul = TSKindId.LineContinuationNul;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
@@ -4427,6 +4464,9 @@ export interface ParenthesizedImportListTree extends AnyTreeNode {
 export interface IntegerHexTree extends TreeNode<'integer_hex'> {}
 export interface IntegerOctalTree extends TreeNode<'integer_octal'> {}
 export interface IntegerBinaryTree extends TreeNode<'integer_binary'> {}
+export interface FloatPointTree extends TreeNode<'float_point'> {}
+export interface FloatLeadingPointTree extends TreeNode<'float_leading_point'> {}
+export interface FloatScientificTree extends TreeNode<'float_scientific'> {}
 export interface EscapeSequenceUnicodeFixedTree extends TreeNode<'escape_sequence_unicode_fixed'> {}
 export interface EscapeSequenceUnicodeWideTree extends TreeNode<'escape_sequence_unicode_wide'> {}
 export interface EscapeSequenceHexTree extends TreeNode<'escape_sequence_hex'> {}
@@ -4499,9 +4539,6 @@ export interface WildcardPatternTree extends AnyTreeNode {
 	readonly type: '_wildcard_pattern';
 }
 export interface IntegerDecimalTree extends TreeNode<'integer_decimal'> {}
-export interface FloatPointTree extends TreeNode<'float_point'> {}
-export interface FloatLeadingPointTree extends TreeNode<'float_leading_point'> {}
-export interface FloatScientificTree extends TreeNode<'float_scientific'> {}
 export interface LineContinuationNewlineTree extends TreeNode<'line_continuation_newline'> {}
 export interface LineContinuationNulTree extends AnyTreeNode {
 	readonly type: 'line_continuation_nul';
@@ -5089,6 +5126,9 @@ export type PythonNode =
 	| IntegerHex
 	| IntegerOctal
 	| IntegerBinary
+	| FloatPoint
+	| FloatLeadingPoint
+	| FloatScientific
 	| EscapeSequenceUnicodeFixed
 	| EscapeSequenceUnicodeWide
 	| EscapeSequenceHex
@@ -5246,6 +5286,9 @@ export interface KindMap {
 	integer_hex: IntegerHex;
 	integer_octal: IntegerOctal;
 	integer_binary: IntegerBinary;
+	float_point: FloatPoint;
+	float_leading_point: FloatLeadingPoint;
+	float_scientific: FloatScientific;
 	escape_sequence_unicode_fixed: EscapeSequenceUnicodeFixed;
 	escape_sequence_unicode_wide: EscapeSequenceUnicodeWide;
 	escape_sequence_hex: EscapeSequenceHex;
@@ -5286,9 +5329,6 @@ export interface KindMap {
 	_augmented_assignment_operator: AugmentedAssignmentOperator;
 	_wildcard_pattern: WildcardPattern;
 	integer_decimal: IntegerDecimal;
-	float_point: FloatPoint;
-	float_leading_point: FloatLeadingPoint;
-	float_scientific: FloatScientific;
 	line_continuation_newline: LineContinuationNewline;
 	line_continuation_nul: LineContinuationNul;
 	string_start: StringStart;
@@ -6763,6 +6803,39 @@ export interface IntegerBinaryNs extends NodeNs<
 	'content',
 	'integer_binary'
 > {}
+export interface FloatPointNs extends NodeNs<
+	FloatPoint,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	FloatPoint.Built,
+	FloatPoint.BuildArgs,
+	FloatPoint.LooseArgs,
+	never,
+	'float_point'
+> {}
+export interface FloatLeadingPointNs extends NodeNs<
+	FloatLeadingPoint,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	FloatLeadingPoint.Built,
+	FloatLeadingPoint.BuildArgs,
+	FloatLeadingPoint.LooseArgs,
+	never,
+	'float_leading_point'
+> {}
+export interface FloatScientificNs extends NodeNs<
+	FloatScientific,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	FloatScientific.Built,
+	FloatScientific.BuildArgs,
+	FloatScientific.LooseArgs,
+	never,
+	'float_scientific'
+> {}
 export interface EscapeSequenceUnicodeFixedNs extends NodeNs<
 	EscapeSequenceUnicodeFixed,
 	LeafScalarMap,
@@ -7085,27 +7158,6 @@ export interface IntegerDecimalNs extends LeafNs<
 	IntegerDecimalTree,
 	'integer_decimal'
 > {}
-export interface FloatPointNs extends LeafNs<
-	FloatPoint,
-	string | number,
-	FloatPoint.Built,
-	FloatPointTree,
-	'float_point'
-> {}
-export interface FloatLeadingPointNs extends LeafNs<
-	FloatLeadingPoint,
-	string | number,
-	FloatLeadingPoint.Built,
-	FloatLeadingPointTree,
-	'float_leading_point'
-> {}
-export interface FloatScientificNs extends LeafNs<
-	FloatScientific,
-	string | number,
-	FloatScientific.Built,
-	FloatScientificTree,
-	'float_scientific'
-> {}
 export interface LineContinuationNewlineNs extends LeafNs<
 	LineContinuationNewline,
 	string,
@@ -7272,6 +7324,9 @@ export interface NamespaceMap {
 	[TSKindId.IntegerHex]: IntegerHexNs;
 	[TSKindId.IntegerOctal]: IntegerOctalNs;
 	[TSKindId.IntegerBinary]: IntegerBinaryNs;
+	[TSKindId.FloatPoint]: FloatPointNs;
+	[TSKindId.FloatLeadingPoint]: FloatLeadingPointNs;
+	[TSKindId.FloatScientific]: FloatScientificNs;
 	[TSKindId.EscapeSequenceUnicodeFixed]: EscapeSequenceUnicodeFixedNs;
 	[TSKindId.EscapeSequenceUnicodeWide]: EscapeSequenceUnicodeWideNs;
 	[TSKindId.EscapeSequenceHex]: EscapeSequenceHexNs;
@@ -7311,9 +7366,6 @@ export interface NamespaceMap {
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.IntegerDecimal]: IntegerDecimalNs;
-	[TSKindId.FloatPoint]: FloatPointNs;
-	[TSKindId.FloatLeadingPoint]: FloatLeadingPointNs;
-	[TSKindId.FloatScientific]: FloatScientificNs;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewlineNs;
 	[TSKindId.StringStart]: StringStartNs;
 	[TSKindId._StringContent]: _StringContentNs;
@@ -10049,6 +10101,101 @@ export namespace IntegerBinary {
 	export type Tree = TreeFor<TSKindId.IntegerBinary>;
 	export type Kind = 'integer_binary';
 }
+export namespace FloatPoint {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export interface Built extends T.FloatPoint, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			integer(value: string | number): T.FloatPoint.Built;
+			fraction(value?: string | number): T.FloatPoint.Built;
+			marker(value?: string): T.FloatPoint.Built;
+			exponent(value?: string | number): T.FloatPoint.Built;
+			imaginary(value?: string): T.FloatPoint.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.FloatPoint>
+		| WidenNumeric<LooseConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>
+		| string
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.FloatPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatPoint>, 'integer' | 'fraction' | 'exponent'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.FloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'integer' | 'fraction' | 'exponent'
+			  >
+			| T.FloatPoint
+	];
+	export type Tree = TreeFor<TSKindId.FloatPoint>;
+	export type Kind = 'float_point';
+}
+export namespace FloatLeadingPoint {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export interface Built extends T.FloatLeadingPoint, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			integer(value?: string | number): T.FloatLeadingPoint.Built;
+			fraction(value: string | number): T.FloatLeadingPoint.Built;
+			marker(value?: string): T.FloatLeadingPoint.Built;
+			exponent(value?: string | number): T.FloatLeadingPoint.Built;
+			imaginary(value?: string): T.FloatLeadingPoint.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.FloatLeadingPoint>
+		| WidenNumeric<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>
+		| string
+		| number;
+	export type LooseConfig = WidenNumeric<
+		LooseConfigFor<TSKindId.FloatLeadingPoint>,
+		'integer' | 'fraction' | 'exponent'
+	>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatLeadingPoint>, 'integer' | 'fraction' | 'exponent'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.FloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'integer' | 'fraction' | 'exponent'
+			  >
+			| T.FloatLeadingPoint
+	];
+	export type Tree = TreeFor<TSKindId.FloatLeadingPoint>;
+	export type Kind = 'float_leading_point';
+}
+export namespace FloatScientific {
+	export type Config = WidenNumeric<ConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>;
+	export interface Built extends T.FloatScientific, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			integer(value: string | number): T.FloatScientific.Built;
+			marker(value: string): T.FloatScientific.Built;
+			exponent(value: string | number): T.FloatScientific.Built;
+			imaginary(value?: string): T.FloatScientific.Built;
+		};
+	}
+	export type Loose =
+		| LooseFor<TSKindId.FloatScientific>
+		| WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>
+		| string
+		| number;
+	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.FloatScientific>, 'integer' | 'exponent'>;
+	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.FloatScientific>, 'integer' | 'exponent'>];
+	export type LooseArgs = [
+		config:
+			| WidenNumeric<
+					LooseConfigOf<T.FloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'integer' | 'exponent'
+			  >
+			| T.FloatScientific
+	];
+	export type Tree = TreeFor<TSKindId.FloatScientific>;
+	export type Kind = 'float_scientific';
+}
 export namespace EscapeSequenceUnicodeFixed {
 	export type Config = ConfigFor<TSKindId.EscapeSequenceUnicodeFixed>;
 	export interface Built extends T.EscapeSequenceUnicodeFixed, NodeMethodsOf {
@@ -10636,51 +10783,6 @@ export namespace IntegerDecimal {
 	export type LooseArgs = IntegerDecimalNs['LooseArgs'];
 	export type Tree = IntegerDecimalNs['Tree'];
 	export type Kind = 'integer_decimal';
-}
-export namespace FloatPoint {
-	export type Config = FloatPointNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FloatPoint;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FloatPointNs['Loose'];
-	export type LooseConfig = FloatPointNs['LooseConfig'];
-	export type BuildArgs = FloatPointNs['BuildArgs'];
-	export type LooseArgs = FloatPointNs['LooseArgs'];
-	export type Tree = FloatPointNs['Tree'];
-	export type Kind = 'float_point';
-}
-export namespace FloatLeadingPoint {
-	export type Config = FloatLeadingPointNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FloatLeadingPoint;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FloatLeadingPointNs['Loose'];
-	export type LooseConfig = FloatLeadingPointNs['LooseConfig'];
-	export type BuildArgs = FloatLeadingPointNs['BuildArgs'];
-	export type LooseArgs = FloatLeadingPointNs['LooseArgs'];
-	export type Tree = FloatLeadingPointNs['Tree'];
-	export type Kind = 'float_leading_point';
-}
-export namespace FloatScientific {
-	export type Config = FloatScientificNs['Config'];
-	export interface Built extends NodeMethodsOf {
-		readonly $type: TSKindId.FloatScientific;
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $text: string;
-	}
-	export type Loose = FloatScientificNs['Loose'];
-	export type LooseConfig = FloatScientificNs['LooseConfig'];
-	export type BuildArgs = FloatScientificNs['BuildArgs'];
-	export type LooseArgs = FloatScientificNs['LooseArgs'];
-	export type Tree = FloatScientificNs['Tree'];
-	export type Kind = 'float_scientific';
 }
 export namespace LineContinuationNewline {
 	export type Config = LineContinuationNewlineNs['Config'];

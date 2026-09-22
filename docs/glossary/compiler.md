@@ -11183,6 +11183,38 @@ A pattern under an authored `field(name, ...)` inside the token counts toward th
 it is its own slot and never merges with a neighbouring pattern run.
 ```
 
+#### named parts in nested structure
+
+```text
+A token whose sequence holds an authored `field()` at any depth is structured on the flattened sequence: a
+nested sequence is the same sequence (associativity), so its members become members of the token. A
+`field(name, choice-of-strings)` is an enum slot under its own name, and a `field(name, optional(x))` over a
+pattern is an optional text slot. An optional group (a choice with a blank, or an optional, whose live arm is a
+sequence that holds a named part) stays a group: its members are structured the same way and the group stays
+optional, so its slots are optional and its literal text is written only when it is present. A token with no
+authored field is untouched: its nested sequences still compose into one slot, so no existing kind changes.
+```
+
+### `packages/codegen/src/compiler/token-interior.ts::structureMembers`
+
+The member loop of the token-interior pass, shared by the token's own sequence and by each optional group's arm: classifies each member (template, flag, enum, slot, group), names enums and slots, composes an unnamed run of slot members into one pattern slot, and recurses into a group. Returns nothing when a member cannot be composed, leaving the token whole-text. Inside a group every pattern must be named: an unnamed run there would take a `content<n>` name indexed by the group's own position and could shadow a top-level `content<n>`, so it is a compile-time error naming the kind (`unnamedInGroup`).
+
+### `packages/codegen/src/compiler/token-interior.ts::flattenMembers`
+
+The members of a sequence with every nested (non-lexed) sequence spliced in, recursively.
+
+### `packages/codegen/src/compiler/token-interior.ts::containsField`
+
+Whether a rule holds an authored `field()` at any depth through sequences, choices, optionals and repeats (the same descent as `containsPattern`); the gate for the flattened, group-aware path.
+
+### `packages/codegen/src/compiler/token-interior.ts::groupArm`
+
+The sequence a member's optional group holds, when the member is an optional or a choice with a blank whose one live arm is a sequence that contains a named part; otherwise nothing.
+
+### `packages/codegen/src/compiler/token-interior.ts::optionalArm`
+
+The live arm of an optional or of a choice with a blank and one other member. A zero-or-more repeat reads as an optional one-or-more repeat, so a named repeated pattern is an optional slot rather than a required one.
+
 ### `packages/codegen/src/compiler/token-interior.ts::namedGroupParts`
 
 ```text

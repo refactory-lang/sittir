@@ -5154,6 +5154,10 @@ The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
 
 The shape of a pattern leaf's own text pattern.
 
+### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
+
+Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric (`numberShape` over the interior guard, compiled once by `interiorGuard` for the leaf guard and for this probe). A bare string is projected onto the kind's slots through its token interior.
+
 ### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
 
 The base and prefix arguments of the `numberText` call an emitter writes for a shape.
@@ -16126,8 +16130,27 @@ guards all read this; nothing re-derives it. Slots are matched left to right, ea
 semantics, the lexer's longest match over the whole token). A lexed kind whose render rule is not a sequence, or
 whose member is neither template text nor a slot, is a compile-time error naming the kind and the member. An
 optional literal followed by a literal it cannot be told apart from at their first differing character is a
-compile-time error naming both.
+compile-time error naming both. An optional group of members (a nested optional sequence) is walked
+recursively: the regex wraps it in an optional non-capturing group, while `entries` stays the flat list of
+literal, flag, enum and slot entries every consumer reads, so a slot inside a group is guarded, typed and
+projected like any other, and an optional pattern slot is an optional named group.
 ```
+
+### `packages/codegen/src/emitters/interior.ts::walkInterior`
+
+Turns the members of a lexed kind's render rule into interior nodes: an entry for a literal, flag, enum or slot, and a group node for a nested sequence, walked recursively.
+
+### `packages/codegen/src/emitters/interior.ts::groupMembers`
+
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+
+### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
+
+The regex of an interior node: an entry's own pattern, or a group's members joined inside an optional non-capturing group.
+
+### `packages/codegen/src/emitters/interior.ts::flattenNodes`
+
+The leaf entries of an interior tree in order, the flat list consumers read.
 
 ### `packages/codegen/src/emitters/consts.ts::emitTokenInteriors`
 

@@ -2045,11 +2045,7 @@ function extractExternalNames(base2, hasWrapper) {
       }
     }
   );
-  try {
-    return harvestSupertypeNames(externals(dollar));
-  } catch {
-    return /* @__PURE__ */ new Set();
-  }
+  return harvestSupertypeNames(externals(dollar));
 }
 function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
   if (seen.has(name)) return false;
@@ -5879,6 +5875,19 @@ var grammar_sittir_default = grammar(
           1: variant("block")
         },
         number: {
+          "1/0/0": field("integer"),
+          "1/0/2": field("fraction"),
+          "1/0/3/0/0": field("marker"),
+          "1/0/3/0/1/0": field("sign"),
+          "1/0/3/0/1/1": field("exponent"),
+          "2/0/1": field("fraction"),
+          "2/0/2/0/0": field("marker"),
+          "2/0/2/0/1/0": field("sign"),
+          "2/0/2/0/1/1": field("exponent"),
+          "3/0/0": field("integer"),
+          "3/0/1/0": field("marker"),
+          "3/0/1/1/0": field("sign"),
+          "3/0/1/1/1": field("exponent"),
           0: variant("hex"),
           1: variant("float_point"),
           2: variant("float_leading_point"),

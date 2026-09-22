@@ -3118,21 +3118,38 @@ const simplePatternNegative$decimal =
 	};
 const simplePatternNegative$point =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'exponent' || key === 'imaginary')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const simplePatternNegative$leadingPoint =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'exponent' || key === 'imaginary')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const simplePatternNegative$scientific =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) });
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'exponent' || key === 'imaginary') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) });
 	};
 const simplePatternNegative: {
 	hex: {
@@ -3178,38 +3195,31 @@ const simplePatternNegative: {
 	};
 	point: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFloatPoint>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & ArgsOf<typeof F.buildFloatPoint>[0]
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFloatPoint>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFloatPoint>[0]
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 	leadingPoint: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFloatLeadingPoint>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof F.buildFloatLeadingPoint>[0]
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFloatLeadingPoint>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFloatLeadingPoint>[0]
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 	scientific: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof F.buildSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof F.buildFloatScientific>[0]
 		) => ReturnType<typeof F.buildSimplePatternNegative>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFloatScientific>;
-			}
+			config: OmitEach<ArgsOf<typeof C.coerceToSimplePatternNegative>[0], 'content'> &
+				ArgsOf<typeof C.coerceToFloatScientific>[0]
 		) => ReturnType<typeof C.coerceToSimplePatternNegative>;
 	};
 } = {
