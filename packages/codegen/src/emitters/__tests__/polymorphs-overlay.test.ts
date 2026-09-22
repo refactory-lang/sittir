@@ -216,7 +216,7 @@ describe('emitPolymorphsOverlay', () => {
 	it('stamps a parameterless child into its slot instead of asking the caller for an empty argument tuple', () => {
 		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() });
 
-		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>): ReturnType<PF> =>");
+		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
 		expect(text).toContain('{ ...config, content: _c(child)() }');
 		expect(text).not.toContain('_c(child)(...seated)');
 	});

@@ -22,6 +22,7 @@ export interface FactorySlotMeta {
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
 	readonly wireKeys?: readonly string[];
+	readonly registered?: boolean;
 }
 
 export interface FactoryMapData {
@@ -66,7 +67,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of node.slots) {
-			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));
+			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), field.registeredOption !== undefined);
 			const wireKeys = collectConcreteStorageKeys(field, nodeMap);
 			slots[field.name] = wireKeys === undefined ? meta : { ...meta, wireKeys };
 		}
@@ -109,11 +110,13 @@ function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 function createFactorySlotMeta(
 	unnamed: boolean,
 	slotCount: number,
-	cardinality: ReturnType<typeof deriveSlotCardinality>
+	cardinality: ReturnType<typeof deriveSlotCardinality>,
+	registered = false
 ): FactorySlotMeta {
 	return {
 		unnamed,
 		slotCount,
-		...cardinality
+		...cardinality,
+		...(registered ? { registered: true } : {})
 	};
 }

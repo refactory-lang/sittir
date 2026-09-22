@@ -46,8 +46,7 @@ export function importTypesStrict() {
 			),
 			source: ir.string.single.strict(ir.unescapedSingleStringFragment('@sittir/types')),
 		},
-		terminator: ';',
-	});
+	}).$with.terminator(TSKindId.Semi);
 }
 
 /** The JSDoc block that leads `applyFormat`. */

@@ -500,12 +500,6 @@ function slotStorageExpr(
 	typeName: string
 ): string {
 	const valueExpr = `${configAccess}.${f.configKey}`;
-	// A required field alongside an optional sibling (e.g. async_block's
-	// body next to moveMarker) is what makes `config` itself defaultable to
-	// `{}` (argumentOptional, above) — reading it bare would then silently
-	// store `undefined` instead of the empty construction that field's own
-	// omission means. `canDefaultToEmpty` is the same fact `emitBranchFrom`
-	// (from.ts) already applies on the loose surface.
 	const defaultFactory = isMultiple(f) ? undefined : canDefaultToEmpty(f, nodeMap);
 	const withDefault = isMultiple(f)
 		? `(${valueExpr} ?? [])`
@@ -585,11 +579,15 @@ function fieldCarryingBuiltTypeSurface(
 		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
 		withTypeMembers = [
 			`    ${singleField.propertyName}(${setterValueSignature(singleField, setterType)}): ${self};`,
-			...registeredSlots(node).map((f) => setterTypeMember(f, `T.${node.typeName}.Config`, self, nodeMap, kindEntries))
+			...registeredSlots(node).map((f) => setterTypeMember(f, `T.${node.typeName}.Options`, self, nodeMap, kindEntries))
 		];
 	} else {
 		const configType = surface.configType ?? `T.${node.typeName}.Config`;
-		withTypeMembers = slots.map((f) => setterTypeMember(f, configType, self, nodeMap, kindEntries));
+		const registeredHere = new Set(registeredSlots(node));
+		withTypeMembers = [
+			...slots.filter((f) => !registeredHere.has(f)).map((f) => setterTypeMember(f, configType, self, nodeMap, kindEntries)),
+			...registeredSlots(node).map((f) => setterTypeMember(f, `T.${node.typeName}.Options`, self, nodeMap, kindEntries))
+		];
 	}
 	return {
 		extendsList: [`T.${node.typeName}`, 'NodeMethodsOf'],
@@ -764,23 +762,37 @@ function looseValueOf(elementType: string): string {
 	return `LooseValue<${elementType}, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>`;
 }
 
-export function registeredSlots(node: { readonly slots: readonly AssembledNonterminal[] }): readonly AssembledNonterminal[] {
-	return node.slots.filter((slot) => slot.registeredOption === true);
+export function registeredSlots(node: {
+	readonly slots: readonly AssembledNonterminal[];
+	readonly configSlots?: readonly AssembledNonterminal[];
+}): readonly AssembledNonterminal[] {
+	if (node.configSlots === undefined) return node.slots.filter((slot) => slot.registeredOption !== undefined);
+	const config = new Set(node.configSlots);
+	return node.slots.filter((slot) => !config.has(slot));
 }
 
-function registeredSlotSource(node: FieldCarryingNode, slot: AssembledNonterminal, hasConfig: boolean): string {
+function registeredSlotSource(
+	node: FieldCarryingNode,
+	slot: AssembledNonterminal,
+	hasConfig: boolean,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (slot.registeredOption === 'choice') {
+		return storedSlotValueExpr(slot, `options?.${slot.configKey}`, nodeMap, kindEntries, node.typeName);
+	}
 	const value = `options?.${slot.configKey} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
 	const present = (peers ?? [])
 		.map((name) => node.slots.find((candidate) => candidate.name === name))
-		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption !== true)
+		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption === undefined)
 		.map((peer) => `config.${peer.configKey} !== undefined`);
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
 }
 
 export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
 	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.configKey));
-	return keys.length === 0 ? type : `Omit<${type}, ${keys.join(' | ')}>`;
+	return keys.length === 0 ? type : `OmitEach<${type}, ${keys.join(' | ')}>`;
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string | undefined {
@@ -797,7 +809,7 @@ function resolveFactorySurface(
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spellingType === undefined) return surface;
-	const trailing = `options?: T.${node.typeName}.Spelling`;
+	const trailing = `options?: T.${node.typeName}.Options`;
 	return {
 		...surface,
 		params: `${surface.params}, ${trailing}`,
@@ -879,12 +891,6 @@ function resolveConfigFactorySurface(
 		};
 	}
 	const slots = node.slots;
-	// The same recursive fact the loose surface's `emitBranchFrom` derives
-	// its own optionality from (node-map.ts `argumentOptional`): a required
-	// slot only blocks the no-argument call when it has no default-empty
-	// construction of its own (an optional sibling slot alongside it never
-	// blocks on its own, unlike the shallow "any slot required" scan this
-	// replaced).
 	const opt = node.argumentOptional(nodeMap) ? '?' : '';
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
@@ -1018,6 +1024,7 @@ function emitFieldCarryingFactory(
 	let withLines: string[];
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
+	const registeredSet = new Set(registered);
 	const spellingWith = (rebuild: (patch: string) => string): string[] =>
 		registered.map((f) => `      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${rebuild(`{ ...options, ${f.configKey}: spelling }`)},`);
 
@@ -1045,7 +1052,7 @@ function emitFieldCarryingFactory(
 		withLines = ['    $with: {'];
 		const optionsArg = registered.length === 0 ? '' : ', options';
 		for (const f of slots) {
-			if (f.registeredOption === true) continue;
+			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -1071,8 +1078,8 @@ function emitFieldCarryingFactory(
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
 		const source =
-			f.registeredOption === true
-				? registeredSlotSource(node, f, singleField === undefined && spreadFacts === null)
+			registeredSet.has(f)
+				? registeredSlotSource(node, f, singleField === undefined && spreadFacts === null, nodeMap, kindEntries)
 				: shape === undefined
 					? valueSourceFor(f)
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
@@ -1128,21 +1135,46 @@ function emitFieldCarryingFactory(
 			),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		];
-		if (!directParamOptional && targetTakesNoArgs) {
-			wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetFn}() as ${directParamType});`, `  }`);
+		if (registered.length > 0) {
+			if (!directParamOptional && targetTakesNoArgs) {
+				wrapper.push(
+					`  if (args.length === 0 || args[0] === undefined) {`,
+					`    return _${fn}(${targetFn}() as ${directParamType}, args[0] as never);`,
+					`  }`
+				);
+			}
+			wrapper.push(
+				`  if (args.length === 1 && typeof args[0] !== 'object') {`,
+				`    return _${fn}(args[0] as ${directParamType});`,
+				`  }`,
+				`  if (args[0] === undefined) {`,
+				`    return _${fn}(args[0] as unknown as ${directParamType}, args[1] as never);`,
+				`  }`,
+				`  const prebuilt =`,
+				`    typeof args[0] === 'object' && args[0] !== null &&`,
+				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+				`  return prebuilt`,
+				`    ? _${fn}(args[0] as ${directParamType}, args[1] as never)`,
+				`    : _${fn}((${targetFn} as (...a: unknown[]) => unknown)(args[0]) as ${directParamType}, args[1] as never);`,
+				'}'
+			);
+		} else {
+			if (!directParamOptional && targetTakesNoArgs) {
+				wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetFn}() as ${directParamType});`, `  }`);
+			}
+			wrapper.push(
+				`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {`,
+				`    return _${fn}(args[0] as ${directParamType});`,
+				`  }`,
+				`  const prebuilt =`,
+				`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
+				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+				`  return prebuilt`,
+				`    ? _${fn}(args[0] as ${directParamType})`,
+				`    : _${fn}((${targetFn} as (...a: unknown[]) => unknown)(...args) as ${directParamType});`,
+				'}'
+			);
 		}
-		wrapper.push(
-			`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {`,
-			`    return _${fn}(args[0] as ${directParamType});`,
-			`  }`,
-			`  const prebuilt =`,
-			`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
-			`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
-			`  return prebuilt`,
-			`    ? _${fn}(args[0] as ${directParamType})`,
-			`    : _${fn}((${targetFn} as (...a: unknown[]) => unknown)(...args) as ${directParamType});`,
-			'}'
-		);
 		lines.unshift(...wrapper);
 	}
 	return renameUnusedConfigParam(lines);
@@ -1213,20 +1245,28 @@ function emitRefineFormFactory(
 	const formFn = refineFormFactoryName(baseFn, form.name);
 	const narrowed = new Map<string, string>();
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
-	const slots = node.slots;
+	const allSlots = node.slots;
+	const slots = node.configSlots;
+	const registered = registeredSlots(node);
 	const opt = resolveRefineFormConfigOptional(slots, nodeMap, narrowed);
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
 	const lines: string[] = [];
 	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
 	const formBuiltName = `T.${info.typeName}.${formShortName}.Built`;
-	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}): ${formBuiltName} {`);
-	for (const f of slots) {
+	const optionsParam = registered.length === 0 ? '' : `, options?: T.${info.typeName}.${formShortName}.Options`;
+	const optionsArg = registered.length === 0 ? '' : ', options';
+	lines.push(`export function ${formFn}(config${opt}: ${formConfigType}${optionsParam}): ${formBuiltName} {`);
+	for (const f of allSlots) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
 			lines.push(
 				`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries, info.typeName)};`
 			);
+			continue;
+		}
+		if (registered.includes(f)) {
+			lines.push(`  const ${f.storageKey} = ${registeredSlotSource(node, f, true, nodeMap, kindEntries)};`);
 			continue;
 		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries, info.typeName)};`);
@@ -1235,7 +1275,7 @@ function emitRefineFormFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	for (const f of slots) {
+	for (const f of allSlots) {
 		lines.push(`    ${f.storageKey},`);
 	}
 	lines.push('    $with: {');
@@ -1247,7 +1287,7 @@ function emitRefineFormFactory(
 			const elemType = constructionFieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
-			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`);
+			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }${optionsArg}),`);
 		} else {
 			const elemType = setterElemType(
 				f,
@@ -1256,12 +1296,18 @@ function emitRefineFormFactory(
 				nodeMap
 			);
 			const setterSig = setterValueSignature(f, elemType);
-			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }),`);
+			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }${optionsArg}),`);
 		}
+	}
+	for (const f of registered) {
+		if (narrowed.has(f.name)) continue;
+		lines.push(
+			`      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${formFn}(config, { ...options, ${f.configKey}: spelling }),`
+		);
 	}
 	lines.push('    },');
 	lines.push('  }, {');
-	for (const f of slots) {
+	for (const f of allSlots) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
@@ -1281,16 +1327,20 @@ export function refineFormBuiltTypeSurfaceOf(
 	const narrowed = new Set(form.narrowedFields.map((n) => n.fieldName));
 	const formShortName = refineFormTypeName(info.typeName, form.name).slice(info.typeName.length);
 	const formConfigType = `T.${info.typeName}.${formShortName}.Config`;
+	const formOptionsType = `T.${info.typeName}.${formShortName}.Options`;
 	const self = `T.${info.typeName}.${formShortName}.Built`;
 	const opt = resolveRefineFormConfigOptional(
-		node.slots,
+		node.configSlots,
 		nodeMap,
 		new Map(form.narrowedFields.map((n) => [n.fieldName, n.literal]))
 	);
-	const withTypeMembers = node.slots
-		.filter((f) => !narrowed.has(f.name))
-		.map((f) => setterTypeMember(f, formConfigType, self, nodeMap, kindEntries));
-	const params = `config${opt}: ${formConfigType}`;
+	const registered = registeredSlots(node);
+	const withTypeMembers = [
+		...node.configSlots.filter((f) => !narrowed.has(f.name)).map((f) => setterTypeMember(f, formConfigType, self, nodeMap, kindEntries)),
+		...registered.filter((f) => !narrowed.has(f.name)).map((f) => setterTypeMember(f, formOptionsType, self, nodeMap, kindEntries))
+	];
+	const optionsParam = registered.length === 0 ? '' : `, options?: ${formOptionsType}`;
+	const params = `config${opt}: ${formConfigType}${optionsParam}`;
 	return {
 		extendsList: [`T.${info.typeName}`, 'NodeMethodsOf'],
 		members: builtInterfaceMembers(withTypeMembers),

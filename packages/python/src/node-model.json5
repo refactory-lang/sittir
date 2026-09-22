@@ -2429,7 +2429,8 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true
       },
       "content": {
         "unnamed": false,
@@ -2445,7 +2446,8 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true
       },
       "content": {
         "unnamed": false,
@@ -2461,7 +2463,8 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": false,
+        "registered": true
       },
       "content": {
         "unnamed": false,

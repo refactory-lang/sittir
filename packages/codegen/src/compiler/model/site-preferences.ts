@@ -174,10 +174,9 @@ function withDeclaredArms(
 		const site = addressed[index]!;
 		if (!admits(site, arm)) continue;
 		if (site.siteIndex === undefined) {
-			if (site.arms.every((candidate) => candidate.kind === undefined)) {
-				registerSpellingSite(config.nodeMap, site, arm);
-				continue;
-			}
+			const isSpelling = site.arms.every((candidate) => candidate.kind === undefined);
+			registerSlot(config.nodeMap, site, arm, isSpelling ? 'spelling' : 'choice');
+			if (isSpelling) continue;
 			const { kind, slot, address, label, arms, path } = site;
 			out.push({ kind, slot, address, label, arms, path, defaultArm: arm, source: 'choice', origin });
 			continue;
@@ -187,12 +186,12 @@ function withDeclaredArms(
 	return out;
 }
 
-function registerSpellingSite(nodeMap: NodeMap, site: SiteCandidate, arm: string): void {
+function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 'spelling' | 'choice'): void {
 	const node = nodeMap.nodes.get(site.kind);
 	const slot = node instanceof AbstractAssembledCompound ? node.slots.find((candidate) => candidate.name === site.slot) : undefined;
 	if (slot === undefined) return;
 	slot.optionDefaultArm = arm;
-	slot.registeredOption = true;
+	slot.registeredOption = mode;
 }
 
 function separatorArmKinds(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLike[]): string[] {

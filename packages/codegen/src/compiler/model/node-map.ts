@@ -1104,7 +1104,7 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
-	registeredOption?: boolean;
+	registeredOption?: 'spelling' | 'choice';
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1577,7 +1577,13 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
-		return this._slots.filter((slot) => slot.registeredOption !== true);
+		// A registered site never collapses a node to zero remaining config
+		// slots — a node whose ONLY slot is registered (e.g. a polymorph's
+		// sole dispatch slot bound to a preference default) still needs
+		// something a caller can construct from, so registration is inert
+		// for that node: every slot stays a config slot.
+		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
+		return real.length > 0 ? real : this._slots;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
@@ -1626,7 +1632,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		// (exactly one slot total) undercounts this: a node can have several
 		// slots and still take no argument as long as all but one are
 		// optional and that one forwards to an argument-optional target.
-		const requiredSlots = this._slots.filter((slot) => isRequired(slot));
+		const requiredSlots = this.configSlots.filter((slot) => isRequired(slot));
 		if (requiredSlots.length === 0) return true;
 		if (requiredSlots.length > 1) return false;
 		const slot = requiredSlots[0]!;

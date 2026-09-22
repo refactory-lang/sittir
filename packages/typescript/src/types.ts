@@ -18,7 +18,8 @@ import type {
 	NonEmptyArray,
 	BooleanKeyword,
 	KindEnum,
-	HiddenLeaf
+	HiddenLeaf,
+	OmitEach
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { NodeMethodsOf } from './utils.js';
@@ -13452,7 +13453,7 @@ export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement.Built,
 	ExpressionStatement.BuildArgs,
 	ExpressionStatement.LooseArgs,
-	never,
+	'expression',
 	'expression_statement'
 > {}
 export interface VariableDeclarationNs extends NodeNs<
@@ -13595,7 +13596,7 @@ export interface BreakStatementNs extends NodeNs<
 	BreakStatement.Built,
 	BreakStatement.BuildArgs,
 	BreakStatement.LooseArgs,
-	never,
+	'label',
 	'break_statement'
 > {}
 export interface ContinueStatementNs extends NodeNs<
@@ -13606,7 +13607,7 @@ export interface ContinueStatementNs extends NodeNs<
 	ContinueStatement.Built,
 	ContinueStatement.BuildArgs,
 	ContinueStatement.LooseArgs,
-	never,
+	'label',
 	'continue_statement'
 > {}
 export interface DebuggerStatementNs extends NodeNs<
@@ -13628,7 +13629,7 @@ export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement.Built,
 	ReturnStatement.BuildArgs,
 	ReturnStatement.LooseArgs,
-	never,
+	'expression',
 	'return_statement'
 > {}
 export interface ThrowStatementNs extends NodeNs<
@@ -13639,7 +13640,7 @@ export interface ThrowStatementNs extends NodeNs<
 	ThrowStatement.Built,
 	ThrowStatement.BuildArgs,
 	ThrowStatement.LooseArgs,
-	never,
+	'expression',
 	'throw_statement'
 > {}
 export interface LabeledStatementNs extends NodeNs<
@@ -15190,7 +15191,7 @@ export interface ExportStatementNamespaceExportNs extends NodeNs<
 	ExportStatementNamespaceExport.Built,
 	ExportStatementNamespaceExport.BuildArgs,
 	ExportStatementNamespaceExport.LooseArgs,
-	never,
+	'name',
 	'export_statement_namespace_export'
 > {}
 export interface ExportStatementTypeExportNs extends NodeNs<
@@ -15212,7 +15213,7 @@ export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport.Built,
 	ExportStatementEqualsExport.BuildArgs,
 	ExportStatementEqualsExport.LooseArgs,
-	never,
+	'expression',
 	'export_statement_equals_export'
 > {}
 export interface CommentLineNs extends NodeNs<
@@ -15355,7 +15356,7 @@ export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember.Built,
 	ClassBodyMember.BuildArgs,
 	ClassBodyMember.LooseArgs,
-	never,
+	'content',
 	'class_body_member'
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
@@ -15553,7 +15554,7 @@ export interface ExportStatementDefaultFromNs extends NodeNs<
 	ExportStatementDefaultFrom.Built,
 	ExportStatementDefaultFrom.BuildArgs,
 	ExportStatementDefaultFrom.LooseArgs,
-	never,
+	'content',
 	'export_statement_default_from'
 > {}
 export interface ExportStatementDefaultDeclarationNs extends NodeNs<
@@ -15619,7 +15620,7 @@ export interface ExportStatementDefaultDeclarationDefaultKwValueNs extends NodeN
 	ExportStatementDefaultDeclarationDefaultKwValue.Built,
 	ExportStatementDefaultDeclarationDefaultKwValue.BuildArgs,
 	ExportStatementDefaultDeclarationDefaultKwValue.LooseArgs,
-	never,
+	'value',
 	'export_statement_default_declaration_default_kw_value'
 > {}
 export interface VariableDeclaratorPlainNs extends NodeNs<
@@ -16181,7 +16182,8 @@ export namespace ExportSpecifier {
 	export type Kind = 'export_specifier';
 }
 export namespace ImportStatement {
-	export type Config = ConfigFor<TSKindId.ImportStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ImportStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ImportStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -16189,14 +16191,20 @@ export namespace ImportStatement {
 			importClause(value?: NonNullable<T.ImportStatement.Config>['importClause']): T.ImportStatement.Built;
 			fromClause(value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String): T.ImportStatement.Built;
 			importAttribute(value?: T.ImportAttribute): T.ImportStatement.Built;
-			terminator(value: NonNullable<T.ImportStatement.Config>['terminator']): T.ImportStatement.Built;
+			terminator(value: NonNullable<T.ImportStatement.Options>['terminator']): T.ImportStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ImportStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ImportStatement>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ImportStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportStatement>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.ImportStatement>, 'terminator'>,
+		options?: T.ImportStatement.Options
+	];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ImportStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ImportStatement
+		config:
+			| OmitEach<LooseConfigOf<T.ImportStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
+			| T.ImportStatement,
+		options?: T.ImportStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.ImportStatement>;
 	export type Kind = 'import_statement';
@@ -16276,65 +16284,81 @@ export namespace ImportAttribute {
 	export type Kind = 'import_attribute';
 }
 export namespace ExpressionStatement {
-	export type Config = ConfigFor<TSKindId.ExpressionStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExpressionStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExpressionStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value: NonNullable<T.ExpressionStatement.Config>['expression']): T.ExpressionStatement.Built;
-			terminator(value: NonNullable<T.ExpressionStatement.Config>['terminator']): T.ExpressionStatement.Built;
+			expression(value: NonNullable<T.Expression | T.SequenceExpression>): T.ExpressionStatement.Built;
+			terminator(value: NonNullable<T.ExpressionStatement.Options>['terminator']): T.ExpressionStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExpressionStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ExpressionStatement>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExpressionStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExpressionStatement>, 'terminator'>;
+	export type BuildArgs = [value: T.Expression | T.SequenceExpression, options?: T.ExpressionStatement.Options];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExpressionStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExpressionStatement
+		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ExpressionStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.ExpressionStatement>;
 	export type Kind = 'expression_statement';
 }
 export namespace VariableDeclaration {
-	export type Config = ConfigFor<TSKindId.VariableDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.VariableDeclaration, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			declarators(...values: NonEmptyArray<T.VariableDeclarator>): T.VariableDeclaration.Built;
-			terminator(value: NonNullable<T.VariableDeclaration.Config>['terminator']): T.VariableDeclaration.Built;
+			terminator(value: NonNullable<T.VariableDeclaration.Options>['terminator']): T.VariableDeclaration.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.VariableDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.VariableDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.VariableDeclaration>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.VariableDeclaration>, 'terminator'>,
+		options?: T.VariableDeclaration.Options
+	];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.VariableDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.VariableDeclaration
+			| OmitEach<
+					LooseConfigOf<T.VariableDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'terminator'
+			  >
+			| T.VariableDeclaration,
+		options?: T.VariableDeclaration.Options
 	];
 	export type Tree = TreeFor<TSKindId.VariableDeclaration>;
 	export type Kind = 'variable_declaration';
 }
 export namespace LexicalDeclaration {
-	export type Config = ConfigFor<TSKindId.LexicalDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.LexicalDeclaration, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			kind(value: NonNullable<T.LexicalDeclaration.Config>['kind']): T.LexicalDeclaration.Built;
 			declarators(...values: NonEmptyArray<T.VariableDeclarator>): T.LexicalDeclaration.Built;
-			terminator(value: NonNullable<T.LexicalDeclaration.Config>['terminator']): T.LexicalDeclaration.Built;
+			terminator(value: NonNullable<T.LexicalDeclaration.Options>['terminator']): T.LexicalDeclaration.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.LexicalDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.LexicalDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.LexicalDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.LexicalDeclaration>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.LexicalDeclaration>, 'terminator'>,
+		options?: T.LexicalDeclaration.Options
+	];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.LexicalDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.LexicalDeclaration
+			| OmitEach<
+					LooseConfigOf<T.LexicalDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'terminator'
+			  >
+			| T.LexicalDeclaration,
+		options?: T.LexicalDeclaration.Options
 	];
 	export type Tree = TreeFor<TSKindId.LexicalDeclaration>;
 	export type Kind = 'lexical_declaration';
@@ -16474,21 +16498,25 @@ export namespace WhileStatement {
 	export type Kind = 'while_statement';
 }
 export namespace DoStatement {
-	export type Config = ConfigFor<TSKindId.DoStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.DoStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.DoStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			body(value: NonNullable<T.DoStatement.Config>['body']): T.DoStatement.Built;
 			condition(value: T.ParenthesizedExpression): T.DoStatement.Built;
-			terminator(value?: NonNullable<T.DoStatement.Config>['terminator']): T.DoStatement.Built;
+			terminator(value?: NonNullable<T.DoStatement.Options>['terminator']): T.DoStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.DoStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.DoStatement>;
-	export type BuildArgs = [config: ConfigOf<T.DoStatement>];
+	export type Loose = OmitEach<LooseFor<TSKindId.DoStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.DoStatement>, 'terminator'>;
+	export type BuildArgs = [config: OmitEach<ConfigOf<T.DoStatement>, 'terminator'>, options?: T.DoStatement.Options];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.DoStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.DoStatement
+		config:
+			| OmitEach<LooseConfigOf<T.DoStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
+			| T.DoStatement,
+		options?: T.DoStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.DoStatement>;
 	export type Kind = 'do_statement';
@@ -16533,41 +16561,43 @@ export namespace WithStatement {
 	export type Kind = 'with_statement';
 }
 export namespace BreakStatement {
-	export type Config = ConfigFor<TSKindId.BreakStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.BreakStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.BreakStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			label(value?: T.Identifier): T.BreakStatement.Built;
-			terminator(value: NonNullable<T.BreakStatement.Config>['terminator']): T.BreakStatement.Built;
+			terminator(value: NonNullable<T.BreakStatement.Options>['terminator']): T.BreakStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.BreakStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.BreakStatement>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.BreakStatement>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.BreakStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.BreakStatement>, 'terminator'>;
+	export type BuildArgs = [value?: T.Identifier, options?: T.BreakStatement.Options];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.BreakStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.BreakStatement
+		value?: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.BreakStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.BreakStatement>;
 	export type Kind = 'break_statement';
 }
 export namespace ContinueStatement {
-	export type Config = ConfigFor<TSKindId.ContinueStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ContinueStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			label(value?: T.Identifier): T.ContinueStatement.Built;
-			terminator(value: NonNullable<T.ContinueStatement.Config>['terminator']): T.ContinueStatement.Built;
+			terminator(value: NonNullable<T.ContinueStatement.Options>['terminator']): T.ContinueStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ContinueStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ContinueStatement>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ContinueStatement>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ContinueStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
+	export type BuildArgs = [value?: T.Identifier, options?: T.ContinueStatement.Options];
 	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.ContinueStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ContinueStatement
+		value?: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ContinueStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.ContinueStatement>;
 	export type Kind = 'continue_statement';
@@ -16591,39 +16621,43 @@ export namespace DebuggerStatement {
 	export type Kind = 'debugger_statement';
 }
 export namespace ReturnStatement {
-	export type Config = ConfigFor<TSKindId.ReturnStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ReturnStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ReturnStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value?: NonNullable<T.ReturnStatement.Config>['expression']): T.ReturnStatement.Built;
-			terminator(value: NonNullable<T.ReturnStatement.Config>['terminator']): T.ReturnStatement.Built;
+			expression(value?: NonNullable<T.Expression | T.SequenceExpression>): T.ReturnStatement.Built;
+			terminator(value: NonNullable<T.ReturnStatement.Options>['terminator']): T.ReturnStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ReturnStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ReturnStatement>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ReturnStatement>>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ReturnStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReturnStatement>, 'terminator'>;
+	export type BuildArgs = [value?: T.Expression | T.SequenceExpression, options?: T.ReturnStatement.Options];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.ReturnStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ReturnStatement
+		value?: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ReturnStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.ReturnStatement>;
 	export type Kind = 'return_statement';
 }
 export namespace ThrowStatement {
-	export type Config = ConfigFor<TSKindId.ThrowStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ThrowStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ThrowStatement, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(value: NonNullable<T.ThrowStatement.Config>['expression']): T.ThrowStatement.Built;
-			terminator(value: NonNullable<T.ThrowStatement.Config>['terminator']): T.ThrowStatement.Built;
+			expression(value: NonNullable<T.Expression | T.SequenceExpression>): T.ThrowStatement.Built;
+			terminator(value: NonNullable<T.ThrowStatement.Options>['terminator']): T.ThrowStatement.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ThrowStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ThrowStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ThrowStatement>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ThrowStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ThrowStatement>, 'terminator'>;
+	export type BuildArgs = [value: T.Expression | T.SequenceExpression, options?: T.ThrowStatement.Options];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ThrowStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ThrowStatement
+		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ThrowStatement.Options
 	];
 	export type Tree = TreeFor<TSKindId.ThrowStatement>;
 	export type Kind = 'throw_statement';
@@ -17992,7 +18026,10 @@ export namespace AbstractMethodSignature {
 	export type Kind = 'abstract_method_signature';
 }
 export namespace FunctionSignature {
-	export type Config = ConfigFor<TSKindId.FunctionSignature>;
+	export type Config = OmitEach<ConfigFor<TSKindId.FunctionSignature>, 'terminator'>;
+	export type Options = {
+		readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
+	};
 	export interface Built extends T.FunctionSignature, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -18002,16 +18039,20 @@ export namespace FunctionSignature {
 			typeParameters(value?: T.TypeParameters): T.FunctionSignature.Built;
 			parameters(value: T.FormalParameters): T.FunctionSignature.Built;
 			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.FunctionSignature.Built;
-			terminator(value: NonNullable<T.FunctionSignature.Config>['terminator']): T.FunctionSignature.Built;
+			terminator(value: NonNullable<T.FunctionSignature.Options>['terminator']): T.FunctionSignature.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.FunctionSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.FunctionSignature>;
-	export type BuildArgs = [config: ConfigOf<T.FunctionSignature>];
+	export type Loose = OmitEach<LooseFor<TSKindId.FunctionSignature>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.FunctionSignature>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.FunctionSignature>, 'terminator'>,
+		options?: T.FunctionSignature.Options
+	];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.FunctionSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.FunctionSignature
+			| OmitEach<LooseConfigOf<T.FunctionSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
+			| T.FunctionSignature,
+		options?: T.FunctionSignature.Options
 	];
 	export type Tree = TreeFor<TSKindId.FunctionSignature>;
 	export type Kind = 'function_signature';
@@ -18285,21 +18326,25 @@ export namespace InternalModule {
 	export type Kind = 'internal_module';
 }
 export namespace ImportAlias {
-	export type Config = ConfigFor<TSKindId.ImportAlias>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ImportAlias>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ImportAlias, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			name(value: T.Identifier): T.ImportAlias.Built;
 			value(value: T.Identifier | T.NestedIdentifier): T.ImportAlias.Built;
-			terminator(value: NonNullable<T.ImportAlias.Config>['terminator']): T.ImportAlias.Built;
+			terminator(value: NonNullable<T.ImportAlias.Options>['terminator']): T.ImportAlias.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ImportAlias>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ImportAlias>;
-	export type BuildArgs = [config: ConfigOf<T.ImportAlias>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ImportAlias>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportAlias>, 'terminator'>;
+	export type BuildArgs = [config: OmitEach<ConfigOf<T.ImportAlias>, 'terminator'>, options?: T.ImportAlias.Options];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ImportAlias, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ImportAlias
+		config:
+			| OmitEach<LooseConfigOf<T.ImportAlias, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
+			| T.ImportAlias,
+		options?: T.ImportAlias.Options
 	];
 	export type Tree = TreeFor<TSKindId.ImportAlias>;
 	export type Kind = 'import_alias';
@@ -18427,7 +18472,8 @@ export namespace EnumAssignment {
 	export type Kind = 'enum_assignment';
 }
 export namespace TypeAliasDeclaration {
-	export type Config = ConfigFor<TSKindId.TypeAliasDeclaration>;
+	export type Config = OmitEach<ConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.TypeAliasDeclaration, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -18435,16 +18481,23 @@ export namespace TypeAliasDeclaration {
 			name(value: T.Identifier): T.TypeAliasDeclaration.Built;
 			typeParameters(value?: T.TypeParameters): T.TypeAliasDeclaration.Built;
 			value(value: NonNullable<T.TypeAliasDeclaration.Config>['value']): T.TypeAliasDeclaration.Built;
-			terminator(value: NonNullable<T.TypeAliasDeclaration.Config>['terminator']): T.TypeAliasDeclaration.Built;
+			terminator(value: NonNullable<T.TypeAliasDeclaration.Options>['terminator']): T.TypeAliasDeclaration.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.TypeAliasDeclaration>;
-	export type LooseConfig = LooseConfigFor<TSKindId.TypeAliasDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.TypeAliasDeclaration>];
+	export type Loose = OmitEach<LooseFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.TypeAliasDeclaration>, 'terminator'>,
+		options?: T.TypeAliasDeclaration.Options
+	];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.TypeAliasDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeAliasDeclaration
+			| OmitEach<
+					LooseConfigOf<T.TypeAliasDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'terminator'
+			  >
+			| T.TypeAliasDeclaration,
+		options?: T.TypeAliasDeclaration.Options
 	];
 	export type Tree = TreeFor<TSKindId.TypeAliasDeclaration>;
 	export type Kind = 'type_alias_declaration';
@@ -19737,7 +19790,8 @@ export namespace AmbientDeclarationGlobal {
 	export type Kind = 'ambient_declaration_global';
 }
 export namespace AmbientDeclarationModule {
-	export type Config = ConfigFor<TSKindId.AmbientDeclarationModule>;
+	export type Config = OmitEach<ConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.AmbientDeclarationModule, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -19745,17 +19799,24 @@ export namespace AmbientDeclarationModule {
 			name(value: T.Identifier): T.AmbientDeclarationModule.Built;
 			type(value: NonNullable<T.AmbientDeclarationModule.Config>['type']): T.AmbientDeclarationModule.Built;
 			terminator(
-				value?: NonNullable<T.AmbientDeclarationModule.Config>['terminator']
+				value?: NonNullable<T.AmbientDeclarationModule.Options>['terminator']
 			): T.AmbientDeclarationModule.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.AmbientDeclarationModule>;
-	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationModule>;
-	export type BuildArgs = [config: ConfigOf<T.AmbientDeclarationModule>];
+	export type Loose = OmitEach<LooseFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.AmbientDeclarationModule>, 'terminator'>,
+		options?: T.AmbientDeclarationModule.Options
+	];
 	export type LooseArgs = [
 		config:
-			| LooseConfigOf<T.AmbientDeclarationModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AmbientDeclarationModule
+			| OmitEach<
+					LooseConfigOf<T.AmbientDeclarationModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'terminator'
+			  >
+			| T.AmbientDeclarationModule,
+		options?: T.AmbientDeclarationModule.Options
 	];
 	export type Tree = TreeFor<TSKindId.AmbientDeclarationModule>;
 	export type Kind = 'ambient_declaration_module';
@@ -19831,30 +19892,31 @@ export namespace ObjectTypeContent {
 	export type Kind = 'object_type_content';
 }
 export namespace ExportStatementNamespaceExport {
-	export type Config = ConfigFor<TSKindId.ExportStatementNamespaceExport>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExportStatementNamespaceExport, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			name(value: T.Identifier): T.ExportStatementNamespaceExport.Built;
 			terminator(
-				value: NonNullable<T.ExportStatementNamespaceExport.Config>['terminator']
+				value: NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']
 			): T.ExportStatementNamespaceExport.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementNamespaceExport>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementNamespaceExport>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementNamespaceExport>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
+	export type BuildArgs = [value: T.Identifier, options?: T.ExportStatementNamespaceExport.Options];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementNamespaceExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementNamespaceExport
+		value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ExportStatementNamespaceExport.Options
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementNamespaceExport>;
 	export type Kind = 'export_statement_namespace_export';
 }
 export namespace ExportStatementTypeExport {
-	export type Config = ConfigFor<TSKindId.ExportStatementTypeExport>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExportStatementTypeExport, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -19862,42 +19924,43 @@ export namespace ExportStatementTypeExport {
 			exportClause(value: T.ExportClause): T.ExportStatementTypeExport.Built;
 			source(value?: T.String): T.ExportStatementTypeExport.Built;
 			terminator(
-				value: NonNullable<T.ExportStatementTypeExport.Config>['terminator']
+				value: NonNullable<T.ExportStatementTypeExport.Options>['terminator']
 			): T.ExportStatementTypeExport.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementTypeExport>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementTypeExport>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementTypeExport>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
+	export type BuildArgs = [config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport>, 'terminator'>>];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+		config?:
+			| OmitEach<
+					LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					'terminator'
+			  >
 			| T.ExportStatementTypeExport
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementTypeExport>;
 	export type Kind = 'export_statement_type_export';
 }
 export namespace ExportStatementEqualsExport {
-	export type Config = ConfigFor<TSKindId.ExportStatementEqualsExport>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExportStatementEqualsExport, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expression(
-				value: NonNullable<T.ExportStatementEqualsExport.Config>['expression']
-			): T.ExportStatementEqualsExport.Built;
+			expression(value: NonNullable<T.Expression>): T.ExportStatementEqualsExport.Built;
 			terminator(
-				value: NonNullable<T.ExportStatementEqualsExport.Config>['terminator']
+				value: NonNullable<T.ExportStatementEqualsExport.Options>['terminator']
 			): T.ExportStatementEqualsExport.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementEqualsExport>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementEqualsExport>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementEqualsExport>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
+	export type BuildArgs = [value: T.Expression, options?: T.ExportStatementEqualsExport.Options];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementEqualsExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementEqualsExport
+		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ExportStatementEqualsExport.Options
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementEqualsExport>;
 	export type Kind = 'export_statement_equals_export';
@@ -19935,8 +19998,8 @@ export namespace CommentBlock {
 	export type Kind = 'comment_block';
 }
 export namespace NumberHex {
-	export type Config = WidenNumeric<Omit<ConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;
-	export type Spelling = { readonly prefix?: '0x' | '0X' };
+	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;
+	export type Options = { readonly prefix?: '0x' | '0X' };
 	export interface Built extends T.NumberHex, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -19946,145 +20009,151 @@ export namespace NumberHex {
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberHex>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>
+		| OmitEach<LooseFor<TSKindId.NumberHex>, 'prefix'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>
 		| number;
-	export type LooseConfig = WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.NumberHex.Spelling];
+	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, 'content'>;
+	export type BuildArgs = [value: string | number, options?: T.NumberHex.Options];
 	export type LooseArgs = [
 		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberHex.Spelling
+		options?: T.NumberHex.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberHex>;
 	export type Kind = 'number_hex';
 }
 export namespace NumberFloatPoint {
 	export type Config = WidenNumeric<
-		Omit<ConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
+		OmitEach<ConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		'integer' | 'fraction' | 'exponent'
 	>;
-	export type Spelling = { readonly marker?: 'e' | 'E' };
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			integer(value: string | number): T.NumberFloatPoint.Built;
 			fraction(value?: string | number): T.NumberFloatPoint.Built;
-			marker(value?: 'e' | 'E'): T.NumberFloatPoint.Built;
 			sign(value?: '-' | '+'): T.NumberFloatPoint.Built;
 			exponent(value?: string | number): T.NumberFloatPoint.Built;
+			marker(value?: 'e' | 'E'): T.NumberFloatPoint.Built;
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberFloatPoint>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>
+		| OmitEach<LooseFor<TSKindId.NumberFloatPoint>, 'marker'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		Omit<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		'integer' | 'fraction' | 'exponent'
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>,
-		options?: T.NumberFloatPoint.Spelling
+		config: WidenNumeric<OmitEach<ConfigOf<T.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>,
+		options?: T.NumberFloatPoint.Options
 	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					Omit<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
+					OmitEach<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
 					'integer' | 'fraction' | 'exponent'
 			  >
 			| T.NumberFloatPoint,
-		options?: T.NumberFloatPoint.Spelling
+		options?: T.NumberFloatPoint.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatPoint>;
 	export type Kind = 'number_float_point';
 }
 export namespace NumberFloatLeadingPoint {
 	export type Config = WidenNumeric<
-		Omit<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
+		OmitEach<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		'fraction' | 'exponent'
 	>;
-	export type Spelling = { readonly marker?: 'e' | 'E' };
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatLeadingPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			fraction(value: string | number): T.NumberFloatLeadingPoint.Built;
-			marker(value?: 'e' | 'E'): T.NumberFloatLeadingPoint.Built;
 			sign(value?: '-' | '+'): T.NumberFloatLeadingPoint.Built;
 			exponent(value?: string | number): T.NumberFloatLeadingPoint.Built;
+			marker(value?: 'e' | 'E'): T.NumberFloatLeadingPoint.Built;
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberFloatLeadingPoint>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>
+		| OmitEach<LooseFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		Omit<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		'fraction' | 'exponent'
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>,
-		options?: T.NumberFloatLeadingPoint.Spelling
+		config: WidenNumeric<OmitEach<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>,
+		options?: T.NumberFloatLeadingPoint.Options
 	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					Omit<
+					OmitEach<
 						LooseConfigOf<T.NumberFloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 						'marker'
 					>,
 					'fraction' | 'exponent'
 			  >
 			| T.NumberFloatLeadingPoint,
-		options?: T.NumberFloatLeadingPoint.Spelling
+		options?: T.NumberFloatLeadingPoint.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatLeadingPoint>;
 	export type Kind = 'number_float_leading_point';
 }
 export namespace NumberFloatScientific {
-	export type Config = WidenNumeric<Omit<ConfigFor<TSKindId.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>;
-	export type Spelling = { readonly marker?: 'e' | 'E' };
+	export type Config = WidenNumeric<
+		OmitEach<ConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
+		'integer' | 'exponent'
+	>;
+	export type Options = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatScientific, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			integer(value: string | number): T.NumberFloatScientific.Built;
-			marker(value: 'e' | 'E'): T.NumberFloatScientific.Built;
 			sign(value?: '-' | '+'): T.NumberFloatScientific.Built;
 			exponent(value: string | number): T.NumberFloatScientific.Built;
+			marker(value: 'e' | 'E'): T.NumberFloatScientific.Built;
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberFloatScientific>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>
+		| OmitEach<LooseFor<TSKindId.NumberFloatScientific>, 'marker'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		Omit<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
+		OmitEach<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
 		'integer' | 'exponent'
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>,
-		options?: T.NumberFloatScientific.Spelling
+		config: WidenNumeric<OmitEach<ConfigOf<T.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>,
+		options?: T.NumberFloatScientific.Options
 	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					Omit<LooseConfigOf<T.NumberFloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
+					OmitEach<
+						LooseConfigOf<T.NumberFloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+						'marker'
+					>,
 					'integer' | 'exponent'
 			  >
 			| T.NumberFloatScientific,
-		options?: T.NumberFloatScientific.Spelling
+		options?: T.NumberFloatScientific.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatScientific>;
 	export type Kind = 'number_float_scientific';
 }
 export namespace NumberBinary {
-	export type Config = WidenNumeric<Omit<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>;
-	export type Spelling = { readonly prefix?: '0b' | '0B' };
+	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>;
+	export type Options = { readonly prefix?: '0b' | '0B' };
 	export interface Built extends T.NumberBinary, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20094,21 +20163,21 @@ export namespace NumberBinary {
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberBinary>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>
+		| OmitEach<LooseFor<TSKindId.NumberBinary>, 'prefix'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>
 		| number;
-	export type LooseConfig = WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.NumberBinary.Spelling];
+	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, 'content'>;
+	export type BuildArgs = [value: string | number, options?: T.NumberBinary.Options];
 	export type LooseArgs = [
 		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberBinary.Spelling
+		options?: T.NumberBinary.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberBinary>;
 	export type Kind = 'number_binary';
 }
 export namespace NumberOctal {
-	export type Config = WidenNumeric<Omit<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>;
-	export type Spelling = { readonly prefix?: '0o' | '0O' };
+	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>;
+	export type Options = { readonly prefix?: '0o' | '0O' };
 	export interface Built extends T.NumberOctal, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20118,14 +20187,14 @@ export namespace NumberOctal {
 		};
 	}
 	export type Loose =
-		| LooseFor<TSKindId.NumberOctal>
-		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>
+		| OmitEach<LooseFor<TSKindId.NumberOctal>, 'prefix'>
+		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>
 		| number;
-	export type LooseConfig = WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>;
-	export type BuildArgs = [value: string | number, options?: T.NumberOctal.Spelling];
+	export type LooseConfig = WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, 'content'>;
+	export type BuildArgs = [value: string | number, options?: T.NumberOctal.Options];
 	export type LooseArgs = [
 		value: LooseValue<string | number, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberOctal.Spelling
+		options?: T.NumberOctal.Options
 	];
 	export type Tree = TreeFor<TSKindId.NumberOctal>;
 	export type Kind = 'number_octal';
@@ -20171,21 +20240,28 @@ export namespace BinaryExpressionIn {
 	export type Kind = 'binary_expression_in';
 }
 export namespace ClassBodyMethod {
-	export type Config = ConfigFor<TSKindId.ClassBodyMethod>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMethod>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ClassBodyMethod, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
 			decorators(...values: T.Decorator[]): T.ClassBodyMethod.Built;
 			methodDefinition(value: T.MethodDefinition): T.ClassBodyMethod.Built;
-			terminator(value?: NonNullable<T.ClassBodyMethod.Config>['terminator']): T.ClassBodyMethod.Built;
+			terminator(value?: NonNullable<T.ClassBodyMethod.Options>['terminator']): T.ClassBodyMethod.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ClassBodyMethod>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMethod>;
-	export type BuildArgs = [config: ConfigOf<T.ClassBodyMethod>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMethod>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMethod>, 'terminator'>;
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.ClassBodyMethod>, 'terminator'>,
+		options?: T.ClassBodyMethod.Options
+	];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ClassBodyMethod, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassBodyMethod
+		config:
+			| OmitEach<LooseConfigOf<T.ClassBodyMethod, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
+			| T.ClassBodyMethod,
+		options?: T.ClassBodyMethod.Options
 	];
 	export type Tree = TreeFor<TSKindId.ClassBodyMethod>;
 	export type Kind = 'class_body_method';
@@ -20212,7 +20288,8 @@ export namespace ClassBodyMethodSig {
 	export type Kind = 'class_body_method_sig';
 }
 export namespace ClassBodyMember {
-	export type Config = ConfigFor<TSKindId.ClassBodyMember>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMember>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma };
 	export interface Built extends T.ClassBodyMember, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20220,14 +20297,23 @@ export namespace ClassBodyMember {
 			content(
 				value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
 			): T.ClassBodyMember.Built;
-			terminator(value: NonNullable<T.ClassBodyMember.Config>['terminator']): T.ClassBodyMember.Built;
+			terminator(value: NonNullable<T.ClassBodyMember.Options>['terminator']): T.ClassBodyMember.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ClassBodyMember>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMember>;
-	export type BuildArgs = [config: ConfigOf<T.ClassBodyMember>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMember>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMember>, 'terminator'>;
+	export type BuildArgs = [
+		value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
+		options?: T.ClassBodyMember.Options
+	];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ClassBodyMember, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassBodyMember
+		value: LooseValue<
+			T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		options?: T.ClassBodyMember.Options
 	];
 	export type Tree = TreeFor<TSKindId.ClassBodyMember>;
 	export type Kind = 'class_body_member';
@@ -20684,7 +20770,8 @@ export namespace ImportClauseDefaultImport {
 	export type Kind = 'import_clause_default_import';
 }
 export namespace ExportStatementDefaultFrom {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFrom>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
+	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExportStatementDefaultFrom, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20697,17 +20784,31 @@ export namespace ExportStatementDefaultFrom {
 					| T.ExportClause
 			): T.ExportStatementDefaultFrom.Built;
 			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultFrom.Config>['automaticSemicolon']
+				value: NonNullable<T.ExportStatementDefaultFrom.Options>['automaticSemicolon']
 			): T.ExportStatementDefaultFrom.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFrom>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFrom>];
+	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
+	export type BuildArgs = [
+		value:
+			| T.ExportStatementDefaultFromStarFrom
+			| T.ExportStatementDefaultFromNsFrom
+			| T.ExportStatementDefaultFromClauseFrom
+			| T.ExportClause,
+		options?: T.ExportStatementDefaultFrom.Options
+	];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementDefaultFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultFrom
+		value: LooseValue<
+			| T.ExportStatementDefaultFromStarFrom
+			| T.ExportStatementDefaultFromNsFrom
+			| T.ExportStatementDefaultFromClauseFrom
+			| T.ExportClause,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>,
+		options?: T.ExportStatementDefaultFrom.Options
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementDefaultFrom>;
 	export type Kind = 'export_statement_default_from';
@@ -20819,32 +20920,33 @@ export namespace ExportStatementDefaultDeclarationDefaultKw {
 	export type Kind = 'export_statement_default_declaration_default_kw';
 }
 export namespace ExportStatementDefaultDeclarationDefaultKwValue {
-	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
+	export type Config = OmitEach<
+		ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>,
+		'automaticSemicolon'
+	>;
+	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Built extends T.ExportStatementDefaultDeclarationDefaultKwValue, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			value(
-				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['value']
-			): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
+			value(value: NonNullable<T.Expression>): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
 			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['automaticSemicolon']
+				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Options>['automaticSemicolon']
 			): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
 		};
 	}
-	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclarationDefaultKwValue>];
+	export type Loose = OmitEach<
+		LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>,
+		'automaticSemicolon'
+	>;
+	export type LooseConfig = OmitEach<
+		LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>,
+		'automaticSemicolon'
+	>;
+	export type BuildArgs = [value: T.Expression, options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options];
 	export type LooseArgs = [
-		config:
-			| LooseConfigOf<
-					T.ExportStatementDefaultDeclarationDefaultKwValue,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					[],
-					T.NamespaceMap
-			  >
-			| T.ExportStatementDefaultDeclarationDefaultKwValue
+		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 	];
 	export type Tree = TreeFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>;
 	export type Kind = 'export_statement_default_declaration_default_kw_value';

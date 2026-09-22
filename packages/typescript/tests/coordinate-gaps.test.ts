@@ -21,10 +21,10 @@ describe('gaps between coordinates', () => {
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
-			ir.expressionStatement.strict({
-				expression: ir.callExpression.call.strict({ function: ir.identifier('d'), arguments: ir.arguments.strict() }),
-				terminator: TSKindId.Semi
-			})
+			ir.expressionStatement.strict(
+				ir.callExpression.call.strict({ function: ir.identifier('d'), arguments: ir.arguments.strict() }),
+				{ terminator: TSKindId.Semi }
+			)
 		);
 		// The blank lines are the claim; the indent width is the format's.
 		const text = engine.render(rebuilt as never).toString().replace(/\n[ \t]+/g, '\n');

@@ -4317,7 +4317,7 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 	);
 }
 
-export function buildIntegerHex(value: string | number, options?: T.IntegerHex.Spelling): T.IntegerHex.Built {
+export function buildIntegerHex(value: string | number, options?: T.IntegerHex.Options): T.IntegerHex.Built {
 	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
@@ -4346,7 +4346,7 @@ export function buildIntegerHex(value: string | number, options?: T.IntegerHex.S
 	);
 }
 
-export function buildIntegerOctal(value: string | number, options?: T.IntegerOctal.Spelling): T.IntegerOctal.Built {
+export function buildIntegerOctal(value: string | number, options?: T.IntegerOctal.Options): T.IntegerOctal.Built {
 	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
@@ -4375,7 +4375,7 @@ export function buildIntegerOctal(value: string | number, options?: T.IntegerOct
 	);
 }
 
-export function buildIntegerBinary(value: string | number, options?: T.IntegerBinary.Spelling): T.IntegerBinary.Built {
+export function buildIntegerBinary(value: string | number, options?: T.IntegerBinary.Options): T.IntegerBinary.Built {
 	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
