@@ -372,15 +372,18 @@ its trivia field. They are the kind's own edges (`<kind>/before`,
 `<kind>/after`), so a per-kind field named after the kind is the same fact
 spelled 400 times.
 
-### A sibling gap rides on the element carrier
+### A sibling gap is the preceding element's own `after` edge
 
 "A sibling gap belongs to the child before it" is a statement about
-storage as much as addressing. The carrier of a repeated slot's element —
-today `SlotValue<T>` inside the slot's `Vec` — gains `gap_after: Option<u16>`.
-That is the one place the reader's gap classifier writes (it classifies the
-gaps between still-parsed items and nothing else), and it is the one
-per-node override that exists. Singular children carry nothing extra: their
-gaps are their own edges.
+storage as much as addressing. With edges in every transport's base, a
+seated site (`arguments/arguments/as_expression/after`) fills the element's
+own base `after`; the element carrier gains nothing. What the generated
+`prepare` does today by matching on each element's kind and descending into
+nested polymorph content becomes one loop over the elements and a generated
+per-slot table from element kind id to seated site index. The reader's
+classifier keeps stamping one majority class per list into the list
+transport's two separator fields, which stay: they are list facts, not
+token seams.
 
 ### A token seam has no per-node carrier
 
