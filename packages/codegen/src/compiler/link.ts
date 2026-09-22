@@ -30,6 +30,7 @@ import type {
 	StringRule,
 	RepeatRule
 } from '../types/rule.ts';
+import { aliasTargetOf, storageNameOf } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	isSeq,
@@ -240,6 +241,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 	const stampCtx: StampKindIdsCtx = { kindEntries, misses: stampMisses, aliasBodies };
 	canonicalizeCatalogLiteralRefs(rules, stampCtx);
+	const displayUnions = collectDisplayUnions(rules);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, stampCtx);
 	pruneInlinedAliasBodies(rules, { ...stampCtx, topLevelAliasBodies });
 	const terminalAliasWireIds = collectTerminalAliasWireIds(
@@ -281,6 +283,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		references,
 		derivations,
 		aliasedHiddenKinds,
+		displayUnions,
 		topLevelAliasBodies,
 		leafTextPatterns: collectLeafTextPatterns(rules),
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
@@ -850,6 +853,38 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 		if (target) out.set(name, target);
 	}
 	return out;
+}
+
+function collectDisplayUnions(rules: Record<string, Rule<'link'>>): ReadonlyMap<string, ReadonlySet<string>> {
+	const unions = new Map<string, Set<string>>();
+	const add = (display: string, storage: string): void => {
+		const set = unions.get(display) ?? new Set<string>();
+		set.add(storage);
+		unions.set(display, set);
+	};
+	const storageKindOf = (content: Rule<'link'>): string | undefined => {
+		if (content.type === SYMBOL) return content.literal ?? storageNameOf(content);
+		if (content.type === STRING) return content.value;
+		return undefined;
+	};
+	const visit = (rule: Rule<'link'>): void => {
+		if (rule.type === ALIAS && rule.named && rule.value) {
+			const storage = storageKindOf(rule.content);
+			if (storage !== undefined) add(rule.value, storage);
+			visit(rule.content);
+			return;
+		}
+		if (rule.type === SYMBOL) {
+			const display = aliasTargetOf(rule);
+			if (display !== undefined) add(display, rule.literal ?? storageNameOf(rule));
+			return;
+		}
+		if ('members' in rule) (rule as { members: readonly Rule<'link'>[] }).members.forEach(visit);
+		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
+	};
+	for (const rule of Object.values(rules)) visit(rule);
+	for (const display of unions.keys()) if (rules[display] !== undefined) add(display, display);
+	return unions;
 }
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {

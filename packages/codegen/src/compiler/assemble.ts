@@ -309,6 +309,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		nodeByKindId,
 		slotByRuleId,
 		aliasedHiddenKinds: normalized.aliasedHiddenKinds,
+		displayUnions: normalized.displayUnions,
 		terminalAliasWireIds: normalized.terminalAliasWireIds,
 		signatures: computeSignatures(nodes),
 		derivations: normalized.derivations,
@@ -901,6 +902,56 @@ function collectAnonymousNodes(
 		} else {
 			nodes.set(catalogEntry.kind, new AssembledPunctuation(catalogEntry.kind, syntheticStringRule, { kindEntries }));
 		}
+	}
+
+	// A distributed literal arm — the alias's own storage identity IS its
+	// literal text (`name === literal`; `u8` in rust's `primitive_type`) —
+	// is looked up by that name, not by literal text: tree-sitter's own
+	// parser.c overwrites the catalog's `literalText`/`symbolName` for an
+	// aliased anonymous token to the alias's display name, so
+	// `findEntryForLiteralText` can never find it — only
+	// `findEntryForKindName(kindEntries, name)` resolves it correctly. A
+	// SYMBOL whose `.name` differs from its `.literal` (an already-named
+	// keyword rule referencing a differently-spelled token, e.g.
+	// `in_keyword`/`in`) is a different, unrelated fact and excluded.
+	const literalRefNames = new Set<string>();
+	const literalRefWalkCtx: LiteralRefWalkCtx = { out: literalRefNames };
+	for (const rule of Object.values(rules)) {
+		if (rule.tokenized === true && rule.type !== STRING && rule.type !== PATTERN) continue;
+		walkForLiteralRefNames(rule, literalRefWalkCtx);
+	}
+	for (const name of literalRefNames) {
+		if (nodes.has(name)) continue;
+		const catalogEntry = findEntryForKindName(kindEntries, name);
+		if (catalogEntry === undefined) continue;
+
+		const syntheticStringRule: StringRule = { type: STRING, value: name };
+		if (matchesWordShape(name, wordMatcher)) {
+			nodes.set(catalogEntry.kind, new AssembledKeyword(catalogEntry.kind, syntheticStringRule, { hidden: true, kindEntries }));
+		} else {
+			nodes.set(catalogEntry.kind, new AssembledPunctuation(catalogEntry.kind, syntheticStringRule, { kindEntries }));
+		}
+	}
+}
+
+interface LiteralRefWalkCtx {
+	readonly out: Set<string>;
+}
+
+function walkForLiteralRefNames(rule: RenderRule, ctx: LiteralRefWalkCtx): void {
+	switch (rule.type) {
+		case SYMBOL:
+			if (rule.literal !== undefined && rule.literal === rule.name) ctx.out.add(rule.name);
+			break;
+		case SEQ:
+			for (const m of rule.members) walkForLiteralRefNames(m, ctx);
+			break;
+		case CHOICE:
+			for (const m of rule.members) walkForLiteralRefNames(m, ctx);
+			break;
+		case SUPERTYPE:
+			for (const s of rule.subtypes) walkForLiteralRefNames(s, ctx);
+			break;
 	}
 }
 

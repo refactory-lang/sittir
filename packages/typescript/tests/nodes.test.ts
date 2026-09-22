@@ -1112,6 +1112,18 @@ describe('labeled_statement', () => {
 	});
 });
 
+describe('labeled_statement sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.labeledStatement.identifier({
+			body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any,
+			label: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.LabeledStatement);
+		expect((node as any).label()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('switch_body', () => {
 	it('factory produces correct type', () => {
 		const node = ir.switchBody();
@@ -1372,6 +1384,15 @@ describe('object_assignment_pattern', () => {
 });
 
 describe('object_assignment_pattern sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.objectAssignmentPattern.identifier({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.ObjectAssignmentPattern);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('objectPattern builds the parent', () => {
 		const node = ir.objectAssignmentPattern.objectPattern({
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -3507,6 +3528,15 @@ describe('pair', () => {
 });
 
 describe('pair sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.pair.identifier({
+			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			key: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.Pair);
+		expect((node as any).key()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.pair.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -4750,6 +4780,15 @@ describe('enum_assignment', () => {
 });
 
 describe('enum_assignment sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.enumAssignment.identifier({
+			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			name: ['test']
+		});
+		expect(node.$type).toBe(TSKindId.EnumAssignment);
+		expect((node as any).name()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.enumAssignment.privatePropertyIdentifier({
 			value: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -6268,6 +6307,12 @@ describe('property_signature', () => {
 });
 
 describe('property_signature sub-factories', () => {
+	it('identifier builds the parent', () => {
+		const node = ir.propertySignature.identifier({ name: ['test'] });
+		expect(node.$type).toBe(TSKindId.PropertySignature);
+		expect((node as any).name()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 	it('privatePropertyIdentifier builds the parent', () => {
 		const node = ir.propertySignature.privatePropertyIdentifier({ name: 'test' });
 		expect(node.$type).toBe(TSKindId.PropertySignature);

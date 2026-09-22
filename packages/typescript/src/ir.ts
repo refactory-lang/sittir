@@ -299,39 +299,17 @@ export const pattern: {
 };
 
 export const propertyName: {
+	readonly identifier: typeof F.buildIdentifier;
 	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly string: typeof F.string;
 	readonly number: typeof F.number;
 	readonly computed: typeof F.computedPropertyName;
 } = {
+	identifier: F.buildIdentifier,
 	privateIdentifier: F.privatePropertyIdentifier,
 	string: F.string,
 	number: F.number,
 	computed: F.computedPropertyName
-};
-
-export const statementIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const shorthandPropertyIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const shorthandPropertyIdentifierPattern: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
-};
-
-export const propertyIdentifier: {
-	readonly identifier: typeof F.buildIdentifier;
-} = {
-	identifier: F.buildIdentifier
 };
 
 export const importIdentifier: {
@@ -682,10 +660,6 @@ export const ir: {
 	readonly identifier: typeof identifier;
 	readonly pattern: typeof pattern;
 	readonly propertyName: typeof propertyName;
-	readonly statementIdentifier: typeof statementIdentifier;
-	readonly shorthandPropertyIdentifier: typeof shorthandPropertyIdentifier;
-	readonly shorthandPropertyIdentifierPattern: typeof shorthandPropertyIdentifierPattern;
-	readonly propertyIdentifier: typeof propertyIdentifier;
 	readonly importIdentifier: typeof importIdentifier;
 	readonly type: typeof type;
 	readonly tupleTypeMember: typeof tupleTypeMember;
@@ -978,10 +952,6 @@ export const ir: {
 	identifier,
 	pattern,
 	propertyName,
-	statementIdentifier,
-	shorthandPropertyIdentifier,
-	shorthandPropertyIdentifierPattern,
-	propertyIdentifier,
 	importIdentifier,
 	type,
 	tupleTypeMember,

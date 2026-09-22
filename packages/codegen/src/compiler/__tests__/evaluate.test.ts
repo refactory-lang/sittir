@@ -621,11 +621,13 @@ describe('Evaluate — evaluate()', () => {
 	});
 
 	it('records grammar, override, and evaluate-synthesized provenance roots', async () => {
-		// Use a temp grammar with an INLINE alias (choice literal body) so that
-		// evaluate() synthesizes a `_primitive_type` hidden rule — the only
-		// scenario that produces 'evaluate-synthesized' provenance. Bare-symbol
-		// aliases to existing rules (e.g. alias($.identifier, $.named_identifier))
-		// are NOT synthesized since 2026-04-30.
+		// Use a temp grammar with an INLINE alias over a SEQUENCE (not a choice
+		// — a choice now distributes over its arms and mints no hidden rule) so
+		// that evaluate() still synthesizes a `_primitive_type` hidden rule —
+		// the only remaining scenario that produces 'evaluate-synthesized'
+		// provenance. Bare-symbol aliases to existing rules
+		// (e.g. alias($.identifier, $.named_identifier)) are NOT synthesized
+		// since 2026-04-30.
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-provenance-'));
 		const baseEntry = resolve(dir, 'base.js');
 		const overrideEntry = resolve(dir, 'override.js');
@@ -635,7 +637,7 @@ describe('Evaluate — evaluate()', () => {
   name: "provenance_test",
   rules: {
     source_file: ($) => $.container,
-    container: ($) => alias(choice('u8', 'u16'), $.primitive_type),
+    container: ($) => alias(seq('u8', 'u16'), $.primitive_type),
     identifier: ($) => /[a-z_]+/,
   },
 });\n`,
@@ -660,7 +662,7 @@ module.exports = grammar(base, {
 			const overrideContainer = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('container')!)!;
 			const overrideOnly = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('override_only')!)!;
 			// _primitive_type is synthesized by inline-alias rewriting:
-			// alias(choice('u8','u16'), $.primitive_type) → _primitive_type = choice(...)
+			// alias(seq('u8','u16'), $.primitive_type) → _primitive_type = seq(...)
 			const synthesized = base.ruleCatalog.byId.get(base.ruleCatalog.rootsByKind.get('_primitive_type')!)!;
 
 			expect(baseContainer.provenance).toBe('grammar-authored');

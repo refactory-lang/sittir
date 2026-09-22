@@ -6372,7 +6372,15 @@
                     "end": 22
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 24,
+                    "end": 27
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -6409,7 +6417,15 @@
                     "end": 30
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 32,
+                    "end": 35
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -6466,7 +6482,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 40,
+          "end": 43
+        }
+      },
       "_body": {
         "$type": 308,
         "$source": 0,
@@ -6650,7 +6674,15 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_element": 31,
+        "_element": {
+          "$type": 31,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 145,
+            "end": 148
+          }
+        },
         "_length": {
           "$type": 139,
           "$source": 0,
@@ -7675,7 +7707,15 @@
                     "end": 318
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 320,
+                    "end": 323
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -7768,7 +7808,15 @@
                     "end": 334
                   }
                 },
-                "_type": 34,
+                "_type": {
+                  "$type": 34,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 336,
+                    "end": 339
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -8537,7 +8585,15 @@
                   "end": 22
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 24,
+                  "end": 27
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -8574,7 +8630,15 @@
                   "end": 30
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 32,
+                  "end": 35
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -8679,7 +8743,15 @@
                 "$type": 247,
                 "$source": 0,
                 "$named": true,
-                "_type": 42,
+                "_type": {
+                  "$type": 42,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 90,
+                    "end": 93
+                  }
+                },
                 "$other": [
                   {
                     "$type": 70,
@@ -9219,7 +9291,15 @@
                   "end": 318
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 320,
+                  "end": 323
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -9312,7 +9392,15 @@
                   "end": 334
                 }
               },
-              "_type": 34,
+              "_type": {
+                "$type": 34,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 336,
+                  "end": 339
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -10507,7 +10595,15 @@
           "end": 22
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 24,
+          "end": 27
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -10556,7 +10652,15 @@
           "end": 30
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 32,
+          "end": 35
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -10609,7 +10713,15 @@
         "$type": 247,
         "$source": 0,
         "$named": true,
-        "_type": 42,
+        "_type": {
+          "$type": 42,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 90,
+            "end": 93
+          }
+        },
         "$other": [
           {
             "$type": 70,
@@ -10909,7 +11021,15 @@
           "end": 318
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 320,
+          "end": 323
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -10958,7 +11078,15 @@
           "end": 334
         }
       },
-      "_type": 34,
+      "_type": {
+        "$type": 34,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 336,
+          "end": 339
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -11653,7 +11781,15 @@
       "$type": 247,
       "$source": 0,
       "$named": true,
-      "_type": 42,
+      "_type": {
+        "$type": 42,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 90,
+          "end": 93
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -11770,7 +11906,15 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_element": 31,
+      "_element": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 145,
+          "end": 148
+        }
+      },
       "_length": {
         "$type": 139,
         "$source": 0,
@@ -16578,7 +16722,15 @@
                               "end": 42
                             }
                           },
-                          "_type": 38,
+                          "_type": {
+                            "$type": 38,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 45,
+                              "end": 50
+                            }
+                          },
                           "$other": [
                             {
                               "$type": 56,
@@ -16976,7 +17128,15 @@
                           "end": 42
                         }
                       },
-                      "_type": 38,
+                      "_type": {
+                        "$type": 38,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 45,
+                          "end": 50
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 56,
@@ -17424,7 +17584,15 @@
                         "end": 42
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 45,
+                        "end": 50
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 56,
@@ -17660,7 +17828,15 @@
                       "end": 42
                     }
                   },
-                  "_type": 38,
+                  "_type": {
+                    "$type": 38,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 45,
+                      "end": 50
+                    }
+                  },
                   "$other": [
                     {
                       "$type": 56,
@@ -17781,7 +17957,15 @@
                     "end": 42
                   }
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 45,
+                    "end": 50
+                  }
+                },
                 "$other": [
                   {
                     "$type": 56,
@@ -17989,7 +18173,15 @@
                               "end": 39
                             }
                           },
-                          "_type": 38,
+                          "_type": {
+                            "$type": 38,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 42,
+                              "end": 47
+                            }
+                          },
                           "$other": [
                             {
                               "$type": 56,
@@ -18245,7 +18437,15 @@
                           "end": 39
                         }
                       },
-                      "_type": 38,
+                      "_type": {
+                        "$type": 38,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 42,
+                          "end": 47
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 56,
@@ -18502,7 +18702,15 @@
                         "end": 39
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 42,
+                        "end": 47
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 56,
@@ -18653,7 +18861,15 @@
                       "end": 39
                     }
                   },
-                  "_type": 38,
+                  "_type": {
+                    "$type": 38,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 42,
+                      "end": 47
+                    }
+                  },
                   "$other": [
                     {
                       "$type": 56,
@@ -18774,7 +18990,15 @@
                     "end": 39
                   }
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 42,
+                    "end": 47
+                  }
+                },
                 "$other": [
                   {
                     "$type": 56,
@@ -19829,7 +20053,15 @@
                 "$type": 391,
                 "$source": 0,
                 "$named": true,
-                "_type": 28,
+                "_type": {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 134,
+                    "end": 136
+                  }
+                },
                 "$other": [
                   {
                     "$type": 10,
@@ -20088,7 +20320,15 @@
       "$type": 391,
       "$source": 0,
       "$named": true,
-      "_type": 28,
+      "_type": {
+        "$type": 28,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 134,
+          "end": 136
+        }
+      },
       "$other": [
         {
           "$type": 10,
@@ -20178,7 +20418,15 @@
         "$type": 391,
         "$source": 0,
         "$named": true,
-        "_type": 28,
+        "_type": {
+          "$type": 28,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 134,
+            "end": 136
+          }
+        },
         "$other": [
           {
             "$type": 10,
@@ -22891,7 +23139,15 @@
               "end": 24
             }
           },
-          "_type": 32,
+          "_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 26,
+              "end": 29
+            }
+          },
           "$other": [
             {
               "$type": 63,
@@ -22943,7 +23199,15 @@
               "end": 36
             }
           },
-          "_type": 28,
+          "_type": {
+            "$type": 28,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 38,
+              "end": 40
+            }
+          },
           "_value": {
             "$type": 139,
             "$source": 0,
@@ -23081,7 +23345,15 @@
               "end": 67
             }
           },
-          "_type": 41,
+          "_type": {
+            "$type": 41,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 69,
+              "end": 73
+            }
+          },
           "_value": 118,
           "$other": [
             {
@@ -23145,7 +23417,15 @@
               "end": 91
             }
           },
-          "_type": 41,
+          "_type": {
+            "$type": 41,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 93,
+              "end": 97
+            }
+          },
           "_value": 118,
           "$other": [
             {
@@ -23209,7 +23489,15 @@
               "end": 114
             }
           },
-          "_type": 42,
+          "_type": {
+            "$type": 42,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 116,
+              "end": 119
+            }
+          },
           "_value": {
             "$type": 327,
             "$source": 0,
@@ -23452,7 +23740,15 @@
           "end": 24
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 26,
+          "end": 29
+        }
+      },
       "$other": [
         {
           "$type": 63,
@@ -23521,7 +23817,15 @@
           "end": 36
         }
       },
-      "_type": 28,
+      "_type": {
+        "$type": 28,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 38,
+          "end": 40
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -23693,7 +23997,15 @@
           "end": 67
         }
       },
-      "_type": 41,
+      "_type": {
+        "$type": 41,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 69,
+          "end": 73
+        }
+      },
       "_value": 118,
       "$other": [
         {
@@ -23774,7 +24086,15 @@
           "end": 91
         }
       },
-      "_type": 41,
+      "_type": {
+        "$type": 41,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 93,
+          "end": 97
+        }
+      },
       "_value": 118,
       "$other": [
         {
@@ -23855,7 +24175,15 @@
           "end": 114
         }
       },
-      "_type": 42,
+      "_type": {
+        "$type": 42,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 116,
+          "end": 119
+        }
+      },
       "_value": {
         "$type": 327,
         "$source": 0,
@@ -28856,7 +29184,15 @@
                     "end": 74
                   }
                 },
-                "_type": 31,
+                "_type": {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 76,
+                    "end": 79
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -28990,7 +29326,15 @@
                     "end": 99
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 101,
+                    "end": 104
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -29082,7 +29426,15 @@
                     "end": 126
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 128,
+                    "end": 131
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -29421,7 +29773,15 @@
                   }
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 152,
+                  "end": 155
+                }
+              },
               "$slotOrder": [
                 "visibility_modifier",
                 "type"
@@ -29432,14 +29792,30 @@
               "$type": 432,
               "$source": 0,
               "$named": true,
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 157,
+                  "end": 160
+                }
+              },
               "_attribute_item": []
             },
             {
               "$type": 432,
               "$source": 0,
               "$named": true,
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 162,
+                  "end": 165
+                }
+              },
               "_attribute_item": []
             }
           ],
@@ -29561,7 +29937,15 @@
               "$type": 432,
               "$source": 0,
               "$named": true,
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 182,
+                  "end": 185
+                }
+              },
               "_attribute_item": []
             }
           ],
@@ -30054,7 +30438,15 @@
                       "$type": 235,
                       "$source": 0,
                       "$named": true,
-                      "_element": 31,
+                      "_element": {
+                        "$type": 31,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 190,
+                          "end": 193
+                        }
+                      },
                       "_length": {
                         "$type": 139,
                         "$source": 0,
@@ -30632,7 +31024,15 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_element": 31,
+                  "_element": {
+                    "$type": 31,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 190,
+                      "end": 193
+                    }
+                  },
                   "_length": {
                     "$type": 139,
                     "$source": 0,
@@ -31172,7 +31572,15 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_element": 31,
+      "_element": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 190,
+          "end": 193
+        }
+      },
       "_length": {
         "$type": 139,
         "$source": 0,
@@ -31789,7 +32197,15 @@
                         "end": 71
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 73,
+                        "end": 78
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 53,
@@ -32524,7 +32940,15 @@
                     "end": 71
                   }
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 73,
+                    "end": 78
+                  }
+                },
                 "$other": [
                   {
                     "$type": 53,
@@ -33137,7 +33561,15 @@
                   "end": 71
                 }
               },
-              "_type": 38,
+              "_type": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 73,
+                  "end": 78
+                }
+              },
               "$other": [
                 {
                   "$type": 53,
@@ -34070,7 +34502,15 @@
                                   "end": 133
                                 }
                               },
-                              "_type": 29,
+                              "_type": {
+                                "$type": 29,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 135,
+                                  "end": 138
+                                }
+                              },
                               "$other": [
                                 {
                                   "$type": 4,
@@ -35038,7 +35478,15 @@
                               "end": 133
                             }
                           },
-                          "_type": 29,
+                          "_type": {
+                            "$type": 29,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 135,
+                              "end": 138
+                            }
+                          },
                           "$other": [
                             {
                               "$type": 4,
@@ -36859,7 +37307,15 @@
                               "$type": 433,
                               "$source": 0,
                               "$named": true,
-                              "_content": 38
+                              "_content": {
+                                "$type": 38,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 57,
+                                  "end": 62
+                                }
+                              }
                             }
                           ],
                           "_delimiter": 0
@@ -37086,7 +37542,15 @@
                         "end": 111
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 113,
+                        "end": 118
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 53,
@@ -37514,7 +37978,15 @@
                           "$type": 433,
                           "$source": 0,
                           "$named": true,
-                          "_content": 38
+                          "_content": {
+                            "$type": 38,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 57,
+                              "end": 62
+                            }
+                          }
                         }
                       ],
                       "_delimiter": 0
@@ -37758,7 +38230,15 @@
                     "end": 111
                   }
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 113,
+                    "end": 118
+                  }
+                },
                 "$other": [
                   {
                     "$type": 53,
@@ -38192,7 +38672,15 @@
                   "end": 111
                 }
               },
-              "_type": 38,
+              "_type": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 113,
+                  "end": 118
+                }
+              },
               "$other": [
                 {
                   "$type": 53,
@@ -38501,7 +38989,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 38
+              "_content": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 57,
+                  "end": 62
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -38622,7 +39118,15 @@
                         "$type": 433,
                         "$source": 0,
                         "$named": true,
-                        "_content": 38
+                        "_content": {
+                          "$type": 38,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 57,
+                            "end": 62
+                          }
+                        }
                       }
                     ],
                     "_delimiter": 0
@@ -38851,7 +39355,15 @@
                 "$type": 433,
                 "$source": 0,
                 "$named": true,
-                "_content": 38
+                "_content": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 57,
+                    "end": 62
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -39147,7 +39659,15 @@
                         "end": 12
                       }
                     },
-                    "_type": 31,
+                    "_type": {
+                      "$type": 31,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 15,
+                        "end": 18
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -39278,7 +39798,15 @@
                     "end": 12
                   }
                 },
-                "_type": 31,
+                "_type": {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 15,
+                    "end": 18
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -39393,7 +39921,15 @@
                   "end": 12
                 }
               },
-              "_type": 31,
+              "_type": {
+                "$type": 31,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 15,
+                  "end": 18
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -39471,7 +40007,15 @@
           "end": 12
         }
       },
-      "_type": 31,
+      "_type": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 15,
+          "end": 18
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -39637,7 +40181,15 @@
                       "$type": 235,
                       "$source": 0,
                       "$named": true,
-                      "_element": 31,
+                      "_element": {
+                        "$type": 31,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 15,
+                          "end": 18
+                        }
+                      },
                       "_length": {
                         "$type": 139,
                         "$source": 0,
@@ -40261,7 +40813,15 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_element": 31,
+                  "_element": {
+                    "$type": 31,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 15,
+                      "end": 18
+                    }
+                  },
                   "_length": {
                     "$type": 139,
                     "$source": 0,
@@ -40903,7 +41463,15 @@
                 "$type": 235,
                 "$source": 0,
                 "$named": true,
-                "_element": 31,
+                "_element": {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 15,
+                    "end": 18
+                  }
+                },
                 "_length": {
                   "$type": 139,
                   "$source": 0,
@@ -41432,7 +42000,15 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_element": 31,
+        "_element": {
+          "$type": 31,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 15,
+            "end": 18
+          }
+        },
         "_length": {
           "$type": 139,
           "$source": 0,
@@ -41867,7 +42443,15 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_element": 31,
+      "_element": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 15,
+          "end": 18
+        }
+      },
       "_length": {
         "$type": 139,
         "$source": 0,
@@ -43341,7 +43925,15 @@
               "end": 7
             }
           },
-          "_type": 32,
+          "_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 9,
+              "end": 12
+            }
+          },
           "_value": {
             "$type": 139,
             "$source": 0,
@@ -43434,7 +44026,15 @@
                     "end": 42
                   }
                 },
-                "_type": 27,
+                "_type": {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 44,
+                    "end": 46
+                  }
+                },
                 "$other": [
                   {
                     "$type": 53,
@@ -43546,7 +44146,15 @@
           "end": 7
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 9,
+          "end": 12
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -43637,7 +44245,15 @@
           "end": 42
         }
       },
-      "_type": 27,
+      "_type": {
+        "$type": 27,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 44,
+          "end": 46
+        }
+      },
       "$other": [
         {
           "$type": 53,
@@ -43753,7 +44369,15 @@
                 "end": 42
               }
             },
-            "_type": 27,
+            "_type": {
+              "$type": 27,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 44,
+                "end": 46
+              }
+            },
             "$other": [
               {
                 "$type": 53,
@@ -43868,7 +44492,15 @@
               "end": 8
             }
           },
-          "_type": 32,
+          "_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 10,
+              "end": 13
+            }
+          },
           "_value": {
             "$type": 139,
             "$source": 0,
@@ -44062,7 +44694,15 @@
           "end": 8
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 10,
+          "end": 13
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -44414,7 +45054,15 @@
               "end": 14
             }
           },
-          "_type": 38,
+          "_type": {
+            "$type": 38,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 16,
+              "end": 21
+            }
+          },
           "_value": {
             "$type": 139,
             "$source": 0,
@@ -44509,7 +45157,15 @@
           "end": 14
         }
       },
-      "_type": 38,
+      "_type": {
+        "$type": 38,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 16,
+          "end": 21
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -44634,7 +45290,15 @@
               "end": 9
             }
           },
-          "_type": 33,
+          "_type": {
+            "$type": 33,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 12,
+              "end": 15
+            }
+          },
           "$other": [
             {
               "$type": 55,
@@ -45134,7 +45798,15 @@
           "end": 9
         }
       },
-      "_type": 33,
+      "_type": {
+        "$type": 33,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 12,
+          "end": 15
+        }
+      },
       "$other": [
         {
           "$type": 55,
@@ -58002,7 +58674,15 @@
                     "end": 31
                   }
                 },
-                "_type": 31,
+                "_type": {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 34,
+                    "end": 37
+                  }
+                },
                 "_value": {
                   "$type": 139,
                   "$source": 0,
@@ -58691,7 +59371,15 @@
                 "end": 31
               }
             },
-            "_type": 31,
+            "_type": {
+              "$type": 31,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 34,
+                "end": 37
+              }
+            },
             "_value": {
               "$type": 139,
               "$source": 0,
@@ -59376,7 +60064,15 @@
           "end": 31
         }
       },
-      "_type": 31,
+      "_type": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 34,
+          "end": 37
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -60925,7 +61621,15 @@
                       "$type": 433,
                       "$source": 0,
                       "$named": true,
-                      "_content": 34
+                      "_content": {
+                        "$type": 34,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 63,
+                          "end": 66
+                        }
+                      }
                     }
                   ],
                   "_delimiter": 0
@@ -60971,7 +61675,15 @@
               }
             ]
           },
-          "_type": 32,
+          "_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 72,
+              "end": 75
+            }
+          },
           "_declaration_list": {
             "$type": 190,
             "$source": 0,
@@ -61041,7 +61753,15 @@
                     }
                   ]
                 },
-                "_return_type": 34,
+                "_return_type": {
+                  "$type": 34,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 103,
+                    "end": 106
+                  }
+                },
                 "_body": {
                   "$type": 308,
                   "$source": 0,
@@ -61061,7 +61781,15 @@
                         "operand"
                       ]
                     },
-                    "_type": 34,
+                    "_type": {
+                      "$type": 34,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 118,
+                        "end": 121
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 66,
@@ -61522,7 +62250,15 @@
                   "$type": 433,
                   "$source": 0,
                   "$named": true,
-                  "_content": 34
+                  "_content": {
+                    "$type": 34,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 63,
+                      "end": 66
+                    }
+                  }
                 }
               ],
               "_delimiter": 0
@@ -61568,7 +62304,15 @@
           }
         ]
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 72,
+          "end": 75
+        }
+      },
       "_declaration_list": {
         "$type": 190,
         "$source": 0,
@@ -61638,7 +62382,15 @@
                 }
               ]
             },
-            "_return_type": 34,
+            "_return_type": {
+              "$type": 34,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 103,
+                "end": 106
+              }
+            },
             "_body": {
               "$type": 308,
               "$source": 0,
@@ -61658,7 +62410,15 @@
                     "operand"
                   ]
                 },
-                "_type": 34,
+                "_type": {
+                  "$type": 34,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 118,
+                    "end": 121
+                  }
+                },
                 "$other": [
                   {
                     "$type": 66,
@@ -62155,7 +62915,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 34
+              "_content": {
+                "$type": 34,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 63,
+                  "end": 66
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -62269,7 +63037,15 @@
           }
         ]
       },
-      "_return_type": 34,
+      "_return_type": {
+        "$type": 34,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 103,
+          "end": 106
+        }
+      },
       "_body": {
         "$type": 308,
         "$source": 0,
@@ -62289,7 +63065,15 @@
               "operand"
             ]
           },
-          "_type": 34,
+          "_type": {
+            "$type": 34,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 118,
+              "end": 121
+            }
+          },
           "$other": [
             {
               "$type": 66,
@@ -62463,7 +63247,15 @@
             "operand"
           ]
         },
-        "_type": 34,
+        "_type": {
+          "$type": 34,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 118,
+            "end": 121
+          }
+        },
         "$other": [
           {
             "$type": 66,
@@ -62537,7 +63329,15 @@
           "operand"
         ]
       },
-      "_type": 34,
+      "_type": {
+        "$type": 34,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 118,
+          "end": 121
+        }
+      },
       "$other": [
         {
           "$type": 66,
@@ -80109,7 +80909,15 @@
                                 }
                               ]
                             },
-                            "_type": 38,
+                            "_type": {
+                              "$type": 38,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 31,
+                                "end": 36
+                              }
+                            },
                             "$other": [
                               {
                                 "$type": 70,
@@ -80444,7 +81252,15 @@
                                 }
                               ]
                             },
-                            "_type": 37,
+                            "_type": {
+                              "$type": 37,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 86,
+                                "end": 91
+                              }
+                            },
                             "$other": [
                               {
                                 "$type": 70,
@@ -80498,7 +81314,15 @@
                                 }
                               ]
                             },
-                            "_type": 37,
+                            "_type": {
+                              "$type": 37,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 97,
+                                "end": 102
+                              }
+                            },
                             "$other": [
                               {
                                 "$type": 70,
@@ -80845,7 +81669,15 @@
                             }
                           ]
                         },
-                        "_type": 38,
+                        "_type": {
+                          "$type": 38,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 31,
+                            "end": 36
+                          }
+                        },
                         "$other": [
                           {
                             "$type": 70,
@@ -81295,7 +82127,15 @@
                     }
                   ]
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 31,
+                    "end": 36
+                  }
+                },
                 "$other": [
                   {
                     "$type": 70,
@@ -81420,7 +82260,15 @@
                     }
                   ]
                 },
-                "_type": 37,
+                "_type": {
+                  "$type": 37,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 86,
+                    "end": 91
+                  }
+                },
                 "$other": [
                   {
                     "$type": 70,
@@ -81474,7 +82322,15 @@
                     }
                   ]
                 },
-                "_type": 37,
+                "_type": {
+                  "$type": 37,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 97,
+                    "end": 102
+                  }
+                },
                 "$other": [
                   {
                     "$type": 70,
@@ -81584,7 +82440,15 @@
           }
         ]
       },
-      "_type": 38,
+      "_type": {
+        "$type": 38,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 31,
+          "end": 36
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -81650,7 +82514,15 @@
           }
         ]
       },
-      "_type": 37,
+      "_type": {
+        "$type": 37,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 86,
+          "end": 91
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -81716,7 +82588,15 @@
           }
         ]
       },
-      "_type": 37,
+      "_type": {
+        "$type": 37,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 97,
+          "end": 102
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -81981,7 +82861,15 @@
                             }
                           ]
                         },
-                        "_type": 37,
+                        "_type": {
+                          "$type": 37,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 86,
+                            "end": 91
+                          }
+                        },
                         "$other": [
                           {
                             "$type": 70,
@@ -82035,7 +82923,15 @@
                             }
                           ]
                         },
-                        "_type": 37,
+                        "_type": {
+                          "$type": 37,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 97,
+                            "end": 102
+                          }
+                        },
                         "$other": [
                           {
                             "$type": 70,
@@ -82369,7 +83265,15 @@
                           }
                         ]
                       },
-                      "_type": 37,
+                      "_type": {
+                        "$type": 37,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 86,
+                          "end": 91
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 70,
@@ -82423,7 +83327,15 @@
                           }
                         ]
                       },
-                      "_type": 37,
+                      "_type": {
+                        "$type": 37,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 97,
+                          "end": 102
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 70,
@@ -82715,7 +83627,15 @@
                         }
                       ]
                     },
-                    "_type": 37,
+                    "_type": {
+                      "$type": 37,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 86,
+                        "end": 91
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 70,
@@ -82769,7 +83689,15 @@
                         }
                       ]
                     },
-                    "_type": 37,
+                    "_type": {
+                      "$type": 37,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 97,
+                        "end": 102
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 70,
@@ -84800,7 +85728,15 @@
                         "end": 41
                       }
                     },
-                    "_type": 41,
+                    "_type": {
+                      "$type": 41,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 43,
+                        "end": 47
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -85092,7 +86028,15 @@
                     "end": 41
                   }
                 },
-                "_type": 41,
+                "_type": {
+                  "$type": 41,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 43,
+                    "end": 47
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -85330,7 +86274,15 @@
                   "end": 41
                 }
               },
-              "_type": 41,
+              "_type": {
+                "$type": 41,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 43,
+                  "end": 47
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -85491,7 +86443,15 @@
           "end": 41
         }
       },
-      "_type": 41,
+      "_type": {
+        "$type": 41,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 43,
+          "end": 47
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -85831,7 +86791,15 @@
               }
             ]
           },
-          "_return_type": 41,
+          "_return_type": {
+            "$type": 41,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 33,
+              "end": 37
+            }
+          },
           "_where_clause": {
             "$type": 206,
             "$source": 0,
@@ -85931,7 +86899,15 @@
                             }
                           ]
                         },
-                        "_return_type": 41,
+                        "_return_type": {
+                          "$type": 41,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 66,
+                            "end": 70
+                          }
+                        },
                         "$other": [
                           {
                             "$type": 132,
@@ -88463,7 +89439,15 @@
                                 "$type": 433,
                                 "$source": 0,
                                 "$named": true,
-                                "_content": 40
+                                "_content": {
+                                  "$type": 40,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$span": {
+                                    "start": 436,
+                                    "end": 439
+                                  }
+                                }
                               }
                             ],
                             "_delimiter": 0
@@ -89192,7 +90176,15 @@
           }
         ]
       },
-      "_return_type": 41,
+      "_return_type": {
+        "$type": 41,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 33,
+          "end": 37
+        }
+      },
       "_where_clause": {
         "$type": 206,
         "$source": 0,
@@ -89292,7 +90284,15 @@
                         }
                       ]
                     },
-                    "_return_type": 41,
+                    "_return_type": {
+                      "$type": 41,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 66,
+                        "end": 70
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 132,
@@ -89599,7 +90599,15 @@
                             "$type": 433,
                             "$source": 0,
                             "$named": true,
-                            "_content": 40
+                            "_content": {
+                              "$type": 40,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 436,
+                                "end": 439
+                              }
+                            }
                           }
                         ],
                         "_delimiter": 0
@@ -91681,7 +92689,15 @@
           }
         ]
       },
-      "_return_type": 41,
+      "_return_type": {
+        "$type": 41,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 66,
+          "end": 70
+        }
+      },
       "$other": [
         {
           "$type": 132,
@@ -94988,7 +96004,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 40
+              "_content": {
+                "$type": 40,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 436,
+                  "end": 439
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -95862,7 +96886,15 @@
               "end": 83
             }
           },
-          "_type": 31,
+          "_type": {
+            "$type": 31,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 85,
+              "end": 88
+            }
+          },
           "_value": {
             "$type": 139,
             "$source": 0,
@@ -96458,7 +97490,15 @@
           "end": 83
         }
       },
-      "_type": 31,
+      "_type": {
+        "$type": 31,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 85,
+          "end": 88
+        }
+      },
       "_value": {
         "$type": 139,
         "$source": 0,
@@ -97382,7 +98422,15 @@
                     "$type": 235,
                     "$source": 0,
                     "$named": true,
-                    "_element": 27,
+                    "_element": {
+                      "$type": 27,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 29,
+                        "end": 31
+                      }
+                    },
                     "_length": {
                       "$type": 139,
                       "$source": 0,
@@ -97765,7 +98813,15 @@
                 "$type": 235,
                 "$source": 0,
                 "$named": true,
-                "_element": 27,
+                "_element": {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 29,
+                    "end": 31
+                  }
+                },
                 "_length": {
                   "$type": 139,
                   "$source": 0,
@@ -98243,7 +99299,15 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_element": 27,
+      "_element": {
+        "$type": 27,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 29,
+          "end": 31
+        }
+      },
       "_length": {
         "$type": 139,
         "$source": 0,
@@ -98561,7 +99625,15 @@
                         "end": 33
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 35,
+                        "end": 40
+                      }
+                    },
                     "_value": {
                       "$type": 139,
                       "$source": 0,
@@ -98910,7 +99982,15 @@
                     "end": 33
                   }
                 },
-                "_type": 38,
+                "_type": {
+                  "$type": 38,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 35,
+                    "end": 40
+                  }
+                },
                 "_value": {
                   "$type": 139,
                   "$source": 0,
@@ -99260,7 +100340,15 @@
                   "end": 33
                 }
               },
-              "_type": 38,
+              "_type": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 35,
+                  "end": 40
+                }
+              },
               "_value": {
                 "$type": 139,
                 "$source": 0,
@@ -106842,7 +107930,15 @@
                 },
                 "_content": "1000"
               },
-              "_type": 27,
+              "_type": {
+                "$type": 27,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 8,
+                  "end": 10
+                }
+              },
               "$other": [
                 {
                   "$type": 66,
@@ -106902,7 +107998,15 @@
                 "end": 35
               }
             },
-            "_type": 43,
+            "_type": {
+              "$type": 43,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 39,
+                "end": 43
+              }
+            },
             "$other": [
               {
                 "$type": 66,
@@ -106971,7 +108075,15 @@
               "end": 53
             }
           },
-          "_type": 40,
+          "_type": {
+            "$type": 40,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 55,
+              "end": 58
+            }
+          },
           "_value": {
             "$type": 265,
             "$source": 0,
@@ -107075,7 +108187,15 @@
                     "operand"
                   ]
                 },
-                "_type": 40,
+                "_type": {
+                  "$type": 40,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 83,
+                    "end": 86
+                  }
+                },
                 "$other": [
                   {
                     "$type": 66,
@@ -107198,7 +108318,15 @@
         },
         "_content": "1000"
       },
-      "_type": 27,
+      "_type": {
+        "$type": 27,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 8,
+          "end": 10
+        }
+      },
       "$other": [
         {
           "$type": 66,
@@ -107247,7 +108375,15 @@
           "end": 35
         }
       },
-      "_type": 43,
+      "_type": {
+        "$type": 43,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 39,
+          "end": 43
+        }
+      },
       "$other": [
         {
           "$type": 66,
@@ -107366,7 +108502,15 @@
           "operand"
         ]
       },
-      "_type": 40,
+      "_type": {
+        "$type": 40,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 83,
+          "end": 86
+        }
+      },
       "$other": [
         {
           "$type": 66,
@@ -107457,7 +108601,15 @@
             "end": 35
           }
         },
-        "_type": 43,
+        "_type": {
+          "$type": 43,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 39,
+            "end": 43
+          }
+        },
         "$other": [
           {
             "$type": 66,
@@ -107543,7 +108695,15 @@
           "end": 53
         }
       },
-      "_type": 40,
+      "_type": {
+        "$type": 40,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 55,
+          "end": 58
+        }
+      },
       "_value": {
         "$type": 265,
         "$source": 0,
@@ -107647,7 +108807,15 @@
                 "operand"
               ]
             },
-            "_type": 40,
+            "_type": {
+              "$type": 40,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 83,
+                "end": 86
+              }
+            },
             "$other": [
               {
                 "$type": 66,
@@ -107856,7 +109024,15 @@
               "operand"
             ]
           },
-          "_type": 40,
+          "_type": {
+            "$type": 40,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 83,
+              "end": 86
+            }
+          },
           "$other": [
             {
               "$type": 66,
@@ -108013,7 +109189,15 @@
             "operand"
           ]
         },
-        "_type": 40,
+        "_type": {
+          "$type": 40,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 83,
+            "end": 86
+          }
+        },
         "$other": [
           {
             "$type": 66,
@@ -141279,7 +142463,15 @@
                         "$type": 433,
                         "$source": 0,
                         "$named": true,
-                        "_content": 31
+                        "_content": {
+                          "$type": 31,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 14,
+                            "end": 17
+                          }
+                        }
                       }
                     ],
                     "_delimiter": 0
@@ -141555,7 +142747,15 @@
                 "$type": 433,
                 "$source": 0,
                 "$named": true,
-                "_content": 31
+                "_content": {
+                  "$type": 31,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 14,
+                    "end": 17
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -141806,7 +143006,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 31
+              "_content": {
+                "$type": 31,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 14,
+                  "end": 17
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -146251,7 +147459,15 @@
                                   "end": 8
                                 }
                               },
-                              "_type": 38,
+                              "_type": {
+                                "$type": 38,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 10,
+                                  "end": 15
+                                }
+                              },
                               "$other": [
                                 {
                                   "$type": 4,
@@ -146546,7 +147762,15 @@
                           "end": 8
                         }
                       },
-                      "_type": 38,
+                      "_type": {
+                        "$type": 38,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 10,
+                          "end": 15
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 4,
@@ -147014,7 +148238,15 @@
                         "end": 8
                       }
                     },
-                    "_type": 38,
+                    "_type": {
+                      "$type": 38,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 10,
+                        "end": 15
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -147297,7 +148529,15 @@
                 "end": 8
               }
             },
-            "_type": 38,
+            "_type": {
+              "$type": 38,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 10,
+                "end": 15
+              }
+            },
             "$other": [
               {
                 "$type": 4,
@@ -147476,7 +148716,15 @@
           "end": 8
         }
       },
-      "_type": 38,
+      "_type": {
+        "$type": 38,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 10,
+          "end": 15
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -166001,7 +167249,15 @@
                                       "$type": 433,
                                       "$source": 0,
                                       "$named": true,
-                                      "_content": 37
+                                      "_content": {
+                                        "$type": 37,
+                                        "$source": 0,
+                                        "$named": true,
+                                        "$span": {
+                                          "start": 157,
+                                          "end": 162
+                                        }
+                                      }
                                     }
                                   ],
                                   "_delimiter": 0
@@ -167074,7 +168330,15 @@
                                 "$type": 433,
                                 "$source": 0,
                                 "$named": true,
-                                "_content": 37
+                                "_content": {
+                                  "$type": 37,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$span": {
+                                    "start": 157,
+                                    "end": 162
+                                  }
+                                }
                               }
                             ],
                             "_delimiter": 0
@@ -168239,7 +169503,15 @@
                       "$type": 433,
                       "$source": 0,
                       "$named": true,
-                      "_content": 37
+                      "_content": {
+                        "$type": 37,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 157,
+                          "end": 162
+                        }
+                      }
                     }
                   ],
                   "_delimiter": 0
@@ -168419,7 +169691,15 @@
                 "$type": 433,
                 "$source": 0,
                 "$named": true,
-                "_content": 37
+                "_content": {
+                  "$type": 37,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 157,
+                    "end": 162
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -168611,7 +169891,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 37
+              "_content": {
+                "$type": 37,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 157,
+                  "end": 162
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -177376,7 +178664,15 @@
                         }
                       ]
                     },
-                    "_type": 27,
+                    "_type": {
+                      "$type": 27,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 328,
+                        "end": 330
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -184323,7 +185619,15 @@
                     }
                   ]
                 },
-                "_type": 27,
+                "_type": {
+                  "$type": 27,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 328,
+                    "end": 330
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -184536,7 +185840,15 @@
                   }
                 ]
               },
-              "_type": 27,
+              "_type": {
+                "$type": 27,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 328,
+                  "end": 330
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -184712,7 +186024,15 @@
           }
         ]
       },
-      "_type": 27,
+      "_type": {
+        "$type": 27,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 328,
+          "end": 330
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -185031,7 +186351,15 @@
                         "end": 8
                       }
                     },
-                    "_type": 32,
+                    "_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 10,
+                        "end": 13
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -185095,7 +186423,15 @@
                     "end": 31
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 33,
+                    "end": 36
+                  }
+                },
                 "_value": {
                   "$type": 271,
                   "$source": 0,
@@ -185596,7 +186932,15 @@
                         "end": 137
                       }
                     },
-                    "_type": 32,
+                    "_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 139,
+                        "end": 142
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -186152,7 +187496,15 @@
                     "end": 8
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 10,
+                    "end": 13
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -186216,7 +187568,15 @@
                 "end": 31
               }
             },
-            "_type": 32,
+            "_type": {
+              "$type": 32,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 33,
+                "end": 36
+              }
+            },
             "_value": {
               "$type": 271,
               "$source": 0,
@@ -186734,7 +188094,15 @@
                     "end": 137
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 139,
+                    "end": 142
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -187274,7 +188642,15 @@
                   "end": 8
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 10,
+                  "end": 13
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -187363,7 +188739,15 @@
                   "end": 137
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 139,
+                  "end": 142
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -187439,7 +188823,15 @@
           "end": 8
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 10,
+          "end": 13
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -187488,7 +188880,15 @@
           "end": 137
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 139,
+          "end": 142
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -187542,7 +188942,15 @@
               "end": 31
             }
           },
-          "_type": 32,
+          "_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 33,
+              "end": 36
+            }
+          },
           "_value": {
             "$type": 271,
             "$source": 0,
@@ -188659,7 +190067,15 @@
           "end": 31
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 33,
+          "end": 36
+        }
+      },
       "_value": {
         "$type": 271,
         "$source": 0,
@@ -192176,7 +193592,15 @@
                 }
               ]
             },
-            "_type": 42,
+            "_type": {
+              "$type": 42,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 26,
+                "end": 29
+              }
+            },
             "$other": [
               {
                 "$type": 70,
@@ -192277,7 +193701,15 @@
               ]
             },
             "_mutable_specifier": true,
-            "_type": 42,
+            "_type": {
+              "$type": 42,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 48,
+                "end": 51
+              }
+            },
             "$other": [
               {
                 "$type": 70,
@@ -192492,7 +193924,15 @@
             }
           ]
         },
-        "_type": 42,
+        "_type": {
+          "$type": 42,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 26,
+            "end": 29
+          }
+        },
         "$other": [
           {
             "$type": 70,
@@ -192610,7 +194050,15 @@
           ]
         },
         "_mutable_specifier": true,
-        "_type": 42,
+        "_type": {
+          "$type": 42,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 48,
+            "end": 51
+          }
+        },
         "$other": [
           {
             "$type": 70,
@@ -192758,7 +194206,15 @@
           }
         ]
       },
-      "_type": 42,
+      "_type": {
+        "$type": 42,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 26,
+          "end": 29
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -192825,7 +194281,15 @@
         ]
       },
       "_mutable_specifier": true,
-      "_type": 42,
+      "_type": {
+        "$type": 42,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 48,
+          "end": 51
+        }
+      },
       "$other": [
         {
           "$type": 70,
@@ -192966,7 +194430,15 @@
             "$type": 391,
             "$source": 0,
             "$named": true,
-            "_type": 42,
+            "_type": {
+              "$type": 42,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 33,
+                "end": 36
+              }
+            },
             "$other": [
               {
                 "$type": 10,
@@ -193163,7 +194635,15 @@
         "$type": 391,
         "$source": 0,
         "$named": true,
-        "_type": 42,
+        "_type": {
+          "$type": 42,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 33,
+            "end": 36
+          }
+        },
         "$other": [
           {
             "$type": 10,
@@ -193293,7 +194773,15 @@
       "$type": 391,
       "$source": 0,
       "$named": true,
-      "_type": 42,
+      "_type": {
+        "$type": 42,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 33,
+          "end": 36
+        }
+      },
       "$other": [
         {
           "$type": 10,
@@ -193515,7 +195003,15 @@
                     "$type": 433,
                     "$source": 0,
                     "$named": true,
-                    "_content": 42
+                    "_content": {
+                      "$type": 42,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 29,
+                        "end": 32
+                      }
+                    }
                   }
                 ],
                 "$other": [
@@ -194124,7 +195620,15 @@
                 "$type": 433,
                 "$source": 0,
                 "$named": true,
-                "_content": 42
+                "_content": {
+                  "$type": 42,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 29,
+                    "end": 32
+                  }
+                }
               }
             ],
             "$other": [
@@ -194700,7 +196204,15 @@
               "$type": 433,
               "$source": 0,
               "$named": true,
-              "_content": 42
+              "_content": {
+                "$type": 42,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 29,
+                  "end": 32
+                }
+              }
             }
           ],
           "$other": [
@@ -197490,7 +199002,15 @@
                         "end": 20
                       }
                     },
-                    "_type": 32,
+                    "_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 22,
+                        "end": 25
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -197544,7 +199064,15 @@
                               "$type": 429,
                               "$source": 0,
                               "$named": true,
-                              "_content": 32
+                              "_content": {
+                                "$type": 32,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 33,
+                                  "end": 36
+                                }
+                              }
                             }
                           ],
                           "_delimiter": 0
@@ -197642,7 +199170,15 @@
               }
             ]
           },
-          "_return_type": 32,
+          "_return_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 42,
+              "end": 45
+            }
+          },
           "_body": {
             "$type": 308,
             "$source": 0,
@@ -197719,7 +199255,15 @@
                         "end": 70
                       }
                     },
-                    "_type": 32,
+                    "_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 72,
+                        "end": 75
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -197773,7 +199317,15 @@
                               "$type": 429,
                               "$source": 0,
                               "$named": true,
-                              "_content": 32
+                              "_content": {
+                                "$type": 32,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 83,
+                                  "end": 86
+                                }
+                              }
                             }
                           ],
                           "_delimiter": 0
@@ -197801,7 +199353,15 @@
                           }
                         ]
                       },
-                      "_return_type": 32,
+                      "_return_type": {
+                        "$type": 32,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 91,
+                          "end": 94
+                        }
+                      },
                       "$other": [
                         {
                           "$type": 132,
@@ -197885,7 +199445,15 @@
               }
             ]
           },
-          "_return_type": 32,
+          "_return_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 99,
+              "end": 102
+            }
+          },
           "_body": {
             "$type": 308,
             "$source": 0,
@@ -198054,7 +199622,15 @@
                         "end": 141
                       }
                     },
-                    "_type": 32,
+                    "_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 143,
+                        "end": 146
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 4,
@@ -198112,7 +199688,15 @@
                                 "$type": 429,
                                 "$source": 0,
                                 "$named": true,
-                                "_content": 32
+                                "_content": {
+                                  "$type": 32,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "$span": {
+                                    "start": 159,
+                                    "end": 162
+                                  }
+                                }
                               }
                             ],
                             "_delimiter": 0
@@ -198140,7 +199724,15 @@
                             }
                           ]
                         },
-                        "_return_type": 32,
+                        "_return_type": {
+                          "$type": 32,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 167,
+                            "end": 170
+                          }
+                        },
                         "$other": [
                           {
                             "$type": 132,
@@ -198243,7 +199835,15 @@
               }
             ]
           },
-          "_return_type": 32,
+          "_return_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 175,
+              "end": 178
+            }
+          },
           "_body": {
             "$type": 308,
             "$source": 0,
@@ -199002,7 +200602,15 @@
                     "end": 20
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 22,
+                    "end": 25
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -199056,7 +200664,15 @@
                           "$type": 429,
                           "$source": 0,
                           "$named": true,
-                          "_content": 32
+                          "_content": {
+                            "$type": 32,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 33,
+                              "end": 36
+                            }
+                          }
                         }
                       ],
                       "_delimiter": 0
@@ -199154,7 +200770,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 42,
+          "end": 45
+        }
+      },
       "_body": {
         "$type": 308,
         "$source": 0,
@@ -199248,7 +200872,15 @@
                     "end": 70
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 72,
+                    "end": 75
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -199302,7 +200934,15 @@
                           "$type": 429,
                           "$source": 0,
                           "$named": true,
-                          "_content": 32
+                          "_content": {
+                            "$type": 32,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 83,
+                              "end": 86
+                            }
+                          }
                         }
                       ],
                       "_delimiter": 0
@@ -199330,7 +200970,15 @@
                       }
                     ]
                   },
-                  "_return_type": 32,
+                  "_return_type": {
+                    "$type": 32,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 91,
+                      "end": 94
+                    }
+                  },
                   "$other": [
                     {
                       "$type": 132,
@@ -199414,7 +201062,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 99,
+          "end": 102
+        }
+      },
       "_body": {
         "$type": 308,
         "$source": 0,
@@ -199600,7 +201256,15 @@
                     "end": 141
                   }
                 },
-                "_type": 32,
+                "_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 143,
+                    "end": 146
+                  }
+                },
                 "$other": [
                   {
                     "$type": 4,
@@ -199658,7 +201322,15 @@
                             "$type": 429,
                             "$source": 0,
                             "$named": true,
-                            "_content": 32
+                            "_content": {
+                              "$type": 32,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 159,
+                                "end": 162
+                              }
+                            }
                           }
                         ],
                         "_delimiter": 0
@@ -199686,7 +201358,15 @@
                         }
                       ]
                     },
-                    "_return_type": 32,
+                    "_return_type": {
+                      "$type": 32,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 167,
+                        "end": 170
+                      }
+                    },
                     "$other": [
                       {
                         "$type": 132,
@@ -199789,7 +201469,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 175,
+          "end": 178
+        }
+      },
       "_body": {
         "$type": 308,
         "$source": 0,
@@ -199961,7 +201649,15 @@
                   "end": 20
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 22,
+                  "end": 25
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -200015,7 +201711,15 @@
                         "$type": 429,
                         "$source": 0,
                         "$named": true,
-                        "_content": 32
+                        "_content": {
+                          "$type": 32,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 33,
+                            "end": 36
+                          }
+                        }
                       }
                     ],
                     "_delimiter": 0
@@ -200143,7 +201847,15 @@
             "$type": 429,
             "$source": 0,
             "$named": true,
-            "_content": 32
+            "_content": {
+              "$type": 32,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 33,
+                "end": 36
+              }
+            }
           }
         ],
         "_delimiter": 0
@@ -200215,7 +201927,15 @@
                   "end": 70
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 72,
+                  "end": 75
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -200269,7 +201989,15 @@
                         "$type": 429,
                         "$source": 0,
                         "$named": true,
-                        "_content": 32
+                        "_content": {
+                          "$type": 32,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 83,
+                            "end": 86
+                          }
+                        }
                       }
                     ],
                     "_delimiter": 0
@@ -200297,7 +202025,15 @@
                     }
                   ]
                 },
-                "_return_type": 32,
+                "_return_type": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 91,
+                    "end": 94
+                  }
+                },
                 "$other": [
                   {
                     "$type": 132,
@@ -200411,7 +202147,15 @@
             "$type": 429,
             "$source": 0,
             "$named": true,
-            "_content": 32
+            "_content": {
+              "$type": 32,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 83,
+                "end": 86
+              }
+            }
           }
         ],
         "_delimiter": 0
@@ -200483,7 +202227,15 @@
                   "end": 141
                 }
               },
-              "_type": 32,
+              "_type": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 143,
+                  "end": 146
+                }
+              },
               "$other": [
                 {
                   "$type": 4,
@@ -200541,7 +202293,15 @@
                           "$type": 429,
                           "$source": 0,
                           "$named": true,
-                          "_content": 32
+                          "_content": {
+                            "$type": 32,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 159,
+                              "end": 162
+                            }
+                          }
                         }
                       ],
                       "_delimiter": 0
@@ -200569,7 +202329,15 @@
                       }
                     ]
                   },
-                  "_return_type": 32,
+                  "_return_type": {
+                    "$type": 32,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 167,
+                      "end": 170
+                    }
+                  },
                   "$other": [
                     {
                       "$type": 132,
@@ -200702,7 +202470,15 @@
             "$type": 429,
             "$source": 0,
             "$named": true,
-            "_content": 32
+            "_content": {
+              "$type": 32,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 159,
+                "end": 162
+              }
+            }
           }
         ],
         "_delimiter": 0
@@ -201145,7 +202921,15 @@
           "end": 20
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 22,
+          "end": 25
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -201211,7 +202995,15 @@
                 "$type": 429,
                 "$source": 0,
                 "$named": true,
-                "_content": 32
+                "_content": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 33,
+                    "end": 36
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -201301,7 +203093,15 @@
           "end": 70
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 72,
+          "end": 75
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -201367,7 +203167,15 @@
                 "$type": 429,
                 "$source": 0,
                 "$named": true,
-                "_content": 32
+                "_content": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 83,
+                    "end": 86
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -201395,7 +203203,15 @@
             }
           ]
         },
-        "_return_type": 32,
+        "_return_type": {
+          "$type": 32,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 91,
+            "end": 94
+          }
+        },
         "$other": [
           {
             "$type": 132,
@@ -201471,7 +203287,15 @@
           "end": 141
         }
       },
-      "_type": 32,
+      "_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 143,
+          "end": 146
+        }
+      },
       "$other": [
         {
           "$type": 4,
@@ -201541,7 +203365,15 @@
                   "$type": 429,
                   "$source": 0,
                   "$named": true,
-                  "_content": 32
+                  "_content": {
+                    "$type": 32,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 159,
+                      "end": 162
+                    }
+                  }
                 }
               ],
               "_delimiter": 0
@@ -201569,7 +203401,15 @@
               }
             ]
           },
-          "_return_type": 32,
+          "_return_type": {
+            "$type": 32,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 167,
+              "end": 170
+            }
+          },
           "$other": [
             {
               "$type": 132,
@@ -202001,7 +203841,15 @@
               "$type": 429,
               "$source": 0,
               "$named": true,
-              "_content": 32
+              "_content": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 33,
+                  "end": 36
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -202077,7 +203925,15 @@
               "$type": 429,
               "$source": 0,
               "$named": true,
-              "_content": 32
+              "_content": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 83,
+                  "end": 86
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -202105,7 +203961,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 91,
+          "end": 94
+        }
+      },
       "$other": [
         {
           "$type": 132,
@@ -202167,7 +204031,15 @@
               "$type": 429,
               "$source": 0,
               "$named": true,
-              "_content": 32
+              "_content": {
+                "$type": 32,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 159,
+                  "end": 162
+                }
+              }
             }
           ],
           "_delimiter": 0
@@ -202195,7 +204067,15 @@
           }
         ]
       },
-      "_return_type": 32,
+      "_return_type": {
+        "$type": 32,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 167,
+          "end": 170
+        }
+      },
       "$other": [
         {
           "$type": 132,
@@ -203367,7 +205247,15 @@
                 "$type": 429,
                 "$source": 0,
                 "$named": true,
-                "_content": 32
+                "_content": {
+                  "$type": 32,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 159,
+                    "end": 162
+                  }
+                }
               }
             ],
             "_delimiter": 0
@@ -203395,7 +205283,15 @@
             }
           ]
         },
-        "_return_type": 32,
+        "_return_type": {
+          "$type": 32,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 167,
+            "end": 170
+          }
+        },
         "$other": [
           {
             "$type": 132,

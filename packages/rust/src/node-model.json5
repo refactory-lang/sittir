@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 439,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -171,10 +171,10 @@
   },
   "fieldAliasMap": {
     "token_repetition_pattern.token_patterns": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_repetition.tokens": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "union_item.name": {
       "type_identifier": "identifier"
@@ -187,34 +187,33 @@
     },
     "field_declaration.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "const_item.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "static_item.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "type_item.name": {
       "type_identifier": "identifier"
     },
     "type_item.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "function_item.return_type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "function_signature_item.return_type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "where_predicate.left": {
-      "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "type_identifier": "identifier"
     },
     "trait_item.name": {
       "type_identifier": "identifier"
@@ -224,54 +223,54 @@
     },
     "trait_bounds.bounds": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "higher_ranked_trait_bound.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "removed_trait_bound.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "const_parameter.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
     },
     "type_parameter.default_type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "let_declaration.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "parameter.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "bracketed_type.content": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "qualified_type.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "qualified_type.alias": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "array_type.element": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "function_type.return_type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "generic_type.type": {
       "type_identifier": "identifier"
@@ -281,22 +280,22 @@
     },
     "bounded_type.left": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "bounded_type.right": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
     "type_binding.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "reference_type.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -321,7 +320,7 @@
     },
     "type_cast_expression.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "struct_expression.name": {
       "type_identifier": "identifier",
@@ -356,14 +355,14 @@
     },
     "_tuple_type_elements.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "attribute_input.arguments": {
       "token_tree": "delim_token_tree"
     },
     "closure_expression_block.return_type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "impl_item_positive_clause.trait": {
       "type_identifier": "identifier"
@@ -373,22 +372,22 @@
     },
     "impl_item_body.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "impl_item_semi.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "function_type_trait_form.trait": {
       "type_identifier": "identifier"
     },
     "pointer_type_const.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "pointer_type_mut.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "block_comment_doc_outer.doc": {
       "doc_comment": "_block_comment_content"
@@ -397,34 +396,34 @@
       "doc_comment": "_block_comment_content"
     },
     "token_tree_pattern_paren.token_patterns": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_tree_pattern_bracket.token_patterns": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_tree_pattern_brace.token_patterns": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_tree_paren.tokens": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_tree_bracket.tokens": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "token_tree_brace.tokens": {
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "delim_token_tree_paren.delim_tokens": {
       "token_tree": "delim_token_tree",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "delim_token_tree_bracket.delim_tokens": {
       "token_tree": "delim_token_tree",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "delim_token_tree_brace.delim_tokens": {
       "token_tree": "delim_token_tree",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
@@ -443,15 +442,15 @@
     },
     "_attributed_parameter.content": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "_attributed_ordered_field.type": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     },
     "_type_argument.content": {
       "type_identifier": "identifier",
-      "primitive_type": "_primitive_type"
+      "primitive_type": "char_keyword"
     }
   },
   "factorySlots": {
@@ -1476,6 +1475,23 @@
           "_dynamic_type",
           "_bounded_type",
           "_removed_trait_bound",
+          "_u8_keyword",
+          "_i8_keyword",
+          "_u16_keyword",
+          "_i16_keyword",
+          "_u32_keyword",
+          "_i32_keyword",
+          "_u64_keyword",
+          "_i64_keyword",
+          "_u128_keyword",
+          "_i128_keyword",
+          "_isize_keyword",
+          "_usize_keyword",
+          "_f32_keyword",
+          "_f64_keyword",
+          "_bool_keyword",
+          "_str_keyword",
+          "_char_keyword",
           "_qualified_type"
         ]
       }
@@ -3990,7 +4006,24 @@
           "_never_type",
           "_dynamic_type",
           "_bounded_type",
-          "_removed_trait_bound"
+          "_removed_trait_bound",
+          "_u8_keyword",
+          "_i8_keyword",
+          "_u16_keyword",
+          "_i16_keyword",
+          "_u32_keyword",
+          "_i32_keyword",
+          "_u64_keyword",
+          "_i64_keyword",
+          "_u128_keyword",
+          "_i128_keyword",
+          "_isize_keyword",
+          "_usize_keyword",
+          "_f32_keyword",
+          "_f64_keyword",
+          "_bool_keyword",
+          "_str_keyword",
+          "_char_keyword"
         ]
       }
     },
@@ -4139,6 +4172,23 @@
           "_dynamic_type",
           "_bounded_type",
           "_removed_trait_bound",
+          "_u8_keyword",
+          "_i8_keyword",
+          "_u16_keyword",
+          "_i16_keyword",
+          "_u32_keyword",
+          "_i32_keyword",
+          "_u64_keyword",
+          "_i64_keyword",
+          "_u128_keyword",
+          "_i128_keyword",
+          "_isize_keyword",
+          "_usize_keyword",
+          "_f32_keyword",
+          "_f64_keyword",
+          "_bool_keyword",
+          "_str_keyword",
+          "_char_keyword",
           "_type_binding",
           "_lifetime",
           "_string_literal",
@@ -5273,20 +5323,36 @@
       "transparent": true,
       "subtypes": [
         "_literal",
-        "_primitive_type",
         "_token_keywords",
         "_token_tree_punctuation",
+        "bool_keyword",
         "boolean_literal",
+        "char_keyword",
         "char_literal",
         "crate",
+        "f32_keyword",
+        "f64_keyword",
         "float_literal",
+        "i128_keyword",
+        "i16_keyword",
+        "i32_keyword",
+        "i64_keyword",
+        "i8_keyword",
         "identifier",
         "integer_literal",
+        "isize_keyword",
         "mutable_specifier",
         "raw_string_literal",
         "self",
+        "str_keyword",
         "string_literal",
-        "super"
+        "super",
+        "u128_keyword",
+        "u16_keyword",
+        "u32_keyword",
+        "u64_keyword",
+        "u8_keyword",
+        "usize_keyword"
       ]
     },
     {
@@ -5359,34 +5425,6 @@
         "tuple_pattern",
         "tuple_struct_pattern"
       ]
-    },
-    {
-      "kind": "_primitive_type",
-      "modelType": "enum",
-      "typeName": "PrimitiveType",
-      "factoryName": "primitiveType",
-      "irKey": "primitiveType",
-      "hidden": false,
-      "values": [
-        "u8",
-        "i8",
-        "u16",
-        "i16",
-        "u32",
-        "i32",
-        "u64",
-        "i64",
-        "u128",
-        "i128",
-        "isize",
-        "usize",
-        "f32",
-        "f64",
-        "bool",
-        "str",
-        "char"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_range_expression_bare",
@@ -5721,7 +5759,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -5768,14 +5805,23 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_primitive_type",
         "abstract_type",
         "array_type",
+        "bool_keyword",
         "bounded_type",
+        "char_keyword",
         "dynamic_type",
+        "f32_keyword",
+        "f64_keyword",
         "function_type",
         "generic_type",
+        "i128_keyword",
+        "i16_keyword",
+        "i32_keyword",
+        "i64_keyword",
+        "i8_keyword",
         "identifier",
+        "isize_keyword",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -5783,8 +5829,15 @@
         "reference_type",
         "removed_trait_bound",
         "scoped_type_identifier",
+        "str_keyword",
         "tuple_type",
-        "unit_type"
+        "u128_keyword",
+        "u16_keyword",
+        "u32_keyword",
+        "u64_keyword",
+        "u8_keyword",
+        "unit_type",
+        "usize_keyword"
       ]
     },
     {
@@ -7689,7 +7742,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -9511,7 +9563,6 @@
         "trait"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16147,20 +16198,36 @@
       "transparent": true,
       "subtypes": [
         "_literal",
-        "_primitive_type",
         "_token_keywords",
         "_token_tree_punctuation",
+        "bool_keyword",
         "boolean_literal",
+        "char_keyword",
         "char_literal",
         "crate",
+        "f32_keyword",
+        "f64_keyword",
         "float_literal",
+        "i128_keyword",
+        "i16_keyword",
+        "i32_keyword",
+        "i64_keyword",
+        "i8_keyword",
         "identifier",
         "integer_literal",
+        "isize_keyword",
         "mutable_specifier",
         "raw_string_literal",
         "self",
+        "str_keyword",
         "string_literal",
-        "super"
+        "super",
+        "u128_keyword",
+        "u16_keyword",
+        "u32_keyword",
+        "u64_keyword",
+        "u8_keyword",
+        "usize_keyword"
       ]
     },
     {
@@ -16348,7 +16415,6 @@
       ],
       "bareAccepts": [
         "_attributed_ordered_field",
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16418,7 +16484,6 @@
       ],
       "bareAccepts": [
         "_attributed_ordered_field",
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16576,7 +16641,6 @@
       ],
       "bareAccepts": [
         "_attributed_parameter",
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16649,7 +16713,6 @@
       ],
       "bareAccepts": [
         "_attributed_parameter",
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -17005,7 +17068,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -17082,7 +17144,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -18800,7 +18861,6 @@
         "type"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -21969,7 +22029,6 @@
         "tuple_type_elements"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -22054,7 +22113,6 @@
         "type_arguments_elements"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "_type_argument",
         "abstract_type",
@@ -22140,7 +22198,6 @@
         "element"
       ],
       "bareAccepts": [
-        "_primitive_type",
         "_tuple_type_elements",
         "_type_argument",
         "abstract_type",
@@ -23878,8 +23935,7 @@
             "pointer_type",
             "tuple_type",
             "array_type",
-            "higher_ranked_trait_bound",
-            "_primitive_type"
+            "higher_ranked_trait_bound"
           ],
           "values": [
             {
@@ -23937,9 +23993,105 @@
               "parseKind": "higher_ranked_trait_bound"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_primitive_type",
+              "value": "u8",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "i8",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "u16",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "i16",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "u32",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "i32",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "u64",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "i64",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "u128",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "i128",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "isize",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "usize",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "f32",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "f64",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "bool",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "str",
+              "parseKind": "primitive_type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "char",
               "parseKind": "primitive_type"
             }
           ]

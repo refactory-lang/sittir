@@ -866,8 +866,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'rest_pattern'
 	]),
 	_property_name: new Set([
-		'_property_identifier',
-		'property_identifier',
 		'identifier',
 		'_reserved_identifier',
 		'reserved_identifier',
@@ -905,114 +903,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'number_octal',
 		'number_bigint',
 		'computed_property_name'
-	]),
-	_statement_identifier: new Set([
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword'
-	]),
-	_shorthand_property_identifier: new Set([
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword'
-	]),
-	_shorthand_property_identifier_pattern: new Set([
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword'
-	]),
-	_property_identifier: new Set([
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword'
 	]),
 	_import_identifier: new Set(['identifier', 'type_keyword']),
 	type: new Set([
@@ -1179,33 +1069,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'object_pattern',
 		'array_pattern',
 		'non_null_expression'
-	]),
-	property_identifier: new Set([
-		'identifier',
-		'_reserved_identifier',
-		'reserved_identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword'
 	])
 };
 
@@ -3147,6 +3010,8 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
 
 export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_label', '_body']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.LabeledStatement as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -3196,7 +3061,31 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 			),
 
 			label() {
-				return drillIn<T.StatementIdentifier>(this._label, tree);
+				return drillIn<
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+				>(this._label, tree);
 			},
 			body() {
 				return drillIn<T.Statement>(this._body, tree);
@@ -3875,10 +3764,8 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
 			_properties: splitElidedWrapSlot(data._properties, [TSKindId.Comma], undefined),
 
 			properties() {
-				return drillInAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | undefined>(
-					this._properties as
-						| readonly (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier | undefined)[]
-						| undefined,
+				return drillInAll<T.ObjectArm | undefined>(
+					this._properties as readonly (T.ObjectArm | undefined)[] | undefined,
 					tree
 				);
 			},
@@ -3901,18 +3788,8 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
 			_properties: splitElidedWrapSlot(data._properties, [TSKindId.Comma], undefined),
 
 			properties() {
-				return drillInAll<
-					T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern | undefined
-				>(
-					this._properties as
-						| readonly (
-								| T.PairPattern
-								| T.RestPattern
-								| T.ObjectAssignmentPattern
-								| T.ShorthandPropertyIdentifierPattern
-								| undefined
-						  )[]
-						| undefined,
+				return drillInAll<T.ObjectPatternArm | undefined>(
+					this._properties as readonly (T.ObjectPatternArm | undefined)[] | undefined,
 					tree
 				);
 			},
@@ -4028,6 +3905,8 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
 
 export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_left', '_right']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.ObjectAssignmentPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -4108,7 +3987,33 @@ export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tre
 			),
 
 			left() {
-				return drillIn<T.ShorthandPropertyIdentifierPattern | T.ObjectPattern | T.ArrayPattern>(this._left, tree);
+				return drillIn<
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.Identifier
+					| T.ObjectPattern
+					| T.ArrayPattern
+				>(this._left, tree);
 			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
@@ -7431,7 +7336,33 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			},
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			optionalMarker() {
@@ -7486,6 +7417,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 
 export function wrapPair(data: T.Pair, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_key', '_value']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Pair as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -7567,7 +7499,33 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 
 			key() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._key, tree);
 			},
 			value() {
@@ -7585,6 +7543,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 
 export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_key', '_value']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.PairPattern as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -7661,7 +7620,33 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
 
 			key() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._key, tree);
 			},
 			value() {
@@ -7683,8 +7668,9 @@ export function wrapPropertyName(
 ) {
 	if (typeof data === 'number') return data;
 	const node = _keepModelledSlots(data, [
-		'__property_identifier',
-		'_property_identifier',
+		'_identifier',
+		'__reserved_identifier',
+		'_reserved_identifier',
 		'_private_property_identifier',
 		'_string',
 		'_number',
@@ -7699,8 +7685,9 @@ export function wrapPropertyName(
 		'_number_bigint'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
-		'_property_identifier',
-		'property_identifier',
+		'identifier',
+		'_reserved_identifier',
+		'reserved_identifier',
 		'private_property_identifier',
 		'string',
 		'number',
@@ -7717,8 +7704,9 @@ export function wrapPropertyName(
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, [
-			'_property_identifier',
-			'property_identifier',
+			'identifier',
+			'_reserved_identifier',
+			'reserved_identifier',
 			'private_property_identifier',
 			'string',
 			'number',
@@ -7807,126 +7795,6 @@ export function wrapComputedPropertyName(data: T.ComputedPropertyName, tree: Tre
 		_treeEngine(tree)
 	);
 	return _node;
-}
-
-export function wrapStatementIdentifier(
-	data: T.StatementIdentifier & { readonly $other?: T.StatementIdentifier | readonly T.StatementIdentifier[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier', '__reserved_identifier', '_reserved_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T.StatementIdentifier
-		| readonly T.StatementIdentifier[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.StatementIdentifier>(node as T.StatementIdentifier, tree);
-	}
-	return drillIn<T.StatementIdentifier>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
-export function wrapShorthandPropertyIdentifier(
-	data: T.ShorthandPropertyIdentifier & {
-		readonly $other?: T.ShorthandPropertyIdentifier | readonly T.ShorthandPropertyIdentifier[];
-	},
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier', '__reserved_identifier', '_reserved_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T.ShorthandPropertyIdentifier
-		| readonly T.ShorthandPropertyIdentifier[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.ShorthandPropertyIdentifier>(node as T.ShorthandPropertyIdentifier, tree);
-	}
-	return drillIn<T.ShorthandPropertyIdentifier>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
-export function wrapShorthandPropertyIdentifierPattern(
-	data: T.ShorthandPropertyIdentifierPattern & {
-		readonly $other?: T.ShorthandPropertyIdentifierPattern | readonly T.ShorthandPropertyIdentifierPattern[];
-	},
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier', '__reserved_identifier', '_reserved_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T.ShorthandPropertyIdentifierPattern
-		| readonly T.ShorthandPropertyIdentifierPattern[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.ShorthandPropertyIdentifierPattern>(node as T.ShorthandPropertyIdentifierPattern, tree);
-	}
-	return drillIn<T.ShorthandPropertyIdentifierPattern>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
-export function wrap_PropertyIdentifier(
-	data: T._PropertyIdentifier & { readonly $other?: T._PropertyIdentifier | readonly T._PropertyIdentifier[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier', '__reserved_identifier', '_reserved_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T._PropertyIdentifier
-		| readonly T._PropertyIdentifier[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T._PropertyIdentifier>(node as T._PropertyIdentifier, tree);
-	}
-	return drillIn<T._PropertyIdentifier>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
 }
 
 export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: TreeHandle) {
@@ -8132,7 +8000,33 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 			},
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			optionalityMarker() {
@@ -8418,7 +8312,33 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 			},
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			optionalMarker() {
@@ -8583,7 +8503,33 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 			},
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			optionalMarker() {
@@ -9757,6 +9703,8 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
 
 export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_value']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.EnumAssignment as const }, _treeEngine(tree));
 	const _node = withMethods(
 		{
 			...data,
@@ -9838,7 +9786,33 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
 
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			value() {
@@ -12768,7 +12742,33 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 			},
 			name() {
 				return drillIn<
-					T._PropertyIdentifier | T.PrivatePropertyIdentifier | T.String | T.Number | T.ComputedPropertyName
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
+					| T.PrivatePropertyIdentifier
+					| T.String
+					| T.Number
+					| T.ComputedPropertyName
 				>(this._name, tree);
 			},
 			optionalMarker() {
@@ -13497,105 +13497,406 @@ export function wrapEnumBodyElements(
 	data: T.EnumBodyElements & {
 		readonly _name?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
-		readonly _reserved_identifier?:
+		readonly _property_identifier?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName;
-		readonly _identifier?:
-			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _private_property_identifier?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _string?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_hex?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_float_point?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_float_leading_point?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_float_scientific?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_decimal?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_binary?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_octal?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _number_bigint?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _computed_property_name?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName;
 		readonly _enum_assignment?:
 			| T.EnumAssignment
-			| T._PropertyIdentifier
+			| T.Identifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
 			| T.PrivatePropertyIdentifier
 			| T.String
 			| T.Number
@@ -13608,8 +13909,7 @@ export function wrapEnumBodyElements(
 	data = _keepModelledSlots(data, [
 		'_content',
 		'_name',
-		'_reserved_identifier',
-		'_identifier',
+		'_property_identifier',
 		'_private_property_identifier',
 		'_string',
 		'_number_hex',
@@ -13623,13 +13923,14 @@ export function wrapEnumBodyElements(
 		'_computed_property_name',
 		'_enum_assignment'
 	]);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.EnumBodyElements as const }, _treeEngine(tree));
 	const _content = normalizeRepeatedWrapSlot(
 		data._content !== undefined
 			? _toArr(data._content)
 			: _interleaveBySlotOrder(data as _NodeData, [
 					['name', data._name],
-					['reserved_identifier', data._reserved_identifier],
-					['identifier', data._identifier],
+					['property_identifier', data._property_identifier],
 					['private_property_identifier', data._private_property_identifier],
 					['string', data._string],
 					['number_hex', data._number_hex],
@@ -13652,7 +13953,6 @@ export function wrapEnumBodyElements(
 			..._omitWrapKeys(data, [
 				'_computed_property_name',
 				'_enum_assignment',
-				'_identifier',
 				'_name',
 				'_number_bigint',
 				'_number_binary',
@@ -13663,7 +13963,7 @@ export function wrapEnumBodyElements(
 				'_number_hex',
 				'_number_octal',
 				'_private_property_identifier',
-				'_reserved_identifier',
+				'_property_identifier',
 				'_string'
 			]),
 			$type: TSKindId.EnumBodyElements as const,
@@ -13674,7 +13974,29 @@ export function wrapEnumBodyElements(
 
 			contents() {
 				return drillInAll<
-					| T._PropertyIdentifier
+					| T.Identifier
+					| TSKindId.DeclareKeyword
+					| TSKindId.NamespaceKeyword
+					| TSKindId.TypeKeyword
+					| TSKindId.PublicKeyword
+					| TSKindId.PrivateKeyword
+					| TSKindId.ProtectedKeyword
+					| TSKindId.OverrideKeyword
+					| TSKindId.ReadonlyKeyword
+					| TSKindId.ModuleKeyword
+					| TSKindId.AnyKeyword
+					| TSKindId.NumberKeyword
+					| TSKindId.BooleanKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.SymbolKeyword
+					| TSKindId.ExportKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.NewKeyword
+					| TSKindId.GetKeyword
+					| TSKindId.SetKeyword
+					| TSKindId.AsyncKeyword
+					| TSKindId.StaticKeyword
+					| TSKindId.LetKeyword
 					| T.PrivatePropertyIdentifier
 					| T.String
 					| T.Number
@@ -13683,7 +14005,29 @@ export function wrapEnumBodyElements(
 				>(
 					this._content as
 						| readonly (
-								| T._PropertyIdentifier
+								| T.Identifier
+								| TSKindId.DeclareKeyword
+								| TSKindId.NamespaceKeyword
+								| TSKindId.TypeKeyword
+								| TSKindId.PublicKeyword
+								| TSKindId.PrivateKeyword
+								| TSKindId.ProtectedKeyword
+								| TSKindId.OverrideKeyword
+								| TSKindId.ReadonlyKeyword
+								| TSKindId.ModuleKeyword
+								| TSKindId.AnyKeyword
+								| TSKindId.NumberKeyword
+								| TSKindId.BooleanKeyword
+								| TSKindId.StringKeyword
+								| TSKindId.SymbolKeyword
+								| TSKindId.ExportKeyword
+								| TSKindId.ObjectKeyword
+								| TSKindId.NewKeyword
+								| TSKindId.GetKeyword
+								| TSKindId.SetKeyword
+								| TSKindId.AsyncKeyword
+								| TSKindId.StaticKeyword
+								| TSKindId.LetKeyword
 								| T.PrivatePropertyIdentifier
 								| T.String
 								| T.Number
@@ -17206,35 +17550,6 @@ export function wrapLhsExpression(
 	);
 }
 
-export function wrapPropertyIdentifier(
-	data: T.PropertyIdentifier & { readonly $other?: T.PropertyIdentifier | readonly T.PropertyIdentifier[] },
-	tree: TreeHandle
-) {
-	if (typeof data === 'number') return data;
-	const node = _keepModelledSlots(data, ['_identifier', '__reserved_identifier', '_reserved_identifier']);
-	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T.PropertyIdentifier
-		| readonly T.PropertyIdentifier[]
-		| undefined;
-	const filtered =
-		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
-		return drillInSelf<T.PropertyIdentifier>(node as T.PropertyIdentifier, tree);
-	}
-	return drillIn<T.PropertyIdentifier>(
-		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
-			tree,
-			nodeType: node.$type,
-			slotName: 'children',
-			span: (node as _NodeData).$span
-		}),
-		tree
-	);
-}
-
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.Program]: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	[TSKindId.HashBangLine]: (d, t) => wrapHashBangLine(d as unknown as T.HashBangLine, t),
@@ -17357,12 +17672,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.PropertyName]: (d, t) => wrapPropertyName(d as unknown as T.PropertyName, t),
 	[TSKindId.ComputedPropertyName]: (d, t) => wrapComputedPropertyName(d as unknown as T.ComputedPropertyName, t),
 	[TSKindId.ReservedIdentifier]: (d) => ({ ...d, $type: TSKindId.ReservedIdentifier as const }),
-	[TSKindId.StatementIdentifier]: (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
-	[TSKindId.ShorthandPropertyIdentifier]: (d, t) =>
-		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),
-	[TSKindId.ShorthandPropertyIdentifierPattern]: (d, t) =>
-		wrapShorthandPropertyIdentifierPattern(d as unknown as T.ShorthandPropertyIdentifierPattern, t),
-	[TSKindId._PropertyIdentifier]: (d, t) => wrap_PropertyIdentifier(d as unknown as T._PropertyIdentifier, t),
 	[TSKindId.PublicFieldDefinition]: (d, t) => wrapPublicFieldDefinition(d as unknown as T.PublicFieldDefinition, t),
 	[TSKindId.ImportIdentifier]: (d, t) => wrapImportIdentifier(d as unknown as T.ImportIdentifier, t),
 	[TSKindId.NonNullExpression]: (d, t) => wrapNonNullExpression(d as unknown as T.NonNullExpression, t),
@@ -17679,10 +17988,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.PropertyName]: ReturnType<typeof wrapPropertyName>;
 	[TSKindId.ComputedPropertyName]: ReturnType<typeof wrapComputedPropertyName>;
 	[TSKindId.ReservedIdentifier]: _NodeData & { readonly $type: TSKindId.ReservedIdentifier };
-	[TSKindId.StatementIdentifier]: ReturnType<typeof wrapStatementIdentifier>;
-	[TSKindId.ShorthandPropertyIdentifier]: ReturnType<typeof wrapShorthandPropertyIdentifier>;
-	[TSKindId.ShorthandPropertyIdentifierPattern]: ReturnType<typeof wrapShorthandPropertyIdentifierPattern>;
-	[TSKindId._PropertyIdentifier]: ReturnType<typeof wrap_PropertyIdentifier>;
 	[TSKindId.PublicFieldDefinition]: ReturnType<typeof wrapPublicFieldDefinition>;
 	[TSKindId.ImportIdentifier]: ReturnType<typeof wrapImportIdentifier>;
 	[TSKindId.NonNullExpression]: ReturnType<typeof wrapNonNullExpression>;

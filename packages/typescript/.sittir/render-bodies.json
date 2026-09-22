@@ -5841,6 +5841,12 @@
 			"field": "object_after"
 		}
 	],
+	"object_arm": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"object_assignment_pattern": [
 		{
 			"kind": "seam",
@@ -5899,6 +5905,12 @@
 		{
 			"kind": "seam",
 			"field": "object_pattern_after"
+		}
+	],
+	"object_pattern_arm": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"object_type": [

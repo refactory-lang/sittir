@@ -3476,6 +3476,7 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
   const claimedRetargetNames = /* @__PURE__ */ new Set();
   for (const { slotName, targetName, bucket } of byBucket.values()) {
     if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
+    if (bucket.every((c) => c.aliasSite !== void 0)) continue;
     const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
     const values = bucket.map((candidate, i) => ({
       original: candidate,

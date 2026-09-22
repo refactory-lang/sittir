@@ -2160,6 +2160,12 @@ function applyUnaliasDistinct(
 
 	for (const { slotName, targetName, bucket } of byBucket.values()) {
 		if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
+		// A bucket where every candidate is itself an explicit alias site to
+		// this target is a display union (evaluate.ts's inline-alias
+		// distribution over a choice) — read dispatch keys off each arm's own
+		// distinct storage kindId, never the shared display name, so the
+		// non-injective-parseKind concern below does not apply.
+		if (bucket.every((c) => c.aliasSite !== undefined)) continue;
 		const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
 		const values: ParseKindCollisionValue<UnaliasCandidate>[] = bucket.map((candidate, i) => ({
 			original: candidate,

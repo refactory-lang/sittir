@@ -285,6 +285,16 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly aliasedToId?: number;
 };
 
+/** The display name a ref carries, or `undefined` when it has none. */
+export function aliasTargetOf(ref: SymbolRule<PhaseName>): string | undefined {
+	return ref.aliasedTo;
+}
+
+/** The ref's own storage identity — the rule (or literal symbol) that parsed it. */
+export function storageNameOf(ref: SymbolRule<PhaseName>): string {
+	return ref.name;
+}
+
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase
 	? RuleBase<Phase> & {
 			readonly type: typeof ALIAS;

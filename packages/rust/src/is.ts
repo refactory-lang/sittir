@@ -816,13 +816,18 @@ const _supertype_macroDefinition_ids = new Set<number>([417, 418, 419]);
 const _supertype_tokenPattern_ids = new Set<number>([180, 179, 129]);
 const _supertype_tokenTreePattern_ids = new Set<number>([406, 407, 408]);
 const _supertype_tokens_ids = new Set<number>([182, 183, 129]);
-const _supertype_nonSpecialToken_ids = new Set<number>([327, 328, 331, 159, 1, 73, 126, 127, 128, 365, 366]);
+const _supertype_nonSpecialToken_ids = new Set<number>([
+	327, 328, 331, 159, 1, 73, 126, 127, 128, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 365, 366
+]);
 const _supertype_modItem_ids = new Set<number>([387, 388]);
 const _supertype_foreignModItem_ids = new Set<number>([397, 398]);
 const _supertype_structItem_ids = new Set<number>([424, 425, 426]);
 const _supertype_implItem_ids = new Set<number>([381, 382]);
 const _supertype_useClause_ids = new Set<number>([126, 1, 129, 127, 128, 258, 223, 222, 221, 224]);
-const _supertype_type_ids = new Set<number>([250, 247, 129, 241, 260, 238, 239, 235, 237, 1, 254, 249, 251, 243, 213]);
+const _supertype_type_ids = new Set<number>([
+	250, 247, 129, 241, 260, 238, 239, 235, 237, 1, 254, 249, 251, 243, 213, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
+	38, 39, 40, 41, 42, 43
+]);
 const _supertype_pointerType_ids = new Set<number>([391, 392]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,

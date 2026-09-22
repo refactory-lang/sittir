@@ -224,7 +224,6 @@ pub enum AnyTransport {
     Super(SuperTransport),
     Crate(CrateTransport),
     Metavariable(MetavariableTransport),
-    PrimitiveType(PrimitiveTypeEnum),
     KwRefMarker(KwRefMarkerTransport),
     KwUnsafeMarker(KwUnsafeMarkerTransport),
     KwStaticMarker(KwStaticMarkerTransport),
@@ -395,6 +394,23 @@ pub enum AnyTransport {
     FnKeyword(FnKeywordTransport),
     DashGt(DashGtTransport),
     WhereKeyword(WhereKeywordTransport),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TraitKeyword(TraitKeywordTransport),
     ForKeyword(ForKeywordTransport),
     Lt(LtTransport),
@@ -447,23 +463,6 @@ pub enum AnyTransport {
     SlashStar(SlashStarTransport),
     StarSlash(StarSlashTransport),
     DefaultKeyword(DefaultKeywordTransport),
-    U8Keyword(U8KeywordTransport),
-    I8Keyword(I8KeywordTransport),
-    U16Keyword(U16KeywordTransport),
-    I16Keyword(I16KeywordTransport),
-    U32Keyword(U32KeywordTransport),
-    I32Keyword(I32KeywordTransport),
-    U64Keyword(U64KeywordTransport),
-    I64Keyword(I64KeywordTransport),
-    U128Keyword(U128KeywordTransport),
-    I128Keyword(I128KeywordTransport),
-    IsizeKeyword(IsizeKeywordTransport),
-    UsizeKeyword(UsizeKeywordTransport),
-    F32Keyword(F32KeywordTransport),
-    F64Keyword(F64KeywordTransport),
-    BoolKeyword(BoolKeywordTransport),
-    StrKeyword(StrKeywordTransport),
-    CharKeyword(CharKeywordTransport),
     MoveKeyword(MoveKeywordTransport),
     PlusEq(PlusEqTransport),
     DashEq(DashEqTransport),
@@ -719,7 +718,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Super(t) => t.prepare(ctx),
             AnyTransport::Crate(t) => t.prepare(ctx),
             AnyTransport::Metavariable(t) => t.prepare(ctx),
-            AnyTransport::PrimitiveType(t) => t.prepare(ctx),
             AnyTransport::KwRefMarker(t) => t.prepare(ctx),
             AnyTransport::KwUnsafeMarker(t) => t.prepare(ctx),
             AnyTransport::KwStaticMarker(t) => t.prepare(ctx),
@@ -890,6 +888,23 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::FnKeyword(t) => t.prepare(ctx),
             AnyTransport::DashGt(t) => t.prepare(ctx),
             AnyTransport::WhereKeyword(t) => t.prepare(ctx),
+            AnyTransport::U8Keyword(t) => t.prepare(ctx),
+            AnyTransport::I8Keyword(t) => t.prepare(ctx),
+            AnyTransport::U16Keyword(t) => t.prepare(ctx),
+            AnyTransport::I16Keyword(t) => t.prepare(ctx),
+            AnyTransport::U32Keyword(t) => t.prepare(ctx),
+            AnyTransport::I32Keyword(t) => t.prepare(ctx),
+            AnyTransport::U64Keyword(t) => t.prepare(ctx),
+            AnyTransport::I64Keyword(t) => t.prepare(ctx),
+            AnyTransport::U128Keyword(t) => t.prepare(ctx),
+            AnyTransport::I128Keyword(t) => t.prepare(ctx),
+            AnyTransport::IsizeKeyword(t) => t.prepare(ctx),
+            AnyTransport::UsizeKeyword(t) => t.prepare(ctx),
+            AnyTransport::F32Keyword(t) => t.prepare(ctx),
+            AnyTransport::F64Keyword(t) => t.prepare(ctx),
+            AnyTransport::BoolKeyword(t) => t.prepare(ctx),
+            AnyTransport::StrKeyword(t) => t.prepare(ctx),
+            AnyTransport::CharKeyword(t) => t.prepare(ctx),
             AnyTransport::TraitKeyword(t) => t.prepare(ctx),
             AnyTransport::ForKeyword(t) => t.prepare(ctx),
             AnyTransport::Lt(t) => t.prepare(ctx),
@@ -942,23 +957,6 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::SlashStar(t) => t.prepare(ctx),
             AnyTransport::StarSlash(t) => t.prepare(ctx),
             AnyTransport::DefaultKeyword(t) => t.prepare(ctx),
-            AnyTransport::U8Keyword(t) => t.prepare(ctx),
-            AnyTransport::I8Keyword(t) => t.prepare(ctx),
-            AnyTransport::U16Keyword(t) => t.prepare(ctx),
-            AnyTransport::I16Keyword(t) => t.prepare(ctx),
-            AnyTransport::U32Keyword(t) => t.prepare(ctx),
-            AnyTransport::I32Keyword(t) => t.prepare(ctx),
-            AnyTransport::U64Keyword(t) => t.prepare(ctx),
-            AnyTransport::I64Keyword(t) => t.prepare(ctx),
-            AnyTransport::U128Keyword(t) => t.prepare(ctx),
-            AnyTransport::I128Keyword(t) => t.prepare(ctx),
-            AnyTransport::IsizeKeyword(t) => t.prepare(ctx),
-            AnyTransport::UsizeKeyword(t) => t.prepare(ctx),
-            AnyTransport::F32Keyword(t) => t.prepare(ctx),
-            AnyTransport::F64Keyword(t) => t.prepare(ctx),
-            AnyTransport::BoolKeyword(t) => t.prepare(ctx),
-            AnyTransport::StrKeyword(t) => t.prepare(ctx),
-            AnyTransport::CharKeyword(t) => t.prepare(ctx),
             AnyTransport::MoveKeyword(t) => t.prepare(ctx),
             AnyTransport::PlusEq(t) => t.prepare(ctx),
             AnyTransport::DashEq(t) => t.prepare(ctx),
@@ -2332,6 +2330,74 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 58 => Ok(AnyTransport::WhereKeyword(
                     WhereKeywordTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: u8_keyword (U8_KEYWORD)
+                27 => Ok(AnyTransport::U8Keyword(
+                    U8KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: i8_keyword (I8_KEYWORD)
+                28 => Ok(AnyTransport::I8Keyword(
+                    I8KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: u16_keyword (U16_KEYWORD)
+                29 => Ok(AnyTransport::U16Keyword(
+                    U16KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: i16_keyword (I16_KEYWORD)
+                30 => Ok(AnyTransport::I16Keyword(
+                    I16KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: u32_keyword (U32_KEYWORD)
+                31 => Ok(AnyTransport::U32Keyword(
+                    U32KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: i32_keyword (I32_KEYWORD)
+                32 => Ok(AnyTransport::I32Keyword(
+                    I32KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: u64_keyword (U64_KEYWORD)
+                33 => Ok(AnyTransport::U64Keyword(
+                    U64KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: i64_keyword (I64_KEYWORD)
+                34 => Ok(AnyTransport::I64Keyword(
+                    I64KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: u128_keyword (U128_KEYWORD)
+                35 => Ok(AnyTransport::U128Keyword(
+                    U128KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: i128_keyword (I128_KEYWORD)
+                36 => Ok(AnyTransport::I128Keyword(
+                    I128KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: isize_keyword (ISIZE_KEYWORD)
+                37 => Ok(AnyTransport::IsizeKeyword(
+                    IsizeKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: usize_keyword (USIZE_KEYWORD)
+                38 => Ok(AnyTransport::UsizeKeyword(
+                    UsizeKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: f32_keyword (F32_KEYWORD)
+                39 => Ok(AnyTransport::F32Keyword(
+                    F32KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: f64_keyword (F64_KEYWORD)
+                40 => Ok(AnyTransport::F64Keyword(
+                    F64KeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: bool_keyword (BOOL_KEYWORD)
+                41 => Ok(AnyTransport::BoolKeyword(
+                    BoolKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: str_keyword (STR_KEYWORD)
+                42 => Ok(AnyTransport::StrKeyword(
+                    StrKeywordTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: char_keyword (CHAR_KEYWORD)
+                43 => Ok(AnyTransport::CharKeyword(
+                    CharKeywordTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: trait_keyword (TRAIT_KEYWORD)
                 59 => Ok(AnyTransport::TraitKeyword(
                     TraitKeywordTransport::from_napi_value(env, napi_val)?
@@ -2539,74 +2605,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: default_keyword (DEFAULT_KEYWORD)
                 125 => Ok(AnyTransport::DefaultKeyword(
                     DefaultKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: u8_keyword (U8_KEYWORD)
-                27 => Ok(AnyTransport::U8Keyword(
-                    U8KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: i8_keyword (I8_KEYWORD)
-                28 => Ok(AnyTransport::I8Keyword(
-                    I8KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: u16_keyword (U16_KEYWORD)
-                29 => Ok(AnyTransport::U16Keyword(
-                    U16KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: i16_keyword (I16_KEYWORD)
-                30 => Ok(AnyTransport::I16Keyword(
-                    I16KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: u32_keyword (U32_KEYWORD)
-                31 => Ok(AnyTransport::U32Keyword(
-                    U32KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: i32_keyword (I32_KEYWORD)
-                32 => Ok(AnyTransport::I32Keyword(
-                    I32KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: u64_keyword (U64_KEYWORD)
-                33 => Ok(AnyTransport::U64Keyword(
-                    U64KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: i64_keyword (I64_KEYWORD)
-                34 => Ok(AnyTransport::I64Keyword(
-                    I64KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: u128_keyword (U128_KEYWORD)
-                35 => Ok(AnyTransport::U128Keyword(
-                    U128KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: i128_keyword (I128_KEYWORD)
-                36 => Ok(AnyTransport::I128Keyword(
-                    I128KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: isize_keyword (ISIZE_KEYWORD)
-                37 => Ok(AnyTransport::IsizeKeyword(
-                    IsizeKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: usize_keyword (USIZE_KEYWORD)
-                38 => Ok(AnyTransport::UsizeKeyword(
-                    UsizeKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: f32_keyword (F32_KEYWORD)
-                39 => Ok(AnyTransport::F32Keyword(
-                    F32KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: f64_keyword (F64_KEYWORD)
-                40 => Ok(AnyTransport::F64Keyword(
-                    F64KeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: bool_keyword (BOOL_KEYWORD)
-                41 => Ok(AnyTransport::BoolKeyword(
-                    BoolKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: str_keyword (STR_KEYWORD)
-                42 => Ok(AnyTransport::StrKeyword(
-                    StrKeywordTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: char_keyword (CHAR_KEYWORD)
-                43 => Ok(AnyTransport::CharKeyword(
-                    CharKeywordTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: move_keyword (MOVE_KEYWORD)
                 130 => Ok(AnyTransport::MoveKeyword(
@@ -4021,7 +4019,23 @@ pub enum TypeTransport {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -4044,7 +4058,23 @@ impl ::sittir_core::prepare::Prepare for TypeTransport {
             TypeTransport::DynamicType(t) => t.prepare(ctx),
             TypeTransport::BoundedType(t) => t.prepare(ctx),
             TypeTransport::RemovedTraitBound(t) => t.prepare(ctx),
-            TypeTransport::PrimitiveType(t) => t.prepare(ctx),
+            TypeTransport::U8Keyword(t) => t.prepare(ctx),
+            TypeTransport::I8Keyword(t) => t.prepare(ctx),
+            TypeTransport::U16Keyword(t) => t.prepare(ctx),
+            TypeTransport::I16Keyword(t) => t.prepare(ctx),
+            TypeTransport::U32Keyword(t) => t.prepare(ctx),
+            TypeTransport::I32Keyword(t) => t.prepare(ctx),
+            TypeTransport::U64Keyword(t) => t.prepare(ctx),
+            TypeTransport::I64Keyword(t) => t.prepare(ctx),
+            TypeTransport::U128Keyword(t) => t.prepare(ctx),
+            TypeTransport::I128Keyword(t) => t.prepare(ctx),
+            TypeTransport::IsizeKeyword(t) => t.prepare(ctx),
+            TypeTransport::UsizeKeyword(t) => t.prepare(ctx),
+            TypeTransport::F32Keyword(t) => t.prepare(ctx),
+            TypeTransport::F64Keyword(t) => t.prepare(ctx),
+            TypeTransport::BoolKeyword(t) => t.prepare(ctx),
+            TypeTransport::StrKeyword(t) => t.prepare(ctx),
+            TypeTransport::CharKeyword(t) => t.prepare(ctx),
             TypeTransport::Verbatim(t) => t.prepare(ctx),
         }
     }
@@ -4105,8 +4135,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                         if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RemovedTraitBound(value));
                         }
-                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrimitiveType(value));
+                        if let Ok(value) = U8KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U8Keyword(value));
+                        }
+                        if let Ok(value) = I8KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I8Keyword(value));
+                        }
+                        if let Ok(value) = U16KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U16Keyword(value));
+                        }
+                        if let Ok(value) = I16KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I16Keyword(value));
+                        }
+                        if let Ok(value) = U32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U32Keyword(value));
+                        }
+                        if let Ok(value) = I32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I32Keyword(value));
+                        }
+                        if let Ok(value) = U64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U64Keyword(value));
+                        }
+                        if let Ok(value) = I64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I64Keyword(value));
+                        }
+                        if let Ok(value) = U128KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U128Keyword(value));
+                        }
+                        if let Ok(value) = I128KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I128Keyword(value));
+                        }
+                        if let Ok(value) = IsizeKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IsizeKeyword(value));
+                        }
+                        if let Ok(value) = UsizeKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UsizeKeyword(value));
+                        }
+                        if let Ok(value) = F32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::F32Keyword(value));
+                        }
+                        if let Ok(value) = F64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::F64Keyword(value));
+                        }
+                        if let Ok(value) = BoolKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BoolKeyword(value));
+                        }
+                        if let Ok(value) = StrKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StrKeyword(value));
+                        }
+                        if let Ok(value) = CharKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharKeyword(value));
                         }
                         if let Ok(value) = PointerTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PointerType(value));
@@ -4119,56 +4197,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -4287,8 +4365,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                         if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::RemovedTraitBound(value));
                         }
-                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
-                            return Ok(Self::PrimitiveType(value));
+                        if let Ok(value) = U8KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U8Keyword(value));
+                        }
+                        if let Ok(value) = I8KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I8Keyword(value));
+                        }
+                        if let Ok(value) = U16KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U16Keyword(value));
+                        }
+                        if let Ok(value) = I16KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I16Keyword(value));
+                        }
+                        if let Ok(value) = U32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U32Keyword(value));
+                        }
+                        if let Ok(value) = I32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I32Keyword(value));
+                        }
+                        if let Ok(value) = U64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U64Keyword(value));
+                        }
+                        if let Ok(value) = I64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I64Keyword(value));
+                        }
+                        if let Ok(value) = U128KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::U128Keyword(value));
+                        }
+                        if let Ok(value) = I128KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::I128Keyword(value));
+                        }
+                        if let Ok(value) = IsizeKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IsizeKeyword(value));
+                        }
+                        if let Ok(value) = UsizeKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UsizeKeyword(value));
+                        }
+                        if let Ok(value) = F32KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::F32Keyword(value));
+                        }
+                        if let Ok(value) = F64KeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::F64Keyword(value));
+                        }
+                        if let Ok(value) = BoolKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BoolKeyword(value));
+                        }
+                        if let Ok(value) = StrKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StrKeyword(value));
+                        }
+                        if let Ok(value) = CharKeywordTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharKeyword(value));
                         }
                         if let Ok(value) = PointerTypeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PointerType(value));
@@ -4301,56 +4427,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -4472,7 +4598,23 @@ impl ::sittir_core::view::KindOf for TypeTransport {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -8921,7 +9063,23 @@ pub enum TokenRepetitionPatternTokenPatternsTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -8952,7 +9110,23 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTokenPatternsTran
             TokenRepetitionPatternTokenPatternsTransportSlot::Self_(t) => t.prepare(ctx),
             TokenRepetitionPatternTokenPatternsTransportSlot::Super(t) => t.prepare(ctx),
             TokenRepetitionPatternTokenPatternsTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenRepetitionPatternTokenPatternsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenRepetitionPatternTokenPatternsTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenRepetitionPatternTokenPatternsTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -8985,7 +9159,23 @@ impl ::sittir_core::view::KindOf for TokenRepetitionPatternTokenPatternsTranspor
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -9023,56 +9213,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -9367,7 +9557,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -9411,56 +9600,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -9755,7 +9944,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionPatternTokenPatte
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -9832,7 +10020,23 @@ fn token_repetition_pattern_token_patterns_transport_slot_to_any(t: TokenRepetit
         TokenRepetitionPatternTokenPatternsTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenRepetitionPatternTokenPatternsTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenRepetitionPatternTokenPatternsTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenRepetitionPatternTokenPatternsTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenRepetitionPatternTokenPatternsTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenRepetitionPatternTokenPatternsTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenRepetitionPatternTokenPatternsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -9864,7 +10068,23 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTokenPatternsTransp
             TokenRepetitionPatternTokenPatternsTransportSlot::Self_(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::Super(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::Crate(inner) => inner.render(w),
-            TokenRepetitionPatternTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenRepetitionPatternTokenPatternsTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenRepetitionPatternTokenPatternsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -10127,7 +10347,23 @@ pub enum TokenRepetitionTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -10155,7 +10391,23 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::Self_(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::Super(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenRepetitionTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenRepetitionTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenRepetitionTokensTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -10185,7 +10437,23 @@ impl ::sittir_core::view::KindOf for TokenRepetitionTokensTransportSlot {
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -10223,56 +10491,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -10558,7 +10826,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -10602,56 +10869,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -10937,7 +11204,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenRepetitionTokensTransportSl
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -11011,7 +11277,23 @@ fn token_repetition_tokens_transport_slot_to_any(t: TokenRepetitionTokensTranspo
         TokenRepetitionTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenRepetitionTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenRepetitionTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenRepetitionTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenRepetitionTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenRepetitionTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenRepetitionTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenRepetitionTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenRepetitionTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenRepetitionTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenRepetitionTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenRepetitionTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenRepetitionTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenRepetitionTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenRepetitionTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenRepetitionTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenRepetitionTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenRepetitionTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenRepetitionTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenRepetitionTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenRepetitionTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenRepetitionTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenRepetitionTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenRepetitionTokensTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -11040,7 +11322,23 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensTransportSlot {
             TokenRepetitionTokensTransportSlot::Self_(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::Super(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::Crate(inner) => inner.render(w),
-            TokenRepetitionTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenRepetitionTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenRepetitionTokensTransportSlot::Verbatim(inner) => inner.render(w),
@@ -12815,7 +13113,23 @@ pub enum TraitBoundsBoundsTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     Lifetime(LifetimeTransport),
     HigherRankedTraitBound(HigherRankedTraitBoundTransport),
     Verbatim(VerbatimTransport),
@@ -12841,7 +13155,23 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsBoundsTransportSlot {
             TraitBoundsBoundsTransportSlot::DynamicType(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::BoundedType(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            TraitBoundsBoundsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TraitBoundsBoundsTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::Lifetime(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(t) => t.prepare(ctx),
             TraitBoundsBoundsTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -12869,7 +13199,23 @@ impl ::sittir_core::view::KindOf for TraitBoundsBoundsTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::Lifetime(inner) => inner.kind_in(kinds),
             Self::HigherRankedTraitBound(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -12892,56 +13238,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -13020,56 +13366,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -13191,7 +13537,23 @@ fn trait_bounds_bounds_transport_slot_to_any(t: TraitBoundsBoundsTransportSlot) 
         TraitBoundsBoundsTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         TraitBoundsBoundsTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         TraitBoundsBoundsTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        TraitBoundsBoundsTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TraitBoundsBoundsTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TraitBoundsBoundsTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TraitBoundsBoundsTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TraitBoundsBoundsTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TraitBoundsBoundsTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TraitBoundsBoundsTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TraitBoundsBoundsTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TraitBoundsBoundsTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TraitBoundsBoundsTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TraitBoundsBoundsTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TraitBoundsBoundsTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TraitBoundsBoundsTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TraitBoundsBoundsTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TraitBoundsBoundsTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TraitBoundsBoundsTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TraitBoundsBoundsTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TraitBoundsBoundsTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TraitBoundsBoundsTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
         TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => AnyTransport::HigherRankedTraitBound(inner),
         TraitBoundsBoundsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -13218,7 +13580,23 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsTransportSlot {
             TraitBoundsBoundsTransportSlot::DynamicType(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::BoundedType(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            TraitBoundsBoundsTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::U8Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::I8Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::U16Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::I16Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::U32Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::I32Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::U64Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::I64Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::U128Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::I128Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::F32Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::F64Keyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::StrKeyword(inner) => inner.render(w),
+            TraitBoundsBoundsTransportSlot::CharKeyword(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::Lifetime(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::HigherRankedTraitBound(inner) => inner.render(w),
             TraitBoundsBoundsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -15686,7 +16064,23 @@ pub enum BracketedTypeContentTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     QualifiedType(QualifiedTypeTransport),
     Verbatim(VerbatimTransport),
 }
@@ -15711,7 +16105,23 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeContentTransportSlot {
             BracketedTypeContentTransportSlot::DynamicType(t) => t.prepare(ctx),
             BracketedTypeContentTransportSlot::BoundedType(t) => t.prepare(ctx),
             BracketedTypeContentTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            BracketedTypeContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            BracketedTypeContentTransportSlot::CharKeyword(t) => t.prepare(ctx),
             BracketedTypeContentTransportSlot::QualifiedType(t) => t.prepare(ctx),
             BracketedTypeContentTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
@@ -15738,7 +16148,23 @@ impl ::sittir_core::view::KindOf for BracketedTypeContentTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::QualifiedType(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
@@ -15760,56 +16186,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -15885,56 +16311,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     250 => Ok(Self::AbstractType(
                         AbstractTypeTransport::from_napi_value(env, napi_val)?
@@ -16053,7 +16479,23 @@ fn bracketed_type_content_transport_slot_to_any(t: BracketedTypeContentTransport
         BracketedTypeContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         BracketedTypeContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        BracketedTypeContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        BracketedTypeContentTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        BracketedTypeContentTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        BracketedTypeContentTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        BracketedTypeContentTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        BracketedTypeContentTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        BracketedTypeContentTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        BracketedTypeContentTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        BracketedTypeContentTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        BracketedTypeContentTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        BracketedTypeContentTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        BracketedTypeContentTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        BracketedTypeContentTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        BracketedTypeContentTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        BracketedTypeContentTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        BracketedTypeContentTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        BracketedTypeContentTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        BracketedTypeContentTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         BracketedTypeContentTransportSlot::QualifiedType(inner) => AnyTransport::QualifiedType(inner),
         BracketedTypeContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -16079,7 +16521,23 @@ impl ::sittir_core::render::Render for BracketedTypeContentTransportSlot {
             BracketedTypeContentTransportSlot::DynamicType(inner) => inner.render(w),
             BracketedTypeContentTransportSlot::BoundedType(inner) => inner.render(w),
             BracketedTypeContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            BracketedTypeContentTransportSlot::PrimitiveType(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::U8Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::I8Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::U16Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::I16Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::U32Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::I32Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::U64Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::I64Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::U128Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::I128Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::F32Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::F64Keyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::BoolKeyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::StrKeyword(inner) => inner.render(w),
+            BracketedTypeContentTransportSlot::CharKeyword(inner) => inner.render(w),
             BracketedTypeContentTransportSlot::QualifiedType(inner) => inner.render(w),
             BracketedTypeContentTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -16955,7 +17413,23 @@ pub enum BoundedTypeLeftTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     UseBounds(UseBoundsTransport),
     Verbatim(VerbatimTransport),
 }
@@ -16981,7 +17455,23 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeLeftTransportSlot {
             BoundedTypeLeftTransportSlot::DynamicType(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::BoundedType(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            BoundedTypeLeftTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            BoundedTypeLeftTransportSlot::CharKeyword(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::UseBounds(t) => t.prepare(ctx),
             BoundedTypeLeftTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
@@ -17009,7 +17499,23 @@ impl ::sittir_core::view::KindOf for BoundedTypeLeftTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::UseBounds(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
@@ -17031,56 +17537,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     234 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
@@ -17159,56 +17665,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     234 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
@@ -17331,7 +17837,23 @@ fn bounded_type_left_transport_slot_to_any(t: BoundedTypeLeftTransportSlot) -> A
         BoundedTypeLeftTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         BoundedTypeLeftTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         BoundedTypeLeftTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        BoundedTypeLeftTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        BoundedTypeLeftTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        BoundedTypeLeftTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        BoundedTypeLeftTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        BoundedTypeLeftTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        BoundedTypeLeftTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        BoundedTypeLeftTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        BoundedTypeLeftTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        BoundedTypeLeftTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        BoundedTypeLeftTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        BoundedTypeLeftTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        BoundedTypeLeftTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        BoundedTypeLeftTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        BoundedTypeLeftTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        BoundedTypeLeftTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        BoundedTypeLeftTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        BoundedTypeLeftTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        BoundedTypeLeftTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         BoundedTypeLeftTransportSlot::UseBounds(inner) => AnyTransport::UseBounds(inner),
         BoundedTypeLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -17358,7 +17880,23 @@ impl ::sittir_core::render::Render for BoundedTypeLeftTransportSlot {
             BoundedTypeLeftTransportSlot::DynamicType(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::BoundedType(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            BoundedTypeLeftTransportSlot::PrimitiveType(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::U8Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::I8Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::U16Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::I16Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::U32Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::I32Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::U64Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::I64Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::U128Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::I128Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::F32Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::F64Keyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::BoolKeyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::StrKeyword(inner) => inner.render(w),
+            BoundedTypeLeftTransportSlot::CharKeyword(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::UseBounds(inner) => inner.render(w),
             BoundedTypeLeftTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -17385,7 +17923,23 @@ pub enum BoundedTypeRightTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     UseBounds(UseBoundsTransport),
     Verbatim(VerbatimTransport),
 }
@@ -17411,7 +17965,23 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeRightTransportSlot {
             BoundedTypeRightTransportSlot::DynamicType(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::BoundedType(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            BoundedTypeRightTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            BoundedTypeRightTransportSlot::CharKeyword(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::UseBounds(t) => t.prepare(ctx),
             BoundedTypeRightTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
@@ -17439,7 +18009,23 @@ impl ::sittir_core::view::KindOf for BoundedTypeRightTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::UseBounds(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
@@ -17461,56 +18047,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     234 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
@@ -17589,56 +18175,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     234 => Ok(Self::Lifetime(
                         LifetimeTransport::from_napi_value(env, napi_val)?
@@ -17761,7 +18347,23 @@ fn bounded_type_right_transport_slot_to_any(t: BoundedTypeRightTransportSlot) ->
         BoundedTypeRightTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         BoundedTypeRightTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         BoundedTypeRightTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        BoundedTypeRightTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        BoundedTypeRightTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        BoundedTypeRightTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        BoundedTypeRightTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        BoundedTypeRightTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        BoundedTypeRightTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        BoundedTypeRightTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        BoundedTypeRightTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        BoundedTypeRightTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        BoundedTypeRightTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        BoundedTypeRightTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        BoundedTypeRightTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        BoundedTypeRightTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        BoundedTypeRightTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        BoundedTypeRightTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        BoundedTypeRightTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        BoundedTypeRightTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        BoundedTypeRightTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         BoundedTypeRightTransportSlot::UseBounds(inner) => AnyTransport::UseBounds(inner),
         BoundedTypeRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -17788,7 +18390,23 @@ impl ::sittir_core::render::Render for BoundedTypeRightTransportSlot {
             BoundedTypeRightTransportSlot::DynamicType(inner) => inner.render(w),
             BoundedTypeRightTransportSlot::BoundedType(inner) => inner.render(w),
             BoundedTypeRightTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            BoundedTypeRightTransportSlot::PrimitiveType(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::U8Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::I8Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::U16Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::I16Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::U32Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::I32Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::U64Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::I64Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::U128Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::I128Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::F32Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::F64Keyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::BoolKeyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::StrKeyword(inner) => inner.render(w),
+            BoundedTypeRightTransportSlot::CharKeyword(inner) => inner.render(w),
             BoundedTypeRightTransportSlot::UseBounds(inner) => inner.render(w),
             BoundedTypeRightTransportSlot::Verbatim(inner) => inner.render(w),
         }
@@ -35471,7 +36089,23 @@ pub enum TokenTreePatternParenTokenPatternsTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -35502,7 +36136,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenTokenPatternsTrans
             TokenTreePatternParenTokenPatternsTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreePatternParenTokenPatternsTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreePatternParenTokenPatternsTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreePatternParenTokenPatternsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreePatternParenTokenPatternsTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreePatternParenTokenPatternsTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreePatternParenTokenPatternsTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -35535,7 +36185,23 @@ impl ::sittir_core::view::KindOf for TokenTreePatternParenTokenPatternsTransport
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -35573,56 +36239,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -35917,7 +36583,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -35961,56 +36626,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -36305,7 +36970,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternParenTokenPatter
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -36382,7 +37046,23 @@ fn token_tree_pattern_paren_token_patterns_transport_slot_to_any(t: TokenTreePat
         TokenTreePatternParenTokenPatternsTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreePatternParenTokenPatternsTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreePatternParenTokenPatternsTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreePatternParenTokenPatternsTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreePatternParenTokenPatternsTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreePatternParenTokenPatternsTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreePatternParenTokenPatternsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -36414,7 +37094,23 @@ impl ::sittir_core::render::Render for TokenTreePatternParenTokenPatternsTranspo
             TokenTreePatternParenTokenPatternsTransportSlot::Self_(inner) => inner.render(w),
             TokenTreePatternParenTokenPatternsTransportSlot::Super(inner) => inner.render(w),
             TokenTreePatternParenTokenPatternsTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreePatternParenTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreePatternParenTokenPatternsTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreePatternParenTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreePatternParenTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreePatternParenTokenPatternsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -36446,7 +37142,23 @@ pub enum TokenTreePatternBracketTokenPatternsTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -36477,7 +37189,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketTokenPatternsTra
             TokenTreePatternBracketTokenPatternsTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreePatternBracketTokenPatternsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBracketTokenPatternsTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreePatternBracketTokenPatternsTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -36510,7 +37238,23 @@ impl ::sittir_core::view::KindOf for TokenTreePatternBracketTokenPatternsTranspo
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -36548,56 +37292,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -36892,7 +37636,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -36936,56 +37679,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -37280,7 +38023,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBracketTokenPatt
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -37357,7 +38099,23 @@ fn token_tree_pattern_bracket_token_patterns_transport_slot_to_any(t: TokenTreeP
         TokenTreePatternBracketTokenPatternsTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreePatternBracketTokenPatternsTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreePatternBracketTokenPatternsTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreePatternBracketTokenPatternsTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreePatternBracketTokenPatternsTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreePatternBracketTokenPatternsTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreePatternBracketTokenPatternsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -37389,7 +38147,23 @@ impl ::sittir_core::render::Render for TokenTreePatternBracketTokenPatternsTrans
             TokenTreePatternBracketTokenPatternsTransportSlot::Self_(inner) => inner.render(w),
             TokenTreePatternBracketTokenPatternsTransportSlot::Super(inner) => inner.render(w),
             TokenTreePatternBracketTokenPatternsTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreePatternBracketTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreePatternBracketTokenPatternsTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreePatternBracketTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreePatternBracketTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreePatternBracketTokenPatternsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -37421,7 +38195,23 @@ pub enum TokenTreePatternBraceTokenPatternsTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -37452,7 +38242,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceTokenPatternsTrans
             TokenTreePatternBraceTokenPatternsTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreePatternBraceTokenPatternsTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreePatternBraceTokenPatternsTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreePatternBraceTokenPatternsTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreePatternBraceTokenPatternsTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreePatternBraceTokenPatternsTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreePatternBraceTokenPatternsTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -37485,7 +38291,23 @@ impl ::sittir_core::view::KindOf for TokenTreePatternBraceTokenPatternsTransport
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -37523,56 +38345,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -37867,7 +38689,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -37911,56 +38732,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -38255,7 +39076,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternBraceTokenPatter
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -38332,7 +39152,23 @@ fn token_tree_pattern_brace_token_patterns_transport_slot_to_any(t: TokenTreePat
         TokenTreePatternBraceTokenPatternsTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreePatternBraceTokenPatternsTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreePatternBraceTokenPatternsTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreePatternBraceTokenPatternsTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreePatternBraceTokenPatternsTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreePatternBraceTokenPatternsTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreePatternBraceTokenPatternsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -38364,7 +39200,23 @@ impl ::sittir_core::render::Render for TokenTreePatternBraceTokenPatternsTranspo
             TokenTreePatternBraceTokenPatternsTransportSlot::Self_(inner) => inner.render(w),
             TokenTreePatternBraceTokenPatternsTransportSlot::Super(inner) => inner.render(w),
             TokenTreePatternBraceTokenPatternsTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreePatternBraceTokenPatternsTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreePatternBraceTokenPatternsTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreePatternBraceTokenPatternsTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreePatternBraceTokenPatternsTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreePatternBraceTokenPatternsTransportSlot::Verbatim(inner) => inner.render(w),
@@ -38393,7 +39245,23 @@ pub enum TokenTreeParenTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -38421,7 +39289,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenTokensTransportSlot {
             TokenTreeParenTokensTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreeParenTokensTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreeParenTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreeParenTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreeParenTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreeParenTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreeParenTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreeParenTokensTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -38451,7 +39335,23 @@ impl ::sittir_core::view::KindOf for TokenTreeParenTokensTransportSlot {
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -38489,56 +39389,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -38824,7 +39724,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -38868,56 +39767,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -39203,7 +40102,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeParenTokensTransportSlo
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -39277,7 +40175,23 @@ fn token_tree_paren_tokens_transport_slot_to_any(t: TokenTreeParenTokensTranspor
         TokenTreeParenTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreeParenTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreeParenTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreeParenTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreeParenTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreeParenTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreeParenTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreeParenTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreeParenTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreeParenTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreeParenTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreeParenTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreeParenTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreeParenTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreeParenTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreeParenTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreeParenTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreeParenTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreeParenTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreeParenTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreeParenTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreeParenTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreeParenTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreeParenTokensTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -39306,7 +40220,23 @@ impl ::sittir_core::render::Render for TokenTreeParenTokensTransportSlot {
             TokenTreeParenTokensTransportSlot::Self_(inner) => inner.render(w),
             TokenTreeParenTokensTransportSlot::Super(inner) => inner.render(w),
             TokenTreeParenTokensTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreeParenTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreeParenTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreeParenTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreeParenTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreeParenTokensTransportSlot::Verbatim(inner) => inner.render(w),
@@ -39335,7 +40265,23 @@ pub enum TokenTreeBracketTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -39363,7 +40309,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketTokensTransportSlot {
             TokenTreeBracketTokensTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreeBracketTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreeBracketTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreeBracketTokensTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -39393,7 +40355,23 @@ impl ::sittir_core::view::KindOf for TokenTreeBracketTokensTransportSlot {
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -39431,56 +40409,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -39766,7 +40744,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -39810,56 +40787,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -40145,7 +41122,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBracketTokensTransportS
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -40219,7 +41195,23 @@ fn token_tree_bracket_tokens_transport_slot_to_any(t: TokenTreeBracketTokensTran
         TokenTreeBracketTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreeBracketTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreeBracketTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreeBracketTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreeBracketTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreeBracketTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreeBracketTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreeBracketTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreeBracketTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreeBracketTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreeBracketTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreeBracketTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreeBracketTokensTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -40248,7 +41240,23 @@ impl ::sittir_core::render::Render for TokenTreeBracketTokensTransportSlot {
             TokenTreeBracketTokensTransportSlot::Self_(inner) => inner.render(w),
             TokenTreeBracketTokensTransportSlot::Super(inner) => inner.render(w),
             TokenTreeBracketTokensTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreeBracketTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreeBracketTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreeBracketTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreeBracketTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreeBracketTokensTransportSlot::Verbatim(inner) => inner.render(w),
@@ -40277,7 +41285,23 @@ pub enum TokenTreeBraceTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     Verbatim(VerbatimTransport),
@@ -40305,7 +41329,23 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceTokensTransportSlot {
             TokenTreeBraceTokensTransportSlot::Self_(t) => t.prepare(ctx),
             TokenTreeBraceTokensTransportSlot::Super(t) => t.prepare(ctx),
             TokenTreeBraceTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            TokenTreeBraceTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TokenTreeBraceTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TokenTreeBraceTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             TokenTreeBraceTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             TokenTreeBraceTokensTransportSlot::Verbatim(t) => t.prepare(ctx),
@@ -40335,7 +41375,23 @@ impl ::sittir_core::view::KindOf for TokenTreeBraceTokensTransportSlot {
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(145), ::sittir_core::types::KindId(159)].iter().any(|k| kinds.contains(k)),
@@ -40373,56 +41429,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -40708,7 +41764,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -40752,56 +41807,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -41087,7 +42142,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeBraceTokensTransportSlo
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -41161,7 +42215,23 @@ fn token_tree_brace_tokens_transport_slot_to_any(t: TokenTreeBraceTokensTranspor
         TokenTreeBraceTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         TokenTreeBraceTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         TokenTreeBraceTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        TokenTreeBraceTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenTreeBraceTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TokenTreeBraceTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TokenTreeBraceTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TokenTreeBraceTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TokenTreeBraceTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TokenTreeBraceTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TokenTreeBraceTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         TokenTreeBraceTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         TokenTreeBraceTokensTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -41190,7 +42260,23 @@ impl ::sittir_core::render::Render for TokenTreeBraceTokensTransportSlot {
             TokenTreeBraceTokensTransportSlot::Self_(inner) => inner.render(w),
             TokenTreeBraceTokensTransportSlot::Super(inner) => inner.render(w),
             TokenTreeBraceTokensTransportSlot::Crate(inner) => inner.render(w),
-            TokenTreeBraceTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            TokenTreeBraceTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             TokenTreeBraceTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             TokenTreeBraceTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             TokenTreeBraceTokensTransportSlot::Verbatim(inner) => inner.render(w),
@@ -41216,7 +42302,23 @@ pub enum DelimTokenTreeParenDelimTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
@@ -41245,7 +42347,23 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenDelimTokensTransport
             DelimTokenTreeParenDelimTokensTransportSlot::Self_(t) => t.prepare(ctx),
             DelimTokenTreeParenDelimTokensTransportSlot::Super(t) => t.prepare(ctx),
             DelimTokenTreeParenDelimTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            DelimTokenTreeParenDelimTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeParenDelimTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             DelimTokenTreeParenDelimTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             DelimTokenTreeParenDelimTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.prepare(ctx),
@@ -41276,7 +42394,23 @@ impl ::sittir_core::view::KindOf for DelimTokenTreeParenDelimTokensTransportSlot
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
@@ -41319,56 +42453,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -41651,7 +42785,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -41711,56 +42844,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -42043,7 +43176,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeParenDelimTokensTr
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -42129,7 +43261,23 @@ fn delim_token_tree_paren_delim_tokens_transport_slot_to_any(t: DelimTokenTreePa
         DelimTokenTreeParenDelimTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         DelimTokenTreeParenDelimTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         DelimTokenTreeParenDelimTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        DelimTokenTreeParenDelimTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        DelimTokenTreeParenDelimTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         DelimTokenTreeParenDelimTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         DelimTokenTreeParenDelimTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(inner) => AnyTransport::DelimTokenTreeParen(inner),
@@ -42159,7 +43307,23 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensTransportSl
             DelimTokenTreeParenDelimTokensTransportSlot::Self_(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::Super(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::Crate(inner) => inner.render(w),
-            DelimTokenTreeParenDelimTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            DelimTokenTreeParenDelimTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             DelimTokenTreeParenDelimTokensTransportSlot::DelimTokenTreeParen(inner) => inner.render(w),
@@ -42189,7 +43353,23 @@ pub enum DelimTokenTreeBracketDelimTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
@@ -42218,7 +43398,23 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketDelimTokensTranspo
             DelimTokenTreeBracketDelimTokensTransportSlot::Self_(t) => t.prepare(ctx),
             DelimTokenTreeBracketDelimTokensTransportSlot::Super(t) => t.prepare(ctx),
             DelimTokenTreeBracketDelimTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            DelimTokenTreeBracketDelimTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBracketDelimTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             DelimTokenTreeBracketDelimTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             DelimTokenTreeBracketDelimTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.prepare(ctx),
@@ -42249,7 +43445,23 @@ impl ::sittir_core::view::KindOf for DelimTokenTreeBracketDelimTokensTransportSl
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
@@ -42292,56 +43504,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -42624,7 +43836,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -42684,56 +43895,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -43016,7 +44227,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBracketDelimTokens
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -43102,7 +44312,23 @@ fn delim_token_tree_bracket_delim_tokens_transport_slot_to_any(t: DelimTokenTree
         DelimTokenTreeBracketDelimTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         DelimTokenTreeBracketDelimTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         DelimTokenTreeBracketDelimTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        DelimTokenTreeBracketDelimTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        DelimTokenTreeBracketDelimTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         DelimTokenTreeBracketDelimTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         DelimTokenTreeBracketDelimTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeParen(inner) => AnyTransport::DelimTokenTreeParen(inner),
@@ -43132,7 +44358,23 @@ impl ::sittir_core::render::Render for DelimTokenTreeBracketDelimTokensTransport
             DelimTokenTreeBracketDelimTokensTransportSlot::Self_(inner) => inner.render(w),
             DelimTokenTreeBracketDelimTokensTransportSlot::Super(inner) => inner.render(w),
             DelimTokenTreeBracketDelimTokensTransportSlot::Crate(inner) => inner.render(w),
-            DelimTokenTreeBracketDelimTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            DelimTokenTreeBracketDelimTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             DelimTokenTreeBracketDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             DelimTokenTreeBracketDelimTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             DelimTokenTreeBracketDelimTokensTransportSlot::DelimTokenTreeParen(inner) => inner.render(w),
@@ -43162,7 +44404,23 @@ pub enum DelimTokenTreeBraceDelimTokensTransportSlot {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
     DelimTokenTreeParen(DelimTokenTreeParenTransport),
@@ -43191,7 +44449,23 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceDelimTokensTransport
             DelimTokenTreeBraceDelimTokensTransportSlot::Self_(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::Super(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::Crate(t) => t.prepare(ctx),
-            DelimTokenTreeBraceDelimTokensTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            DelimTokenTreeBraceDelimTokensTransportSlot::CharKeyword(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::TokenTreePunctuation(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::TokenKeywords(t) => t.prepare(ctx),
             DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeParen(t) => t.prepare(ctx),
@@ -43222,7 +44496,23 @@ impl ::sittir_core::view::KindOf for DelimTokenTreeBraceDelimTokensTransportSlot
             Self::Self_(inner) => inner.kind_in(kinds),
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
             Self::DelimTokenTreeParen(inner) => inner.kind_in(kinds),
@@ -43265,56 +44555,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -43597,7 +44887,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -43657,56 +44946,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                     128 => Ok(Self::Crate(
                         CrateTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     365 => Ok(Self::TokenTreePunctuation(
                         TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
@@ -43989,7 +45278,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeBraceDelimTokensTr
                             }
                         }
                         if let Ok(v) = BooleanLiteralEnum::from_napi_value(env, napi_val) { return Ok(Self::BooleanLiteral(v)); }
-                        if let Ok(v) = PrimitiveTypeEnum::from_napi_value(env, napi_val) { return Ok(Self::PrimitiveType(v)); }
                         if let Ok(v) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenTreePunctuation(v)); }
                         if let Ok(v) = TokenKeywordsEnum::from_napi_value(env, napi_val) { return Ok(Self::TokenKeywords(v)); }
                         if let Ok(v) = MutableSpecifierTransport::from_napi_value(env, napi_val) { return Ok(Self::MutableSpecifier(v)); }
@@ -44075,7 +45363,23 @@ fn delim_token_tree_brace_delim_tokens_transport_slot_to_any(t: DelimTokenTreeBr
         DelimTokenTreeBraceDelimTokensTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
         DelimTokenTreeBraceDelimTokensTransportSlot::Super(inner) => AnyTransport::Super(inner),
         DelimTokenTreeBraceDelimTokensTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        DelimTokenTreeBraceDelimTokensTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        DelimTokenTreeBraceDelimTokensTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         DelimTokenTreeBraceDelimTokensTransportSlot::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         DelimTokenTreeBraceDelimTokensTransportSlot::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
         DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeParen(inner) => AnyTransport::DelimTokenTreeParen(inner),
@@ -44105,7 +45409,23 @@ impl ::sittir_core::render::Render for DelimTokenTreeBraceDelimTokensTransportSl
             DelimTokenTreeBraceDelimTokensTransportSlot::Self_(inner) => inner.render(w),
             DelimTokenTreeBraceDelimTokensTransportSlot::Super(inner) => inner.render(w),
             DelimTokenTreeBraceDelimTokensTransportSlot::Crate(inner) => inner.render(w),
-            DelimTokenTreeBraceDelimTokensTransportSlot::PrimitiveType(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U8Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I8Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U16Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I16Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::U128Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::I128Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::F32Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::F64Keyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::BoolKeyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::StrKeyword(inner) => inner.render(w),
+            DelimTokenTreeBraceDelimTokensTransportSlot::CharKeyword(inner) => inner.render(w),
             DelimTokenTreeBraceDelimTokensTransportSlot::TokenTreePunctuation(inner) => inner.render(w),
             DelimTokenTreeBraceDelimTokensTransportSlot::TokenKeywords(inner) => inner.render(w),
             DelimTokenTreeBraceDelimTokensTransportSlot::DelimTokenTreeParen(inner) => inner.render(w),
@@ -46160,7 +47480,23 @@ pub enum AttributedParameterContentTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     Literal80_75_6e_64_65_72_73_63_6f_72_65(LiteralSeams),
     Verbatim(VerbatimTransport),
 }
@@ -46188,7 +47524,23 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentTransportSlot
             AttributedParameterContentTransportSlot::DynamicType(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::BoundedType(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            AttributedParameterContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            AttributedParameterContentTransportSlot::CharKeyword(t) => t.prepare(ctx),
             AttributedParameterContentTransportSlot::Literal80_75_6e_64_65_72_73_63_6f_72_65(t) => {
                 t.before.get_or_insert(ctx.options.spacing[options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE]);
                 Ok(())
@@ -46221,7 +47573,23 @@ impl ::sittir_core::view::KindOf for AttributedParameterContentTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::Literal80_75_6e_64_65_72_73_63_6f_72_65(_) => [::sittir_core::types::KindId(133)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
@@ -46244,56 +47612,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     228 => Ok(Self::Parameter(
                         ParameterTransport::from_napi_value(env, napi_val)?
@@ -46376,56 +47744,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     228 => Ok(Self::Parameter(
                         ParameterTransport::from_napi_value(env, napi_val)?
@@ -46553,7 +47921,23 @@ fn attributed_parameter_content_transport_slot_to_any(t: AttributedParameterCont
         AttributedParameterContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         AttributedParameterContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        AttributedParameterContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        AttributedParameterContentTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        AttributedParameterContentTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        AttributedParameterContentTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        AttributedParameterContentTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        AttributedParameterContentTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        AttributedParameterContentTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        AttributedParameterContentTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        AttributedParameterContentTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        AttributedParameterContentTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        AttributedParameterContentTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        AttributedParameterContentTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        AttributedParameterContentTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        AttributedParameterContentTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        AttributedParameterContentTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        AttributedParameterContentTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        AttributedParameterContentTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        AttributedParameterContentTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         AttributedParameterContentTransportSlot::Literal80_75_6e_64_65_72_73_63_6f_72_65(_) => AnyTransport::Literal80_75_6e_64_65_72_73_63_6f_72_65,
         AttributedParameterContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -46582,7 +47966,23 @@ impl ::sittir_core::render::Render for AttributedParameterContentTransportSlot {
             AttributedParameterContentTransportSlot::DynamicType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::BoundedType(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            AttributedParameterContentTransportSlot::PrimitiveType(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::U8Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::I8Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::U16Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::I16Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::U32Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::I32Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::U64Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::I64Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::U128Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::I128Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::F32Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::F64Keyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::BoolKeyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::StrKeyword(inner) => inner.render(w),
+            AttributedParameterContentTransportSlot::CharKeyword(inner) => inner.render(w),
             AttributedParameterContentTransportSlot::Literal80_75_6e_64_65_72_73_63_6f_72_65(seams) => {
                 w.site_with(seams.before.unwrap_or(0), options::site_strength(options::SITE_ATTRIBUTED_PARAMETER_UNDERSCORE_BEFORE, seams.before.unwrap_or(0)));
                 let written = w.text("_");
@@ -46747,7 +48147,23 @@ pub enum TypeArgumentContentTransportSlot {
     DynamicType(DynamicTypeTransport),
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
+    U8Keyword(U8KeywordTransport),
+    I8Keyword(I8KeywordTransport),
+    U16Keyword(U16KeywordTransport),
+    I16Keyword(I16KeywordTransport),
+    U32Keyword(U32KeywordTransport),
+    I32Keyword(I32KeywordTransport),
+    U64Keyword(U64KeywordTransport),
+    I64Keyword(I64KeywordTransport),
+    U128Keyword(U128KeywordTransport),
+    I128Keyword(I128KeywordTransport),
+    IsizeKeyword(IsizeKeywordTransport),
+    UsizeKeyword(UsizeKeywordTransport),
+    F32Keyword(F32KeywordTransport),
+    F64Keyword(F64KeywordTransport),
+    BoolKeyword(BoolKeywordTransport),
+    StrKeyword(StrKeywordTransport),
+    CharKeyword(CharKeywordTransport),
     TypeBinding(TypeBindingTransport),
     Lifetime(LifetimeTransport),
     StringLiteral(StringLiteralTransport),
@@ -46785,7 +48201,23 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::DynamicType(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::BoundedType(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::RemovedTraitBound(t) => t.prepare(ctx),
-            TypeArgumentContentTransportSlot::PrimitiveType(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::U8Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::I8Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::U16Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::I16Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::U32Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::I32Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::U64Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::I64Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::U128Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::I128Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::IsizeKeyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::UsizeKeyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::F32Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::F64Keyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::BoolKeyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::StrKeyword(t) => t.prepare(ctx),
+            TypeArgumentContentTransportSlot::CharKeyword(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::TypeBinding(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::Lifetime(t) => t.prepare(ctx),
             TypeArgumentContentTransportSlot::StringLiteral(t) => t.prepare(ctx),
@@ -46825,7 +48257,23 @@ impl ::sittir_core::view::KindOf for TypeArgumentContentTransportSlot {
             Self::DynamicType(inner) => inner.kind_in(kinds),
             Self::BoundedType(inner) => inner.kind_in(kinds),
             Self::RemovedTraitBound(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TypeBinding(inner) => inner.kind_in(kinds),
             Self::Lifetime(inner) => inner.kind_in(kinds),
             Self::StringLiteral(inner) => inner.kind_in(kinds),
@@ -46860,56 +48308,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -47030,56 +48478,56 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     249 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    27 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    27 => Ok(Self::U8Keyword(
+                        U8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    28 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    28 => Ok(Self::I8Keyword(
+                        I8KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    29 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    29 => Ok(Self::U16Keyword(
+                        U16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    30 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    30 => Ok(Self::I16Keyword(
+                        I16KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    31 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    31 => Ok(Self::U32Keyword(
+                        U32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    32 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    32 => Ok(Self::I32Keyword(
+                        I32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    33 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    33 => Ok(Self::U64Keyword(
+                        U64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    34 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    34 => Ok(Self::I64Keyword(
+                        I64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    35 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    35 => Ok(Self::U128Keyword(
+                        U128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    36 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    36 => Ok(Self::I128Keyword(
+                        I128KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    37 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    37 => Ok(Self::IsizeKeyword(
+                        IsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    38 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    38 => Ok(Self::UsizeKeyword(
+                        UsizeKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    39 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    39 => Ok(Self::F32Keyword(
+                        F32KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    40 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    40 => Ok(Self::F64Keyword(
+                        F64KeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    41 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    41 => Ok(Self::BoolKeyword(
+                        BoolKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    42 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    42 => Ok(Self::StrKeyword(
+                        StrKeywordTransport::from_napi_value(env, napi_val)?
                     )),
-                    43 => Ok(Self::PrimitiveType(
-                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    43 => Ok(Self::CharKeyword(
+                        CharKeywordTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -47243,7 +48691,23 @@ fn type_argument_content_transport_slot_to_any(t: TypeArgumentContentTransportSl
         TypeArgumentContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
         TypeArgumentContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        TypeArgumentContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TypeArgumentContentTransportSlot::U8Keyword(inner) => AnyTransport::U8Keyword(inner),
+        TypeArgumentContentTransportSlot::I8Keyword(inner) => AnyTransport::I8Keyword(inner),
+        TypeArgumentContentTransportSlot::U16Keyword(inner) => AnyTransport::U16Keyword(inner),
+        TypeArgumentContentTransportSlot::I16Keyword(inner) => AnyTransport::I16Keyword(inner),
+        TypeArgumentContentTransportSlot::U32Keyword(inner) => AnyTransport::U32Keyword(inner),
+        TypeArgumentContentTransportSlot::I32Keyword(inner) => AnyTransport::I32Keyword(inner),
+        TypeArgumentContentTransportSlot::U64Keyword(inner) => AnyTransport::U64Keyword(inner),
+        TypeArgumentContentTransportSlot::I64Keyword(inner) => AnyTransport::I64Keyword(inner),
+        TypeArgumentContentTransportSlot::U128Keyword(inner) => AnyTransport::U128Keyword(inner),
+        TypeArgumentContentTransportSlot::I128Keyword(inner) => AnyTransport::I128Keyword(inner),
+        TypeArgumentContentTransportSlot::IsizeKeyword(inner) => AnyTransport::IsizeKeyword(inner),
+        TypeArgumentContentTransportSlot::UsizeKeyword(inner) => AnyTransport::UsizeKeyword(inner),
+        TypeArgumentContentTransportSlot::F32Keyword(inner) => AnyTransport::F32Keyword(inner),
+        TypeArgumentContentTransportSlot::F64Keyword(inner) => AnyTransport::F64Keyword(inner),
+        TypeArgumentContentTransportSlot::BoolKeyword(inner) => AnyTransport::BoolKeyword(inner),
+        TypeArgumentContentTransportSlot::StrKeyword(inner) => AnyTransport::StrKeyword(inner),
+        TypeArgumentContentTransportSlot::CharKeyword(inner) => AnyTransport::CharKeyword(inner),
         TypeArgumentContentTransportSlot::TypeBinding(inner) => AnyTransport::TypeBinding(inner),
         TypeArgumentContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
         TypeArgumentContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
@@ -47282,7 +48746,23 @@ impl ::sittir_core::render::Render for TypeArgumentContentTransportSlot {
             TypeArgumentContentTransportSlot::DynamicType(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::BoundedType(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => inner.render(w),
-            TypeArgumentContentTransportSlot::PrimitiveType(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::U8Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::I8Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::U16Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::I16Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::U32Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::I32Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::U64Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::I64Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::U128Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::I128Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::IsizeKeyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::UsizeKeyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::F32Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::F64Keyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::BoolKeyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::StrKeyword(inner) => inner.render(w),
+            TypeArgumentContentTransportSlot::CharKeyword(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::TypeBinding(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::Lifetime(inner) => inner.render(w),
             TypeArgumentContentTransportSlot::StringLiteral(inner) => inner.render(w),
@@ -58110,214 +59590,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MetavariableTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         MetavariableTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PrimitiveTypeEnum {
-    U8,
-    I8,
-    U16,
-    I16,
-    U32,
-    I32,
-    U64,
-    I64,
-    U128,
-    I128,
-    Isize,
-    Usize,
-    F32,
-    F64,
-    Bool,
-    Str,
-    Char,
-}
-
-impl ::sittir_core::prepare::Prepare for PrimitiveTypeEnum {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PrimitiveTypeEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        27 => return Ok(Self::U8), // "u8"
-                        28 => return Ok(Self::I8), // "i8"
-                        29 => return Ok(Self::U16), // "u16"
-                        30 => return Ok(Self::I16), // "i16"
-                        31 => return Ok(Self::U32), // "u32"
-                        32 => return Ok(Self::I32), // "i32"
-                        33 => return Ok(Self::U64), // "u64"
-                        34 => return Ok(Self::I64), // "i64"
-                        35 => return Ok(Self::U128), // "u128"
-                        36 => return Ok(Self::I128), // "i128"
-                        37 => return Ok(Self::Isize), // "isize"
-                        38 => return Ok(Self::Usize), // "usize"
-                        39 => return Ok(Self::F32), // "f32"
-                        40 => return Ok(Self::F64), // "f64"
-                        41 => return Ok(Self::Bool), // "bool"
-                        42 => return Ok(Self::Str), // "str"
-                        43 => return Ok(Self::Char), // "char"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "u8" => return Ok(Self::U8),
-                    "i8" => return Ok(Self::I8),
-                    "u16" => return Ok(Self::U16),
-                    "i16" => return Ok(Self::I16),
-                    "u32" => return Ok(Self::U32),
-                    "i32" => return Ok(Self::I32),
-                    "u64" => return Ok(Self::U64),
-                    "i64" => return Ok(Self::I64),
-                    "u128" => return Ok(Self::U128),
-                    "i128" => return Ok(Self::I128),
-                    "isize" => return Ok(Self::Isize),
-                    "usize" => return Ok(Self::Usize),
-                    "f32" => return Ok(Self::F32),
-                    "f64" => return Ok(Self::F64),
-                    "bool" => return Ok(Self::Bool),
-                    "str" => return Ok(Self::Str),
-                    "char" => return Ok(Self::Char),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        27 => return Ok(Self::U8), // "u8"
-                        28 => return Ok(Self::I8), // "i8"
-                        29 => return Ok(Self::U16), // "u16"
-                        30 => return Ok(Self::I16), // "i16"
-                        31 => return Ok(Self::U32), // "u32"
-                        32 => return Ok(Self::I32), // "i32"
-                        33 => return Ok(Self::U64), // "u64"
-                        34 => return Ok(Self::I64), // "i64"
-                        35 => return Ok(Self::U128), // "u128"
-                        36 => return Ok(Self::I128), // "i128"
-                        37 => return Ok(Self::Isize), // "isize"
-                        38 => return Ok(Self::Usize), // "usize"
-                        39 => return Ok(Self::F32), // "f32"
-                        40 => return Ok(Self::F64), // "f64"
-                        41 => return Ok(Self::Bool), // "bool"
-                        42 => return Ok(Self::Str), // "str"
-                        43 => return Ok(Self::Char), // "char"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "u8" => return Ok(Self::U8),
-                        "i8" => return Ok(Self::I8),
-                        "u16" => return Ok(Self::U16),
-                        "i16" => return Ok(Self::I16),
-                        "u32" => return Ok(Self::U32),
-                        "i32" => return Ok(Self::I32),
-                        "u64" => return Ok(Self::U64),
-                        "i64" => return Ok(Self::I64),
-                        "u128" => return Ok(Self::U128),
-                        "i128" => return Ok(Self::I128),
-                        "isize" => return Ok(Self::Isize),
-                        "usize" => return Ok(Self::Usize),
-                        "f32" => return Ok(Self::F32),
-                        "f64" => return Ok(Self::F64),
-                        "bool" => return Ok(Self::Bool),
-                        "str" => return Ok(Self::Str),
-                        "char" => return Ok(Self::Char),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_u8")?.is_some() { return Ok(Self::U8); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_i8")?.is_some() { return Ok(Self::I8); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_u16")?.is_some() { return Ok(Self::U16); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_i16")?.is_some() { return Ok(Self::I16); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_u32")?.is_some() { return Ok(Self::U32); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_i32")?.is_some() { return Ok(Self::I32); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_u64")?.is_some() { return Ok(Self::U64); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_i64")?.is_some() { return Ok(Self::I64); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_u128")?.is_some() { return Ok(Self::U128); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_i128")?.is_some() { return Ok(Self::I128); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_isize")?.is_some() { return Ok(Self::Isize); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_usize")?.is_some() { return Ok(Self::Usize); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_f32")?.is_some() { return Ok(Self::F32); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_f64")?.is_some() { return Ok(Self::F64); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_bool")?.is_some() { return Ok(Self::Bool); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_str")?.is_some() { return Ok(Self::Str); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_char")?.is_some() { return Ok(Self::Char); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for PrimitiveTypeEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PrimitiveTypeEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PrimitiveTypeEnum is receive-only"))
-    }
-}
-
-impl ::sittir_core::view::KindOf for PrimitiveTypeEnum {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::U8 => [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k)),
-            Self::I8 => [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k)),
-            Self::U16 => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::I16 => [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k)),
-            Self::U32 => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
-            Self::I32 => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::U64 => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::I64 => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::U128 => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::I128 => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::Isize => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::Usize => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::F32 => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::F64 => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::Bool => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::Str => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Char => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for PrimitiveTypeEnum {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        w.text(match self {
-            Self::U8 => "u8",
-            Self::I8 => "i8",
-            Self::U16 => "u16",
-            Self::I16 => "i16",
-            Self::U32 => "u32",
-            Self::I32 => "i32",
-            Self::U64 => "u64",
-            Self::I64 => "i64",
-            Self::U128 => "u128",
-            Self::I128 => "i128",
-            Self::Isize => "isize",
-            Self::Usize => "usize",
-            Self::F32 => "f32",
-            Self::F64 => "f64",
-            Self::Bool => "bool",
-            Self::Str => "str",
-            Self::Char => "char",
-        })
     }
 }
 
@@ -73628,6 +74900,1604 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WhereKeywordTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct U8KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for U8KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for U8KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U8KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "u8".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "u8".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "u8".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for U8KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U8KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        U8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U8KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        U8KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct I8KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for I8KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for I8KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I8KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "i8".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "i8".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "i8".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for I8KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I8KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        I8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I8KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        I8KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct U16KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for U16KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for U16KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U16KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "u16".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "u16".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "u16".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for U16KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U16KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        U16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U16KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        U16KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct I16KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for I16KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for I16KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I16KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "i16".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "i16".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "i16".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for I16KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I16KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        I16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I16KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        I16KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct U32KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for U32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for U32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "u32".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "u32".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "u32".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for U32KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U32KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        U32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U32KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        U32KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct I32KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for I32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for I32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "i32".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "i32".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "i32".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for I32KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I32KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        I32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I32KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        I32KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct U64KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for U64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for U64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "u64".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "u64".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "u64".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for U64KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U64KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        U64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U64KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        U64KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct I64KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for I64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for I64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "i64".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "i64".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "i64".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for I64KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I64KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        I64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I64KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        I64KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct U128KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for U128KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for U128KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for U128KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "u128".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "u128".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "u128".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for U128KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<U128KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        U128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<U128KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        U128KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct I128KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for I128KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for I128KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for I128KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "i128".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "i128".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "i128".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for I128KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<I128KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        I128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<I128KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        I128KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct IsizeKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for IsizeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for IsizeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for IsizeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "isize".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "isize".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "isize".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IsizeKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IsizeKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IsizeKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IsizeKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct UsizeKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for UsizeKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for UsizeKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for UsizeKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "usize".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "usize".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "usize".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UsizeKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<UsizeKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        UsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<UsizeKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        UsizeKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct F32KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for F32KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for F32KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for F32KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "f32".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "f32".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "f32".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for F32KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<F32KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        F32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<F32KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        F32KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct F64KeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for F64KeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for F64KeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for F64KeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "f64".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "f64".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "f64".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for F64KeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<F64KeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        F64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<F64KeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        F64KeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct BoolKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for BoolKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for BoolKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for BoolKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "bool".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "bool".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "bool".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BoolKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BoolKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BoolKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BoolKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BoolKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct StrKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StrKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StrKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for StrKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "str".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "str".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "str".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StrKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StrKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StrKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StrKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StrKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CharKeywordTransport {
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for CharKeywordTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for CharKeywordTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, w.text(&self.text))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for CharKeywordTransport {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let mut __trivia: Option<TransportTrivia> = None;
+        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "char".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                __trivia = obj.get("$_trivia")?;
+                obj.get("$text")?.unwrap_or_else(|| "char".to_string())
+            }
+        };
+        Ok(Self {
+            transport_trivia_data: __trivia,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "char".to_string());
+        let transport_trivia_data = obj.get("$_trivia")?;
+        Ok(Self {
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CharKeywordTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CharKeywordTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CharKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CharKeywordTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CharKeywordTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct TraitKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -78516,1604 +81386,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DefaultKeywordTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct U8KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for U8KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(27)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for U8KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U8KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "u8".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "u8".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U8KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "u8".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U8KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U8KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        U8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U8KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        U8KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct I8KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for I8KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(28)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for I8KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I8KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "i8".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "i8".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I8KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "i8".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I8KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I8KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        I8KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I8KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        I8KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct U16KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for U16KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for U16KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U16KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "u16".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "u16".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U16KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "u16".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U16KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U16KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        U16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U16KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        U16KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct I16KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for I16KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(30)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for I16KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I16KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "i16".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "i16".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I16KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "i16".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I16KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I16KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        I16KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I16KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        I16KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct U32KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for U32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for U32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "u32".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "u32".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "u32".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U32KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U32KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        U32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U32KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        U32KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct I32KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for I32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for I32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "i32".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "i32".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "i32".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I32KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I32KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        I32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I32KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        I32KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct U64KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for U64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for U64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "u64".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "u64".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "u64".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U64KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U64KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        U64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U64KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        U64KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct I64KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for I64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for I64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "i64".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "i64".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "i64".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I64KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I64KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        I64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I64KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        I64KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct U128KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for U128KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for U128KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for U128KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "u128".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "u128".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for U128KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "u128".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for U128KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<U128KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        U128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<U128KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        U128KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct I128KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for I128KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for I128KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for I128KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "i128".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "i128".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for I128KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "i128".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for I128KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<I128KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        I128KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<I128KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        I128KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct IsizeKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for IsizeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for IsizeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for IsizeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "isize".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "isize".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for IsizeKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "isize".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for IsizeKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<IsizeKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        IsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<IsizeKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        IsizeKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct UsizeKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for UsizeKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for UsizeKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for UsizeKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "usize".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "usize".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for UsizeKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "usize".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UsizeKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<UsizeKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        UsizeKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<UsizeKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        UsizeKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct F32KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for F32KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for F32KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for F32KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "f32".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "f32".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for F32KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "f32".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for F32KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<F32KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        F32KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<F32KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        F32KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct F64KeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for F64KeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for F64KeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for F64KeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "f64".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "f64".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for F64KeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "f64".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for F64KeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<F64KeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        F64KeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<F64KeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        F64KeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct BoolKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for BoolKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for BoolKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for BoolKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "bool".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "bool".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BoolKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "bool".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BoolKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BoolKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        BoolKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BoolKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        BoolKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct StrKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for StrKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for StrKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for StrKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "str".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "str".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StrKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "str".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StrKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StrKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StrKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StrKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StrKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct CharKeywordTransport {
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for CharKeywordTransport {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for CharKeywordTransport {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_with_trivia!(self, w, w.text(&self.text))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for CharKeywordTransport {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let mut __trivia: Option<TransportTrivia> = None;
-        let text = match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "char".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                __trivia = obj.get("$_trivia")?;
-                obj.get("$text")?.unwrap_or_else(|| "char".to_string())
-            }
-        };
-        Ok(Self {
-            transport_trivia_data: __trivia,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CharKeywordTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "char".to_string());
-        let transport_trivia_data = obj.get("$_trivia")?;
-        Ok(Self {
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CharKeywordTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CharKeywordTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CharKeywordTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CharKeywordTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CharKeywordTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct MoveKeywordTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub text: String,
@@ -83832,10 +85104,6 @@ fn render_metavariable(node: &MetavariableTransport, w: &mut dyn ::sittir_core::
     Ok(())
 }
 
-fn render_primitive_type(t: &PrimitiveTypeEnum, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    t.render(w)
-}
-
 fn render_kw_ref_marker(t: &KwRefMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -85633,6 +86901,74 @@ fn render_where_keyword(t: &WhereKeywordTransport, w: &mut dyn ::sittir_core::re
     w.text(&t.text)
 }
 
+fn render_u8_keyword(t: &U8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_i8_keyword(t: &I8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_u16_keyword(t: &U16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_i16_keyword(t: &I16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_u32_keyword(t: &U32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_i32_keyword(t: &I32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_u64_keyword(t: &U64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_i64_keyword(t: &I64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_u128_keyword(t: &U128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_i128_keyword(t: &I128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_isize_keyword(t: &IsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_usize_keyword(t: &UsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_f32_keyword(t: &F32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_f64_keyword(t: &F64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_bool_keyword(t: &BoolKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_str_keyword(t: &StrKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
+fn render_char_keyword(t: &CharKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.text(&t.text)
+}
+
 fn render_trait_keyword(t: &TraitKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -85841,74 +87177,6 @@ fn render_default_keyword(t: &DefaultKeywordTransport, w: &mut dyn ::sittir_core
     w.text(&t.text)
 }
 
-fn render_u8_keyword(t: &U8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_i8_keyword(t: &I8KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_u16_keyword(t: &U16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_i16_keyword(t: &I16KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_u32_keyword(t: &U32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_i32_keyword(t: &I32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_u64_keyword(t: &U64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_i64_keyword(t: &I64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_u128_keyword(t: &U128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_i128_keyword(t: &I128KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_isize_keyword(t: &IsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_usize_keyword(t: &UsizeKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_f32_keyword(t: &F32KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_f64_keyword(t: &F64KeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_bool_keyword(t: &BoolKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_str_keyword(t: &StrKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
-fn render_char_keyword(t: &CharKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.text(&t.text)
-}
-
 fn render_move_keyword(t: &MoveKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -86070,7 +87338,23 @@ fn render_type(t: &TypeTransport, w: &mut dyn ::sittir_core::render::RenderSink)
         TypeTransport::DynamicType(inner) => inner.render(w),
         TypeTransport::BoundedType(inner) => inner.render(w),
         TypeTransport::RemovedTraitBound(inner) => inner.render(w),
-        TypeTransport::PrimitiveType(inner) => inner.render(w),
+        TypeTransport::U8Keyword(inner) => inner.render(w),
+        TypeTransport::I8Keyword(inner) => inner.render(w),
+        TypeTransport::U16Keyword(inner) => inner.render(w),
+        TypeTransport::I16Keyword(inner) => inner.render(w),
+        TypeTransport::U32Keyword(inner) => inner.render(w),
+        TypeTransport::I32Keyword(inner) => inner.render(w),
+        TypeTransport::U64Keyword(inner) => inner.render(w),
+        TypeTransport::I64Keyword(inner) => inner.render(w),
+        TypeTransport::U128Keyword(inner) => inner.render(w),
+        TypeTransport::I128Keyword(inner) => inner.render(w),
+        TypeTransport::IsizeKeyword(inner) => inner.render(w),
+        TypeTransport::UsizeKeyword(inner) => inner.render(w),
+        TypeTransport::F32Keyword(inner) => inner.render(w),
+        TypeTransport::F64Keyword(inner) => inner.render(w),
+        TypeTransport::BoolKeyword(inner) => inner.render(w),
+        TypeTransport::StrKeyword(inner) => inner.render(w),
+        TypeTransport::CharKeyword(inner) => inner.render(w),
         TypeTransport::Verbatim(inner) => inner.render(w),
     }
 }
@@ -86413,7 +87697,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Super(inner) => inner.kind_in(kinds),
             Self::Crate(inner) => inner.kind_in(kinds),
             Self::Metavariable(inner) => inner.kind_in(kinds),
-            Self::PrimitiveType(inner) => inner.kind_in(kinds),
             Self::KwRefMarker(inner) => inner.kind_in(kinds),
             Self::KwUnsafeMarker(inner) => inner.kind_in(kinds),
             Self::KwStaticMarker(inner) => inner.kind_in(kinds),
@@ -86584,6 +87867,23 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::FnKeyword(inner) => inner.kind_in(kinds),
             Self::DashGt(inner) => inner.kind_in(kinds),
             Self::WhereKeyword(inner) => inner.kind_in(kinds),
+            Self::U8Keyword(inner) => inner.kind_in(kinds),
+            Self::I8Keyword(inner) => inner.kind_in(kinds),
+            Self::U16Keyword(inner) => inner.kind_in(kinds),
+            Self::I16Keyword(inner) => inner.kind_in(kinds),
+            Self::U32Keyword(inner) => inner.kind_in(kinds),
+            Self::I32Keyword(inner) => inner.kind_in(kinds),
+            Self::U64Keyword(inner) => inner.kind_in(kinds),
+            Self::I64Keyword(inner) => inner.kind_in(kinds),
+            Self::U128Keyword(inner) => inner.kind_in(kinds),
+            Self::I128Keyword(inner) => inner.kind_in(kinds),
+            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
+            Self::F32Keyword(inner) => inner.kind_in(kinds),
+            Self::F64Keyword(inner) => inner.kind_in(kinds),
+            Self::BoolKeyword(inner) => inner.kind_in(kinds),
+            Self::StrKeyword(inner) => inner.kind_in(kinds),
+            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::TraitKeyword(inner) => inner.kind_in(kinds),
             Self::ForKeyword(inner) => inner.kind_in(kinds),
             Self::Lt(inner) => inner.kind_in(kinds),
@@ -86636,23 +87936,6 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::SlashStar(inner) => inner.kind_in(kinds),
             Self::StarSlash(inner) => inner.kind_in(kinds),
             Self::DefaultKeyword(inner) => inner.kind_in(kinds),
-            Self::U8Keyword(inner) => inner.kind_in(kinds),
-            Self::I8Keyword(inner) => inner.kind_in(kinds),
-            Self::U16Keyword(inner) => inner.kind_in(kinds),
-            Self::I16Keyword(inner) => inner.kind_in(kinds),
-            Self::U32Keyword(inner) => inner.kind_in(kinds),
-            Self::I32Keyword(inner) => inner.kind_in(kinds),
-            Self::U64Keyword(inner) => inner.kind_in(kinds),
-            Self::I64Keyword(inner) => inner.kind_in(kinds),
-            Self::U128Keyword(inner) => inner.kind_in(kinds),
-            Self::I128Keyword(inner) => inner.kind_in(kinds),
-            Self::IsizeKeyword(inner) => inner.kind_in(kinds),
-            Self::UsizeKeyword(inner) => inner.kind_in(kinds),
-            Self::F32Keyword(inner) => inner.kind_in(kinds),
-            Self::F64Keyword(inner) => inner.kind_in(kinds),
-            Self::BoolKeyword(inner) => inner.kind_in(kinds),
-            Self::StrKeyword(inner) => inner.kind_in(kinds),
-            Self::CharKeyword(inner) => inner.kind_in(kinds),
             Self::MoveKeyword(inner) => inner.kind_in(kinds),
             Self::PlusEq(inner) => inner.kind_in(kinds),
             Self::DashEq(inner) => inner.kind_in(kinds),
@@ -86823,7 +88106,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Super(t) => t.render(w),
             AnyTransport::Crate(t) => t.render(w),
             AnyTransport::Metavariable(t) => t.render(w),
-            AnyTransport::PrimitiveType(t) => t.render(w),
             AnyTransport::KwRefMarker(t) => t.render(w),
             AnyTransport::KwUnsafeMarker(t) => t.render(w),
             AnyTransport::KwStaticMarker(t) => t.render(w),
@@ -86994,6 +88276,23 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::FnKeyword(t) => t.render(w),
             AnyTransport::DashGt(t) => t.render(w),
             AnyTransport::WhereKeyword(t) => t.render(w),
+            AnyTransport::U8Keyword(t) => t.render(w),
+            AnyTransport::I8Keyword(t) => t.render(w),
+            AnyTransport::U16Keyword(t) => t.render(w),
+            AnyTransport::I16Keyword(t) => t.render(w),
+            AnyTransport::U32Keyword(t) => t.render(w),
+            AnyTransport::I32Keyword(t) => t.render(w),
+            AnyTransport::U64Keyword(t) => t.render(w),
+            AnyTransport::I64Keyword(t) => t.render(w),
+            AnyTransport::U128Keyword(t) => t.render(w),
+            AnyTransport::I128Keyword(t) => t.render(w),
+            AnyTransport::IsizeKeyword(t) => t.render(w),
+            AnyTransport::UsizeKeyword(t) => t.render(w),
+            AnyTransport::F32Keyword(t) => t.render(w),
+            AnyTransport::F64Keyword(t) => t.render(w),
+            AnyTransport::BoolKeyword(t) => t.render(w),
+            AnyTransport::StrKeyword(t) => t.render(w),
+            AnyTransport::CharKeyword(t) => t.render(w),
             AnyTransport::TraitKeyword(t) => t.render(w),
             AnyTransport::ForKeyword(t) => t.render(w),
             AnyTransport::Lt(t) => t.render(w),
@@ -87046,23 +88345,6 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::SlashStar(t) => t.render(w),
             AnyTransport::StarSlash(t) => t.render(w),
             AnyTransport::DefaultKeyword(t) => t.render(w),
-            AnyTransport::U8Keyword(t) => t.render(w),
-            AnyTransport::I8Keyword(t) => t.render(w),
-            AnyTransport::U16Keyword(t) => t.render(w),
-            AnyTransport::I16Keyword(t) => t.render(w),
-            AnyTransport::U32Keyword(t) => t.render(w),
-            AnyTransport::I32Keyword(t) => t.render(w),
-            AnyTransport::U64Keyword(t) => t.render(w),
-            AnyTransport::I64Keyword(t) => t.render(w),
-            AnyTransport::U128Keyword(t) => t.render(w),
-            AnyTransport::I128Keyword(t) => t.render(w),
-            AnyTransport::IsizeKeyword(t) => t.render(w),
-            AnyTransport::UsizeKeyword(t) => t.render(w),
-            AnyTransport::F32Keyword(t) => t.render(w),
-            AnyTransport::F64Keyword(t) => t.render(w),
-            AnyTransport::BoolKeyword(t) => t.render(w),
-            AnyTransport::StrKeyword(t) => t.render(w),
-            AnyTransport::CharKeyword(t) => t.render(w),
             AnyTransport::MoveKeyword(t) => t.render(w),
             AnyTransport::PlusEq(t) => t.render(w),
             AnyTransport::DashEq(t) => t.render(w),

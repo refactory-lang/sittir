@@ -26,18 +26,14 @@ import type {
 	PrimaryExpression,
 	PrimaryType,
 	PropertyName,
-	ShorthandPropertyIdentifier,
-	ShorthandPropertyIdentifierPattern,
 	Statement,
-	StatementIdentifier,
 	TupleTypeMember,
 	Type,
 	UpdateExpression,
 	VariableDeclarator,
 	Whitespace,
 	_Identifier,
-	_LhsExpression,
-	_PropertyIdentifier
+	_LhsExpression
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -573,12 +569,6 @@ export interface IsGuards {
 	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number } | number): v is StatementIdentifier;
-	shorthandPropertyIdentifier(v: { readonly $type: string | number } | number): v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(
-		v: { readonly $type: string | number } | number
-	): v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number } | number): v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number } | number): v is ImportIdentifier;
 	type(v: { readonly $type: string | number } | number): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
@@ -907,14 +897,6 @@ export interface AssertGuards {
 	metaProperty(v: { readonly $type: string | number } | number): asserts v is MetaProperty;
 	pattern(v: { readonly $type: string | number } | number): asserts v is Pattern;
 	propertyName(v: { readonly $type: string | number } | number): asserts v is PropertyName;
-	statementIdentifier(v: { readonly $type: string | number } | number): asserts v is StatementIdentifier;
-	shorthandPropertyIdentifier(
-		v: { readonly $type: string | number } | number
-	): asserts v is ShorthandPropertyIdentifier;
-	shorthandPropertyIdentifierPattern(
-		v: { readonly $type: string | number } | number
-	): asserts v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number } | number): asserts v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number } | number): asserts v is ImportIdentifier;
 	type(v: { readonly $type: string | number } | number): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number } | number): asserts v is TupleTypeMember;
@@ -958,11 +940,7 @@ const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160
 const _supertype_identifier_ids = new Set<number>([104, 1]);
 const _supertype_metaProperty_ids = new Set<number>([427, 428]);
 const _supertype_pattern_ids = new Set<number>([279]);
-const _supertype_propertyName_ids = new Set<number>([98, 265, 284]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 459]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 459]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 459]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 459]);
+const _supertype_propertyName_ids = new Set<number>([1, 459, 98, 265, 284]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([370, 367, 332, 336, 322, 323]);
 const _supertype_tupleTypeMember_ids = new Set<number>([327, 328, 329, 330]);
@@ -1164,10 +1142,6 @@ export const is = {
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	propertyName: _sg(_supertype_propertyName_ids),
-	statementIdentifier: _sg(_supertype_statementIdentifier_ids),
-	shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
-	shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
-	propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
 	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
 	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
@@ -1415,13 +1389,6 @@ export const assert = {
 	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
-	statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),
-	shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
-	shorthandPropertyIdentifierPattern: _makeAssert(
-		'shorthandPropertyIdentifierPattern',
-		is.shorthandPropertyIdentifierPattern as _AnyGuard
-	),
-	propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
 	importIdentifier: _makeAssert('importIdentifier', is.importIdentifier as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
 	tupleTypeMember: _makeAssert('tupleTypeMember', is.tupleTypeMember as _AnyGuard),

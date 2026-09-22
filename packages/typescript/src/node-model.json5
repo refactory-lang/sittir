@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 438,
+  "nodeCount": 435,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -12,11 +12,7 @@
     "_import_identifier",
     "_lhs_expression",
     "_module_export_name",
-    "_property_identifier",
     "_property_name",
-    "_shorthand_property_identifier",
-    "_shorthand_property_identifier_pattern",
-    "_statement_identifier",
     "_tuple_type_member",
     "_whitespace",
     "comment",
@@ -32,7 +28,6 @@
     "pattern",
     "primary_expression",
     "primary_type",
-    "property_identifier",
     "statement",
     "type",
     "update_expression",
@@ -167,12 +162,18 @@
     "continue_statement.label": {
       "statement_identifier": "identifier"
     },
+    "labeled_statement.label": {
+      "statement_identifier": "_reserved_identifier"
+    },
     "parenthesized_expression.content": {
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
     "assignment_pattern.left": {
       "lhs_expression": "_lhs_expression"
+    },
+    "object_assignment_pattern.left": {
+      "shorthand_property_identifier_pattern": "identifier"
     },
     "array_pattern.elements": {
       "lhs_expression": "_lhs_expression"
@@ -195,6 +196,9 @@
     "assignment_expression.left": {
       "lhs_expression": "_lhs_expression"
     },
+    "template_string.elements": {
+      "string_fragment": "_template_chars"
+    },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression",
@@ -209,8 +213,26 @@
     "decorator_call_expression.function": {
       "member_expression": "decorator_member_expression"
     },
+    "method_definition.name": {
+      "property_identifier": "_reserved_identifier"
+    },
+    "pair.key": {
+      "property_identifier": "_reserved_identifier"
+    },
+    "pair_pattern.key": {
+      "property_identifier": "_reserved_identifier"
+    },
     "pair_pattern.value": {
       "lhs_expression": "_lhs_expression"
+    },
+    "public_field_definition.name": {
+      "property_identifier": "_reserved_identifier"
+    },
+    "method_signature.name": {
+      "property_identifier": "_reserved_identifier"
+    },
+    "abstract_method_signature.name": {
+      "property_identifier": "_reserved_identifier"
     },
     "decorator_parenthesized_expression.content": {
       "member_expression": "decorator_member_expression",
@@ -242,6 +264,9 @@
     },
     "extends_type_clause.type": {
       "type_identifier": "identifier"
+    },
+    "enum_assignment.name": {
+      "property_identifier": "_reserved_identifier"
     },
     "type_alias_declaration.name": {
       "type_identifier": "identifier"
@@ -297,6 +322,9 @@
     "template_type.content": {
       "type_identifier": "identifier",
       "this_type": "this"
+    },
+    "template_literal_type.elements": {
+      "string_fragment": "_template_chars"
     },
     "infer_type.name": {
       "type_identifier": "identifier"
@@ -389,6 +417,9 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
+    "property_signature.name": {
+      "property_identifier": "_reserved_identifier"
+    },
     "type_parameter.name": {
       "type_identifier": "identifier"
     },
@@ -428,6 +459,9 @@
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
     },
+    "enum_body_elements.content": {
+      "property_identifier": "_reserved_identifier"
+    },
     "types.type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
@@ -437,6 +471,12 @@
       "optional_parameter": "optional_tuple_parameter",
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "object_arm.content": {
+      "shorthand_property_identifier": "_reserved_identifier"
+    },
+    "object_pattern_arm.content": {
+      "shorthand_property_identifier_pattern": "_reserved_identifier"
     },
     "ambient_declaration_module.name": {
       "property_identifier": "identifier"
@@ -448,6 +488,9 @@
     "index_signature_colon.index_type": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
       "call_expression": "_type_query_call_expression_in_type_annotation"
+    },
+    "string_single.elements": {
+      "string_fragment": "unescaped_single_string_fragment"
     },
     "for_header_lhs.left": {
       "lhs_expression": "_lhs_expression"
@@ -3552,8 +3595,7 @@
         "wireKeys": [
           "_name",
           "_enum_assignment",
-          "_reserved_identifier",
-          "_identifier",
+          "_property_identifier",
           "_private_property_identifier",
           "_string",
           "_number_hex",
@@ -3622,6 +3664,36 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "object_arm": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_pair",
+          "_spread_element",
+          "_method_definition",
+          "_shorthand_property_identifier"
+        ]
+      }
+    },
+    "object_pattern_arm": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false,
+        "wireKeys": [
+          "_pair_pattern",
+          "_rest_pattern",
+          "_object_assignment_pattern",
+          "_shorthand_property_identifier_pattern"
+        ]
       }
     },
     "ambient_declaration_global": {
@@ -5073,18 +5145,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_property_identifier",
-      "modelType": "supertype",
-      "typeName": "_PropertyIdentifier",
-      "irKey": "propertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
       "kind": "_property_name",
       "modelType": "supertype",
       "typeName": "PropertyName",
@@ -5092,8 +5152,9 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_property_identifier",
+        "_reserved_identifier",
         "computed_property_name",
+        "identifier",
         "number",
         "private_property_identifier",
         "string"
@@ -5133,30 +5194,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_shorthand_property_identifier",
-      "modelType": "supertype",
-      "typeName": "ShorthandPropertyIdentifier",
-      "irKey": "shorthandPropertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
-      "kind": "_shorthand_property_identifier_pattern",
-      "modelType": "supertype",
-      "typeName": "ShorthandPropertyIdentifierPattern",
-      "irKey": "shorthandPropertyIdentifierPattern",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
       "kind": "_space",
       "modelType": "punctuation",
       "typeName": "Space",
@@ -5165,18 +5202,6 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " "
-    },
-    {
-      "kind": "_statement_identifier",
-      "modelType": "supertype",
-      "typeName": "StatementIdentifier",
-      "irKey": "statementIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
     },
     {
       "kind": "_template_chars",
@@ -5983,7 +6008,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -5993,7 +6019,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -10723,7 +10755,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -10733,7 +10766,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -16314,13 +16353,20 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_statement_identifier"
+            "identifier",
+            "_reserved_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_statement_identifier",
+              "name": "identifier",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "statement_identifier"
             }
           ]
@@ -17068,7 +17114,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -17078,7 +17125,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -17381,7 +17434,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -17391,7 +17445,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -18929,37 +18989,16 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "pair",
-            "spread_element",
-            "method_definition",
-            "_shorthand_property_identifier"
+            "object_arm"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "pair",
-              "parseKind": "pair"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "spread_element",
-              "parseKind": "spread_element"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "method_definition",
-              "parseKind": "method_definition"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_shorthand_property_identifier",
-              "parseKind": "shorthand_property_identifier"
+              "name": "object_arm",
+              "parseKind": "object_arm"
             }
           ]
         }
@@ -18967,6 +19006,72 @@
       "factoryShape": "spread",
       "factoryFields": [
         "properties"
+      ]
+    },
+    {
+      "kind": "object_arm",
+      "modelType": "polymorph",
+      "typeName": "ObjectArm",
+      "factoryName": "objectArm",
+      "irKey": "objectArm",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "pair",
+            "spread_element",
+            "method_definition",
+            "identifier",
+            "_reserved_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pair",
+              "parseKind": "pair"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "spread_element",
+              "parseKind": "spread_element"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "method_definition",
+              "parseKind": "method_definition"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "parseKind": "shorthand_property_identifier"
+            }
+          ]
+        }
+      ],
+      "name": "object_arm",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
       ]
     },
     {
@@ -18986,7 +19091,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_shorthand_property_identifier_pattern",
+            "_reserved_identifier",
+            "identifier",
             "object_pattern",
             "array_pattern"
           ],
@@ -18994,7 +19100,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_shorthand_property_identifier_pattern",
+              "name": "_reserved_identifier",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
               "parseKind": "shorthand_property_identifier_pattern"
             },
             {
@@ -19064,37 +19176,16 @@
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "pair_pattern",
-            "rest_pattern",
-            "object_assignment_pattern",
-            "_shorthand_property_identifier_pattern"
+            "object_pattern_arm"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "pair_pattern",
-              "parseKind": "pair_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "rest_pattern",
-              "parseKind": "rest_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "object_assignment_pattern",
-              "parseKind": "object_assignment_pattern"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_shorthand_property_identifier_pattern",
-              "parseKind": "shorthand_property_identifier_pattern"
+              "name": "object_pattern_arm",
+              "parseKind": "object_pattern_arm"
             }
           ]
         }
@@ -19102,6 +19193,72 @@
       "factoryShape": "spread",
       "factoryFields": [
         "properties"
+      ]
+    },
+    {
+      "kind": "object_pattern_arm",
+      "modelType": "polymorph",
+      "typeName": "ObjectPatternArm",
+      "factoryName": "objectPatternArm",
+      "irKey": "objectPatternArm",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "pair_pattern",
+            "rest_pattern",
+            "object_assignment_pattern",
+            "identifier",
+            "_reserved_identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "pair_pattern",
+              "parseKind": "pair_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "rest_pattern",
+              "parseKind": "rest_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_assignment_pattern",
+              "parseKind": "object_assignment_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "parseKind": "shorthand_property_identifier_pattern"
+            }
+          ]
+        }
+      ],
+      "name": "object_pattern_arm",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
       ]
     },
     {
@@ -19882,7 +20039,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -19892,7 +20050,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -19965,7 +20129,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -19975,7 +20140,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -20636,18 +20807,6 @@
       ]
     },
     {
-      "kind": "property_identifier",
-      "modelType": "supertype",
-      "typeName": "PropertyIdentifier",
-      "irKey": "propertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
       "kind": "property_signature",
       "modelType": "branch",
       "typeName": "PropertySignature",
@@ -20742,7 +20901,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -20752,7 +20912,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -21017,7 +21183,8 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "identifier",
+            "_reserved_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -21027,7 +21194,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
               "parseKind": "property_identifier"
             },
             {
@@ -22493,7 +22666,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
-              "parseKind": "unescaped_double_string_fragment"
+              "parseKind": "string_fragment"
             },
             {
               "kind": "node-ref",
@@ -22549,7 +22722,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
-              "parseKind": "unescaped_single_string_fragment"
+              "parseKind": "string_fragment"
             },
             {
               "kind": "node-ref",

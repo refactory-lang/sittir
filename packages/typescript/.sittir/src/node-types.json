@@ -6554,7 +6554,7 @@
             "named": true
           },
           {
-            "type": "unescaped_double_string_fragment",
+            "type": "string_fragment",
             "named": true
           }
         ]
@@ -6574,7 +6574,7 @@
             "named": true
           },
           {
-            "type": "unescaped_single_string_fragment",
+            "type": "string_fragment",
             "named": true
           }
         ]
@@ -8186,14 +8186,6 @@
   },
   {
     "type": "undefined",
-    "named": true
-  },
-  {
-    "type": "unescaped_double_string_fragment",
-    "named": true
-  },
-  {
-    "type": "unescaped_single_string_fragment",
     "named": true
   },
   {

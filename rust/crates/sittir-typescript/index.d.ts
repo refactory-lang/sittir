@@ -1346,7 +1346,7 @@ export interface IntersectionTypeTransport {
 
 export interface LabeledStatementTransport {
   '$_trivia'?: TransportTrivia
-  _label: SlotValue<StatementIdentifierTransport>
+  _label: SlotValue<LabeledStatementLabelTransportSlot>
   _body: SlotValue<Box<StatementTransport>>
   _colon_before?: number
   _colon_after?: number
@@ -1602,6 +1602,11 @@ export interface NumberTransport {
   _argument: SlotValue<NumberTransport>
 }
 
+export interface ObjectArmTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<ObjectArmContentTransportSlot>
+}
+
 export interface ObjectAssignmentPatternTransport {
   '$_trivia'?: TransportTrivia
   _left: SlotValue<ObjectAssignmentPatternLeftTransportSlot>
@@ -1612,9 +1617,14 @@ export interface ObjectAssignmentPatternTransport {
   _object_assignment_pattern_after?: number
 }
 
+export interface ObjectPatternArmTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<ObjectPatternArmContentTransportSlot>
+}
+
 export interface ObjectPatternTransport {
   '$_trivia'?: TransportTrivia
-  _properties?: Array<SlotValue<ObjectPatternPropertiesTransportSlot> | undefined | null>
+  _properties?: Array<SlotValue<ObjectPatternArmTransport> | undefined | null>
   _properties_end?: number
   _properties_start?: number
   _properties_separator_space_before?: number
@@ -1627,7 +1637,7 @@ export interface ObjectPatternTransport {
 
 export interface ObjectTransport {
   '$_trivia'?: TransportTrivia
-  _properties?: Array<SlotValue<ObjectPropertiesTransportSlot> | undefined | null>
+  _properties?: Array<SlotValue<ObjectArmTransport> | undefined | null>
   _properties_end?: number
   _properties_start?: number
   _properties_separator_space_before?: number

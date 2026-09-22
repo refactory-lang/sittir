@@ -168,7 +168,6 @@ const LEAF_KINDS = [
 	'_kw_unsafe',
 	'_kw_unsafe_marker',
 	'_line_doc_content',
-	'_primitive_type',
 	'_raw_string_literal_end',
 	'_raw_string_literal_start',
 	'_reserved_identifier',
@@ -2651,28 +2650,6 @@ export const _COMPOUND_ASSIGNMENT_EXPR_OPERATORS = [
 	'>>='
 ] as const;
 export type CompoundAssignmentExprOperatorValue = (typeof _COMPOUND_ASSIGNMENT_EXPR_OPERATORS)[number];
-
-/** Valid values for `_primitive_type` nodes. */
-export const _PRIMITIVE_TYPES = [
-	'u8',
-	'i8',
-	'u16',
-	'i16',
-	'u32',
-	'i32',
-	'u64',
-	'i64',
-	'u128',
-	'i128',
-	'isize',
-	'usize',
-	'f32',
-	'f64',
-	'bool',
-	'str',
-	'char'
-] as const;
-export type PrimitiveTypeValue = (typeof _PRIMITIVE_TYPES)[number];
 
 /** Valid values for `_reserved_identifier` nodes. */
 export const _RESERVED_IDENTIFIERS = ['default', 'union', 'gen'] as const;

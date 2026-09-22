@@ -42,11 +42,12 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 5 label-routed arm(s) [field(name):_property_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
+    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 6 label-routed arm(s) [field(name):identifier, field(name):_reserved_identifier, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
       "degenerateFields": [
+        "name",
         "name",
         "name",
         "name",
@@ -171,22 +172,6 @@
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_property_identifier",
-    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "PropertyIdentifier",
-      "newType": "_PropertyIdentifier",
-      "visibleKinds": [
-        "property_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -200,14 +185,16 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId",
+    "message": "6 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
-        "_unary_expression_operator"
+        "_unary_expression_operator",
+        "object_arm",
+        "object_pattern_arm"
       ]
     },
     "severity": "warning",
@@ -254,7 +241,7 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
@@ -262,7 +249,9 @@
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
-        "_unary_expression_operator"
+        "_unary_expression_operator",
+        "object_arm",
+        "object_pattern_arm"
       ]
     },
     "scope": "grammar",

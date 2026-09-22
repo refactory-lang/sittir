@@ -1437,6 +1437,261 @@ describe('where_predicate sub-factories', () => {
 		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('u8 builds the parent', () => {
+		const node = ir.wherePredicate.u8({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.U8Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.wherePredicate.i8({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.I8Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.wherePredicate.u16({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.U16Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.wherePredicate.i16({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.I16Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.wherePredicate.u32({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.U32Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.wherePredicate.i32({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.I32Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.wherePredicate.u64({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.U64Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.wherePredicate.i64({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.I64Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.wherePredicate.u128({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.U128Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.wherePredicate.i128({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.I128Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.wherePredicate.isize({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.IsizeKeyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.wherePredicate.usize({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.UsizeKeyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.wherePredicate.f32({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.F32Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.wherePredicate.f64({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.F64Keyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('bool builds the parent', () => {
+		const node = ir.wherePredicate.bool({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.BoolKeyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('str builds the parent', () => {
+		const node = ir.wherePredicate.str({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.StrKeyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('char builds the parent', () => {
+		const node = ir.wherePredicate.char({
+			bounds: {
+				$type: TSKindId.TraitBounds,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_bounds: [{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.WherePredicate);
+		const seated = (node as any).left();
+		expect(seated?.$text ?? seated).toBe(TSKindId.CharKeyword);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('trait_item', () => {

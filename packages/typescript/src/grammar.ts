@@ -2287,7 +2287,7 @@ export type TypescriptGrammar = {
 			elements: {
 				multiple: true;
 				required: false;
-				types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_double_string_fragment'; named: true }];
+				types: [{ type: 'escape_sequence'; named: true }, { type: 'string_fragment'; named: true }];
 			};
 		};
 	};
@@ -2298,7 +2298,7 @@ export type TypescriptGrammar = {
 			elements: {
 				multiple: true;
 				required: false;
-				types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_single_string_fragment'; named: true }];
+				types: [{ type: 'escape_sequence'; named: true }, { type: 'string_fragment'; named: true }];
 			};
 		};
 	};
@@ -2836,8 +2836,6 @@ export type TypescriptGrammar = {
 	readonly type_identifier: { type: 'type_identifier'; named: true };
 	readonly _anonymous_typeof: { type: 'typeof'; named: false };
 	readonly undefined: { type: 'undefined'; named: true };
-	readonly unescaped_double_string_fragment: { type: 'unescaped_double_string_fragment'; named: true };
-	readonly unescaped_single_string_fragment: { type: 'unescaped_single_string_fragment'; named: true };
 	readonly '_anonymous_unique symbol': { type: 'unique symbol'; named: false };
 	readonly _anonymous_unknown: { type: 'unknown'; named: false };
 	readonly _anonymous_using: { type: 'using'; named: false };

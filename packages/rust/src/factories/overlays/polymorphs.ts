@@ -2507,6 +2507,74 @@ const wherePredicate$higherRankedTraitBound =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
 	};
+const wherePredicate$u8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$i8 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$u16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$i16 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$u32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$i32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$u64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$i64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$u128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$i128 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$isize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$usize =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$f32 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$f64 =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$bool =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$str =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
+const wherePredicate$char =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: value } as never, options as never);
 export const wherePredicate: typeof B.wherePredicate & {
 	lifetime: {
 		strict: (
@@ -2737,6 +2805,176 @@ export const wherePredicate: typeof B.wherePredicate & {
 			options?: OptionsArg<typeof C.coerceToWherePredicate>
 		) => ReturnType<typeof C.coerceToWherePredicate>;
 	};
+	u8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	i8: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	u16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	i16: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	u32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	i32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	u64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	i64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	u128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	i128: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	isize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	usize: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	f32: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	f64: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	bool: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	str: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
+	char: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildWherePredicate>
+		) => ReturnType<typeof F.buildWherePredicate>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToWherePredicate>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToWherePredicate>
+		) => ReturnType<typeof C.coerceToWherePredicate>;
+	};
 } = {
 	...B.wherePredicate,
 	lifetime: {
@@ -2822,6 +3060,74 @@ export const wherePredicate: typeof B.wherePredicate & {
 	higherRankedTraitBound: {
 		strict: wherePredicate$higherRankedTraitBound(F.buildWherePredicate, F.buildHigherRankedTraitBound),
 		coerce: wherePredicate$higherRankedTraitBound(C.coerceToWherePredicate, C.coerceToHigherRankedTraitBound)
+	},
+	u8: {
+		strict: wherePredicate$u8(F.buildWherePredicate, TSKindId.U8Keyword),
+		coerce: wherePredicate$u8(C.coerceToWherePredicate, TSKindId.U8Keyword)
+	},
+	i8: {
+		strict: wherePredicate$i8(F.buildWherePredicate, TSKindId.I8Keyword),
+		coerce: wherePredicate$i8(C.coerceToWherePredicate, TSKindId.I8Keyword)
+	},
+	u16: {
+		strict: wherePredicate$u16(F.buildWherePredicate, TSKindId.U16Keyword),
+		coerce: wherePredicate$u16(C.coerceToWherePredicate, TSKindId.U16Keyword)
+	},
+	i16: {
+		strict: wherePredicate$i16(F.buildWherePredicate, TSKindId.I16Keyword),
+		coerce: wherePredicate$i16(C.coerceToWherePredicate, TSKindId.I16Keyword)
+	},
+	u32: {
+		strict: wherePredicate$u32(F.buildWherePredicate, TSKindId.U32Keyword),
+		coerce: wherePredicate$u32(C.coerceToWherePredicate, TSKindId.U32Keyword)
+	},
+	i32: {
+		strict: wherePredicate$i32(F.buildWherePredicate, TSKindId.I32Keyword),
+		coerce: wherePredicate$i32(C.coerceToWherePredicate, TSKindId.I32Keyword)
+	},
+	u64: {
+		strict: wherePredicate$u64(F.buildWherePredicate, TSKindId.U64Keyword),
+		coerce: wherePredicate$u64(C.coerceToWherePredicate, TSKindId.U64Keyword)
+	},
+	i64: {
+		strict: wherePredicate$i64(F.buildWherePredicate, TSKindId.I64Keyword),
+		coerce: wherePredicate$i64(C.coerceToWherePredicate, TSKindId.I64Keyword)
+	},
+	u128: {
+		strict: wherePredicate$u128(F.buildWherePredicate, TSKindId.U128Keyword),
+		coerce: wherePredicate$u128(C.coerceToWherePredicate, TSKindId.U128Keyword)
+	},
+	i128: {
+		strict: wherePredicate$i128(F.buildWherePredicate, TSKindId.I128Keyword),
+		coerce: wherePredicate$i128(C.coerceToWherePredicate, TSKindId.I128Keyword)
+	},
+	isize: {
+		strict: wherePredicate$isize(F.buildWherePredicate, TSKindId.IsizeKeyword),
+		coerce: wherePredicate$isize(C.coerceToWherePredicate, TSKindId.IsizeKeyword)
+	},
+	usize: {
+		strict: wherePredicate$usize(F.buildWherePredicate, TSKindId.UsizeKeyword),
+		coerce: wherePredicate$usize(C.coerceToWherePredicate, TSKindId.UsizeKeyword)
+	},
+	f32: {
+		strict: wherePredicate$f32(F.buildWherePredicate, TSKindId.F32Keyword),
+		coerce: wherePredicate$f32(C.coerceToWherePredicate, TSKindId.F32Keyword)
+	},
+	f64: {
+		strict: wherePredicate$f64(F.buildWherePredicate, TSKindId.F64Keyword),
+		coerce: wherePredicate$f64(C.coerceToWherePredicate, TSKindId.F64Keyword)
+	},
+	bool: {
+		strict: wherePredicate$bool(F.buildWherePredicate, TSKindId.BoolKeyword),
+		coerce: wherePredicate$bool(C.coerceToWherePredicate, TSKindId.BoolKeyword)
+	},
+	str: {
+		strict: wherePredicate$str(F.buildWherePredicate, TSKindId.StrKeyword),
+		coerce: wherePredicate$str(C.coerceToWherePredicate, TSKindId.StrKeyword)
+	},
+	char: {
+		strict: wherePredicate$char(F.buildWherePredicate, TSKindId.CharKeyword),
+		coerce: wherePredicate$char(C.coerceToWherePredicate, TSKindId.CharKeyword)
 	}
 };
 
