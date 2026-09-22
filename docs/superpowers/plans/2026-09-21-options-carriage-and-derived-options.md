@@ -522,53 +522,48 @@ git commit -m "feat(render): options resolve through a static address trie; per-
 
 ---
 
-### Task 6: `Options` is derived from templates
+### Task 6: `Options` is derived from `__optionsHint__` on the node interfaces
 
 **Files:**
 - Create: `packages/types/src/options.ts`
 - Modify: `packages/types/src/index.ts` (export)
 - Modify: `packages/codegen/src/emitters/options.ts` (`renderOptionsModule`, `addressLines`)
-- Modify: `packages/codegen/src/emitters/types.ts` (emit `<Kind>Template` beside each interface)
+- Modify: `packages/codegen/src/emitters/types.ts` (emit `__optionsHint__` on each interface, beside `__inputHints__`)
 - Test: `packages/codegen/src/emitters/__tests__/emitter-options.test.ts`, a type test `packages/typescript/tests/options.test-d.ts`
 
 **Interfaces:**
-- Consumes: the address tables' `segments` per leaf (to know token names, slots, element kinds and sides); `TREE_SITTER_KIND_BY_KIND_ID` in `consts.ts`.
+- Consumes: the address tables' `segments` per leaf (token names, slots, element kinds, sides, separator arms), the same `deriveAddressTables` output `render-options-rs.ts` builds the trie from; the arm aliases `WhitespaceArm`/`SpacingArm` already printed by `options.ts`.
 - Produces, in `packages/types/src/options.ts`:
   ```ts
-  declare const tok: unique symbol; declare const rep: unique symbol; declare const sep: unique symbol;
-  export type Tok<N extends string> = { readonly [tok]: N };
-  export type Sep<C extends string> = { readonly [sep]: C };
-  export type Repeat<N extends string, S = never> = { readonly [rep]: N; readonly separator: S };
-  export type Sides<W> = { readonly before?: W; readonly after?: W };
-  type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
-  type ElementOf<V> = V extends readonly (infer E)[] ? E : V;
-  type KindNameOf<E, Names> = E extends { readonly $type: infer Id } ? Id extends keyof Names ? Names[Id] : never : never;
-  type TokSites<M, W> = M extends Tok<infer N> ? { readonly [K in N]?: Sides<W> } : {};
-  type ElementSites<E, Names, W> = { readonly [K in KindNameOf<E, Names> & string]?: { readonly after?: W } };
-  type SepValue<S> = [S] extends [never] ? {} : S extends Sep<infer C> ? { readonly value?: C } : {};
-  type RepeatSites<Node, M, Names, W, Sp> = M extends Repeat<infer N, infer S>
-  	? { readonly [K in N]?: { readonly separator?: Sides<Sp> & SepValue<S> } & ElementSites<ElementOf<N extends keyof Node ? Node[N] : never>, Names, W> }
-  	: {};
-  export type Sites<Node, Tpl extends readonly unknown[], Names, W, Sp> =
-  	Sides<W> & UnionToIntersection<TokSites<Tpl[number], W> | RepeatSites<Node, Tpl[number], Names, W, Sp>>;
-  export type DerivedOptions<NodeMap, TemplateMap, Names, W, Sp> =
-  	{ readonly [K in keyof TemplateMap]?: Sites<NodeMap[K & keyof NodeMap], TemplateMap[K] & readonly unknown[], Names, W, Sp> } & { readonly indent?: string };
+  type DeepPartial<T> = T extends object ? { readonly [K in keyof T]?: DeepPartial<T[K]> } : T;
+  export type OptionsHintOf<N> = N extends { readonly __optionsHint__?: infer H } ? H : never;
+  export type DerivedOptions<NodeMap> = {
+  	readonly [K in keyof NodeMap]?: DeepPartial<OptionsHintOf<NodeMap[K]>>;
+  } & { readonly indent?: string };
+  /** The slot-bearing sites of a kind's hint: the projection a factory's trailing preferences argument is typed from. */
+  export type PreferenceBagOf<N, Keys extends keyof OptionsHintOf<N>> = DeepPartial<Pick<OptionsHintOf<N>, Keys>>;
   ```
   and in each grammar's generated `options.ts`:
   ```ts
-  export type Options = DerivedOptions<T.NodeMap, TemplateMap, typeof TREE_SITTER_KIND_BY_KIND_ID, WhitespaceArm, SpacingArm>;
+  export type Options = DerivedOptions<T.NodeMap> & { readonly [L in VirtualKind]?: Sides<WhitespaceArm> };
   ```
-  with `TemplateMap` emitted there, one line per kind, and `T.NodeMap` the kind-name to interface map `types.ts` gains if it does not already export one.
+  with `T.NodeMap` the kind-name to interface map `types.ts` gains if it does not already export one, and the virtual kinds (labels) listed from `declared.bindings`.
+- On each generated interface, one member:
+  ```ts
+  readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }; readonly arguments: { readonly separator?: { readonly before?: SpacingArm; readonly after?: SpacingArm; readonly value?: TSKindId.Comma }; readonly spread_element: { readonly after?: WhitespaceArm } } };
+  ```
+  nested exactly as the address trie is nested, so a seated element site is `arguments.arguments.as_expression.after`. A kind with no sites emits no member.
 
 - [ ] **Step 1: Write the failing tests**
 
 `emitter-options.test.ts`:
 
 ```ts
-it('emits one template per kind and derives Options; no address tables', () => {
+it('emits an options hint per kind and derives Options from it; no address tables', () => {
+	const types = emitTypes(typesConfig);
+	expect(types).toContain("readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }");
 	const text = emitOptions(config);
-	expect(text).toContain("readonly arguments: readonly [Tok<'lparen'>, Repeat<'_arguments', Sep<'comma'>>, Tok<'rparen'>];");
-	expect(text).toContain('export type Options = DerivedOptions<');
+	expect(text).toContain('export type Options = DerivedOptions<T.NodeMap>');
 	expect(text).not.toContain('AddressBranch');
 	expect(text).not.toContain('AddressLeaf');
 });
@@ -580,7 +575,7 @@ it('emits one template per kind and derives Options; no address tables', () => {
 import { expectTypeOf } from 'vitest';
 import type { Options } from '../src/options.ts';
 import { TSKindId } from '../src/types.ts';
-const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, _arguments: { separator: { after: TSKindId.Tight }, spread_element: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
+const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, arguments: { separator: { after: TSKindId.Tight }, spread_element: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
 expectTypeOf(ok).toMatchTypeOf<Options>();
 // @ts-expect-error a token the kind does not have
 const bad: Options = { arguments: { lbrace: { after: TSKindId.Space } } };
@@ -592,16 +587,14 @@ Run: the emitter test file; `pnpm exec vitest --typecheck run packages/typescrip
 
 - [ ] **Step 3: Implement**
 
-`packages/types/src/options.ts` as in Interfaces. In `emitters/options.ts`, `renderOptionsModule` prints the two arm aliases, then `TemplateMap`: for each kind in `addresses` derive its members from the leaf segments beneath it: a literal segment at depth 1 is a `Tok<name>` (name = `nestedKey`), a field segment whose interface slot is an array is `Repeat<'_<slot>', Sep<'<separatorKind>'>>` (separator kind from the site with `role === 'separator'` under that slot, else no `Sep`), in rule order (order the members by the position of their first site in `plan.spacingSites`, which is rule order). Labels (virtual kinds, from `declared.bindings`) are emitted as their own top-level entries of the `Options` intersection: `& { readonly body?: Sides<WhitespaceArm> }` per virtual kind, with the sides its bindings reach. `AddressRoot`/`AddressBranch`/`AddressLeaf`/`AddressNodeN` are no longer printed; `deriveAddressTables` stays, since `render-options-rs.ts` builds the trie from it.
-
-`emitters/types.ts` exports `NodeMap` (kind name → interface) if `types.ts` has no such map; check for the existing kind-to-interface index (`ConfigFor`/`TreeFor` use one) and reuse its name instead of adding a second.
+`packages/types/src/options.ts` as in Interfaces. In `emitters/types.ts`, where `__inputHints__` is written for a kind, also write `__optionsHint__` from that kind's subtree of the address tables: a literal segment becomes a token key with its sides; a field segment whose slot repeats becomes the slot key holding `separator` (sides plus `value` when the separator has arms) and one key per element kind with its seated sides; sides are typed by the arm alias the site admits. In `emitters/options.ts`, `renderOptionsModule` prints the two arm aliases, `T.NodeMap` if needed, the virtual-kind intersection for labels, and `export type Options = …`; `AddressRoot`/`AddressBranch`/`AddressLeaf`/`AddressNodeN` are no longer printed; `deriveAddressTables` stays, since `render-options-rs.ts` builds the trie from it, and the hint emitter reads the same output, so the two surfaces cannot drift.
 
 - [ ] **Step 4: Tests, regenerate, measure, gates, commit**
 
-Run the emitter suite, regenerate all three, `pnpm run type-check`, and `pnpm exec tsc -p packages/typescript/tsconfig.json --extendedDiagnostics | tail -12`; instantiations within 1% of the number recorded in the spec (3,058,924 for the spike). The generated `options.ts` is under 600 lines per grammar.
+Run the emitter suite, regenerate all three, `pnpm run type-check`, and `pnpm exec tsc -p packages/typescript/tsconfig.json --extendedDiagnostics | tail -12`; instantiations at or below the template spike's 3,058,924 (recorded in the spec). The generated `options.ts` is under 300 lines per grammar.
 
 ```bash
-git commit -m "feat(options): Options is derived from the node interfaces and a per-kind template type" -- packages/types/src packages/codegen/src packages/typescript packages/rust packages/python
+git commit -m "feat(options): Options is derived from an options hint on each node interface" -- packages/types/src packages/codegen/src packages/typescript packages/rust packages/python
 ```
 
 ---
