@@ -743,9 +743,15 @@ const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
 function unhideAliasedTargets(rules: Record<string, Rule<'link'>>): void {
 	for (const rule of Object.values(rules)) {
 		aliasedRefWalker.find(rule, (r) => {
-			if (r.type !== ALIAS || !r.named || r.content.type !== SYMBOL) return false;
-			const target = rules[r.content.name];
-			if (target !== undefined && target.hidden === true) rules[r.content.name] = { ...target, hidden: false };
+			const aliasedTo =
+				r.type === ALIAS && r.named && r.content.type === SYMBOL
+					? { storageName: r.content.name, displayName: r.value }
+					: r.type === SYMBOL && r.aliasedTo !== undefined
+						? { storageName: r.name, displayName: r.aliasedTo }
+						: undefined;
+			if (aliasedTo === undefined || aliasedTo.displayName.startsWith('_')) return false;
+			const target = rules[aliasedTo.storageName];
+			if (target !== undefined && target.hidden === true) rules[aliasedTo.storageName] = { ...target, hidden: false };
 			return false;
 		});
 	}
