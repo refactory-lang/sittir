@@ -6085,7 +6085,8 @@ export function buildNumberHex(value: string | number, options?: T.NumberHex.Spe
 }
 
 export function buildNumberFloatPoint(
-	config: WidenNumeric<T.NumberFloatPoint.Config, 'integer' | 'fraction' | 'exponent'>
+	config: WidenNumeric<T.NumberFloatPoint.Config, 'integer' | 'fraction' | 'exponent'>,
+	options?: T.NumberFloatPoint.Spelling
 ): T.NumberFloatPoint.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatPoint_integer.test(_integer))
@@ -6093,7 +6094,7 @@ export function buildNumberFloatPoint(
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
 		throw new Error(`number_float_point.fraction: text does not match pattern: ${_fraction}`);
-	const _marker = config.marker;
+	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && !_slotRe_buildNumberFloatPoint_marker.test(_marker))
 		throw new Error(`number_float_point.marker: text does not match pattern: ${_marker}`);
 	const _sign = config.sign;
@@ -6114,11 +6115,11 @@ export function buildNumberFloatPoint(
 				_sign,
 				_exponent,
 				$with: {
-					integer: (value: string | number) => buildNumberFloatPoint({ ...config, integer: value }),
-					fraction: (value?: string | number) => buildNumberFloatPoint({ ...config, fraction: value }),
-					marker: (value?: 'e' | 'E') => buildNumberFloatPoint({ ...config, marker: value }),
-					sign: (value?: '-' | '+') => buildNumberFloatPoint({ ...config, sign: value }),
-					exponent: (value?: string | number) => buildNumberFloatPoint({ ...config, exponent: value })
+					integer: (value: string | number) => buildNumberFloatPoint({ ...config, integer: value }, options),
+					fraction: (value?: string | number) => buildNumberFloatPoint({ ...config, fraction: value }, options),
+					sign: (value?: '-' | '+') => buildNumberFloatPoint({ ...config, sign: value }, options),
+					exponent: (value?: string | number) => buildNumberFloatPoint({ ...config, exponent: value }, options),
+					marker: (spelling: 'e' | 'E') => buildNumberFloatPoint(config, { ...options, marker: spelling })
 				}
 			},
 			{
@@ -6134,12 +6135,13 @@ export function buildNumberFloatPoint(
 }
 
 export function buildNumberFloatLeadingPoint(
-	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, 'fraction' | 'exponent'>
+	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, 'fraction' | 'exponent'>,
+	options?: T.NumberFloatLeadingPoint.Spelling
 ): T.NumberFloatLeadingPoint.Built {
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${_fraction}`);
-	const _marker = config.marker;
+	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
 		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${_marker}`);
 	const _sign = config.sign;
@@ -6159,10 +6161,10 @@ export function buildNumberFloatLeadingPoint(
 				_sign,
 				_exponent,
 				$with: {
-					fraction: (value: string | number) => buildNumberFloatLeadingPoint({ ...config, fraction: value }),
-					marker: (value?: 'e' | 'E') => buildNumberFloatLeadingPoint({ ...config, marker: value }),
-					sign: (value?: '-' | '+') => buildNumberFloatLeadingPoint({ ...config, sign: value }),
-					exponent: (value?: string | number) => buildNumberFloatLeadingPoint({ ...config, exponent: value })
+					fraction: (value: string | number) => buildNumberFloatLeadingPoint({ ...config, fraction: value }, options),
+					sign: (value?: '-' | '+') => buildNumberFloatLeadingPoint({ ...config, sign: value }, options),
+					exponent: (value?: string | number) => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options),
+					marker: (spelling: 'e' | 'E') => buildNumberFloatLeadingPoint(config, { ...options, marker: spelling })
 				}
 			},
 			{
@@ -6177,12 +6179,13 @@ export function buildNumberFloatLeadingPoint(
 }
 
 export function buildNumberFloatScientific(
-	config: WidenNumeric<T.NumberFloatScientific.Config, 'integer' | 'exponent'>
+	config: WidenNumeric<T.NumberFloatScientific.Config, 'integer' | 'exponent'>,
+	options?: T.NumberFloatScientific.Spelling
 ): T.NumberFloatScientific.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatScientific_integer.test(_integer))
 		throw new Error(`number_float_scientific.integer: text does not match pattern: ${_integer}`);
-	const _marker = config.marker;
+	const _marker = options?.marker ?? 'e';
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
 		throw new Error(`number_float_scientific.marker: text does not match pattern: ${_marker}`);
 	const _sign = config.sign;
@@ -6202,10 +6205,10 @@ export function buildNumberFloatScientific(
 				_sign,
 				_exponent,
 				$with: {
-					integer: (value: string | number) => buildNumberFloatScientific({ ...config, integer: value }),
-					marker: (value: 'e' | 'E') => buildNumberFloatScientific({ ...config, marker: value }),
-					sign: (value?: '-' | '+') => buildNumberFloatScientific({ ...config, sign: value }),
-					exponent: (value: string | number) => buildNumberFloatScientific({ ...config, exponent: value })
+					integer: (value: string | number) => buildNumberFloatScientific({ ...config, integer: value }, options),
+					sign: (value?: '-' | '+') => buildNumberFloatScientific({ ...config, sign: value }, options),
+					exponent: (value: string | number) => buildNumberFloatScientific({ ...config, exponent: value }, options),
+					marker: (spelling: 'e' | 'E') => buildNumberFloatScientific(config, { ...options, marker: spelling })
 				}
 			},
 			{

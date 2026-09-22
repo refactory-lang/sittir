@@ -6,7 +6,8 @@ import {
 	numberTextArgs,
 	numericLeafShape,
 	numericSlotKeys,
-	numericSlotShape
+	numericSlotShape,
+	optionalGroupPeers
 } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
@@ -767,6 +768,16 @@ export function registeredSlots(node: { readonly slots: readonly AssembledNonter
 	return node.slots.filter((slot) => slot.registeredOption === true);
 }
 
+function registeredSlotSource(node: FieldCarryingNode, slot: AssembledNonterminal, hasConfig: boolean): string {
+	const value = `options?.${slot.configKey} ?? ${JSON.stringify(slot.optionDefaultArm)}`;
+	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
+	const present = (peers ?? [])
+		.map((name) => node.slots.find((candidate) => candidate.name === name))
+		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption !== true)
+		.map((peer) => `config.${peer.configKey} !== undefined`);
+	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
+}
+
 export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
 	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.configKey));
 	return keys.length === 0 ? type : `Omit<${type}, ${keys.join(' | ')}>`;
@@ -1061,7 +1072,7 @@ function emitFieldCarryingFactory(
 		const shape = numericSlotShape(f);
 		const source =
 			f.registeredOption === true
-				? `options?.${f.configKey} ?? ${JSON.stringify(f.optionDefaultArm)}`
+				? registeredSlotSource(node, f, singleField === undefined && spreadFacts === null)
 				: shape === undefined
 					? valueSourceFor(f)
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;

@@ -19959,7 +19959,11 @@ export namespace NumberHex {
 	export type Kind = 'number_hex';
 }
 export namespace NumberFloatPoint {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberFloatPoint>, 'integer' | 'fraction' | 'exponent'>;
+	export type Config = WidenNumeric<
+		Omit<ConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
+		'integer' | 'fraction' | 'exponent'
+	>;
+	export type Spelling = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -19973,27 +19977,35 @@ export namespace NumberFloatPoint {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatPoint>, 'integer' | 'fraction' | 'exponent'>
+		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>
 		| string
 		| number;
 	export type LooseConfig = WidenNumeric<
-		LooseConfigFor<TSKindId.NumberFloatPoint>,
+		Omit<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		'integer' | 'fraction' | 'exponent'
 	>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatPoint>, 'integer' | 'fraction' | 'exponent'>];
+	export type BuildArgs = [
+		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatPoint>, 'marker'>, 'integer' | 'fraction' | 'exponent'>,
+		options?: T.NumberFloatPoint.Spelling
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					Omit<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
 					'integer' | 'fraction' | 'exponent'
 			  >
-			| T.NumberFloatPoint
+			| T.NumberFloatPoint,
+		options?: T.NumberFloatPoint.Spelling
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatPoint>;
 	export type Kind = 'number_float_point';
 }
 export namespace NumberFloatLeadingPoint {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>;
+	export type Config = WidenNumeric<
+		Omit<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
+		'fraction' | 'exponent'
+	>;
+	export type Spelling = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatLeadingPoint, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20006,24 +20018,35 @@ export namespace NumberFloatLeadingPoint {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatLeadingPoint>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>
+		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatLeadingPoint>, 'fraction' | 'exponent'>];
+	export type LooseConfig = WidenNumeric<
+		Omit<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
+		'fraction' | 'exponent'
+	>;
+	export type BuildArgs = [
+		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>, 'fraction' | 'exponent'>,
+		options?: T.NumberFloatLeadingPoint.Spelling
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					LooseConfigOf<T.NumberFloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					Omit<
+						LooseConfigOf<T.NumberFloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+						'marker'
+					>,
 					'fraction' | 'exponent'
 			  >
-			| T.NumberFloatLeadingPoint
+			| T.NumberFloatLeadingPoint,
+		options?: T.NumberFloatLeadingPoint.Spelling
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatLeadingPoint>;
 	export type Kind = 'number_float_leading_point';
 }
 export namespace NumberFloatScientific {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>;
+	export type Config = WidenNumeric<Omit<ConfigFor<TSKindId.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>;
+	export type Spelling = { readonly marker?: 'e' | 'E' };
 	export interface Built extends T.NumberFloatScientific, NodeMethodsOf {
 		readonly $source: 2;
 		readonly $named: true;
@@ -20036,18 +20059,25 @@ export namespace NumberFloatScientific {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberFloatScientific>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>
+		| WidenNumeric<Omit<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberFloatScientific>, 'integer' | 'exponent'>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.NumberFloatScientific>, 'integer' | 'exponent'>];
+	export type LooseConfig = WidenNumeric<
+		Omit<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
+		'integer' | 'exponent'
+	>;
+	export type BuildArgs = [
+		config: WidenNumeric<Omit<ConfigOf<T.NumberFloatScientific>, 'marker'>, 'integer' | 'exponent'>,
+		options?: T.NumberFloatScientific.Spelling
+	];
 	export type LooseArgs = [
 		config:
 			| WidenNumeric<
-					LooseConfigOf<T.NumberFloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
+					Omit<LooseConfigOf<T.NumberFloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
 					'integer' | 'exponent'
 			  >
-			| T.NumberFloatScientific
+			| T.NumberFloatScientific,
+		options?: T.NumberFloatScientific.Spelling
 	];
 	export type Tree = TreeFor<TSKindId.NumberFloatScientific>;
 	export type Kind = 'number_float_scientific';

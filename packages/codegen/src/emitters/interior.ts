@@ -46,6 +46,20 @@ function interiorNodePattern(node: InteriorNode): string {
 	return 'group' in node ? `(?:${node.group.map(interiorNodePattern).join('')})?` : interiorEntryPattern(node);
 }
 
+function entryName(entry: InteriorEntry): string | undefined {
+	if ('lit' in entry) return undefined;
+	if ('flag' in entry) return entry.flag;
+	return 'enum' in entry ? entry.enum : entry.slot;
+}
+
+function groupsOf(nodes: readonly InteriorNode[]): string[][] {
+	return nodes.flatMap((node) =>
+		'group' in node
+			? [flattenNodes(node.group).flatMap((entry) => entryName(entry) ?? []), ...groupsOf(node.group)]
+			: []
+	);
+}
+
 function flattenNodes(nodes: readonly InteriorNode[]): InteriorEntry[] {
 	return nodes.flatMap((node) => ('group' in node ? flattenNodes(node.group) : [node]));
 }
@@ -124,11 +138,16 @@ function walkInterior(node: AbstractAssembledCompound, members: readonly RenderR
 	return out;
 }
 
-export function interiorOf(node: AssembledNode): NodeInterior | undefined {
+function interiorTreeOf(node: AssembledNode): InteriorNode[] | undefined {
 	if (!(node instanceof AbstractAssembledCompound) || !node.lexedInterior) return undefined;
 	const rule = node.renderRule;
 	if (rule.type !== SEQ) unsupported(node.kind, `its render rule is a ${rule.type}, not a sequence of literals and slots`);
-	const tree = walkInterior(node, rule.members);
+	return walkInterior(node, rule.members);
+}
+
+export function interiorOf(node: AssembledNode): NodeInterior | undefined {
+	const tree = interiorTreeOf(node);
+	if (tree === undefined || !(node instanceof AbstractAssembledCompound)) return undefined;
 	const entries = flattenNodes(tree);
 	assertUnambiguous(node.kind, entries);
 	const configKeyOf = (name: string): string => node.slots.find((s) => s.name === name)!.configKey;
@@ -142,6 +161,12 @@ export function interiorOf(node: AssembledNode): NodeInterior | undefined {
 					: [{ name: entry.slot, configKey: configKeyOf(entry.slot) }]
 	);
 	return { entries, regex: `^${tree.map(interiorNodePattern).join('')}$`, slots };
+}
+
+export function optionalGroupPeers(node: AssembledNode, slotName: string): readonly string[] | undefined {
+	const tree = interiorTreeOf(node);
+	const group = tree === undefined ? undefined : groupsOf(tree).find((members) => members.includes(slotName));
+	return group?.filter((name) => name !== slotName);
 }
 
 export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, AssembledNode> }): Map<string, NodeInterior> {

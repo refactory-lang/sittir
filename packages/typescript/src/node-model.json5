@@ -17960,7 +17960,6 @@
       "factoryShape": "config",
       "factoryFields": [
         "fraction",
-        "marker",
         "sign",
         "exponent"
       ]
@@ -18137,7 +18136,6 @@
       "factoryFields": [
         "integer",
         "fraction",
-        "marker",
         "sign",
         "exponent"
       ]
@@ -18284,7 +18282,6 @@
       "factoryShape": "config",
       "factoryFields": [
         "integer",
-        "marker",
         "sign",
         "exponent"
       ]

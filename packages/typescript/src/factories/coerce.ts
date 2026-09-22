@@ -302,21 +302,21 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_point'].regex, 'su'),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_point'], 'number_float_point');
-			return F.buildNumberFloatPoint(cfg as never);
+			return F.buildNumberFloatPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	number_float_leading_point: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_leading_point'].regex, 'su'),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_leading_point'], 'number_float_leading_point');
-			return F.buildNumberFloatLeadingPoint(cfg as never);
+			return F.buildNumberFloatLeadingPoint(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	number_float_scientific: {
 		pattern: new RegExp(TOKEN_INTERIORS['number_float_scientific'].regex, 'su'),
 		factory: (text: string) => {
 			const cfg = lexedConfig(text, TOKEN_INTERIORS['number_float_scientific'], 'number_float_scientific');
-			return F.buildNumberFloatScientific(cfg as never);
+			return F.buildNumberFloatScientific(cfg as never, { marker: cfg['marker'] } as never);
 		}
 	},
 	number_decimal: { pattern: /^(?:(?:\d(_?\d)*))$/u, factory: F.buildNumberDecimal },
@@ -8505,12 +8505,6 @@ export function resolveNumberFloatPoint_fraction(
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function resolveNumberFloatPoint_marker(
-	value: T.NumberFloatPoint.LooseConfig['marker']
-): T.NumberFloatPoint['_marker'] {
-	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
-}
-
 export function resolveNumberFloatPoint_sign(
 	value: T.NumberFloatPoint.LooseConfig['sign']
 ): T.NumberFloatPoint['_sign'] {
@@ -8523,7 +8517,10 @@ export function resolveNumberFloatPoint_exponent(
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
 }
 
-export function coerceToNumberFloatPoint(input: T.NumberFloatPoint.Loose): ReturnType<typeof F.buildNumberFloatPoint> {
+export function coerceToNumberFloatPoint(
+	input: T.NumberFloatPoint.Loose,
+	options?: T.NumberFloatPoint.Spelling
+): ReturnType<typeof F.buildNumberFloatPoint> {
 	if (!_isLooseConfig<T.NumberFloatPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatPoint>;
 	const _cfg = (
@@ -8531,25 +8528,21 @@ export function coerceToNumberFloatPoint(input: T.NumberFloatPoint.Loose): Retur
 			? lexedConfig(numberText('float', '', input), TOKEN_INTERIORS['number_float_point'], 'number_float_point')
 			: input
 	) as T.NumberFloatPoint.LooseConfig;
-	return F.buildNumberFloatPoint({
-		integer: _requireField('number_float_point', 'integer', resolveNumberFloatPoint_integer(_cfg.integer)),
-		fraction: resolveNumberFloatPoint_fraction(_cfg.fraction),
-		marker: resolveNumberFloatPoint_marker(_cfg.marker),
-		sign: resolveNumberFloatPoint_sign(_cfg.sign),
-		exponent: resolveNumberFloatPoint_exponent(_cfg.exponent)
-	});
+	return F.buildNumberFloatPoint(
+		{
+			integer: _requireField('number_float_point', 'integer', resolveNumberFloatPoint_integer(_cfg.integer)),
+			fraction: resolveNumberFloatPoint_fraction(_cfg.fraction),
+			sign: resolveNumberFloatPoint_sign(_cfg.sign),
+			exponent: resolveNumberFloatPoint_exponent(_cfg.exponent)
+		},
+		options
+	);
 }
 
 export function resolveNumberFloatLeadingPoint_fraction(
 	value: T.NumberFloatLeadingPoint.LooseConfig['fraction']
 ): T.NumberFloatLeadingPoint['_fraction'] {
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
-}
-
-export function resolveNumberFloatLeadingPoint_marker(
-	value: T.NumberFloatLeadingPoint.LooseConfig['marker']
-): T.NumberFloatLeadingPoint['_marker'] {
-	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatLeadingPoint_sign(
@@ -8565,7 +8558,8 @@ export function resolveNumberFloatLeadingPoint_exponent(
 }
 
 export function coerceToNumberFloatLeadingPoint(
-	input: T.NumberFloatLeadingPoint.Loose
+	input: T.NumberFloatLeadingPoint.Loose,
+	options?: T.NumberFloatLeadingPoint.Spelling
 ): ReturnType<typeof F.buildNumberFloatLeadingPoint> {
 	if (!_isLooseConfig<T.NumberFloatLeadingPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatLeadingPoint>;
@@ -8578,28 +8572,24 @@ export function coerceToNumberFloatLeadingPoint(
 				)
 			: input
 	) as T.NumberFloatLeadingPoint.LooseConfig;
-	return F.buildNumberFloatLeadingPoint({
-		fraction: _requireField(
-			'number_float_leading_point',
-			'fraction',
-			resolveNumberFloatLeadingPoint_fraction(_cfg.fraction)
-		),
-		marker: resolveNumberFloatLeadingPoint_marker(_cfg.marker),
-		sign: resolveNumberFloatLeadingPoint_sign(_cfg.sign),
-		exponent: resolveNumberFloatLeadingPoint_exponent(_cfg.exponent)
-	});
+	return F.buildNumberFloatLeadingPoint(
+		{
+			fraction: _requireField(
+				'number_float_leading_point',
+				'fraction',
+				resolveNumberFloatLeadingPoint_fraction(_cfg.fraction)
+			),
+			sign: resolveNumberFloatLeadingPoint_sign(_cfg.sign),
+			exponent: resolveNumberFloatLeadingPoint_exponent(_cfg.exponent)
+		},
+		options
+	);
 }
 
 export function resolveNumberFloatScientific_integer(
 	value: T.NumberFloatScientific.LooseConfig['integer']
 ): T.NumberFloatScientific['_integer'] {
 	return typeof value === 'number' ? numberText(10, '', value) : _resolveOne<string>(value, _K2, _K2);
-}
-
-export function resolveNumberFloatScientific_marker(
-	value: T.NumberFloatScientific.LooseConfig['marker']
-): T.NumberFloatScientific['_marker'] {
-	return _resolveOne<'e' | 'E'>(value, _K2, _K2);
 }
 
 export function resolveNumberFloatScientific_sign(
@@ -8615,7 +8605,8 @@ export function resolveNumberFloatScientific_exponent(
 }
 
 export function coerceToNumberFloatScientific(
-	input: T.NumberFloatScientific.Loose
+	input: T.NumberFloatScientific.Loose,
+	options?: T.NumberFloatScientific.Spelling
 ): ReturnType<typeof F.buildNumberFloatScientific> {
 	if (!_isLooseConfig<T.NumberFloatScientific.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
@@ -8628,12 +8619,18 @@ export function coerceToNumberFloatScientific(
 				)
 			: input
 	) as T.NumberFloatScientific.LooseConfig;
-	return F.buildNumberFloatScientific({
-		integer: _requireField('number_float_scientific', 'integer', resolveNumberFloatScientific_integer(_cfg.integer)),
-		marker: _requireField('number_float_scientific', 'marker', resolveNumberFloatScientific_marker(_cfg.marker)),
-		sign: resolveNumberFloatScientific_sign(_cfg.sign),
-		exponent: _requireField('number_float_scientific', 'exponent', resolveNumberFloatScientific_exponent(_cfg.exponent))
-	});
+	return F.buildNumberFloatScientific(
+		{
+			integer: _requireField('number_float_scientific', 'integer', resolveNumberFloatScientific_integer(_cfg.integer)),
+			sign: resolveNumberFloatScientific_sign(_cfg.sign),
+			exponent: _requireField(
+				'number_float_scientific',
+				'exponent',
+				resolveNumberFloatScientific_exponent(_cfg.exponent)
+			)
+		},
+		options
+	);
 }
 
 export function coerceToNumberDecimal(input: T.NumberDecimal.Loose): ReturnType<typeof F.buildNumberDecimal> {

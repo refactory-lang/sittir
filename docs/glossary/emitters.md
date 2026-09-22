@@ -5166,6 +5166,14 @@ Wraps a configuration type so it omits the registered slots' keys.
 
 The object type of a node's registered slots, each key optional and typed by the slot's literal arms; the type of the trailing options parameter and of the namespace's `Spelling`. Nothing when the node has no registered slot.
 
+### `packages/codegen/src/emitters/interior.ts::optionalGroupPeers`
+
+The other named parts of the optional group a slot sits in, or nothing when the slot is not in a group. A registered spelling in a group is written only when one of these is present.
+
+### `packages/codegen/src/emitters/factories.ts::registeredSlotSource`
+
+The expression a builder binds a registered slot to: the option, else the registered arm, and, for a slot inside an optional group, only when one of the group's other parts is present.
+
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
 
 Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric. A bare string is projected onto the kind's slots through its token interior.
