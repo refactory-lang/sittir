@@ -1,219 +1,175 @@
-# Alias identity — one kind per alias site
+# Alias identity — storage is the grammar symbol, the alias target is display
 
-**Status:** approved design, 2026-09-21. Implementation plan to follow.
+**Status:** approved design, 2026-09-22 (supersedes the 2026-09-21 draft,
+which assumed the native read stamps the alias target; it stamps the grammar
+symbol). Implementation plan to follow.
 
-**Goal:** every alias site in a grammar resolves to exactly one kind, the one
-the parser issues there, and every layer downstream of link reads that one
-identity. The alias source contributes a body or a text admission and nothing
-else.
+**Goal:** close every open alias defect on the identity model the repo
+already has: a parsed node carries two parser-issued identities, the grammar
+symbol (`grammar_id()`, the rule that parsed it) and the display kind
+(`kind_id()`, the alias target). The grammar symbol is the storage kind. The
+display kind is a name over storage kinds. Nothing derives either from the
+other by string manipulation, and nothing models an alias as a node the
+parser never issues.
 
-**Closes:** #314 (aliased choices leak their arms as kinds), #289
-(`publicKindName` underscore strip collides under a non-matching alias), #291
-(`alias()` cannot promote an unnamed alias; leaf mints over-tagged `hoisted`),
-#290 (no primitive mints a real rule with an authored body), #214 (validator
-tolerates alias display-name mismatches), the S1 alias-identity audit (native
-read stamps the context id while factories stamp the canonical id) and the
-ts/py follow-on of the nested-supertype alias materialization.
+**Closes:** #314 (reduced: a hidden twin of a display union), #289
+(`publicKindName` underscore strip), #291 (`alias()` cannot promote an
+unnamed alias; leaf mints over-tagged `hoisted`), #290 (no primitive mints a
+real rule with an authored body), #214 (validator compares display names).
 
 ## Global constraints
 
-- DRY: one identity per site, stamped once in link, consumed everywhere.
+- DRY: one storage identity per node, stamped by the read from
+  `grammar_id()`, consumed everywhere; one display identity, the alias
+  target, read from the alias mapping.
 - Generated outputs are never hand-edited; every codegen edit regenerates all
   three grammars and commits the manifests.
 - Gate for every task: read-render-parse and AST-match rows equal the
-  baselines in all three grammars; cargo green; the api-surface snapshots
-  change only where this spec says they change.
+  baselines in all three grammars; cargo green; api-surface snapshots change
+  only where this spec says they change.
 - Comments live in `docs/glossary/`, never in `packages/codegen/src/`.
-- Settled facts this spec builds on and does not reopen:
-  - `aliasedFrom` names the alias **source**; `name` names the target.
-  - The enrich unaliasing pass drops a base alias whose source and target
-    shapes differ, so the source surfaces under its own name.
-  - An alias is never placed over a multi-member sequence directly:
-    tree-sitter distributes the alias over the members.
+- Settled facts this spec builds on:
+  - The native read stamps `KindId(node.grammar_id())`
+    (`read_node.rs::stamped_kind`). The wire `$type` is the storage kind and
+    alias display collapses are injective on the wire by construction.
+  - `aliasedFrom` names the alias source, `name` the target, in the
+    canonical ref form; the older `aliasedTo` form is the same fact in
+    transition.
+  - tree-sitter applies an alias to every step of inline content: an alias
+    over a choice reaches each arm, an alias over a sequence reaches each
+    member. Only a symbol, a literal or a pattern is aliased as one node.
 
-## 1. The problem
+## 1. The model, stated once
 
-tree-sitter's `alias(X, Y)` makes the parser issue kind `Y` for every match of
-`X`. `X` decides the text and the children; `Y` is the only identity a parsed
-node carries.
-
-sittir models the site with two identities. After link a symbol ref is
-`{ name: X, kindId: id(X), aliasedTo: Y, aliasedToId: id(Y) }`, and every
-consumer derives the parse kind as `aliasedToId ?? kindId`. The split shows up
-as a family of defects:
-
-- **Arms typed as kinds** (#314). `alias(choice($.identifier,
-  $._reserved_identifier), $.property_identifier)` types the site as
-  `KindEnum<'declare' | … | 'let', TSKindId.DeclareKeyword | …> |
-  _PropertyIdentifier | …`. The keyword ids exist in the parser but are never
-  issued here; the parser issues `property_identifier`. Rust's
-  `primitive_type` (`alias(choice('u8', …), $.primitive_type)`) shows the same
-  `KindEnum<'u8' | …, TSKindId.U8Keyword | …>`.
-- **The target modelled as a supertype over its arms, twice.**
-  `PropertyIdentifier = Identifier | ReservedIdentifier` and
-  `_PropertyIdentifier = Identifier | ReservedIdentifier`, both listed in the
-  grammar's supertypes. A parsed `property_identifier` is a leaf and matches
-  neither member; reads only work through a per-site alias map in wrap
-  (`"member_expression.property": { "property_identifier": "identifier" }`)
-  that stores the node as `Identifier` and loses the kind.
-- **Names derived by stripping** (#289). `publicKindName` is
-  `kind.replace(/^_+/, '')`. `alias($._as_pattern, $.case_as_pattern)` strips
-  `_as_pattern` to `as_pattern`, the name of an unrelated rule, and the two
-  rules' spacing sites collapse into one struct. Seventy-one call sites depend
-  on "stripped name equals display name".
-- **Stamps not consumed** (S1). Link stamps the pair, but wrap dispatches by
-  kind name (lossy where two parser symbols share a display name), the
-  transport's per-slot enum loses the stamp under supertype expansion, and the
-  alias-unwrap arm assumes a kind-keyed child that a leaf-shaped alias value
-  never has.
-- **Authoring gaps** (#290, #291). `alias()` and `variant()` only wrap content
-  that already sits at a path and always mint an alias-wrapped hidden rule, so
-  the comprehension rewrite and the `case_as_pattern` split stay hand-written
-  `rules:` overrides, and an unnamed alias cannot be promoted to a named one.
-- **Validator tolerance** (#214). The structural diff tolerates a root whose
-  display name differs from the original's by a known alias pair, because the
-  synthetic reparse wrapper cannot reproduce the alias-triggering position.
-
-Every item is the split, seen from a different layer.
-
-## 2. Alias classes
-
-At any alias site the parser issues one kind: the target. That leaves four
-classes, each with one rule.
-
-| class | site shape | rule |
+| identity | source of truth | what keys on it |
 | --- | --- | --- |
-| 1 | a literal, or a choice of literals, aliased to a name | the target is a text leaf; the literals are its spelling set |
-| 2 | a hidden rule aliased to a visible name, shapes compatible | the target is the kind; the source is its body |
-| 3 | a rule aliased to a name whose own shape differs | enrich drops the alias; the source keeps its own name (existing pass, criterion tightened) |
-| 4 | an alias over a repeat, or over a multi-step body that is inlined | compile-time diagnostic |
+| storage kind | `grammar_id()`; the rule (or literal symbol) that parsed the node | `$type`, transport structs, factories, wrap dispatch, spacing sites, options addresses |
+| display kind | `kind_id()`; the alias target at the site, else the storage kind | node-types, `bindings.scm` queries, the validator's `type`, the display union in the typed surface |
 
-Census, from `grammar.json` (`ALIAS` whose content is a `CHOICE`), the class 1
-sites:
+A display kind that is only ever an alias target (`property_identifier`,
+`case_as_pattern`, `primitive_type`) is a **display union**: the set of
+storage kinds that display under that name. It is a name, not a kind: no
+struct, no factory, no wrap function, no supertype entry. The typed surface
+exposes it as a union type (`PropertyIdentifier = Identifier |
+ReservedIdentifier`) and `is.<display>()` narrows to that union.
 
-| grammar | rule | target | arms |
-| --- | --- | --- | --- |
-| typescript | `_property_name` | `property_identifier` | `identifier`, `_reserved_identifier` |
-| typescript | `labeled_statement` | `statement_identifier` | `identifier`, `_reserved_identifier` |
-| typescript | `object` (×2) | `shorthand_property_identifier` | `identifier`, `_reserved_identifier` |
-| typescript | `object_pattern` (×2), `object_assignment_pattern` | `shorthand_property_identifier_pattern` | `identifier`, `_reserved_identifier` |
-| rust | `_type`, `where_predicate`, `_non_special_token` | `primitive_type` | 17 strings |
-| rust | `_expression_except_range`, `_pattern`, `_path` | `identifier` | 17 strings |
-| rust | `_reserved_identifier` | `identifier` | 3 strings |
-| python | `keyword_identifier` (×2) | `identifier` | 4 and 2 strings |
+A display kind that is also a rule of its own (`generic_type`, aliased from
+`generic_type_with_turbofish`) is both: its own storage kind, and a display
+union with one more member. The two never collide on the wire because their
+grammar symbols differ.
 
-The class 3 sites the unaliasing pass currently leaves in place, all rust:
-`generic_type_with_turbofish → generic_type` (`scoped_identifier`,
-`scoped_type_identifier_in_expression_position`, `tuple_struct_pattern`),
-`delim_token_tree → token_tree` (`macro_invocation`, `_delim_tokens`,
-`attribute_arm`, `attribute_input`), `scoped_type_identifier_in_expression_position
-→ scoped_type_identifier` (`struct_expression`), `_let_chain → let_chain`
-(`_condition`).
+So, at `alias(choice($.identifier, $._reserved_identifier),
+$.property_identifier)`, the parser issues grammar ids `identifier`,
+`anon_sym_type`, `anon_sym_public`, …, all displaying as
+`property_identifier`. The site's storage type is `Identifier |
+KindEnum<'type' | 'public' | …, TSKindId.TypeKeyword | …>`: exactly the ids
+the parser issues. That typing is correct and stays.
 
-## 3. The identity model
+## 2. What is wrong today, per item
 
-### 3.1 One stamp
+### 2.1 A hidden twin of every inline-aliased display union (#314, residual)
 
-After link a symbol ref is:
+`evaluate.ts::synthesizeInlineAliasSources` rewrites
+`alias(<inline content>, $.t)` into `rules[_t] = <content>` plus
+`alias($._t, $.t)`, so that the alias source has a name for the storage
+linkage. tree-sitter never sees `_t` (the rewrite runs on sittir's pass
+only), so `_t` is a phantom hidden supertype, and the typed surface carries
+it twice: `PropertyIdentifier` and `_PropertyIdentifier`, both
+`Identifier | ReservedIdentifier`; `is.propertyIdentifier` narrows to the
+twin. Typescript lists `_property_identifier`, `_statement_identifier`,
+`_shorthand_property_identifier`, `_shorthand_property_identifier_pattern`,
+`_import_identifier`, `_identifier` and `_module_export_name` in its
+supertypes this way; rust and python have the same family for
+`primitive_type` and `identifier`.
 
-```ts
-{ type: SYMBOL, name: <kind the parser issues>, kindId: <its id>, aliasedFrom?: <source rule name> }
-```
+The synthesis is also a misrepresentation for a sequence: tree-sitter aliases
+each member, never the sequence as one node, so `_t = seq(…)` describes a
+node that does not exist.
 
-`aliasedTo` and `aliasedToId` are deleted from `SymbolRule` and from every
-phase's rule type. `stampAliasTargetId` is deleted; `stampSymbolRefKindIds`
-resolves `kindId` by `name`, which is now always the parser's name for the
-site. The `aliasedToId ?? kindId` fallbacks in `deriveValuesForRule` and the
-`subtypeRestampPairsOf` restamp machinery go with them: there is nothing to
-restamp.
+### 2.2 Display names by underscore strip (#289)
 
-`aliasedFrom` is provenance. Its readers are transform's path descent
-(`descendThroughAlias`, so an authored patch path written against the base
-grammar still resolves) and the parse-kind collision diagnostics. No emitter
-reads it. `dsl/builders.ts::attributeAlias` produces the same form.
+`publicKindName` is `kind.replace(/^_+/, '')`. It answers two different
+questions with one guess: "what is this kind's display name" and "what is a
+readable name for this kind's struct or site". `alias($._as_pattern,
+$.case_as_pattern)` strips to `as_pattern`, the name of an unrelated rule,
+and the two rules' spacing sites collapse. Seventy-one call sites.
 
-### 3.2 Class 1: the target is a text leaf
+### 2.3 Authoring gaps (#290, #291)
 
-`resolveRule` links `alias(<literal or choice of literals>, $.t)` to
-`SYMBOL(t)` and registers `t` as a pattern-shaped leaf whose **admission** is
-the set of spellings. The admission is a new leaf attribute,
-`spellings: readonly string[]`, beside `textPattern`; a leaf may carry either
-or both:
+`alias()` and `variant()` only wrap content already at a path and always go
+through `registerAliasedVariant`, which mints `_<name>` aliased to `<name>`.
+There is no way to declare a real rule with an authored body at a path, to
+promote an unnamed alias to a named one, or to mint a bare literal as a
+supertype member without it being tagged `hoisted`.
 
-- `alias(choice('u8', 'i8', …), $.primitive_type)`: `primitive_type` has
-  `spellings: ['u8', 'i8', …]` and no pattern.
-- `alias(choice($.identifier, $._reserved_identifier), $.property_identifier)`:
-  `property_identifier` has `textPattern` from `identifier` and `spellings`
-  from `_reserved_identifier`.
+### 2.4 The validator compares display names (#214)
 
-When a target is aliased from several sites, their admissions merge. This
-replaces `foldAliasLiteralsIntoEnumRules`, whose job was to append alias
-spellings to an enum kind's member set: there is no enum kind at an alias site
-any more.
+`astStructuralDiff` compares `TSNode.type`, the display name, so a wrapper
+reparse that does not reproduce the alias position shows `generic_type ≠
+generic_type_with_turbofish` and is tolerated by a known pair. The grammar
+type is on the node (`grammarType`, `grammarId` in web-tree-sitter) and is
+the same in both parses.
 
-Typing follows the admission. A leaf with spellings only is typed as the
-string union of its spellings; a leaf with a pattern is typed `string`. The
-loose surface admits a string; the builder guards the text against the
-admission (spelling set, or the anchored pattern, or their union). No keyword
-kind id is stored, admitted or emitted at the site. This is the same shape the
-lexed-interior enum ruling produced for `integer_literal.suffix`.
+### 2.5 Nothing stops an alias over a sequence or a repeat
 
-`KindEnum` stays exactly where it is right today for unaliased choices of
-literals: there the parser does issue the anon symbols.
+`alias(seq(a, b), $.t)` and `alias(repeat(x), $.t)` distribute per step in
+tree-sitter. The model would describe one node; the parser issues several.
+This is the public-field-definition failure, found once, guarded nowhere.
 
-### 3.3 Class 2: the target is the kind, the source is its body
+## 3. Design
 
-`resolveRule` links `alias($._x, $.t)` to `SYMBOL(t)`. `t`'s body is `_x`'s
-body. Three cases:
+### 3.1 Inline alias content is distributed, not synthesized
 
-- `t` has no rule of its own (`case_as_pattern`, every enrich-minted visible
-  group): `t` is registered with `_x`'s resolved body.
-- `t` has its own rule and it is `rulesEqual` to `_x`'s: one kind, one body.
-- `t` has its own rule and the bodies differ: the enrich unaliasing pass has
-  already dropped this alias (class 3). A mismatch that reaches link is a
-  compile-time error naming both rules; link never chooses.
+`synthesizeInlineAliasSources` is replaced by distribution, the semantics
+tree-sitter itself applies:
 
-A hidden rule whose every use is as an alias source is **not a kind**: no
-node-map entry, no interface, no factory, no wrap function, no `_` twin. The
-`_PropertyIdentifier` family, `aliasedHiddenKinds` on `LinkedGrammar`,
-`NormalizedGrammar` and `NodeMap`, `collectAliasedHiddenKinds`,
-`unhideAliasedTargets` and `assemble.ts::aliasSourceKinds` are deleted. A
-hidden rule that is also referenced directly elsewhere stays a hidden helper
-there, as today.
+- `alias(choice(a, b, …), $.t)` becomes `choice(alias(a, $.t), alias(b, $.t),
+  …)`, recursively through nested choices, and through a hidden rule whose
+  body is a choice (`_reserved_identifier`) when the alias is the only use of
+  it. Each arm then carries its own storage identity with `t` as display:
+  a symbol arm is `SYMBOL(a, aliasedTo: t)`; a literal arm is the literal's
+  own symbol with display `t`, the form `foldAliasLiteralsIntoEnumRules`
+  already consumes.
+- `alias(<symbol | literal | pattern>, $.t)` is unchanged.
+- `alias(seq(…), $.t)` and `alias(repeat(…), $.t)` are the §3.5 diagnostic.
 
-The kind's name is the parser's name, so `publicKindName` is the identity
-function on kinds and is deleted with its underscore strip; its call sites read
-`kind` directly. `case_as_pattern` needs no special handling: `_as_pattern`
-never becomes a kind, so nothing collides with `as_pattern`.
+No `_t` rule is minted. The display union `t` is assembled in the node model
+from every site that displays as `t`: `displayUnions: Map<displayName,
+Set<storageKind>>`, built once in link from the aliased refs, replacing the
+per-consumer walks (`collectAliasedHiddenKinds`, `aliasSourceKinds`,
+`includeAliasMemberKinds`'s structural discovery). The typed surface emits one
+union type per display union; the `_` twins, their supertype entries, their
+`wrap_*` functions and factories disappear. `is.<display>()` narrows to the
+union.
 
-### 3.4 Class 3: the unaliasing pass, criterion tightened
+`innermostNamedAliasContent` keeps its job for chained aliases: the innermost
+symbol is the storage identity, the outermost target the display.
 
-The pass keeps its shape. Its criterion becomes: drop the alias when the
-source's resolved body is not `rulesEqual` to the target's, with literal
-members compared by value. The nine rust sites listed in §2 fall under this
-and are dropped; each source then surfaces under its own name, as
-`generic_type_with_turbofish` already does in the node model. The
-`parsekind-noninjective` diagnostic is then empty for all three grammars and
-stays a ratchet at zero.
+### 3.2 Two name derivations, neither a strip
 
-### 3.5 Class 4: a diagnostic
+`publicKindName` is deleted. Its call sites are split by the question they
+ask:
 
-The grammar-diagnostics preflight gains one blocking diagnostic,
-`alias-distributed`: an `ALIAS` whose content is a `REPEAT`/`REPEAT1`, or a
-`SEQ` of two or more members whose rule is listed in `inline`. tree-sitter
-splices the steps into the parent and applies the alias to each, so the model
-would describe one node where the parser issues several. The diagnostic names
-the rule, the alias target and the offending shape. No grammar hits it today;
-it stops the next author from re-creating the public-field-definition
-failure.
+- **Display name of a kind at a site**: `displayNameOf(ref)` = the ref's
+  alias target when it has one, else the storage kind's own name. Used by
+  the options addresses and any surface that must match `bindings.scm` and
+  node-types spelling.
+- **Identifier for a storage kind**: the storage kind's own name, hidden
+  prefix included, through the existing identifier casing
+  (`_as_pattern` → `_AsPattern…`, as the transport already spells hidden
+  structs). Used by struct names, spacing-site keys, wrap function names.
 
-## 4. Authoring: `rule()` and a named `alias()`
+A spacing site is keyed by storage kind. `case_as_pattern` then works from
+the declarative patch alone: `_as_pattern`'s sites are keyed `_as_pattern`,
+`as_pattern`'s are keyed `as_pattern`, and the display name
+`case_as_pattern` comes from the alias mapping where a display name is
+needed. The audit of the seventy-one call sites is the implementation task;
+each site records which of the two it uses.
 
-### 4.1 `rule(name, body)`
+### 3.3 `rule(name, body)`
 
-A new `patches:` placeholder. At a path it declares a real rule named `name`
-with the authored `body` and replaces the content at the path with
-`SYMBOL(name)`:
+A new `patches:` placeholder declares a real rule named `name` with the
+authored `body` and replaces the content at the path with `SYMBOL(name)`:
 
 ```ts
 patches: {
@@ -223,85 +179,59 @@ patches: {
 }
 ```
 
-The same name at several paths must carry `rulesEqual` bodies; a mismatch is a
-compile-time error naming the paths. The rule is visible unless `name` starts
-with `_`. It carries no `hoisted` annotation: `hoisted` is for group and arm
-mints seated by a parent, and a `rule()` mint is seated by its own name. The
-body callback receives the same `$` the grammar's rule callbacks receive, so
-it participates in both pipelines through wire, like every other patch.
+The same name at several paths must carry `rulesEqual` bodies; a mismatch is
+a compile-time error naming the paths. The rule is visible unless `name`
+starts with `_`. Storage kind equals display kind: there is no alias. The
+body callback receives the grammar's `$`, so the rule reaches both pipelines
+through wire like every other patch. It carries no `hoisted` annotation.
 
-Storage kind equals parse kind by construction: there is no alias wrapper.
+### 3.4 `alias(name)` promotes; leaf mints are not hoisted
 
-### 4.2 `alias(name)` on an unnamed alias
+`resolveAliasPlaceholder`'s retarget branch sets `named: true` with
+`value: name`; the original content is kept. `registerAliasedVariant` stamps
+`hoisted` only on group and arm mints; a bare literal or pattern minted at a
+supertype subtype position (`wildcard_pattern`) is a subtype, not a hoist,
+and the hoisted census needs no change.
 
-`resolveAliasPlaceholder`'s retarget branch sets `named: true` together with
-`value: name`. Promoting an unnamed alias to a named one is a rename of the
-face, not a mint, and the original content (the `[bc]?"` pattern of rust's
-`string_literal`) is kept.
+### 3.5 `alias-distributed` diagnostic
 
-### 4.3 `hoisted` on leaf mints
+The grammar-diagnostics preflight gains one blocking diagnostic: an `ALIAS`
+whose content, after looking through hidden single-use rules, is a `SEQ` of
+two or more members or a `REPEAT`/`REPEAT1`. It names the rule, the target
+and the shape. No grammar hits it today.
 
-`registerAliasedVariant` stamps `hoisted` only on group and arm mints. A bare
-literal or pattern minted as a kind at a supertype subtype position
-(`wildcard_pattern`) is not hoisted; it is a subtype. The hoisted census is
-unchanged, since the over-tag is what put a leaf in front of it.
+### 3.6 The validator compares grammar types
 
-### 4.4 Acceptance cases
+`astStructuralDiff` compares `grammarType` (and the root by `grammarId`)
+instead of `type`. The root-alias tolerance, `leafAliasPairs` and the
+`renderedKind`/`targetKind` pair at the call site are deleted. The wrapper
+reparse stays.
 
-The rule re-authoring retirement's `case_as_pattern` (#289),
-`comprehension_clauses` (#290), `_wildcard_pattern` and
-`string_literal`/`_string_literal_open` (#291) entries are retired through
-these primitives, each with byte-identical native output.
-
-## 5. Consumers
-
-With one identity the following are deleted or reduced. Each is a workaround
-for the split; none has a job once the split is gone.
-
-| layer | today | after |
-| --- | --- | --- |
-| wrap (`emitters/wrap.ts`) | dispatch by `KIND_NAMES` id→name; per-site alias maps (`"member_expression.property": {…}`) | dispatch by numeric kind id from the stamp; no alias maps |
-| transport (`transport-common.ts`, `render-module.ts`) | `acceptedTransportKinds` resolves hidden-kind visible aliases through `aliasedHiddenKinds`; `emitAliasUnwrapRecurseArm`; per-slot enum arms keyed by storage kind while expanded arms are keyed by concrete kind | accepted ids are the stamped ids; no unwrap arm; one key |
-| types (`emitters/types.ts`) | class 1 sites widen the input surface with a keyword `KindEnum`; `_` twins | leaf typed by its admission; no twins |
-| `is.*` / narrowers | `is.propertyIdentifier` narrows to `_PropertyIdentifier` | narrows to `PropertyIdentifier`, a leaf |
-| ir / factories | leaf factory per alias source | one leaf factory per target |
-| supertypes | `property_identifier` and `_property_identifier` listed as supertypes over their arms | neither is a supertype |
-| nested-supertype materialization | rust landed; ts/py follow-on open | covered: a nested-supertype member is an ordinary ref with one id |
-| validator | root-alias tolerance and `leafAliasPairs` in `astStructuralDiff`; type compared by name | both tolerances deleted; compare stamped kind ids |
-
-The native read is unchanged: it already stamps `node.kind_id()`, which is
-the target's id. That stamp becomes correct by construction instead of
-needing the restamp.
-
-## 6. Gates and tests
+## 4. Acceptance
 
 - **Native**: read-render-parse and AST-match rows equal the baselines in
-  rust, typescript and python at every task; `parsekind-noninjective` is
-  empty and ratcheted at zero.
-- **Surface**: the api-surface snapshots change only by losing the keyword
-  `KindEnum` alternatives at the sixteen class 1 sites and the `_`-twin
-  declarations; a snapshot diff outside those is a stop.
-- **Census test**: a unit test walks each grammar's `grammar.json` for
-  `ALIAS` sites, classifies them by §2, and asserts for classes 1 and 2 that
-  the node model's kind at the site is the alias target and that no kind is
-  registered under the source's name unless it is referenced directly
-  elsewhere.
-- **Link tests**: `SymbolRule` has no `aliasedTo`/`aliasedToId`; an alias
-  over compatible bodies yields one kind; an alias over incompatible bodies
-  that reaches link throws naming both rules; class 1 admissions merge across
-  sites.
-- **Authoring tests**: `rule()` at one path and at two paths with equal and
-  unequal bodies; `alias()` on an unnamed alias yields `named: true`;
-  `wildcard_pattern` carries no `hoisted`.
-- **Diagnostics test**: `alias-distributed` fires on an alias over a repeat
-  and on an inlined multi-step alias, and is silent on all three grammars.
-- **Validator**: the tolerance branches are gone and the three validation
-  runs match the baselines without them.
+  rust, typescript and python at every task.
+- **Surface**: api-surface snapshots lose the `_<display>` twin declarations
+  and nothing else; `is.propertyIdentifier` narrows to `PropertyIdentifier`.
+- **Model test**: for every `ALIAS` in each grammar's `grammar.json`, the
+  node model has no kind named `_<target>` unless the grammar declares one,
+  and `displayUnions.get(target)` equals the set of grammar symbols the
+  alias content can produce.
+- **Authoring**: the retirement spec's `case_as_pattern` (#289),
+  `comprehension_clauses` (#290), `_wildcard_pattern` and
+  `string_literal`/`_string_literal_open` (#291) overrides are retired
+  through `rule()`, `alias()` and the patch already verified at the
+  node-model level, each with byte-identical native output.
+- **Diagnostics**: `alias-distributed` fires on an alias over a sequence and
+  over a repeat in a unit fixture and is silent on all three grammars.
+- **Validator**: the tolerances are gone and the three validation runs match
+  the baselines.
 
-## 7. Out of scope
+## 5. Out of scope
 
-- Splicing rendered text into the real source for reparse (#214's proposed
-  mechanism). Class 3 removes the mismatch the tolerance covered.
-- Case spelling of prefixes and markers as render options; a separate spec.
-- Retiring `aliasedFrom` provenance itself. Transform's path descent needs
-  it while authored patch paths are written against the base grammar.
+- Splicing rendered text into the real source for reparse; §3.6 removes the
+  need.
+- Retiring the older `aliasedTo` ref form in favour of `aliasedFrom`; that
+  flip is in progress on its own branch and this spec reads whichever form
+  a ref carries through one accessor.
+- Case spelling of prefixes and markers as render options.
