@@ -22,11 +22,11 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	}
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push(
-		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors } from '@sittir/common/utils';"
+		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText } from '@sittir/common/utils';"
 	);
 	lines.push("import type { WithMethodsEngine } from '@sittir/common/utils';");
 	lines.push('');
-	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };');
+	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText };');
 	lines.push('');
 	lines.push(...emitIsNodeData());
 	lines.push('');
@@ -102,17 +102,24 @@ function emitMethodsEngine(): string[] {
 
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 	const triviaType = buildTriviaParamType(triviaTypeNames);
+	const triviaEntry = buildTriviaEntryType(triviaTypeNames);
 	return [
 		'/** The methods every node carries. Named, and self-referential through',
 		' *  the polymorphic `this`, because `$trivia` rebuilds the node and hands',
 		' *  back the same kind. A type alias cannot name itself, so the earlier',
 		' *  declaration fell back to `AnyNodeData` and lost the type at every',
 		' *  `$trivia` call site. */',
+		'export interface TriviaSetterOf<Self> {',
+		`  (...args: ${triviaType}[]): Self;`,
+		`  leading(...items: ${triviaEntry}[]): Self;`,
+		`  trailing(...items: ${triviaEntry}[]): Self;`,
+		'}',
+		'',
 		'export interface NodeMethodsOf {',
 		'  $render(): string;',
 		'  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 		'  $replace(target: { range(): ByteRange }): Edit;',
-		`  $trivia(...args: ${triviaType}[]): this;`,
+		'  $trivia: TriviaSetterOf<this>;',
 		'}',
 		'',
 		'export function withMethods<T extends object>(',
@@ -270,9 +277,13 @@ export function resolveTriviaTypeNames(triviaKinds: readonly string[], nodeMap: 
 	return [...new Set(names)].sort();
 }
 
-export function buildTriviaParamType(triviaTypeNames: readonly string[], qualify = ''): string {
+export function buildTriviaEntryType(triviaTypeNames: readonly string[], qualify = ''): string {
 	const triviaType =
 		triviaTypeNames.length > 0 ? triviaTypeNames.map((n) => `${qualify}${n}`).join(' | ') : 'AnyNodeData';
-	const entry = `${triviaType} | string`;
-	return `(${entry} | { leading?: (${entry})[]; trailing?: (${entry})[] })`;
+	return `(${triviaType} | string)`;
+}
+
+export function buildTriviaParamType(triviaTypeNames: readonly string[], qualify = ''): string {
+	const entry = buildTriviaEntryType(triviaTypeNames, qualify);
+	return `(${entry} | { leading?: ${entry}[]; trailing?: ${entry}[] })`;
 }

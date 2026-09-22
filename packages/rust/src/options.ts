@@ -45,6 +45,7 @@ export type AddressRoot =
 	| 'break_expression'
 	| 'call_expression'
 	| 'captured_pattern'
+	| 'char_literal_empty'
 	| 'closure_expression_block'
 	| 'closure_expression_expr'
 	| 'closure_parameters'
@@ -394,6 +395,8 @@ export interface AddressBranch {
 	readonly call_expression: 'after' | 'before';
 	readonly captured_pattern: 'after' | 'at' | 'before';
 	readonly 'captured_pattern/at': 'after' | 'before';
+	readonly char_literal_empty: 'squote';
+	readonly 'char_literal_empty/squote': 'before';
 	readonly closure_expression_block: 'after' | 'async_marker' | 'before' | 'dash_gt' | 'move_marker' | 'static_marker';
 	readonly 'closure_expression_block/async_marker': 'after' | 'before';
 	readonly 'closure_expression_block/dash_gt': 'after' | 'before';
@@ -2060,6 +2063,7 @@ export interface AddressLeaf {
 	readonly 'captured_pattern/at/after': WhitespaceArm;
 	readonly 'captured_pattern/at/before': WhitespaceArm;
 	readonly 'captured_pattern/before': WhitespaceArm;
+	readonly 'char_literal_empty/squote/before': WhitespaceArm;
 	readonly 'closure_expression_block/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/after': WhitespaceArm;
 	readonly 'closure_expression_block/async_marker/before': WhitespaceArm;

@@ -193,6 +193,23 @@ export default grammar(
 			},
 
 			patches: {
+				integer_literal: {
+					0: variant('decimal', { default: true }),
+					1: variant('hex'),
+					2: variant('binary'),
+					3: variant('octal')
+				},
+				char_literal: {
+					0: variant('escaped'),
+					1: variant('plain', { default: true }),
+					2: variant('empty')
+				},
+				escape_sequence: {
+					0: variant('simple', { default: true }),
+					1: variant('unicode_fixed'),
+					2: variant('unicode_braced'),
+					3: variant('hex')
+				},
 				metavariable: { '.': regex(/\$(?<name>[a-zA-Z_]\w*)/) },
 
 				shebang: { '.': regex(/#!(?<content>[\r\f\t\v ]*(?:[^\[\n].*)?)\n/) },

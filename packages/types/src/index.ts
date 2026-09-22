@@ -926,6 +926,9 @@ type OptionalKeys<T> = {
  *   1 of spec 009 — cached indexed access instead of fresh `LooseConfigOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
+/** A config type whose numeric text slots (`K`) also accept a JavaScript number, converted to the slot's text by the base builder. */
+export type WidenNumeric<C, K extends PropertyKey> = { [P in keyof C]: P extends K ? C[P] | number : C[P] };
+
 /**
  * @param Visited - Set of `$type` discriminants already seen on the
  *   current expansion path. Combined with `Depth`, gives belt-and-
@@ -1459,7 +1462,7 @@ export interface KeywordNs<Id extends number, Text extends string, Tree = never,
  */
 export interface LeafNs<
 	Node extends { readonly $type: string | number; readonly $text: string },
-	Text extends string,
+	Text extends string | number,
 	Built = Node,
 	Tree = never,
 	Kind extends string = string

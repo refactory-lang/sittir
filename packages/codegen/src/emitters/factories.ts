@@ -1,6 +1,13 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
-import { interiorOf } from './interior.ts';
+import {
+	interiorEnumArms,
+	interiorOf,
+	numberTextArgs,
+	numericLeafShape,
+	numericSlotKeys,
+	numericSlotShape
+} from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	kindDiscriminantExprForId,
@@ -113,6 +120,9 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (hiddenTextLeaves(slot, nodeMap).length > 0) imports.add('admitHiddenText');
 		}
 	}
+	for (const [kind, node] of nodeMap.nodes) {
+		if (numericSlotKeys(node).length > 0 || numericLeafShape(kind, node) !== undefined) imports.add('numberText');
+	}
 	return [...imports].sort();
 }
 
@@ -169,11 +179,13 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 		const interior = interiorOf(node);
 		if (interior === undefined) continue;
 		for (const entry of interior.entries) {
-			if (!('slot' in entry)) continue;
-			const literal = anchoredLeafRegexLiteral(kind, entry.pattern);
+			const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+			if (guarded === undefined) continue;
+			const { slot, pattern } = guarded;
+			const literal = anchoredLeafRegexLiteral(kind, pattern);
 			if (literal === undefined) continue;
-			const constName = `_slotRe_${node.rawFactoryName!}_${entry.slot}`;
-			leafReConsts.set(slotGuardKey(kind, entry.slot), constName);
+			const constName = `_slotRe_${node.rawFactoryName!}_${slot}`;
+			leafReConsts.set(slotGuardKey(kind, slot), constName);
 			lines.push(`const ${constName} = ${literal};`);
 		}
 	}
@@ -284,8 +296,10 @@ export namespace factory {
 		switch (node.modelType) {
 			case 'pattern': {
 				const guards = buildLeafGuards(node, leafReConsts);
+				const shape = numericLeafShape(node.kind, node);
+				if (shape !== undefined) guards.unshift(`text = numberText(${numberTextArgs(shape)}, text);`);
 				const guard = guards.join(' ');
-				result = emitTextFactory(node, 'text: string', 'text', guard, kindEntries, nodeMap);
+				result = emitTextFactory(node, leafTextParams(node), 'text', guard, kindEntries, nodeMap);
 				break;
 			}
 			case 'keyword':
@@ -319,6 +333,10 @@ export namespace factory {
 		const result = emitSeparatedListFactory(node, nodeMap, kindEntries);
 		if (result) output.push(result);
 	}
+}
+
+function leafTextParams(node: AssembledNode): string {
+	return numericLeafShape(node.kind, node) === undefined ? 'text: string' : 'text: string | number';
 }
 
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
@@ -606,7 +624,7 @@ export function builtTypeSurfaceOf(
 	if (isSlotBearingCompound(node)) return fieldCarryingBuiltTypeSurface(node, node.slots, nodeMap, kindEntries);
 	switch (node.modelType) {
 		case 'pattern':
-			return leafBuiltTypeSurface(node, 'text: string', 'string', nodeMap, kindEntries);
+			return leafBuiltTypeSurface(node, leafTextParams(node), 'string', nodeMap, kindEntries);
 		default:
 			return undefined;
 	}
@@ -631,6 +649,7 @@ export function constructionFieldElementType(
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const type = fieldElementType(f, nodeMap, kindEntries);
+	if (numericSlotShape(f) !== undefined) return `${type} | number`;
 	return admitsHiddenText([f], nodeMap) ? `${type} | string` : type;
 }
 
@@ -819,14 +838,17 @@ function resolveFactorySurface(
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
+	const numericKeys = numericSlotKeys(node);
+	const widen = (type: string): string =>
+		numericKeys.length === 0 ? type : `WidenNumeric<${type}, ${numericKeys.map((key) => JSON.stringify(key)).join(' | ')}>`;
 	const param: FactoryParam = {
 		label: 'config',
 		optional: opt === '?',
 		rest: false,
-		strictType: allOptional ? `Partial<${configType}>` : configType,
+		strictType: allOptional ? `Partial<${widen(configType)}>` : widen(configType),
 		looseType: `T.${node.typeName}.Loose`,
-		rowStrictType: allOptional ? `Partial<ConfigOf<T.${node.typeName}>>` : `ConfigOf<T.${node.typeName}>`,
-		rowLooseType: `LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.${node.typeName}`,
+		rowStrictType: allOptional ? `Partial<${widen(`ConfigOf<T.${node.typeName}>`)}>` : widen(`ConfigOf<T.${node.typeName}>`),
+		rowLooseType: `${widen(`LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>`)} | T.${node.typeName}`,
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
@@ -907,7 +929,7 @@ export function constructorSurface(
 			if (!isVisibleTextLeaf(target)) return undefined;
 			return { params: '', args: '' };
 		case 'pattern':
-			return { params: 'text: string', args: 'text' };
+			return { params: leafTextParams(target), args: 'text' };
 		case 'enum':
 			return { params: `value: ${enumMemberDiscriminant(target, kindEntries)}`, args: 'value' };
 		default:
@@ -985,7 +1007,9 @@ function emitFieldCarryingFactory(
 		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 	}
 	for (const f of slotsToEmit) {
-		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
+		const shape = numericSlotShape(f);
+		const source = shape === undefined ? valueSourceFor(f) : `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
+		lines.push(`  const ${f.storageKey} = ${source};`);
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		if (guard !== undefined) {
 			lines.push(
@@ -1658,4 +1682,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 }
 
 const SITTIR_TYPES_IMPORT_PLACEHOLDER = '__SITTIR_TYPES_IMPORT__';
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['AnyNodeData', 'ByteRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['AnyNodeData', 'ByteRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];

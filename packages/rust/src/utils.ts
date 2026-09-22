@@ -21,11 +21,12 @@ import {
 	hasKind,
 	coerceBooleanKeywordStorage,
 	coerceBitflagStorage,
-	withAccessors
+	withAccessors,
+	numberText
 } from '@sittir/common/utils';
 import type { WithMethodsEngine } from '@sittir/common/utils';
 
-export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };
+export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors, numberText };
 
 export function isNodeData<K extends keyof NamespaceMap>(
 	v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
@@ -57,18 +58,22 @@ export const methodsEngine = {
  *  back the same kind. A type alias cannot name itself, so the earlier
  *  declaration fell back to `AnyNodeData` and lost the type at every
  *  `$trivia` call site. */
+export interface TriviaSetterOf<Self> {
+	(
+		...args: (
+			| (BlockComment | LineComment | string)
+			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
+		)[]
+	): Self;
+	leading(...items: (BlockComment | LineComment | string)[]): Self;
+	trailing(...items: (BlockComment | LineComment | string)[]): Self;
+}
+
 export interface NodeMethodsOf {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(
-		...args: (
-			| BlockComment
-			| LineComment
-			| string
-			| { leading?: (BlockComment | LineComment | string)[]; trailing?: (BlockComment | LineComment | string)[] }
-		)[]
-	): this;
+	$trivia: TriviaSetterOf<this>;
 }
 
 export function withMethods<T extends object>(node: T, engine: typeof methodsEngine): T & NodeMethodsOf {

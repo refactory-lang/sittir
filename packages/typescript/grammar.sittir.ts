@@ -304,10 +304,33 @@ export default grammar(
 
 			patches: {
 				comment: {
-					'0/1/1': regex(/([^*]|\*+[^*\/])*\**/),
-					'0/1/2': { type: 'STRING', value: '*/' } as never,
+					'1/0/1': regex(/([^*]|\*+[^*\/])*\**/),
+					'1/0/2': { type: 'STRING', value: '*/' } as never,
 					0: variant('line'),
 					1: variant('block')
+				},
+				number: {
+					'1/0/0': field('integer'),
+					'1/0/2': field('fraction'),
+					'1/0/3/0/0': field('marker'),
+					'1/0/3/0/1/0': field('sign'),
+					'1/0/3/0/1/1': field('exponent'),
+					'2/0/1': field('fraction'),
+					'2/0/2/0/0': field('marker'),
+					'2/0/2/0/1/0': field('sign'),
+					'2/0/2/0/1/1': field('exponent'),
+					'3/0/0': field('integer'),
+					'3/0/1/0': field('marker'),
+					'3/0/1/1/0': field('sign'),
+					'3/0/1/1/1': field('exponent'),
+					0: variant('hex'),
+					1: variant('float_point'),
+					2: variant('float_leading_point'),
+					3: variant('float_scientific'),
+					4: variant('decimal', { default: true }),
+					5: variant('binary'),
+					6: variant('octal'),
+					7: variant('bigint')
 				},
 				hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 				binary_expression: {
@@ -669,12 +692,8 @@ export default grammar(
 				}
 			},
 			externals: ($, previous) => [...(previous ?? []), $._tight, $._space, $._newline, $._blankline, $._indent, $._dedent],
-			supertypes: ($, previous) => [...(previous ?? []), $._whitespace, $.comment],
-			extras: ($, previous) => [
-				...(previous ?? []).filter((extra: { name?: string }) => extra.name !== 'comment'),
-				$.comment_line,
-				$.comment_block
-			],
+			supertypes: ($, previous) => [...(previous ?? []), $._whitespace],
+			extras: ($, previous) => [...(previous ?? [])],
 			visibleExternals: (_$) => ({
 				_automatic_semicolon: string('\n'),
 				_function_signature_automatic_semicolon: string('\n'),

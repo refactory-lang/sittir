@@ -1643,11 +1643,41 @@ describe('const_parameter sub-factories', () => {
 		expect((node as any).value()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('negativeLiteral.integerLiteral builds the parent', () => {
-		const node = ir.constParameter.negativeLiteral.integerLiteral({
+	it('negativeLiteral.decimal builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.decimal({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
 			value: [{ content: '1' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.hex builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.hex({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.binary builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.binary({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.ConstParameter);
+		expect((node as any).value()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('negativeLiteral.octal builds the parent', () => {
+		const node = ir.constParameter.negativeLiteral.octal({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			type: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any,
+			value: [{ content: '0o0' }]
 		});
 		expect(node.$type).toBe(TSKindId.ConstParameter);
 		expect((node as any).value()).toBeDefined();
@@ -2709,8 +2739,8 @@ describe('generic_function sub-factories', () => {
 		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('fieldExpression.integerLiteral builds the parent', () => {
-		const node = ir.genericFunction.fieldExpression.integerLiteral({
+	it('fieldExpression.decimal builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.decimal({
 			typeArguments: {
 				$type: TSKindId.TypeArguments,
 				$text: 'test',
@@ -2734,6 +2764,99 @@ describe('generic_function sub-factories', () => {
 			} as any,
 			function: [
 				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.hex builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.hex({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0x1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.binary builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.binary({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0b0' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.GenericFunction);
+		expect((node as any).function()?.$type).toBe(TSKindId.FieldExpression);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.octal builds the parent', () => {
+		const node = ir.genericFunction.fieldExpression.octal({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_type_arguments_elements: {
+					$type: TSKindId.TypeArgumentsElements,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_element: [
+						{
+							$type: TSKindId.TypeArgument,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_content: { $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any
+						} as any
+					]
+				} as any
+			} as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0o0' }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.GenericFunction);
@@ -4816,11 +4939,44 @@ describe('call_expression sub-factories', () => {
 		expect((node as any).function()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('fieldExpression.integerLiteral builds the parent', () => {
-		const node = ir.callExpression.fieldExpression.integerLiteral({
+	it('fieldExpression.decimal builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.decimal({
 			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
 			function: [
 				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.hex builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.hex({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0x1' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.binary builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.binary({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0b0' }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.CallExpression);
+		expect((node as any).function()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('fieldExpression.octal builds the parent', () => {
+		const node = ir.callExpression.fieldExpression.octal({
+			arguments: { $type: TSKindId.Arguments, $text: 'test', $source: 2, $named: true } as any,
+			function: [
+				{ value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any, content: '0o0' }
 			]
 		});
 		expect(node.$type).toBe(TSKindId.CallExpression);
@@ -5519,139 +5675,544 @@ describe('field_initializer sub-factories', () => {
 		expect((node as any).field()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral({
+	it('decimal builds the parent', () => {
+		const node = ir.fieldInitializer.decimal({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			content: '1'
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u8 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.u8({
+	it('decimal.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.u8({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i8 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.i8({
+	it('hex.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u8 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.i8({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u16 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.u16({
+	it('hex.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i8 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.u16({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i16 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.i16({
+	it('hex.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u16 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.i16({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u32 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.u32({
+	it('hex.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i16 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.u32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i32 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.i32({
+	it('hex.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u32 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.i32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u64 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.u64({
+	it('hex.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i32 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.u64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i64 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.i64({
+	it('hex.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u64 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.i64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u128 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.u128({
+	it('hex.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i64 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.u128({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i128 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.i128({
+	it('hex.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u128 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.i128({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.isize builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.isize({
+	it('hex.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i128 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.isize builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.isize({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.usize builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.usize({
+	it('hex.isize builds the parent', () => {
+		const node = ir.fieldInitializer.hex.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.isize builds the parent', () => {
+		const node = ir.fieldInitializer.binary.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.isize builds the parent', () => {
+		const node = ir.fieldInitializer.octal.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.usize builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.usize({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f32 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.f32({
+	it('hex.usize builds the parent', () => {
+		const node = ir.fieldInitializer.hex.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.usize builds the parent', () => {
+		const node = ir.fieldInitializer.binary.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.usize builds the parent', () => {
+		const node = ir.fieldInitializer.octal.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.f32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f64 builds the parent', () => {
-		const node = ir.fieldInitializer.integerLiteral.f64({
+	it('hex.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f32 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.decimal.f64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldInitializer);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.hex.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.binary.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f64 builds the parent', () => {
+		const node = ir.fieldInitializer.octal.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex builds the parent', () => {
+		const node = ir.fieldInitializer.hex({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0x1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary builds the parent', () => {
+		const node = ir.fieldInitializer.binary({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0b0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal builds the parent', () => {
+		const node = ir.fieldInitializer.octal({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0o0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldInitializer);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -6071,139 +6632,544 @@ describe('field_expression sub-factories', () => {
 		expect((node as any).field()?.$type).toBe(TSKindId.Identifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral({
+	it('decimal builds the parent', () => {
+		const node = ir.fieldExpression.decimal({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			content: '1'
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u8 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.u8({
+	it('decimal.u8 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.u8({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i8 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.i8({
+	it('hex.u8 builds the parent', () => {
+		const node = ir.fieldExpression.hex.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u8 builds the parent', () => {
+		const node = ir.fieldExpression.binary.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u8 builds the parent', () => {
+		const node = ir.fieldExpression.octal.u8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i8 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.i8({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u16 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.u16({
+	it('hex.i8 builds the parent', () => {
+		const node = ir.fieldExpression.hex.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i8 builds the parent', () => {
+		const node = ir.fieldExpression.binary.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i8 builds the parent', () => {
+		const node = ir.fieldExpression.octal.i8({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u16 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.u16({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i16 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.i16({
+	it('hex.u16 builds the parent', () => {
+		const node = ir.fieldExpression.hex.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u16 builds the parent', () => {
+		const node = ir.fieldExpression.binary.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u16 builds the parent', () => {
+		const node = ir.fieldExpression.octal.u16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i16 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.i16({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u32 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.u32({
+	it('hex.i16 builds the parent', () => {
+		const node = ir.fieldExpression.hex.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i16 builds the parent', () => {
+		const node = ir.fieldExpression.binary.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i16 builds the parent', () => {
+		const node = ir.fieldExpression.octal.i16({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u32 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.u32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i32 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.i32({
+	it('hex.u32 builds the parent', () => {
+		const node = ir.fieldExpression.hex.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u32 builds the parent', () => {
+		const node = ir.fieldExpression.binary.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u32 builds the parent', () => {
+		const node = ir.fieldExpression.octal.u32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i32 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.i32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u64 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.u64({
+	it('hex.i32 builds the parent', () => {
+		const node = ir.fieldExpression.hex.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i32 builds the parent', () => {
+		const node = ir.fieldExpression.binary.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i32 builds the parent', () => {
+		const node = ir.fieldExpression.octal.i32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u64 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.u64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i64 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.i64({
+	it('hex.u64 builds the parent', () => {
+		const node = ir.fieldExpression.hex.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u64 builds the parent', () => {
+		const node = ir.fieldExpression.binary.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u64 builds the parent', () => {
+		const node = ir.fieldExpression.octal.u64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i64 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.i64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u128 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.u128({
+	it('hex.i64 builds the parent', () => {
+		const node = ir.fieldExpression.hex.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i64 builds the parent', () => {
+		const node = ir.fieldExpression.binary.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i64 builds the parent', () => {
+		const node = ir.fieldExpression.octal.i64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u128 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.u128({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i128 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.i128({
+	it('hex.u128 builds the parent', () => {
+		const node = ir.fieldExpression.hex.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u128 builds the parent', () => {
+		const node = ir.fieldExpression.binary.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u128 builds the parent', () => {
+		const node = ir.fieldExpression.octal.u128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i128 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.i128({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.isize builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.isize({
+	it('hex.i128 builds the parent', () => {
+		const node = ir.fieldExpression.hex.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i128 builds the parent', () => {
+		const node = ir.fieldExpression.binary.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i128 builds the parent', () => {
+		const node = ir.fieldExpression.octal.i128({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.isize builds the parent', () => {
+		const node = ir.fieldExpression.decimal.isize({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.usize builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.usize({
+	it('hex.isize builds the parent', () => {
+		const node = ir.fieldExpression.hex.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.isize builds the parent', () => {
+		const node = ir.fieldExpression.binary.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.isize builds the parent', () => {
+		const node = ir.fieldExpression.octal.isize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.usize builds the parent', () => {
+		const node = ir.fieldExpression.decimal.usize({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f32 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.f32({
+	it('hex.usize builds the parent', () => {
+		const node = ir.fieldExpression.hex.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.usize builds the parent', () => {
+		const node = ir.fieldExpression.binary.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.usize builds the parent', () => {
+		const node = ir.fieldExpression.octal.usize({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f32 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.f32({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f64 builds the parent', () => {
-		const node = ir.fieldExpression.integerLiteral.f64({
+	it('hex.f32 builds the parent', () => {
+		const node = ir.fieldExpression.hex.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f32 builds the parent', () => {
+		const node = ir.fieldExpression.binary.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f32 builds the parent', () => {
+		const node = ir.fieldExpression.octal.f32({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f64 builds the parent', () => {
+		const node = ir.fieldExpression.decimal.f64({
 			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
 			field: [{ content: '1' }]
 		});
 		expect(node.$type).toBe(TSKindId.FieldExpression);
-		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.f64 builds the parent', () => {
+		const node = ir.fieldExpression.hex.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0x1' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f64 builds the parent', () => {
+		const node = ir.fieldExpression.binary.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0b0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f64 builds the parent', () => {
+		const node = ir.fieldExpression.octal.f64({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			field: [{ content: '0o0' }]
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex builds the parent', () => {
+		const node = ir.fieldExpression.hex({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0x1'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary builds the parent', () => {
+		const node = ir.fieldExpression.binary({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0b0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal builds the parent', () => {
+		const node = ir.fieldExpression.octal({
+			value: { $type: TSKindId.FloatLiteral, $text: 'test', $source: 2, $named: true } as any,
+			content: '0o0'
+		});
+		expect(node.$type).toBe(TSKindId.FieldExpression);
+		expect((node as any).field()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -6727,213 +7693,370 @@ describe('negative_literal', () => {
 });
 
 describe('negative_literal sub-factories', () => {
-	it('integerLiteral builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral({ content: '1' });
+	it('decimal builds the parent', () => {
+		const node = ir.negativeLiteral.decimal({ content: '1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u8 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.u8({ content: '1' });
+	it('decimal.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.u8({ content: '1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i8 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.i8({ content: '1' });
+	it('hex.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.u8({ content: '0x1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u16 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.u16({ content: '1' });
+	it('binary.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.u8({ content: '0b0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i16 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.i16({ content: '1' });
+	it('octal.u8 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.u8({ content: '0o0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u32 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.u32({ content: '1' });
+	it('decimal.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.i8({ content: '1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i32 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.i32({ content: '1' });
+	it('hex.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.i8({ content: '0x1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u64 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.u64({ content: '1' });
+	it('binary.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.i8({ content: '0b0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i64 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.i64({ content: '1' });
+	it('octal.i8 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.i8({ content: '0o0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.u128 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.u128({ content: '1' });
+	it('decimal.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.u16({ content: '1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.i128 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.i128({ content: '1' });
+	it('hex.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.u16({ content: '0x1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.isize builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.isize({ content: '1' });
+	it('binary.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.u16({ content: '0b0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.usize builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.usize({ content: '1' });
+	it('octal.u16 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.u16({ content: '0o0' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f32 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.f32({ content: '1' });
+	it('decimal.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.i16({ content: '1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('integerLiteral.f64 builds the parent', () => {
-		const node = ir.negativeLiteral.integerLiteral.f64({ content: '1' });
+	it('hex.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.i16({ content: '0x1' });
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
-		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.i16({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i16 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.i16({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.u32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.u32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.u32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u32 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.u32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.i32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.i32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.i32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i32 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.i32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.u64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.u64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.u64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u64 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.u64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.i64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.i64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.i64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i64 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.i64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.u128({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.u128({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.u128({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.u128 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.u128({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.i128({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.i128({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.i128({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.i128 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.i128({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.isize builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.isize({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.isize builds the parent', () => {
+		const node = ir.negativeLiteral.hex.isize({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.isize builds the parent', () => {
+		const node = ir.negativeLiteral.binary.isize({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.isize builds the parent', () => {
+		const node = ir.negativeLiteral.octal.isize({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.usize builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.usize({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.usize builds the parent', () => {
+		const node = ir.negativeLiteral.hex.usize({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.usize builds the parent', () => {
+		const node = ir.negativeLiteral.binary.usize({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.usize builds the parent', () => {
+		const node = ir.negativeLiteral.octal.usize({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.f32({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.f32({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.f32({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f32 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.f32({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('decimal.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.decimal.f64({ content: '1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.hex.f64({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.binary.f64({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal.f64 builds the parent', () => {
+		const node = ir.negativeLiteral.octal.f64({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('hex builds the parent', () => {
+		const node = ir.negativeLiteral.hex({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralHex);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('binary builds the parent', () => {
+		const node = ir.negativeLiteral.binary({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralBinary);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('octal builds the parent', () => {
+		const node = ir.negativeLiteral.octal({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.NegativeLiteral);
+		expect((node as any).value()?.$type).toBe(TSKindId.IntegerLiteralOctal);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('floatLiteral builds the parent', () => {
 		const node = ir.negativeLiteral.floatLiteral('1.0');
 		expect(node.$type).toBe(TSKindId.NegativeLiteral);
 		expect((node as any).value()?.$type).toBe(TSKindId.FloatLiteral);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('integer_literal', () => {
-	it('factory produces correct type', () => {
-		const node = ir.integerLiteral({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.integerLiteral({ content: '1' });
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('integer_literal sub-factories', () => {
-	it('u8 builds the parent', () => {
-		const node = ir.integerLiteral.u8({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.U8Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('i8 builds the parent', () => {
-		const node = ir.integerLiteral.i8({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.I8Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('u16 builds the parent', () => {
-		const node = ir.integerLiteral.u16({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.U16Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('i16 builds the parent', () => {
-		const node = ir.integerLiteral.i16({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.I16Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('u32 builds the parent', () => {
-		const node = ir.integerLiteral.u32({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.U32Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('i32 builds the parent', () => {
-		const node = ir.integerLiteral.i32({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.I32Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('u64 builds the parent', () => {
-		const node = ir.integerLiteral.u64({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.U64Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('i64 builds the parent', () => {
-		const node = ir.integerLiteral.i64({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.I64Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('u128 builds the parent', () => {
-		const node = ir.integerLiteral.u128({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.U128Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('i128 builds the parent', () => {
-		const node = ir.integerLiteral.i128({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.I128Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('isize builds the parent', () => {
-		const node = ir.integerLiteral.isize({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.IsizeKeyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('usize builds the parent', () => {
-		const node = ir.integerLiteral.usize({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.UsizeKeyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('f32 builds the parent', () => {
-		const node = ir.integerLiteral.f32({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.F32Keyword);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('f64 builds the parent', () => {
-		const node = ir.integerLiteral.f64({ content: '1' });
-		expect(node.$type).toBe(TSKindId.IntegerLiteral);
-		const seated = (node as any).suffix();
-		expect(seated?.$text ?? seated).toBe(TSKindId.F64Keyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -6970,30 +8093,6 @@ describe('raw_string_literal', () => {
 			stringContent: { $type: TSKindId.RawStringLiteralContent, $text: 'test', $source: 2, $named: true } as any,
 			rawStringLiteralEnd: { $type: TSKindId.RawStringLiteralEnd, $text: 'test', $source: 2, $named: true } as any
 		});
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('char_literal', () => {
-	it('factory produces correct type', () => {
-		const node = ir.charLiteral({ content: 'a' });
-		expect(node.$type).toBe(TSKindId.CharLiteral);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.charLiteral({ content: 'a' });
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('escape_sequence', () => {
-	it('factory produces correct type', () => {
-		const node = ir.escapeSequence('a');
-		expect(node.$type).toBe(TSKindId.EscapeSequence);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.escapeSequence('a');
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -7757,6 +8856,410 @@ describe('visibility_modifier_group sub-factories', () => {
 		});
 		expect(node.$type).toBe(TSKindId.VisibilityModifierGroup);
 		expect((node as any).content()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_decimal sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.u8.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.i8.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.u16.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.i16.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.u32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.i32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.u64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.i64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.u128.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.i128.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.decimal.isize.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.decimal.usize.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.f32.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.decimal.f64.coerce({ content: '1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralDecimal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_hex sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.hex.u8.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.hex.i8.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.hex.u16.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.hex.i16.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.hex.u32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.hex.i32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.hex.u64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.hex.i64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.hex.u128.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.hex.i128.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.hex.isize.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.hex.usize.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.hex.f32.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.hex.f64.coerce({ content: '0x1' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralHex);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_binary sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.binary.u8.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.binary.i8.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.binary.u16.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.binary.i16.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.binary.u32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.binary.i32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.binary.u64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.binary.i64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.binary.u128.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.binary.i128.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.binary.isize.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.binary.usize.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.binary.f32.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.binary.f64.coerce({ content: '0b0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralBinary);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('integer_literal_octal sub-factories', () => {
+	it('u8 builds the parent', () => {
+		const node = ir.integerLiteral.octal.u8.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i8 builds the parent', () => {
+		const node = ir.integerLiteral.octal.i8.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i8');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u16 builds the parent', () => {
+		const node = ir.integerLiteral.octal.u16.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i16 builds the parent', () => {
+		const node = ir.integerLiteral.octal.i16.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i16');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u32 builds the parent', () => {
+		const node = ir.integerLiteral.octal.u32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i32 builds the parent', () => {
+		const node = ir.integerLiteral.octal.i32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u64 builds the parent', () => {
+		const node = ir.integerLiteral.octal.u64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i64 builds the parent', () => {
+		const node = ir.integerLiteral.octal.i64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i64');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('u128 builds the parent', () => {
+		const node = ir.integerLiteral.octal.u128.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('u128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('i128 builds the parent', () => {
+		const node = ir.integerLiteral.octal.i128.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('i128');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('isize builds the parent', () => {
+		const node = ir.integerLiteral.octal.isize.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('isize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('usize builds the parent', () => {
+		const node = ir.integerLiteral.octal.usize.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('usize');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f32 builds the parent', () => {
+		const node = ir.integerLiteral.octal.f32.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f32');
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('f64 builds the parent', () => {
+		const node = ir.integerLiteral.octal.f64.coerce({ content: '0o0' });
+		expect(node.$type).toBe(TSKindId.IntegerLiteralOctal);
+		const seated = (node as any).suffix();
+		expect(seated?.$text ?? seated).toBe('f64');
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

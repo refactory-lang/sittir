@@ -1,5 +1,6 @@
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
+import { compileAnchoredPattern } from '../types/runtime-shapes.ts';
 import { isWordOrVisibleTextLeaf, isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
@@ -446,7 +447,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	return { arms, texts, sawNodeArm, verbatim, ownSymbolIds };
 }
 
-function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
+function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap, owner?: AssembledNode): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -476,6 +477,9 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 		collapsesMultiplicity: false
 	});
 	const walked = enumArmsOf(field, nodeMap);
+	if (owner instanceof AbstractAssembledCompound && owner.lexedInterior && !walked.verbatim && !walked.sawNodeArm && walked.texts.length > 0) {
+		return { kind: 'verbatim', texts: [...walked.texts], enumKinds: [], enumKindsById: new Map(), collapsesMultiplicity: false };
+	}
 	if (walked.verbatim || walked.arms.length === 0) return verbatim();
 	const enumKindsById = new Map<string, number>();
 	for (const arm of walked.arms) if (arm.id !== undefined) enumKindsById.set(arm.kind, arm.id);
@@ -488,11 +492,15 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	};
 }
 
+export function isTextEnum(info: FieldStorageInfo): boolean {
+	return info.kind === 'verbatim' && info.texts.length > 0;
+}
+
 export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of node.slots) {
 			for (const value of slot.values) value.storage = classifyValueStorage(value, nodeMap);
-			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
+			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap, node);
 		}
 	}
 }
@@ -680,8 +688,6 @@ export interface BooleanLeafKinds {
 
 export interface ScalarLeafKinds {
 	readonly boolean?: BooleanLeafKinds;
-	readonly integer?: string;
-	readonly float?: string;
 }
 
 const BOOLEAN_TEXTS = ['true', 'false'] as const;
@@ -703,12 +709,7 @@ function booleanLeafKinds(nodeMap: NodeMap): BooleanLeafKinds | undefined {
 }
 
 export function scalarLeafKinds(nodeMap: NodeMap): ScalarLeafKinds {
-	const pick = (...names: readonly string[]): string | undefined => names.find((name) => nodeMap.nodes.has(name));
-	return {
-		boolean: booleanLeafKinds(nodeMap),
-		integer: pick('integer_literal', 'integer'),
-		float: pick('float_literal', 'float')
-	};
+	return { boolean: booleanLeafKinds(nodeMap) };
 }
 
 export function lexedContentSlot(node: AssembledNode): AssembledNonterminal | undefined {
@@ -1132,23 +1133,16 @@ export function stripUselessEscapes(pattern: string): string {
 
 export function anchoredLeafRegex(kind: string, textPattern: string | undefined): RegExp | undefined {
 	if (!textPattern) return undefined;
-	const anchored = `^(?:${stripUselessEscapes(textPattern)})$`;
-	let regex: RegExp;
-	try {
-		regex = new RegExp(anchored, 'u');
-	} catch {
-		try {
-			regex = new RegExp(anchored);
-		} catch (e) {
-			throw new Error(
-				`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
-					`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(anchored)}. ` +
-					`Cause: ${(e as Error).message}. ` +
-					`Either fix the grammar or add the kind to an emitter exception list.`
-			);
-		}
+	const compiled = compileAnchoredPattern(stripUselessEscapes(textPattern));
+	if ('error' in compiled) {
+		throw new Error(
+			`emitter: leaf '${kind}' pattern does not compile as a JavaScript RegExp ` +
+				`(tried 'u' flag and no-flag). Pattern: ${JSON.stringify(`^(?:${stripUselessEscapes(textPattern)})$`)}. ` +
+				`Cause: ${compiled.error.message}. ` +
+				`Either fix the grammar or add the kind to an emitter exception list.`
+		);
 	}
-	return regex;
+	return compiled.regex;
 }
 
 export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {

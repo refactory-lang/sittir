@@ -5123,14 +5123,48 @@ projects it through the token interior.
 ### `packages/codegen/src/emitters/shared.ts::scalarLeafKinds`
 
 ```text
-/** The leaf kinds a JavaScript scalar resolves to in this grammar — a
- *  boolean to the boolean literal, an integer to the integer literal, any
- *  other number to the float literal — by the grammar's own names for them
- *  (`integer_literal` in rust, `integer` in python), absent when the grammar
- *  has no such leaf. The one source for the runtime `_resolveScalar` and for
- *  the `LeafScalarMap` the loose surface widens those leaves through, so a
- *  scalar the resolver accepts is exactly a scalar the type admits. */
+/** The leaf kinds a JavaScript boolean resolves to in this grammar — the
+ *  grammar's own true and false leaves — absent when it has none. The one
+ *  source for the runtime `_resolveScalar` and for the `LeafScalarMap` the
+ *  loose surface widens those leaves through. A number is not resolved by
+ *  name: see `numericLeafKinds`. */
 ```
+
+### `packages/codegen/src/emitters/interior.ts::numberShape`
+
+The numeric shape of a guard pattern: an integer written in base 2, 8, 10 or 16 with the prefix the pattern requires (`0x`, `0o`, `0b`, or none), or a float, or nothing. It is found by probing the anchored pattern, never by reading its source: a base is taken when the pattern accepts digits of that base (with the prefix, when it needs one) and rejects a digit outside it, so `0x[0-9a-f]+` is hex with prefix `0x`, a bare `[\da-fA-F]+` is hex with no prefix, `\d+` is decimal, and a pattern that accepts a letter outside the base, or the empty string, has no shape. A float is a pattern that accepts a float numeral and no letter. The one classifier behind bare-number coercion, the number acceptance of builders and the widened config types.
+
+### `packages/codegen/src/emitters/interior.ts::numberSignature`
+
+`numberShape` named for reading and tests: decimal, hex, octal, binary or float.
+
+### `packages/codegen/src/emitters/interior.ts::numberShapeOfPattern`
+
+`numberShape` of a pattern source, compiled the way every leaf guard is.
+
+### `packages/codegen/src/emitters/interior.ts::numericSlotShape`
+
+The shape of a text slot whose values are one pattern; a slot of any other kind has none.
+
+### `packages/codegen/src/emitters/interior.ts::numericSlotKeys`
+
+The config keys of a node's numeric text slots, the keys `WidenNumeric` widens.
+
+### `packages/codegen/src/emitters/interior.ts::numericLeafShape`
+
+The shape of a pattern leaf's own text pattern.
+
+### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
+
+Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric (`numberShape` over the interior guard, compiled once by `interiorGuard` for the leaf guard and for this probe). A bare string is projected onto the kind's slots through its token interior.
+
+### `packages/codegen/src/emitters/interior.ts::numberTextArgs`
+
+The base and prefix arguments of the `numberText` call an emitter writes for a shape.
+
+### `packages/codegen/src/emitters/interior.ts::numericLeafKinds`
+
+The leaf kinds a bare JavaScript number can resolve to: the leaves whose guard has a decimal or float shape (a hex, octal or binary leaf is reached by naming its arm). The list is ordered the default arms of hoisted parents first, then declaration order. The runtime resolver tests `String(value)` against each leaf's registered pattern in that order and builds the first that accepts it, so `1` reaches the default integer arm, `1.5` a point arm and `1e21` a scientific arm, in any grammar, with no leaf named in the emitter. The same list types the number-accepting leaves in `LeafScalarMap`.
 
 #### the boolean kinds come from the model, not a name
 
@@ -13389,6 +13423,8 @@ folds by text unconditionally.
 
 ### `packages/codegen/src/emitters/wrap.ts::emitTransparentSupertypeWrap`
 
+The kinds the wrapper accepts as a child are the supertype's direct subtypes plus everything reachable through nested supertypes (`transitiveParseKinds`): a parser node arrives under the concrete arm kind (`integer_literal_decimal`), never under the supertype that groups it, so a wrapper listing only direct subtypes returned the node empty.
+
 #### body
 
 ```text
@@ -16094,8 +16130,27 @@ guards all read this; nothing re-derives it. Slots are matched left to right, ea
 semantics, the lexer's longest match over the whole token). A lexed kind whose render rule is not a sequence, or
 whose member is neither template text nor a slot, is a compile-time error naming the kind and the member. An
 optional literal followed by a literal it cannot be told apart from at their first differing character is a
-compile-time error naming both.
+compile-time error naming both. An optional group of members (a nested optional sequence) is walked
+recursively: the regex wraps it in an optional non-capturing group, while `entries` stays the flat list of
+literal, flag, enum and slot entries every consumer reads, so a slot inside a group is guarded, typed and
+projected like any other, and an optional pattern slot is an optional named group.
 ```
+
+### `packages/codegen/src/emitters/interior.ts::walkInterior`
+
+Turns the members of a lexed kind's render rule into interior nodes: an entry for a literal, flag, enum or slot, and a group node for a nested sequence, walked recursively.
+
+### `packages/codegen/src/emitters/interior.ts::groupMembers`
+
+The members of a nested sequence member, which is an optional group of interior members. The render rule carries no optional marker here: `flattenMembers` in the token-interior pass splices every nested sequence that is not a group arm, so a nested sequence that survives to the render rule is, by construction, the arm of an optional group and the regex wraps it as one.
+
+### `packages/codegen/src/emitters/interior.ts::interiorNodePattern`
+
+The regex of an interior node: an entry's own pattern, or a group's members joined inside an optional non-capturing group.
+
+### `packages/codegen/src/emitters/interior.ts::flattenNodes`
+
+The leaf entries of an interior tree in order, the flat list consumers read.
 
 ### `packages/codegen/src/emitters/consts.ts::emitTokenInteriors`
 
@@ -16154,3 +16209,12 @@ A sample that satisfies the slot pattern, so the generated construction tests pa
 The own parser symbols of the visible enum arms of a slot, in seating order (`enumArmsOf`.ownSymbolIds). Guards the
 text fold of `projectMixedEnumStorage` so an identifier that happens to be spelled like a member is never taken for one.
 ```
+
+### `packages/codegen/src/emitters/factories.ts::leafTextParams`
+
+The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
+
+### `packages/codegen/src/emitters/types.ts::widenNumericSlots`
+
+Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so the namespace `Config` and `LooseConfig` accept a number where the builder converts one.
+

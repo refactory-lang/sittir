@@ -59,7 +59,7 @@ export function rebuildFormatLoose() {
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia({ leading: ["/**\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n */"] }), ir.functionDeclaration({
+		}).$trivia.leading("/**\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n */"), ir.functionDeclaration({
 			name: "applyBoundary",
 			parameters: [ir.requiredParameter({
 				pattern: "s",
@@ -125,7 +125,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia({ leading: ["/** Prepend/append boundary whitespace. */"] }), ir.functionDeclaration({
+		}).$trivia.leading("/** Prepend/append boundary whitespace. */"), ir.functionDeclaration({
 			name: "applyTrivia",
 			parameters: [ir.requiredParameter({
 				pattern: "s",
@@ -287,7 +287,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia({ leading: ["/**\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n */"] }), ir.exportStatement.default.declaration({
+		}).$trivia.leading("/**\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n */"), ir.exportStatement.default.declaration({
 			content: ir.functionDeclaration({
 				name: "rebaseTrivia",
 				parameters: [ir.requiredParameter({
@@ -358,7 +358,7 @@ export function rebuildFormatLoose() {
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia({ leading: ["/**\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n */"] }), ir.functionDeclaration({
+		}).$trivia.leading("/**\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n */"), ir.functionDeclaration({
 			name: "rebaseTriviaItems",
 			parameters: [ir.requiredParameter({
 				pattern: "trivia",
@@ -442,7 +442,7 @@ export function rebuildFormatLoose() {
 										}),
 									})),
 									terminator: TSKindId.Semi,
-								}).$trivia({ leading: ["// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output)."] })],
+								}).$trivia.leading("// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output).")],
 							}),
 							content: ir.callSignature({
 								parameters: ir.requiredParameter({
@@ -456,7 +456,7 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia({ leading: ["/** Rebase a trivia array, returning the adjusted array or undefined if absent. */"] }), ir.functionDeclaration({
+		}).$trivia.leading("/** Rebase a trivia array, returning the adjusted array or undefined if absent. */"), ir.functionDeclaration({
 			name: "rebaseKinds",
 			parameters: [ir.requiredParameter({
 				pattern: "kinds",
@@ -541,6 +541,6 @@ export function rebuildFormatLoose() {
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia({ leading: ["/** Recursively rebase all sub-records in `kinds`. */"] })],
+		}).$trivia.leading("/** Recursively rebase all sub-records in `kinds`. */")],
 	});
 }

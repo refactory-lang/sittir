@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 283,
+  "nodeCount": 299,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -16,8 +16,12 @@
     "_suite",
     "_whitespace",
     "assignment",
+    "escape_sequence",
     "expression",
+    "float",
+    "integer",
     "keyword_identifier",
+    "line_continuation",
     "parameter",
     "pattern",
     "primary_expression",
@@ -66,6 +70,22 @@
     "assignment_eq": "assignment.eq",
     "assignment_type": "assignment.type",
     "assignment_typed": "assignment.typed",
+    "escape_sequence_hex": "escapeSequence.hex",
+    "escape_sequence_line_break": "escapeSequence.lineBreak",
+    "escape_sequence_named": "escapeSequence.named",
+    "escape_sequence_octal": "escapeSequence.octal",
+    "escape_sequence_simple": "escapeSequence.simple",
+    "escape_sequence_unicode_fixed": "escapeSequence.unicodeFixed",
+    "escape_sequence_unicode_wide": "escapeSequence.unicodeWide",
+    "float_leading_point": "float.leadingPoint",
+    "float_point": "float.point",
+    "float_scientific": "float.scientific",
+    "integer_binary": "integer.binary",
+    "integer_decimal": "integer.decimal",
+    "integer_hex": "integer.hex",
+    "integer_octal": "integer.octal",
+    "line_continuation_newline": "lineContinuation.newline",
+    "line_continuation_nul": "lineContinuation.nul",
     "suite_block": "suite.block",
     "suite_empty": "suite.empty",
     "suite_inline": "suite.inline",
@@ -249,8 +269,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -314,8 +339,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -358,8 +388,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -402,8 +437,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -943,8 +983,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1124,8 +1169,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific"
         ]
       }
     },
@@ -1432,8 +1482,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1568,8 +1623,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1828,8 +1888,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -1968,7 +2033,13 @@
         "nonEmpty": false,
         "wireKeys": [
           "_escape_interpolation",
-          "_escape_sequence",
+          "_escape_sequence_unicode_fixed",
+          "_escape_sequence_unicode_wide",
+          "_escape_sequence_hex",
+          "_escape_sequence_octal",
+          "_escape_sequence_line_break",
+          "_escape_sequence_simple",
+          "_escape_sequence_named",
           "_not_escape_sequence",
           "_string_fragment"
         ]
@@ -2000,15 +2071,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "escape_sequence": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2114,8 +2176,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2210,8 +2277,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2351,6 +2423,221 @@
         "nonEmpty": false
       }
     },
+    "integer_hex": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_octal": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "integer_binary": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_point": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_leading_point": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "float_scientific": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_fixed": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_unicode_wide": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_hex": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_octal": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_line_break": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_simple": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "escape_sequence_named": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "simple_pattern_negative": {
       "sign": {
         "unnamed": false,
@@ -2366,8 +2653,13 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_integer",
-          "_float"
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific"
         ]
       }
     },
@@ -2531,8 +2823,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2571,8 +2868,13 @@
           "_identifier",
           "_string",
           "_concatenated_string",
-          "_integer",
-          "_float",
+          "_integer_hex",
+          "_integer_octal",
+          "_integer_binary",
+          "_integer_decimal",
+          "_float_point",
+          "_float_leading_point",
+          "_float_scientific",
           "_true",
           "_false",
           "_none",
@@ -2684,10 +2986,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3339,10 +3646,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3402,10 +3714,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3563,14 +3880,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3763,10 +4085,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -3928,10 +4255,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
@@ -3999,10 +4331,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "keyword_argument",
         "lambda",
         "list",
@@ -4694,10 +5031,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -5656,10 +5998,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6471,10 +6818,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6639,10 +6991,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6785,10 +7142,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6907,10 +7269,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -6984,10 +7351,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7254,14 +7626,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7339,11 +7716,32 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "EscapeSequence",
-      "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "escape_sequence_hex",
+        "escape_sequence_line_break",
+        "escape_sequence_named",
+        "escape_sequence_octal",
+        "escape_sequence_simple",
+        "escape_sequence_unicode_fixed",
+        "escape_sequence_unicode_wide"
+      ]
+    },
+    {
+      "kind": "escape_sequence_hex",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceHex",
+      "factoryName": "escapeSequenceHex",
+      "irKey": "escapeSequenceHex",
       "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
       "slots": [
         {
           "name": "content",
@@ -7362,6 +7760,7 @@
           ]
         }
       ],
+      "name": "escape_sequence_hex",
       "interior": {
         "entries": [
           {
@@ -7369,10 +7768,328 @@
           },
           {
             "slot": "content",
-            "pattern": "(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\}))"
+            "pattern": "(?:x[a-fA-F\\d]{2})"
           }
         ],
-        "regex": "^\\\\(?<content>(?:(?:u[a-fA-F\\d]{4})|(?:U[a-fA-F\\d]{8})|(?:x[a-fA-F\\d]{2})|(?:\\d{1,3})|(?:\\r?\\n)|(?:['\"abfrntv\\\\])|(?:N\\{[^}]+\\})))$",
+        "regex": "^\\\\(?<content>(?:x[a-fA-F\\d]{2}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_line_break",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceLineBreak",
+      "factoryName": "escapeSequenceLineBreak",
+      "irKey": "escapeSequenceLineBreak",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_line_break",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\r?\\n)"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\r?\\n))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_named",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceNamed",
+      "factoryName": "escapeSequenceNamed",
+      "irKey": "escapeSequenceNamed",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_named",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:N\\{[^}]+\\})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:N\\{[^}]+\\}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_octal",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceOctal",
+      "factoryName": "escapeSequenceOctal",
+      "irKey": "escapeSequenceOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_octal",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:\\d{1,3})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:\\d{1,3}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_simple",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceSimple",
+      "factoryName": "escapeSequenceSimple",
+      "irKey": "escapeSequenceSimple",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_simple",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:['\"abfrntv\\\\])"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:['\"abfrntv\\\\]))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_unicode_fixed",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceUnicodeFixed",
+      "factoryName": "escapeSequenceUnicodeFixed",
+      "irKey": "escapeSequenceUnicodeFixed",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_unicode_fixed",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:u[a-fA-F\\d]{4})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:u[a-fA-F\\d]{4}))$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "escape_sequence_unicode_wide",
+      "modelType": "branch",
+      "typeName": "EscapeSequenceUnicodeWide",
+      "factoryName": "escapeSequenceUnicodeWide",
+      "irKey": "escapeSequenceUnicodeWide",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "escape_sequence_unicode_wide",
+      "interior": {
+        "entries": [
+          {
+            "lit": "\\"
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:U[a-fA-F\\d]{8})"
+          }
+        ],
+        "regex": "^\\\\(?<content>(?:U[a-fA-F\\d]{8}))$",
         "slots": [
           {
             "name": "content",
@@ -7821,10 +8538,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -7936,10 +8658,15 @@
         "expression_list",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8002,10 +8729,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8109,14 +8841,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -8163,13 +8900,456 @@
     },
     {
       "kind": "float",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Float",
-      "factoryName": "float",
       "irKey": "float",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "float_leading_point",
+        "float_point",
+        "float_scientific"
+      ]
+    },
+    {
+      "kind": "float_leading_point",
+      "modelType": "branch",
+      "typeName": "FloatLeadingPoint",
+      "factoryName": "floatLeadingPoint",
+      "irKey": "floatLeadingPoint",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:(?:[0-9]+_?))+\\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u",
-      "factoryShape": "text"
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_leading_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)",
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)?\\.(?<fraction>(?:(?:[0-9]+_?))+)(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
+    },
+    {
+      "kind": "float_point",
+      "modelType": "branch",
+      "typeName": "FloatPoint",
+      "factoryName": "floatPoint",
+      "irKey": "floatPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)",
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+",
+            "optional": true
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)\\.(?<fraction>(?:(?:[0-9]+_?))+)?(?:(?<marker>(?:[eE][\\+-]?))?(?<exponent>(?:(?:[0-9]+_?))+)?)?(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
+    },
+    {
+      "kind": "float_scientific",
+      "modelType": "branch",
+      "typeName": "FloatScientific",
+      "factoryName": "floatScientific",
+      "irKey": "floatScientific",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "imaginary",
+          "propertyName": "imaginary",
+          "paramName": "imaginary",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "float_scientific",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "marker",
+            "pattern": "(?:[eE][\\+-]?)"
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:(?:[0-9]+_?))+"
+          },
+          {
+            "slot": "imaginary",
+            "pattern": "(?:[jJ])",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:(?:[0-9]+_?))+)(?<marker>(?:[eE][\\+-]?))(?<exponent>(?:(?:[0-9]+_?))+)(?<imaginary>(?:[jJ]))?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          },
+          {
+            "name": "imaginary",
+            "configKey": "imaginary"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "marker",
+        "exponent",
+        "imaginary"
+      ]
     },
     {
       "kind": "for_in_clause",
@@ -8923,10 +10103,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -9192,13 +10377,286 @@
     },
     {
       "kind": "integer",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Integer",
-      "factoryName": "integer",
       "irKey": "integer",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal"
+      ]
+    },
+    {
+      "kind": "integer_binary",
+      "modelType": "branch",
+      "typeName": "IntegerBinary",
+      "factoryName": "integerBinary",
+      "irKey": "integerBinary",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u",
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0b"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0B"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_binary",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0b",
+              "0B"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-1]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0b|0B)(?<content>(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_decimal",
+      "modelType": "pattern",
+      "typeName": "IntegerDecimal",
+      "factoryName": "integerDecimal",
+      "irKey": "integerDecimal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "integer_hex",
+      "modelType": "branch",
+      "typeName": "IntegerHex",
+      "factoryName": "integerHex",
+      "irKey": "integerHex",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_hex",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "integer_octal",
+      "modelType": "branch",
+      "typeName": "IntegerOctal",
+      "factoryName": "integerOctal",
+      "irKey": "integerOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "integer_octal",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:(?:_?[0-7]+))+(?:(?:[Ll]))?"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
     },
     {
       "kind": "interpolation",
@@ -9764,12 +11222,44 @@
     },
     {
       "kind": "line_continuation",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "LineContinuation",
-      "factoryName": "lineContinuation",
       "irKey": "lineContinuation",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "line_continuation_newline",
+        "line_continuation_nul"
+      ]
+    },
+    {
+      "kind": "line_continuation_newline",
+      "modelType": "pattern",
+      "typeName": "LineContinuationNewline",
+      "factoryName": "lineContinuationNewline",
+      "irKey": "lineContinuationNewline",
       "hidden": false,
-      "leafPattern": "/^(?:\\\\(?:(?:\\r)?\\n|\\0))$/u",
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "leafPattern": "/^(?:\\\\(?:\\r)?\\n)$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "line_continuation_nul",
+      "modelType": "punctuation",
+      "typeName": "LineContinuationNul",
+      "factoryName": "lineContinuationNul",
+      "irKey": "lineContinuationNul",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\\u0000\" as const",
+      "text": "\\\u0000",
       "factoryShape": "text"
     },
     {
@@ -9825,10 +11315,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -10047,10 +11542,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -10564,10 +12064,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -10791,10 +12296,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -10875,10 +12385,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11215,10 +12730,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11357,10 +12877,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11600,10 +13125,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11688,10 +13218,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -11889,14 +13424,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12102,10 +13642,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12492,10 +14037,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12618,10 +14168,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -12800,14 +14355,19 @@
         "expression_statement",
         "expression_statement_tuple",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "future_import_statement",
         "generator_expression",
         "global_statement",
         "identifier",
         "import_from_statement",
         "import_statement",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13021,10 +14581,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13178,11 +14743,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13338,11 +14908,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13556,11 +15131,16 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "generic_type",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -13995,10 +15575,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14078,10 +15663,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14146,10 +15736,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14224,10 +15819,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",
@@ -14408,10 +16008,15 @@
         "ellipsis",
         "expression_list",
         "false",
-        "float",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
         "generator_expression",
         "identifier",
-        "integer",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
         "lambda",
         "list",
         "list_comprehension",

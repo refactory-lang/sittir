@@ -20,8 +20,8 @@ export const synonym = {
 	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
-	number(value: number): ReturnType<typeof F.buildNumber> {
-		return F.buildNumber(String(value));
+	number(value: number): ReturnType<typeof F.number> {
+		return F.number(String(value));
 	},
 	comment: Object.assign(
 		function comment(content: string): ReturnType<typeof F.comment.line> {
@@ -194,7 +194,7 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
-	readonly number: typeof F.buildNumber;
+	readonly number: typeof F.number;
 	readonly string: typeof F.string;
 	readonly templateString: typeof F.templateString;
 	readonly regex: typeof F.regex;
@@ -218,7 +218,7 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	this: F.buildThis,
 	super: F.buildSuper,
-	number: F.buildNumber,
+	number: F.number,
 	string: F.string,
 	templateString: F.templateString,
 	regex: F.regex,
@@ -301,12 +301,12 @@ export const pattern: {
 export const propertyName: {
 	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly string: typeof F.string;
-	readonly number: typeof F.buildNumber;
+	readonly number: typeof F.number;
 	readonly computed: typeof F.computedPropertyName;
 } = {
 	privateIdentifier: F.privatePropertyIdentifier,
 	string: F.string,
-	number: F.buildNumber,
+	number: F.number,
 	computed: F.computedPropertyName
 };
 
@@ -579,6 +579,7 @@ export const ir: {
 	readonly forHeader: typeof F.forHeader;
 	readonly updateExpression: typeof F.updateExpression;
 	readonly comment: typeof F.comment;
+	readonly number: typeof F.number;
 	readonly metaProperty: typeof F.metaProperty;
 	readonly indexSignature: typeof F.indexSignature;
 	readonly exportStatementDefault: typeof F.exportStatementDefault;
@@ -600,7 +601,6 @@ export const ir: {
 	readonly unescapedSingleStringFragment: typeof F.buildUnescapedSingleStringFragment;
 	readonly regexPattern: typeof F.buildRegexPattern;
 	readonly regexFlags: typeof F.buildRegexFlags;
-	readonly number: typeof F.buildNumber;
 	readonly htmlComment: typeof F.buildHtmlComment;
 	readonly jsxText: typeof F.buildJsxText;
 	readonly templateChars: typeof F.buildTemplateChars;
@@ -867,6 +867,7 @@ export const ir: {
 	forHeader: F.forHeader,
 	updateExpression: F.updateExpression,
 	comment: F.comment,
+	number: F.number,
 	metaProperty: F.metaProperty,
 	indexSignature: F.indexSignature,
 	exportStatementDefault: F.exportStatementDefault,
@@ -892,7 +893,6 @@ export const ir: {
 	unescapedSingleStringFragment: F.buildUnescapedSingleStringFragment,
 	regexPattern: F.buildRegexPattern,
 	regexFlags: F.buildRegexFlags,
-	number: F.buildNumber,
 	htmlComment: F.buildHtmlComment,
 	jsxText: F.buildJsxText,
 	templateChars: F.buildTemplateChars,

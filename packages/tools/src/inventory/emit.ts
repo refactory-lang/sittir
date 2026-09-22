@@ -304,7 +304,9 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 		const members: Member[] = paths.length > 0 ? [kindMember([v])] : [];
 		for (const [cm, f] of [...mems].sort(([a], [b]) => a.localeCompare(b))) {
 			if (LAYOUT.has(cm)) continue;
-			members.push(memberDecl(d, v, cm, f));
+			const decl = memberDecl(d, v, cm, f);
+			if (decl.type.k === 'kw' && decl.type.name === 'unknown') continue;
+			members.push(decl);
 		}
 		out.push({
 			k: 'interface',
@@ -416,9 +418,16 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 	return files;
 }
 
-const escapeSingle = (text: string): string =>
-	text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
-const str = (text: string) => ir.string.single.strict(ir.unescapedSingleStringFragment(escapeSingle(text)));
+const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
+const str = (text: string) =>
+	ir.string.single.strict(
+		...text
+			.split(/([\\'\n\r\t])/)
+			.filter((piece) => piece !== '')
+			.map((piece) =>
+				piece in ESCAPED_CONTENT ? ir.escapeSequence(ESCAPED_CONTENT[piece]!) : ir.unescapedSingleStringFragment(piece)
+			)
+	);
 
 function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.nestedIdentifier.strict> {
 	const [head, ...rest] = path;
@@ -526,9 +535,9 @@ function toIr(t: TypeExpr, base: boolean): Type {
 const typeParams = () =>
 	ir.typeParameters.strict(
 		{ delimiter: Delimiter.None },
-		ir.typeParameter.strict({
-			name: ir.identifier('G'),
-			constraint: ir.constraint.strict({ type: ir.identifier('GrammarContext'), content: TSKindId.ExtendsKeyword })
+		ir.typeParameter({
+			name: 'G',
+			constraint: { type: 'GrammarContext', content: TSKindId.ExtendsKeyword }
 		})
 	);
 const keyParams = () =>
@@ -540,17 +549,13 @@ const keyParams = () =>
 		})
 	);
 
-interface Trivia {
-	leading?: string[];
-	trailing?: string[];
-}
+type Triviable<N> = {
+	readonly $trivia: { leading(...items: string[]): N; trailing(...items: string[]): N };
+};
 
-function trivia(leading: readonly string[], trailing: readonly string[]): Trivia | null {
-	if (leading.length === 0 && trailing.length === 0) return null;
-	const t: Trivia = {};
-	if (leading.length > 0) t.leading = [...leading];
-	if (trailing.length > 0) t.trailing = [...trailing];
-	return t;
+function withTrivia<N extends Triviable<N>>(node: N, leading: readonly string[], trailing: readonly string[]): N {
+	const led = leading.length > 0 ? node.$trivia.leading(...leading) : node;
+	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
 }
 
 function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature {
@@ -560,8 +565,7 @@ function memberIr(m: Member, base: boolean, leading: readonly string[]): Propert
 		...(m.optional ? { optionalMarker: true } : {}),
 		type: ir.typeAnnotation.strict(toIr(m.type, base))
 	});
-	const t = trivia(leading, m.trailing);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, leading, m.trailing);
 }
 
 function interfaceIr(s: Interface, base: boolean): TsStatement {
@@ -580,8 +584,7 @@ function interfaceIr(s: Interface, base: boolean): TsStatement {
 		body: ir.objectType.strict({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
 	});
 	const built = ir.exportStatement.default.declaration.strict({ content: decl });
-	const t = trivia(s.leading, s.trailing);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, s.leading, s.trailing);
 }
 
 function statementIr(s: Statement, base: boolean): TsStatement {
@@ -611,7 +614,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
-			? ir.importClause.strict(ir.namespaceImport.strict(ir.identifier(imp.namespace)))
+			? ir.importClause.namespaceImport(imp.namespace)
 			: ir.importClause.strict(
 					first ? ir.namedImports.strict({ delimiter: Delimiter.None }, first, ...rest) : ir.namedImports.strict()
 				);
@@ -620,8 +623,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 		fromClause: { importClause: clause, source: str(imp.from) },
 		terminator: TSKindId.Semi
 	});
-	const t = trivia(leading, []);
-	return t ? built.$trivia(t) : built;
+	return withTrivia(built, leading, []);
 }
 
 export function renderVocabularyFile(file: VocabularyFile): string {

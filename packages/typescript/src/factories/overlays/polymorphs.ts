@@ -6254,6 +6254,346 @@ const methodDefinition$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const methodDefinition$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword);
+const methodDefinition$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$get(
+	C.coerceToMethodDefinition,
+	TSKindId.GetKeyword
+);
+const methodDefinition$get$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$get$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$get$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword);
+const methodDefinition$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$set(
+	C.coerceToMethodDefinition,
+	TSKindId.SetKeyword
+);
+const methodDefinition$set$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$set$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$set$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodDefinition$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodDefinition> = methodDefinition$star(F.buildMethodDefinition, TSKindId.Star);
+const methodDefinition$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodDefinition> = methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star);
+const methodDefinition$star$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodDefinition$star$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodDefinition$star$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const methodDefinition: typeof B.methodDefinition & {
 	get: {
 		strict: (
@@ -6262,6 +6602,87 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6270,6 +6691,87 @@ export const methodDefinition: typeof B.methodDefinition & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6277,21 +6779,320 @@ export const methodDefinition: typeof B.methodDefinition & {
 		) => ReturnType<typeof F.buildMethodDefinition>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodDefinition$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodDefinition$star$appliedCoerce>;
+		};
+	};
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberDecimal>;
+			}
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToMethodDefinition>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildMethodDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
 		) => ReturnType<typeof C.coerceToMethodDefinition>;
 	};
 } = {
 	...B.methodDefinition,
 	get: {
 		strict: methodDefinition$get(F.buildMethodDefinition, TSKindId.GetKeyword),
-		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword)
+		coerce: methodDefinition$get(C.coerceToMethodDefinition, TSKindId.GetKeyword),
+		hex: {
+			strict: methodDefinition$get$hex(methodDefinition$get$applied, F.buildNumberHex),
+			coerce: methodDefinition$get$hex(methodDefinition$get$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodDefinition$get$floatPoint(methodDefinition$get$applied, F.buildNumberFloatPoint),
+			coerce: methodDefinition$get$floatPoint(methodDefinition$get$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodDefinition$get$floatLeadingPoint(methodDefinition$get$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodDefinition$get$floatLeadingPoint(
+				methodDefinition$get$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodDefinition$get$floatScientific(methodDefinition$get$applied, F.buildNumberFloatScientific),
+			coerce: methodDefinition$get$floatScientific(methodDefinition$get$appliedCoerce, C.coerceToNumberFloatScientific)
+		},
+		decimal: {
+			strict: methodDefinition$get$decimal(methodDefinition$get$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$get$decimal(methodDefinition$get$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodDefinition$get$binary(methodDefinition$get$applied, F.buildNumberBinary),
+			coerce: methodDefinition$get$binary(methodDefinition$get$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodDefinition$get$octal(methodDefinition$get$applied, F.buildNumberOctal),
+			coerce: methodDefinition$get$octal(methodDefinition$get$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodDefinition$get$bigint(methodDefinition$get$applied, F.buildNumberBigint),
+			coerce: methodDefinition$get$bigint(methodDefinition$get$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	set: {
 		strict: methodDefinition$set(F.buildMethodDefinition, TSKindId.SetKeyword),
-		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword)
+		coerce: methodDefinition$set(C.coerceToMethodDefinition, TSKindId.SetKeyword),
+		hex: {
+			strict: methodDefinition$set$hex(methodDefinition$set$applied, F.buildNumberHex),
+			coerce: methodDefinition$set$hex(methodDefinition$set$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodDefinition$set$floatPoint(methodDefinition$set$applied, F.buildNumberFloatPoint),
+			coerce: methodDefinition$set$floatPoint(methodDefinition$set$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodDefinition$set$floatLeadingPoint(methodDefinition$set$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodDefinition$set$floatLeadingPoint(
+				methodDefinition$set$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodDefinition$set$floatScientific(methodDefinition$set$applied, F.buildNumberFloatScientific),
+			coerce: methodDefinition$set$floatScientific(methodDefinition$set$appliedCoerce, C.coerceToNumberFloatScientific)
+		},
+		decimal: {
+			strict: methodDefinition$set$decimal(methodDefinition$set$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$set$decimal(methodDefinition$set$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodDefinition$set$binary(methodDefinition$set$applied, F.buildNumberBinary),
+			coerce: methodDefinition$set$binary(methodDefinition$set$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodDefinition$set$octal(methodDefinition$set$applied, F.buildNumberOctal),
+			coerce: methodDefinition$set$octal(methodDefinition$set$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodDefinition$set$bigint(methodDefinition$set$applied, F.buildNumberBigint),
+			coerce: methodDefinition$set$bigint(methodDefinition$set$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	star: {
 		strict: methodDefinition$star(F.buildMethodDefinition, TSKindId.Star),
-		coerce: methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star)
+		coerce: methodDefinition$star(C.coerceToMethodDefinition, TSKindId.Star),
+		hex: {
+			strict: methodDefinition$star$hex(methodDefinition$star$applied, F.buildNumberHex),
+			coerce: methodDefinition$star$hex(methodDefinition$star$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodDefinition$star$floatPoint(methodDefinition$star$applied, F.buildNumberFloatPoint),
+			coerce: methodDefinition$star$floatPoint(methodDefinition$star$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodDefinition$star$floatLeadingPoint(methodDefinition$star$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodDefinition$star$floatLeadingPoint(
+				methodDefinition$star$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodDefinition$star$floatScientific(methodDefinition$star$applied, F.buildNumberFloatScientific),
+			coerce: methodDefinition$star$floatScientific(
+				methodDefinition$star$appliedCoerce,
+				C.coerceToNumberFloatScientific
+			)
+		},
+		decimal: {
+			strict: methodDefinition$star$decimal(methodDefinition$star$applied, F.buildNumberDecimal),
+			coerce: methodDefinition$star$decimal(methodDefinition$star$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodDefinition$star$binary(methodDefinition$star$applied, F.buildNumberBinary),
+			coerce: methodDefinition$star$binary(methodDefinition$star$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodDefinition$star$octal(methodDefinition$star$applied, F.buildNumberOctal),
+			coerce: methodDefinition$star$octal(methodDefinition$star$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodDefinition$star$bigint(methodDefinition$star$applied, F.buildNumberBigint),
+			coerce: methodDefinition$star$bigint(methodDefinition$star$appliedCoerce, C.coerceToNumberBigint)
+		}
+	},
+	hex: {
+		strict: methodDefinition$hex(F.buildMethodDefinition, F.buildNumberHex),
+		coerce: methodDefinition$hex(C.coerceToMethodDefinition, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: methodDefinition$floatPoint(F.buildMethodDefinition, F.buildNumberFloatPoint),
+		coerce: methodDefinition$floatPoint(C.coerceToMethodDefinition, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: methodDefinition$floatLeadingPoint(F.buildMethodDefinition, F.buildNumberFloatLeadingPoint),
+		coerce: methodDefinition$floatLeadingPoint(C.coerceToMethodDefinition, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: methodDefinition$floatScientific(F.buildMethodDefinition, F.buildNumberFloatScientific),
+		coerce: methodDefinition$floatScientific(C.coerceToMethodDefinition, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: methodDefinition$decimal(F.buildMethodDefinition, F.buildNumberDecimal),
+		coerce: methodDefinition$decimal(C.coerceToMethodDefinition, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: methodDefinition$binary(F.buildMethodDefinition, F.buildNumberBinary),
+		coerce: methodDefinition$binary(C.coerceToMethodDefinition, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: methodDefinition$octal(F.buildMethodDefinition, F.buildNumberOctal),
+		coerce: methodDefinition$octal(C.coerceToMethodDefinition, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: methodDefinition$bigint(F.buildMethodDefinition, F.buildNumberBigint),
+		coerce: methodDefinition$bigint(C.coerceToMethodDefinition, C.coerceToNumberBigint)
 	}
 };
 
@@ -6319,11 +7120,84 @@ const pair$stringSingle =
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
 	};
-const pair$number =
+const pair$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const pair$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pair$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
 	};
 const pair$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -6368,12 +7242,68 @@ export const pair: typeof B.pair & {
 			) => ReturnType<typeof C.coerceToPair>;
 		};
 	};
-	number: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumber> }
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumber> }
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberDecimal> }
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberDecimal> }
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToPair>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberBigint>[0] }
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberBigint>[0] }
 		) => ReturnType<typeof C.coerceToPair>;
 	};
 	computedPropertyName: {
@@ -6404,10 +7334,222 @@ export const pair: typeof B.pair & {
 			coerce: pair$stringSingle(C.coerceToPair, string.single.coerce)
 		}
 	},
-	number: { strict: pair$number(F.buildPair, F.buildNumber), coerce: pair$number(C.coerceToPair, C.coerceToNumber) },
+	hex: { strict: pair$hex(F.buildPair, F.buildNumberHex), coerce: pair$hex(C.coerceToPair, C.coerceToNumberHex) },
+	floatPoint: {
+		strict: pair$floatPoint(F.buildPair, F.buildNumberFloatPoint),
+		coerce: pair$floatPoint(C.coerceToPair, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: pair$floatLeadingPoint(F.buildPair, F.buildNumberFloatLeadingPoint),
+		coerce: pair$floatLeadingPoint(C.coerceToPair, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: pair$floatScientific(F.buildPair, F.buildNumberFloatScientific),
+		coerce: pair$floatScientific(C.coerceToPair, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: pair$decimal(F.buildPair, F.buildNumberDecimal),
+		coerce: pair$decimal(C.coerceToPair, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: pair$binary(F.buildPair, F.buildNumberBinary),
+		coerce: pair$binary(C.coerceToPair, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: pair$octal(F.buildPair, F.buildNumberOctal),
+		coerce: pair$octal(C.coerceToPair, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: pair$bigint(F.buildPair, F.buildNumberBigint),
+		coerce: pair$bigint(C.coerceToPair, C.coerceToNumberBigint)
+	},
 	computedPropertyName: {
 		strict: pair$computedPropertyName(F.buildPair, F.buildComputedPropertyName),
 		coerce: pair$computedPropertyName(C.coerceToPair, C.coerceToComputedPropertyName)
+	}
+};
+
+const pairPattern$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) });
+	};
+const pairPattern$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) });
+	};
+const pairPattern$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) });
+	};
+export const pairPattern: typeof B.pairPattern & {
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberDecimal> }
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToNumberDecimal> }
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPairPattern>[0], 'key'> & { key: ArgsOf<typeof F.buildNumberBigint>[0] }
+		) => ReturnType<typeof F.buildPairPattern>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPairPattern>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
+		) => ReturnType<typeof C.coerceToPairPattern>;
+	};
+} = {
+	...B.pairPattern,
+	hex: {
+		strict: pairPattern$hex(F.buildPairPattern, F.buildNumberHex),
+		coerce: pairPattern$hex(C.coerceToPairPattern, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: pairPattern$floatPoint(F.buildPairPattern, F.buildNumberFloatPoint),
+		coerce: pairPattern$floatPoint(C.coerceToPairPattern, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: pairPattern$floatLeadingPoint(F.buildPairPattern, F.buildNumberFloatLeadingPoint),
+		coerce: pairPattern$floatLeadingPoint(C.coerceToPairPattern, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: pairPattern$floatScientific(F.buildPairPattern, F.buildNumberFloatScientific),
+		coerce: pairPattern$floatScientific(C.coerceToPairPattern, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: pairPattern$decimal(F.buildPairPattern, F.buildNumberDecimal),
+		coerce: pairPattern$decimal(C.coerceToPairPattern, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: pairPattern$binary(F.buildPairPattern, F.buildNumberBinary),
+		coerce: pairPattern$binary(C.coerceToPairPattern, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: pairPattern$octal(F.buildPairPattern, F.buildNumberOctal),
+		coerce: pairPattern$octal(C.coerceToPairPattern, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: pairPattern$bigint(F.buildPairPattern, F.buildNumberBigint),
+		coerce: pairPattern$bigint(C.coerceToPairPattern, C.coerceToNumberBigint)
 	}
 };
 
@@ -6416,6 +7558,258 @@ const publicFieldDefinition$qmark =
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
 const publicFieldDefinition$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const publicFieldDefinition$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const publicFieldDefinition$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const publicFieldDefinition$hex$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$hex(
+	F.buildPublicFieldDefinition,
+	F.buildNumberHex
+);
+const publicFieldDefinition$hex$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$hex(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberHex
+);
+const publicFieldDefinition$hex$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$hex$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatPoint$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$floatPoint(
+	F.buildPublicFieldDefinition,
+	F.buildNumberFloatPoint
+);
+const publicFieldDefinition$floatPoint$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$floatPoint(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberFloatPoint
+);
+const publicFieldDefinition$floatPoint$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatPoint$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatLeadingPoint$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$floatLeadingPoint(
+	F.buildPublicFieldDefinition,
+	F.buildNumberFloatLeadingPoint
+);
+const publicFieldDefinition$floatLeadingPoint$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$floatLeadingPoint(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberFloatLeadingPoint
+);
+const publicFieldDefinition$floatLeadingPoint$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatLeadingPoint$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatScientific$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof F.buildNumberFloatScientific>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$floatScientific(
+	F.buildPublicFieldDefinition,
+	F.buildNumberFloatScientific
+);
+const publicFieldDefinition$floatScientific$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+		ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$floatScientific(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberFloatScientific
+);
+const publicFieldDefinition$floatScientific$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$floatScientific$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$decimal$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof F.buildNumberDecimal>;
+	}
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$decimal(
+	F.buildPublicFieldDefinition,
+	F.buildNumberDecimal
+);
+const publicFieldDefinition$decimal$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof C.coerceToNumberDecimal>;
+	}
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$decimal(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberDecimal
+);
+const publicFieldDefinition$decimal$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$decimal$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$binary$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$binary(
+	F.buildPublicFieldDefinition,
+	F.buildNumberBinary
+);
+const publicFieldDefinition$binary$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$binary(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberBinary
+);
+const publicFieldDefinition$binary$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$binary$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$octal$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$octal(
+	F.buildPublicFieldDefinition,
+	F.buildNumberOctal
+);
+const publicFieldDefinition$octal$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$octal(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberOctal
+);
+const publicFieldDefinition$octal$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$octal$bang =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$bigint$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof F.buildNumberBigint>[0];
+	}
+) => ReturnType<typeof F.buildPublicFieldDefinition> = publicFieldDefinition$bigint(
+	F.buildPublicFieldDefinition,
+	F.buildNumberBigint
+);
+const publicFieldDefinition$bigint$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+		name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+	}
+) => ReturnType<typeof C.coerceToPublicFieldDefinition> = publicFieldDefinition$bigint(
+	C.coerceToPublicFieldDefinition,
+	C.coerceToNumberBigint
+);
+const publicFieldDefinition$bigint$qmark =
+	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
+const publicFieldDefinition$bigint$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'optionalityMarker'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, optionalityMarker: value });
@@ -6436,6 +7830,215 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'optionalityMarker'>
 		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
 	};
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$hex$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$hex$appliedCoerce>;
+		};
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatPoint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatPoint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatPoint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatPoint$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatPoint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatPoint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatPoint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatPoint$appliedCoerce>;
+		};
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatLeadingPoint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatLeadingPoint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatLeadingPoint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatLeadingPoint$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatLeadingPoint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatLeadingPoint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatLeadingPoint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatLeadingPoint$appliedCoerce>;
+		};
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatScientific$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatScientific$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatScientific$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatScientific$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatScientific$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatScientific$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$floatScientific$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$floatScientific$appliedCoerce>;
+		};
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberDecimal>;
+			}
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$decimal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$decimal$appliedCoerce>;
+		};
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$binary$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$binary$appliedCoerce>;
+		};
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$octal$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$octal$appliedCoerce>;
+		};
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildPublicFieldDefinition>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPublicFieldDefinition>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
+		) => ReturnType<typeof C.coerceToPublicFieldDefinition>;
+		qmark: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$appliedCoerce>;
+		};
+		bang: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$applied>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof publicFieldDefinition$bigint$appliedCoerce>[0], 'optionalityMarker'>
+			) => ReturnType<typeof publicFieldDefinition$bigint$appliedCoerce>;
+		};
+	};
 } = {
 	...B.publicFieldDefinition,
 	qmark: {
@@ -6445,6 +8048,123 @@ export const publicFieldDefinition: typeof B.publicFieldDefinition & {
 	bang: {
 		strict: publicFieldDefinition$bang(F.buildPublicFieldDefinition, TSKindId.Bang),
 		coerce: publicFieldDefinition$bang(C.coerceToPublicFieldDefinition, TSKindId.Bang)
+	},
+	hex: {
+		strict: publicFieldDefinition$hex(F.buildPublicFieldDefinition, F.buildNumberHex),
+		coerce: publicFieldDefinition$hex(C.coerceToPublicFieldDefinition, C.coerceToNumberHex),
+		qmark: {
+			strict: publicFieldDefinition$hex$qmark(publicFieldDefinition$hex$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$hex$qmark(publicFieldDefinition$hex$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$hex$bang(publicFieldDefinition$hex$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$hex$bang(publicFieldDefinition$hex$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	floatPoint: {
+		strict: publicFieldDefinition$floatPoint(F.buildPublicFieldDefinition, F.buildNumberFloatPoint),
+		coerce: publicFieldDefinition$floatPoint(C.coerceToPublicFieldDefinition, C.coerceToNumberFloatPoint),
+		qmark: {
+			strict: publicFieldDefinition$floatPoint$qmark(publicFieldDefinition$floatPoint$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$floatPoint$qmark(publicFieldDefinition$floatPoint$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$floatPoint$bang(publicFieldDefinition$floatPoint$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$floatPoint$bang(publicFieldDefinition$floatPoint$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	floatLeadingPoint: {
+		strict: publicFieldDefinition$floatLeadingPoint(F.buildPublicFieldDefinition, F.buildNumberFloatLeadingPoint),
+		coerce: publicFieldDefinition$floatLeadingPoint(C.coerceToPublicFieldDefinition, C.coerceToNumberFloatLeadingPoint),
+		qmark: {
+			strict: publicFieldDefinition$floatLeadingPoint$qmark(
+				publicFieldDefinition$floatLeadingPoint$applied,
+				TSKindId.Qmark
+			),
+			coerce: publicFieldDefinition$floatLeadingPoint$qmark(
+				publicFieldDefinition$floatLeadingPoint$appliedCoerce,
+				TSKindId.Qmark
+			)
+		},
+		bang: {
+			strict: publicFieldDefinition$floatLeadingPoint$bang(
+				publicFieldDefinition$floatLeadingPoint$applied,
+				TSKindId.Bang
+			),
+			coerce: publicFieldDefinition$floatLeadingPoint$bang(
+				publicFieldDefinition$floatLeadingPoint$appliedCoerce,
+				TSKindId.Bang
+			)
+		}
+	},
+	floatScientific: {
+		strict: publicFieldDefinition$floatScientific(F.buildPublicFieldDefinition, F.buildNumberFloatScientific),
+		coerce: publicFieldDefinition$floatScientific(C.coerceToPublicFieldDefinition, C.coerceToNumberFloatScientific),
+		qmark: {
+			strict: publicFieldDefinition$floatScientific$qmark(
+				publicFieldDefinition$floatScientific$applied,
+				TSKindId.Qmark
+			),
+			coerce: publicFieldDefinition$floatScientific$qmark(
+				publicFieldDefinition$floatScientific$appliedCoerce,
+				TSKindId.Qmark
+			)
+		},
+		bang: {
+			strict: publicFieldDefinition$floatScientific$bang(publicFieldDefinition$floatScientific$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$floatScientific$bang(
+				publicFieldDefinition$floatScientific$appliedCoerce,
+				TSKindId.Bang
+			)
+		}
+	},
+	decimal: {
+		strict: publicFieldDefinition$decimal(F.buildPublicFieldDefinition, F.buildNumberDecimal),
+		coerce: publicFieldDefinition$decimal(C.coerceToPublicFieldDefinition, C.coerceToNumberDecimal),
+		qmark: {
+			strict: publicFieldDefinition$decimal$qmark(publicFieldDefinition$decimal$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$decimal$qmark(publicFieldDefinition$decimal$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$decimal$bang(publicFieldDefinition$decimal$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$decimal$bang(publicFieldDefinition$decimal$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	binary: {
+		strict: publicFieldDefinition$binary(F.buildPublicFieldDefinition, F.buildNumberBinary),
+		coerce: publicFieldDefinition$binary(C.coerceToPublicFieldDefinition, C.coerceToNumberBinary),
+		qmark: {
+			strict: publicFieldDefinition$binary$qmark(publicFieldDefinition$binary$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$binary$qmark(publicFieldDefinition$binary$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$binary$bang(publicFieldDefinition$binary$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$binary$bang(publicFieldDefinition$binary$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	octal: {
+		strict: publicFieldDefinition$octal(F.buildPublicFieldDefinition, F.buildNumberOctal),
+		coerce: publicFieldDefinition$octal(C.coerceToPublicFieldDefinition, C.coerceToNumberOctal),
+		qmark: {
+			strict: publicFieldDefinition$octal$qmark(publicFieldDefinition$octal$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$octal$qmark(publicFieldDefinition$octal$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$octal$bang(publicFieldDefinition$octal$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$octal$bang(publicFieldDefinition$octal$appliedCoerce, TSKindId.Bang)
+		}
+	},
+	bigint: {
+		strict: publicFieldDefinition$bigint(F.buildPublicFieldDefinition, F.buildNumberBigint),
+		coerce: publicFieldDefinition$bigint(C.coerceToPublicFieldDefinition, C.coerceToNumberBigint),
+		qmark: {
+			strict: publicFieldDefinition$bigint$qmark(publicFieldDefinition$bigint$applied, TSKindId.Qmark),
+			coerce: publicFieldDefinition$bigint$qmark(publicFieldDefinition$bigint$appliedCoerce, TSKindId.Qmark)
+		},
+		bang: {
+			strict: publicFieldDefinition$bigint$bang(publicFieldDefinition$bigint$applied, TSKindId.Bang),
+			coerce: publicFieldDefinition$bigint$bang(publicFieldDefinition$bigint$appliedCoerce, TSKindId.Bang)
+		}
 	}
 };
 
@@ -6460,6 +8180,340 @@ const methodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const methodSignature$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword);
+const methodSignature$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword);
+const methodSignature$get$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$get$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$get$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword);
+const methodSignature$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword);
+const methodSignature$set$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$set$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$set$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const methodSignature$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildMethodSignature> = methodSignature$star(F.buildMethodSignature, TSKindId.Star);
+const methodSignature$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToMethodSignature> = methodSignature$star(C.coerceToMethodSignature, TSKindId.Star);
+const methodSignature$star$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const methodSignature$star$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const methodSignature$star$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const methodSignature: typeof B.methodSignature & {
 	get: {
 		strict: (
@@ -6468,6 +8522,87 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6476,6 +8611,87 @@ export const methodSignature: typeof B.methodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6483,21 +8699,314 @@ export const methodSignature: typeof B.methodSignature & {
 		) => ReturnType<typeof F.buildMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof methodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof methodSignature$star$appliedCoerce>;
+		};
+	};
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberDecimal> }
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToMethodSignature>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
 		) => ReturnType<typeof C.coerceToMethodSignature>;
 	};
 } = {
 	...B.methodSignature,
 	get: {
 		strict: methodSignature$get(F.buildMethodSignature, TSKindId.GetKeyword),
-		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword)
+		coerce: methodSignature$get(C.coerceToMethodSignature, TSKindId.GetKeyword),
+		hex: {
+			strict: methodSignature$get$hex(methodSignature$get$applied, F.buildNumberHex),
+			coerce: methodSignature$get$hex(methodSignature$get$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodSignature$get$floatPoint(methodSignature$get$applied, F.buildNumberFloatPoint),
+			coerce: methodSignature$get$floatPoint(methodSignature$get$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodSignature$get$floatLeadingPoint(methodSignature$get$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodSignature$get$floatLeadingPoint(
+				methodSignature$get$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodSignature$get$floatScientific(methodSignature$get$applied, F.buildNumberFloatScientific),
+			coerce: methodSignature$get$floatScientific(methodSignature$get$appliedCoerce, C.coerceToNumberFloatScientific)
+		},
+		decimal: {
+			strict: methodSignature$get$decimal(methodSignature$get$applied, F.buildNumberDecimal),
+			coerce: methodSignature$get$decimal(methodSignature$get$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodSignature$get$binary(methodSignature$get$applied, F.buildNumberBinary),
+			coerce: methodSignature$get$binary(methodSignature$get$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodSignature$get$octal(methodSignature$get$applied, F.buildNumberOctal),
+			coerce: methodSignature$get$octal(methodSignature$get$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodSignature$get$bigint(methodSignature$get$applied, F.buildNumberBigint),
+			coerce: methodSignature$get$bigint(methodSignature$get$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	set: {
 		strict: methodSignature$set(F.buildMethodSignature, TSKindId.SetKeyword),
-		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword)
+		coerce: methodSignature$set(C.coerceToMethodSignature, TSKindId.SetKeyword),
+		hex: {
+			strict: methodSignature$set$hex(methodSignature$set$applied, F.buildNumberHex),
+			coerce: methodSignature$set$hex(methodSignature$set$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodSignature$set$floatPoint(methodSignature$set$applied, F.buildNumberFloatPoint),
+			coerce: methodSignature$set$floatPoint(methodSignature$set$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodSignature$set$floatLeadingPoint(methodSignature$set$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodSignature$set$floatLeadingPoint(
+				methodSignature$set$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodSignature$set$floatScientific(methodSignature$set$applied, F.buildNumberFloatScientific),
+			coerce: methodSignature$set$floatScientific(methodSignature$set$appliedCoerce, C.coerceToNumberFloatScientific)
+		},
+		decimal: {
+			strict: methodSignature$set$decimal(methodSignature$set$applied, F.buildNumberDecimal),
+			coerce: methodSignature$set$decimal(methodSignature$set$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodSignature$set$binary(methodSignature$set$applied, F.buildNumberBinary),
+			coerce: methodSignature$set$binary(methodSignature$set$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodSignature$set$octal(methodSignature$set$applied, F.buildNumberOctal),
+			coerce: methodSignature$set$octal(methodSignature$set$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodSignature$set$bigint(methodSignature$set$applied, F.buildNumberBigint),
+			coerce: methodSignature$set$bigint(methodSignature$set$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	star: {
 		strict: methodSignature$star(F.buildMethodSignature, TSKindId.Star),
-		coerce: methodSignature$star(C.coerceToMethodSignature, TSKindId.Star)
+		coerce: methodSignature$star(C.coerceToMethodSignature, TSKindId.Star),
+		hex: {
+			strict: methodSignature$star$hex(methodSignature$star$applied, F.buildNumberHex),
+			coerce: methodSignature$star$hex(methodSignature$star$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: methodSignature$star$floatPoint(methodSignature$star$applied, F.buildNumberFloatPoint),
+			coerce: methodSignature$star$floatPoint(methodSignature$star$appliedCoerce, C.coerceToNumberFloatPoint)
+		},
+		floatLeadingPoint: {
+			strict: methodSignature$star$floatLeadingPoint(methodSignature$star$applied, F.buildNumberFloatLeadingPoint),
+			coerce: methodSignature$star$floatLeadingPoint(
+				methodSignature$star$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: methodSignature$star$floatScientific(methodSignature$star$applied, F.buildNumberFloatScientific),
+			coerce: methodSignature$star$floatScientific(methodSignature$star$appliedCoerce, C.coerceToNumberFloatScientific)
+		},
+		decimal: {
+			strict: methodSignature$star$decimal(methodSignature$star$applied, F.buildNumberDecimal),
+			coerce: methodSignature$star$decimal(methodSignature$star$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: methodSignature$star$binary(methodSignature$star$applied, F.buildNumberBinary),
+			coerce: methodSignature$star$binary(methodSignature$star$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: methodSignature$star$octal(methodSignature$star$applied, F.buildNumberOctal),
+			coerce: methodSignature$star$octal(methodSignature$star$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: methodSignature$star$bigint(methodSignature$star$applied, F.buildNumberBigint),
+			coerce: methodSignature$star$bigint(methodSignature$star$appliedCoerce, C.coerceToNumberBigint)
+		}
+	},
+	hex: {
+		strict: methodSignature$hex(F.buildMethodSignature, F.buildNumberHex),
+		coerce: methodSignature$hex(C.coerceToMethodSignature, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: methodSignature$floatPoint(F.buildMethodSignature, F.buildNumberFloatPoint),
+		coerce: methodSignature$floatPoint(C.coerceToMethodSignature, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: methodSignature$floatLeadingPoint(F.buildMethodSignature, F.buildNumberFloatLeadingPoint),
+		coerce: methodSignature$floatLeadingPoint(C.coerceToMethodSignature, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: methodSignature$floatScientific(F.buildMethodSignature, F.buildNumberFloatScientific),
+		coerce: methodSignature$floatScientific(C.coerceToMethodSignature, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: methodSignature$decimal(F.buildMethodSignature, F.buildNumberDecimal),
+		coerce: methodSignature$decimal(C.coerceToMethodSignature, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: methodSignature$binary(F.buildMethodSignature, F.buildNumberBinary),
+		coerce: methodSignature$binary(C.coerceToMethodSignature, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: methodSignature$octal(F.buildMethodSignature, F.buildNumberOctal),
+		coerce: methodSignature$octal(C.coerceToMethodSignature, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: methodSignature$bigint(F.buildMethodSignature, F.buildNumberBigint),
+		coerce: methodSignature$bigint(C.coerceToMethodSignature, C.coerceToNumberBigint)
 	}
 };
 
@@ -6513,6 +9022,358 @@ const abstractMethodSignature$star =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'accessorKind'>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)({ ...config, accessorKind: value });
+const abstractMethodSignature$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$get$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$get(
+	F.buildAbstractMethodSignature,
+	TSKindId.GetKeyword
+);
+const abstractMethodSignature$get$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$get(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.GetKeyword
+);
+const abstractMethodSignature$get$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$get$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$get$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$set$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$set(
+	F.buildAbstractMethodSignature,
+	TSKindId.SetKeyword
+);
+const abstractMethodSignature$set$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$set(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.SetKeyword
+);
+const abstractMethodSignature$set$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$set$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$set$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
+const abstractMethodSignature$star$applied: (
+	config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof F.buildAbstractMethodSignature> = abstractMethodSignature$star(
+	F.buildAbstractMethodSignature,
+	TSKindId.Star
+);
+const abstractMethodSignature$star$appliedCoerce: (
+	config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+) => ReturnType<typeof C.coerceToAbstractMethodSignature> = abstractMethodSignature$star(
+	C.coerceToAbstractMethodSignature,
+	TSKindId.Star
+);
+const abstractMethodSignature$star$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const abstractMethodSignature$star$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const abstractMethodSignature$star$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
+	};
 export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 	get: {
 		strict: (
@@ -6521,6 +9382,90 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$get$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$get$appliedCoerce>;
+		};
 	};
 	set: {
 		strict: (
@@ -6529,6 +9474,90 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$set$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$set$appliedCoerce>;
+		};
 	};
 	star: {
 		strict: (
@@ -6536,21 +9565,362 @@ export const abstractMethodSignature: typeof B.abstractMethodSignature & {
 		) => ReturnType<typeof F.buildAbstractMethodSignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'accessorKind'>
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberHex>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberDecimal>;
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberBinary>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> &
+					ArgsOf<typeof F.buildNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> &
+					ArgsOf<typeof C.coerceToNumberOctal>[0]
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$applied>[0], 'name'> & {
+					name: ArgsOf<typeof F.buildNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$applied>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof abstractMethodSignature$star$appliedCoerce>[0], 'name'> & {
+					name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+				}
+			) => ReturnType<typeof abstractMethodSignature$star$appliedCoerce>;
+		};
+	};
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberDecimal>;
+			}
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildAbstractMethodSignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAbstractMethodSignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
 		) => ReturnType<typeof C.coerceToAbstractMethodSignature>;
 	};
 } = {
 	...B.abstractMethodSignature,
 	get: {
 		strict: abstractMethodSignature$get(F.buildAbstractMethodSignature, TSKindId.GetKeyword),
-		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword)
+		coerce: abstractMethodSignature$get(C.coerceToAbstractMethodSignature, TSKindId.GetKeyword),
+		hex: {
+			strict: abstractMethodSignature$get$hex(abstractMethodSignature$get$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$get$hex(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: abstractMethodSignature$get$floatPoint(abstractMethodSignature$get$applied, F.buildNumberFloatPoint),
+			coerce: abstractMethodSignature$get$floatPoint(
+				abstractMethodSignature$get$appliedCoerce,
+				C.coerceToNumberFloatPoint
+			)
+		},
+		floatLeadingPoint: {
+			strict: abstractMethodSignature$get$floatLeadingPoint(
+				abstractMethodSignature$get$applied,
+				F.buildNumberFloatLeadingPoint
+			),
+			coerce: abstractMethodSignature$get$floatLeadingPoint(
+				abstractMethodSignature$get$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: abstractMethodSignature$get$floatScientific(
+				abstractMethodSignature$get$applied,
+				F.buildNumberFloatScientific
+			),
+			coerce: abstractMethodSignature$get$floatScientific(
+				abstractMethodSignature$get$appliedCoerce,
+				C.coerceToNumberFloatScientific
+			)
+		},
+		decimal: {
+			strict: abstractMethodSignature$get$decimal(abstractMethodSignature$get$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$get$decimal(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: abstractMethodSignature$get$binary(abstractMethodSignature$get$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$get$binary(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: abstractMethodSignature$get$octal(abstractMethodSignature$get$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$get$octal(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: abstractMethodSignature$get$bigint(abstractMethodSignature$get$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$get$bigint(abstractMethodSignature$get$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	set: {
 		strict: abstractMethodSignature$set(F.buildAbstractMethodSignature, TSKindId.SetKeyword),
-		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword)
+		coerce: abstractMethodSignature$set(C.coerceToAbstractMethodSignature, TSKindId.SetKeyword),
+		hex: {
+			strict: abstractMethodSignature$set$hex(abstractMethodSignature$set$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$set$hex(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: abstractMethodSignature$set$floatPoint(abstractMethodSignature$set$applied, F.buildNumberFloatPoint),
+			coerce: abstractMethodSignature$set$floatPoint(
+				abstractMethodSignature$set$appliedCoerce,
+				C.coerceToNumberFloatPoint
+			)
+		},
+		floatLeadingPoint: {
+			strict: abstractMethodSignature$set$floatLeadingPoint(
+				abstractMethodSignature$set$applied,
+				F.buildNumberFloatLeadingPoint
+			),
+			coerce: abstractMethodSignature$set$floatLeadingPoint(
+				abstractMethodSignature$set$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: abstractMethodSignature$set$floatScientific(
+				abstractMethodSignature$set$applied,
+				F.buildNumberFloatScientific
+			),
+			coerce: abstractMethodSignature$set$floatScientific(
+				abstractMethodSignature$set$appliedCoerce,
+				C.coerceToNumberFloatScientific
+			)
+		},
+		decimal: {
+			strict: abstractMethodSignature$set$decimal(abstractMethodSignature$set$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$set$decimal(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: abstractMethodSignature$set$binary(abstractMethodSignature$set$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$set$binary(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: abstractMethodSignature$set$octal(abstractMethodSignature$set$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$set$octal(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: abstractMethodSignature$set$bigint(abstractMethodSignature$set$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$set$bigint(abstractMethodSignature$set$appliedCoerce, C.coerceToNumberBigint)
+		}
 	},
 	star: {
 		strict: abstractMethodSignature$star(F.buildAbstractMethodSignature, TSKindId.Star),
-		coerce: abstractMethodSignature$star(C.coerceToAbstractMethodSignature, TSKindId.Star)
+		coerce: abstractMethodSignature$star(C.coerceToAbstractMethodSignature, TSKindId.Star),
+		hex: {
+			strict: abstractMethodSignature$star$hex(abstractMethodSignature$star$applied, F.buildNumberHex),
+			coerce: abstractMethodSignature$star$hex(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberHex)
+		},
+		floatPoint: {
+			strict: abstractMethodSignature$star$floatPoint(abstractMethodSignature$star$applied, F.buildNumberFloatPoint),
+			coerce: abstractMethodSignature$star$floatPoint(
+				abstractMethodSignature$star$appliedCoerce,
+				C.coerceToNumberFloatPoint
+			)
+		},
+		floatLeadingPoint: {
+			strict: abstractMethodSignature$star$floatLeadingPoint(
+				abstractMethodSignature$star$applied,
+				F.buildNumberFloatLeadingPoint
+			),
+			coerce: abstractMethodSignature$star$floatLeadingPoint(
+				abstractMethodSignature$star$appliedCoerce,
+				C.coerceToNumberFloatLeadingPoint
+			)
+		},
+		floatScientific: {
+			strict: abstractMethodSignature$star$floatScientific(
+				abstractMethodSignature$star$applied,
+				F.buildNumberFloatScientific
+			),
+			coerce: abstractMethodSignature$star$floatScientific(
+				abstractMethodSignature$star$appliedCoerce,
+				C.coerceToNumberFloatScientific
+			)
+		},
+		decimal: {
+			strict: abstractMethodSignature$star$decimal(abstractMethodSignature$star$applied, F.buildNumberDecimal),
+			coerce: abstractMethodSignature$star$decimal(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberDecimal)
+		},
+		binary: {
+			strict: abstractMethodSignature$star$binary(abstractMethodSignature$star$applied, F.buildNumberBinary),
+			coerce: abstractMethodSignature$star$binary(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberBinary)
+		},
+		octal: {
+			strict: abstractMethodSignature$star$octal(abstractMethodSignature$star$applied, F.buildNumberOctal),
+			coerce: abstractMethodSignature$star$octal(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberOctal)
+		},
+		bigint: {
+			strict: abstractMethodSignature$star$bigint(abstractMethodSignature$star$applied, F.buildNumberBigint),
+			coerce: abstractMethodSignature$star$bigint(abstractMethodSignature$star$appliedCoerce, C.coerceToNumberBigint)
+		}
+	},
+	hex: {
+		strict: abstractMethodSignature$hex(F.buildAbstractMethodSignature, F.buildNumberHex),
+		coerce: abstractMethodSignature$hex(C.coerceToAbstractMethodSignature, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: abstractMethodSignature$floatPoint(F.buildAbstractMethodSignature, F.buildNumberFloatPoint),
+		coerce: abstractMethodSignature$floatPoint(C.coerceToAbstractMethodSignature, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: abstractMethodSignature$floatLeadingPoint(F.buildAbstractMethodSignature, F.buildNumberFloatLeadingPoint),
+		coerce: abstractMethodSignature$floatLeadingPoint(
+			C.coerceToAbstractMethodSignature,
+			C.coerceToNumberFloatLeadingPoint
+		)
+	},
+	floatScientific: {
+		strict: abstractMethodSignature$floatScientific(F.buildAbstractMethodSignature, F.buildNumberFloatScientific),
+		coerce: abstractMethodSignature$floatScientific(C.coerceToAbstractMethodSignature, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: abstractMethodSignature$decimal(F.buildAbstractMethodSignature, F.buildNumberDecimal),
+		coerce: abstractMethodSignature$decimal(C.coerceToAbstractMethodSignature, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: abstractMethodSignature$binary(F.buildAbstractMethodSignature, F.buildNumberBinary),
+		coerce: abstractMethodSignature$binary(C.coerceToAbstractMethodSignature, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: abstractMethodSignature$octal(F.buildAbstractMethodSignature, F.buildNumberOctal),
+		coerce: abstractMethodSignature$octal(C.coerceToAbstractMethodSignature, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: abstractMethodSignature$bigint(F.buildAbstractMethodSignature, F.buildNumberBigint),
+		coerce: abstractMethodSignature$bigint(C.coerceToAbstractMethodSignature, C.coerceToNumberBigint)
 	}
 };
 
@@ -7030,11 +10400,84 @@ const enumAssignment$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const enumAssignment$number =
+const enumAssignment$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const enumAssignment$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const enumAssignment$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
 const enumAssignment$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -7089,12 +10532,78 @@ export const enumAssignment: typeof B.enumAssignment & {
 			) => ReturnType<typeof C.coerceToEnumAssignment>;
 		};
 	};
-	number: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumber> }
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof C.coerceToNumber> }
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildNumberDecimal> }
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
 	computedPropertyName: {
@@ -7127,9 +10636,37 @@ export const enumAssignment: typeof B.enumAssignment & {
 			coerce: enumAssignment$stringSingle(C.coerceToEnumAssignment, string.single.coerce)
 		}
 	},
-	number: {
-		strict: enumAssignment$number(F.buildEnumAssignment, F.buildNumber),
-		coerce: enumAssignment$number(C.coerceToEnumAssignment, C.coerceToNumber)
+	hex: {
+		strict: enumAssignment$hex(F.buildEnumAssignment, F.buildNumberHex),
+		coerce: enumAssignment$hex(C.coerceToEnumAssignment, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: enumAssignment$floatPoint(F.buildEnumAssignment, F.buildNumberFloatPoint),
+		coerce: enumAssignment$floatPoint(C.coerceToEnumAssignment, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: enumAssignment$floatLeadingPoint(F.buildEnumAssignment, F.buildNumberFloatLeadingPoint),
+		coerce: enumAssignment$floatLeadingPoint(C.coerceToEnumAssignment, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: enumAssignment$floatScientific(F.buildEnumAssignment, F.buildNumberFloatScientific),
+		coerce: enumAssignment$floatScientific(C.coerceToEnumAssignment, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: enumAssignment$decimal(F.buildEnumAssignment, F.buildNumberDecimal),
+		coerce: enumAssignment$decimal(C.coerceToEnumAssignment, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: enumAssignment$binary(F.buildEnumAssignment, F.buildNumberBinary),
+		coerce: enumAssignment$binary(C.coerceToEnumAssignment, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: enumAssignment$octal(F.buildEnumAssignment, F.buildNumberOctal),
+		coerce: enumAssignment$octal(C.coerceToEnumAssignment, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: enumAssignment$bigint(F.buildEnumAssignment, F.buildNumberBigint),
+		coerce: enumAssignment$bigint(C.coerceToEnumAssignment, C.coerceToNumberBigint)
 	},
 	computedPropertyName: {
 		strict: enumAssignment$computedPropertyName(F.buildEnumAssignment, F.buildComputedPropertyName),
@@ -7596,6 +11133,218 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 	}
 };
 
+const typeQuerySubscriptExpression$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF> }): ReturnType<PF> => {
+		const { index: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(...seated) });
+	};
+const typeQuerySubscriptExpression$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(inner) });
+	};
+const typeQuerySubscriptExpression$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'index'> & { index: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { index: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, index: _c(child)(seated) });
+	};
+export const typeQuerySubscriptExpression: typeof B.typeQuerySubscriptExpression & {
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof F.buildNumberDecimal>;
+			}
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> &
+				ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildTypeQuerySubscriptExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0], 'index'> & {
+				index: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
+		) => ReturnType<typeof C.coerceToTypeQuerySubscriptExpression>;
+	};
+} = {
+	...B.typeQuerySubscriptExpression,
+	hex: {
+		strict: typeQuerySubscriptExpression$hex(F.buildTypeQuerySubscriptExpression, F.buildNumberHex),
+		coerce: typeQuerySubscriptExpression$hex(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: typeQuerySubscriptExpression$floatPoint(F.buildTypeQuerySubscriptExpression, F.buildNumberFloatPoint),
+		coerce: typeQuerySubscriptExpression$floatPoint(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: typeQuerySubscriptExpression$floatLeadingPoint(
+			F.buildTypeQuerySubscriptExpression,
+			F.buildNumberFloatLeadingPoint
+		),
+		coerce: typeQuerySubscriptExpression$floatLeadingPoint(
+			C.coerceToTypeQuerySubscriptExpression,
+			C.coerceToNumberFloatLeadingPoint
+		)
+	},
+	floatScientific: {
+		strict: typeQuerySubscriptExpression$floatScientific(
+			F.buildTypeQuerySubscriptExpression,
+			F.buildNumberFloatScientific
+		),
+		coerce: typeQuerySubscriptExpression$floatScientific(
+			C.coerceToTypeQuerySubscriptExpression,
+			C.coerceToNumberFloatScientific
+		)
+	},
+	decimal: {
+		strict: typeQuerySubscriptExpression$decimal(F.buildTypeQuerySubscriptExpression, F.buildNumberDecimal),
+		coerce: typeQuerySubscriptExpression$decimal(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: typeQuerySubscriptExpression$binary(F.buildTypeQuerySubscriptExpression, F.buildNumberBinary),
+		coerce: typeQuerySubscriptExpression$binary(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: typeQuerySubscriptExpression$octal(F.buildTypeQuerySubscriptExpression, F.buildNumberOctal),
+		coerce: typeQuerySubscriptExpression$octal(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: typeQuerySubscriptExpression$bigint(F.buildTypeQuerySubscriptExpression, F.buildNumberBigint),
+		coerce: typeQuerySubscriptExpression$bigint(C.coerceToTypeQuerySubscriptExpression, C.coerceToNumberBigint)
+	}
+};
+
 const typeQueryCallExpression$import =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'function'>): ReturnType<PF> =>
@@ -7639,6 +11388,54 @@ const typeQueryCallExpression$typeQuerySubscriptExpression =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryCallExpression$numberHex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberFloatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberFloatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberFloatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberDecimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberBinary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberOctal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryCallExpression$numberBigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
 export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 	import: {
@@ -7704,6 +11501,102 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryCallExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryCallExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryCallExpression>;
+		};
 	};
 } = {
 	...B.typeQueryCallExpression,
@@ -7747,7 +11640,87 @@ export const typeQueryCallExpression: typeof B.typeQueryCallExpression & {
 		coerce: typeQueryCallExpression$typeQuerySubscriptExpression(
 			C.coerceToTypeQueryCallExpression,
 			C.coerceToTypeQuerySubscriptExpression
-		)
+		),
+		hex: {
+			strict: typeQueryCallExpression$numberHex(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.hex.strict
+			),
+			coerce: typeQueryCallExpression$numberHex(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.hex.coerce
+			)
+		},
+		floatPoint: {
+			strict: typeQueryCallExpression$numberFloatPoint(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatPoint.strict
+			),
+			coerce: typeQueryCallExpression$numberFloatPoint(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatPoint.coerce
+			)
+		},
+		floatLeadingPoint: {
+			strict: typeQueryCallExpression$numberFloatLeadingPoint(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatLeadingPoint.strict
+			),
+			coerce: typeQueryCallExpression$numberFloatLeadingPoint(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatLeadingPoint.coerce
+			)
+		},
+		floatScientific: {
+			strict: typeQueryCallExpression$numberFloatScientific(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatScientific.strict
+			),
+			coerce: typeQueryCallExpression$numberFloatScientific(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.floatScientific.coerce
+			)
+		},
+		decimal: {
+			strict: typeQueryCallExpression$numberDecimal(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.decimal.strict
+			),
+			coerce: typeQueryCallExpression$numberDecimal(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.decimal.coerce
+			)
+		},
+		binary: {
+			strict: typeQueryCallExpression$numberBinary(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.binary.strict
+			),
+			coerce: typeQueryCallExpression$numberBinary(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.binary.coerce
+			)
+		},
+		octal: {
+			strict: typeQueryCallExpression$numberOctal(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.octal.strict
+			),
+			coerce: typeQueryCallExpression$numberOctal(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.octal.coerce
+			)
+		},
+		bigint: {
+			strict: typeQueryCallExpression$numberBigint(
+				F.buildTypeQueryCallExpression,
+				typeQuerySubscriptExpression.bigint.strict
+			),
+			coerce: typeQueryCallExpression$numberBigint(
+				C.coerceToTypeQueryCallExpression,
+				typeQuerySubscriptExpression.bigint.coerce
+			)
+		}
 	}
 };
 
@@ -7794,6 +11767,54 @@ const typeQueryInstantiationExpression$typeQuerySubscriptExpression =
 			else rest[key] = value;
 		}
 		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(inner) });
+	};
+const typeQueryInstantiationExpression$numberHex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberFloatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberFloatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberFloatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberDecimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberBinary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberOctal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
+	};
+const typeQueryInstantiationExpression$numberBigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'function'> & { function: ArgsOf<CF> }): ReturnType<PF> => {
+		const { function: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, function: _c(child)(...seated) });
 	};
 export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationExpression & {
 	import: {
@@ -7859,6 +11880,102 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> &
 				ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>[0]
 		) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		hex: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		floatPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		floatScientific: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		decimal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		binary: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		octal: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
+		bigint: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>;
+				}
+			) => ReturnType<typeof F.buildTypeQueryInstantiationExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryInstantiationExpression>[0], 'function'> & {
+					function: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>;
+				}
+			) => ReturnType<typeof C.coerceToTypeQueryInstantiationExpression>;
+		};
 	};
 } = {
 	...B.typeQueryInstantiationExpression,
@@ -7911,11 +12028,123 @@ export const typeQueryInstantiationExpression: typeof B.typeQueryInstantiationEx
 		coerce: typeQueryInstantiationExpression$typeQuerySubscriptExpression(
 			C.coerceToTypeQueryInstantiationExpression,
 			C.coerceToTypeQuerySubscriptExpression
-		)
+		),
+		hex: {
+			strict: typeQueryInstantiationExpression$numberHex(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.hex.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberHex(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.hex.coerce
+			)
+		},
+		floatPoint: {
+			strict: typeQueryInstantiationExpression$numberFloatPoint(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatPoint.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberFloatPoint(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatPoint.coerce
+			)
+		},
+		floatLeadingPoint: {
+			strict: typeQueryInstantiationExpression$numberFloatLeadingPoint(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatLeadingPoint.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberFloatLeadingPoint(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatLeadingPoint.coerce
+			)
+		},
+		floatScientific: {
+			strict: typeQueryInstantiationExpression$numberFloatScientific(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatScientific.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberFloatScientific(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.floatScientific.coerce
+			)
+		},
+		decimal: {
+			strict: typeQueryInstantiationExpression$numberDecimal(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.decimal.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberDecimal(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.decimal.coerce
+			)
+		},
+		binary: {
+			strict: typeQueryInstantiationExpression$numberBinary(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.binary.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberBinary(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.binary.coerce
+			)
+		},
+		octal: {
+			strict: typeQueryInstantiationExpression$numberOctal(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.octal.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberOctal(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.octal.coerce
+			)
+		},
+		bigint: {
+			strict: typeQueryInstantiationExpression$numberBigint(
+				F.buildTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.bigint.strict
+			),
+			coerce: typeQueryInstantiationExpression$numberBigint(
+				C.coerceToTypeQueryInstantiationExpression,
+				typeQuerySubscriptExpression.bigint.coerce
+			)
+		}
 	}
 };
 
 const typeQuery$subscriptExpression =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberHex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberFloatPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberFloatLeadingPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberFloatScientific =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberDecimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberBinary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberOctal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const typeQuery$numberBigint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -7959,6 +12188,66 @@ export const typeQuery: typeof B.typeQuery & {
 	subscriptExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
 		coerce: (...args: ArgsOf<typeof C.coerceToTypeQuerySubscriptExpression>) => ReturnType<typeof F.buildTypeQuery>;
+		hex: {
+			strict: (...args: ArgsOf<typeof typeQuerySubscriptExpression.hex.strict>) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (...args: ArgsOf<typeof typeQuerySubscriptExpression.hex.coerce>) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		floatPoint: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatPoint.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		floatLeadingPoint: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatLeadingPoint.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		floatScientific: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.floatScientific.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		decimal: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.decimal.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.decimal.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		binary: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.binary.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.binary.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		octal: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.octal.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.octal.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
+		bigint: {
+			strict: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.bigint.strict>
+			) => ReturnType<typeof F.buildTypeQuery>;
+			coerce: (
+				...args: ArgsOf<typeof typeQuerySubscriptExpression.bigint.coerce>
+			) => ReturnType<typeof F.buildTypeQuery>;
+		};
 	};
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildTypeQueryMemberExpression>) => ReturnType<typeof F.buildTypeQuery>;
@@ -8008,7 +12297,42 @@ export const typeQuery: typeof B.typeQuery & {
 	...B.typeQuery,
 	subscriptExpression: {
 		strict: typeQuery$subscriptExpression(F.buildTypeQuery, F.buildTypeQuerySubscriptExpression),
-		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression)
+		coerce: typeQuery$subscriptExpression(F.buildTypeQuery, C.coerceToTypeQuerySubscriptExpression),
+		hex: {
+			strict: typeQuery$numberHex(F.buildTypeQuery, typeQuerySubscriptExpression.hex.strict),
+			coerce: typeQuery$numberHex(F.buildTypeQuery, typeQuerySubscriptExpression.hex.coerce)
+		},
+		floatPoint: {
+			strict: typeQuery$numberFloatPoint(F.buildTypeQuery, typeQuerySubscriptExpression.floatPoint.strict),
+			coerce: typeQuery$numberFloatPoint(F.buildTypeQuery, typeQuerySubscriptExpression.floatPoint.coerce)
+		},
+		floatLeadingPoint: {
+			strict: typeQuery$numberFloatLeadingPoint(
+				F.buildTypeQuery,
+				typeQuerySubscriptExpression.floatLeadingPoint.strict
+			),
+			coerce: typeQuery$numberFloatLeadingPoint(F.buildTypeQuery, typeQuerySubscriptExpression.floatLeadingPoint.coerce)
+		},
+		floatScientific: {
+			strict: typeQuery$numberFloatScientific(F.buildTypeQuery, typeQuerySubscriptExpression.floatScientific.strict),
+			coerce: typeQuery$numberFloatScientific(F.buildTypeQuery, typeQuerySubscriptExpression.floatScientific.coerce)
+		},
+		decimal: {
+			strict: typeQuery$numberDecimal(F.buildTypeQuery, typeQuerySubscriptExpression.decimal.strict),
+			coerce: typeQuery$numberDecimal(F.buildTypeQuery, typeQuerySubscriptExpression.decimal.coerce)
+		},
+		binary: {
+			strict: typeQuery$numberBinary(F.buildTypeQuery, typeQuerySubscriptExpression.binary.strict),
+			coerce: typeQuery$numberBinary(F.buildTypeQuery, typeQuerySubscriptExpression.binary.coerce)
+		},
+		octal: {
+			strict: typeQuery$numberOctal(F.buildTypeQuery, typeQuerySubscriptExpression.octal.strict),
+			coerce: typeQuery$numberOctal(F.buildTypeQuery, typeQuerySubscriptExpression.octal.coerce)
+		},
+		bigint: {
+			strict: typeQuery$numberBigint(F.buildTypeQuery, typeQuerySubscriptExpression.bigint.strict),
+			coerce: typeQuery$numberBigint(F.buildTypeQuery, typeQuerySubscriptExpression.bigint.coerce)
+		}
 	},
 	memberExpression: {
 		strict: typeQuery$memberExpression(F.buildTypeQuery, F.buildTypeQueryMemberExpression),
@@ -8048,6 +12372,262 @@ export const typeQuery: typeof B.typeQuery & {
 	}
 };
 
+const _number$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$decimal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF> }): ReturnType<PF> => {
+		const { argument: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(...seated) });
+	};
+const _number$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(inner) });
+	};
+const _number$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'argument'> & { argument: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { argument: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, argument: _c(child)(seated) });
+	};
+export const _number: typeof B._number & {
+	hex: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & { argument: ArgsOf<typeof F.buildNumberDecimal> }
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.build_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.build_Number>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceTo_Number>[0], 'argument'> & {
+				argument: ArgsOf<typeof C.coerceToNumberBigint>[0];
+			}
+		) => ReturnType<typeof C.coerceTo_Number>;
+	};
+} = {
+	...B._number,
+	hex: {
+		strict: _number$hex(F.build_Number, F.buildNumberHex),
+		coerce: _number$hex(C.coerceTo_Number, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: _number$floatPoint(F.build_Number, F.buildNumberFloatPoint),
+		coerce: _number$floatPoint(C.coerceTo_Number, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: _number$floatLeadingPoint(F.build_Number, F.buildNumberFloatLeadingPoint),
+		coerce: _number$floatLeadingPoint(C.coerceTo_Number, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: _number$floatScientific(F.build_Number, F.buildNumberFloatScientific),
+		coerce: _number$floatScientific(C.coerceTo_Number, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: _number$decimal(F.build_Number, F.buildNumberDecimal),
+		coerce: _number$decimal(C.coerceTo_Number, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: _number$binary(F.build_Number, F.buildNumberBinary),
+		coerce: _number$binary(C.coerceTo_Number, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: _number$octal(F.build_Number, F.buildNumberOctal),
+		coerce: _number$octal(C.coerceTo_Number, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: _number$bigint(F.build_Number, F.buildNumberBigint),
+		coerce: _number$bigint(C.coerceTo_Number, C.coerceToNumberBigint)
+	}
+};
+
+const literalType$number =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberHex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberFloatPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberFloatLeadingPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberFloatScientific =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberDecimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberBinary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberOctal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$numberBigint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$hex =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatLeadingPoint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatScientific =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$decimal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$octal =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const literalType$string =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -8077,6 +12657,74 @@ const literalType$undefined =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const literalType: typeof B.literalType & {
+	number: {
+		strict: (...args: ArgsOf<typeof F.build_Number>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceTo_Number>) => ReturnType<typeof F.buildLiteralType>;
+		hex: {
+			strict: (...args: ArgsOf<typeof _number.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		floatPoint: {
+			strict: (...args: ArgsOf<typeof _number.floatPoint.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.floatPoint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		floatLeadingPoint: {
+			strict: (...args: ArgsOf<typeof _number.floatLeadingPoint.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.floatLeadingPoint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		floatScientific: {
+			strict: (...args: ArgsOf<typeof _number.floatScientific.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.floatScientific.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		decimal: {
+			strict: (...args: ArgsOf<typeof _number.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		binary: {
+			strict: (...args: ArgsOf<typeof _number.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		octal: {
+			strict: (...args: ArgsOf<typeof _number.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		bigint: {
+			strict: (...args: ArgsOf<typeof _number.bigint.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof _number.bigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+	};
+	hex: {
+		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatLeadingPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatScientific: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	decimal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	octal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	bigint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBigint>) => ReturnType<typeof F.buildLiteralType>;
+	};
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildString>) => ReturnType<typeof F.buildLiteralType>;
 		coerce: (...args: ArgsOf<typeof C.coerceToString>) => ReturnType<typeof F.buildLiteralType>;
@@ -8107,6 +12755,74 @@ export const literalType: typeof B.literalType & {
 	};
 } = {
 	...B.literalType,
+	number: {
+		strict: literalType$number(F.buildLiteralType, F.build_Number),
+		coerce: literalType$number(F.buildLiteralType, C.coerceTo_Number),
+		hex: {
+			strict: literalType$numberHex(F.buildLiteralType, _number.hex.strict),
+			coerce: literalType$numberHex(F.buildLiteralType, _number.hex.coerce)
+		},
+		floatPoint: {
+			strict: literalType$numberFloatPoint(F.buildLiteralType, _number.floatPoint.strict),
+			coerce: literalType$numberFloatPoint(F.buildLiteralType, _number.floatPoint.coerce)
+		},
+		floatLeadingPoint: {
+			strict: literalType$numberFloatLeadingPoint(F.buildLiteralType, _number.floatLeadingPoint.strict),
+			coerce: literalType$numberFloatLeadingPoint(F.buildLiteralType, _number.floatLeadingPoint.coerce)
+		},
+		floatScientific: {
+			strict: literalType$numberFloatScientific(F.buildLiteralType, _number.floatScientific.strict),
+			coerce: literalType$numberFloatScientific(F.buildLiteralType, _number.floatScientific.coerce)
+		},
+		decimal: {
+			strict: literalType$numberDecimal(F.buildLiteralType, _number.decimal.strict),
+			coerce: literalType$numberDecimal(F.buildLiteralType, _number.decimal.coerce)
+		},
+		binary: {
+			strict: literalType$numberBinary(F.buildLiteralType, _number.binary.strict),
+			coerce: literalType$numberBinary(F.buildLiteralType, _number.binary.coerce)
+		},
+		octal: {
+			strict: literalType$numberOctal(F.buildLiteralType, _number.octal.strict),
+			coerce: literalType$numberOctal(F.buildLiteralType, _number.octal.coerce)
+		},
+		bigint: {
+			strict: literalType$numberBigint(F.buildLiteralType, _number.bigint.strict),
+			coerce: literalType$numberBigint(F.buildLiteralType, _number.bigint.coerce)
+		}
+	},
+	hex: {
+		strict: literalType$hex(F.buildLiteralType, F.buildNumberHex),
+		coerce: literalType$hex(F.buildLiteralType, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: literalType$floatPoint(F.buildLiteralType, F.buildNumberFloatPoint),
+		coerce: literalType$floatPoint(F.buildLiteralType, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: literalType$floatLeadingPoint(F.buildLiteralType, F.buildNumberFloatLeadingPoint),
+		coerce: literalType$floatLeadingPoint(F.buildLiteralType, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: literalType$floatScientific(F.buildLiteralType, F.buildNumberFloatScientific),
+		coerce: literalType$floatScientific(F.buildLiteralType, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: literalType$decimal(F.buildLiteralType, F.buildNumberDecimal),
+		coerce: literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: literalType$binary(F.buildLiteralType, F.buildNumberBinary),
+		coerce: literalType$binary(F.buildLiteralType, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: literalType$octal(F.buildLiteralType, F.buildNumberOctal),
+		coerce: literalType$octal(F.buildLiteralType, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: literalType$bigint(F.buildLiteralType, F.buildNumberBigint),
+		coerce: literalType$bigint(F.buildLiteralType, C.coerceToNumberBigint)
+	},
 	string: {
 		strict: literalType$string(F.buildLiteralType, F.buildString),
 		coerce: literalType$string(F.buildLiteralType, C.coerceToString),
@@ -8348,11 +13064,84 @@ const propertySignature$stringSingle =
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
 	};
-const propertySignature$number =
+const propertySignature$hex =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$floatPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent')
+				inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$floatLeadingPoint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'fraction' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$floatScientific =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'integer' || key === 'marker' || key === 'sign' || key === 'exponent') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$decimal =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) });
+	};
+const propertySignature$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$octal =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & ArgsOf<CF>[0]): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'prefix' || key === 'content') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) });
+	};
+const propertySignature$bigint =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _p<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) });
 	};
 const propertySignature$computedPropertyName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -8407,13 +13196,80 @@ export const propertySignature: typeof B.propertySignature & {
 			) => ReturnType<typeof C.coerceToPropertySignature>;
 		};
 	};
-	number: {
+	hex: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & { name: ArgsOf<typeof F.buildNumber> }
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberHex>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberHex>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	floatPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberFloatPoint>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatPoint>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	floatLeadingPoint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	floatScientific: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> &
+				ArgsOf<typeof F.buildNumberFloatScientific>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> &
+				ArgsOf<typeof C.coerceToNumberFloatScientific>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	decimal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberDecimal>;
+			}
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToNumber>;
+				name: ArgsOf<typeof C.coerceToNumberDecimal>;
+			}
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	binary: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberBinary>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberBinary>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	octal: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & ArgsOf<typeof F.buildNumberOctal>[0]
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & ArgsOf<typeof C.coerceToNumberOctal>[0]
+		) => ReturnType<typeof C.coerceToPropertySignature>;
+	};
+	bigint: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildNumberBigint>[0];
+			}
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToNumberBigint>[0];
 			}
 		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
@@ -8450,9 +13306,37 @@ export const propertySignature: typeof B.propertySignature & {
 			coerce: propertySignature$stringSingle(C.coerceToPropertySignature, string.single.coerce)
 		}
 	},
-	number: {
-		strict: propertySignature$number(F.buildPropertySignature, F.buildNumber),
-		coerce: propertySignature$number(C.coerceToPropertySignature, C.coerceToNumber)
+	hex: {
+		strict: propertySignature$hex(F.buildPropertySignature, F.buildNumberHex),
+		coerce: propertySignature$hex(C.coerceToPropertySignature, C.coerceToNumberHex)
+	},
+	floatPoint: {
+		strict: propertySignature$floatPoint(F.buildPropertySignature, F.buildNumberFloatPoint),
+		coerce: propertySignature$floatPoint(C.coerceToPropertySignature, C.coerceToNumberFloatPoint)
+	},
+	floatLeadingPoint: {
+		strict: propertySignature$floatLeadingPoint(F.buildPropertySignature, F.buildNumberFloatLeadingPoint),
+		coerce: propertySignature$floatLeadingPoint(C.coerceToPropertySignature, C.coerceToNumberFloatLeadingPoint)
+	},
+	floatScientific: {
+		strict: propertySignature$floatScientific(F.buildPropertySignature, F.buildNumberFloatScientific),
+		coerce: propertySignature$floatScientific(C.coerceToPropertySignature, C.coerceToNumberFloatScientific)
+	},
+	decimal: {
+		strict: propertySignature$decimal(F.buildPropertySignature, F.buildNumberDecimal),
+		coerce: propertySignature$decimal(C.coerceToPropertySignature, C.coerceToNumberDecimal)
+	},
+	binary: {
+		strict: propertySignature$binary(F.buildPropertySignature, F.buildNumberBinary),
+		coerce: propertySignature$binary(C.coerceToPropertySignature, C.coerceToNumberBinary)
+	},
+	octal: {
+		strict: propertySignature$octal(F.buildPropertySignature, F.buildNumberOctal),
+		coerce: propertySignature$octal(C.coerceToPropertySignature, C.coerceToNumberOctal)
+	},
+	bigint: {
+		strict: propertySignature$bigint(F.buildPropertySignature, F.buildNumberBigint),
+		coerce: propertySignature$bigint(C.coerceToPropertySignature, C.coerceToNumberBigint)
 	},
 	computedPropertyName: {
 		strict: propertySignature$computedPropertyName(F.buildPropertySignature, F.buildComputedPropertyName),
@@ -9667,11 +14551,45 @@ export const updateExpression: {
 };
 
 export const comment: {
+	readonly strict: typeof F.buildCommentLine;
+	readonly coerce: typeof C.coerceToCommentLine;
 	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
 	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
 } = {
+	strict: F.buildCommentLine,
+	coerce: C.coerceToCommentLine,
 	line: { strict: F.buildCommentLine, coerce: C.coerceToCommentLine },
 	block: { strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock }
+};
+
+export const number: {
+	readonly strict: typeof F.buildNumberDecimal;
+	readonly coerce: typeof C.coerceToNumberDecimal;
+	readonly hex: { strict: typeof F.buildNumberHex; coerce: typeof C.coerceToNumberHex };
+	readonly floatPoint: { strict: typeof F.buildNumberFloatPoint; coerce: typeof C.coerceToNumberFloatPoint };
+	readonly floatLeadingPoint: {
+		strict: typeof F.buildNumberFloatLeadingPoint;
+		coerce: typeof C.coerceToNumberFloatLeadingPoint;
+	};
+	readonly floatScientific: {
+		strict: typeof F.buildNumberFloatScientific;
+		coerce: typeof C.coerceToNumberFloatScientific;
+	};
+	readonly decimal: { strict: typeof F.buildNumberDecimal; coerce: typeof C.coerceToNumberDecimal };
+	readonly binary: { strict: typeof F.buildNumberBinary; coerce: typeof C.coerceToNumberBinary };
+	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
+	readonly bigint: { strict: typeof F.buildNumberBigint; coerce: typeof C.coerceToNumberBigint };
+} = {
+	strict: F.buildNumberDecimal,
+	coerce: C.coerceToNumberDecimal,
+	hex: { strict: F.buildNumberHex, coerce: C.coerceToNumberHex },
+	floatPoint: { strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint },
+	floatLeadingPoint: { strict: F.buildNumberFloatLeadingPoint, coerce: C.coerceToNumberFloatLeadingPoint },
+	floatScientific: { strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific },
+	decimal: { strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal },
+	binary: { strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary },
+	octal: { strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal },
+	bigint: { strict: F.buildNumberBigint, coerce: C.coerceToNumberBigint }
 };
 
 export const metaProperty: {

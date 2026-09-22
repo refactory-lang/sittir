@@ -1548,16 +1548,58 @@ export interface NonNullExpressionTransport {
   _non_null_expression_after?: number
 }
 
+export interface NumberBigintTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface NumberBinaryTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface NumberFloatLeadingPointTransport {
+  '$_trivia'?: TransportTrivia
+  _fraction: string
+  _marker?: string
+  _sign?: string
+  _exponent?: string
+}
+
+export interface NumberFloatPointTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _fraction?: string
+  _marker?: string
+  _sign?: string
+  _exponent?: string
+}
+
+export interface NumberFloatScientificTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _marker: string
+  _sign?: string
+  _exponent: string
+}
+
+export interface NumberHexTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface NumberOctalTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
 export interface NumberTransport {
   '$_trivia'?: TransportTrivia
   _operator: SlotValue<NumberOperatorEnum>
   _argument: SlotValue<NumberTransport>
-  _plus_before?: number
-  _plus_after?: number
-  _dash_before?: number
-  _dash_after?: number
-  _dot_before?: number
-  _dot_after?: number
 }
 
 export interface ObjectAssignmentPatternTransport {

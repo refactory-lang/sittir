@@ -775,11 +775,8 @@ export const ir: {
 	readonly capturedPattern: typeof F.capturedPattern;
 	readonly referencePattern: typeof F.referencePattern;
 	readonly negativeLiteral: typeof F.negativeLiteral;
-	readonly integerLiteral: typeof F.integerLiteral;
 	readonly stringLiteral: typeof F.stringLiteral;
 	readonly rawStringLiteral: typeof F.rawStringLiteral;
-	readonly charLiteral: typeof F.charLiteral;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly lineComment: typeof F.lineComment;
 	readonly blockComment: typeof F.blockComment;
 	readonly shebang: typeof F.shebang;
@@ -819,6 +816,9 @@ export const ir: {
 	readonly fieldPattern: typeof F.fieldPattern;
 	readonly rangePattern: typeof F.rangePattern;
 	readonly orPattern: typeof F.orPattern;
+	readonly integerLiteral: typeof F.integerLiteral;
+	readonly charLiteral: typeof F.charLiteral;
+	readonly escapeSequence: typeof F.escapeSequence;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly unitType: typeof F.buildUnitType;
 	readonly neverType: typeof F.buildNeverType;
@@ -853,7 +853,6 @@ export const ir: {
 	readonly break: typeof F.breakExpression;
 	readonly call: typeof F.callExpression;
 	readonly captured: typeof F.capturedPattern;
-	readonly char: typeof F.charLiteral;
 	readonly compoundAssignment: typeof F.compoundAssignmentExpr;
 	readonly const: typeof F.constItem;
 	readonly continue: typeof F.continueExpression;
@@ -871,7 +870,6 @@ export const ir: {
 	readonly if: typeof F.ifExpression;
 	readonly index: typeof F.indexExpression;
 	readonly innerAttribute: typeof F.innerAttributeItem;
-	readonly integer: typeof F.integerLiteral;
 	readonly let: typeof F.letDeclaration;
 	readonly list: typeof F.useList;
 	readonly loop: typeof F.loopExpression;
@@ -1045,11 +1043,8 @@ export const ir: {
 	capturedPattern: F.capturedPattern,
 	referencePattern: F.referencePattern,
 	negativeLiteral: F.negativeLiteral,
-	integerLiteral: F.integerLiteral,
 	stringLiteral: F.stringLiteral,
 	rawStringLiteral: F.rawStringLiteral,
-	charLiteral: F.charLiteral,
-	escapeSequence: F.escapeSequence,
 	lineComment: F.lineComment,
 	blockComment: F.blockComment,
 	shebang: F.shebang,
@@ -1089,6 +1084,9 @@ export const ir: {
 	fieldPattern: F.fieldPattern,
 	rangePattern: F.rangePattern,
 	orPattern: F.orPattern,
+	integerLiteral: F.integerLiteral,
+	charLiteral: F.charLiteral,
+	escapeSequence: F.escapeSequence,
 
 	// Keyword factories
 	emptyStatement: F.buildEmptyStatement,
@@ -1129,7 +1127,6 @@ export const ir: {
 	break: F.breakExpression,
 	call: F.callExpression,
 	captured: F.capturedPattern,
-	char: F.charLiteral,
 	compoundAssignment: F.compoundAssignmentExpr,
 	const: F.constItem,
 	continue: F.continueExpression,
@@ -1147,7 +1144,6 @@ export const ir: {
 	if: F.ifExpression,
 	index: F.indexExpression,
 	innerAttribute: F.innerAttributeItem,
-	integer: F.integerLiteral,
 	let: F.letDeclaration,
 	list: F.useList,
 	loop: F.loopExpression,

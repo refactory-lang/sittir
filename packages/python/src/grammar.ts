@@ -57,6 +57,19 @@ export type PythonGrammar = {
 			{ type: 'assignment_typed'; named: true }
 		];
 	};
+	readonly escape_sequence: {
+		type: 'escape_sequence';
+		named: true;
+		subtypes: [
+			{ type: 'escape_sequence_hex'; named: true },
+			{ type: 'escape_sequence_line_break'; named: true },
+			{ type: 'escape_sequence_named'; named: true },
+			{ type: 'escape_sequence_octal'; named: true },
+			{ type: 'escape_sequence_simple'; named: true },
+			{ type: 'escape_sequence_unicode_fixed'; named: true },
+			{ type: 'escape_sequence_unicode_wide'; named: true }
+		];
+	};
 	readonly expression: {
 		type: 'expression';
 		named: true;
@@ -69,6 +82,25 @@ export type PythonGrammar = {
 			{ type: 'named_expression'; named: true },
 			{ type: 'not_operator'; named: true },
 			{ type: 'primary_expression'; named: true }
+		];
+	};
+	readonly float: {
+		type: 'float';
+		named: true;
+		subtypes: [
+			{ type: 'float_leading_point'; named: true },
+			{ type: 'float_point'; named: true },
+			{ type: 'float_scientific'; named: true }
+		];
+	};
+	readonly integer: {
+		type: 'integer';
+		named: true;
+		subtypes: [
+			{ type: 'integer_binary'; named: true },
+			{ type: 'integer_decimal'; named: true },
+			{ type: 'integer_hex'; named: true },
+			{ type: 'integer_octal'; named: true }
 		];
 	};
 	readonly parameter: {
@@ -1669,12 +1701,20 @@ export type PythonGrammar = {
 	readonly ellipsis: { type: 'ellipsis'; named: true };
 	readonly _anonymous_else: { type: 'else'; named: false };
 	readonly escape_interpolation: { type: 'escape_interpolation'; named: true };
-	readonly escape_sequence: { type: 'escape_sequence'; named: true };
+	readonly escape_sequence_hex: { type: 'escape_sequence_hex'; named: true };
+	readonly escape_sequence_line_break: { type: 'escape_sequence_line_break'; named: true };
+	readonly escape_sequence_named: { type: 'escape_sequence_named'; named: true };
+	readonly escape_sequence_octal: { type: 'escape_sequence_octal'; named: true };
+	readonly escape_sequence_simple: { type: 'escape_sequence_simple'; named: true };
+	readonly escape_sequence_unicode_fixed: { type: 'escape_sequence_unicode_fixed'; named: true };
+	readonly escape_sequence_unicode_wide: { type: 'escape_sequence_unicode_wide'; named: true };
 	readonly _anonymous_except: { type: 'except'; named: false };
 	readonly _anonymous_exec: { type: 'exec'; named: false };
 	readonly false: { type: 'false'; named: true };
 	readonly _anonymous_finally: { type: 'finally'; named: false };
-	readonly float: { type: 'float'; named: true };
+	readonly float_leading_point: { type: 'float_leading_point'; named: true };
+	readonly float_point: { type: 'float_point'; named: true };
+	readonly float_scientific: { type: 'float_scientific'; named: true };
 	readonly _anonymous_for: { type: 'for'; named: false };
 	readonly _anonymous_from: { type: 'from'; named: false };
 	readonly _anonymous_global: { type: 'global'; named: false };
@@ -1682,10 +1722,14 @@ export type PythonGrammar = {
 	readonly _anonymous_if: { type: 'if'; named: false };
 	readonly _anonymous_import: { type: 'import'; named: false };
 	readonly _anonymous_in: { type: 'in'; named: false };
-	readonly integer: { type: 'integer'; named: true };
+	readonly integer_binary: { type: 'integer_binary'; named: true };
+	readonly integer_decimal: { type: 'integer_decimal'; named: true };
+	readonly integer_hex: { type: 'integer_hex'; named: true };
+	readonly integer_octal: { type: 'integer_octal'; named: true };
 	readonly _anonymous_is: { type: 'is'; named: false };
 	readonly _anonymous_lambda: { type: 'lambda'; named: false };
-	readonly line_continuation: { type: 'line_continuation'; named: true; extra: true };
+	readonly line_continuation_newline: { type: 'line_continuation_newline'; named: true; extra: true };
+	readonly line_continuation_nul: { type: 'line_continuation_nul'; named: true; extra: true };
 	readonly _anonymous_match: { type: 'match'; named: false };
 	readonly newline: { type: 'newline'; named: true };
 	readonly none: { type: 'none'; named: true };

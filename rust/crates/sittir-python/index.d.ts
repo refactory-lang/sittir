@@ -529,7 +529,37 @@ export interface EngineOptions {
   options?: Options
 }
 
-export interface EscapeSequenceTransport {
+export interface EscapeSequenceHexTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceLineBreakTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceNamedTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceOctalTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceSimpleTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceUnicodeFixedTransport {
+  '$_trivia'?: TransportTrivia
+  _content: string
+}
+
+export interface EscapeSequenceUnicodeWideTransport {
   '$_trivia'?: TransportTrivia
   _content: string
 }
@@ -621,6 +651,32 @@ export interface FinallyClauseTransport {
   _finally_keyword_after?: number
   _finally_clause_before?: number
   _finally_clause_after?: number
+}
+
+export interface FloatLeadingPointTransport {
+  '$_trivia'?: TransportTrivia
+  _integer?: string
+  _fraction: string
+  _marker?: string
+  _exponent?: string
+  _imaginary?: string
+}
+
+export interface FloatPointTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _fraction?: string
+  _marker?: string
+  _exponent?: string
+  _imaginary?: string
+}
+
+export interface FloatScientificTransport {
+  '$_trivia'?: TransportTrivia
+  _integer: string
+  _marker: string
+  _exponent: string
+  _imaginary?: string
 }
 
 export interface ForInClauseTransport {
@@ -774,6 +830,24 @@ export interface ImportStatementTransport {
   _import_keyword_after?: number
   _import_statement_before?: number
   _import_statement_after?: number
+}
+
+export interface IntegerBinaryTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface IntegerHexTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
+}
+
+export interface IntegerOctalTransport {
+  '$_trivia'?: TransportTrivia
+  _prefix: string
+  _content: string
 }
 
 export interface InterpolationTransport {

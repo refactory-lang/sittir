@@ -295,7 +295,7 @@ describe('ir.synonym.* canonical factories — Python', () => {
 	it('synonym.number(3.14) produces float', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
 		const node = synonym.number(3.14);
-		expect(node.$text).toBe('3.14');
+		expect(node.$render()).toBe('3.14');
 	});
 
 	it('synonym.comment("# hello") produces comment', async () => {

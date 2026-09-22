@@ -20,15 +20,15 @@ export const synonym = {
 		return value ? F.buildTrue() : F.buildFalse();
 	},
 	number: Object.assign(
-		function number(value: number): ReturnType<typeof F.buildInteger> | ReturnType<typeof F.buildFloat> {
-			return Number.isInteger(value) ? F.buildInteger(String(value)) : F.buildFloat(String(value));
+		function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+			return Number.isInteger(value) ? F.integer(String(value)) : F.float(String(value));
 		},
 		{
-			integer(value: number): ReturnType<typeof F.buildInteger> {
-				return F.buildInteger(String(value));
+			integer(value: number): ReturnType<typeof F.integer> {
+				return F.integer(String(value));
 			},
-			float(value: number): ReturnType<typeof F.buildFloat> {
-				return F.buildFloat(String(value));
+			float(value: number): ReturnType<typeof F.float> {
+				return F.float(String(value));
 			}
 		}
 	),
@@ -243,8 +243,8 @@ export const primaryExpression: {
 	readonly identifier: typeof F.buildIdentifier;
 	readonly string: typeof F.string;
 	readonly concatenatedString: typeof F.concatenatedString;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
 	readonly none: typeof F.buildNone;
@@ -269,8 +269,8 @@ export const primaryExpression: {
 	identifier: F.buildIdentifier,
 	string: F.string,
 	concatenatedString: F.concatenatedString,
-	integer: F.buildInteger,
-	float: F.buildFloat,
+	integer: F.integer,
+	float: F.float,
 	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
@@ -432,7 +432,6 @@ export const ir: {
 	readonly string: typeof F.string;
 	readonly stringContent: typeof F.stringContent;
 	readonly interpolation: typeof F.interpolation;
-	readonly escapeSequence: typeof F.escapeSequence;
 	readonly formatSpecifier: typeof F.formatSpecifier;
 	readonly await: typeof F.await_;
 	readonly comment: typeof F.comment;
@@ -463,6 +462,10 @@ export const ir: {
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
 	readonly assignment: typeof F.assignment;
+	readonly escapeSequence: typeof F.escapeSequence;
+	readonly integer: typeof F.integer;
+	readonly float: typeof F.float;
+	readonly lineContinuation: typeof F.lineContinuation;
 	readonly wildcardImport: typeof F.buildWildcardImport;
 	readonly passStatement: typeof F.buildPassStatement;
 	readonly breakStatement: typeof F.buildBreakStatement;
@@ -475,10 +478,7 @@ export const ir: {
 	readonly keywordSeparator: typeof F.buildKeywordSeparator;
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
-	readonly integer: typeof F.buildInteger;
-	readonly float: typeof F.buildFloat;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly lineContinuation: typeof F.buildLineContinuation;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly stringEnd: typeof F.buildStringEnd;
@@ -648,7 +648,6 @@ export const ir: {
 	string: F.string,
 	stringContent: F.stringContent,
 	interpolation: F.interpolation,
-	escapeSequence: F.escapeSequence,
 	formatSpecifier: F.formatSpecifier,
 	await: F.await_,
 	comment: F.comment,
@@ -679,6 +678,10 @@ export const ir: {
 	withClause: F.withClause,
 	suite: F.suite,
 	assignment: F.assignment,
+	escapeSequence: F.escapeSequence,
+	integer: F.integer,
+	float: F.float,
+	lineContinuation: F.lineContinuation,
 
 	// Keyword factories
 	wildcardImport: F.buildWildcardImport,
@@ -695,10 +698,7 @@ export const ir: {
 	// Leaf node factories
 	importPrefix: F.buildImportPrefix,
 	typeConversion: F.buildTypeConversion,
-	integer: F.buildInteger,
-	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	lineContinuation: F.buildLineContinuation,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,

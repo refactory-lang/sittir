@@ -1,4 +1,4 @@
-import { withHoistedAnnotation } from './annotations.ts';
+import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
@@ -48,6 +48,7 @@ import {
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
+import { distributeTokenForms } from './transform/token-forms.ts';
 
 export interface GrammarResult {
 	grammar: {
@@ -110,6 +111,18 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (!rule) continue;
 		enrichedRules[name] = distributeExclusiveFieldChoices(rule, enrichedRules);
 	}
+	const wordName = extractWordName(grammarMeta?.word);
+	const unhoistableNames = new Set([...extractExternalNames(base, hasWrapper), ...(wordName === null ? [] : [wordName])]);
+	const tokenFormParents: string[] = [];
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule) continue;
+		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
+		const hoisted = hoistTokenForms(name, rule, rulesBag, clauseGroupRules, groupDedupeMap, counter, visibleGroupSources, clauseGroupOwners, unhoistableNames);
+		if (hoisted === rule) continue;
+		enrichedRules[name] = hoisted;
+		tokenFormParents.push(name);
+	}
 	separatedListNameCounts = collectSeparatedListNameProposals(enrichedRules);
 	hiddenListPromotionNames = new Map();
 	hoistKwRules = kwRules;
@@ -156,6 +169,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
+	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
 	for (const name of Object.keys(mergedRules)) {
 		const rule = mergedRules[name];
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, supertypeNames);
@@ -171,6 +185,8 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const result: unknown = hasWrapper
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
+	addSupertypes((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormParents);
+	replaceExtras((hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>, tokenFormArms(mergedRules, tokenFormParents));
 	if (clauseGroupNames.size > 0) {
 		Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
 			value: clauseGroupNames,
@@ -261,6 +277,141 @@ function applyFieldWrapPasses(
 	return r;
 }
 
+function hoistTokenForms(
+	parentKind: string,
+	rule: Rule,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	groupDedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	visibleGroupSources: Set<string>,
+	clauseGroupOwners: Map<string, string>,
+	unhoistableNames: ReadonlySet<string>
+): Rule {
+	if (unhoistableNames.has(parentKind)) return rule;
+	const distributed = distributeTokenForms(rule as unknown as RuntimeRule, parentKind) as unknown as Rule;
+	if (distributed === rule) return rule;
+	const precStack: Rule[] = [];
+	let core = distributed;
+	while (isPrecWrapper(core as { type: string })) {
+		precStack.push(core);
+		core = (core as unknown as { content: Rule }).content;
+	}
+	const arms = (core as unknown as { members: Rule[] }).members;
+	const members = arms.map((arm, i) => {
+		const minted = visibleGroupSynthName(withAnnotations(arm, { tokenForm: true }) as unknown as Rule, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, undefined, undefined, 'arm');
+		if (minted === null) throw new Error(`token forms: '${parentKind}' could not mint form ${i}`);
+		visibleGroupSources.add(minted);
+		if (!clauseGroupOwners.has(minted)) clauseGroupOwners.set(minted, parentKind);
+		return makeGroupLiftSymbol(arm, minted);
+	});
+	let out = { ...core, members } as unknown as Rule;
+	for (let i = precStack.length - 1; i >= 0; i--) out = { ...precStack[i]!, content: out } as unknown as Rule;
+	return out;
+}
+
+function tokenFormArms(rules: Record<string, Rule>, parents: readonly string[]): ReadonlyMap<string, readonly string[]> {
+	const arms = new Map<string, readonly string[]>();
+	for (const parent of parents) {
+		let core = rules[parent];
+		while (core !== undefined && isPrecWrapper(core as { type: string })) core = (core as unknown as { content: Rule }).content;
+		const members = (core as unknown as { members?: readonly { name?: string }[] } | undefined)?.members ?? [];
+		arms.set(parent, members.flatMap((m) => (m.name === undefined ? [] : [m.name])));
+	}
+	return arms;
+}
+
+function replaceExtras(result: Record<string, unknown>, replacements: ReadonlyMap<string, readonly string[]>): void {
+	if (replacements.size === 0) return;
+	const current = result.extras;
+	const replaced = (entries: readonly unknown[], dollar: Record<string, unknown> | undefined): unknown[] =>
+		entries.flatMap((entry) => {
+			const isSymbol = (entry as { type?: string } | undefined)?.type === 'SYMBOL';
+			const named = typeof entry === 'string' ? entry : isSymbol ? (entry as { name: string }).name : undefined;
+			const arms = named === undefined ? undefined : replacements.get(named);
+			if (arms === undefined) return [entry];
+			return arms.map((arm) => (typeof entry === 'string' ? arm : dollar === undefined ? { type: 'SYMBOL', name: arm } : dollar[arm]));
+		});
+	if (typeof current === 'function') {
+		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
+		result.extras = (dollar: Record<string, unknown>, previous?: unknown) => replaced(fn(dollar, previous), dollar);
+		return;
+	}
+	if (Array.isArray(current)) result.extras = replaced(current, undefined);
+}
+
+function annotateTokenFormArms(parent: string, rules: Record<string, Rule>): void {
+	const stack: Rule[] = [];
+	let core = rules[parent];
+	while (core !== undefined && isPrecWrapper(core as { type: string })) {
+		stack.push(core);
+		core = (core as unknown as { content: Rule }).content;
+	}
+	const members = (core as unknown as { members?: Rule[] } | undefined)?.members;
+	if (core === undefined || members === undefined) return;
+	const base = parent.replace(/^_+/, '');
+	const preferred = defaultTokenFormArm(members, rules);
+	const annotated = members.map((member, i) => {
+		const name = (member as { name?: string }).name ?? '';
+		const variant = name.startsWith(`${base}_`) ? name.slice(base.length + 1) : name;
+		return withAnnotations(member, { variant, variantOf: parent, ...(i === preferred ? { default: true } : {}) }) as unknown as Rule;
+	});
+	let out = { ...core, members: annotated } as unknown as Rule;
+	for (let i = stack.length - 1; i >= 0; i--) out = { ...stack[i]!, content: out } as unknown as Rule;
+	rules[parent] = out;
+}
+
+function defaultTokenFormArm(members: readonly Rule[], rules: Record<string, Rule>): number {
+	interface Measure {
+		leaves: number;
+		patterns: number;
+		enums: number;
+	}
+	const measure = (rule: RuntimeRule | undefined): Measure => {
+		if (rule === undefined) return { leaves: 0, patterns: 0, enums: 0 };
+		const t = (rule as { type?: string }).type ?? '';
+		if (t === 'PATTERN') return { leaves: 1, patterns: 1, enums: 0 };
+		if (t === 'STRING') return { leaves: 1, patterns: 0, enums: 0 };
+		const kids = (rule as unknown as { members?: RuntimeRule[] }).members ?? [(rule as unknown as { content?: RuntimeRule }).content];
+		const own = t === 'CHOICE' && kids.every((kid) => (kid as { type?: string } | undefined)?.type === 'STRING') ? 1 : 0;
+		return kids.reduce<Measure>(
+			(acc, kid) => {
+				const m = measure(kid);
+				return { leaves: acc.leaves + m.leaves, patterns: acc.patterns + m.patterns, enums: acc.enums + m.enums };
+			},
+			{ leaves: 0, patterns: 0, enums: own }
+		);
+	};
+	let best = -1;
+	let bestScore: [number, number] = [Infinity, Infinity];
+	members.forEach((member, i) => {
+		const m = measure(rules[(member as { name?: string }).name ?? ''] as unknown as RuntimeRule);
+		if (m.patterns === 0) return;
+		if (m.enums < bestScore[0] || (m.enums === bestScore[0] && m.leaves < bestScore[1])) {
+			best = i;
+			bestScore = [m.enums, m.leaves];
+		}
+	});
+	return best < 0 ? 0 : best;
+}
+
+function addSupertypes(result: Record<string, unknown>, names: readonly string[]): void {
+	if (names.length === 0) return;
+	const current = result.supertypes;
+	if (typeof current === 'function') {
+		const fn = current as (dollar: Record<string, unknown>, previous?: unknown) => unknown[];
+		result.supertypes = (dollar: Record<string, unknown>, previous?: unknown) => {
+			const base = fn(dollar, previous);
+			const listed = harvestSupertypeNames(base);
+			return [...base, ...names.filter((n) => !listed.has(n)).map((n) => dollar[n])];
+		};
+		return;
+	}
+	const base = Array.isArray(current) ? current : [];
+	const listed = harvestSupertypeNames(base);
+	result.supertypes = [...base, ...names.filter((n) => !listed.has(n))];
+}
+
 function applyHoistAndUnalias(
 	ruleName: string,
 	rule: Rule,
@@ -318,6 +469,21 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	}
 	if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
 	return new Set();
+}
+
+function extractExternalNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
+	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
+	const externals = root?.externals;
+	if (typeof externals !== 'function') return Array.isArray(externals) ? harvestSupertypeNames(externals) : new Set();
+	const dollar = new Proxy(
+		{},
+		{
+			get(_t, prop) {
+				return typeof prop === 'string' ? { type: 'SYMBOL', name: prop } : undefined;
+			}
+		}
+	);
+	return harvestSupertypeNames((externals as (proxy: unknown) => unknown)(dollar));
 }
 
 function isAnonymousLiteralShapedRule(name: string, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {

@@ -1012,6 +1012,10 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const result = opts.extras.call($, $, baseExtras);
 		if (Array.isArray(result)) {
 			for (const e of result) {
+				if (typeof e === 'string') {
+					appendDedup(sinks.extras, e);
+					continue;
+				}
 				const n = coerceToRule(e);
 				if (n.type === SYMBOL) appendDedup(sinks.extras, n.name);
 				else if (n.type === PATTERN) appendDedup(sinks.extras, n.value);

@@ -88,6 +88,20 @@ export type TypescriptGrammar = {
 		named: true;
 		subtypes: [{ type: 'meta_property_import_meta'; named: true }, { type: 'meta_property_new_target'; named: true }];
 	};
+	readonly number: {
+		type: 'number';
+		named: true;
+		subtypes: [
+			{ type: 'number_bigint'; named: true },
+			{ type: 'number_binary'; named: true },
+			{ type: 'number_decimal'; named: true },
+			{ type: 'number_float_leading_point'; named: true },
+			{ type: 'number_float_point'; named: true },
+			{ type: 'number_float_scientific'; named: true },
+			{ type: 'number_hex'; named: true },
+			{ type: 'number_octal'; named: true }
+		];
+	};
 	readonly pattern: {
 		type: 'pattern';
 		named: true;
@@ -2779,7 +2793,14 @@ export type TypescriptGrammar = {
 	readonly _anonymous_new: { type: 'new'; named: false };
 	readonly null: { type: 'null'; named: true };
 	readonly _anonymous_number: { type: 'number'; named: false };
-	readonly number: { type: 'number'; named: true };
+	readonly number_bigint: { type: 'number_bigint'; named: true };
+	readonly number_binary: { type: 'number_binary'; named: true };
+	readonly number_decimal: { type: 'number_decimal'; named: true };
+	readonly number_float_leading_point: { type: 'number_float_leading_point'; named: true };
+	readonly number_float_point: { type: 'number_float_point'; named: true };
+	readonly number_float_scientific: { type: 'number_float_scientific'; named: true };
+	readonly number_hex: { type: 'number_hex'; named: true };
+	readonly number_octal: { type: 'number_octal'; named: true };
 	readonly _anonymous_object: { type: 'object'; named: false };
 	readonly _anonymous_of: { type: 'of'; named: false };
 	readonly _anonymous_override: { type: 'override'; named: false };

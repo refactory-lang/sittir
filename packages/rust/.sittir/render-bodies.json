@@ -1185,7 +1185,28 @@
 			"field": "captured_pattern_after"
 		}
 	],
-	"char_literal": [
+	"char_literal_escaped": [
+		{
+			"kind": "slot",
+			"name": "b"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "text",
+			"text": "'"
+		}
+	],
+	"char_literal_plain": [
 		{
 			"kind": "slot",
 			"name": "b"
@@ -2050,7 +2071,46 @@
 			"field": "enum_variant_list_elements_after"
 		}
 	],
-	"escape_sequence": [
+	"escape_sequence_hex": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_simple": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_unicode_braced": [
+		{
+			"kind": "text",
+			"text": "\\"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"escape_sequence_unicode_fixed": [
 		{
 			"kind": "text",
 			"text": "\\"
@@ -3698,7 +3758,76 @@
 			"field": "inner_attribute_item_after"
 		}
 	],
-	"integer_literal": [
+	"integer_literal_binary": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_decimal": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_hex": [
+		{
+			"kind": "slot",
+			"name": "content"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "suffix",
+					"body": [
+						{
+							"kind": "adjacent"
+						},
+						{
+							"kind": "slot",
+							"name": "suffix"
+						}
+					]
+				}
+			]
+		}
+	],
+	"integer_literal_octal": [
 		{
 			"kind": "slot",
 			"name": "content"

@@ -224,6 +224,44 @@
     ]
   },
   {
+    "type": "number",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "number_bigint",
+        "named": true
+      },
+      {
+        "type": "number_binary",
+        "named": true
+      },
+      {
+        "type": "number_decimal",
+        "named": true
+      },
+      {
+        "type": "number_float_leading_point",
+        "named": true
+      },
+      {
+        "type": "number_float_point",
+        "named": true
+      },
+      {
+        "type": "number_float_scientific",
+        "named": true
+      },
+      {
+        "type": "number_hex",
+        "named": true
+      },
+      {
+        "type": "number_octal",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "pattern",
     "named": true,
     "subtypes": [
@@ -7979,7 +8017,35 @@
     "named": false
   },
   {
-    "type": "number",
+    "type": "number_bigint",
+    "named": true
+  },
+  {
+    "type": "number_binary",
+    "named": true
+  },
+  {
+    "type": "number_decimal",
+    "named": true
+  },
+  {
+    "type": "number_float_leading_point",
+    "named": true
+  },
+  {
+    "type": "number_float_point",
+    "named": true
+  },
+  {
+    "type": "number_float_scientific",
+    "named": true
+  },
+  {
+    "type": "number_hex",
+    "named": true
+  },
+  {
+    "type": "number_octal",
     "named": true
   },
   {

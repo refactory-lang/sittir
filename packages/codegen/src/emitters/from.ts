@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
-import { interiorOf } from './interior.ts';
+import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -158,7 +158,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyNodeData';
-const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray'] as const;
+const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray', 'WidenNumeric'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -208,7 +208,7 @@ export namespace from {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
 		if (node instanceof AssembledPattern) {
-			result = emitStringLikeFrom(node);
+			result = emitStringLikeFrom(node, numericLeafShape(node.kind, node) !== undefined);
 		} else if (isVisibleTextLeaf(node)) {
 			result = emitKeywordFrom(node);
 		}
@@ -264,9 +264,9 @@ function emitBranchNodeDataPassthrough(
 	inputOptional: boolean,
 	returnType: string,
 	typeName: string,
-	bare = false
+	bare: false | 'text' | 'number' = false
 ): void {
-	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${inputOptional ? ' | undefined' : ''}`;
+	const configType = `T.${typeName}.LooseConfig${bare ? ' | string' : ''}${bare === 'number' ? ' | number' : ''}${inputOptional ? ' | undefined' : ''}`;
 	lines.push(`  if (!_isLooseConfig<${configType}>(input)) return input as unknown as ${returnType};`);
 }
 
@@ -328,7 +328,9 @@ function emitBranchFrom(
 				''
 			);
 		} else {
-			lines.push(signature, `  return ${body};`, '}', '');
+			const shape = numericSlotShape(f);
+			const numeric = shape === undefined ? body : `typeof value === 'number' ? numberText(${numberTextArgs(shape)}, value) : ${body}`;
+			lines.push(signature, `  return ${numeric};`, '}', '');
 		}
 	}
 	const resolverFor = new Set(resolverSlots.map((f) => f.propertyName));
@@ -338,18 +340,36 @@ function emitBranchFrom(
 			: resolveFieldCall(valueExpr, f, isMultiple(f), nodeMap, intern, true, undefined, kindEntries);
 	lines.push(`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`);
 	const bareContent = canDirectFactoryCall ? undefined : lexedContentSlot(node);
-	const cfg = bareContent === undefined ? 'input' : '_cfg';
+	const bareInterior = canDirectFactoryCall || slots.length === 0 ? undefined : bareInteriorText(node.kind, node);
+	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
 				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareContent !== undefined);
+			const bareKind =
+				bareInterior !== undefined
+					? bareInterior.number === undefined
+						? 'text'
+						: 'number'
+					: bareContent === undefined
+						? false
+						: numericSlotShape(bareContent) === undefined
+							? 'text'
+							: 'number';
+			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
+		}
+		if (bareInterior !== undefined) {
+			const shape = bareInterior.number;
+			const text = shape === undefined ? 'input' : `numberText(${numberTextArgs(shape)}, input)`;
+			lines.push(
+				`  const _cfg = (typeof input === 'string'${shape === undefined ? '' : " || typeof input === 'number'"} ? lexedConfig(${text}, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)}) : input) as T.${typeName}.LooseConfig;`
+			);
 		}
 		if (bareContent !== undefined) {
 			lines.push(
-				`  const _cfg = (typeof input === 'string' ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
+				`  const _cfg = (typeof input === 'string'${numericSlotShape(bareContent) === undefined ? '' : " || typeof input === 'number'"} ? { ${bareContent.configKey}: input } : input) as T.${typeName}.LooseConfig;`
 			);
 		}
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
@@ -694,12 +714,12 @@ interface LeafFromNode {
 	readonly fromFunctionName?: string;
 }
 
-function emitStringLikeFrom(node: LeafFromNode): string {
+function emitStringLikeFrom(node: LeafFromNode, numeric: boolean): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
 		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (typeof input !== 'string') return input as unknown as ${factoryReturnTypeExpr(factory)};`,
+		`  if (typeof input !== 'string'${numeric ? " && typeof input !== 'number'" : ''}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
 		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
 		'}'
 	].join('\n');
@@ -976,8 +996,8 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 }
 
-function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boolean): string {
-	return hasBool || hasInt || hasFloat ? 'v' : '_v';
+function resolveScalarParamName(hasBool: boolean, hasNumeric: boolean): string {
+	return hasBool || hasNumeric ? 'v' : '_v';
 }
 
 function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
@@ -1378,10 +1398,10 @@ function emitResolverHelpers(
 	lines.push('');
 
 	const scalars = scalarLeafKinds(nodeMap);
+	const numeric = numericLeafKinds(nodeMap);
 	const scalarParam = resolveScalarParamName(
 		scalars.boolean !== undefined && kindEntries !== undefined,
-		scalars.integer !== undefined,
-		scalars.float !== undefined
+		numeric.length > 0
 	);
 	lines.push(`function _resolveScalar(${scalarParam}: boolean | number): AnyNodeData | number | undefined {`);
 	const booleanMember = (kind: string): string | undefined =>
@@ -1391,18 +1411,13 @@ function emitResolverHelpers(
 	if (trueMember !== undefined && falseMember !== undefined) {
 		lines.push(`  if (typeof v === "boolean") return v ? TSKindId.${trueMember} : TSKindId.${falseMember};`);
 	}
-	if (scalars.integer !== undefined || scalars.float !== undefined) {
+	if (numeric.length > 0) {
 		lines.push('  if (typeof v === "number") {');
-		if (scalars.integer !== undefined) {
-			lines.push(`    if (Number.isInteger(v)) {`);
-			lines.push(`      const e = _leafRegistry[${JSON.stringify(scalars.integer)}];`);
-			lines.push(`      return e ? e.factory(String(v)) : undefined;`);
-			lines.push(`    }`);
-		}
-		if (scalars.float !== undefined) {
-			lines.push(`    const e = _leafRegistry[${JSON.stringify(scalars.float)}];`);
-			lines.push(`    return e ? e.factory(String(v)) : undefined;`);
-		}
+		lines.push('    const text = String(v);');
+		lines.push(`    for (const kind of ${JSON.stringify(numeric)}) {`);
+		lines.push('      const e = _leafRegistry[kind];');
+		lines.push('      if (e?.pattern?.test(text)) return e.factory(text);');
+		lines.push('    }');
 		lines.push('  }');
 	}
 	lines.push('  return undefined;');
@@ -1676,8 +1691,17 @@ export class FromEmitter implements CodegenEmitter<string> {
 		const usesArgs = lines.some((l) => l !== ARGS_HELPER && /\b_Args</.test(l));
 		const pruned = lines.flatMap((l) => {
 			if (!usesArgs && l === ARGS_HELPER) return [];
-			if (l === `import * as F from './raw.js';` && /\bTOKEN_INTERIORS\b/.test(body)) {
-				return [l, `import { TOKEN_INTERIORS } from '../consts.js';`, `import { lexedConfig } from '@sittir/common';`];
+			if (l === `import * as F from './raw.js';`) {
+				const usesInterior = /\bTOKEN_INTERIORS\b/.test(body);
+				const usesNumberText = /\bnumberText\(/.test(body);
+				if (usesInterior || usesNumberText) {
+					const common = [...(usesInterior ? ['lexedConfig'] : []), ...(usesNumberText ? ['numberText'] : [])];
+					return [
+						l,
+						...(usesInterior ? [`import { TOKEN_INTERIORS } from '../consts.js';`] : []),
+						`import { ${common.join(', ')} } from '@sittir/common';`
+					];
+				}
 			}
 			if (!/\bDelimiter\./.test(body)) {
 				if (l === `import { Delimiter } from './types.js';`) return [];

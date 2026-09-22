@@ -30,13 +30,13 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						value: ir.binaryExpression.strict({
 							left: ir.parenthesizedExpression.typed.strict({
 								expression: ir.binaryExpression.strict({
-									left: ir.number("1"),
+									left: ir.number.decimal("1"),
 									operator: TSKindId.Plus,
-									right: ir.number("2"),
+									right: ir.number.decimal("2"),
 								}),
 							}),
 							operator: TSKindId.Star,
-							right: ir.number("3"),
+							right: ir.number.decimal("3"),
 						}),
 					})],
 					terminator: TSKindId.Semi,
@@ -65,7 +65,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 									expression: ir.binaryExpression.strict({
 										left: ir.identifier("x"),
 										operator: TSKindId.Dash,
-										right: ir.number("1"),
+										right: ir.number.decimal("1"),
 									}),
 								}),
 							}),
@@ -78,14 +78,14 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						kind: TSKindId.LetKeyword,
 						declarators: [ir.variableDeclarator.plain.strict({
 							name: ir.identifier("i"),
-							value: ir.number("0"),
+							value: ir.number.decimal("0"),
 						})],
 						terminator: TSKindId.Semi,
 					}),
 					condition: ir.binaryExpression.strict({
 						left: ir.identifier("i"),
 						operator: TSKindId.Lt,
-						right: ir.number("3"),
+						right: ir.number.decimal("3"),
 					}),
 					increment: ir.updateExpression.postfix.strict({
 						argument: ir.identifier("i"),
@@ -118,7 +118,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					}),
 					body: ir.switchBody.strict(ir.switchCase.strict({
 						value: ir.parenthesizedExpression.typed.strict({
-							expression: ir.number("1"),
+							expression: ir.number.decimal("1"),
 						}),
 						body: [ir.breakStatement.strict({
 							terminator: TSKindId.Semi,
@@ -169,8 +169,8 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					declarators: [ir.variableDeclarator.plain.strict({
 						name: ir.identifier("arr"),
 						value: ir.array.strict(ir.parenthesizedExpression.typed.strict({
-							expression: ir.number("1"),
-						}), ir.array.strict(ir.number("2"))),
+							expression: ir.number.decimal("1"),
+						}), ir.array.strict(ir.number.decimal("2"))),
 					})],
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({
@@ -204,7 +204,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					expression: ir.unaryExpression.strict({
 						operator: TSKindId.VoidKeyword,
 						argument: ir.parenthesizedExpression.typed.strict({
-							expression: ir.number("0"),
+							expression: ir.number.decimal("0"),
 						}),
 					}),
 					terminator: TSKindId.Semi,
@@ -263,11 +263,11 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						value: ir.object.strict(ir.pair.strict({
 							key: ir.identifier("a"),
 							value: ir.parenthesizedExpression.typed.strict({
-								expression: ir.number("1"),
+								expression: ir.number.decimal("1"),
 							}),
 						}), ir.pair.strict({
 							key: ir.identifier("b"),
-							value: ir.array.strict(ir.number("2")),
+							value: ir.array.strict(ir.number.decimal("2")),
 						})),
 					})],
 					terminator: TSKindId.Semi,
@@ -278,7 +278,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 						value: ir.memberExpression.strict({
 							object: ir.subscriptExpression.strict({
 								object: ir.identifier("a"),
-								index: ir.number("0"),
+								index: ir.number.decimal("0"),
 							}),
 							separator: TSKindId.Dot,
 							property: ir.identifier("b"),
@@ -296,7 +296,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 								separator: TSKindId.Dot,
 								property: ir.identifier("bar"),
 							}),
-							index: ir.number("1"),
+							index: ir.number.decimal("1"),
 						}),
 						arguments: ir.arguments.strict(ir.identifier("y")),
 					}),

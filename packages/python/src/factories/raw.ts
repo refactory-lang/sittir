@@ -3,7 +3,7 @@
 import type * as T from '../types.js';
 import { Delimiter } from '../types.js';
 import { TSKindId } from '../types.js';
-import type { NonEmptyArray } from '@sittir/types';
+import type { NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withMethods,
 	withAccessors,
@@ -11,7 +11,8 @@ import {
 	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
-	coerceMixedEnumStorage
+	coerceMixedEnumStorage,
+	numberText
 } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -22,19 +23,41 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
-const _leafRe_buildInteger =
-	/^(?:(?:(?:0x|0X)(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?|(?:0o|0O)(?:(?:_?[0-7]+))+(?:(?:[Ll]))?|(?:0b|0B)(?:(?:_?[0-1]+))+(?:(?:[Ll]))?|(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?)))$/u;
-const _leafRe_buildFloat =
-	/^(?:(?:(?:(?:[0-9]+_?))+\.(?:(?:[0-9]+_?))*(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))*\.(?:(?:[0-9]+_?))+(?:(?:[eE][+-]?)(?:(?:[0-9]+_?))+)?|(?:(?:[0-9]+_?))+(?:[eE][+-]?)(?:(?:[0-9]+_?))+)(?:(?:[jJ]))?)$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildLineContinuation = /^(?:\\(?:(?:\r)?\n|\0))$/u;
+const _leafRe_buildIntegerDecimal = /^(?:(?:(?:[0-9]+_?))+(?:(?:(?:[Ll]))?|(?:(?:[jJ]))?))$/u;
+const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
 const _leafRe_buildStringStart = /^(?:(?:[a-zA-Z]*["']+))$/u;
 const _leafRe_build_StringContent = /^(?:(?:[^"'\\{}\n]+))$/u;
 const _leafRe_buildEscapeInterpolation = /^(?:(?:\{\{|\}\}))$/u;
 const _leafRe_buildStringEnd = /^(?:(?:["']+))$/u;
-const _slotRe_buildEscapeSequence_content =
-	/^(?:(?:(?:u[a-fA-F\d]{4})|(?:U[a-fA-F\d]{8})|(?:x[a-fA-F\d]{2})|(?:\d{1,3})|(?:\r?\n)|(?:['"abfrntv\\])|(?:N\{[^}]+\})))$/u;
 const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
+const _slotRe_buildIntegerHex_prefix = /^(?:0x|0X)$/u;
+const _slotRe_buildIntegerHex_content = /^(?:(?:(?:_?[A-Fa-f0-9]+))+(?:(?:[Ll]))?)$/u;
+const _slotRe_buildIntegerOctal_prefix = /^(?:0o|0O)$/u;
+const _slotRe_buildIntegerOctal_content = /^(?:(?:(?:_?[0-7]+))+(?:(?:[Ll]))?)$/u;
+const _slotRe_buildIntegerBinary_prefix = /^(?:0b|0B)$/u;
+const _slotRe_buildIntegerBinary_content = /^(?:(?:(?:_?[0-1]+))+(?:(?:[Ll]))?)$/u;
+const _slotRe_buildFloatPoint_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatPoint_fraction = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatPoint_marker = /^(?:(?:[eE][+-]?))$/u;
+const _slotRe_buildFloatPoint_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatPoint_imaginary = /^(?:(?:[jJ]))$/u;
+const _slotRe_buildFloatLeadingPoint_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatLeadingPoint_fraction = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatLeadingPoint_marker = /^(?:(?:[eE][+-]?))$/u;
+const _slotRe_buildFloatLeadingPoint_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatLeadingPoint_imaginary = /^(?:(?:[jJ]))$/u;
+const _slotRe_buildFloatScientific_integer = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatScientific_marker = /^(?:(?:[eE][+-]?))$/u;
+const _slotRe_buildFloatScientific_exponent = /^(?:(?:(?:[0-9]+_?))+)$/u;
+const _slotRe_buildFloatScientific_imaginary = /^(?:(?:[jJ]))$/u;
+const _slotRe_buildEscapeSequenceUnicodeFixed_content = /^(?:(?:u[a-fA-F\d]{4}))$/u;
+const _slotRe_buildEscapeSequenceUnicodeWide_content = /^(?:(?:U[a-fA-F\d]{8}))$/u;
+const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[a-fA-F\d]{2}))$/u;
+const _slotRe_buildEscapeSequenceOctal_content = /^(?:(?:\d{1,3}))$/u;
+const _slotRe_buildEscapeSequenceLineBreak_content = /^(?:(?:\r?\n))$/u;
+const _slotRe_buildEscapeSequenceSimple_content = /^(?:(?:['"abfrntv\\]))$/u;
+const _slotRe_buildEscapeSequenceNamed_content = /^(?:(?:N\{[^}]+\}))$/u;
 
 export function buildModule(...children: (T.SimpleStatements | T.CompoundStatement)[]): T.Module.Built {
 	const _statements = children;
@@ -3206,29 +3229,6 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
-export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
-	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
-		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EscapeSequence as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (value: string) => buildEscapeSequence(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built {
 	const _content = children;
 	return withMethods(
@@ -3254,34 +3254,6 @@ export function buildTypeConversion(text: string): T.TypeConversion.Built {
 	return withMethods(
 		{
 			$type: TSKindId.TypeConversion as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildInteger(text: string): T.Integer.Built {
-	if (text.length === 0) throw new Error(`integer: text must be non-empty`);
-	if (!_leafRe_buildInteger.test(text)) throw new Error(`integer: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Integer as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildFloat(text: string): T.Float.Built {
-	if (text.length === 0) throw new Error(`float: text must be non-empty`);
-	if (!_leafRe_buildFloat.test(text)) throw new Error(`float: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Float as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -3356,21 +3328,6 @@ export function buildComment(value: string): T.Comment.Built {
 				content: () => _content
 			}
 		),
-		methodsEngine
-	);
-}
-
-export function buildLineContinuation(text: string): T.LineContinuation.Built {
-	if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
-	if (!_leafRe_buildLineContinuation.test(text))
-		throw new Error(`line_continuation: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.LineContinuation as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
 		methodsEngine
 	);
 }
@@ -4360,6 +4317,429 @@ function _buildParenthesizedImportList(value: T.ImportList): T.ParenthesizedImpo
 	);
 }
 
+export function buildIntegerHex(config: WidenNumeric<T.IntegerHex.Config, 'content'>): T.IntegerHex.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
+		throw new Error(`integer_hex.prefix: text does not match pattern: ${_prefix}`);
+	const _content = numberText(16, '', config.content);
+	if (_content !== undefined && !_slotRe_buildIntegerHex_content.test(_content))
+		throw new Error(`integer_hex.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerHex as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0x' | '0X') => buildIntegerHex({ ...config, prefix: value }),
+					content: (value: string | number) => buildIntegerHex({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerOctal(config: WidenNumeric<T.IntegerOctal.Config, 'content'>): T.IntegerOctal.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
+		throw new Error(`integer_octal.prefix: text does not match pattern: ${_prefix}`);
+	const _content = numberText(8, '', config.content);
+	if (_content !== undefined && !_slotRe_buildIntegerOctal_content.test(_content))
+		throw new Error(`integer_octal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerOctal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0o' | '0O') => buildIntegerOctal({ ...config, prefix: value }),
+					content: (value: string | number) => buildIntegerOctal({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerBinary(config: WidenNumeric<T.IntegerBinary.Config, 'content'>): T.IntegerBinary.Built {
+	const _prefix = config.prefix;
+	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
+		throw new Error(`integer_binary.prefix: text does not match pattern: ${_prefix}`);
+	const _content = numberText(2, '', config.content);
+	if (_content !== undefined && !_slotRe_buildIntegerBinary_content.test(_content))
+		throw new Error(`integer_binary.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.IntegerBinary as const,
+				$source: 2 as const,
+				$named: true as const,
+				_prefix,
+				_content,
+				$with: {
+					prefix: (value: '0b' | '0B') => buildIntegerBinary({ ...config, prefix: value }),
+					content: (value: string | number) => buildIntegerBinary({ ...config, content: value })
+				}
+			},
+			{
+				prefix: () => _prefix,
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildIntegerDecimal(text: string | number): T.IntegerDecimal.Built {
+	text = numberText(10, '', text);
+	if (text.length === 0) throw new Error(`integer_decimal: text must be non-empty`);
+	if (!_leafRe_buildIntegerDecimal.test(text)) throw new Error(`integer_decimal: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.IntegerDecimal as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildFloatPoint(
+	config: WidenNumeric<T.FloatPoint.Config, 'integer' | 'fraction' | 'exponent'>
+): T.FloatPoint.Built {
+	const _integer = numberText(10, '', config.integer);
+	if (_integer !== undefined && !_slotRe_buildFloatPoint_integer.test(_integer))
+		throw new Error(`float_point.integer: text does not match pattern: ${_integer}`);
+	const _fraction = numberText(10, '', config.fraction);
+	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
+		throw new Error(`float_point.fraction: text does not match pattern: ${_fraction}`);
+	const _marker = config.marker;
+	if (_marker !== undefined && !_slotRe_buildFloatPoint_marker.test(_marker))
+		throw new Error(`float_point.marker: text does not match pattern: ${_marker}`);
+	const _exponent = numberText(10, '', config.exponent);
+	if (_exponent !== undefined && !_slotRe_buildFloatPoint_exponent.test(_exponent))
+		throw new Error(`float_point.exponent: text does not match pattern: ${_exponent}`);
+	const _imaginary = config.imaginary;
+	if (_imaginary !== undefined && !_slotRe_buildFloatPoint_imaginary.test(_imaginary))
+		throw new Error(`float_point.imaginary: text does not match pattern: ${_imaginary}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FloatPoint as const,
+				$source: 2 as const,
+				$named: true as const,
+				_integer,
+				_fraction,
+				_marker,
+				_exponent,
+				_imaginary,
+				$with: {
+					integer: (value: string | number) => buildFloatPoint({ ...config, integer: value }),
+					fraction: (value?: string | number) => buildFloatPoint({ ...config, fraction: value }),
+					marker: (value?: string) => buildFloatPoint({ ...config, marker: value }),
+					exponent: (value?: string | number) => buildFloatPoint({ ...config, exponent: value }),
+					imaginary: (value?: string) => buildFloatPoint({ ...config, imaginary: value })
+				}
+			},
+			{
+				integer: () => _integer,
+				fraction: () => _fraction,
+				marker: () => _marker,
+				exponent: () => _exponent,
+				imaginary: () => _imaginary
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFloatLeadingPoint(
+	config: WidenNumeric<T.FloatLeadingPoint.Config, 'integer' | 'fraction' | 'exponent'>
+): T.FloatLeadingPoint.Built {
+	const _integer = numberText(10, '', config.integer);
+	if (_integer !== undefined && !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
+		throw new Error(`float_leading_point.integer: text does not match pattern: ${_integer}`);
+	const _fraction = numberText(10, '', config.fraction);
+	if (_fraction !== undefined && !_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
+		throw new Error(`float_leading_point.fraction: text does not match pattern: ${_fraction}`);
+	const _marker = config.marker;
+	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
+		throw new Error(`float_leading_point.marker: text does not match pattern: ${_marker}`);
+	const _exponent = numberText(10, '', config.exponent);
+	if (_exponent !== undefined && !_slotRe_buildFloatLeadingPoint_exponent.test(_exponent))
+		throw new Error(`float_leading_point.exponent: text does not match pattern: ${_exponent}`);
+	const _imaginary = config.imaginary;
+	if (_imaginary !== undefined && !_slotRe_buildFloatLeadingPoint_imaginary.test(_imaginary))
+		throw new Error(`float_leading_point.imaginary: text does not match pattern: ${_imaginary}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FloatLeadingPoint as const,
+				$source: 2 as const,
+				$named: true as const,
+				_integer,
+				_fraction,
+				_marker,
+				_exponent,
+				_imaginary,
+				$with: {
+					integer: (value?: string | number) => buildFloatLeadingPoint({ ...config, integer: value }),
+					fraction: (value: string | number) => buildFloatLeadingPoint({ ...config, fraction: value }),
+					marker: (value?: string) => buildFloatLeadingPoint({ ...config, marker: value }),
+					exponent: (value?: string | number) => buildFloatLeadingPoint({ ...config, exponent: value }),
+					imaginary: (value?: string) => buildFloatLeadingPoint({ ...config, imaginary: value })
+				}
+			},
+			{
+				integer: () => _integer,
+				fraction: () => _fraction,
+				marker: () => _marker,
+				exponent: () => _exponent,
+				imaginary: () => _imaginary
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFloatScientific(
+	config: WidenNumeric<T.FloatScientific.Config, 'integer' | 'exponent'>
+): T.FloatScientific.Built {
+	const _integer = numberText(10, '', config.integer);
+	if (_integer !== undefined && !_slotRe_buildFloatScientific_integer.test(_integer))
+		throw new Error(`float_scientific.integer: text does not match pattern: ${_integer}`);
+	const _marker = config.marker;
+	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
+		throw new Error(`float_scientific.marker: text does not match pattern: ${_marker}`);
+	const _exponent = numberText(10, '', config.exponent);
+	if (_exponent !== undefined && !_slotRe_buildFloatScientific_exponent.test(_exponent))
+		throw new Error(`float_scientific.exponent: text does not match pattern: ${_exponent}`);
+	const _imaginary = config.imaginary;
+	if (_imaginary !== undefined && !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
+		throw new Error(`float_scientific.imaginary: text does not match pattern: ${_imaginary}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.FloatScientific as const,
+				$source: 2 as const,
+				$named: true as const,
+				_integer,
+				_marker,
+				_exponent,
+				_imaginary,
+				$with: {
+					integer: (value: string | number) => buildFloatScientific({ ...config, integer: value }),
+					marker: (value: string) => buildFloatScientific({ ...config, marker: value }),
+					exponent: (value: string | number) => buildFloatScientific({ ...config, exponent: value }),
+					imaginary: (value?: string) => buildFloatScientific({ ...config, imaginary: value })
+				}
+			},
+			{
+				integer: () => _integer,
+				marker: () => _marker,
+				exponent: () => _exponent,
+				imaginary: () => _imaginary
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceUnicodeFixed(value: string): T.EscapeSequenceUnicodeFixed.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceUnicodeFixed as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceUnicodeFixed(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceUnicodeWide(value: string): T.EscapeSequenceUnicodeWide.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
+		throw new Error(`escape_sequence_unicode_wide.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceUnicodeWide as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceUnicodeWide(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceHex_content.test(_content))
+		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceHex as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceHex(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceOctal(value: string): T.EscapeSequenceOctal.Built {
+	const _content = numberText(10, '', value);
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
+		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceOctal as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceOctal(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceLineBreak(value: string): T.EscapeSequenceLineBreak.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
+		throw new Error(`escape_sequence_line_break.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceLineBreak as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceLineBreak(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceSimple(value: string): T.EscapeSequenceSimple.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceSimple_content.test(_content))
+		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceSimple as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceSimple(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildEscapeSequenceNamed(value: string): T.EscapeSequenceNamed.Built {
+	const _content = value;
+	if (_content !== undefined && !_slotRe_buildEscapeSequenceNamed_content.test(_content))
+		throw new Error(`escape_sequence_named.content: text does not match pattern: ${_content}`);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EscapeSequenceNamed as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: string) => buildEscapeSequenceNamed(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildLineContinuationNewline(text: string): T.LineContinuationNewline.Built {
+	if (text.length === 0) throw new Error(`line_continuation_newline: text must be non-empty`);
+	if (!_leafRe_buildLineContinuationNewline.test(text))
+		throw new Error(`line_continuation_newline: text does not match pattern: ${text}`);
+	return withMethods(
+		{
+			$type: TSKindId.LineContinuationNewline as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildLineContinuationNul(): TSKindId.LineContinuationNul {
+	return TSKindId.LineContinuationNul;
+}
+
 export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Built {
 	const _sign = coerceBooleanKeywordStorage(config.sign);
 	const _content = config.content;
@@ -5031,18 +5411,14 @@ export type FluentKindMap = {
 	string: T.String.Built;
 	string_content: T.StringContent.Built;
 	interpolation: T.Interpolation.Built;
-	escape_sequence: T.EscapeSequence.Built;
 	format_specifier: T.FormatSpecifier.Built;
 	type_conversion: T.TypeConversion;
-	integer: T.Integer;
-	float: T.Float;
 	identifier: T.Identifier;
 	true: T.True;
 	false: T.False;
 	none: T.None;
 	await: T.Await.Built;
 	comment: T.Comment.Built;
-	line_continuation: T.LineContinuation;
 	positional_separator: T.PositionalSeparator;
 	keyword_separator: T.KeywordSeparator;
 	simple_statements_elements: T.SimpleStatementsElements.Built;
@@ -5068,6 +5444,22 @@ export type FluentKindMap = {
 	print_statement_chevron: T.PrintStatementChevron.Built;
 	print_statement_plain: T.PrintStatementPlain.Built;
 	_parenthesized_import_list: T.ParenthesizedImportList.Built;
+	integer_hex: T.IntegerHex.Built;
+	integer_octal: T.IntegerOctal.Built;
+	integer_binary: T.IntegerBinary.Built;
+	integer_decimal: T.IntegerDecimal;
+	float_point: T.FloatPoint.Built;
+	float_leading_point: T.FloatLeadingPoint.Built;
+	float_scientific: T.FloatScientific.Built;
+	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Built;
+	escape_sequence_unicode_wide: T.EscapeSequenceUnicodeWide.Built;
+	escape_sequence_hex: T.EscapeSequenceHex.Built;
+	escape_sequence_octal: T.EscapeSequenceOctal.Built;
+	escape_sequence_line_break: T.EscapeSequenceLineBreak.Built;
+	escape_sequence_simple: T.EscapeSequenceSimple.Built;
+	escape_sequence_named: T.EscapeSequenceNamed.Built;
+	line_continuation_newline: T.LineContinuationNewline;
+	line_continuation_nul: T.LineContinuationNul;
 	simple_pattern_negative: T.SimplePatternNegative.Built;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Built;
 	except_clause_exception: T.ExceptClauseException.Built;
@@ -5202,18 +5594,14 @@ export const _factoryMap = {
 	string: buildString,
 	string_content: buildStringContent,
 	interpolation: buildInterpolation,
-	escape_sequence: buildEscapeSequence,
 	format_specifier: buildFormatSpecifier,
 	type_conversion: buildTypeConversion,
-	integer: buildInteger,
-	float: buildFloat,
 	identifier: buildIdentifier,
 	true: buildTrue,
 	false: buildFalse,
 	none: buildNone,
 	await: buildAwait,
 	comment: buildComment,
-	line_continuation: buildLineContinuation,
 	positional_separator: buildPositionalSeparator,
 	keyword_separator: buildKeywordSeparator,
 	simple_statements_elements: buildSimpleStatementsElements,
@@ -5239,6 +5627,22 @@ export const _factoryMap = {
 	print_statement_chevron: buildPrintStatementChevron,
 	print_statement_plain: buildPrintStatementPlain,
 	_parenthesized_import_list: buildParenthesizedImportList,
+	integer_hex: buildIntegerHex,
+	integer_octal: buildIntegerOctal,
+	integer_binary: buildIntegerBinary,
+	integer_decimal: buildIntegerDecimal,
+	float_point: buildFloatPoint,
+	float_leading_point: buildFloatLeadingPoint,
+	float_scientific: buildFloatScientific,
+	escape_sequence_unicode_fixed: buildEscapeSequenceUnicodeFixed,
+	escape_sequence_unicode_wide: buildEscapeSequenceUnicodeWide,
+	escape_sequence_hex: buildEscapeSequenceHex,
+	escape_sequence_octal: buildEscapeSequenceOctal,
+	escape_sequence_line_break: buildEscapeSequenceLineBreak,
+	escape_sequence_simple: buildEscapeSequenceSimple,
+	escape_sequence_named: buildEscapeSequenceNamed,
+	line_continuation_newline: buildLineContinuationNewline,
+	line_continuation_nul: buildLineContinuationNul,
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,

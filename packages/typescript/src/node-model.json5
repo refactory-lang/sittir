@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 430,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -28,6 +28,7 @@
     "index_signature",
     "lhs_expression",
     "meta_property",
+    "number",
     "pattern",
     "primary_expression",
     "primary_type",
@@ -146,6 +147,14 @@
     "index_signature_mapped_type_clause": "indexSignature.mappedTypeClause",
     "meta_property_import_meta": "metaProperty.importMeta",
     "meta_property_new_target": "metaProperty.newTarget",
+    "number_bigint": "number.bigint",
+    "number_binary": "number.binary",
+    "number_decimal": "number.decimal",
+    "number_float_leading_point": "number.floatLeadingPoint",
+    "number_float_point": "number.floatPoint",
+    "number_float_scientific": "number.floatScientific",
+    "number_hex": "number.hex",
+    "number_octal": "number.octal",
     "update_expression_postfix": "updateExpression.postfix",
     "update_expression_prefix": "updateExpression.prefix",
     "variable_declarator_definite": "variableDeclarator.definite",
@@ -3156,7 +3165,14 @@
         "nonEmpty": false,
         "wireKeys": [
           "_unary_expression",
-          "_number",
+          "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_scientific",
+          "_number_decimal",
+          "_number_binary",
+          "_number_octal",
+          "_number_bigint",
           "_string",
           "_true",
           "_false",
@@ -3526,7 +3542,14 @@
           "_identifier",
           "_private_property_identifier",
           "_string",
-          "_number",
+          "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_scientific",
+          "_number_decimal",
+          "_number_binary",
+          "_number_octal",
+          "_number_bigint",
           "_computed_property_name"
         ]
       }
@@ -3706,6 +3729,160 @@
       }
     },
     "comment_block": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_hex": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_point": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_leading_point": {
+      "fraction": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_float_scientific": {
+      "integer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "sign": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "exponent": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_binary": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_octal": {
+      "prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "number_bigint": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -3935,7 +4112,14 @@
           "_identifier",
           "_this",
           "_super",
-          "_number",
+          "_number_hex",
+          "_number_float_point",
+          "_number_float_leading_point",
+          "_number_float_scientific",
+          "_number_decimal",
+          "_number_binary",
+          "_number_octal",
+          "_number_bigint",
           "_string",
           "_template_string",
           "_regex",
@@ -6000,8 +6184,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -6450,8 +6641,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -7175,8 +7373,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -8993,6 +9198,7 @@
       "irKey": "commentBlock",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -9048,6 +9254,7 @@
       "irKey": "commentLine",
       "hidden": false,
       "annotations": {
+        "tokenForm": true,
         "hoisted": true
       },
       "slots": [
@@ -9163,8 +9370,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -10092,8 +10306,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -10522,8 +10743,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -10627,8 +10855,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -12038,8 +12273,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -15172,8 +15414,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -15873,7 +16122,14 @@
         "_number",
         "false",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
+        "number_octal",
         "string",
         "string_double",
         "string_single",
@@ -17332,8 +17588,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -17383,13 +17646,734 @@
     },
     {
       "kind": "number",
-      "modelType": "pattern",
+      "modelType": "supertype",
       "typeName": "Number",
-      "factoryName": "number",
       "irKey": "number",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
+        "number_octal"
+      ]
+    },
+    {
+      "kind": "number_bigint",
+      "modelType": "branch",
+      "typeName": "NumberBigint",
+      "factoryName": "numberBigint",
+      "irKey": "numberBigint",
       "hidden": false,
-      "leafPattern": "/^(?:(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)\\.(?:(?:\\d(_?\\d)*))?(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|\\.(?:\\d(_?\\d)*)(?:(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*))?|(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)(?:e|E)(?:(?:-|\\+))?(?:\\d(_?\\d)*)|(?:\\d(_?\\d)*))|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*))n))$/u",
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_bigint",
+      "interior": {
+        "entries": [
+          {
+            "slot": "content",
+            "pattern": "(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*))"
+          },
+          {
+            "lit": "n"
+          }
+        ],
+        "regex": "^(?<content>(?:(?:0x|0X)(?:[\\da-fA-F](_?[\\da-fA-F])*)|(?:0b|0B)(?:[0-1](_?[0-1])*)|(?:0o|0O)(?:[0-7](_?[0-7])*)|(?:\\d(_?\\d)*)))n$",
+        "slots": [
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "number_binary",
+      "modelType": "branch",
+      "typeName": "NumberBinary",
+      "factoryName": "numberBinary",
+      "irKey": "numberBinary",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0b"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0B"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_binary",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0b",
+              "0B"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[0-1](_?[0-1])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0b|0B)(?<content>(?:[0-1](_?[0-1])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
+    },
+    {
+      "kind": "number_decimal",
+      "modelType": "pattern",
+      "typeName": "NumberDecimal",
+      "factoryName": "numberDecimal",
+      "irKey": "numberDecimal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "pattern": "\\d(_?\\d)*",
+      "leafPattern": "/^(?:(?:\\d(_?\\d)*))$/u",
       "factoryShape": "text"
+    },
+    {
+      "kind": "number_float_leading_point",
+      "modelType": "branch",
+      "typeName": "NumberFloatLeadingPoint",
+      "factoryName": "numberFloatLeadingPoint",
+      "irKey": "numberFloatLeadingPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_leading_point",
+      "interior": {
+        "entries": [
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:\\d(_?\\d)*)"
+          },
+          {
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
+          }
+        ],
+        "regex": "^\\.(?<fraction>(?:\\d(_?\\d)*))(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$",
+        "slots": [
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "fraction",
+        "marker",
+        "sign",
+        "exponent"
+      ]
+    },
+    {
+      "kind": "number_float_point",
+      "modelType": "branch",
+      "typeName": "NumberFloatPoint",
+      "factoryName": "numberFloatPoint",
+      "irKey": "numberFloatPoint",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "fraction",
+          "propertyName": "fraction",
+          "paramName": "fraction",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_point",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)"
+          },
+          {
+            "lit": "."
+          },
+          {
+            "slot": "fraction",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
+          },
+          {
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": true
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)",
+            "optional": true
+          }
+        ],
+        "regex": "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))\\.(?<fraction>(?:\\d(_?\\d)*))?(?:(?<marker>e|E)?(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))?)?$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "fraction",
+            "configKey": "fraction"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "fraction",
+        "marker",
+        "sign",
+        "exponent"
+      ]
+    },
+    {
+      "kind": "number_float_scientific",
+      "modelType": "branch",
+      "typeName": "NumberFloatScientific",
+      "factoryName": "numberFloatScientific",
+      "irKey": "numberFloatScientific",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "integer",
+          "propertyName": "integer",
+          "paramName": "integer",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        },
+        {
+          "name": "marker",
+          "propertyName": "marker",
+          "paramName": "marker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "e"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "E"
+            }
+          ]
+        },
+        {
+          "name": "sign",
+          "propertyName": "sign",
+          "paramName": "sign",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "dash"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "+",
+              "parseKind": "plus"
+            }
+          ]
+        },
+        {
+          "name": "exponent",
+          "propertyName": "exponent",
+          "paramName": "exponent",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_float_scientific",
+      "interior": {
+        "entries": [
+          {
+            "slot": "integer",
+            "pattern": "(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?)"
+          },
+          {
+            "enum": "marker",
+            "values": [
+              "e",
+              "E"
+            ],
+            "optional": false
+          },
+          {
+            "enum": "sign",
+            "values": [
+              "-",
+              "+"
+            ],
+            "optional": true
+          },
+          {
+            "slot": "exponent",
+            "pattern": "(?:\\d(_?\\d)*)"
+          }
+        ],
+        "regex": "^(?<integer>(?:0|(?:0)?(?:[1-9])(?:(?:_)?(?:\\d(_?\\d)*))?))(?<marker>e|E)(?<sign>-|\\+)?(?<exponent>(?:\\d(_?\\d)*))$",
+        "slots": [
+          {
+            "name": "integer",
+            "configKey": "integer"
+          },
+          {
+            "name": "marker",
+            "configKey": "marker"
+          },
+          {
+            "name": "sign",
+            "configKey": "sign"
+          },
+          {
+            "name": "exponent",
+            "configKey": "exponent"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "integer",
+        "marker",
+        "sign",
+        "exponent"
+      ]
+    },
+    {
+      "kind": "number_hex",
+      "modelType": "branch",
+      "typeName": "NumberHex",
+      "factoryName": "numberHex",
+      "irKey": "numberHex",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0x"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0X"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_hex",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0x",
+              "0X"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[\\da-fA-F](_?[\\da-fA-F])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0x|0X)(?<content>(?:[\\da-fA-F](_?[\\da-fA-F])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
     },
     {
       "kind": "number_keyword",
@@ -17401,6 +18385,91 @@
       "stampExpression": "\"number\" as const",
       "text": "number",
       "factoryShape": "text"
+    },
+    {
+      "kind": "number_octal",
+      "modelType": "branch",
+      "typeName": "NumberOctal",
+      "factoryName": "numberOctal",
+      "irKey": "numberOctal",
+      "hidden": false,
+      "annotations": {
+        "tokenForm": true,
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0o"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "0O"
+            }
+          ]
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single"
+            }
+          ]
+        }
+      ],
+      "name": "number_octal",
+      "interior": {
+        "entries": [
+          {
+            "enum": "prefix",
+            "values": [
+              "0o",
+              "0O"
+            ],
+            "optional": false
+          },
+          {
+            "slot": "content",
+            "pattern": "(?:[0-7](_?[0-7])*)"
+          }
+        ],
+        "regex": "^(?<prefix>0o|0O)(?<content>(?:[0-7](_?[0-7])*))$",
+        "slots": [
+          {
+            "name": "prefix",
+            "configKey": "prefix"
+          },
+          {
+            "name": "content",
+            "configKey": "content"
+          }
+        ]
+      },
+      "factoryShape": "config",
+      "factoryFields": [
+        "prefix",
+        "content"
+      ]
     },
     {
       "kind": "object",
@@ -17785,8 +18854,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -17874,8 +18950,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -18195,8 +19278,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -18661,8 +19751,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -19664,8 +20761,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -20066,8 +21170,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "object_pattern",
@@ -20164,8 +21275,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -20494,8 +21612,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -21327,8 +22452,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
@@ -21431,8 +22563,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -21859,8 +22998,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -21941,8 +23087,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -22150,8 +23303,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -22240,8 +23400,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -22744,8 +23911,15 @@
         "nested_type_identifier",
         "never_keyword",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object_keyword",
         "object_type",
         "optional_tuple_parameter",
@@ -23530,8 +24704,15 @@
         "new_keyword",
         "non_null_expression",
         "null",
-        "number",
+        "number_bigint",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
         "number_keyword",
+        "number_octal",
         "object",
         "object_keyword",
         "override_keyword",
