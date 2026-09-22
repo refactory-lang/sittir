@@ -58,16 +58,25 @@
 >    `kindEntries` (the same miss `kindid-unstamped-symbols` reports) is
 >    expanded, recursively, to the arms the parser issues; one with a
 >    kind entry (`_lhs_expression`) is a member as itself.
-> 3. `assemble.ts` turns every `displayUnions` entry into a supertype
->    entry (`SupertypeMembers`) whose members are the storage kinds, and
->    the emitters produce for it exactly what a supertype over visible
->    variants gets today: type alias, `is.<display>()`, dispatching
->    factory; no struct, wrap or transport (spec §A.2). Where the display
->    is also a rule of its own, that rule is one of the members.
+> 3. `assemble.ts` turns every `displayUnions` entry into an
+>    AssembledEnvelope whose `content` slot is the storage node: the
+>    storage struct for a nonterminal, the AssembledEnum of the storage
+>    kinds (or the leaf, or their union) for terminals (spec §A.2). The
+>    envelope gets the ordinary struct, wrap, transport, factory and
+>    render template; the template writes the content.
+>    `read_node.rs::stamped_kind` stamps `kind_id()` for an aliased node
+>    and places the `grammar_id()` node in `content`.
+> 3b. `dsl/enrich.ts::applyUnaliasDistinct` is generalized: a bucket with
+>    a nonterminal or own-rule member is split into unique
+>    (storage, display) pairs (visible storage drops the alias; hidden
+>    storage mints the underscore-less name); a terminals-only bucket is
+>    left as the envelope's enum. The all-alias-site skip added in Task 1
+>    is narrowed to that terminals-only case.
 > 4. Gate for the task is now: rust 135/137, python 115/116 unchanged and
 >    typescript read-render-parse back to 112/114 with the three
 >    `pair.key` fixtures passing; `_reserved_identifier` absent from the
->    node map; no `Rule.hidden` differing from its name.
+>    node map; no `Rule.hidden` differing from its name; no display name is also a
+>    storage kind after enrich.
 > 5. The explanatory comment added to `dsl/enrich.ts::applyUnaliasDistinct`
 >    moves to `docs/glossary/dsl.md`.
 

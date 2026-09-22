@@ -278,47 +278,54 @@ Two facts follow, and they are independent:
   under its storage identifier (§3.2: `_LhsExpression`) and is a member of
   the display's supertype (A.2). No rule-level flag carries this.
 
-### A.2 A display union is a virtual supertype
+### A.2 A display kind is an envelope over its storage node
 
 §1 called a display union "a name, not a kind: no struct, no factory, no wrap
-function, no supertype entry". Amended: a display union is a **virtual
-supertype** in the node model, with the surface sittir already generates for
-a supertype over visible variants:
+function, no supertype entry". Amended: every alias site is a node the
+parser issues (`alias_sym_*`), and the node model gives it a class: an
+**AssembledEnvelope** whose single `content` slot carries the storage node.
+The treatment is identical for every storage shape:
 
-- an entry in the supertype table whose members are the storage kinds that
-  display under that name, read from `displayUnions`;
-- the type alias (`PropertyIdentifier`, `LhsExpression`, `MemberExpression`
-  where the display is also a rule of its own), the `is.<display>()` guard,
-  and the dispatching factory;
-- no struct, no wrap function and no transport of its own: the node is its
-  storage kind, stamped from `grammar_id()` exactly as today.
+| display | content | example |
+| --- | --- | --- |
+| over a nonterminal | the storage struct | `LhsExpression { $type: 457, content: _LhsExpression {…} }` |
+| over terminals | the AssembledEnum of the storage kinds, or the leaf | `ReservedIdentifier { $type: 459, content: TSKindId.DeclareKeyword \| TSKindId.NamespaceKeyword \| … }` |
+| over a leaf and terminals | the union of both | `PropertyIdentifier { $type: 458, content: Identifier \| TSKindId.DeclareKeyword \| … }` |
 
-The identity rule is therefore unchanged and has no exception: `$type` is
-the grammar symbol everywhere. Terminal members are the leaf kinds the parser
-issues: `property_identifier` = {`identifier`, `declare_keyword`,
-`namespace_keyword`, `type_keyword`, …}; `reserved_identifier` is the same
-set without `identifier`; `type_identifier`, `statement_identifier`,
-`shorthand_property_identifier` are further supertypes over overlapping
-sets. A supertype's members are kind names (`SupertypeMembers`), so keyword
-kinds are admissible members; the enum-arms-through-supertypes work already
-walks them.
+The envelope has its own struct, wrap function, transport, factory
+(`ir.reservedIdentifier('declare')`, `ir.lhsExpression(…)`) and render
+template; the template writes the content. `is.<display>()` narrows to the
+envelope.
 
-A display over one hidden nonterminal (`lhs_expression` ←
-`_lhs_expression`) is the same thing with one member. A display over several
-nonterminal storages (`member_expression` ← {`member_expression`,
-`nested_identifier`, `decorator_member_expression`, the two
-`_type_query_member_expression*`}; `call_expression` ← 4; rust `doc_comment`
-← 2; python `block` ← {`block`, `_match_block`}) is a supertype over the
-storage structs. The tree keeps upstream's display names; nothing is
-unaliased in enrich for this purpose. `applyUnaliasDistinct`'s skip of a
-bucket whose candidates are all alias sites (landed in Task 1) is the
-consistent behaviour and stays; its explanatory comment moves to the
-glossary.
+**Identity.** The envelope's `$type` is the type id. This revises the settled
+fact in *Global constraints*: the native read stamps `KindId(kind_id())` for
+an aliased node and places the `KindId(grammar_id())` node in `content`;
+for an unaliased node the two ids coincide and nothing changes. One rule,
+no exception: an aliased node is always an envelope over its storage node.
+The storage node keeps its own identity inside the envelope, so transport
+structs, spacing sites and options addresses stay keyed by storage kind.
+The validator (§3.6) is unaffected: it compares parse trees.
 
-The envelope alternative (a carrier node with `$type` = the alias id and the
-token as content) was considered and rejected: it makes type id the identity
-for one class of node and grammar id for every other, and it re-mints as a
-node what the parser already dedups.
+**Overloaded displays are unaliased in enrich.** A kind cannot be both a
+struct and an envelope, so a display name that is also a rule of its own
+(`member_expression` over `nested_identifier` and its shadows;
+`call_expression`; python `identifier` over the `'type'` keyword; rust
+`identifier` over an inline choice), or that sits over more than one
+nonterminal storage (`doc_comment` over two comment contents), is rewritten
+by enrich into unique (storage, display) pairs: a visible storage drops the
+alias and shows under its own name; a hidden storage mints the
+underscore-less name, falling back to the existing collision scheme on a
+clash. This generalizes `applyUnaliasDistinct` and reaches the parser and
+the IR alike; the tree then shows `decorator_member_expression` where
+upstream shows `member_expression`, the divergence policy already applied to
+`<text>_keyword` and `number_decimal`. Task 1's skip of an all-alias-site
+bucket is reversed for buckets with a nonterminal or own-rule member; a
+bucket of terminals only (`property_identifier`'s tokens) is the envelope's
+enum and is not split. After enrich, every nonterminal display is 1:1.
+
+The virtual-supertype alternative (no node class; a type alias and guard
+over the members, `$type` = grammar symbol) was considered and rejected:
+the parser issues a node at every alias site and the model should have one.
 
 ### A.3 A dissolved hidden rule distributes at every alias site
 
@@ -335,7 +342,8 @@ only use of it". Amended: use count is not the criterion; the parser is.
   the arms the parser actually issues. A hidden rule that *has* a parser
   symbol (`_lhs_expression`) is a member as itself.
 
-So `property_identifier`'s members come from every one of
+`displayUnions.get(display)` is the envelope's content set. So
+`reserved_identifier`'s content enum comes from every one of
 `_reserved_identifier`'s six alias sites, and `_reserved_identifier` never
 enters the node model. The ground truth for "dissolved" is the catalog, the
 same source `kindid-unstamped-symbols` reads; no shape heuristic decides it.
@@ -344,23 +352,25 @@ same source `kindid-unstamped-symbols` reads; no shape heuristic decides it.
 
 No display in the three grammars sits over both a terminal and a nonterminal
 storage kind (externals such as `_template_chars` and the rust doc-comment
-markers are tokens). A display union whose members mix the two is not
-modelled; the preflight reports `display-union-mixed`, naming the display and
-the members on each side. It sits beside `alias-distributed` (§3.5) and is
-specified with the other shape diagnostics in
-`2026-09-22-unsupported-shape-diagnostics-design.md`.
+markers are tokens). A display whose members mix the two has no single
+content shape and is not modelled; the preflight reports
+`display-union-mixed`, naming the display and the members on each side. It
+sits beside `alias-distributed` (§3.5) and is specified with the other shape
+diagnostics in `2026-09-22-unsupported-shape-diagnostics-design.md`.
 
 ### A.5 Acceptance additions
 
 - `unhideAliasedTargets` is gone; no `Rule.hidden` differs from
   `isParserHiddenName(name)` in any linked grammar.
-- `_reserved_identifier` is absent from every node map; `pair.key`'s
-  accepted set equals `displayUnions.get('property_identifier')`; the three
-  `pair.key` fixtures pass and typescript read-render-parse returns to its
-  112/114 baseline.
-- For every `alias_sym_*` in each grammar's parser.c, the node model has a
-  supertype entry of that name whose members are the grammar symbols the
-  parser issues under it, and, when the name is also a rule, that rule is one
-  of the members.
+- `_reserved_identifier` is absent from every node map; `pair.key` accepts
+  `PropertyIdentifier` whose content set equals
+  `displayUnions.get('property_identifier')`; the three `pair.key` fixtures
+  pass and typescript read-render-parse returns to its 112/114 baseline.
+- For every `alias_sym_*` in each grammar's parser.c after enrich, the node
+  model has exactly one AssembledEnvelope of that name, its content is the
+  set of grammar symbols the parser issues under it, and no display name is
+  also a storage kind.
+- `read_node.rs::stamped_kind` stamps `kind_id()` for an aliased node and
+  the parity fixtures show the envelope with its storage node as content.
 - `display-union-mixed` fires on a unit fixture and is silent on all three
   grammars.
