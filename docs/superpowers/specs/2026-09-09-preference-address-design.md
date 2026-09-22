@@ -376,7 +376,7 @@ spelled 400 times.
 
 "A sibling gap belongs to the child before it" is a statement about
 storage as much as addressing. With edges in every transport's base, a
-seated site (`arguments/arguments/as_expression/after`) fills the element's
+seated site (`arguments/elements/as_expression/after`) fills the element's
 own base `after`; the element carrier gains nothing. What the generated
 `prepare` does today by matching on each element's kind and descending into
 nested polymorph content becomes one loop over the elements and a generated
@@ -409,8 +409,8 @@ node interfaces already carry phantom members that describe a kind to the
 type system (`__inputHints__`, the loose hints). So the generator writes
 that fact onto the interface as one more phantom member, **`__optionsHint__`**,
 nested the way the address trie is nested (`arguments.lparen.after`,
-`arguments.arguments.separator`, a seated element site as
-`arguments.arguments.as_expression.after`), each leaf typed as the arm union
+`arguments.elements.separator`, a seated element site as
+`arguments.elements.as_expression.after`), each leaf typed as the arm union
 the site admits:
 
 ```ts
@@ -420,7 +420,7 @@ export interface Arguments {
 	readonly __optionsHint__?: {
 		readonly lparen: { readonly after?: WhitespaceArm };
 		readonly rparen: { readonly before?: WhitespaceArm };
-		readonly arguments: {
+		readonly elements: {
 			readonly separator: { readonly comma: { readonly before?: SpacingArm; readonly after?: SpacingArm } };
 			readonly spreadElement: { readonly after?: WhitespaceArm };
 		};
@@ -464,7 +464,6 @@ variant before planning (2026-09-21): 3,058,924 instantiations against
 the transitive import of `types.ts`. The hint variant is a mapped type over
 members that already exist, so its gate is the same measurement, expected
 at or below the template's number; the usage
-`arguments: { lparen: { after }, arguments: { separator: { comma: { after } }, spreadElement: { after } } }`
-(the kind `arguments` has one slot, also named `arguments`, so the address
-reads kind, slot, site, exactly as the trie does)
+`arguments: { lparen: { after }, elements: { separator: { comma: { after } }, spreadElement: { after } } }`
+(kind, slot, site, exactly as the trie does)
 type-checks against the derived type.
