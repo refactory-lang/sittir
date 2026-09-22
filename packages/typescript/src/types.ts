@@ -6233,9 +6233,9 @@ export interface PrivatePropertyIdentifier {
 
 export interface Arguments {
 	readonly $type: TSKindId.Arguments;
-	readonly _arguments?: readonly (Expression | SpreadElement | undefined)[];
+	readonly _elements?: readonly (Expression | SpreadElement | undefined)[];
 	readonly __inputHints__?: {
-		readonly arguments?: readonly (
+		readonly elements?: readonly (
 			| KindEnum<
 					| 'undefined'
 					| 'declare'
@@ -6298,7 +6298,7 @@ export interface Arguments {
 			| SpreadElement
 		)[];
 	};
-	arguments(): readonly (Expression | SpreadElement | undefined)[];
+	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
 export interface Decorator {
@@ -17510,7 +17510,7 @@ export namespace Arguments {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			arguments(...vs: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
+			elements(...vs: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;

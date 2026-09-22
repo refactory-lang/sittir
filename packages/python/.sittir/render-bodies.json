@@ -3175,11 +3175,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "parameters",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "parameters"
+							"name": "elements"
 						}
 					]
 				}

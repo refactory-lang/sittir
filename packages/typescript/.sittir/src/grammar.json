@@ -5610,7 +5610,7 @@
         },
         {
           "type": "FIELD",
-          "name": "arguments",
+          "name": "elements",
           "content": {
             "type": "CHOICE",
             "members": [

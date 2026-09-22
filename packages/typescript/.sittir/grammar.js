@@ -5902,7 +5902,7 @@ var grammar_sittir_default = grammar(
           24: variant("in")
         },
         arguments: {
-          1: field("arguments")
+          1: field("elements")
         },
         array: {
           1: field("elements")

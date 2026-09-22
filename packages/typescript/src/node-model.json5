@@ -1716,7 +1716,7 @@
       }
     },
     "arguments": {
-      "arguments": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -6467,9 +6467,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6496,7 +6496,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "arguments"
+        "elements"
       ]
     },
     {

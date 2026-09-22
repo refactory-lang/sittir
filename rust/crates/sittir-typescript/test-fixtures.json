@@ -47803,7 +47803,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": []
+                        "_elements": []
                       },
                       "$slotOrder": [
                         "function",
@@ -48044,7 +48044,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "function",
@@ -48269,7 +48269,7 @@
                   "$type": 271,
                   "$source": 0,
                   "$named": true,
-                  "_arguments": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "function",
@@ -48448,7 +48448,7 @@
         "$type": 271,
         "$source": 0,
         "$named": true,
-        "_arguments": []
+        "_elements": []
       },
       "$slotOrder": [
         "function",
@@ -48477,7 +48477,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -48806,7 +48806,7 @@
                           "$type": 271,
                           "$source": 0,
                           "$named": true,
-                          "_arguments": [
+                          "_elements": [
                             {
                               "$type": 1,
                               "$source": 0,
@@ -49463,7 +49463,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "@ baz\n@ bam\nclass Foo {\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
-    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "@ baz\n@ bam\nclass Foo {\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
     "wrappedOffset": 0
   },
@@ -49704,7 +49704,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": [
+                      "_elements": [
                         {
                           "$type": 1,
                           "$source": 0,
@@ -50359,7 +50359,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "@ baz\n@ bam\nclass Foo {\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
-    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration decorator: (decorator (identifier)) decorator: (decorator (identifier)) name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "@ baz\n@ bam\nclass Foo {\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}\n",
     "wrappedOffset": 0
   },
@@ -50530,7 +50530,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": [
+                    "_elements": [
                       {
                         "$type": 1,
                         "$source": 0,
@@ -51164,7 +51164,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}",
-    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (number_decimal) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition decorator: (decorator (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))) accessibility_modifier: (accessibility_modifier) name: (number_decimal) type: (type_annotation type: (predefined_type)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_member (public_field_definition decorator: (decorator (identifier)) name: (string (string_single elements: (unescaped_single_string_fragment))) type: (type_annotation type: (type_identifier)) value: (string (string_single elements: (unescaped_single_string_fragment))))) content: (class_body_method decorator: (decorator (identifier)) (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (optional_parameter decorator: (decorator (identifier)) pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n    @ foo\n    static 2: string ;\n    @ bar.buzz(grue)\n    public static 2: string = 'string' ;\n    @ readonly\n    readonly 'hello' ?: int = 'string' ;\n    @ readonly\n    fooBar(@ required param: any, @ optional param2 ?: any) {}\n}",
     "wrappedOffset": 9
   },
@@ -51405,7 +51405,7 @@
         "$type": 271,
         "$source": 0,
         "$named": true,
-        "_arguments": [
+        "_elements": [
           {
             "$type": 1,
             "$source": 0,
@@ -51454,7 +51454,7 @@
     "pattern": "decorator_call_expression",
     "edits": [],
     "expectedSourceOut": "bar.buzz(grue)",
-    "expectedReparseTree": "(call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (identifier)))",
+    "expectedReparseTree": "(call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (identifier)))",
     "wrappedText": "@bar.buzz(grue)\nclass _W {}",
     "wrappedOffset": 1
   },
@@ -51524,7 +51524,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -51568,7 +51568,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(grue)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(grue);",
     "wrappedOffset": 2
   },
@@ -54896,7 +54896,7 @@
                             "$type": 271,
                             "$source": 0,
                             "$named": true,
-                            "_arguments": []
+                            "_elements": []
                           },
                           "$slotOrder": [
                             "function",
@@ -55197,7 +55197,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": []
+                        "_elements": []
                       },
                       "$slotOrder": [
                         "function",
@@ -55482,7 +55482,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": []
+                      "_elements": []
                     },
                     "$slotOrder": [
                       "function",
@@ -55738,7 +55738,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -55918,7 +55918,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -56162,7 +56162,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -56191,7 +56191,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -56907,7 +56907,7 @@
                               "$type": 271,
                               "$source": 0,
                               "$named": true,
-                              "_arguments": [
+                              "_elements": [
                                 {
                                   "$type": 265,
                                   "$source": 0,
@@ -57171,7 +57171,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo {}\n\nabstract class Animal {\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@ bar\nabstract class Foo {}",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator (identifier)) name: (type_identifier) body: (class_body)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator (identifier)) name: (type_identifier) body: (class_body)))",
     "wrappedText": "abstract class Foo {}\n\nabstract class Animal {\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@ bar\nabstract class Foo {}",
     "wrappedOffset": 0
   },
@@ -57675,7 +57675,7 @@
                           "$type": 271,
                           "$source": 0,
                           "$named": true,
-                          "_arguments": [
+                          "_elements": [
                             {
                               "$type": 265,
                               "$source": 0,
@@ -57860,7 +57860,7 @@
     "pattern": "abstract_class_declaration",
     "edits": [],
     "expectedSourceOut": "abstract class Animal {\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))))",
     "wrappedText": "abstract class Animal {\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "wrappedOffset": 0
   },
@@ -58402,7 +58402,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": [
+                        "_elements": [
                           {
                             "$type": 265,
                             "$source": 0,
@@ -58559,7 +58559,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
-    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (public_field_definition name: (property_identifier) type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_member (abstract_method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n    readonly abstract prop: string ;\n    requiredProp !: string ;\n    abstract makeSound(): void ;\n    abstract get readonlyProp(): string ;\n    protected abstract readonlyProp ?(): string ;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "wrappedOffset": 9
   },
@@ -58956,7 +58956,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 265,
                     "$source": 0,
@@ -59075,7 +59075,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n    console.log(\"roaming the earth...\");\n}\n",
-    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n    console.log(\"roaming the earth...\");\n}\n",
     "wrappedOffset": 0
   },
@@ -59130,7 +59130,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 265,
                 "$source": 0,
@@ -59220,7 +59220,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "console.log(\"roaming the earth...\");",
-    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))",
+    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment)))))))",
     "wrappedText": "console.log(\"roaming the earth...\");",
     "wrappedOffset": 0
   },
@@ -59271,7 +59271,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 265,
               "$source": 0,
@@ -59355,7 +59355,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "console.log(\"roaming the earth...\")",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))",
     "wrappedText": "let _ = console.log(\"roaming the earth...\");",
     "wrappedOffset": 8
   },
@@ -59415,7 +59415,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 265,
           "$source": 0,
@@ -59493,7 +59493,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(\"roaming the earth...\")",
-    "expectedReparseTree": "(arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))",
+    "expectedReparseTree": "(arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))",
     "wrappedText": "_f(\"roaming the earth...\");",
     "wrappedOffset": 2
   },
@@ -63796,7 +63796,7 @@
                           "$type": 271,
                           "$source": 0,
                           "$named": true,
-                          "_arguments": [
+                          "_elements": [
                             {
                               "$type": 1,
                               "$source": 0,
@@ -64030,7 +64030,7 @@
                             "$type": 271,
                             "$source": 0,
                             "$named": true,
-                            "_arguments": [
+                            "_elements": [
                               {
                                 "$type": 1,
                                 "$source": 0,
@@ -64248,7 +64248,7 @@
                           "$type": 271,
                           "$source": 0,
                           "$named": true,
-                          "_arguments": [
+                          "_elements": [
                             {
                               "$type": 1,
                               "$source": 0,
@@ -64531,7 +64531,7 @@
                             "$type": 271,
                             "$source": 0,
                             "$named": true,
-                            "_arguments": [
+                            "_elements": [
                               {
                                 "$type": 1,
                                 "$source": 0,
@@ -64918,7 +64918,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\n\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))) statements: (export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier) type_arguments: (type_arguments (types type: (type_identifier) type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))))",
     "wrappedText": "class A extends B<C>(D) implements C {}\n\nexport class A extends B<C>(D) implements C {}\n\nclass A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C>(D)<E> implements C {}\n\nexport class A extends B<C, D> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -65024,7 +65024,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": [
+                      "_elements": [
                         {
                           "$type": 1,
                           "$source": 0,
@@ -65152,7 +65152,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -65258,7 +65258,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": [
+                      "_elements": [
                         {
                           "$type": 1,
                           "$source": 0,
@@ -65386,7 +65386,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -65492,7 +65492,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": [
+                      "_elements": [
                         {
                           "$type": 1,
                           "$source": 0,
@@ -65669,7 +65669,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -65775,7 +65775,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": [
+                      "_elements": [
                         {
                           "$type": 1,
                           "$source": 0,
@@ -65952,7 +65952,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -66233,7 +66233,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -66284,7 +66284,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "B<C>(D)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = B<C>(D);",
     "wrappedOffset": 8
   },
@@ -66359,7 +66359,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -66410,7 +66410,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "B<C>(D)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = B<C>(D);",
     "wrappedOffset": 8
   },
@@ -66485,7 +66485,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -66536,7 +66536,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "B<C>(D)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = B<C>(D);",
     "wrappedOffset": 8
   },
@@ -66611,7 +66611,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -66662,7 +66662,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "B<C>(D)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = B<C>(D);",
     "wrappedOffset": 8
   },
@@ -66674,7 +66674,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -66718,7 +66718,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(D)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(D);",
     "wrappedOffset": 2
   },
@@ -66730,7 +66730,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -66774,7 +66774,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(D)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(D);",
     "wrappedOffset": 2
   },
@@ -66786,7 +66786,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -66830,7 +66830,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(D)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(D);",
     "wrappedOffset": 2
   },
@@ -66842,7 +66842,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -66886,7 +66886,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(D)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(D);",
     "wrappedOffset": 2
   },
@@ -67124,7 +67124,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": [
+                        "_elements": [
                           {
                             "$type": 1,
                             "$source": 0,
@@ -67253,7 +67253,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D) implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D) implements C {}\n",
     "wrappedOffset": 0
   },
@@ -67376,7 +67376,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": [
+                        "_elements": [
                           {
                             "$type": 1,
                             "$source": 0,
@@ -67554,7 +67554,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D)<E> implements C {}\n",
-    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement_default_declaration declaration: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) type_arguments: (type_arguments (types type: (type_identifier))))) (implements_clause type: (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "export class A extends B<C>(D)<E> implements C {}\n",
     "wrappedOffset": 0
   },
@@ -79498,7 +79498,7 @@
                       "$type": 271,
                       "$source": 0,
                       "$named": true,
-                      "_arguments": []
+                      "_elements": []
                     },
                     "$slotOrder": [
                       "function",
@@ -79707,7 +79707,7 @@
                   "$type": 271,
                   "$source": 0,
                   "$named": true,
-                  "_arguments": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "function",
@@ -79927,7 +79927,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -80066,7 +80066,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -80172,7 +80172,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -80340,7 +80340,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -82689,7 +82689,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 1,
                     "$source": 0,
@@ -82748,7 +82748,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "f<T>(x)\n",
-    "expectedReparseTree": "(program statements: (expression_statement expression: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (expression_statement expression: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon)))",
     "wrappedText": "f<T>(x)\n",
     "wrappedOffset": 0
   },
@@ -82827,7 +82827,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 1,
                 "$source": 0,
@@ -82884,7 +82884,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "f<T>(x)\n",
-    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier)))) terminator: (automatic_semicolon))",
     "wrappedText": "f<T>(x)\n",
     "wrappedOffset": 0
   },
@@ -82959,7 +82959,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -83010,7 +83010,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "f<T>(x)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (types type: (type_identifier))) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = f<T>(x);",
     "wrappedOffset": 8
   },
@@ -83022,7 +83022,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -83066,7 +83066,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(x)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(x);",
     "wrappedOffset": 2
   },
@@ -94782,7 +94782,7 @@
                   "$type": 271,
                   "$source": 0,
                   "$named": true,
-                  "_arguments": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -94929,7 +94929,7 @@
               "$type": 271,
               "$source": 0,
               "$named": true,
-              "_arguments": []
+              "_elements": []
             },
             "$other": [
               {
@@ -95068,7 +95068,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$other": [
           {
@@ -95185,7 +95185,7 @@
         "$type": 271,
         "$source": 0,
         "$named": true,
-        "_arguments": []
+        "_elements": []
       },
       "$other": [
         {
@@ -95226,7 +95226,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -95377,7 +95377,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -95521,7 +95521,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -95682,7 +95682,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -95843,7 +95843,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -95998,7 +95998,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -96149,7 +96149,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -96289,7 +96289,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -96312,7 +96312,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -96550,7 +96550,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$other": [
                 {
@@ -96667,7 +96667,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$other": [
             {
@@ -96778,7 +96778,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$other": [
           {
@@ -96820,7 +96820,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -100692,7 +100692,7 @@
                               "$type": 271,
                               "$source": 0,
                               "$named": true,
-                              "_arguments": [
+                              "_elements": [
                                 {
                                   "$type": 1,
                                   "$source": 0,
@@ -100860,7 +100860,7 @@
                                   "$type": 271,
                                   "$source": 0,
                                   "$named": true,
-                                  "_arguments": []
+                                  "_elements": []
                                 },
                                 "$slotOrder": [
                                   "function",
@@ -101065,7 +101065,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -101299,7 +101299,7 @@
                           "$type": 271,
                           "$source": 0,
                           "$named": true,
-                          "_arguments": [
+                          "_elements": [
                             {
                               "$type": 1,
                               "$source": 0,
@@ -101467,7 +101467,7 @@
                               "$type": 271,
                               "$source": 0,
                               "$named": true,
-                              "_arguments": []
+                              "_elements": []
                             },
                             "$slotOrder": [
                               "function",
@@ -101670,7 +101670,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause (extends_clause_single value: (identifier))))) body: (class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}\n",
     "wrappedOffset": 0
   },
@@ -101846,7 +101846,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": [
+                        "_elements": [
                           {
                             "$type": 1,
                             "$source": 0,
@@ -102014,7 +102014,7 @@
                             "$type": 271,
                             "$source": 0,
                             "$named": true,
-                            "_arguments": []
+                            "_elements": []
                           },
                           "$slotOrder": [
                             "function",
@@ -102196,7 +102196,7 @@
     "pattern": "class_body",
     "edits": [],
     "expectedSourceOut": "{\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}",
-    "expectedReparseTree": "(class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(class_body content: (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier))))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)) content: (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement expression: (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double elements: (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) terminator: (automatic_semicolon)))",
     "wrappedText": "class _C {\n    constructor(x: number, y: number) {\n        super(x);\n    }\n    public toString() {\n        return super.toString() + \" y=\" + this.y;\n    }\n}",
     "wrappedOffset": 9
   },
@@ -102572,7 +102572,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 1,
                     "$source": 0,
@@ -102657,7 +102657,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n    super(x);\n}\n",
-    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier))))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n    super(x);\n}\n",
     "wrappedOffset": 0
   },
@@ -102716,7 +102716,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "function",
@@ -102885,7 +102885,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 1,
                 "$source": 0,
@@ -102941,7 +102941,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "super(x);",
-    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier)))))",
+    "expectedReparseTree": "(expression_statement expression: (call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier)))))",
     "wrappedText": "super(x);",
     "wrappedOffset": 0
   },
@@ -102962,7 +102962,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 1,
               "$source": 0,
@@ -103012,7 +103012,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "super(x)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (super) arguments: (arguments elements: (identifier))))",
     "wrappedText": "let _ = super(x);",
     "wrappedOffset": 8
   },
@@ -103054,7 +103054,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -103083,7 +103083,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 1,
           "$source": 0,
@@ -103127,7 +103127,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(x)",
-    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "expectedReparseTree": "(arguments elements: (identifier))",
     "wrappedText": "_f(x);",
     "wrappedOffset": 2
   },
@@ -103139,7 +103139,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -103204,7 +103204,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -103369,7 +103369,7 @@
               "$type": 271,
               "$source": 0,
               "$named": true,
-              "_arguments": []
+              "_elements": []
             },
             "$slotOrder": [
               "function",
@@ -103512,7 +103512,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -107683,7 +107683,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -108100,7 +108100,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -108158,7 +108158,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -108187,7 +108187,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -123492,7 +123492,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": [
+                    "_elements": [
                       {
                         "$type": 265,
                         "$source": 0,
@@ -123674,7 +123674,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": [
+                    "_elements": [
                       {
                         "$type": 265,
                         "$source": 0,
@@ -123786,7 +123786,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "const symFoo: unique symbol = Symbol(\"foo\");\n\nconst symBar: symbol = Symbol.for(\"bar\");",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment)))))))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment)))))))))",
     "wrappedText": "const symFoo: unique symbol = Symbol(\"foo\");\n\nconst symBar: symbol = Symbol.for(\"bar\");",
     "wrappedOffset": 0
   },
@@ -123854,7 +123854,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 265,
                     "$source": 0,
@@ -123964,7 +123964,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const symFoo: unique symbol = Symbol(\"foo\");",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))))",
     "wrappedText": "const symFoo: unique symbol = Symbol(\"foo\");",
     "wrappedOffset": 0
   },
@@ -124053,7 +124053,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 265,
                     "$source": 0,
@@ -124163,7 +124163,7 @@
     "pattern": "lexical_declaration",
     "edits": [],
     "expectedSourceOut": "const symBar: symbol = Symbol.for(\"bar\");",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))))",
     "wrappedText": "const symBar: symbol = Symbol.for(\"bar\");",
     "wrappedOffset": 0
   },
@@ -124225,7 +124225,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 265,
                 "$source": 0,
@@ -124327,7 +124327,7 @@
     "pattern": "variable_declarator_plain",
     "edits": [],
     "expectedSourceOut": "symFoo: unique symbol = Symbol(\"foo\")",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (identifier) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment)))))))",
     "wrappedText": "let symFoo: unique symbol = Symbol(\"foo\");",
     "wrappedOffset": 4
   },
@@ -124410,7 +124410,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 265,
                 "$source": 0,
@@ -124512,7 +124512,7 @@
     "pattern": "variable_declarator_plain",
     "edits": [],
     "expectedSourceOut": "symBar: symbol = Symbol.for(\"bar\")",
-    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment)))))))",
+    "expectedReparseTree": "(variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment)))))))",
     "wrappedText": "let symBar: symbol = Symbol.for(\"bar\");",
     "wrappedOffset": 4
   },
@@ -124612,7 +124612,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 265,
               "$source": 0,
@@ -124696,7 +124696,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "Symbol(\"foo\")",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (identifier) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))",
     "wrappedText": "let _ = Symbol(\"foo\");",
     "wrappedOffset": 8
   },
@@ -124747,7 +124747,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 265,
               "$source": 0,
@@ -124831,7 +124831,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "Symbol.for(\"bar\")",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))))",
     "wrappedText": "let _ = Symbol.for(\"bar\");",
     "wrappedOffset": 8
   },
@@ -124843,7 +124843,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 265,
           "$source": 0,
@@ -124921,7 +124921,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(\"foo\")",
-    "expectedReparseTree": "(arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))",
+    "expectedReparseTree": "(arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))",
     "wrappedText": "_f(\"foo\");",
     "wrappedOffset": 2
   },
@@ -124933,7 +124933,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 265,
           "$source": 0,
@@ -125011,7 +125011,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(\"bar\")",
-    "expectedReparseTree": "(arguments arguments: (string (string_double elements: (unescaped_double_string_fragment))))",
+    "expectedReparseTree": "(arguments elements: (string (string_double elements: (unescaped_double_string_fragment))))",
     "wrappedText": "_f(\"bar\");",
     "wrappedOffset": 2
   },
@@ -125332,7 +125332,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "function",
@@ -125522,7 +125522,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -125704,7 +125704,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -125864,7 +125864,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -126234,7 +126234,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -136345,7 +136345,7 @@
                         "$type": 271,
                         "$source": 0,
                         "$named": true,
-                        "_arguments": [
+                        "_elements": [
                           {
                             "$type": 261,
                             "$source": 0,
@@ -136393,7 +136393,7 @@
                                   "$type": 271,
                                   "$source": 0,
                                   "$named": true,
-                                  "_arguments": []
+                                  "_elements": []
                                 },
                                 "$slotOrder": [
                                   "function",
@@ -136976,7 +136976,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
-    "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))) (enum_assignment name: (property_identifier) value: (number_decimal)) name: (property_identifier)))) statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier)))))))",
+    "expectedReparseTree": "(program statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))) (enum_assignment name: (property_identifier) value: (number_decimal)) name: (property_identifier)))) statements: (enum_declaration name: (identifier) body: (enum_body (enum_body_elements (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (number_decimal)) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier))) (enum_assignment name: (property_identifier) value: (binary_expression left: (identifier) right: (identifier)))))))",
     "wrappedText": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "wrappedOffset": 0
   },
@@ -137201,7 +137201,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": [
+                    "_elements": [
                       {
                         "$type": 261,
                         "$source": 0,
@@ -137249,7 +137249,7 @@
                               "$type": 271,
                               "$source": 0,
                               "$named": true,
-                              "_arguments": []
+                              "_elements": []
                             },
                             "$slotOrder": [
                               "function",
@@ -137424,7 +137424,7 @@
     "pattern": "enum_declaration",
     "edits": [],
     "expectedSourceOut": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
-    "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))) (enum_assignment name: (property_identifier) value: (number_decimal)) name: (property_identifier))))",
+    "expectedReparseTree": "(enum_declaration name: (identifier) body: (enum_body (enum_body_elements name: (property_identifier) name: (string (string_single elements: (unescaped_single_string_fragment))) (enum_assignment name: (string (string_single elements: (unescaped_single_string_fragment))) value: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))) (enum_assignment name: (property_identifier) value: (number_decimal)) name: (property_identifier))))",
     "wrappedText": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}",
     "wrappedOffset": 0
   },
@@ -138020,7 +138020,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 261,
               "$source": 0,
@@ -138068,7 +138068,7 @@
                     "$type": 271,
                     "$source": 0,
                     "$named": true,
-                    "_arguments": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "function",
@@ -138132,7 +138132,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "Math.floor(Math.random() * 1000)",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))))",
     "wrappedText": "let _ = Math.floor(Math.random() * 1000);",
     "wrappedOffset": 8
   },
@@ -138183,7 +138183,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -138308,7 +138308,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 261,
           "$source": 0,
@@ -138356,7 +138356,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": []
+                "_elements": []
               },
               "$slotOrder": [
                 "function",
@@ -138414,7 +138414,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "(Math.random() * 1000)",
-    "expectedReparseTree": "(arguments arguments: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))",
+    "expectedReparseTree": "(arguments elements: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments))) right: (number_decimal)))",
     "wrappedText": "_f(Math.random() * 1000);",
     "wrappedOffset": 2
   },
@@ -138426,7 +138426,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -138492,7 +138492,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": []
+            "_elements": []
           },
           "$slotOrder": [
             "function",
@@ -139202,7 +139202,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": []
+          "_elements": []
         },
         "$slotOrder": [
           "function",
@@ -139231,7 +139231,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": []
+      "_elements": []
     },
     "expectedOutput": "()"
   },
@@ -150310,7 +150310,7 @@
                 "$type": 271,
                 "$source": 0,
                 "$named": true,
-                "_arguments": [
+                "_elements": [
                   {
                     "$type": 265,
                     "$source": 0,
@@ -150817,7 +150817,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type T = keyof Person;\n\ntype T = keyof Person.P;\n\ntype T = keyof Person<P>;\n\ntype T = keyof (Person);\n\ntype T = typeof Person;\n\ntype T = typeof Person.P;\n\ntype T = typeof import('person');\n\ntype T = keyof typeof Person;\n\ntype T = keyof U[number];\n\ntype T = keyof U & V;\n\ntype T = typeof array[number];",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query (identifier)) index_type: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query (identifier)) index_type: (predefined_type))))",
     "wrappedText": "type T = keyof Person;\n\ntype T = keyof Person.P;\n\ntype T = keyof Person<P>;\n\ntype T = keyof (Person);\n\ntype T = typeof Person;\n\ntype T = typeof Person.P;\n\ntype T = typeof import('person');\n\ntype T = keyof typeof Person;\n\ntype T = keyof U[number];\n\ntype T = keyof U & V;\n\ntype T = typeof array[number];",
     "wrappedOffset": 0
   },
@@ -151530,7 +151530,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 265,
                 "$source": 0,
@@ -151643,7 +151643,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type T = typeof import('person');",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment)))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment)))))))",
     "wrappedText": "type T = typeof import('person');",
     "wrappedOffset": 0
   },
@@ -152918,7 +152918,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 265,
               "$source": 0,
@@ -153002,7 +153002,7 @@
     "pattern": "type_query",
     "edits": [],
     "expectedSourceOut": "typeof import('person')",
-    "expectedReparseTree": "(type_query (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(type_query (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "type _X = typeof import('person');",
     "wrappedOffset": 10
   },
@@ -153166,7 +153166,7 @@
         "$type": 271,
         "$source": 0,
         "$named": true,
-        "_arguments": [
+        "_elements": [
           {
             "$type": 265,
             "$source": 0,
@@ -153249,7 +153249,7 @@
     "pattern": "_type_query_call_expression",
     "edits": [],
     "expectedSourceOut": "import('person')",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "let _ = import('person');",
     "wrappedOffset": 8
   },
@@ -153261,7 +153261,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 265,
           "$source": 0,
@@ -153339,7 +153339,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "('person')",
-    "expectedReparseTree": "(arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "_f('person');",
     "wrappedOffset": 2
   },
@@ -207088,7 +207088,7 @@
                   "$type": 271,
                   "$source": 0,
                   "$named": true,
-                  "_arguments": [
+                  "_elements": [
                     {
                       "$type": 265,
                       "$source": 0,
@@ -207307,7 +207307,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type Foo = import('node:fs').ReadStream & {\n    bar();\n};",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
     "wrappedText": "type Foo = import('node:fs').ReadStream & {\n    bar();\n};",
     "wrappedOffset": 0
   },
@@ -207346,7 +207346,7 @@
               "$type": 271,
               "$source": 0,
               "$named": true,
-              "_arguments": [
+              "_elements": [
                 {
                   "$type": 265,
                   "$source": 0,
@@ -207563,7 +207563,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type Foo = import('node:fs').ReadStream & {\n    bar();\n};",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
     "wrappedText": "type Foo = import('node:fs').ReadStream & {\n    bar();\n};",
     "wrappedOffset": 0
   },
@@ -207588,7 +207588,7 @@
             "$type": 271,
             "$source": 0,
             "$named": true,
-            "_arguments": [
+            "_elements": [
               {
                 "$type": 265,
                 "$source": 0,
@@ -207776,7 +207776,7 @@
     "pattern": "intersection_type",
     "edits": [],
     "expectedSourceOut": "import('node:fs').ReadStream & {\n    bar();\n}",
-    "expectedReparseTree": "(intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
+    "expectedReparseTree": "(intersection_type left: (member_expression object: (call_expression function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
     "wrappedText": "type _X = import('node:fs').ReadStream & {\n    bar();\n};",
     "wrappedOffset": 10
   },
@@ -207797,7 +207797,7 @@
           "$type": 271,
           "$source": 0,
           "$named": true,
-          "_arguments": [
+          "_elements": [
             {
               "$type": 265,
               "$source": 0,
@@ -207907,7 +207907,7 @@
     "pattern": "_type_query_member_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs').ReadStream",
-    "expectedReparseTree": "(member_expression object: (call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment)))))) property: (property_identifier))",
+    "expectedReparseTree": "(member_expression object: (call_expression (call_expression_call function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment)))))) property: (property_identifier))",
     "wrappedText": "let _ = import('node:fs').ReadStream;",
     "wrappedOffset": 8
   },
@@ -207924,7 +207924,7 @@
         "$type": 271,
         "$source": 0,
         "$named": true,
-        "_arguments": [
+        "_elements": [
           {
             "$type": 265,
             "$source": 0,
@@ -208007,7 +208007,7 @@
     "pattern": "_type_query_call_expression_in_type_annotation",
     "edits": [],
     "expectedSourceOut": "import('node:fs')",
-    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(call_expression (call_expression_call function: (import) arguments: (arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))))",
     "wrappedText": "let _ = import('node:fs');",
     "wrappedOffset": 8
   },
@@ -208019,7 +208019,7 @@
       "$type": 271,
       "$source": 0,
       "$named": true,
-      "_arguments": [
+      "_elements": [
         {
           "$type": 265,
           "$source": 0,
@@ -208097,7 +208097,7 @@
     "pattern": "arguments",
     "edits": [],
     "expectedSourceOut": "('node:fs')",
-    "expectedReparseTree": "(arguments arguments: (string (string_single elements: (unescaped_single_string_fragment))))",
+    "expectedReparseTree": "(arguments elements: (string (string_single elements: (unescaped_single_string_fragment))))",
     "wrappedText": "_f('node:fs');",
     "wrappedOffset": 2
   },
