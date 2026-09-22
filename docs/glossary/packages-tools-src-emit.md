@@ -9,6 +9,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ---
 
+
 ### `packages/tools/src/emit/factory-source.ts::catalogEntriesOf`
 
 ```text
@@ -20,7 +21,6 @@ the parser's own display name, `literalText` the token's literal text, and
 `literalText` makes `findEntryForLiteralText` miss every anon-token lookup,
 so this must mirror `KindEntryLike` exactly, not just `symbolName`/`anon`.
 ```
-
 
 ### `packages/tools/src/emit/factory-source.ts::mountPrinter`
 
@@ -52,12 +52,23 @@ The strict flavor is named (`.strict`); the loose flavor is the bundle's
 own call, and every mount and variant route is callable the same way, so
 nothing ever spells `.coerce`.
 
+```text
+/** The strict flavor is named; the loose one is the bundle's own call. */
+```
+
 ### `packages/tools/src/emit/factory-source.ts::loosenAt`
 
 Applies the loose rules to what a slot holds once the strict wrapping has
 run: a `multiple` slot per element, since the runtime resolves each element
 on its own. Without loose facts, or at a slot the model does not declare,
 the value passes unchanged.
+
+#### body
+
+```text
+// A repeated slot resolves each element on its own; a tuple seat's array
+// is one argument list the envelope builder takes as given.
+```
 
 ### `packages/tools/src/emit/factory-source.ts::loosenValue`
 
@@ -103,6 +114,19 @@ when it has any, else the model's `elementKinds` for the list, either expanded
 through the supertypes. A list carries no `slots` in the model, so this is
 the element slot the coercer's `_listElements` resolves through.
 
+```text
+/**
+ * The loosest spelling of a printed node at a slot, by the loose contract's
+ * slot-driven rules: a single-slot wrapper is dropped when exactly one arm
+ * of the slot admits its inner value bare and that arm is the wrapper; a
+ * list envelope is its bare array when the slot's one branch kind, or its
+ * declared default, is the envelope; a text leaf is its bare string when the
+ * slot admits one pattern kind; a config is its object when nested configs
+ * are asked for. A node carrying trivia keeps its call, since only a call
+ * can carry `$trivia`.
+ */
+```
+
 ### `packages/tools/src/emit/factory-source.ts::contentSlotKinds`
 
 For a kind with exactly one required, non-multiple slot, that slot's kinds
@@ -141,6 +165,15 @@ argument is when the wrapper is dropped and it lands on the parent's slot,
 where the parent's rules decide its spelling afresh; the loose form is its
 spelling inside the wrapper's own call.
 
+```text
+/**
+ * A single-slot kind's argument, spelled both ways: the strict form is what
+ * the argument is when the wrapper is dropped and it lands on the PARENT's
+ * slot, where the parent's rules decide its spelling afresh; the loose form
+ * is its spelling inside the wrapper's own call.
+ */
+```
+
 ### `packages/tools/src/emit/factory-source.ts::printVerbatimText`
 
 ```text
@@ -175,3 +208,300 @@ itself, on the strict surface as on the loose one. An optional multiple slot
 given an empty array counts as unset, since the read projection spells an
 absent repeated slot as `[]` (`attributeItem: []` beside `expression`) and
 the strict factory builds the same node without it.
+
+```text
+/**
+ * A seated element whose config sets nothing but the seat's one required
+ * slot is that slot's value: the list builder takes the value bare and seats
+ * it itself, on the strict surface as on the loose one.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::PrintContext.source`
+
+```text
+/** The source the read came from: the bytes a span addresses. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::LooseFacts.kindIdOfName`
+
+```text
+/** A kind's parser id; an alias shares its target's, and the runtime admits by id. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::Printed.$_trivia`
+
+```text
+/** Set by the construction funnel from the read node this was built from. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::printRawNode`
+
+#### body
+
+```text
+// A fixed-text leaf stores its kind id in place of its text.
+```
+
+### `packages/tools/src/emit/factory-source.ts::isListOptions`
+
+```text
+/**
+ * A separated list's options bag, which its factory takes ahead of the
+ * elements. It reaches the generic printer too: a tuple seat hands the
+ * parent's slot the child's WHOLE argument list, so the bag arrives as the
+ * first entry of an array rather than as a positional argument.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::triviaOf`
+
+```text
+/**
+ * A node's attached comments as text. A trivia entry carries its text when the
+ * reader captured one; otherwise its span addresses the bytes in `source`.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::storesKindId`
+
+```text
+/**
+ * A slot whose storage is `verbatim` holds text, never a kind id, so the
+ * literal-text resolution chain does not apply to it: that chain answers
+ * "which literal token spells this", and it falls back to the full name chain,
+ * which matches any identifier that happens to share a rule's name (python's
+ * `list` as a type annotation became `TSKindId.List`, rendering `[]`).
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::textLeafValue`
+
+```text
+/**
+ * The text a slot value stands for when it is text: a bare string, or a read
+ * leaf — a node with `$text`, no storage and no attached trivia — which the
+ * reader hands over as itself, coordinate included. A leaf carrying trivia
+ * keeps its node form so the trivia prints with it.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::soleLeafKind`
+
+```text
+/**
+ * The single leaf kind of a slot whose guard the text satisfies, if exactly
+ * one does. A bare string resolves at runtime to the leaf kind whose pattern
+ * it matches, so a leaf spells bare safely only when that kind is unique.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::bareTextAdmitted`
+
+```text
+/**
+ * Whether a read leaf's text prints bare at a slot: the slot admits exactly
+ * one pattern kind, which is the kind the strict spelling would name too
+ * (the first text leaf of the slot), so a bare string builds the same leaf.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::admitsDirectly`
+
+```text
+/**
+ * Whether a slot admits a printed node as it is. The runtime's resolver
+ * tables are keyed by parser id, so an alias (`_shorthand_property_identifier`
+ * over `identifier`) admits the node its target would.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::buildsNodeData`
+
+```text
+/**
+ * Whether a kind's value is node data the coercer can route by its `$type`:
+ * an enum or keyword leaf is stored as a bare kind id, which the runtime only
+ * accepts where the slot itself admits the kind, never through a wrapper.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::bareArrayItems`
+
+```text
+/**
+ * The items a printed value stands for when it is a list envelope with
+ * default options, directly or through a single-slot wrapper whose sole slot
+ * is that list — the array the runtime builds the envelope from.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::wrapSeatedConfig`
+
+```text
+/**
+ * Text leaves inside a seated config belong to the group, not the parent: a
+ * spliced or flattened-arm key and an element-seat object carry the child's
+ * slot names. Wrap with the parent's slot map first so its own slots win,
+ * then with each seat's kind for what the parent does not declare.
+ */
+```
+
+#### body
+
+```text
+// A tuple seat carries the child's options bag as its first entry; one
+// that restates the child's default says nothing the loose call needs.
+```
+
+#### body
+
+```text
+// A seated arm's config is the child's own: its keys are the child's
+// slots, so the child's rules decide their loose spelling.
+```
+
+### `packages/tools/src/emit/factory-source.ts::PlacedArg.strict`
+
+```text
+/** The value as the strict surface spells it at the kind's sole slot. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::PlacedArg.loose`
+
+```text
+/** The same value as the loose surface spells it there. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::printingFactoryMap`
+
+#### body
+
+```text
+// A hidden text kind has no factory on `ir` (the model's key for it
+// names nothing emitted): it hands its text to the parent, whose
+// slot prints it through the public text kind it declares.
+```
+
+#### body
+
+```text
+// The strict wrapper re-exposes its child's rest parameters; the loose
+// one takes one input, so the spliced arguments ride as its array.
+```
+
+#### body
+
+```text
+// A registered slot outside this direct/forwarded value (some OTHER
+// field of the kind — direct/forwarded classification skips
+// registered slots) rides as a trailing options argument.
+```
+
+#### body
+
+```text
+// A registered slot rides as a trailing options argument outside
+// the config object — `entry` is fully variadic, but this branch
+// only read args[0] until now, silently dropping it.
+```
+
+### `packages/tools/src/emit/factory-source.ts::printingIrSurface`
+
+```text
+/**
+ * The printing counterpart of a grammar's `ir` bindings: every kind's
+ * `strict`, plus one entry per mount name its seats declare, printing
+ * `ir.<parent>.<mount>.strict(…)`. Handing this to
+ * `buildFactoryNodeFromReference` as the surface makes the printer take the
+ * same seat projection the validators take, so the emitted spelling is the
+ * one `ir-render-parse` builds rather than a second derivation of it.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::absorbedKindsOf`
+
+```text
+/**
+ * A hoisted child whose OWN surface is a rest-parameter one (`spread`, or a
+ * separated list's `elements`) and that its parent takes POSITIONALLY is
+ * absorbed: its arguments splice straight into the parent's call, because the
+ * parent's own factory already offers those rest parameters. A parent with
+ * named keys takes the same child as a tuple on its slot, which is the tuple
+ * seat. Every other hoisted child prints its own call, and so does one that
+ * seats children of its own: those arrive as the child's configs, which only
+ * the child's own builder knows how to take.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::variantFormsOf`
+
+```text
+/**
+ * The variant form each child kind is declared under, keyed by node kind and
+ * by its public name. `childKind` is keyed by parse kind, which drops a hidden
+ * kind's leading underscore.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::irPathResolver`
+
+```text
+/**
+ * A variant of a flattened parent is spelled by codegen's published route
+ * (`node-model.json5` `variantRoutes`, e.g. `ir.exportStatement.default.from`).
+ * Any other hoisted compound has no flat `ir` binding — hoisting is what keeps
+ * it out of the bundle — so its spelling is the variant form its parent
+ * declares: `ir.<parent>.<form>`. The parent composes in turn while it is itself
+ * hoisted, and the path stops at the first kind that owns a flat binding.
+ * Being declared under a variant form does not settle this on its own: a kind
+ * that is not hoisted carries both spellings, and its flat one is canonical.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::seatFormTree`
+
+```text
+/**
+ * Apply the seat key-move to every node of an already-materialized tree,
+ * bottom-up so a child is seated before its parent reads the slot.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::seatFormChild`
+
+```text
+/**
+ * A read stores an arm's value under the child's own kind (`_delim_token_tree_paren`)
+ * when the parent's slot carries no label. Move it to the slot the seat names
+ * so `nodeToConfig` sees a declared slot and the seat projection applies.
+ */
+```
+
+### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.surface`
+
+```text
+/** `strict` prints `.strict(...)` calls; `loose` prints the bundle calls with every coercion the loose contract admits. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.nested`
+
+```text
+/** On the loose surface, whether a nested compound prints as its builder call or as a config object. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::EmitSurfaceOptions.backend`
+
+```text
+/** The read backend; the native engine unless a caller has none to offer. */
+```
+
+### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
+
+#### body
+
+```text
+// Keyed by the model's own kind names: a slot names a hidden kind
+// with its underscore, and a public spelling would collide with a
+// visible kind of the same name (`_identifier` over `identifier`).
+```
