@@ -5963,7 +5963,7 @@ export function resolveIntegerHex_content(value: T.IntegerHex.LooseConfig['conte
 
 export function coerceToIntegerHex(
 	input: T.IntegerHex.Loose,
-	options?: T.IntegerHex.Spelling
+	options?: T.IntegerHex.Options
 ): ReturnType<typeof F.buildIntegerHex> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerHex)
 		return input as unknown as ReturnType<typeof F.buildIntegerHex>;
@@ -5985,7 +5985,7 @@ export function resolveIntegerOctal_content(value: T.IntegerOctal.LooseConfig['c
 
 export function coerceToIntegerOctal(
 	input: T.IntegerOctal.Loose,
-	options?: T.IntegerOctal.Spelling
+	options?: T.IntegerOctal.Options
 ): ReturnType<typeof F.buildIntegerOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
 		return input as unknown as ReturnType<typeof F.buildIntegerOctal>;
@@ -6009,7 +6009,7 @@ export function resolveIntegerBinary_content(
 
 export function coerceToIntegerBinary(
 	input: T.IntegerBinary.Loose,
-	options?: T.IntegerBinary.Spelling
+	options?: T.IntegerBinary.Options
 ): ReturnType<typeof F.buildIntegerBinary> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
 		return input as unknown as ReturnType<typeof F.buildIntegerBinary>;

@@ -121,7 +121,6 @@ export interface PolymorphWires {
 	readonly isEmitted: (kind: string) => boolean;
 	readonly coerceEmitted: CoerceEmitted;
 	readonly keyByKind: ReadonlyMap<string, string>;
-	/** Kinds the bundle exports, so their overlay entry carries a `strict` of its own. */
 	readonly bundledKinds: ReadonlySet<string>;
 }
 
@@ -219,18 +218,6 @@ export function collectPolymorphWires(
 	return { order, byKind, kindEntries, isEmitted, coerceEmitted, keyByKind, bundledKinds };
 }
 
-/**
- * A child whose own overlay entry carries seats must be reached through that
- * entry, not its raw builder: the raw builder takes the unseated shape, so a
- * mount or seat wired to it would hand a seated argument (a group's config, a
- * tuple) straight to a slot that cannot take it. A seat is also what puts a
- * `strict` on the entry: a wire set of arms alone is a bare mount namespace
- * with none, and a leaf has no `strict` at all because its strict and loose
- * forms are one.
- *
- * A child in a cycle with its parent cannot be declared first, so it keeps
- * its raw builder: the seated form has no spelling that would resolve there.
- */
 function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): boolean {
 	const set = wires.byKind.get(kind);
 	if (set === undefined) return false;
@@ -257,7 +244,6 @@ function renderArm(name: string, entry: ArmEntry): { line: string; type: string 
 	return { line: `${name}: { ${parts.join(', ')} }`, type: `${name}: { ${typeParts.join('; ')} }` };
 }
 
-/** Every arm entry a kind emits, nested ones included, with the key path each sits at. */
 function walkArms(entries: ReadonlyMap<string, ArmEntry>): ArmEntry[] {
 	const out: ArmEntry[] = [];
 	for (const entry of entries.values()) {
@@ -266,15 +252,6 @@ function walkArms(entries: ReadonlyMap<string, ArmEntry>): ArmEntry[] {
 	return out;
 }
 
-/**
- * Arms of one slot chain onto arms of another. A kind with two arm-seated
- * slots has to name both in one call — python `except a, b:` needs the
- * exception's `list` and the suite's `block` — and each arm on its own is a
- * whole route wrapping the parent, so a caller could otherwise pick only one.
- * A later slot's arms are emitted again under each earlier arm, applied to it:
- * `ir.exceptClause.exception.list.block.strict(…)`. The applied route needs a
- * name, since a call expression has no `typeof` for the parameter types.
- */
 function composeAcrossSlots(
 	wireSet: PolymorphWireSet,
 	wires: PolymorphWires,
@@ -331,13 +308,6 @@ interface SeatedParent {
 	readonly wireType: string;
 }
 
-/**
- * Fold a kind's seats onto its own factory and give the result a name. Every
- * mount route then builds on that name instead of the raw factory, so a mount
- * carries the parent's seats rather than dropping them: `case_clause` seats
- * its patterns as a tuple AND mounts its suite, and both spellings must work
- * in one call.
- */
 function composeSeats(
 	seats: readonly SeatEmission[],
 	wireSet: PolymorphWireSet,
@@ -386,21 +356,6 @@ function composeSeats(
 	};
 }
 
-/**
- * The arm a flattened grand-arm nests under: the direct arm that reaches the
- * same child. A variant minted inside another variant's rule is spelled
- * inside it too — `ir.visibilityModifier.pub.inPath`, not a flat
- * `ir.visibilityModifier.inPath` that reads as its sibling. A grand-arm whose
- * child no parent arm reaches stays flat, since there is nothing to nest it
- * under. The nested key is the child's own arm name, since the flattened
- * name's prefix is exactly the arm it now sits under.
- */
-/**
- * How an arm of `kind` is actually spelled on its emitted entry: one segment
- * when it sits at the top, two when it nests under the arm that reaches its
- * child. A reference into a child's arms has to follow the same nesting the
- * child was emitted with, or it names a key that is not there.
- */
 export function emittedArmPath(kind: string, path: readonly string[], wires: PolymorphWires): string[] {
 	const set = wires.byKind.get(kind);
 	const head = path[0];
@@ -490,21 +445,44 @@ function shape(
 	m: string,
 	seatsConfig = false
 ): WireShape {
+	const registered = sub.slot.registeredOption !== undefined;
 	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) {
 			return {
 				method: positional
-					? [`const ${m} = <${PFV}>(parent: PF, value: ArgsOf<PF>[0]) => (): ReturnType<PF> => ${CALL_P}(value);`]
-					: [`const ${m} = <${PF}>(parent: PF, value: unknown) => (): ReturnType<PF> => ${CALL_P}({ ${k}: value });`],
-				paramFor: () => '()'
+					? [
+							`const ${m} = <${PFV}>(parent: PF, value: ArgsOf<PF>[0]) =>`,
+							`	(options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(value as never, options as never);`
+						]
+					: registered
+						? [
+								`const ${m} = <${PF}>(parent: PF, value: unknown) =>`,
+								`	(options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(undefined as never, _m(options, { ${k}: value }) as never);`
+							]
+						: [
+								`const ${m} = <${PF}>(parent: PF, value: unknown) =>`,
+								`	(options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ${k}: value } as never, options as never);`
+							],
+				paramFor: (p) => `(options?: OptionsArg<typeof ${p}>)`
+			};
+		}
+		if (positional) {
+			return {
+				method: [
+					`const ${m} = <${PFV}>(parent: PF, value: unknown) =>`,
+					`	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(arg as never, _m(options, { ${k}: value }) as never);`
+				],
+				paramFor: (p) => `(arg: ArgsOf<typeof ${p}>[0], options?: OptionsArg<typeof ${p}>)`
 			};
 		}
 		return {
 			method: [
 				`const ${m} = <${PF}>(parent: PF, value: unknown) =>`,
-				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'>): ReturnType<PF> => ${CALL_P}({ ...config, ${k}: value });`
+				registered
+					? `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)(config as never, _m(options, { ${k}: value }) as never);`
+					: `	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: value } as never, options as never);`
 			],
-			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>)`
+			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`
 		};
 	}
 	if (sub.residual.length === 0) {
@@ -523,65 +501,66 @@ function shape(
 	}
 	if (mergeKeys !== undefined) {
 		if (mergeKeys.length === 0) {
-			// No key routes to the child, so the partition below would send
-			// every key to `rest` and hand the child an empty object. Say
-			// that directly instead of emitting a loop guarded by `false`.
 			return {
 				method: [
 					`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-					`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0]): ReturnType<PF> =>`,
-					`		${CALL_P}(_m(config, { ${k}: ${CALL_C}({}) }));`
+					`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>`,
+					`		_s<ReturnType<PF>>(parent)(_m(config, { ${k}: ${CALL_C}({}) }) as never, options as never);`
 				],
-				paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`
+				paramFor: (p, c) =>
+					`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0], options?: OptionsArg<typeof ${p}>)`
 			};
 		}
 		const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
 		return {
 			method: [
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0]): ReturnType<PF> => {`,
+				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {`,
 				`		const rest: Record<string, unknown> = {};`,
 				`		const inner: Record<string, unknown> = {};`,
 				`		for (const [key, value] of Object.entries(_o(config))) {`,
 				`			if (${keyTests}) inner[key] = value;`,
 				`			else rest[key] = value;`,
 				`		}`,
-				`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(inner) });`,
+				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(inner) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0])`
+			paramFor: (p, c) =>
+				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0], options?: OptionsArg<typeof ${p}>)`
 		};
 	}
 	if (seatsConfig) {
 		return {
 			method: [
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF>[0] }): ReturnType<PF> => {`,
+				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {`,
 				`		const { ${k}: seated, ...rest } = config;`,
-				`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(seated) });`,
+				`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(seated) } as never, options as never);`,
 				`	};`
 			],
-			paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] })`
+			paramFor: (p, c) =>
+				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] }, options?: OptionsArg<typeof ${p}>)`
 		};
 	}
 	if (sub.arm.child.parameterless) {
 		return {
 			method: [
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'>): ReturnType<PF> => ${CALL_P}({ ...config, ${k}: ${CALL_C}() });`
+				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
 			],
-			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>)`
+			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`
 		};
 	}
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-			`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF> }): ReturnType<PF> => {`,
+			`	(config: OmitEach<ArgsOf<PF>[0], '${k}'> & { ${k}: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {`,
 			`		const { ${k}: seated, ...rest } = config;`,
-			`		return ${CALL_P}({ ...rest, ${k}: ${CALL_C}(...seated) });`,
+			`		return _s<ReturnType<PF>>(parent)({ ...rest, ${k}: ${CALL_C}(...seated) } as never, options as never);`,
 			`	};`
 		],
-		paramFor: (p, c) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}> })`
+		paramFor: (p, c) =>
+			`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}> }, options?: OptionsArg<typeof ${p}>)`
 	};
 }
 
@@ -695,12 +674,6 @@ function elementsShape(
 	};
 }
 
-/**
- * The method behind a tuple seat. The child's whole argument list rides the
- * parent's slot as an array, so a separated list keeps both its options bag
- * and its elements. An already-built child still passes through: an array in
- * that slot is the seated form, anything else is the parent's own input.
- */
 function tupleShape(k: string, m: string): SeatShape {
 	const seated = (p: string, c: string): string =>
 		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & { ${k}: ArgsOf<${c}> })`;
@@ -985,7 +958,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const extraImports = [
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
-		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach } from '../../utils.js';`,
+		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '../../utils.js';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
 	];
 	const anchor = blocks.indexOf(ERASED_HELPERS[ERASED_HELPERS.length - 3]!);

@@ -364,6 +364,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const usesHiddenLeaf = /\bHiddenLeaf\b/.test(body);
 	const usesKeywordNs = /\bKeywordNs\b/.test(body);
 	const usesLeafNs = /\bLeafNs\b/.test(body);
+	const usesOmitEach = /\bOmitEach\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -382,7 +383,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'BooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : []),
 		...(usesKindEnum ? ['KindEnum'] : []),
-		...(usesHiddenLeaf ? ['HiddenLeaf'] : [])
+		...(usesHiddenLeaf ? ['HiddenLeaf'] : []),
+		...(usesOmitEach ? ['OmitEach'] : [])
 	];
 	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
 
@@ -1107,7 +1109,7 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type Config = ${widenNumericSlots(omitRegistered(`ConfigFor<${nsKey}>`, node), node)};`);
 	}
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
-	if (spelling !== undefined) lines.push(`  export type Spelling = ${spelling};`);
+	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
@@ -1121,7 +1123,7 @@ function emitNamespaceSugarBlock(
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
 	const bareAnyNumber = bareNumeric || bareInterior?.number !== undefined;
-	lines.push(`  export type Loose = LooseFor<${nsKey}>${looseWidened}${bareText}${bareAnyNumber ? ' | number' : ''};`);
+	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareAnyNumber ? ' | number' : ''};`);
 	lines.push(`  export type LooseConfig = ${widenNumericSlots(omitRegistered(`LooseConfigFor<${nsKey}>`, node), node)};`);
 	if (surface !== undefined) {
 		lines.push(`  export type BuildArgs = ${surface.buildArgs};`);
@@ -1149,12 +1151,13 @@ function emitRefineFormSubNamespaces(
 		const shortName = formType.slice(parentTypeName.length);
 		lines.push(`  export namespace ${shortName} {`);
 		const narrowed = form.narrowedFields;
-		if (narrowed.length > 0) {
-			const omitKeys = narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ');
-			lines.push(`    export type Config = Omit<ConfigFor<${nsKey}>, ${omitKeys}>;`);
-		} else {
-			lines.push(`    export type Config = ConfigFor<${nsKey}>;`);
-		}
+		const base =
+			narrowed.length > 0
+				? `Omit<ConfigFor<${nsKey}>, ${narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ')}>`
+				: `ConfigFor<${nsKey}>`;
+		lines.push(`    export type Config = ${omitRegistered(base, node)};`);
+		const formSpelling = spellingTypeOf(node, nodeMap, kindEntries);
+		if (formSpelling !== undefined) lines.push(`    export type Options = ${formSpelling};`);
 		const surface = refineFormBuiltTypeSurfaceOf(node, form, refineInfo, nodeMap, kindEntries);
 		if (surface !== undefined) {
 			emitBuiltInterface(lines, surface, '    ');

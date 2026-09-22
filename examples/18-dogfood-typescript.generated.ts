@@ -13,6 +13,7 @@ export function rebuildFormatGenerated() {
 				}))),
 				source: ir.string.single.strict(ir.unescapedSingleStringFragment("@sittir/types")),
 			},
+		}, {
 			terminator: TSKindId.Semi,
 		}), ir.exportStatement.default.declaration.strict({
 			content: ir.functionDeclaration.strict({
@@ -32,27 +33,25 @@ export function rebuildFormatGenerated() {
 							name: ir.identifier("result"),
 							value: ir.identifier("canonicalRender"),
 						})],
+					}, {
 						terminator: TSKindId.Semi,
-					}), ir.expressionStatement.strict({
-						expression: ir.assignmentExpression.strict({
-							left: ir.identifier("result"),
-							right: ir.callExpression.call.strict({
-								function: ir.identifier("applyTrivia"),
-								arguments: ir.arguments.strict(ir.identifier("result"), ir.identifier("format")),
-							}),
+					}), ir.expressionStatement.strict(ir.assignmentExpression.strict({
+						left: ir.identifier("result"),
+						right: ir.callExpression.call.strict({
+							function: ir.identifier("applyTrivia"),
+							arguments: ir.arguments.strict(ir.identifier("result"), ir.identifier("format")),
 						}),
+					}), {
 						terminator: TSKindId.Semi,
-					}), ir.expressionStatement.strict({
-						expression: ir.assignmentExpression.strict({
-							left: ir.identifier("result"),
-							right: ir.callExpression.call.strict({
-								function: ir.identifier("applyBoundary"),
-								arguments: ir.arguments.strict(ir.identifier("result"), ir.identifier("format")),
-							}),
+					}), ir.expressionStatement.strict(ir.assignmentExpression.strict({
+						left: ir.identifier("result"),
+						right: ir.callExpression.call.strict({
+							function: ir.identifier("applyBoundary"),
+							arguments: ir.arguments.strict(ir.identifier("result"), ir.identifier("format")),
 						}),
+					}), {
 						terminator: TSKindId.Semi,
-					}), ir.returnStatement.strict({
-						expression: ir.identifier("result"),
+					}), ir.returnStatement.strict(ir.identifier("result"), {
 						terminator: TSKindId.Semi,
 					})],
 					automaticSemicolon: true,
@@ -76,6 +75,7 @@ export function rebuildFormatGenerated() {
 						name: ir.objectPattern.strict(ir.identifier("boundary")),
 						value: ir.identifier("format"),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.ifStatement.strict({
 					condition: ir.parenthesizedExpression.typed.strict({
@@ -84,8 +84,7 @@ export function rebuildFormatGenerated() {
 							argument: ir.identifier("boundary"),
 						}),
 					}),
-					consequence: ir.returnStatement.strict({
-						expression: ir.identifier("s"),
+					consequence: ir.returnStatement.strict(ir.identifier("s"), {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
@@ -102,6 +101,7 @@ export function rebuildFormatGenerated() {
 							right: ir.string.single.strict(),
 						}),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({
 					kind: TSKindId.ConstKeyword,
@@ -117,9 +117,9 @@ export function rebuildFormatGenerated() {
 							right: ir.string.single.strict(),
 						}),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
-				}), ir.returnStatement.strict({
-					expression: ir.templateString.strict(ir.templateSubstitution.strict(ir.identifier("leading")), ir.templateSubstitution.strict(ir.identifier("s")), ir.templateSubstitution.strict(ir.identifier("trailing"))),
+				}), ir.returnStatement.strict(ir.templateString.strict(ir.templateSubstitution.strict(ir.identifier("leading")), ir.templateSubstitution.strict(ir.identifier("s")), ir.templateSubstitution.strict(ir.identifier("trailing"))), {
 					terminator: TSKindId.Semi,
 				})],
 				automaticSemicolon: true,
@@ -142,6 +142,7 @@ export function rebuildFormatGenerated() {
 						name: ir.objectPattern.strict(ir.identifier("trivia")),
 						value: ir.identifier("format"),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.ifStatement.strict({
 					condition: ir.parenthesizedExpression.typed.strict({
@@ -162,8 +163,7 @@ export function rebuildFormatGenerated() {
 							}),
 						}),
 					}),
-					consequence: ir.returnStatement.strict({
-						expression: ir.identifier("s"),
+					consequence: ir.returnStatement.strict(ir.identifier("s"), {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
@@ -200,6 +200,7 @@ export function rebuildFormatGenerated() {
 							})),
 						}),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.lexicalDeclaration.strict({
 					kind: TSKindId.LetKeyword,
@@ -207,6 +208,7 @@ export function rebuildFormatGenerated() {
 						name: ir.identifier("result"),
 						value: ir.identifier("s"),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
 					body: ir.statementBlock.strict({
@@ -238,38 +240,38 @@ export function rebuildFormatGenerated() {
 									})),
 								}),
 							})],
+						}, {
 							terminator: TSKindId.Semi,
-						}), ir.expressionStatement.strict({
-							expression: ir.assignmentExpression.strict({
-								left: ir.identifier("result"),
-								right: ir.binaryExpression.strict({
-									left: ir.binaryExpression.strict({
-										left: ir.callExpression.call.strict({
-											function: ir.memberExpression.strict({
-												object: ir.identifier("result"),
-												separator: TSKindId.Dot,
-												property: ir.identifier("slice"),
-											}),
-											arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("offset")),
-										}),
-										operator: TSKindId.Plus,
-										right: ir.memberExpression.strict({
-											object: ir.identifier("item"),
-											separator: TSKindId.Dot,
-											property: ir.identifier("text"),
-										}),
-									}),
-									operator: TSKindId.Plus,
-									right: ir.callExpression.call.strict({
+						}), ir.expressionStatement.strict(ir.assignmentExpression.strict({
+							left: ir.identifier("result"),
+							right: ir.binaryExpression.strict({
+								left: ir.binaryExpression.strict({
+									left: ir.callExpression.call.strict({
 										function: ir.memberExpression.strict({
 											object: ir.identifier("result"),
 											separator: TSKindId.Dot,
 											property: ir.identifier("slice"),
 										}),
-										arguments: ir.arguments.strict(ir.identifier("offset")),
+										arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("offset")),
+									}),
+									operator: TSKindId.Plus,
+									right: ir.memberExpression.strict({
+										object: ir.identifier("item"),
+										separator: TSKindId.Dot,
+										property: ir.identifier("text"),
 									}),
 								}),
+								operator: TSKindId.Plus,
+								right: ir.callExpression.call.strict({
+									function: ir.memberExpression.strict({
+										object: ir.identifier("result"),
+										separator: TSKindId.Dot,
+										property: ir.identifier("slice"),
+									}),
+									arguments: ir.arguments.strict(ir.identifier("offset")),
+								}),
 							}),
+						}), {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
@@ -280,8 +282,7 @@ export function rebuildFormatGenerated() {
 						operator: TSKindId.OfKeyword,
 						right: ir.identifier("sorted"),
 					}),
-				}), ir.returnStatement.strict({
-					expression: ir.identifier("result"),
+				}), ir.returnStatement.strict(ir.identifier("result"), {
 					terminator: TSKindId.Semi,
 				})],
 				automaticSemicolon: true,
@@ -315,6 +316,7 @@ export function rebuildFormatGenerated() {
 								}), ir.identifier("editStart"), ir.identifier("delta")),
 							}),
 						})],
+					}, {
 						terminator: TSKindId.Semi,
 					}), ir.lexicalDeclaration.strict({
 						kind: TSKindId.ConstKeyword,
@@ -329,29 +331,29 @@ export function rebuildFormatGenerated() {
 								}), ir.identifier("editStart"), ir.identifier("delta")),
 							}),
 						})],
+					}, {
 						terminator: TSKindId.Semi,
-					}), ir.returnStatement.strict({
-						expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
-							expression: ir.binaryExpression.strict({
-								left: ir.binaryExpression.strict({
-									left: ir.identifier("trivia"),
-									operator: TSKindId.BangEqEq,
-									right: TSKindId.Undefined,
-								}),
-								operator: TSKindId.AmpAmp,
-								right: ir.object.strict(ir.identifier("trivia")),
+					}), ir.returnStatement.strict(ir.object.strict(ir.spreadElement.strict(ir.identifier("format")), ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
+						expression: ir.binaryExpression.strict({
+							left: ir.binaryExpression.strict({
+								left: ir.identifier("trivia"),
+								operator: TSKindId.BangEqEq,
+								right: TSKindId.Undefined,
 							}),
-						})), ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
-							expression: ir.binaryExpression.strict({
-								left: ir.binaryExpression.strict({
-									left: ir.identifier("kinds"),
-									operator: TSKindId.BangEqEq,
-									right: TSKindId.Undefined,
-								}),
-								operator: TSKindId.AmpAmp,
-								right: ir.object.strict(ir.identifier("kinds")),
+							operator: TSKindId.AmpAmp,
+							right: ir.object.strict(ir.identifier("trivia")),
+						}),
+					})), ir.spreadElement.strict(ir.parenthesizedExpression.typed.strict({
+						expression: ir.binaryExpression.strict({
+							left: ir.binaryExpression.strict({
+								left: ir.identifier("kinds"),
+								operator: TSKindId.BangEqEq,
+								right: TSKindId.Undefined,
 							}),
-						}))),
+							operator: TSKindId.AmpAmp,
+							right: ir.object.strict(ir.identifier("kinds")),
+						}),
+					}))), {
 						terminator: TSKindId.Semi,
 					})],
 					automaticSemicolon: true,
@@ -385,72 +387,69 @@ export function rebuildFormatGenerated() {
 							argument: ir.identifier("trivia"),
 						}),
 					}),
-					consequence: ir.returnStatement.strict({
-						expression: TSKindId.Undefined,
+					consequence: ir.returnStatement.strict(TSKindId.Undefined, {
 						terminator: TSKindId.Semi,
 					}),
-				}), ir.returnStatement.strict({
-					expression: ir.callExpression.call.strict({
-						function: ir.memberExpression.strict({
-							object: ir.identifier("trivia"),
-							separator: TSKindId.Dot,
-							property: ir.identifier("map"),
-						}),
-						arguments: ir.arguments.strict(ir.arrowFunction.strict({
-							body: ir.statementBlock.strict({
-								statements: [ir.ifStatement.strict({
-									condition: ir.parenthesizedExpression.typed.strict({
-										expression: ir.binaryExpression.strict({
-											left: ir.memberExpression.strict({
-												object: ir.identifier("item"),
-												separator: TSKindId.Dot,
-												property: ir.identifier("offset"),
-											}),
-											operator: TSKindId.Lt,
-											right: ir.identifier("editStart"),
-										}),
-									}),
-									consequence: ir.returnStatement.strict({
-										expression: ir.identifier("item"),
-										terminator: TSKindId.Semi,
-									}),
-								}), ir.lexicalDeclaration.strict({
-									kind: TSKindId.ConstKeyword,
-									declarators: [ir.variableDeclarator.plain.strict({
-										name: ir.identifier("newOffset"),
-										value: ir.binaryExpression.strict({
-											left: ir.memberExpression.strict({
-												object: ir.identifier("item"),
-												separator: TSKindId.Dot,
-												property: ir.identifier("offset"),
-											}),
-											operator: TSKindId.Plus,
-											right: ir.identifier("delta"),
-										}),
-									})],
-									terminator: TSKindId.Semi,
-								}), ir.returnStatement.strict({
-									expression: ir.object.strict(ir.spreadElement.strict(ir.identifier("item")), ir.pair.strict({
-										key: ir.identifier("offset"),
-										value: ir.callExpression.call.strict({
-											function: ir.memberExpression.strict({
-												object: ir.identifier("Math"),
-												separator: TSKindId.Dot,
-												property: ir.identifier("max"),
-											}),
-											arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("newOffset")),
-										}),
-									})),
-									terminator: TSKindId.Semi,
-								}).$trivia.leading("// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output).")],
-							}),
-							content: ir.callSignature.strict({
-								parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
-									pattern: ir.identifier("item"),
-								})),
-							}),
-						})),
+				}), ir.returnStatement.strict(ir.callExpression.call.strict({
+					function: ir.memberExpression.strict({
+						object: ir.identifier("trivia"),
+						separator: TSKindId.Dot,
+						property: ir.identifier("map"),
 					}),
+					arguments: ir.arguments.strict(ir.arrowFunction.strict({
+						body: ir.statementBlock.strict({
+							statements: [ir.ifStatement.strict({
+								condition: ir.parenthesizedExpression.typed.strict({
+									expression: ir.binaryExpression.strict({
+										left: ir.memberExpression.strict({
+											object: ir.identifier("item"),
+											separator: TSKindId.Dot,
+											property: ir.identifier("offset"),
+										}),
+										operator: TSKindId.Lt,
+										right: ir.identifier("editStart"),
+									}),
+								}),
+								consequence: ir.returnStatement.strict(ir.identifier("item"), {
+									terminator: TSKindId.Semi,
+								}),
+							}), ir.lexicalDeclaration.strict({
+								kind: TSKindId.ConstKeyword,
+								declarators: [ir.variableDeclarator.plain.strict({
+									name: ir.identifier("newOffset"),
+									value: ir.binaryExpression.strict({
+										left: ir.memberExpression.strict({
+											object: ir.identifier("item"),
+											separator: TSKindId.Dot,
+											property: ir.identifier("offset"),
+										}),
+										operator: TSKindId.Plus,
+										right: ir.identifier("delta"),
+									}),
+								})],
+							}, {
+								terminator: TSKindId.Semi,
+							}), ir.returnStatement.strict(ir.object.strict(ir.spreadElement.strict(ir.identifier("item")), ir.pair.strict({
+								key: ir.identifier("offset"),
+								value: ir.callExpression.call.strict({
+									function: ir.memberExpression.strict({
+										object: ir.identifier("Math"),
+										separator: TSKindId.Dot,
+										property: ir.identifier("max"),
+									}),
+									arguments: ir.arguments.strict(ir.number.decimal("0"), ir.identifier("newOffset")),
+								}),
+							})), {
+								terminator: TSKindId.Semi,
+							}).$trivia.leading("// Clamp to zero: a large negative delta must not produce a negative", "// offset (negative indices into slice() silently corrupt output).")],
+						}),
+						content: ir.callSignature.strict({
+							parameters: ir.formalParameters.strict({ delimiter: Delimiter.None }, ir.requiredParameter.strict({
+								pattern: ir.identifier("item"),
+							})),
+						}),
+					})),
+				}), {
 					terminator: TSKindId.Semi,
 				})],
 				automaticSemicolon: true,
@@ -489,8 +488,7 @@ export function rebuildFormatGenerated() {
 							argument: ir.identifier("kinds"),
 						}),
 					}),
-					consequence: ir.returnStatement.strict({
-						expression: TSKindId.Undefined,
+					consequence: ir.returnStatement.strict(TSKindId.Undefined, {
 						terminator: TSKindId.Semi,
 					}),
 				}), ir.lexicalDeclaration.strict({
@@ -503,20 +501,20 @@ export function rebuildFormatGenerated() {
 						})),
 						value: ir.object.strict(),
 					})],
+				}, {
 					terminator: TSKindId.Semi,
 				}), ir.forInStatement.strict({
 					body: ir.statementBlock.strict({
-						statements: [ir.expressionStatement.strict({
-							expression: ir.assignmentExpression.strict({
-								left: ir.subscriptExpression.strict({
-									object: ir.identifier("result"),
-									index: ir.identifier("key"),
-								}),
-								right: ir.callExpression.call.strict({
-									function: ir.identifier("rebaseTrivia"),
-									arguments: ir.arguments.strict(ir.identifier("sub"), ir.identifier("editStart"), ir.identifier("delta")),
-								}),
+						statements: [ir.expressionStatement.strict(ir.assignmentExpression.strict({
+							left: ir.subscriptExpression.strict({
+								object: ir.identifier("result"),
+								index: ir.identifier("key"),
 							}),
+							right: ir.callExpression.call.strict({
+								function: ir.identifier("rebaseTrivia"),
+								arguments: ir.arguments.strict(ir.identifier("sub"), ir.identifier("editStart"), ir.identifier("delta")),
+							}),
+						}), {
 							terminator: TSKindId.Semi,
 						})],
 						automaticSemicolon: true,
@@ -534,8 +532,7 @@ export function rebuildFormatGenerated() {
 							arguments: ir.arguments.strict(ir.identifier("kinds")),
 						}),
 					}),
-				}), ir.returnStatement.strict({
-					expression: ir.identifier("result"),
+				}), ir.returnStatement.strict(ir.identifier("result"), {
 					terminator: TSKindId.Semi,
 				})],
 				automaticSemicolon: true,

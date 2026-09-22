@@ -178,7 +178,7 @@ function hoistedCandidatesOf(
 		if (s === exclude || isMultiple(s)) continue;
 		const values = slotValuesOf(s, nodeMap);
 		if (values.length < 2 && !values.some((v) => isChoiceGroup(node, v, nodeMap, isEmitted, visiting))) continue;
-		const residual = node.slots.filter((f) => f !== s);
+		const residual = node.configSlots.filter((f) => f !== s);
 		for (const value of values) {
 			if (!isNodeRef(value)) continue;
 			const child = nodeMap.nodes.get(storageKindOfRef(value.node));
@@ -248,13 +248,13 @@ function derive(
 			slot = enumSlot;
 		} else {
 			slot = node.soleSlot!;
-			const residual = node.slots.filter((f) => f !== slot);
+			const residual = node.configSlots.filter((f) => f !== slot);
 			candidates.push(...grandArmCandidates(node, forwardChild, slot, residual, nodeMap, isEmitted, nextVisiting));
 			return resolveCandidates(node, candidates, nodeMap, isEmitted, nextVisiting);
 		}
 	}
 
-	const residual = node.slots.filter((f) => f !== slot);
+	const residual = node.configSlots.filter((f) => f !== slot);
 
 	for (const value of slotValuesOf(slot, nodeMap)) {
 		if (isTerminalValue(value)) {

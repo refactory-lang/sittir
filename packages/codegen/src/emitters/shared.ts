@@ -812,9 +812,20 @@ export function classifyFactoryShape(
 	if (node instanceof AbstractAssembledCompound) {
 		const slot = node.soleSlot;
 		if (slot !== undefined) {
-			if (isMultiple(slot)) return 'spread';
-			if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
-			return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+			if (isMultiple(slot)) {
+				// A rest parameter must be last in a JS/TS signature, so a node
+				// with a registered slot (which takes a trailing options
+				// argument) can never expose the bare spread-children surface —
+				// every consumer of this shape (factory surface, from()/coerce
+				// emission, wrap, test generation) needs to agree on that, so
+				// the fallback to 'config' lives here rather than being
+				// special-cased downstream.
+				const hasRegistered = node.slots.some((f) => f.registeredOption !== undefined);
+				if (!hasRegistered) return 'spread';
+			} else {
+				if (!resolveDirectFactorySlot(node, nodeMap)) return 'config';
+				return forwardedTargetKind(node, nodeMap) !== null ? 'forwarded' : 'direct';
+			}
 		}
 		return 'config';
 	}

@@ -212,14 +212,17 @@ export function buildImport(): TSKindId.Import {
 	return TSKindId.Import;
 }
 
-export function buildImportStatement(config: T.ImportStatement.Config): T.ImportStatement.Built {
+export function buildImportStatement(
+	config: T.ImportStatement.Config,
+	options?: T.ImportStatement.Options
+): T.ImportStatement.Built {
 	const _import_clause = coerceKindEnumStorage<NonNullable<T.ImportStatement['_import_clause']>>(config.importClause, [
 		['type', TSKindId.TypeKeyword] as const,
 		['typeof', TSKindId.TypeofKeyword] as const
 	]);
 	const _from_clause = config.fromClause;
 	const _import_attribute = config.importAttribute;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportStatement['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -235,12 +238,13 @@ export function buildImportStatement(config: T.ImportStatement.Config): T.Import
 				_terminator,
 				$with: {
 					importClause: (value?: NonNullable<T.ImportStatement.Config>['importClause']) =>
-						buildImportStatement({ ...config, importClause: value }),
+						buildImportStatement({ ...config, importClause: value }, options),
 					fromClause: (value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String) =>
-						buildImportStatement({ ...config, fromClause: value }),
-					importAttribute: (value?: T.ImportAttribute) => buildImportStatement({ ...config, importAttribute: value }),
-					terminator: (value: NonNullable<T.ImportStatement.Config>['terminator']) =>
-						buildImportStatement({ ...config, terminator: value })
+						buildImportStatement({ ...config, fromClause: value }, options),
+					importAttribute: (value?: T.ImportAttribute) =>
+						buildImportStatement({ ...config, importAttribute: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildImportStatement(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -382,9 +386,12 @@ export function buildImportAttribute(config: T.ImportAttribute.Config): T.Import
 	);
 }
 
-export function buildExpressionStatement(config: T.ExpressionStatement.Config): T.ExpressionStatement.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_expression']>>(config.expression, []);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ExpressionStatement['_terminator']>>(config.terminator, [
+export function buildExpressionStatement(
+	value: T.Expression | T.SequenceExpression,
+	options?: T.ExpressionStatement.Options
+): T.ExpressionStatement.Built {
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ExpressionStatement['_expression']>>(value, []);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ExpressionStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -397,10 +404,10 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config): 
 				_expression,
 				_terminator,
 				$with: {
-					expression: (value: NonNullable<T.ExpressionStatement.Config>['expression']) =>
-						buildExpressionStatement({ ...config, expression: value }),
-					terminator: (value: NonNullable<T.ExpressionStatement.Config>['terminator']) =>
-						buildExpressionStatement({ ...config, terminator: value })
+					expression: (value: NonNullable<T.Expression | T.SequenceExpression>) =>
+						buildExpressionStatement(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExpressionStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -412,9 +419,12 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config): 
 	);
 }
 
-export function buildVariableDeclaration(config: T.VariableDeclaration.Config): T.VariableDeclaration.Built {
+export function buildVariableDeclaration(
+	config: T.VariableDeclaration.Config,
+	options?: T.VariableDeclaration.Options
+): T.VariableDeclaration.Built {
 	const _declarators = config.declarators ?? [];
-	const _terminator = coerceKindEnumStorage<NonNullable<T.VariableDeclaration['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.VariableDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -428,9 +438,9 @@ export function buildVariableDeclaration(config: T.VariableDeclaration.Config): 
 				_terminator,
 				$with: {
 					declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
-						buildVariableDeclaration({ ...config, declarators: values }),
-					terminator: (value: NonNullable<T.VariableDeclaration.Config>['terminator']) =>
-						buildVariableDeclaration({ ...config, terminator: value })
+						buildVariableDeclaration({ ...config, declarators: values }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildVariableDeclaration(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -442,13 +452,16 @@ export function buildVariableDeclaration(config: T.VariableDeclaration.Config): 
 	);
 }
 
-export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.LexicalDeclaration.Built {
+export function buildLexicalDeclaration(
+	config: T.LexicalDeclaration.Config,
+	options?: T.LexicalDeclaration.Options
+): T.LexicalDeclaration.Built {
 	const _kind = coerceKindEnumStorage<NonNullable<T.LexicalDeclaration['_kind']>>(config.kind, [
 		['let', TSKindId.LetKeyword] as const,
 		['const', TSKindId.ConstKeyword] as const
 	]);
 	const _declarators = config.declarators ?? [];
-	const _terminator = coerceKindEnumStorage<NonNullable<T.LexicalDeclaration['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.LexicalDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -463,11 +476,11 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config): T.
 				_terminator,
 				$with: {
 					kind: (value: NonNullable<T.LexicalDeclaration.Config>['kind']) =>
-						buildLexicalDeclaration({ ...config, kind: value }),
+						buildLexicalDeclaration({ ...config, kind: value }, options),
 					declarators: (...values: NonEmptyArray<T.VariableDeclarator>) =>
-						buildLexicalDeclaration({ ...config, declarators: values }),
-					terminator: (value: NonNullable<T.LexicalDeclaration.Config>['terminator']) =>
-						buildLexicalDeclaration({ ...config, terminator: value })
+						buildLexicalDeclaration({ ...config, declarators: values }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildLexicalDeclaration(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -678,10 +691,10 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 	);
 }
 
-export function buildDoStatement(config: T.DoStatement.Config): T.DoStatement.Built {
+export function buildDoStatement(config: T.DoStatement.Config, options?: T.DoStatement.Options): T.DoStatement.Built {
 	const _body = coerceMixedEnumStorage<NonNullable<T.DoStatement['_body']>>(config.body, []);
 	const _condition = config.condition;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DoStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -695,10 +708,11 @@ export function buildDoStatement(config: T.DoStatement.Config): T.DoStatement.Bu
 				_condition,
 				_terminator,
 				$with: {
-					body: (value: NonNullable<T.DoStatement.Config>['body']) => buildDoStatement({ ...config, body: value }),
-					condition: (value: T.ParenthesizedExpression) => buildDoStatement({ ...config, condition: value }),
-					terminator: (value?: NonNullable<T.DoStatement.Config>['terminator']) =>
-						buildDoStatement({ ...config, terminator: value })
+					body: (value: NonNullable<T.DoStatement.Config>['body']) =>
+						buildDoStatement({ ...config, body: value }, options),
+					condition: (value: T.ParenthesizedExpression) => buildDoStatement({ ...config, condition: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildDoStatement(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -765,9 +779,32 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 	);
 }
 
-export function buildBreakStatement(config: Partial<T.BreakStatement.Config> = {}): T.BreakStatement.Built {
-	const _label = config.label;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.BreakStatement['_terminator']>>(config.terminator, [
+export function buildBreakStatement(
+	value?: T.Identifier,
+	options?: T.BreakStatement.Options
+): ReturnType<typeof _buildBreakStatement>;
+export function buildBreakStatement(text: string): ReturnType<typeof _buildBreakStatement>;
+export function buildBreakStatement(...args: unknown[]) {
+	if (args.length === 1 && typeof args[0] !== 'object') {
+		return _buildBreakStatement(args[0] as T.Identifier);
+	}
+	if (args[0] === undefined) {
+		return _buildBreakStatement(args[0] as unknown as T.Identifier, args[1] as never);
+	}
+	const prebuilt =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
+	return prebuilt
+		? _buildBreakStatement(args[0] as T.Identifier, args[1] as never)
+		: _buildBreakStatement(
+				(buildIdentifier as (...a: unknown[]) => unknown)(args[0]) as T.Identifier,
+				args[1] as never
+			);
+}
+function _buildBreakStatement(value?: T.Identifier, options?: T.BreakStatement.Options): T.BreakStatement.Built {
+	const _label = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.BreakStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -780,9 +817,9 @@ export function buildBreakStatement(config: Partial<T.BreakStatement.Config> = {
 				_label,
 				_terminator,
 				$with: {
-					label: (value?: T.Identifier) => buildBreakStatement({ ...config, label: value }),
-					terminator: (value: NonNullable<T.BreakStatement.Config>['terminator']) =>
-						buildBreakStatement({ ...config, terminator: value })
+					label: (value?: T.Identifier) => buildBreakStatement(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildBreakStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -794,9 +831,35 @@ export function buildBreakStatement(config: Partial<T.BreakStatement.Config> = {
 	);
 }
 
-export function buildContinueStatement(config: Partial<T.ContinueStatement.Config> = {}): T.ContinueStatement.Built {
-	const _label = config.label;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ContinueStatement['_terminator']>>(config.terminator, [
+export function buildContinueStatement(
+	value?: T.Identifier,
+	options?: T.ContinueStatement.Options
+): ReturnType<typeof _buildContinueStatement>;
+export function buildContinueStatement(text: string): ReturnType<typeof _buildContinueStatement>;
+export function buildContinueStatement(...args: unknown[]) {
+	if (args.length === 1 && typeof args[0] !== 'object') {
+		return _buildContinueStatement(args[0] as T.Identifier);
+	}
+	if (args[0] === undefined) {
+		return _buildContinueStatement(args[0] as unknown as T.Identifier, args[1] as never);
+	}
+	const prebuilt =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
+	return prebuilt
+		? _buildContinueStatement(args[0] as T.Identifier, args[1] as never)
+		: _buildContinueStatement(
+				(buildIdentifier as (...a: unknown[]) => unknown)(args[0]) as T.Identifier,
+				args[1] as never
+			);
+}
+function _buildContinueStatement(
+	value?: T.Identifier,
+	options?: T.ContinueStatement.Options
+): T.ContinueStatement.Built {
+	const _label = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ContinueStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -809,9 +872,9 @@ export function buildContinueStatement(config: Partial<T.ContinueStatement.Confi
 				_label,
 				_terminator,
 				$with: {
-					label: (value?: T.Identifier) => buildContinueStatement({ ...config, label: value }),
-					terminator: (value: NonNullable<T.ContinueStatement.Config>['terminator']) =>
-						buildContinueStatement({ ...config, terminator: value })
+					label: (value?: T.Identifier) => buildContinueStatement(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildContinueStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -847,9 +910,12 @@ export function buildDebuggerStatement(value: TSKindId.AutomaticSemicolon | TSKi
 	);
 }
 
-export function buildReturnStatement(config: Partial<T.ReturnStatement.Config> = {}): T.ReturnStatement.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expression']>>(config.expression, []);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ReturnStatement['_terminator']>>(config.terminator, [
+export function buildReturnStatement(
+	value?: T.Expression | T.SequenceExpression,
+	options?: T.ReturnStatement.Options
+): T.ReturnStatement.Built {
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ReturnStatement['_expression']>>(value, []);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ReturnStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -862,10 +928,10 @@ export function buildReturnStatement(config: Partial<T.ReturnStatement.Config> =
 				_expression,
 				_terminator,
 				$with: {
-					expression: (value?: NonNullable<T.ReturnStatement.Config>['expression']) =>
-						buildReturnStatement({ ...config, expression: value }),
-					terminator: (value: NonNullable<T.ReturnStatement.Config>['terminator']) =>
-						buildReturnStatement({ ...config, terminator: value })
+					expression: (value?: NonNullable<T.Expression | T.SequenceExpression>) =>
+						buildReturnStatement(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildReturnStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -877,9 +943,12 @@ export function buildReturnStatement(config: Partial<T.ReturnStatement.Config> =
 	);
 }
 
-export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowStatement.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ThrowStatement['_expression']>>(config.expression, []);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ThrowStatement['_terminator']>>(config.terminator, [
+export function buildThrowStatement(
+	value: T.Expression | T.SequenceExpression,
+	options?: T.ThrowStatement.Options
+): T.ThrowStatement.Built {
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ThrowStatement['_expression']>>(value, []);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ThrowStatement['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -892,10 +961,9 @@ export function buildThrowStatement(config: T.ThrowStatement.Config): T.ThrowSta
 				_expression,
 				_terminator,
 				$with: {
-					expression: (value: NonNullable<T.ThrowStatement.Config>['expression']) =>
-						buildThrowStatement({ ...config, expression: value }),
-					terminator: (value: NonNullable<T.ThrowStatement.Config>['terminator']) =>
-						buildThrowStatement({ ...config, terminator: value })
+					expression: (value: NonNullable<T.Expression | T.SequenceExpression>) => buildThrowStatement(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildThrowStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -2986,13 +3054,16 @@ export function buildAbstractMethodSignature(
 	);
 }
 
-export function buildFunctionSignature(config: T.FunctionSignature.Config): T.FunctionSignature.Built {
+export function buildFunctionSignature(
+	config: T.FunctionSignature.Config,
+	options?: T.FunctionSignature.Options
+): T.FunctionSignature.Built {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters ?? buildFormalParameters();
 	const _return_type = config.returnType;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionSignature['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.FunctionSignature['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
@@ -3011,14 +3082,16 @@ export function buildFunctionSignature(config: T.FunctionSignature.Config): T.Fu
 				_terminator,
 				$with: {
 					asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
-						buildFunctionSignature({ ...config, asyncMarker: value }),
-					name: (value: T.Identifier) => buildFunctionSignature({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildFunctionSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }),
+						buildFunctionSignature({ ...config, asyncMarker: value }, options),
+					name: (value: T.Identifier) => buildFunctionSignature({ ...config, name: value }, options),
+					typeParameters: (value?: T.TypeParameters) =>
+						buildFunctionSignature({ ...config, typeParameters: value }, options),
+					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }, options),
 					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildFunctionSignature({ ...config, returnType: value }),
-					terminator: (value: NonNullable<T.FunctionSignature.Config>['terminator']) =>
-						buildFunctionSignature({ ...config, terminator: value })
+						buildFunctionSignature({ ...config, returnType: value }, options),
+					terminator: (
+						spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
+					) => buildFunctionSignature(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -3381,10 +3454,10 @@ export function buildInternalModule(config: T.InternalModule.Config): T.Internal
 	);
 }
 
-export function buildImportAlias(config: T.ImportAlias.Config): T.ImportAlias.Built {
+export function buildImportAlias(config: T.ImportAlias.Config, options?: T.ImportAlias.Options): T.ImportAlias.Built {
 	const _name = config.name;
 	const _value = config.value;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportAlias['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ImportAlias['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -3398,10 +3471,10 @@ export function buildImportAlias(config: T.ImportAlias.Config): T.ImportAlias.Bu
 				_value,
 				_terminator,
 				$with: {
-					name: (value: T.Identifier) => buildImportAlias({ ...config, name: value }),
-					value: (value: T.Identifier | T.NestedIdentifier) => buildImportAlias({ ...config, value: value }),
-					terminator: (value: NonNullable<T.ImportAlias.Config>['terminator']) =>
-						buildImportAlias({ ...config, terminator: value })
+					name: (value: T.Identifier) => buildImportAlias({ ...config, name: value }, options),
+					value: (value: T.Identifier | T.NestedIdentifier) => buildImportAlias({ ...config, value: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildImportAlias(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -3610,11 +3683,14 @@ export function buildEnumAssignment(config: T.EnumAssignment.Config): T.EnumAssi
 	);
 }
 
-export function buildTypeAliasDeclaration(config: T.TypeAliasDeclaration.Config): T.TypeAliasDeclaration.Built {
+export function buildTypeAliasDeclaration(
+	config: T.TypeAliasDeclaration.Config,
+	options?: T.TypeAliasDeclaration.Options
+): T.TypeAliasDeclaration.Built {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _value = coerceMixedEnumStorage<NonNullable<T.TypeAliasDeclaration['_value']>>(config.value, []);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.TypeAliasDeclaration['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.TypeAliasDeclaration['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -3629,12 +3705,13 @@ export function buildTypeAliasDeclaration(config: T.TypeAliasDeclaration.Config)
 				_value,
 				_terminator,
 				$with: {
-					name: (value: T.Identifier) => buildTypeAliasDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildTypeAliasDeclaration({ ...config, typeParameters: value }),
+					name: (value: T.Identifier) => buildTypeAliasDeclaration({ ...config, name: value }, options),
+					typeParameters: (value?: T.TypeParameters) =>
+						buildTypeAliasDeclaration({ ...config, typeParameters: value }, options),
 					value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
-						buildTypeAliasDeclaration({ ...config, value: value }),
-					terminator: (value: NonNullable<T.TypeAliasDeclaration.Config>['terminator']) =>
-						buildTypeAliasDeclaration({ ...config, terminator: value })
+						buildTypeAliasDeclaration({ ...config, value: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildTypeAliasDeclaration(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -5761,14 +5838,15 @@ function _buildAmbientDeclarationGlobal(value: T.StatementBlock): T.AmbientDecla
 }
 
 export function buildAmbientDeclarationModule(
-	config: T.AmbientDeclarationModule.Config
+	config: T.AmbientDeclarationModule.Config,
+	options?: T.AmbientDeclarationModule.Options
 ): T.AmbientDeclarationModule.Built {
 	const _name = config.name;
 	const _type = coerceMixedEnumStorage<NonNullable<T.AmbientDeclarationModule['_type']>>(config.type, []);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(config.terminator, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const
-	]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.AmbientDeclarationModule['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5779,11 +5857,11 @@ export function buildAmbientDeclarationModule(
 				_type,
 				_terminator,
 				$with: {
-					name: (value: T.Identifier) => buildAmbientDeclarationModule({ ...config, name: value }),
+					name: (value: T.Identifier) => buildAmbientDeclarationModule({ ...config, name: value }, options),
 					type: (value: NonNullable<T.AmbientDeclarationModule.Config>['type']) =>
-						buildAmbientDeclarationModule({ ...config, type: value }),
-					terminator: (value?: NonNullable<T.AmbientDeclarationModule.Config>['terminator']) =>
-						buildAmbientDeclarationModule({ ...config, terminator: value })
+						buildAmbientDeclarationModule({ ...config, type: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildAmbientDeclarationModule(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -5909,11 +5987,37 @@ function _buildObjectTypeContent(
 }
 
 export function buildExportStatementNamespaceExport(
-	config: T.ExportStatementNamespaceExport.Config
+	value: T.Identifier,
+	options?: T.ExportStatementNamespaceExport.Options
+): ReturnType<typeof _buildExportStatementNamespaceExport>;
+export function buildExportStatementNamespaceExport(
+	text: string
+): ReturnType<typeof _buildExportStatementNamespaceExport>;
+export function buildExportStatementNamespaceExport(...args: unknown[]) {
+	if (args.length === 1 && typeof args[0] !== 'object') {
+		return _buildExportStatementNamespaceExport(args[0] as T.Identifier);
+	}
+	if (args[0] === undefined) {
+		return _buildExportStatementNamespaceExport(args[0] as unknown as T.Identifier, args[1] as never);
+	}
+	const prebuilt =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Identifier as const);
+	return prebuilt
+		? _buildExportStatementNamespaceExport(args[0] as T.Identifier, args[1] as never)
+		: _buildExportStatementNamespaceExport(
+				(buildIdentifier as (...a: unknown[]) => unknown)(args[0]) as T.Identifier,
+				args[1] as never
+			);
+}
+function _buildExportStatementNamespaceExport(
+	value: T.Identifier,
+	options?: T.ExportStatementNamespaceExport.Options
 ): T.ExportStatementNamespaceExport.Built {
-	const _name = config.name;
+	const _name = value;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementNamespaceExport['_terminator']>>(
-		config.terminator,
+		options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	return withMethods(
@@ -5925,9 +6029,9 @@ export function buildExportStatementNamespaceExport(
 				_name,
 				_terminator,
 				$with: {
-					name: (value: T.Identifier) => buildExportStatementNamespaceExport({ ...config, name: value }),
-					terminator: (value: NonNullable<T.ExportStatementNamespaceExport.Config>['terminator']) =>
-						buildExportStatementNamespaceExport({ ...config, terminator: value })
+					name: (value: T.Identifier) => buildExportStatementNamespaceExport(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExportStatementNamespaceExport(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -5940,12 +6044,13 @@ export function buildExportStatementNamespaceExport(
 }
 
 export function buildExportStatementTypeExport(
-	config: T.ExportStatementTypeExport.Config
+	config: Partial<T.ExportStatementTypeExport.Config> = {},
+	options?: T.ExportStatementTypeExport.Options
 ): T.ExportStatementTypeExport.Built {
 	const _export_clause = config.exportClause ?? buildExportClause();
 	const _source = config.source;
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementTypeExport['_terminator']>>(
-		config.terminator,
+		options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	return withMethods(
@@ -5958,10 +6063,11 @@ export function buildExportStatementTypeExport(
 				_source,
 				_terminator,
 				$with: {
-					exportClause: (value: T.ExportClause) => buildExportStatementTypeExport({ ...config, exportClause: value }),
-					source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }),
-					terminator: (value: NonNullable<T.ExportStatementTypeExport.Config>['terminator']) =>
-						buildExportStatementTypeExport({ ...config, terminator: value })
+					exportClause: (value: T.ExportClause) =>
+						buildExportStatementTypeExport({ ...config, exportClause: value }, options),
+					source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExportStatementTypeExport(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -5975,14 +6081,12 @@ export function buildExportStatementTypeExport(
 }
 
 export function buildExportStatementEqualsExport(
-	config: T.ExportStatementEqualsExport.Config
+	value: T.Expression,
+	options?: T.ExportStatementEqualsExport.Options
 ): T.ExportStatementEqualsExport.Built {
-	const _expression = coerceMixedEnumStorage<NonNullable<T.ExportStatementEqualsExport['_expression']>>(
-		config.expression,
-		[]
-	);
+	const _expression = coerceMixedEnumStorage<NonNullable<T.ExportStatementEqualsExport['_expression']>>(value, []);
 	const _terminator = coerceKindEnumStorage<NonNullable<T.ExportStatementEqualsExport['_terminator']>>(
-		config.terminator,
+		options?.terminator,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	return withMethods(
@@ -5994,10 +6098,9 @@ export function buildExportStatementEqualsExport(
 				_expression,
 				_terminator,
 				$with: {
-					expression: (value: NonNullable<T.ExportStatementEqualsExport.Config>['expression']) =>
-						buildExportStatementEqualsExport({ ...config, expression: value }),
-					terminator: (value: NonNullable<T.ExportStatementEqualsExport.Config>['terminator']) =>
-						buildExportStatementEqualsExport({ ...config, terminator: value })
+					expression: (value: NonNullable<T.Expression>) => buildExportStatementEqualsExport(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExportStatementEqualsExport(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -6055,7 +6158,7 @@ export function buildCommentBlock(value: string): T.CommentBlock.Built {
 	);
 }
 
-export function buildNumberHex(value: string | number, options?: T.NumberHex.Spelling): T.NumberHex.Built {
+export function buildNumberHex(value: string | number, options?: T.NumberHex.Options): T.NumberHex.Built {
 	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
 		throw new Error(`number_hex.prefix: text does not match pattern: ${_prefix}`);
@@ -6086,7 +6189,7 @@ export function buildNumberHex(value: string | number, options?: T.NumberHex.Spe
 
 export function buildNumberFloatPoint(
 	config: WidenNumeric<T.NumberFloatPoint.Config, 'integer' | 'fraction' | 'exponent'>,
-	options?: T.NumberFloatPoint.Spelling
+	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatPoint_integer.test(_integer))
@@ -6136,7 +6239,7 @@ export function buildNumberFloatPoint(
 
 export function buildNumberFloatLeadingPoint(
 	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, 'fraction' | 'exponent'>,
-	options?: T.NumberFloatLeadingPoint.Spelling
+	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Built {
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
@@ -6180,7 +6283,7 @@ export function buildNumberFloatLeadingPoint(
 
 export function buildNumberFloatScientific(
 	config: WidenNumeric<T.NumberFloatScientific.Config, 'integer' | 'exponent'>,
-	options?: T.NumberFloatScientific.Spelling
+	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Built {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatScientific_integer.test(_integer))
@@ -6237,7 +6340,7 @@ export function buildNumberDecimal(text: string | number): T.NumberDecimal.Built
 	);
 }
 
-export function buildNumberBinary(value: string | number, options?: T.NumberBinary.Spelling): T.NumberBinary.Built {
+export function buildNumberBinary(value: string | number, options?: T.NumberBinary.Options): T.NumberBinary.Built {
 	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
 		throw new Error(`number_binary.prefix: text does not match pattern: ${_prefix}`);
@@ -6266,7 +6369,7 @@ export function buildNumberBinary(value: string | number, options?: T.NumberBina
 	);
 }
 
-export function buildNumberOctal(value: string | number, options?: T.NumberOctal.Spelling): T.NumberOctal.Built {
+export function buildNumberOctal(value: string | number, options?: T.NumberOctal.Options): T.NumberOctal.Built {
 	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
 		throw new Error(`number_octal.prefix: text does not match pattern: ${_prefix}`);
@@ -6345,10 +6448,13 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 	);
 }
 
-export function buildClassBodyMethod(config: T.ClassBodyMethod.Config): T.ClassBodyMethod.Built {
+export function buildClassBodyMethod(
+	config: T.ClassBodyMethod.Config,
+	options?: T.ClassBodyMethod.Options
+): T.ClassBodyMethod.Built {
 	const _decorator = config.decorator ?? [];
 	const _method_definition = config.methodDefinition;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMethod['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMethod['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
@@ -6362,10 +6468,11 @@ export function buildClassBodyMethod(config: T.ClassBodyMethod.Config): T.ClassB
 				_method_definition,
 				_terminator,
 				$with: {
-					decorators: (...values: T.Decorator[]) => buildClassBodyMethod({ ...config, decorator: values }),
-					methodDefinition: (value: T.MethodDefinition) => buildClassBodyMethod({ ...config, methodDefinition: value }),
-					terminator: (value?: NonNullable<T.ClassBodyMethod.Config>['terminator']) =>
-						buildClassBodyMethod({ ...config, terminator: value })
+					decorators: (...values: T.Decorator[]) => buildClassBodyMethod({ ...config, decorator: values }, options),
+					methodDefinition: (value: T.MethodDefinition) =>
+						buildClassBodyMethod({ ...config, methodDefinition: value }, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildClassBodyMethod(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -6407,9 +6514,12 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): T.
 	);
 }
 
-export function buildClassBodyMember(config: T.ClassBodyMember.Config): T.ClassBodyMember.Built {
-	const _content = config.content;
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMember['_terminator']>>(config.terminator, [
+export function buildClassBodyMember(
+	value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
+	options?: T.ClassBodyMember.Options
+): T.ClassBodyMember.Built {
+	const _content = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMember['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
 		[',', TSKindId.Comma] as const
@@ -6425,9 +6535,9 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config): T.ClassB
 				$with: {
 					content: (
 						value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
-					) => buildClassBodyMember({ ...config, content: value }),
-					terminator: (value: NonNullable<T.ClassBodyMember.Config>['terminator']) =>
-						buildClassBodyMember({ ...config, terminator: value })
+					) => buildClassBodyMember(value, options),
+					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
+						buildClassBodyMember(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -7073,11 +7183,16 @@ export function buildImportClauseDefaultImport(
 }
 
 export function buildExportStatementDefaultFrom(
-	config: T.ExportStatementDefaultFrom.Config
+	value:
+		| T.ExportStatementDefaultFromStarFrom
+		| T.ExportStatementDefaultFromNsFrom
+		| T.ExportStatementDefaultFromClauseFrom
+		| T.ExportClause,
+	options?: T.ExportStatementDefaultFrom.Options
 ): T.ExportStatementDefaultFrom.Built {
-	const _content = config.content;
+	const _content = value;
 	const _automatic_semicolon = coerceKindEnumStorage<NonNullable<T.ExportStatementDefaultFrom['_automatic_semicolon']>>(
-		config.automaticSemicolon,
+		options?.automaticSemicolon,
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	return withMethods(
@@ -7095,9 +7210,9 @@ export function buildExportStatementDefaultFrom(
 							| T.ExportStatementDefaultFromNsFrom
 							| T.ExportStatementDefaultFromClauseFrom
 							| T.ExportClause
-					) => buildExportStatementDefaultFrom({ ...config, content: value }),
-					automaticSemicolon: (value: NonNullable<T.ExportStatementDefaultFrom.Config>['automaticSemicolon']) =>
-						buildExportStatementDefaultFrom({ ...config, automaticSemicolon: value })
+					) => buildExportStatementDefaultFrom(value, options),
+					automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExportStatementDefaultFrom(value, { ...options, automaticSemicolon: spelling })
 				}
 			},
 			{
@@ -7259,15 +7374,16 @@ export function buildExportStatementDefaultDeclarationDefaultKw(
 }
 
 export function buildExportStatementDefaultDeclarationDefaultKwValue(
-	config: T.ExportStatementDefaultDeclarationDefaultKwValue.Config
+	value: T.Expression,
+	options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 ): T.ExportStatementDefaultDeclarationDefaultKwValue.Built {
 	const _value = coerceMixedEnumStorage<NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue['_value']>>(
-		config.value,
+		value,
 		[]
 	);
 	const _automatic_semicolon = coerceKindEnumStorage<
 		NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue['_automatic_semicolon']>
-	>(config.automaticSemicolon, [['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]);
+	>(options?.automaticSemicolon, [['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]);
 	return withMethods(
 		withAccessors(
 			{
@@ -7277,11 +7393,10 @@ export function buildExportStatementDefaultDeclarationDefaultKwValue(
 				_value,
 				_automatic_semicolon,
 				$with: {
-					value: (value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['value']) =>
-						buildExportStatementDefaultDeclarationDefaultKwValue({ ...config, value: value }),
-					automaticSemicolon: (
-						value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Config>['automaticSemicolon']
-					) => buildExportStatementDefaultDeclarationDefaultKwValue({ ...config, automaticSemicolon: value })
+					value: (value: NonNullable<T.Expression>) =>
+						buildExportStatementDefaultDeclarationDefaultKwValue(value, options),
+					automaticSemicolon: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+						buildExportStatementDefaultDeclarationDefaultKwValue(value, { ...options, automaticSemicolon: spelling })
 				}
 			},
 			{

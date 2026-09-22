@@ -36,7 +36,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr, registeredSlots } from './factories.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
 import { flattenedVariantParents, variantRoutePaths } from './overlays/module.ts';
@@ -151,30 +151,38 @@ function emitBranchTest(
 		return;
 	}
 
-	const { typeConfigArg, renderConfigArg } = factoryCallArgs(node, nodeMap, kindEntries);
+	const { typeConfigArg, renderConfigArg, registeredOptionsArg } = factoryCallArgs(node, nodeMap, kindEntries);
+	const typeCallArgs =
+		registeredOptionsArg === undefined
+			? typeConfigArg
+			: `${typeConfigArg === '' ? 'undefined' : typeConfigArg}, ${registeredOptionsArg}`;
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
-	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
+	lines.push(`    const node = ir.${key}(${typeCallArgs});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 
-	pushRenderTest(lines, key, renderConfigArg);
+	pushRenderTest(lines, key, renderConfigArg, registeredOptionsArg);
 
 	lines.push('});');
 	lines.push('');
 }
 
-function pushRenderTest(lines: string[], key: string, renderArg: string): void {
-	const hasRenderContent = renderArg !== '{}' && renderArg !== '';
+function pushRenderTest(lines: string[], key: string, renderArg: string, registeredOptionsArg?: string): void {
+	const callArgs =
+		registeredOptionsArg === undefined
+			? renderArg
+			: `${renderArg === '' ? 'undefined' : renderArg}, ${registeredOptionsArg}`;
+	const hasRenderContent = registeredOptionsArg !== undefined || (renderArg !== '{}' && renderArg !== '');
 	if (hasRenderContent) {
 		lines.push(`  it('render produces non-empty string', () => {`);
-		lines.push(`    const node = ir.${key}(${renderArg});`);
+		lines.push(`    const node = ir.${key}(${callArgs});`);
 		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		lines.push('  });');
 	} else {
 		lines.push(`  it('render does not throw on minimal config', () => {`);
-		lines.push(`    const node = ir.${key}(${renderArg});`);
+		lines.push(`    const node = ir.${key}(${callArgs});`);
 		lines.push(`    expect(() => node.$render!()).not.toThrow();`);
 		lines.push('  });');
 	}
@@ -185,9 +193,11 @@ function factoryCallArgs(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	strict = false
-): { typeConfigArg: string; renderConfigArg: string } {
+): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
+	const registeredSet = new Set(registeredSlots(node));
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {
+		if (registeredSet.has(f)) continue;
 		if (isRequired(f)) {
 			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries, strict)}`);
 		}
@@ -209,7 +219,12 @@ function factoryCallArgs(
 		typeConfigArg = typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
 		renderConfigArg = renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
 	}
-	return { typeConfigArg, renderConfigArg };
+	const registeredRequired = [...registeredSet].filter(isRequired);
+	const registeredOptionsArg =
+		registeredRequired.length === 0
+			? undefined
+			: `{ ${registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`).join(', ')} }`;
+	return { typeConfigArg, renderConfigArg, registeredOptionsArg };
 }
 
 function soleSlotDummyKind(
@@ -237,6 +252,18 @@ function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
 }
 
 function childrenCallArgs(
+	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const value = childrenCallValueArg(node, nodeMap, kindEntries);
+	const registeredRequired = registeredSlots(node).filter(isRequired);
+	if (registeredRequired.length === 0) return value;
+	const optionsParts = registeredRequired.map((f) => `${f.configKey}: ${strictOptionDummy(f, nodeMap, kindEntries)}`);
+	return `${value === '' ? 'undefined' : value}, { ${optionsParts.join(', ')} }`;
+}
+
+function childrenCallValueArg(
 	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -324,10 +351,15 @@ function subFactoryCallArgs(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	isEmitted: (kind: string) => boolean,
 	bundledKinds: ReadonlySet<string>,
-	visiting: ReadonlySet<string> = new Set()
+	visiting: ReadonlySet<string> = new Set(),
+	positional = false
 ): string | undefined {
 	if (sub.arm.via === 'value') {
 		if (sub.residual.length === 0) return '';
+		if (positional) {
+			const sole = sub.residual[0];
+			return sole === undefined ? '' : dummyValue(sole, nodeMap, kindEntries);
+		}
 		return objectFrom(requiredFieldParts(sub.residual, nodeMap, kindEntries));
 	}
 
@@ -395,9 +427,10 @@ function emitSubFactoryTests(
 	const aliases = wireSet?.aliases ?? [];
 	if (entries.length === 0 && aliases.length === 0) return;
 
+	const positional = resolveDirectFactorySlot(node, nodeMap) !== undefined;
 	const cases: string[] = [];
 	for (const sub of entries) {
-		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds);
+		const args = subFactoryCallArgs(sub, nodeMap, kindEntries, isEmitted, bundledKinds, new Set(), positional);
 		if (args === undefined) continue;
 		const spelling = emittedArmPath(kind, [sub.name], polymorphWires).join('.');
 		const knownFailure = expectTestFailures?.[`${kind}.${sub.name}`];
@@ -406,7 +439,12 @@ function emitSubFactoryTests(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
 		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${spelling}${base.flavor}` : `ir.${base.path}.${spelling}${base.flavor}`;
-		cases.push(`    const node = ${callTarget}(${args});`);
+		const registeredChain = (() => {
+			if (!(node instanceof AbstractAssembledCompound)) return '';
+			const required = registeredSlots(node).filter((f) => f !== sub.slot && isRequired(f));
+			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+		})();
+		cases.push(`    const node = ${callTarget}(${args})${registeredChain};`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 		const slotProp = sub.slot.propertyName;
 		const slotStorageInfo = resolveFieldStorageInfo(sub.slot, nodeMap);
@@ -441,7 +479,12 @@ function emitSubFactoryTests(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`
 		);
 		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${alias.name}${base.flavor}` : `ir.${base.path}.${alias.name}${base.flavor}`;
-		cases.push(`    const node = ${callTarget}(${args});`);
+		const aliasRegisteredChain = (() => {
+			if (!(child instanceof AbstractAssembledCompound)) return '';
+			const required = registeredSlots(child).filter(isRequired);
+			return required.map((f) => `.$with.${f.configKey}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
+		})();
+		cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);
 		cases.push(`    expect(node.$type).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
 		cases.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		cases.push('  });');
@@ -623,6 +666,21 @@ function resolveConcreteKind(
 }
 
 const MAX_DUMMY_DEPTH = 6;
+
+function strictOptionDummy(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
+	if (storageInfo.kind === 'kindEnum' || storageInfo.kind === 'mixedEnum') {
+		const enumKind = storageInfo.enumKinds[0];
+		if (enumKind !== undefined && kindEntries && hasCatalogEntry(kindEntries, enumKind)) {
+			return kindDiscriminantExpr(enumKind, nodeMap, kindEntries);
+		}
+	}
+	return dummyValue(field, nodeMap, kindEntries, true);
+}
 
 function dummyValueForField(
 	field: AssembledNonterminal,

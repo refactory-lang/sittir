@@ -419,7 +419,12 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'export_clause',
 	'import_clause',
 	'namespace_import',
+	'expression_statement',
 	'else_clause',
+	'break_statement',
+	'continue_statement',
+	'return_statement',
+	'throw_statement',
 	'parenthesized_expression',
 	'yield_expression',
 	'await_expression',
@@ -453,7 +458,13 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'type_parameters_elements',
 	'tuple_type_members',
 	'import_clause_group',
-	'arrow_function_parameter'
+	'object_type_content',
+	'export_statement_namespace_export',
+	'export_statement_equals_export',
+	'arrow_function_parameter',
+	'export_statement_default_from',
+	'export_statement_default_declaration_default_kw',
+	'export_statement_default_declaration_default_kw_value'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
@@ -470,11 +481,35 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	import_clause: new Set([1, 194, 195, 380, 404, 405, 417]),
 	namespace_import: new Set([1]),
 	named_imports: new Set([380, 404, 405]),
-	else_clause: new Set([
-		170, 191, 199, 200, 201, 203, 205, 206, 207, 208, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 238, 241,
-		243, 290, 300, 301, 302, 303, 305, 307, 309, 312, 390, 391, 394, 395, 396, 418, 419
+	expression_statement: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 226, 229, 230, 234, 237, 240, 242, 244, 248, 249,
+		250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 292, 293, 294, 295, 303, 406, 407, 408,
+		409, 410, 411, 412, 413, 414, 427, 428, 459
 	]),
+	else_clause: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 170, 186, 187, 191, 199, 200, 201, 203, 205, 206,
+		207, 208, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 226, 229, 230, 234, 237, 238, 240, 241, 242, 243,
+		244, 248, 249, 250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 290, 292, 293, 294, 295,
+		300, 301, 302, 303, 305, 307, 309, 312, 379, 390, 391, 394, 395, 396, 406, 407, 408, 409, 410, 411, 412, 413, 414,
+		418, 419, 420, 421, 422, 427, 428, 459
+	]),
+	break_statement: new Set([1]),
+	continue_statement: new Set([1]),
 	debugger_statement: new Set([170]),
+	return_statement: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 226, 229, 230, 234, 237, 240, 242, 244, 248, 249,
+		250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 292, 293, 294, 295, 303, 406, 407, 408,
+		409, 410, 411, 412, 413, 414, 427, 428, 459
+	]),
+	throw_statement: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 226, 229, 230, 234, 237, 240, 242, 244, 248, 249,
+		250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 292, 293, 294, 295, 303, 406, 407, 408,
+		409, 410, 411, 412, 413, 414, 427, 428, 459
+	]),
 	finally_clause: new Set([203]),
 	parenthesized_expression: new Set([1, 264, 273, 274, 406, 407]),
 	yield_expression: new Set([
@@ -635,14 +670,39 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	import_clause_group: new Set([1, 194, 195, 380, 404, 405]),
 	ambient_declaration_global: new Set([203]),
-	object_type_content: new Set([288, 357, 358, 363, 394, 395, 396, 401, 402, 418, 419]),
+	object_type_content: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 186, 187, 226, 229, 230, 234, 237, 240, 242, 244,
+		248, 249, 250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 288, 292, 293, 294, 295, 303,
+		357, 358, 363, 379, 394, 395, 396, 401, 402, 406, 407, 408, 409, 410, 411, 412, 413, 414, 418, 419, 420, 421, 422,
+		427, 428, 459
+	]),
+	export_statement_namespace_export: new Set([1]),
+	export_statement_equals_export: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 226, 229, 230, 234, 237, 240, 242, 244, 248, 249,
+		250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 292, 293, 294, 295, 303, 406, 407, 408,
+		409, 410, 411, 412, 413, 414, 427, 428, 459
+	]),
+	class_body_member: new Set([285, 288, 289, 401, 402]),
 	parenthesized_expression_sequence: new Set([264]),
 	arrow_function_parameter: new Set([
 		1, 7, 44, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 459
 	]),
+	export_statement_default_from: new Set([1, 186, 187, 265, 379, 411, 412, 420, 421, 422]),
 	export_statement_default_from_star_from: new Set([265, 411, 412]),
 	export_statement_default_declaration_default_kw: new Set([
-		200, 201, 203, 238, 241, 243, 290, 300, 301, 302, 303, 305, 307, 309, 312, 390, 391, 424
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 200, 201, 203, 226, 229, 230, 234, 237, 238, 240,
+		241, 242, 243, 244, 248, 249, 250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 290, 292,
+		293, 294, 295, 300, 301, 302, 303, 305, 307, 309, 312, 390, 391, 406, 407, 408, 409, 410, 411, 412, 413, 414, 424,
+		427, 428, 459
+	]),
+	export_statement_default_declaration_default_kw_value: new Set([
+		1, 7, 44, 99, 100, 101, 102, 103, 104, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+		121, 122, 123, 124, 125, 154, 155, 156, 157, 158, 159, 160, 161, 226, 229, 230, 234, 237, 240, 242, 244, 248, 249,
+		250, 251, 252, 254, 256, 260, 261, 262, 264, 265, 266, 268, 273, 274, 287, 292, 293, 294, 295, 303, 406, 407, 408,
+		409, 410, 411, 412, 413, 414, 427, 428, 459
 	])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
@@ -855,8 +915,13 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	import_clause: TSKindId.ImportClause,
 	namespace_import: TSKindId.NamespaceImport,
 	named_imports: TSKindId.NamedImports,
+	expression_statement: TSKindId.ExpressionStatement,
 	else_clause: TSKindId.ElseClause,
+	break_statement: TSKindId.BreakStatement,
+	continue_statement: TSKindId.ContinueStatement,
 	debugger_statement: TSKindId.DebuggerStatement,
+	return_statement: TSKindId.ReturnStatement,
+	throw_statement: TSKindId.ThrowStatement,
 	switch_body: TSKindId.SwitchBody,
 	switch_default: TSKindId.SwitchDefault,
 	finally_clause: TSKindId.FinallyClause,
@@ -921,18 +986,23 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	import_clause_group: TSKindId.ImportClauseGroup,
 	ambient_declaration_global: TSKindId.AmbientDeclarationGlobal,
 	object_type_content: TSKindId.ObjectTypeContent,
+	export_statement_namespace_export: TSKindId.ExportStatementNamespaceExport,
+	export_statement_equals_export: TSKindId.ExportStatementEqualsExport,
 	comment_line: TSKindId.CommentLine,
 	comment_block: TSKindId.CommentBlock,
 	number_hex: TSKindId.NumberHex,
 	number_binary: TSKindId.NumberBinary,
 	number_octal: TSKindId.NumberOctal,
 	number_bigint: TSKindId.NumberBigint,
+	class_body_member: TSKindId.ClassBodyMember,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
 	string_double: TSKindId.StringDouble,
 	string_single: TSKindId.StringSingle,
 	arrow_function_parameter: TSKindId.ArrowFunctionParameter,
+	export_statement_default_from: TSKindId.ExportStatementDefaultFrom,
 	export_statement_default_from_star_from: TSKindId.ExportStatementDefaultFromStarFrom,
-	export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw
+	export_statement_default_declaration_default_kw: TSKindId.ExportStatementDefaultDeclarationDefaultKw,
+	export_statement_default_declaration_default_kw_value: TSKindId.ExportStatementDefaultDeclarationDefaultKwValue
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -940,6 +1010,8 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	namespace_import: 'identifier',
 	named_imports: 'import_specifiers',
 	else_clause: 'statement',
+	break_statement: 'identifier',
+	continue_statement: 'identifier',
 	switch_default: 'statement',
 	finally_clause: 'statement_block',
 	yield_expression: 'expression',
@@ -974,8 +1046,11 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	types: 'type',
 	type_parameters_elements: 'type_parameter',
 	ambient_declaration_global: 'statement_block',
+	export_statement_namespace_export: 'identifier',
+	export_statement_equals_export: 'expression',
 	parenthesized_expression_sequence: 'sequence_expression',
-	export_statement_default_from_star_from: 'string'
+	export_statement_default_from_star_from: 'string',
+	export_statement_default_declaration_default_kw_value: 'expression'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -985,8 +1060,13 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'import_clause',
 	'namespace_import',
 	'named_imports',
+	'expression_statement',
 	'else_clause',
+	'break_statement',
+	'continue_statement',
 	'debugger_statement',
+	'return_statement',
+	'throw_statement',
 	'finally_clause',
 	'parenthesized_expression',
 	'yield_expression',
@@ -1029,21 +1109,29 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'readonly_type',
 	'import_clause_group',
 	'ambient_declaration_global',
+	'export_statement_namespace_export',
+	'export_statement_equals_export',
 	'comment_line',
 	'comment_block',
 	'number_hex',
 	'number_binary',
 	'number_octal',
 	'number_bigint',
+	'class_body_member',
 	'parenthesized_expression_sequence',
 	'arrow_function_parameter',
+	'export_statement_default_from',
 	'export_statement_default_from_star_from',
-	'export_statement_default_declaration_default_kw'
+	'export_statement_default_declaration_default_kw',
+	'export_statement_default_declaration_default_kw_value'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
 	'export_clause',
 	'named_imports',
+	'break_statement',
+	'continue_statement',
+	'return_statement',
 	'yield_expression',
 	'formal_parameters',
 	'enum_body',
@@ -1064,10 +1152,20 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildNamespaceImport(children[0] as Parameters<typeof F.buildNamespaceImport>[0]);
 		case 'named_imports':
 			return F.buildNamedImports(children[0] as Parameters<typeof F.buildNamedImports>[0]);
+		case 'expression_statement':
+			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
 		case 'else_clause':
 			return F.buildElseClause(children[0] as Parameters<typeof F.buildElseClause>[0]);
+		case 'break_statement':
+			return F.buildBreakStatement(children[0] as Parameters<typeof F.buildBreakStatement>[0]);
+		case 'continue_statement':
+			return F.buildContinueStatement(children[0] as Parameters<typeof F.buildContinueStatement>[0]);
 		case 'debugger_statement':
 			return F.buildDebuggerStatement(children[0] as Parameters<typeof F.buildDebuggerStatement>[0]);
+		case 'return_statement':
+			return F.buildReturnStatement(children[0] as Parameters<typeof F.buildReturnStatement>[0]);
+		case 'throw_statement':
+			return F.buildThrowStatement(children[0] as Parameters<typeof F.buildThrowStatement>[0]);
 		case 'switch_body':
 			return (coerceToSwitchBody as (...args: unknown[]) => unknown)(...children);
 		case 'switch_default':
@@ -1198,6 +1296,14 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildAmbientDeclarationGlobal(children[0] as Parameters<typeof F.buildAmbientDeclarationGlobal>[0]);
 		case 'object_type_content':
 			return (coerceToObjectTypeContent as (...args: unknown[]) => unknown)(...children);
+		case 'export_statement_namespace_export':
+			return F.buildExportStatementNamespaceExport(
+				children[0] as Parameters<typeof F.buildExportStatementNamespaceExport>[0]
+			);
+		case 'export_statement_equals_export':
+			return F.buildExportStatementEqualsExport(
+				children[0] as Parameters<typeof F.buildExportStatementEqualsExport>[0]
+			);
 		case 'comment_line':
 			return F.buildCommentLine(children[0] as Parameters<typeof F.buildCommentLine>[0]);
 		case 'comment_block':
@@ -1210,6 +1316,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildNumberOctal(children[0] as Parameters<typeof F.buildNumberOctal>[0]);
 		case 'number_bigint':
 			return F.buildNumberBigint(children[0] as Parameters<typeof F.buildNumberBigint>[0]);
+		case 'class_body_member':
+			return F.buildClassBodyMember(children[0] as Parameters<typeof F.buildClassBodyMember>[0]);
 		case 'parenthesized_expression_sequence':
 			return F.buildParenthesizedExpressionSequence(
 				children[0] as Parameters<typeof F.buildParenthesizedExpressionSequence>[0]
@@ -1220,6 +1328,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToStringSingle as (...args: unknown[]) => unknown)(...children);
 		case 'arrow_function_parameter':
 			return F.buildArrowFunctionParameter(children[0] as Parameters<typeof F.buildArrowFunctionParameter>[0]);
+		case 'export_statement_default_from':
+			return F.buildExportStatementDefaultFrom(children[0] as Parameters<typeof F.buildExportStatementDefaultFrom>[0]);
 		case 'export_statement_default_from_star_from':
 			return F.buildExportStatementDefaultFromStarFrom(
 				children[0] as Parameters<typeof F.buildExportStatementDefaultFromStarFrom>[0]
@@ -1227,6 +1337,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case 'export_statement_default_declaration_default_kw':
 			return F.buildExportStatementDefaultDeclarationDefaultKw(
 				children[0] as Parameters<typeof F.buildExportStatementDefaultDeclarationDefaultKw>[0]
+			);
+		case 'export_statement_default_declaration_default_kw_value':
+			return F.buildExportStatementDefaultDeclarationDefaultKwValue(
+				children[0] as Parameters<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>[0]
 			);
 		default:
 			return undefined;
@@ -2211,24 +2325,20 @@ export function resolveImportStatement_importAttribute(
 	return _resolveOneBranch<T.ImportAttribute>(value, 'import_attribute', undefined, true);
 }
 
-export function resolveImportStatement_terminator(
-	value: T.ImportStatement.LooseConfig['terminator']
-): T.ImportStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
+export function coerceToImportStatement(
+	input: T.ImportStatement.Loose,
+	options?: T.ImportStatement.Options
+): ReturnType<typeof F.buildImportStatement> {
 	if (!_isLooseConfig<T.ImportStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportStatement>;
-	return F.buildImportStatement({
-		importClause: resolveImportStatement_importClause(input.importClause),
-		fromClause: _requireField('import_statement', 'fromClause', resolveImportStatement_fromClause(input.fromClause)),
-		importAttribute: resolveImportStatement_importAttribute(input.importAttribute),
-		terminator: _requireField('import_statement', 'terminator', resolveImportStatement_terminator(input.terminator))
-	});
+	return F.buildImportStatement(
+		{
+			importClause: resolveImportStatement_importClause(input.importClause),
+			fromClause: _requireField('import_statement', 'fromClause', resolveImportStatement_fromClause(input.fromClause)),
+			importAttribute: resolveImportStatement_importAttribute(input.importAttribute)
+		},
+		options
+	);
 }
 
 export function resolveImportClause_content(value: T.ImportClause.LooseConfig['content']): T.ImportClause['_content'] {
@@ -2328,32 +2438,35 @@ export function resolveExpressionStatement_expression(
 	);
 }
 
-export function resolveExpressionStatement_terminator(
-	value: T.ExpressionStatement.LooseConfig['terminator']
-): T.ExpressionStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToExpressionStatement(
-	input: T.ExpressionStatement.Loose
+	input: T.ExpressionStatement.Loose,
+	options?: T.ExpressionStatement.Options
 ): ReturnType<typeof F.buildExpressionStatement> {
-	if (!_isLooseConfig<T.ExpressionStatement.LooseConfig>(input))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExpressionStatement)
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
-	return F.buildExpressionStatement({
-		expression: _requireField(
+	return F.buildExpressionStatement(
+		_requireField(
 			'expression_statement',
 			'expression',
-			resolveExpressionStatement_expression(input.expression)
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+						? input.expression
+						: input,
+					() =>
+						_resolveOne<T.Expression | T.SequenceExpression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+								? input.expression
+								: input,
+							_K7,
+							_K8
+						)
+				),
+				[]
+			)
 		),
-		terminator: _requireField(
-			'expression_statement',
-			'terminator',
-			resolveExpressionStatement_terminator(input.terminator)
-		)
-	});
+		options
+	);
 }
 
 export function resolveVariableDeclaration_declarators(
@@ -2368,32 +2481,22 @@ export function resolveVariableDeclaration_declarators(
 	return resolved;
 }
 
-export function resolveVariableDeclaration_terminator(
-	value: T.VariableDeclaration.LooseConfig['terminator']
-): T.VariableDeclaration['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToVariableDeclaration(
-	input: T.VariableDeclaration.Loose
+	input: T.VariableDeclaration.Loose,
+	options?: T.VariableDeclaration.Options
 ): ReturnType<typeof F.buildVariableDeclaration> {
 	if (!_isLooseConfig<T.VariableDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildVariableDeclaration>;
-	return F.buildVariableDeclaration({
-		declarators: _requireField(
-			'variable_declaration',
-			'declarators',
-			resolveVariableDeclaration_declarators(input.declarators)
-		),
-		terminator: _requireField(
-			'variable_declaration',
-			'terminator',
-			resolveVariableDeclaration_terminator(input.terminator)
-		)
-	});
+	return F.buildVariableDeclaration(
+		{
+			declarators: _requireField(
+				'variable_declaration',
+				'declarators',
+				resolveVariableDeclaration_declarators(input.declarators)
+			)
+		},
+		options
+	);
 }
 
 export function resolveLexicalDeclaration_kind(
@@ -2417,33 +2520,23 @@ export function resolveLexicalDeclaration_declarators(
 	return resolved;
 }
 
-export function resolveLexicalDeclaration_terminator(
-	value: T.LexicalDeclaration.LooseConfig['terminator']
-): T.LexicalDeclaration['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToLexicalDeclaration(
-	input: T.LexicalDeclaration.Loose
+	input: T.LexicalDeclaration.Loose,
+	options?: T.LexicalDeclaration.Options
 ): ReturnType<typeof F.buildLexicalDeclaration> {
 	if (!_isLooseConfig<T.LexicalDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLexicalDeclaration>;
-	return F.buildLexicalDeclaration({
-		kind: _requireField('lexical_declaration', 'kind', resolveLexicalDeclaration_kind(input.kind)),
-		declarators: _requireField(
-			'lexical_declaration',
-			'declarators',
-			resolveLexicalDeclaration_declarators(input.declarators)
-		),
-		terminator: _requireField(
-			'lexical_declaration',
-			'terminator',
-			resolveLexicalDeclaration_terminator(input.terminator)
-		)
-	});
+	return F.buildLexicalDeclaration(
+		{
+			kind: _requireField('lexical_declaration', 'kind', resolveLexicalDeclaration_kind(input.kind)),
+			declarators: _requireField(
+				'lexical_declaration',
+				'declarators',
+				resolveLexicalDeclaration_declarators(input.declarators)
+			)
+		},
+		options
+	);
 }
 
 export function resolveStatementBlock_statements(
@@ -2665,23 +2758,19 @@ export function resolveDoStatement_condition(
 	return _resolveOneBranch<T.ParenthesizedExpression>(value, 'parenthesized_expression');
 }
 
-export function resolveDoStatement_terminator(
-	value: T.DoStatement.LooseConfig['terminator']
-): T.DoStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<typeof F.buildDoStatement> {
+export function coerceToDoStatement(
+	input: T.DoStatement.Loose,
+	options?: T.DoStatement.Options
+): ReturnType<typeof F.buildDoStatement> {
 	if (!_isLooseConfig<T.DoStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildDoStatement>;
-	return F.buildDoStatement({
-		body: _requireField('do_statement', 'body', resolveDoStatement_body(input.body)),
-		condition: _requireField('do_statement', 'condition', resolveDoStatement_condition(input.condition)),
-		terminator: resolveDoStatement_terminator(input.terminator)
-	});
+	return F.buildDoStatement(
+		{
+			body: _requireField('do_statement', 'body', resolveDoStatement_body(input.body)),
+			condition: _requireField('do_statement', 'condition', resolveDoStatement_condition(input.condition))
+		},
+		options
+	);
 }
 
 export function resolveTryStatement_body(
@@ -2734,22 +2823,19 @@ export function resolveBreakStatement_label(value: T.BreakStatement.LooseConfig[
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveBreakStatement_terminator(
-	value: T.BreakStatement.LooseConfig['terminator'] | undefined
-): T.BreakStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToBreakStatement(input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
-	if (!_isLooseConfig<T.BreakStatement.LooseConfig | undefined>(input))
+export function coerceToBreakStatement(
+	input?: T.BreakStatement.Loose,
+	options?: T.BreakStatement.Options
+): ReturnType<typeof F.buildBreakStatement> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.BreakStatement)
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
-	return F.buildBreakStatement({
-		label: resolveBreakStatement_label(input?.label),
-		terminator: _requireField('break_statement', 'terminator', resolveBreakStatement_terminator(input?.terminator))
-	});
+	return F.buildBreakStatement(
+		_resolveOneLeaf<T.Identifier>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'label' in input ? input.label : input,
+			'identifier'
+		),
+		options
+	);
 }
 
 export function resolveContinueStatement_label(
@@ -2758,28 +2844,19 @@ export function resolveContinueStatement_label(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveContinueStatement_terminator(
-	value: T.ContinueStatement.LooseConfig['terminator'] | undefined
-): T.ContinueStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToContinueStatement(
-	input?: T.ContinueStatement.Loose
+	input?: T.ContinueStatement.Loose,
+	options?: T.ContinueStatement.Options
 ): ReturnType<typeof F.buildContinueStatement> {
-	if (!_isLooseConfig<T.ContinueStatement.LooseConfig | undefined>(input))
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ContinueStatement)
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
-	return F.buildContinueStatement({
-		label: resolveContinueStatement_label(input?.label),
-		terminator: _requireField(
-			'continue_statement',
-			'terminator',
-			resolveContinueStatement_terminator(input?.terminator)
-		)
-	});
+	return F.buildContinueStatement(
+		_resolveOneLeaf<T.Identifier>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'label' in input ? input.label : input,
+			'identifier'
+		),
+		options
+	);
 }
 
 export function resolveDebuggerStatement_terminator(
@@ -2829,22 +2906,31 @@ export function resolveReturnStatement_expression(
 	);
 }
 
-export function resolveReturnStatement_terminator(
-	value: T.ReturnStatement.LooseConfig['terminator'] | undefined
-): T.ReturnStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToReturnStatement(input?: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
-	if (!_isLooseConfig<T.ReturnStatement.LooseConfig | undefined>(input))
+export function coerceToReturnStatement(
+	input?: T.ReturnStatement.Loose,
+	options?: T.ReturnStatement.Options
+): ReturnType<typeof F.buildReturnStatement> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ReturnStatement)
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
-	return F.buildReturnStatement({
-		expression: resolveReturnStatement_expression(input?.expression),
-		terminator: _requireField('return_statement', 'terminator', resolveReturnStatement_terminator(input?.terminator))
-	});
+	return F.buildReturnStatement(
+		coerceMixedEnumStorage(
+			_resolveKindEnum(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+					? input.expression
+					: input,
+				() =>
+					_resolveOne<T.Expression | T.SequenceExpression>(
+						input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+							? input.expression
+							: input,
+						_K7,
+						_K8
+					)
+			),
+			[]
+		),
+		options
+	);
 }
 
 export function resolveThrowStatement_expression(
@@ -2856,22 +2942,35 @@ export function resolveThrowStatement_expression(
 	);
 }
 
-export function resolveThrowStatement_terminator(
-	value: T.ThrowStatement.LooseConfig['terminator']
-): T.ThrowStatement['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnType<typeof F.buildThrowStatement> {
-	if (!_isLooseConfig<T.ThrowStatement.LooseConfig>(input))
+export function coerceToThrowStatement(
+	input: T.ThrowStatement.Loose,
+	options?: T.ThrowStatement.Options
+): ReturnType<typeof F.buildThrowStatement> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ThrowStatement)
 		return input as unknown as ReturnType<typeof F.buildThrowStatement>;
-	return F.buildThrowStatement({
-		expression: _requireField('throw_statement', 'expression', resolveThrowStatement_expression(input.expression)),
-		terminator: _requireField('throw_statement', 'terminator', resolveThrowStatement_terminator(input.terminator))
-	});
+	return F.buildThrowStatement(
+		_requireField(
+			'throw_statement',
+			'expression',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+						? input.expression
+						: input,
+					() =>
+						_resolveOne<T.Expression | T.SequenceExpression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+								? input.expression
+								: input,
+							_K7,
+							_K8
+						)
+				),
+				[]
+			)
+		),
+		options
+	);
 }
 
 export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): ReturnType<typeof F.buildEmptyStatement> {
@@ -5393,32 +5492,22 @@ export function resolveFunctionSignature_returnType(
 	return _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(value, _K2, _K22);
 }
 
-export function resolveFunctionSignature_terminator(
-	value: T.FunctionSignature.LooseConfig['terminator']
-): T.FunctionSignature['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[
-			['\n', TSKindId.AutomaticSemicolon] as const,
-			[';', TSKindId.Semi] as const,
-			['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
-		]
-	);
-}
-
 export function coerceToFunctionSignature(
-	input: T.FunctionSignature.Loose
+	input: T.FunctionSignature.Loose,
+	options?: T.FunctionSignature.Options
 ): ReturnType<typeof F.buildFunctionSignature> {
 	if (!_isLooseConfig<T.FunctionSignature.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionSignature>;
-	return F.buildFunctionSignature({
-		asyncMarker: resolveFunctionSignature_asyncMarker(input.asyncMarker),
-		name: _requireField('function_signature', 'name', resolveFunctionSignature_name(input.name)),
-		typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
-		parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveFunctionSignature_returnType(input.returnType),
-		terminator: _requireField('function_signature', 'terminator', resolveFunctionSignature_terminator(input.terminator))
-	});
+	return F.buildFunctionSignature(
+		{
+			asyncMarker: resolveFunctionSignature_asyncMarker(input.asyncMarker),
+			name: _requireField('function_signature', 'name', resolveFunctionSignature_name(input.name)),
+			typeParameters: resolveFunctionSignature_typeParameters(input.typeParameters),
+			parameters: resolveFunctionSignature_parameters(input.parameters) ?? F.buildFormalParameters(),
+			returnType: resolveFunctionSignature_returnType(input.returnType)
+		},
+		options
+	);
 }
 
 export function resolveDecoratorParenthesizedExpression_content(
@@ -5792,23 +5881,19 @@ export function resolveImportAlias_value(value: T.ImportAlias.LooseConfig['value
 	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K20);
 }
 
-export function resolveImportAlias_terminator(
-	value: T.ImportAlias.LooseConfig['terminator']
-): T.ImportAlias['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<typeof F.buildImportAlias> {
+export function coerceToImportAlias(
+	input: T.ImportAlias.Loose,
+	options?: T.ImportAlias.Options
+): ReturnType<typeof F.buildImportAlias> {
 	if (!_isLooseConfig<T.ImportAlias.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportAlias>;
-	return F.buildImportAlias({
-		name: _requireField('import_alias', 'name', resolveImportAlias_name(input.name)),
-		value: _requireField('import_alias', 'value', resolveImportAlias_value(input.value)),
-		terminator: _requireField('import_alias', 'terminator', resolveImportAlias_terminator(input.terminator))
-	});
+	return F.buildImportAlias(
+		{
+			name: _requireField('import_alias', 'name', resolveImportAlias_name(input.name)),
+			value: _requireField('import_alias', 'value', resolveImportAlias_value(input.value))
+		},
+		options
+	);
 }
 
 export function resolveNestedTypeIdentifier_module(
@@ -6003,30 +6088,20 @@ export function resolveTypeAliasDeclaration_value(
 	);
 }
 
-export function resolveTypeAliasDeclaration_terminator(
-	value: T.TypeAliasDeclaration.LooseConfig['terminator']
-): T.TypeAliasDeclaration['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToTypeAliasDeclaration(
-	input: T.TypeAliasDeclaration.Loose
+	input: T.TypeAliasDeclaration.Loose,
+	options?: T.TypeAliasDeclaration.Options
 ): ReturnType<typeof F.buildTypeAliasDeclaration> {
 	if (!_isLooseConfig<T.TypeAliasDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeAliasDeclaration>;
-	return F.buildTypeAliasDeclaration({
-		name: _requireField('type_alias_declaration', 'name', resolveTypeAliasDeclaration_name(input.name)),
-		typeParameters: resolveTypeAliasDeclaration_typeParameters(input.typeParameters),
-		value: _requireField('type_alias_declaration', 'value', resolveTypeAliasDeclaration_value(input.value)),
-		terminator: _requireField(
-			'type_alias_declaration',
-			'terminator',
-			resolveTypeAliasDeclaration_terminator(input.terminator)
-		)
-	});
+	return F.buildTypeAliasDeclaration(
+		{
+			name: _requireField('type_alias_declaration', 'name', resolveTypeAliasDeclaration_name(input.name)),
+			typeParameters: resolveTypeAliasDeclaration_typeParameters(input.typeParameters),
+			value: _requireField('type_alias_declaration', 'value', resolveTypeAliasDeclaration_value(input.value))
+		},
+		options
+	);
 }
 
 export function coerceToOverrideModifier(
@@ -8196,25 +8271,19 @@ export function resolveAmbientDeclarationModule_type(
 	);
 }
 
-export function resolveAmbientDeclarationModule_terminator(
-	value: T.AmbientDeclarationModule.LooseConfig['terminator']
-): T.AmbientDeclarationModule['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToAmbientDeclarationModule(
-	input: T.AmbientDeclarationModule.Loose
+	input: T.AmbientDeclarationModule.Loose,
+	options?: T.AmbientDeclarationModule.Options
 ): ReturnType<typeof F.buildAmbientDeclarationModule> {
 	if (!_isLooseConfig<T.AmbientDeclarationModule.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAmbientDeclarationModule>;
-	return F.buildAmbientDeclarationModule({
-		name: _requireField('ambient_declaration_module', 'name', resolveAmbientDeclarationModule_name(input.name)),
-		type: _requireField('ambient_declaration_module', 'type', resolveAmbientDeclarationModule_type(input.type)),
-		terminator: resolveAmbientDeclarationModule_terminator(input.terminator)
-	});
+	return F.buildAmbientDeclarationModule(
+		{
+			name: _requireField('ambient_declaration_module', 'name', resolveAmbientDeclarationModule_name(input.name)),
+			type: _requireField('ambient_declaration_module', 'type', resolveAmbientDeclarationModule_type(input.type))
+		},
+		options
+	);
 }
 
 export function coerceToObjectTypeContent(
@@ -8333,36 +8402,27 @@ export function resolveExportStatementNamespaceExport_name(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export function resolveExportStatementNamespaceExport_terminator(
-	value: T.ExportStatementNamespaceExport.LooseConfig['terminator']
-): T.ExportStatementNamespaceExport['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+export function coerceToExportStatementNamespaceExport(
+	input: T.ExportStatementNamespaceExport.Loose,
+	options?: T.ExportStatementNamespaceExport.Options
+): ReturnType<typeof F.buildExportStatementNamespaceExport> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementNamespaceExport)
+		return input as unknown as ReturnType<typeof F.buildExportStatementNamespaceExport>;
+	return F.buildExportStatementNamespaceExport(
+		_requireField(
+			'export_statement_namespace_export',
+			'name',
+			_resolveOneLeaf<T.Identifier>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'name' in input ? input.name : input,
+				'identifier'
+			)
+		),
+		options
 	);
 }
 
-export function coerceToExportStatementNamespaceExport(
-	input: T.ExportStatementNamespaceExport.Loose
-): ReturnType<typeof F.buildExportStatementNamespaceExport> {
-	if (!_isLooseConfig<T.ExportStatementNamespaceExport.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildExportStatementNamespaceExport>;
-	return F.buildExportStatementNamespaceExport({
-		name: _requireField(
-			'export_statement_namespace_export',
-			'name',
-			resolveExportStatementNamespaceExport_name(input.name)
-		),
-		terminator: _requireField(
-			'export_statement_namespace_export',
-			'terminator',
-			resolveExportStatementNamespaceExport_terminator(input.terminator)
-		)
-	});
-}
-
 export function resolveExportStatementTypeExport_exportClause(
-	value: T.ExportStatementTypeExport.LooseConfig['exportClause']
+	value: T.ExportStatementTypeExport.LooseConfig['exportClause'] | undefined
 ): T.ExportStatementTypeExport['_export_clause'] {
 	return _resolveOneBranch<T.ExportClause>(value, 'export_clause');
 }
@@ -8373,29 +8433,19 @@ export function resolveExportStatementTypeExport_source(
 	return _resolveOneBranch<T.String>(value, 'string', undefined, true);
 }
 
-export function resolveExportStatementTypeExport_terminator(
-	value: T.ExportStatementTypeExport.LooseConfig['terminator']
-): T.ExportStatementTypeExport['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToExportStatementTypeExport(
-	input: T.ExportStatementTypeExport.Loose
+	input?: T.ExportStatementTypeExport.Loose,
+	options?: T.ExportStatementTypeExport.Options
 ): ReturnType<typeof F.buildExportStatementTypeExport> {
-	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig>(input))
+	if (!_isLooseConfig<T.ExportStatementTypeExport.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildExportStatementTypeExport>;
-	return F.buildExportStatementTypeExport({
-		exportClause: resolveExportStatementTypeExport_exportClause(input.exportClause) ?? F.buildExportClause(),
-		source: resolveExportStatementTypeExport_source(input.source),
-		terminator: _requireField(
-			'export_statement_type_export',
-			'terminator',
-			resolveExportStatementTypeExport_terminator(input.terminator)
-		)
-	});
+	return F.buildExportStatementTypeExport(
+		{
+			exportClause: resolveExportStatementTypeExport_exportClause(input?.exportClause) ?? F.buildExportClause(),
+			source: resolveExportStatementTypeExport_source(input?.source)
+		},
+		options
+	);
 }
 
 export function resolveExportStatementEqualsExport_expression(
@@ -8407,32 +8457,35 @@ export function resolveExportStatementEqualsExport_expression(
 	);
 }
 
-export function resolveExportStatementEqualsExport_terminator(
-	value: T.ExportStatementEqualsExport.LooseConfig['terminator']
-): T.ExportStatementEqualsExport['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToExportStatementEqualsExport(
-	input: T.ExportStatementEqualsExport.Loose
+	input: T.ExportStatementEqualsExport.Loose,
+	options?: T.ExportStatementEqualsExport.Options
 ): ReturnType<typeof F.buildExportStatementEqualsExport> {
-	if (!_isLooseConfig<T.ExportStatementEqualsExport.LooseConfig>(input))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementEqualsExport)
 		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
-	return F.buildExportStatementEqualsExport({
-		expression: _requireField(
+	return F.buildExportStatementEqualsExport(
+		_requireField(
 			'export_statement_equals_export',
 			'expression',
-			resolveExportStatementEqualsExport_expression(input.expression)
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+						? input.expression
+						: input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+								? input.expression
+								: input,
+							_K7,
+							_K13
+						)
+				),
+				[]
+			)
 		),
-		terminator: _requireField(
-			'export_statement_equals_export',
-			'terminator',
-			resolveExportStatementEqualsExport_terminator(input.terminator)
-		)
-	});
+		options
+	);
 }
 
 export function resolveCommentLine_content(value: T.CommentLine.LooseConfig['content']): T.CommentLine['_content'] {
@@ -8481,7 +8534,7 @@ export function resolveNumberHex_content(value: T.NumberHex.LooseConfig['content
 
 export function coerceToNumberHex(
 	input: T.NumberHex.Loose,
-	options?: T.NumberHex.Spelling
+	options?: T.NumberHex.Options
 ): ReturnType<typeof F.buildNumberHex> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberHex)
 		return input as unknown as ReturnType<typeof F.buildNumberHex>;
@@ -8519,7 +8572,7 @@ export function resolveNumberFloatPoint_exponent(
 
 export function coerceToNumberFloatPoint(
 	input: T.NumberFloatPoint.Loose,
-	options?: T.NumberFloatPoint.Spelling
+	options?: T.NumberFloatPoint.Options
 ): ReturnType<typeof F.buildNumberFloatPoint> {
 	if (!_isLooseConfig<T.NumberFloatPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatPoint>;
@@ -8559,7 +8612,7 @@ export function resolveNumberFloatLeadingPoint_exponent(
 
 export function coerceToNumberFloatLeadingPoint(
 	input: T.NumberFloatLeadingPoint.Loose,
-	options?: T.NumberFloatLeadingPoint.Spelling
+	options?: T.NumberFloatLeadingPoint.Options
 ): ReturnType<typeof F.buildNumberFloatLeadingPoint> {
 	if (!_isLooseConfig<T.NumberFloatLeadingPoint.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatLeadingPoint>;
@@ -8606,7 +8659,7 @@ export function resolveNumberFloatScientific_exponent(
 
 export function coerceToNumberFloatScientific(
 	input: T.NumberFloatScientific.Loose,
-	options?: T.NumberFloatScientific.Spelling
+	options?: T.NumberFloatScientific.Options
 ): ReturnType<typeof F.buildNumberFloatScientific> {
 	if (!_isLooseConfig<T.NumberFloatScientific.LooseConfig | string | number>(input))
 		return input as unknown as ReturnType<typeof F.buildNumberFloatScientific>;
@@ -8645,7 +8698,7 @@ export function resolveNumberBinary_content(value: T.NumberBinary.LooseConfig['c
 
 export function coerceToNumberBinary(
 	input: T.NumberBinary.Loose,
-	options?: T.NumberBinary.Spelling
+	options?: T.NumberBinary.Options
 ): ReturnType<typeof F.buildNumberBinary> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberBinary)
 		return input as unknown as ReturnType<typeof F.buildNumberBinary>;
@@ -8667,7 +8720,7 @@ export function resolveNumberOctal_content(value: T.NumberOctal.LooseConfig['con
 
 export function coerceToNumberOctal(
 	input: T.NumberOctal.Loose,
-	options?: T.NumberOctal.Spelling
+	options?: T.NumberOctal.Options
 ): ReturnType<typeof F.buildNumberOctal> {
 	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NumberOctal)
 		return input as unknown as ReturnType<typeof F.buildNumberOctal>;
@@ -8742,27 +8795,23 @@ export function resolveClassBodyMethod_methodDefinition(
 	return _resolveOneBranch<T.MethodDefinition>(value, 'method_definition');
 }
 
-export function resolveClassBodyMethod_terminator(
-	value: T.ClassBodyMethod.LooseConfig['terminator']
-): T.ClassBodyMethod['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export function coerceToClassBodyMethod(input: T.ClassBodyMethod.Loose): ReturnType<typeof F.buildClassBodyMethod> {
+export function coerceToClassBodyMethod(
+	input: T.ClassBodyMethod.Loose,
+	options?: T.ClassBodyMethod.Options
+): ReturnType<typeof F.buildClassBodyMethod> {
 	if (!_isLooseConfig<T.ClassBodyMethod.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassBodyMethod>;
-	return F.buildClassBodyMethod({
-		decorator: resolveClassBodyMethod_decorators(input.decorator),
-		methodDefinition: _requireField(
-			'class_body_method',
-			'methodDefinition',
-			resolveClassBodyMethod_methodDefinition(input.methodDefinition)
-		),
-		terminator: resolveClassBodyMethod_terminator(input.terminator)
-	});
+	return F.buildClassBodyMethod(
+		{
+			decorator: resolveClassBodyMethod_decorators(input.decorator),
+			methodDefinition: _requireField(
+				'class_body_method',
+				'methodDefinition',
+				resolveClassBodyMethod_methodDefinition(input.methodDefinition)
+			)
+		},
+		options
+	);
 }
 
 export function resolveClassBodyMethodSig_methodSignature(
@@ -8809,22 +8858,24 @@ export function resolveClassBodyMember_content(
 	);
 }
 
-export function resolveClassBodyMember_terminator(
-	value: T.ClassBodyMember.LooseConfig['terminator']
-): T.ClassBodyMember['_terminator'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';' | ','>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const, [',', TSKindId.Comma] as const]
-	);
-}
-
-export function coerceToClassBodyMember(input: T.ClassBodyMember.Loose): ReturnType<typeof F.buildClassBodyMember> {
-	if (!_isLooseConfig<T.ClassBodyMember.LooseConfig>(input))
+export function coerceToClassBodyMember(
+	input: T.ClassBodyMember.Loose,
+	options?: T.ClassBodyMember.Options
+): ReturnType<typeof F.buildClassBodyMember> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ClassBodyMember)
 		return input as unknown as ReturnType<typeof F.buildClassBodyMember>;
-	return F.buildClassBodyMember({
-		content: _requireField('class_body_member', 'content', resolveClassBodyMember_content(input.content)),
-		terminator: _requireField('class_body_member', 'terminator', resolveClassBodyMember_terminator(input.terminator))
-	});
+	return F.buildClassBodyMember(
+		_requireField(
+			'class_body_member',
+			'content',
+			_resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K2,
+				_K73
+			)
+		),
+		options
+	);
 }
 
 export function resolveIndexSignatureColon_sign(
@@ -9571,32 +9622,29 @@ export function resolveExportStatementDefaultFrom_content(
 	>(value, _K2, _K79);
 }
 
-export function resolveExportStatementDefaultFrom_automaticSemicolon(
-	value: T.ExportStatementDefaultFrom.LooseConfig['automaticSemicolon']
-): T.ExportStatementDefaultFrom['_automatic_semicolon'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToExportStatementDefaultFrom(
-	input: T.ExportStatementDefaultFrom.Loose
+	input: T.ExportStatementDefaultFrom.Loose,
+	options?: T.ExportStatementDefaultFrom.Options
 ): ReturnType<typeof F.buildExportStatementDefaultFrom> {
-	if (!_isLooseConfig<T.ExportStatementDefaultFrom.LooseConfig>(input))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ExportStatementDefaultFrom)
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultFrom>;
-	return F.buildExportStatementDefaultFrom({
-		content: _requireField(
+	return F.buildExportStatementDefaultFrom(
+		_requireField(
 			'export_statement_default_from',
 			'content',
-			resolveExportStatementDefaultFrom_content(input.content)
+			_resolveOne<
+				| T.ExportStatementDefaultFromStarFrom
+				| T.ExportStatementDefaultFromNsFrom
+				| T.ExportStatementDefaultFromClauseFrom
+				| T.ExportClause
+			>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				_K2,
+				_K79
+			)
 		),
-		automaticSemicolon: _requireField(
-			'export_statement_default_from',
-			'automaticSemicolon',
-			resolveExportStatementDefaultFrom_automaticSemicolon(input.automaticSemicolon)
-		)
-	});
+		options
+	);
 }
 
 export function resolveExportStatementDefaultDeclaration_decorators(
@@ -9740,32 +9788,36 @@ export function resolveExportStatementDefaultDeclarationDefaultKwValue_value(
 	);
 }
 
-export function resolveExportStatementDefaultDeclarationDefaultKwValue_automaticSemicolon(
-	value: T.ExportStatementDefaultDeclarationDefaultKwValue.LooseConfig['automaticSemicolon']
-): T.ExportStatementDefaultDeclarationDefaultKwValue['_automatic_semicolon'] {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'\n' | ';'>(value, _K2, _K2)),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
 export function coerceToExportStatementDefaultDeclarationDefaultKwValue(
-	input: T.ExportStatementDefaultDeclarationDefaultKwValue.Loose
+	input: T.ExportStatementDefaultDeclarationDefaultKwValue.Loose,
+	options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 ): ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue> {
-	if (!_isLooseConfig<T.ExportStatementDefaultDeclarationDefaultKwValue.LooseConfig>(input))
+	if (
+		isNodeData(input) &&
+		(input.$type as string | number) === TSKindId.ExportStatementDefaultDeclarationDefaultKwValue
+	)
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>;
-	return F.buildExportStatementDefaultDeclarationDefaultKwValue({
-		value: _requireField(
+	return F.buildExportStatementDefaultDeclarationDefaultKwValue(
+		_requireField(
 			'export_statement_default_declaration_default_kw_value',
 			'value',
-			resolveExportStatementDefaultDeclarationDefaultKwValue_value(input.value)
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input ? input.value : input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'value' in input
+								? input.value
+								: input,
+							_K7,
+							_K13
+						)
+				),
+				[]
+			)
 		),
-		automaticSemicolon: _requireField(
-			'export_statement_default_declaration_default_kw_value',
-			'automaticSemicolon',
-			resolveExportStatementDefaultDeclarationDefaultKwValue_automaticSemicolon(input.automaticSemicolon)
-		)
-	});
+		options
+	);
 }
 
 export function resolveVariableDeclaratorPlain_name(

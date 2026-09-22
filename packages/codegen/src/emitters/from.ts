@@ -296,9 +296,9 @@ function emitBranchFrom(
 
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
-	const slots = node.slots.filter((slot) => slot.registeredOption !== 'spelling');
+	const slots = node.configSlots;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
-	const optionsParam = spellingType === undefined ? '' : `, options?: T.${node.typeName}.Spelling`;
+	const optionsParam = spellingType === undefined ? '' : `, options?: T.${node.typeName}.Options`;
 	const optionsArg = spellingType === undefined ? '' : ', options';
 	// Loose optionality mirrors the strict surface's own derivation
 	// (`argumentOptional`, node-map.ts): a required field only blocks the
