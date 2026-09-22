@@ -550,7 +550,7 @@ git commit -m "feat(render): options resolve through a static address trie; per-
   with `T.NodeMap` the kind-name to interface map `types.ts` gains if it does not already export one, and the virtual kinds (labels) listed from `declared.bindings`.
 - On each generated interface, one member:
   ```ts
-  readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }; readonly arguments: { readonly separator?: { readonly before?: SpacingArm; readonly after?: SpacingArm; readonly value?: TSKindId.Comma }; readonly spread_element: { readonly after?: WhitespaceArm } } };
+  readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }; readonly arguments: { readonly separator: { readonly comma: { readonly before?: SpacingArm; readonly after?: SpacingArm } }; readonly spread_element: { readonly after?: WhitespaceArm } } };
   ```
   nested exactly as the address trie is nested, so a seated element site is `arguments.arguments.as_expression.after`. A kind with no sites emits no member.
 
@@ -575,7 +575,7 @@ it('emits an options hint per kind and derives Options from it; no address table
 import { expectTypeOf } from 'vitest';
 import type { Options } from '../src/options.ts';
 import { TSKindId } from '../src/types.ts';
-const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, arguments: { separator: { after: TSKindId.Tight }, spread_element: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
+const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, arguments: { separator: { comma: { after: TSKindId.Tight } }, spread_element: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
 expectTypeOf(ok).toMatchTypeOf<Options>();
 // @ts-expect-error a token the kind does not have
 const bad: Options = { arguments: { lbrace: { after: TSKindId.Space } } };
@@ -587,7 +587,7 @@ Run: the emitter test file; `pnpm exec vitest --typecheck run packages/typescrip
 
 - [ ] **Step 3: Implement**
 
-`packages/types/src/options.ts` as in Interfaces. In `emitters/types.ts`, where `__inputHints__` is written for a kind, also write `__optionsHint__` from that kind's subtree of the address tables: a literal segment becomes a token key with its sides; a field segment whose slot repeats becomes the slot key holding `separator` (sides plus `value` when the separator has arms) and one key per element kind with its seated sides; sides are typed by the arm alias the site admits. In `emitters/options.ts`, `renderOptionsModule` prints the two arm aliases, `T.NodeMap` if needed, the virtual-kind intersection for labels, and `export type Options = …`; `AddressRoot`/`AddressBranch`/`AddressLeaf`/`AddressNodeN` are no longer printed; `deriveAddressTables` stays, since `render-options-rs.ts` builds the trie from it, and the hint emitter reads the same output, so the two surfaces cannot drift.
+`packages/types/src/options.ts` as in Interfaces. In `emitters/types.ts`, where `__inputHints__` is written for a kind, also write `__optionsHint__` from that kind's subtree of the address tables: a literal segment becomes a token key with its sides; a field segment whose slot repeats becomes the slot key holding `separator` with one key per separator arm carrying its sides (`separator.comma.after`, as the trie spells it) and one key per element kind with its seated sides; sides are typed by the arm alias the site admits. In `emitters/options.ts`, `renderOptionsModule` prints the two arm aliases, `T.NodeMap` if needed, the virtual-kind intersection for labels, and `export type Options = …`; `AddressRoot`/`AddressBranch`/`AddressLeaf`/`AddressNodeN` are no longer printed; `deriveAddressTables` stays, since `render-options-rs.ts` builds the trie from it, and the hint emitter reads the same output, so the two surfaces cannot drift.
 
 - [ ] **Step 4: Tests, regenerate, measure, gates, commit**
 
