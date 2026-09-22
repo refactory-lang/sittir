@@ -550,9 +550,9 @@ git commit -m "feat(render): options resolve through a static address trie; per-
   with `T.NodeMap` the kind-name to interface map `types.ts` gains if it does not already export one, and the virtual kinds (labels) listed from `declared.bindings`.
 - On each generated interface, one member:
   ```ts
-  readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }; readonly arguments: { readonly separator: { readonly comma: { readonly before?: SpacingArm; readonly after?: SpacingArm } }; readonly spread_element: { readonly after?: WhitespaceArm } } };
+  readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }; readonly arguments: { readonly separator: { readonly comma: { readonly before?: SpacingArm; readonly after?: SpacingArm } }; readonly spreadElement: { readonly after?: WhitespaceArm } } };
   ```
-  nested exactly as the address trie is nested, so a seated element site is `arguments.arguments.as_expression.after`. A kind with no sites emits no member.
+  nested exactly as the address trie is nested and camel-cased on every key (`spreadElement`, `asExpression`, `automaticSemicolon`), as the config keys and `__inputHints__` are, so a seated element site is `arguments.arguments.asExpression.after`. The rust addresses keep snake case; both emitters read the same table and case their own keys. A kind with no sites emits no member.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -562,6 +562,8 @@ git commit -m "feat(render): options resolve through a static address trie; per-
 it('emits an options hint per kind and derives Options from it; no address tables', () => {
 	const types = emitTypes(typesConfig);
 	expect(types).toContain("readonly __optionsHint__?: { readonly lparen: { readonly after?: WhitespaceArm }");
+	expect(types).toContain('readonly spreadElement: { readonly after?: WhitespaceArm }');
+	expect(types).not.toContain('spread_element');
 	const text = emitOptions(config);
 	expect(text).toContain('export type Options = DerivedOptions<T.NodeMap>');
 	expect(text).not.toContain('AddressBranch');
@@ -575,7 +577,7 @@ it('emits an options hint per kind and derives Options from it; no address table
 import { expectTypeOf } from 'vitest';
 import type { Options } from '../src/options.ts';
 import { TSKindId } from '../src/types.ts';
-const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, arguments: { separator: { comma: { after: TSKindId.Tight } }, spread_element: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
+const ok: Options = { arguments: { lparen: { after: TSKindId.Space }, arguments: { separator: { comma: { after: TSKindId.Tight } }, spreadElement: { after: TSKindId.Newline } } }, body: { before: TSKindId.Indent } };
 expectTypeOf(ok).toMatchTypeOf<Options>();
 // @ts-expect-error a token the kind does not have
 const bad: Options = { arguments: { lbrace: { after: TSKindId.Space } } };
