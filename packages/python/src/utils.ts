@@ -10,7 +10,8 @@ import type {
 	ElementsOf,
 	FlavorPair,
 	Hoisted,
-	OmitEach
+	OmitEach,
+	OptionsArg
 } from '@sittir/types';
 import type { Comment, NamespaceMap } from './types.js';
 import { render, toEdit } from './boundary.ts';
@@ -182,7 +183,7 @@ export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
 	return { strict, coerce };
 }
 
-export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach };
+export type { ArgsOf, ElementsOf, FlavorPair, Hoisted, OmitEach, OptionsArg };
 
 type AnyFlavorFn = (...args: never[]) => unknown;
 

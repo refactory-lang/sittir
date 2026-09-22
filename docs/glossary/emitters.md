@@ -12,6 +12,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 
 
+
 ### `packages/codegen/src/emitters/consts.ts::emitBitflagConstEnums`
 
 ```text
@@ -765,6 +766,18 @@ config form. Group seating is emitted in one place.
 Every text slot of a lexed kind is guarded by its own anchored pattern before the node is built; the message
 names the kind and the slot. The guards are the interior's slot patterns, so the whole-token regex is never
 tested against a slot value.
+```
+
+#### body
+
+```text
+// This node's own registered slot (e.g. terminator) gave the public
+// wrapper a trailing options argument that the count-only dispatch
+// below never accounted for — args.length alone can no longer tell
+// the plain-value call `(value?, options?)` apart from the bare-text
+// shorthand call `(text)`, so the shorthand branch is narrowed to
+// its one unambiguous shape (a single non-object argument) and every
+// other branch threads args[1] through as options.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::childrenSetterRestType`
@@ -2927,7 +2940,6 @@ share one symbol and a repeated `matches!` arm is an error. A `token` kind
 is absent on purpose: its literal is on the model and the transport already
 defaults a missing `$text` to it.
 
-
 ### `packages/codegen/src/emitters/kind-id-rust.ts::is_slot_separator`
 
 The generated table behind the reader's separator drop: `(parent kind id,
@@ -3918,6 +3930,7 @@ literal. The choice's seams sit inside the arm in the render rule, and the
 template collapses the choice to one slot, so the enum is where they are
 written; the parent never sees them. Literal arms with no such site stay
 unit variants.
+
 ### `packages/codegen/src/emitters/render-module.ts::renderAnyTransportWithNapiFromValue`
 
 ```text
@@ -5174,6 +5187,19 @@ The other named parts of the optional group a slot sits in, or nothing when the 
 
 The expression a builder binds a registered slot to: the option, else the registered arm, and, for a slot inside an optional group, only when one of the group's other parts is present.
 
+#### body
+
+```text
+// A choice-mode slot (terminator, quotes/style — arms with kind ids) is a
+// native render option site with its own resolution chain (per-tree >
+// stamp > per-call > tree table > engine > grammar default). Baking its
+// declared default into the built node would pre-empt that chain, so the
+// factory only ever SETS the slot when the caller passes it — never
+// defaults it, same as the config path already left it when the caller
+// omitted the key. Only a spelling-mode slot (no kind ids, no render-time
+// resolution to preserve) gets the eager default.
+```
+
 ### `packages/codegen/src/emitters/interior.ts::bareInteriorText`
 
 Whether a lexed kind with no single content slot takes a bare string as its whole text, and the number shape of that text when it is numeric. A bare string is projected onto the kind's slots through its token interior.
@@ -6097,6 +6123,25 @@ build error naming the kind and the slots.
 One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child.
 
 A kind's tests are addressed through its public spelling (`subFactoryBase`): its flat `ir` key when it is bundled (sub-factories are callable), or its flattened-parent route (`variantRoutePaths`) called through `.coerce`, the loose flavor that accepts the prebuilt nodes the dummy machinery passes. A kind with neither has no public path, and no sub-factory tests are emitted for it.
+
+#### body
+
+```text
+// A registered slot other than this arm's own key has no home in the
+// sub-factory's call arguments — some composer shapes (e.g. a bare
+// rest-args forward to the child) can't structurally accept a trailing
+// options argument at all. `.$with.<key>(...)` rebuilds through the
+// same options closure regardless of composer shape, so it is the one
+// mechanism that works uniformly here.
+```
+
+#### body
+
+```text
+// The alias constructs `child` (a wrapper kind of its own, e.g.
+// class_body_member), not `node` — its required registered slots are
+// its own, unrelated to `node`'s.
+```
 
 ### `packages/codegen/src/emitters/test.ts::subFactoryBase`
 
@@ -11704,6 +11749,17 @@ omits the key.
 // bypassed/omitted value still stores `[]` rather than `undefined`.
 ```
 
+#### body
+
+```text
+// A required field alongside an optional sibling (e.g. async_block's
+// body next to moveMarker) is what makes `config` itself defaultable to
+// `{}` (argumentOptional, above) — reading it bare would then silently
+// store `undefined` instead of the empty construction that field's own
+// omission means. `canDefaultToEmpty` is the same fact `emitBranchFrom`
+// (from.ts) already applies on the loose surface.
+```
+
 ### `packages/codegen/src/emitters/factories.ts::fieldElementType`
 
 #### body
@@ -12394,6 +12450,20 @@ preference; the literal texts are not part of the surface.
 // Optional field: type test passes no arg; render test passes dummy.
 ```
 
+#### body
+
+```text
+// A required registered slot (e.g. terminator) has no config-object home
+// any more and no viable render-time default — a minimal-config render
+// call would throw without it, so the caller building the actual `ir.key(
+// ...)` call threads a dummy through the trailing options argument the
+// factory now takes. Returned separately rather than folded into
+// renderConfigArg: some callers (childBareCallArgs) reuse renderConfigArg
+// as a value nested inside a larger literal, where a second top-level
+// call argument couldn't be spliced in anyway. The options type only
+// ever accepts the kind-id form, so this dummy is always built strict.
+```
+
 ### `packages/codegen/src/emitters/test.ts::soleSlotDummyKind`
 
 The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that admits its owner (python's `parenthesized_list_splat` admits itself and `list_splat`) stubs the other arm.
@@ -12436,6 +12506,16 @@ The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that
 // not just its type discriminant) rather than a bare `{ type: X }` —
 // the factory's real signature expects full NodeData for this slot, not
 // a type tag.
+```
+
+#### body
+
+```text
+// A registered slot with no viable default (e.g. terminator) still has
+// to come from somewhere at render time even when the node's own sole
+// value is omittable — the value-only placeholder above leaves it unset,
+// so a minimal-config render call would throw. Thread a dummy through
+// the trailing options argument the direct-shaped factory now takes.
 ```
 
 ### `packages/codegen/src/emitters/test.ts::pushRenderTest`
@@ -15095,6 +15175,7 @@ appears after its grand-arm (python `case_pattern`'s `negative` after the
 `integer` and `float` it hosts) still receives them; a one-pass placement
 left such arms flat while this function spelled them nested, and the
 generated pins called a path the overlay never mounted.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatBearing`
 
 Whether a child must be reached through its own overlay entry rather than its
@@ -15123,6 +15204,7 @@ arms span two slots emits any of this.
 
 
 Each chain it builds is recorded by the outer arm's name, so a parent that mounts this kind's arms can mount the chains too (`childChains`).
+
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::isChoiceGroup`
 
 Whether a slot's value is a group that is ITSELF a choice. Such a group has
@@ -15860,7 +15942,6 @@ A list's delimiter is filled from the table like any spacing site, zero
 included: the table's value is the grammar's declared default or a render
 option, and the transport's own value still wins.
 
-
 ### `packages/codegen/src/emitters/render-module.ts::listGapSitesOf`
 
 The un-seated spacing sites of one repeated slot on a kind, by side: `gap`
@@ -16238,3 +16319,53 @@ The text parameter of a pattern leaf's builder: `string | number` when its patte
 
 Wraps a config type in `WidenNumeric` for the numeric text slots of a node, so the namespace `Config` and `LooseConfig` accept a number where the builder converts one.
 
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.registered`
+
+```text
+/** A registered (spelling/choice) slot has no home in the factory's
+	 * config object — it moves to the trailing options argument. */
+```
+
+### `packages/codegen/src/emitters/test.ts::subFactoryCallArgs`
+
+#### body
+
+```text
+// The parent collapsed to a direct/value factory around this
+// arm's one residual slot (see polymorphs.ts's own `positional`
+// branch), so the composer takes that slot's value directly
+// rather than wrapped in a config object.
+```
+
+### `packages/codegen/src/emitters/test.ts::strictOptionDummy`
+
+```text
+// A registered slot's option value is always the kind-id form — the choice's
+// arms (e.g. terminator's automatic-semicolon marker) are synthesized kinds
+// with no source spelling, so kindEnumTextExpr's literal-text lookup (used
+// for the config-surface's spelling form) can't resolve them; read the
+// enum kind straight off the field's own storage facts instead.
+```
+
+### `packages/codegen/src/emitters/factories.ts::resolveConfigFactorySurface`
+
+#### body
+
+```text
+// classifyFactoryShape() already falls through to 'config' for a
+// registered node whose sole slot is multiple — a rest parameter must be
+// last in a JS/TS signature, so it can never sit before the trailing
+// options argument. factoryTakesSpreadChildren reads that same
+// classification, so this stays in sync without re-checking here.
+```
+
+#### body
+
+```text
+// The same recursive fact the loose surface's `emitBranchFrom` derives
+// its own optionality from (node-map.ts `argumentOptional`): a required
+// slot only blocks the no-argument call when it has no default-empty
+// construction of its own (an optional sibling slot alongside it never
+// blocks on its own, unlike the shallow "any slot required" scan this
+// replaced).
+```

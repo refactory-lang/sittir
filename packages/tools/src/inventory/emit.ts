@@ -593,12 +593,14 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 			return interfaceIr(s, base);
 		case 'alias':
 			return ir.exportStatement.default.declaration.strict({
-				content: ir.typeAliasDeclaration.strict({
-					name: ir.identifier(s.name),
-					typeParameters: typeParams(),
-					value: toIr(s.value, base),
-					terminator: TSKindId.Semi
-				})
+				content: ir.typeAliasDeclaration.strict(
+					{
+						name: ir.identifier(s.name),
+						typeParameters: typeParams(),
+						value: toIr(s.value, base)
+					},
+					{ terminator: TSKindId.Semi }
+				)
 			});
 		case 'namespace':
 			return ir.exportStatement.default.declaration.strict({
@@ -618,11 +620,12 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 			: ir.importClause.strict(
 					first ? ir.namedImports.strict({ delimiter: Delimiter.None }, first, ...rest) : ir.namedImports.strict()
 				);
-	const built = ir.importStatement.clauseFrom.strict({
-		importClause: TSKindId.TypeKeyword,
-		fromClause: { importClause: clause, source: str(imp.from) },
-		terminator: TSKindId.Semi
-	});
+	const built = ir.importStatement.clauseFrom
+		.strict({
+			importClause: TSKindId.TypeKeyword,
+			fromClause: { importClause: clause, source: str(imp.from) }
+		})
+		.$with.terminator(TSKindId.Semi);
 	return withTrivia(built, leading, []);
 }
 

@@ -174,6 +174,18 @@ export type ArgsOf<F> = F extends {
 		: never;
 
 /**
+ * OptionsArg<F> — F's own trailing options parameter, read off {@link ArgsOf}
+ * rather than a fixed tuple index: `ArgsOf<F>[1]` is a compile error for any
+ * F with only one declared parameter (TS statically rejects an out-of-range
+ * tuple index), which every value-arm and config-arm composer over a
+ * registered-slot-free factory is. The optional-element pattern match below
+ * is arity-safe in both directions — it resolves to `undefined` when F has
+ * no second parameter and to that parameter's own type (options or
+ * options-and-beyond) when F does.
+ */
+export type OptionsArg<F> = ArgsOf<F> extends readonly [unknown, (infer Opt)?, ...unknown[]] ? Opt : undefined;
+
+/**
  * ElementsOf<F> — the union of every positional argument type a factory
  * accepts, read from its own rest parameter. Unlike {@link ArgsOf} it keeps a
  * rest parameter that is a union of tuples (a non-empty list that also takes
