@@ -296,7 +296,7 @@ function emitBranchFrom(
 
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
-	const slots = node.slots.filter((slot) => slot.registeredOption !== true);
+	const slots = node.slots.filter((slot) => slot.registeredOption !== 'spelling');
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	const optionsParam = spellingType === undefined ? '' : `, options?: T.${node.typeName}.Spelling`;
 	const optionsArg = spellingType === undefined ? '' : ', options';

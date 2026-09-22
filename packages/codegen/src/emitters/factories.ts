@@ -765,7 +765,7 @@ function looseValueOf(elementType: string): string {
 }
 
 export function registeredSlots(node: { readonly slots: readonly AssembledNonterminal[] }): readonly AssembledNonterminal[] {
-	return node.slots.filter((slot) => slot.registeredOption === true);
+	return node.slots.filter((slot) => slot.registeredOption === 'spelling');
 }
 
 function registeredSlotSource(node: FieldCarryingNode, slot: AssembledNonterminal, hasConfig: boolean): string {
@@ -773,7 +773,7 @@ function registeredSlotSource(node: FieldCarryingNode, slot: AssembledNontermina
 	const peers = hasConfig ? optionalGroupPeers(node, slot.name) : undefined;
 	const present = (peers ?? [])
 		.map((name) => node.slots.find((candidate) => candidate.name === name))
-		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption !== true)
+		.filter((peer): peer is AssembledNonterminal => peer !== undefined && peer.registeredOption !== 'spelling')
 		.map((peer) => `config.${peer.configKey} !== undefined`);
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
 }
@@ -1045,7 +1045,7 @@ function emitFieldCarryingFactory(
 		withLines = ['    $with: {'];
 		const optionsArg = registered.length === 0 ? '' : ', options';
 		for (const f of slots) {
-			if (f.registeredOption === true) continue;
+			if (f.registeredOption === 'spelling') continue;
 			const method = f.propertyName;
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
@@ -1071,7 +1071,7 @@ function emitFieldCarryingFactory(
 	for (const f of slotsToEmit) {
 		const shape = numericSlotShape(f);
 		const source =
-			f.registeredOption === true
+			f.registeredOption === 'spelling'
 				? registeredSlotSource(node, f, singleField === undefined && spreadFacts === null)
 				: shape === undefined
 					? valueSourceFor(f)

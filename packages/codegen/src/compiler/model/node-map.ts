@@ -1104,7 +1104,7 @@ export class AssembledNonterminal {
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 	optionDefaultArm?: string;
-	registeredOption?: boolean;
+	registeredOption?: 'spelling' | 'choice';
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;
@@ -1577,7 +1577,7 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
-		return this._slots.filter((slot) => slot.registeredOption !== true);
+		return this._slots.filter((slot) => slot.registeredOption !== 'spelling');
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
