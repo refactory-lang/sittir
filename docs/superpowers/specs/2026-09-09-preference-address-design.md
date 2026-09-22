@@ -422,11 +422,18 @@ export interface Arguments {
 		readonly rparen: { readonly before?: WhitespaceArm };
 		readonly arguments: {
 			readonly separator: { readonly comma: { readonly before?: SpacingArm; readonly after?: SpacingArm } };
-			readonly spread_element: { readonly after?: WhitespaceArm };
+			readonly spreadElement: { readonly after?: WhitespaceArm };
 		};
 	};
 }
 ```
+
+Every key on the TypeScript side is camel-cased (`spreadElement`,
+`automaticSemicolon`), the same casing the config keys and `__inputHints__`
+already use, so an option path is spelled the way the rest of the typed
+surface is; the Rust addresses keep the snake-cased kind and slot names of
+the grammar. The hint emitter and the address emitter read one table and
+apply their own casing, so the two never disagree on which sites exist.
 
 and `Options` is one generic in `packages/types`, mapped over the existing
 kind-to-interface map:
@@ -457,7 +464,7 @@ variant before planning (2026-09-21): 3,058,924 instantiations against
 the transitive import of `types.ts`. The hint variant is a mapped type over
 members that already exist, so its gate is the same measurement, expected
 at or below the template's number; the usage
-`arguments: { lparen: { after }, arguments: { separator: { comma: { after } }, spread_element: { after } } }`
+`arguments: { lparen: { after }, arguments: { separator: { comma: { after } }, spreadElement: { after } } }`
 (the kind `arguments` has one slot, also named `arguments`, so the address
 reads kind, slot, site, exactly as the trie does)
 type-checks against the derived type.
