@@ -235,3 +235,132 @@ reparse stays.
   flip is in progress on its own branch and this spec reads whichever form
   a ref carries through one accessor.
 - Case spelling of prefixes and markers as render options.
+
+## Amendment 2026-09-22 — display unions are virtual supertypes; hidden never flips
+
+**Status:** approved ruling, 2026-09-22, after Task 1 landed and exposed
+the `_reserved_identifier` / `pair.key` regression. Where this section and
+§1–§3 disagree, this section wins; the plan's Task 1 and Task 5 are updated
+to match.
+
+### A.1 Ground truth, from parser.c
+
+Every alias site is a parser-issued kind: `alias_sym_<target>` in
+`ts_symbol_names`. Three shapes exist, and the parser tells them apart:
+
+| shape | example (typescript) | grammar id | type id |
+| --- | --- | --- | --- |
+| nonterminal storage under an alias | `alias($._lhs_expression, $.lhs_expression)` | `sym__lhs_expression` (253) | `alias_sym_lhs_expression` (457) |
+| terminal storage under an alias | `alias($.identifier, $.property_identifier)`, `alias($._reserved_identifier, $.reserved_identifier)` | the token: `identifier` (1), `anon_sym_declare` (109) | `alias_sym_property_identifier` (458), `alias_sym_reserved_identifier` (459) |
+| dissolved hidden rule | `_reserved_identifier` | none: no `sym__reserved_identifier` exists, in our parser.c or upstream's | n/a |
+
+`ts_non_terminal_alias_map` lists exactly the hidden nonterminals that
+materialize under an alias (`_lhs_expression`, and rust's `_let_chain`,
+python's `_simple_statements`, rust's `_block_comment_content`). A hidden
+choice of terminals (`_reserved_identifier`) is dissolved: the alias lands on
+each token, and at a bare reference the token stays bare. The storage kind at
+`{ declare: 1 }`'s key is the `declare` token, displayed as
+`property_identifier`.
+
+Two facts follow, and they are independent:
+
+- **Hidden is a name fact.** A reference to a `_`-named rule elides at every
+  bare occurrence, always. `RuleBase.hidden` is `isParserHiddenName(name)`
+  and is never flipped by a later phase. `link.ts::unhideAliasedTargets` is
+  deleted. The seven rules that are referenced both bare and through an
+  alias (rust `_tuple_type_elements`, `_let_chain`, `_block_comment_content`;
+  typescript `_jsx_identifier`, `_lhs_expression`; python
+  `_simple_statements`, `_print_arguments`) are then correct without special
+  handling: hidden by name, materialized only where an alias ref says so.
+- **Materialization is a site fact.** Whether a node exists at an occurrence
+  is entirely described by that occurrence's alias ref (`aliasedFrom` /
+  `aliasedTo`). A hidden storage kind that some site displays gets its struct
+  under its storage identifier (§3.2: `_LhsExpression`) and is a member of
+  the display's supertype (A.2). No rule-level flag carries this.
+
+### A.2 A display union is a virtual supertype
+
+§1 called a display union "a name, not a kind: no struct, no factory, no wrap
+function, no supertype entry". Amended: a display union is a **virtual
+supertype** in the node model, with the surface sittir already generates for
+a supertype over visible variants:
+
+- an entry in the supertype table whose members are the storage kinds that
+  display under that name, read from `displayUnions`;
+- the type alias (`PropertyIdentifier`, `LhsExpression`, `MemberExpression`
+  where the display is also a rule of its own), the `is.<display>()` guard,
+  and the dispatching factory;
+- no struct, no wrap function and no transport of its own: the node is its
+  storage kind, stamped from `grammar_id()` exactly as today.
+
+The identity rule is therefore unchanged and has no exception: `$type` is
+the grammar symbol everywhere. Terminal members are the leaf kinds the parser
+issues: `property_identifier` = {`identifier`, `declare_keyword`,
+`namespace_keyword`, `type_keyword`, …}; `reserved_identifier` is the same
+set without `identifier`; `type_identifier`, `statement_identifier`,
+`shorthand_property_identifier` are further supertypes over overlapping
+sets. A supertype's members are kind names (`SupertypeMembers`), so keyword
+kinds are admissible members; the enum-arms-through-supertypes work already
+walks them.
+
+A display over one hidden nonterminal (`lhs_expression` ←
+`_lhs_expression`) is the same thing with one member. A display over several
+nonterminal storages (`member_expression` ← {`member_expression`,
+`nested_identifier`, `decorator_member_expression`, the two
+`_type_query_member_expression*`}; `call_expression` ← 4; rust `doc_comment`
+← 2; python `block` ← {`block`, `_match_block`}) is a supertype over the
+storage structs. The tree keeps upstream's display names; nothing is
+unaliased in enrich for this purpose. `applyUnaliasDistinct`'s skip of a
+bucket whose candidates are all alias sites (landed in Task 1) is the
+consistent behaviour and stays; its explanatory comment moves to the
+glossary.
+
+The envelope alternative (a carrier node with `$type` = the alias id and the
+token as content) was considered and rejected: it makes type id the identity
+for one class of node and grammar id for every other, and it re-mints as a
+node what the parser already dedups.
+
+### A.3 A dissolved hidden rule distributes at every alias site
+
+§3.1 distributes an alias through a hidden choice rule "when the alias is the
+only use of it". Amended: use count is not the criterion; the parser is.
+
+- **Evaluate** distributes an alias over *inline* content only
+  (`alias(choice(a, b), $.t)` → `choice(alias(a, $.t), alias(b, $.t))`). It
+  does not look through a symbol; `choiceArmsThrough`'s hidden-rule case is
+  removed.
+- **Link**, where the kind catalog is known, builds `displayUnions` by
+  looking through every aliased `SYMBOL` whose rule is hidden and has **no
+  parser symbol** (a `kindid` miss on the rule's own name), recursively, to
+  the arms the parser actually issues. A hidden rule that *has* a parser
+  symbol (`_lhs_expression`) is a member as itself.
+
+So `property_identifier`'s members come from every one of
+`_reserved_identifier`'s six alias sites, and `_reserved_identifier` never
+enters the node model. The ground truth for "dissolved" is the catalog, the
+same source `kindid-unstamped-symbols` reads; no shape heuristic decides it.
+
+### A.4 Mixed displays are a blocking diagnostic
+
+No display in the three grammars sits over both a terminal and a nonterminal
+storage kind (externals such as `_template_chars` and the rust doc-comment
+markers are tokens). A display union whose members mix the two is not
+modelled; the preflight reports `display-union-mixed`, naming the display and
+the members on each side. It sits beside `alias-distributed` (§3.5) and is
+specified with the other shape diagnostics in
+`2026-09-22-unsupported-shape-diagnostics-design.md`.
+
+### A.5 Acceptance additions
+
+- `unhideAliasedTargets` is gone; no `Rule.hidden` differs from
+  `isParserHiddenName(name)` in any linked grammar.
+- `_reserved_identifier` is absent from every node map; `pair.key`'s
+  accepted set equals `displayUnions.get('property_identifier')`; the three
+  `pair.key` fixtures pass and typescript read-render-parse returns to its
+  112/114 baseline.
+- For every `alias_sym_*` in each grammar's parser.c, the node model has a
+  supertype entry of that name whose members are the grammar symbols the
+  parser issues under it, and, when the name is also a rule, that rule is one
+  of the members.
+- `display-union-mixed` fires on a unit fixture and is silent on all three
+  grammars.

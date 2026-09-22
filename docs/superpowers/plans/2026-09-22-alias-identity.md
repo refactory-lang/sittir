@@ -43,6 +43,34 @@
 
 ### Task 1: Distribute an inline alias over its arms; build `displayUnions`
 
+> **Amended 2026-09-22** (spec §A). Task 1 landed at a4aa98dcc with a
+> follow-up (fe8366532) that flips `rule.hidden` for aliased targets; the
+> follow-up is reverted by this amendment. The remaining Task 1 work is:
+>
+> 1. `link.ts::unhideAliasedTargets` is deleted (spec §A.1). `hidden` is
+>    `isParserHiddenName(name)` and no phase changes it. Keep the
+>    `SYMBOL + aliasedTo` shape matching it introduced, but in
+>    `collectDisplayUnions`, where both ref forms must be read.
+> 2. `evaluate.ts::choiceArmsThrough` no longer looks through a hidden
+>    single-use rule; evaluate distributes over inline content only
+>    (spec §A.3). Move the look-through to `collectDisplayUnions`: an
+>    aliased `SYMBOL` whose rule is hidden and has no entry in
+>    `kindEntries` (the same miss `kindid-unstamped-symbols` reports) is
+>    expanded, recursively, to the arms the parser issues; one with a
+>    kind entry (`_lhs_expression`) is a member as itself.
+> 3. `assemble.ts` turns every `displayUnions` entry into a supertype
+>    entry (`SupertypeMembers`) whose members are the storage kinds, and
+>    the emitters produce for it exactly what a supertype over visible
+>    variants gets today: type alias, `is.<display>()`, dispatching
+>    factory; no struct, wrap or transport (spec §A.2). Where the display
+>    is also a rule of its own, that rule is one of the members.
+> 4. Gate for the task is now: rust 135/137, python 115/116 unchanged and
+>    typescript read-render-parse back to 112/114 with the three
+>    `pair.key` fixtures passing; `_reserved_identifier` absent from the
+>    node map; no `Rule.hidden` differing from its name.
+> 5. The explanatory comment added to `dsl/enrich.ts::applyUnaliasDistinct`
+>    moves to `docs/glossary/dsl.md`.
+
 **Files:**
 - Modify: `packages/codegen/src/compiler/evaluate.ts:458-507` (`rewriteInlineAliases`)
 - Modify: `packages/codegen/src/compiler/link.ts:132-292` (`link`), `:662-706` (`foldAliasLiteralsIntoEnumRules`)
@@ -566,6 +594,15 @@ git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a
 ---
 
 ### Task 5: `alias-distributed` preflight diagnostic
+
+> **Amended 2026-09-22** (spec §A.4). The same module also emits
+> `display-union-mixed`: a `displayUnions` entry whose members include
+> both a terminal storage kind (a literal, pattern or external token) and a
+> nonterminal one. `severity: 'error'`, `canProceed: false`, `details:
+> { display, terminals, nonterminals }`. It reads the link-phase
+> `displayUnions`, so the diagnostics collector gains that input beside
+> the evaluate-phase rules. Silent on all three grammars today; the unit
+> fixture aliases a token and a seq-bodied rule to one name.
 
 **Files:**
 - Create: `packages/codegen/src/compiler/diagnostics/alias-distributed.ts`
