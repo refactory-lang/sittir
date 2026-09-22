@@ -166,11 +166,11 @@ export interface AmbientDeclarationTransport {
 
 export interface ArgumentsTransport {
   '$_trivia'?: TransportTrivia
-  _arguments?: Array<SlotValue<ArgumentsArgumentsTransportSlot> | undefined | null>
-  _arguments_end?: number
-  _arguments_start?: number
-  _arguments_separator_space_before?: number
-  _arguments_separator_space_after?: number
+  _elements?: Array<SlotValue<ArgumentsElementsTransportSlot> | undefined | null>
+  _elements_end?: number
+  _elements_start?: number
+  _elements_separator_space_before?: number
+  _elements_separator_space_after?: number
   _lparen_after?: number
   _rparen_before?: number
   _arguments_before?: number

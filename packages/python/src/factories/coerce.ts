@@ -2763,9 +2763,7 @@ export function coerceToFunctionDefinition(
 	});
 }
 
-export function resolveParameters_parameters(
-	value: T.Parameters.LooseConfig['parameters']
-): T.Parameters['_parameters'] {
+export function resolveParameters_elements(value: T.Parameters.LooseConfig['elements']): T.Parameters['_elements'] {
 	return _resolveOneBranch<T._Parameters>(value, '_parameters', undefined, true);
 }
 
@@ -2774,9 +2772,7 @@ export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeo
 		return input as unknown as ReturnType<typeof F.buildParameters>;
 	return F.buildParameters(
 		_resolveOneBranch<T._Parameters>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'parameters' in input
-				? input.parameters
-				: input,
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'elements' in input ? input.elements : input,
 			'_parameters',
 			undefined,
 			true

@@ -2267,18 +2267,18 @@ export function buildUndefined(): TSKindId.Undefined {
 }
 
 export function buildArguments(...children: (T.Expression | T.SpreadElement)[]): T.Arguments.Built {
-	const _arguments = children;
+	const _elements = children;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Arguments as const,
 				$source: 2 as const,
 				$named: true as const,
-				_arguments,
-				$with: { arguments: (...vs: (T.Expression | T.SpreadElement)[]) => buildArguments(...vs) }
+				_elements,
+				$with: { elements: (...vs: (T.Expression | T.SpreadElement)[]) => buildArguments(...vs) }
 			},
 			{
-				arguments: () => _arguments
+				elements: () => _elements
 			}
 		),
 		methodsEngine

@@ -949,20 +949,20 @@ export function buildParameters(...args: unknown[]) {
 		: _buildParameters((build_Parameters as (...a: unknown[]) => unknown)(...args) as T._Parameters);
 }
 function _buildParameters(value?: T._Parameters): T.Parameters.Built {
-	const _parameters = value;
+	const _elements = value;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Parameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_parameters,
+				_elements,
 				$with: {
-					parameters: (value?: T._Parameters) => buildParameters(value)
+					elements: (value?: T._Parameters) => buildParameters(value)
 				}
 			},
 			{
-				parameters: () => _parameters
+				elements: () => _elements
 			}
 		),
 		methodsEngine

@@ -25639,7 +25639,7 @@ impl ::sittir_core::render::Render for TemplateSubstitutionExpressionTransportSl
 }
 
 #[derive(Debug, Clone)]
-pub enum ArgumentsArgumentsTransportSlot {
+pub enum ArgumentsElementsTransportSlot {
     AsExpression(AsExpressionTransport),
     SatisfiesExpression(SatisfiesExpressionTransport),
     InstantiationExpression(InstantiationExpressionTransport),
@@ -25691,63 +25691,63 @@ pub enum ArgumentsArgumentsTransportSlot {
     Verbatim(VerbatimTransport),
 }
 
-impl ::sittir_core::prepare::Prepare for ArgumentsArgumentsTransportSlot {
+impl ::sittir_core::prepare::Prepare for ArgumentsElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ArgumentsArgumentsTransportSlot::AsExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::SatisfiesExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::InstantiationExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::InternalModule(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::TypeAssertion(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::MemberExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Undefined(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Identifier(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::ReservedIdentifier(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::This(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Super(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberHex(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberDecimal(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberBinary(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberOctal(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NumberBigint(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::String(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::TemplateString(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Regex(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::True(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::False(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Null(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Object(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Array(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::FunctionExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::ArrowFunction(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::GeneratorFunction(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Class(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::MetaPropertyNewTarget(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::MetaPropertyImportMeta(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::CallExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NonNullExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::AssignmentExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::AwaitExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::UnaryExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::BinaryExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::TernaryExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::UpdateExpressionPostfix(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::NewExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::YieldExpression(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::SpreadElement(t) => t.prepare(ctx),
-            ArgumentsArgumentsTransportSlot::Verbatim(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::AsExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::SatisfiesExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::InstantiationExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::InternalModule(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::TypeAssertion(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::SubscriptExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::MemberExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::ParenthesizedExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Undefined(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Identifier(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::ReservedIdentifier(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::This(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Super(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberHex(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberFloatPoint(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberFloatLeadingPoint(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberFloatScientific(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberDecimal(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberBinary(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberOctal(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NumberBigint(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::String(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::TemplateString(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Regex(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::True(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::False(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Null(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Object(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Array(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::FunctionExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::ArrowFunction(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::GeneratorFunction(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Class(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::MetaPropertyNewTarget(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::MetaPropertyImportMeta(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::CallExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NonNullExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::AssignmentExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::AugmentedAssignmentExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::AwaitExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::UnaryExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::BinaryExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::TernaryExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::UpdateExpressionPostfix(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::UpdateExpressionPrefix(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::NewExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::YieldExpression(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::SpreadElement(t) => t.prepare(ctx),
+            ArgumentsElementsTransportSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ArgumentsArgumentsTransportSlot {
+impl ::sittir_core::view::KindOf for ArgumentsElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::AsExpression(inner) => inner.kind_in(kinds),
@@ -25804,7 +25804,7 @@ impl ::sittir_core::view::KindOf for ArgumentsArgumentsTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -26023,14 +26023,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ArgumentsArgumentsTransportSlot",
+                        "unknown kind id {other} in ArgumentsElementsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ArgumentsArgumentsTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ArgumentsElementsTransportSlot")
                 )?;
                 match kind_id {
                     104 => Ok(Self::Undefined(
@@ -26244,152 +26244,152 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsArgumentsTransportSlot 
                         SpreadElementTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ArgumentsArgumentsTransportSlot",
+                        "unknown kind id {other} in ArgumentsElementsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::String => Ok(Self::Verbatim(VerbatimTransport { text: String::from_napi_value(env, napi_val)? })),
-            _ => Err(::napi::Error::from_reason("ArgumentsArgumentsTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ArgumentsElementsTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsArgumentsTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ArgumentsArgumentsTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ArgumentsElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ArgumentsArgumentsTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ArgumentsElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ArgumentsArgumentsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ArgumentsElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentsArgumentsTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentsElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ArgumentsArgumentsTransportSlot::to_napi_value(env, *val)
+        ArgumentsElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn arguments_arguments_transport_slot_to_any(t: ArgumentsArgumentsTransportSlot) -> AnyTransport {
+fn arguments_elements_transport_slot_to_any(t: ArgumentsElementsTransportSlot) -> AnyTransport {
     match t {
-        ArgumentsArgumentsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
-        ArgumentsArgumentsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
-        ArgumentsArgumentsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
-        ArgumentsArgumentsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
-        ArgumentsArgumentsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
-        ArgumentsArgumentsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
-        ArgumentsArgumentsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
-        ArgumentsArgumentsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ArgumentsArgumentsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
-        ArgumentsArgumentsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArgumentsArgumentsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        ArgumentsArgumentsTransportSlot::This(inner) => AnyTransport::This(inner),
-        ArgumentsArgumentsTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        ArgumentsArgumentsTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
-        ArgumentsArgumentsTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
-        ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
-        ArgumentsArgumentsTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
-        ArgumentsArgumentsTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
-        ArgumentsArgumentsTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
-        ArgumentsArgumentsTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
-        ArgumentsArgumentsTransportSlot::NumberBigint(inner) => AnyTransport::NumberBigint(inner),
-        ArgumentsArgumentsTransportSlot::String(inner) => AnyTransport::String(inner),
-        ArgumentsArgumentsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
-        ArgumentsArgumentsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
-        ArgumentsArgumentsTransportSlot::True(inner) => AnyTransport::True(inner),
-        ArgumentsArgumentsTransportSlot::False(inner) => AnyTransport::False(inner),
-        ArgumentsArgumentsTransportSlot::Null(inner) => AnyTransport::Null(inner),
-        ArgumentsArgumentsTransportSlot::Object(inner) => AnyTransport::Object(inner),
-        ArgumentsArgumentsTransportSlot::Array(inner) => AnyTransport::Array(inner),
-        ArgumentsArgumentsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
-        ArgumentsArgumentsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
-        ArgumentsArgumentsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
-        ArgumentsArgumentsTransportSlot::Class(inner) => AnyTransport::Class(inner),
-        ArgumentsArgumentsTransportSlot::MetaPropertyNewTarget(inner) => AnyTransport::MetaPropertyNewTarget(inner),
-        ArgumentsArgumentsTransportSlot::MetaPropertyImportMeta(inner) => AnyTransport::MetaPropertyImportMeta(inner),
-        ArgumentsArgumentsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
-        ArgumentsArgumentsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
-        ArgumentsArgumentsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
-        ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
-        ArgumentsArgumentsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
-        ArgumentsArgumentsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
-        ArgumentsArgumentsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
-        ArgumentsArgumentsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
-        ArgumentsArgumentsTransportSlot::UpdateExpressionPostfix(inner) => AnyTransport::UpdateExpressionPostfix(inner),
-        ArgumentsArgumentsTransportSlot::UpdateExpressionPrefix(inner) => AnyTransport::UpdateExpressionPrefix(inner),
-        ArgumentsArgumentsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
-        ArgumentsArgumentsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
-        ArgumentsArgumentsTransportSlot::SpreadElement(inner) => AnyTransport::SpreadElement(inner),
-        ArgumentsArgumentsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ArgumentsElementsTransportSlot::AsExpression(inner) => AnyTransport::AsExpression(inner),
+        ArgumentsElementsTransportSlot::SatisfiesExpression(inner) => AnyTransport::SatisfiesExpression(inner),
+        ArgumentsElementsTransportSlot::InstantiationExpression(inner) => AnyTransport::InstantiationExpression(inner),
+        ArgumentsElementsTransportSlot::InternalModule(inner) => AnyTransport::InternalModule(inner),
+        ArgumentsElementsTransportSlot::TypeAssertion(inner) => AnyTransport::TypeAssertion(inner),
+        ArgumentsElementsTransportSlot::SubscriptExpression(inner) => AnyTransport::SubscriptExpression(inner),
+        ArgumentsElementsTransportSlot::MemberExpression(inner) => AnyTransport::MemberExpression(inner),
+        ArgumentsElementsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ArgumentsElementsTransportSlot::Undefined(inner) => AnyTransport::Undefined(inner),
+        ArgumentsElementsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ArgumentsElementsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        ArgumentsElementsTransportSlot::This(inner) => AnyTransport::This(inner),
+        ArgumentsElementsTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        ArgumentsElementsTransportSlot::NumberHex(inner) => AnyTransport::NumberHex(inner),
+        ArgumentsElementsTransportSlot::NumberFloatPoint(inner) => AnyTransport::NumberFloatPoint(inner),
+        ArgumentsElementsTransportSlot::NumberFloatLeadingPoint(inner) => AnyTransport::NumberFloatLeadingPoint(inner),
+        ArgumentsElementsTransportSlot::NumberFloatScientific(inner) => AnyTransport::NumberFloatScientific(inner),
+        ArgumentsElementsTransportSlot::NumberDecimal(inner) => AnyTransport::NumberDecimal(inner),
+        ArgumentsElementsTransportSlot::NumberBinary(inner) => AnyTransport::NumberBinary(inner),
+        ArgumentsElementsTransportSlot::NumberOctal(inner) => AnyTransport::NumberOctal(inner),
+        ArgumentsElementsTransportSlot::NumberBigint(inner) => AnyTransport::NumberBigint(inner),
+        ArgumentsElementsTransportSlot::String(inner) => AnyTransport::String(inner),
+        ArgumentsElementsTransportSlot::TemplateString(inner) => AnyTransport::TemplateString(inner),
+        ArgumentsElementsTransportSlot::Regex(inner) => AnyTransport::Regex(inner),
+        ArgumentsElementsTransportSlot::True(inner) => AnyTransport::True(inner),
+        ArgumentsElementsTransportSlot::False(inner) => AnyTransport::False(inner),
+        ArgumentsElementsTransportSlot::Null(inner) => AnyTransport::Null(inner),
+        ArgumentsElementsTransportSlot::Object(inner) => AnyTransport::Object(inner),
+        ArgumentsElementsTransportSlot::Array(inner) => AnyTransport::Array(inner),
+        ArgumentsElementsTransportSlot::FunctionExpression(inner) => AnyTransport::FunctionExpression(inner),
+        ArgumentsElementsTransportSlot::ArrowFunction(inner) => AnyTransport::ArrowFunction(inner),
+        ArgumentsElementsTransportSlot::GeneratorFunction(inner) => AnyTransport::GeneratorFunction(inner),
+        ArgumentsElementsTransportSlot::Class(inner) => AnyTransport::Class(inner),
+        ArgumentsElementsTransportSlot::MetaPropertyNewTarget(inner) => AnyTransport::MetaPropertyNewTarget(inner),
+        ArgumentsElementsTransportSlot::MetaPropertyImportMeta(inner) => AnyTransport::MetaPropertyImportMeta(inner),
+        ArgumentsElementsTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        ArgumentsElementsTransportSlot::NonNullExpression(inner) => AnyTransport::NonNullExpression(inner),
+        ArgumentsElementsTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        ArgumentsElementsTransportSlot::AugmentedAssignmentExpression(inner) => AnyTransport::AugmentedAssignmentExpression(inner),
+        ArgumentsElementsTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        ArgumentsElementsTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        ArgumentsElementsTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        ArgumentsElementsTransportSlot::TernaryExpression(inner) => AnyTransport::TernaryExpression(inner),
+        ArgumentsElementsTransportSlot::UpdateExpressionPostfix(inner) => AnyTransport::UpdateExpressionPostfix(inner),
+        ArgumentsElementsTransportSlot::UpdateExpressionPrefix(inner) => AnyTransport::UpdateExpressionPrefix(inner),
+        ArgumentsElementsTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
+        ArgumentsElementsTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        ArgumentsElementsTransportSlot::SpreadElement(inner) => AnyTransport::SpreadElement(inner),
+        ArgumentsElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl ::sittir_core::render::Render for ArgumentsArgumentsTransportSlot {
+impl ::sittir_core::render::Render for ArgumentsElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ArgumentsArgumentsTransportSlot::AsExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::SatisfiesExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::InstantiationExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::InternalModule(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::TypeAssertion(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::SubscriptExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::MemberExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Undefined(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Identifier(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::ReservedIdentifier(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::This(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Super(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberHex(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberFloatPoint(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberFloatScientific(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberDecimal(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberBinary(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberOctal(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NumberBigint(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::String(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::TemplateString(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Regex(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::True(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::False(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Null(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Object(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Array(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::FunctionExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::ArrowFunction(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::GeneratorFunction(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Class(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::MetaPropertyNewTarget(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::MetaPropertyImportMeta(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::CallExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NonNullExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::AssignmentExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::AwaitExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::UnaryExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::BinaryExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::TernaryExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::UpdateExpressionPostfix(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::NewExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::YieldExpression(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::SpreadElement(inner) => inner.render(w),
-            ArgumentsArgumentsTransportSlot::Verbatim(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::AsExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::SatisfiesExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::InstantiationExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::InternalModule(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::TypeAssertion(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::SubscriptExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::MemberExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::ParenthesizedExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Undefined(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Identifier(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::ReservedIdentifier(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::This(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Super(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberHex(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberFloatPoint(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberFloatLeadingPoint(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberFloatScientific(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberDecimal(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberBinary(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberOctal(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NumberBigint(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::String(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::TemplateString(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Regex(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::True(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::False(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Null(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Object(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Array(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::FunctionExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::ArrowFunction(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::GeneratorFunction(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Class(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::MetaPropertyNewTarget(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::MetaPropertyImportMeta(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::CallExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NonNullExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::AssignmentExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::AugmentedAssignmentExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::AwaitExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::UnaryExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::BinaryExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::TernaryExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::UpdateExpressionPostfix(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::UpdateExpressionPrefix(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::NewExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::YieldExpression(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::SpreadElement(inner) => inner.render(w),
+            ArgumentsElementsTransportSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -61511,16 +61511,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UndefinedTransport> {
 pub struct ArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: Option<Vec<Option<::sittir_core::SlotValue<ArgumentsArgumentsTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_end"))]
-    pub arguments_end: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_start"))]
-    pub arguments_start: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_before"))]
-    pub arguments_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments_separator_space_after"))]
-    pub arguments_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<Option<::sittir_core::SlotValue<ArgumentsElementsTransportSlot>>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_end"))]
+    pub elements_end: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_start"))]
+    pub elements_start: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
+    pub elements_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lparen_after"))]
     pub lparen_after: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_rparen_before"))]
@@ -61546,158 +61546,158 @@ impl ::sittir_core::render::Render for ArgumentsTransport {
 impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.arguments.as_deref().unwrap_or(&[]).iter().map(|item| item.as_ref().and_then(|i| i.coord())).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.arguments_separator_space_before.is_none() { self.arguments_separator_space_before = before; }
-            if self.arguments_separator_space_after.is_none() { self.arguments_separator_space_after = after; }
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| item.as_ref().and_then(|i| i.coord())).collect();
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.elements_separator_space_before.is_none() { self.elements_separator_space_before = before; }
+            if self.elements_separator_space_after.is_none() { self.elements_separator_space_after = after; }
         }
-        self.arguments_end.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_END]);
-        self.arguments_start.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_START]);
-        self.arguments_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_BEFORE]);
-        self.arguments_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SEPARATOR_SPACE_AFTER]);
+        self.elements_end.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_END]);
+        self.elements_start.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_START]);
+        self.elements_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_BEFORE]);
+        self.elements_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_SEPARATOR_SPACE_AFTER]);
         self.lparen_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_LPAREN_AFTER]);
         self.rparen_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_RPAREN_BEFORE]);
         self.arguments_before.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_BEFORE]);
         self.arguments_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AFTER]);
-        if let Some(seated_items) = self.arguments.as_mut() {
+        if let Some(seated_items) = self.elements.as_mut() {
             let seated_last = seated_items.len().saturating_sub(1);
             for (seated_at, item) in seated_items.iter_mut().enumerate() {
                 if seated_at == seated_last { continue; }
                 let Some(item) = item.as_mut() else { continue };
                 if let ::sittir_core::SlotValue::Transport(seated) = item {
-                    let t: &mut ArgumentsArgumentsTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
+                    let t: &mut ArgumentsElementsTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
                     match t {
-                        ArgumentsArgumentsTransportSlot::AsExpression(t) => {
-                            t.as_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AS_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::AsExpression(t) => {
+                            t.as_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_AS_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::SatisfiesExpression(t) => {
-                            t.satisfies_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SATISFIES_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::SatisfiesExpression(t) => {
+                            t.satisfies_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_SATISFIES_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::InstantiationExpression(t) => {
-                            t.instantiation_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_INSTANTIATION_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::InstantiationExpression(t) => {
+                            t.instantiation_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_INSTANTIATION_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::InternalModule(t) => {
-                            t.internal_module_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_INTERNAL_MODULE_AFTER]);
+                        ArgumentsElementsTransportSlot::InternalModule(t) => {
+                            t.internal_module_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_INTERNAL_MODULE_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::TypeAssertion(t) => {
-                            t.type_assertion_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TYPE_ASSERTION_AFTER]);
+                        ArgumentsElementsTransportSlot::TypeAssertion(t) => {
+                            t.type_assertion_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_TYPE_ASSERTION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::SubscriptExpression(t) => {
-                            t.subscript_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SUBSCRIPT_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::SubscriptExpression(t) => {
+                            t.subscript_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_SUBSCRIPT_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::MemberExpression(t) => {
-                            t.member_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_MEMBER_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::MemberExpression(t) => {
+                            t.member_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_MEMBER_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::ParenthesizedExpression(t) => {
+                        ArgumentsElementsTransportSlot::ParenthesizedExpression(t) => {
                             if let ::sittir_core::SlotValue::Transport(seated) = &mut t.content {
                                 let t: &mut ParenthesizedExpressionContentTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
                                 match t {
                                     ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionTyped(t) => {
-                                        t.parenthesized_expression_typed_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER]);
+                                        t.parenthesized_expression_typed_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_TYPED_AFTER]);
                                     }
                                     ParenthesizedExpressionContentTransportSlot::ParenthesizedExpressionSequence(t) => {
-                                        t.parenthesized_expression_sequence_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER]);
+                                        t.parenthesized_expression_sequence_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_PARENTHESIZED_EXPRESSION_SEQUENCE_AFTER]);
                                     }
                                     ParenthesizedExpressionContentTransportSlot::DecoratorMemberExpression(t) => {
-                                        t.decorator_member_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER]);
+                                        t.decorator_member_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_DECORATOR_MEMBER_EXPRESSION_AFTER]);
                                     }
                                     ParenthesizedExpressionContentTransportSlot::DecoratorCallExpression(t) => {
-                                        t.decorator_call_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_DECORATOR_CALL_EXPRESSION_AFTER]);
+                                        t.decorator_call_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_DECORATOR_CALL_EXPRESSION_AFTER]);
                                     }
                                     #[allow(unreachable_patterns)]
                                     _ => {}
                                 }
                             }
                         }
-                        ArgumentsArgumentsTransportSlot::String(t) => {
+                        ArgumentsElementsTransportSlot::String(t) => {
                             if let ::sittir_core::SlotValue::Transport(seated) = &mut t.content {
                                 let t: &mut StringContentTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
                                 match t {
                                     StringContentTransportSlot::StringDouble(t) => {
-                                        t.string_double_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_STRING_DOUBLE_AFTER]);
+                                        t.string_double_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_STRING_DOUBLE_AFTER]);
                                     }
                                     StringContentTransportSlot::StringSingle(t) => {
-                                        t.string_single_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_STRING_SINGLE_AFTER]);
+                                        t.string_single_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_STRING_SINGLE_AFTER]);
                                     }
                                     #[allow(unreachable_patterns)]
                                     _ => {}
                                 }
                             }
                         }
-                        ArgumentsArgumentsTransportSlot::TemplateString(t) => {
-                            t.template_string_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TEMPLATE_STRING_AFTER]);
+                        ArgumentsElementsTransportSlot::TemplateString(t) => {
+                            t.template_string_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_TEMPLATE_STRING_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::Regex(t) => {
-                            t.regex_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_REGEX_AFTER]);
+                        ArgumentsElementsTransportSlot::Regex(t) => {
+                            t.regex_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_REGEX_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::Object(t) => {
-                            t.object_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_OBJECT_AFTER]);
+                        ArgumentsElementsTransportSlot::Object(t) => {
+                            t.object_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_OBJECT_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::Array(t) => {
-                            t.array_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ARRAY_AFTER]);
+                        ArgumentsElementsTransportSlot::Array(t) => {
+                            t.array_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ARRAY_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::FunctionExpression(t) => {
-                            t.function_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_FUNCTION_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::FunctionExpression(t) => {
+                            t.function_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_FUNCTION_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::ArrowFunction(t) => {
-                            t.arrow_function_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ARROW_FUNCTION_AFTER]);
+                        ArgumentsElementsTransportSlot::ArrowFunction(t) => {
+                            t.arrow_function_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ARROW_FUNCTION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::GeneratorFunction(t) => {
-                            t.generator_function_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_GENERATOR_FUNCTION_AFTER]);
+                        ArgumentsElementsTransportSlot::GeneratorFunction(t) => {
+                            t.generator_function_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_GENERATOR_FUNCTION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::Class(t) => {
-                            t.class_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_CLASS_AFTER]);
+                        ArgumentsElementsTransportSlot::Class(t) => {
+                            t.class_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_CLASS_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::CallExpression(t) => {
+                        ArgumentsElementsTransportSlot::CallExpression(t) => {
                             if let ::sittir_core::SlotValue::Transport(seated) = &mut t.content {
                                 let t: &mut CallExpressionContentTransportSlot = ::std::borrow::BorrowMut::borrow_mut(seated);
                                 match t {
                                     CallExpressionContentTransportSlot::CallExpressionCall(t) => {
-                                        t.call_expression_call_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_CALL_AFTER]);
+                                        t.call_expression_call_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_CALL_AFTER]);
                                     }
                                     CallExpressionContentTransportSlot::CallExpressionTemplateCall(t) => {
-                                        t.call_expression_template_call_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER]);
+                                        t.call_expression_template_call_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_TEMPLATE_CALL_AFTER]);
                                     }
                                     CallExpressionContentTransportSlot::CallExpressionMember(t) => {
-                                        t.call_expression_member_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_CALL_EXPRESSION_MEMBER_AFTER]);
+                                        t.call_expression_member_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_CALL_EXPRESSION_MEMBER_AFTER]);
                                     }
                                     #[allow(unreachable_patterns)]
                                     _ => {}
                                 }
                             }
                         }
-                        ArgumentsArgumentsTransportSlot::NonNullExpression(t) => {
-                            t.non_null_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_NON_NULL_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::NonNullExpression(t) => {
+                            t.non_null_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_NON_NULL_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::AssignmentExpression(t) => {
-                            t.assignment_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_ASSIGNMENT_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::AssignmentExpression(t) => {
+                            t.assignment_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_ASSIGNMENT_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::AugmentedAssignmentExpression(t) => {
-                            t.augmented_assignment_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::AugmentedAssignmentExpression(t) => {
+                            t.augmented_assignment_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_AUGMENTED_ASSIGNMENT_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::AwaitExpression(t) => {
-                            t.await_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_AWAIT_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::AwaitExpression(t) => {
+                            t.await_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_AWAIT_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::UnaryExpression(t) => {
-                            t.unary_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_UNARY_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::UnaryExpression(t) => {
+                            t.unary_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_UNARY_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::TernaryExpression(t) => {
-                            t.ternary_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_TERNARY_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::TernaryExpression(t) => {
+                            t.ternary_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_TERNARY_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::UpdateExpressionPostfix(t) => {
-                            t.update_expression_postfix_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER]);
+                        ArgumentsElementsTransportSlot::UpdateExpressionPostfix(t) => {
+                            t.update_expression_postfix_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_POSTFIX_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::UpdateExpressionPrefix(t) => {
-                            t.update_expression_prefix_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_UPDATE_EXPRESSION_PREFIX_AFTER]);
+                        ArgumentsElementsTransportSlot::UpdateExpressionPrefix(t) => {
+                            t.update_expression_prefix_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_UPDATE_EXPRESSION_PREFIX_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::NewExpression(t) => {
-                            t.new_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_NEW_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::NewExpression(t) => {
+                            t.new_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_NEW_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::YieldExpression(t) => {
-                            t.yield_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_YIELD_EXPRESSION_AFTER]);
+                        ArgumentsElementsTransportSlot::YieldExpression(t) => {
+                            t.yield_expression_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_YIELD_EXPRESSION_AFTER]);
                         }
-                        ArgumentsArgumentsTransportSlot::SpreadElement(t) => {
-                            t.spread_element_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ARGUMENTS_SPREAD_ELEMENT_AFTER]);
+                        ArgumentsElementsTransportSlot::SpreadElement(t) => {
+                            t.spread_element_after.get_or_insert(ctx.options.spacing[options::SITE_ARGUMENTS_ELEMENTS_SPREAD_ELEMENT_AFTER]);
                         }
                         #[allow(unreachable_patterns)]
                         _ => {}
@@ -61705,7 +61705,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentsTransport {
                 }
             }
         }
-        self.arguments.prepare(ctx)?;
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -90163,21 +90163,21 @@ fn render_undefined(t: &UndefinedTransport, w: &mut dyn ::sittir_core::render::R
 }
 
 fn render_arguments(node: &ArgumentsTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let arguments = ListView {
-        items: node.arguments.as_deref().unwrap_or(&[]),
+    let elements = ListView {
+        items: node.elements.as_deref().unwrap_or(&[]),
         template: "{}",
         token: ",",
-        before: node.arguments_separator_space_before.unwrap_or(0),
-        after: node.arguments_separator_space_after.unwrap_or(0),
+        before: node.elements_separator_space_before.unwrap_or(0),
+        after: node.elements_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: node.arguments_start.unwrap_or(0),
-        tail: node.arguments_end.unwrap_or(0),
+        head: node.elements_start.unwrap_or(0),
+        tail: node.elements_end.unwrap_or(0),
     };
     w.site_with(node.arguments_before.unwrap_or(0), options::site_strength(options::SITE_ARGUMENTS_ARGUMENTS_BEFORE, node.arguments_before.unwrap_or(0)));
     w.text("(")?;
     w.site_with(node.lparen_after.unwrap_or(0), options::site_strength(options::SITE_ARGUMENTS_LPAREN_AFTER, node.lparen_after.unwrap_or(0)));
-    arguments.render(w)?;
+    elements.render(w)?;
     w.site_with(node.rparen_before.unwrap_or(0), options::site_strength(options::SITE_ARGUMENTS_RPAREN_BEFORE, node.rparen_before.unwrap_or(0)));
     w.text(")")?;
     w.site_with(node.arguments_after.unwrap_or(0), options::site_strength(options::SITE_ARGUMENTS_ARGUMENTS_AFTER, node.arguments_after.unwrap_or(0)));

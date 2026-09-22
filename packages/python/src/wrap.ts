@@ -3061,29 +3061,25 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 	return _node;
 }
 
-export function wrapParameters(
-	data: T.Parameters & { readonly _parameters_elements?: T._Parameters },
-	tree: TreeHandle
-) {
-	data = _keepModelledSlots(data, ['_parameters', '_parameters_elements']);
+export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_elements']);
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_parameters_elements']),
+			...data,
 			$type: TSKindId.Parameters as const,
-			_parameters: normalizeSingularWrapSlot(
-				data._parameters ?? data._parameters_elements,
-				'parameters',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'parameters', span: (data as _NodeData).$span }
-			),
+			_elements: normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _NodeData).$span
+			}),
 
-			parameters() {
-				return drillIn<T._Parameters | undefined>(this._parameters, tree);
+			elements() {
+				return drillIn<T._Parameters | undefined>(this._elements, tree);
 			},
 			$with: {
-				parameters: (v: NonNullable<T.Parameters['_parameters']>) =>
-					wrapParameters({ ...$edited(data), _parameters: v }, tree)
+				elements: (v: NonNullable<T.Parameters['_elements']>) =>
+					wrapParameters({ ...$edited(data), _elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)

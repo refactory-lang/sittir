@@ -6602,22 +6602,22 @@ export function wrapMetaProperty(
 }
 
 export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_arguments']);
+	data = _keepModelledSlots(data, ['_elements']);
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.Arguments as const,
-			_arguments: splitElidedWrapSlot(data._arguments, [TSKindId.Comma], undefined),
+			_elements: splitElidedWrapSlot(data._elements, [TSKindId.Comma], undefined),
 
-			arguments() {
+			elements() {
 				return drillInAll<T.Expression | T.SpreadElement | undefined>(
-					this._arguments as readonly (T.Expression | T.SpreadElement | undefined)[] | undefined,
+					this._elements as readonly (T.Expression | T.SpreadElement | undefined)[] | undefined,
 					tree
 				);
 			},
 			$with: {
-				arguments: (...v: NonNullable<T.Arguments['_arguments']>[number][]) =>
-					wrapArguments({ ...$edited(data), _arguments: v }, tree)
+				elements: (...v: NonNullable<T.Arguments['_elements']>[number][]) =>
+					wrapArguments({ ...$edited(data), _elements: v }, tree)
 			}
 		},
 		_treeEngine(tree)

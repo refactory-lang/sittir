@@ -2598,11 +2598,11 @@ export interface FunctionDefinition {
 
 export interface Parameters {
 	readonly $type: TSKindId.Parameters;
-	readonly _parameters?: _Parameters;
+	readonly _elements?: _Parameters;
 	readonly __looseHints__?: {
-		readonly parameters?: readonly Parameter[];
+		readonly elements?: readonly Parameter[];
 	};
-	parameters(): _Parameters | undefined;
+	elements(): _Parameters | undefined;
 }
 
 export interface LambdaParameters {
@@ -5678,7 +5678,7 @@ export interface ParametersNs extends NodeNs<
 	Parameters.Built,
 	Parameters.BuildArgs,
 	Parameters.LooseArgs,
-	'parameters',
+	'elements',
 	'parameters'
 > {}
 export interface LambdaParametersNs extends NodeNs<
@@ -7969,7 +7969,7 @@ export namespace Parameters {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			parameters(value?: T._Parameters): T.Parameters.Built;
+			elements(value?: T._Parameters): T.Parameters.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
