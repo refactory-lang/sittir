@@ -373,7 +373,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 	const optionsBlock = drainOptionsMetadata(opts);
 
-	synthesizeInlineAliasSources(rules, ctx);
 	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: ctx.sinks.supertypes });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
@@ -439,121 +438,6 @@ function canonicalizeRawGrammar(raw: RawGrammar): RawGrammar {
 		rules[name] = { ...stampRef(canonicalWalker.map(rule, stampRef)), hidden: isParserHiddenName(name) };
 	}
 	return { ...raw, rules, visibleInlineNames: raw.inline.filter((name) => !name.startsWith('_')) };
-}
-
-export function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const externalSet = new Set(ctx.externals);
-	const usesOf = countSymbolUses(rules);
-	const ruleEntries = Object.entries(rules);
-	for (const [name, rule] of ruleEntries) {
-		rules[name] = rewriteInlineAliases(rule, ctx, externalSet, usesOf);
-	}
-}
-
-/** Reference counts of every SYMBOL name over all rule bodies, used to tell
- *  whether a hidden rule has exactly one use (its alias) and can be
- *  distributed through in place. */
-function countSymbolUses(rules: Record<string, Rule<'evaluate'>>): Map<string, number> {
-	const counts = new Map<string, number>();
-	const visit = (rule: Rule<'evaluate'>): void => {
-		if (rule.type === SYMBOL) {
-			counts.set(rule.name, (counts.get(rule.name) ?? 0) + 1);
-			return;
-		}
-		if ('members' in rule) rule.members.forEach(visit);
-		else if ('content' in rule && rule.content !== undefined) visit(rule.content as Rule<'evaluate'>);
-	};
-	Object.values(rules).forEach(visit);
-	return counts;
-}
-
-function innermostNamedAliasContent(rule: Rule<'evaluate'>): Rule<'evaluate'> {
-	let current = rule;
-	while (current.type === ALIAS && current.named && current.value) current = current.content;
-	return current;
-}
-
-export function rewriteInlineAliases(
-	rule: Rule<'evaluate'>,
-	ctx: EvaluateCtx,
-	externals: ReadonlySet<string>,
-	usesOf: ReadonlyMap<string, number>
-): Rule<'evaluate'> {
-	const { rules, provenanceByKind } = ctx;
-	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals, usesOf);
-	switch (rule.type) {
-		case ALIAS: {
-			if (rule.named && rule.value) {
-				const inner = innermostNamedAliasContent(rule.content);
-				const isBareSymbolToKnownSource =
-					inner.type === SYMBOL && (rules[inner.name] !== undefined || externals.has(inner.name));
-				const targetAlreadyExists = rules[rule.value] !== undefined;
-				if (
-					!targetAlreadyExists &&
-					!isBareSymbolToKnownSource &&
-					inner.type !== STRING &&
-					inner.type !== PATTERN
-				) {
-					const arms = choiceArmsThrough(inner, rules, usesOf);
-					if (arms !== undefined) {
-						return {
-							type: CHOICE,
-							members: arms.map((arm) => ({
-								...rule,
-								content: recurse(innermostNamedAliasContent(arm))
-							}))
-						} as Rule<'evaluate'>;
-					}
-					const syntheticHiddenName = `_${rule.value}`;
-					if (!rules[syntheticHiddenName]) {
-						rules[syntheticHiddenName] = recurse(rule.content);
-						provenanceByKind.set(syntheticHiddenName, 'evaluate-synthesized');
-						ctx.desugarDivergences.push({ site: 'inline-alias-source', name: syntheticHiddenName });
-					}
-					return { ...rule, content: { type: SYMBOL, name: syntheticHiddenName } };
-				}
-			}
-			return { ...rule, content: recurse(rule.content) };
-		}
-		case SEQ:
-			return { ...rule, members: rule.members.map((m) => recurse(m)) } as Rule<'evaluate'>;
-		case CHOICE:
-			return {
-				...rule,
-				members: rule.members.map((m) => recurse(m))
-			} as Rule<'evaluate'>;
-		case OPTIONAL:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case TOKEN:
-			return {
-				...rule,
-				content: recurse((rule as { content: Rule<'evaluate'> }).content)
-			} as Rule<'evaluate'>;
-		default:
-			return rule;
-	}
-}
-
-/** The arms an alias distributes over: the members of an inline CHOICE, or of a
- *  hidden rule whose body is a CHOICE and whose only reference is this alias;
- *  nested choices flatten. Undefined when the content is not a choice. */
-function choiceArmsThrough(
-	content: Rule<'evaluate'>,
-	rules: Record<string, Rule<'evaluate'>>,
-	usesOf: ReadonlyMap<string, number>
-): readonly Rule<'evaluate'>[] | undefined {
-	if (content.type === CHOICE) return content.members.flatMap((m) => choiceArmsThrough(m, rules, usesOf) ?? [m]);
-	if (content.type === SYMBOL && content.name.startsWith('_') && usesOf.get(content.name) === 1) {
-		const body = rules[content.name];
-		if (body?.type === CHOICE) return choiceArmsThrough(body, rules, usesOf);
-	}
-	return undefined;
 }
 
 function getWireContext(opts: GrammarOptions): WireContext | undefined {

@@ -270,6 +270,8 @@ pub enum AnyTransport {
     Space(SpaceTransport),
     Indent(IndentTransport),
     Dedent(DedentTransport),
+    AsPatternTarget(AsPatternTargetTransport),
+    FormatExpression(FormatExpressionTransport),
     ImportKeyword(ImportKeywordTransport),
     Dot(DotTransport),
     FromKeyword(FromKeywordTransport),
@@ -611,6 +613,8 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Space(t) => t.prepare(ctx),
             AnyTransport::Indent(t) => t.prepare(ctx),
             AnyTransport::Dedent(t) => t.prepare(ctx),
+            AnyTransport::AsPatternTarget(t) => t.prepare(ctx),
+            AnyTransport::FormatExpression(t) => t.prepare(ctx),
             AnyTransport::ImportKeyword(t) => t.prepare(ctx),
             AnyTransport::Dot(t) => t.prepare(ctx),
             AnyTransport::FromKeyword(t) => t.prepare(ctx),
@@ -1531,6 +1535,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _dedent (_DEDENT)
                 115 => Ok(AnyTransport::Dedent(
                     DedentTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: as_pattern_target (AS_PATTERN_TARGET)
+                331 => Ok(AnyTransport::AsPatternTarget(
+                    AsPatternTargetTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: format_expression (FORMAT_EXPRESSION)
+                332 => Ok(AnyTransport::FormatExpression(
+                    FormatExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_keyword (IMPORT_KEYWORD)
                 2 => Ok(AnyTransport::ImportKeyword(
@@ -18548,14 +18560,14 @@ impl ::sittir_core::render::Render for InterpolationEqMarkerTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FormatSpecifierContentTransportSlot {
-    Interpolation(InterpolationTransport),
+    FormatExpression(FormatExpressionTransport),
     Literal41_5b_5e_7b_7d_5c_6e_5d_2b,
 }
 
 impl ::sittir_core::prepare::Prepare for FormatSpecifierContentTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FormatSpecifierContentTransportSlot::Interpolation(t) => t.prepare(ctx),
+            FormatSpecifierContentTransportSlot::FormatExpression(t) => t.prepare(ctx),
             FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => Ok(()),
         }
     }
@@ -18564,7 +18576,7 @@ impl ::sittir_core::prepare::Prepare for FormatSpecifierContentTransportSlot {
 impl ::sittir_core::view::KindOf for FormatSpecifierContentTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Interpolation(inner) => inner.kind_in(kinds),
+            Self::FormatExpression(inner) => inner.kind_in(kinds),
             Self::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => false,
         }
     }
@@ -18579,11 +18591,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    245 => Ok(Self::Interpolation(
-                        InterpolationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    332 => Ok(Self::Interpolation(
-                        InterpolationTransport::from_napi_value(env, napi_val)?
+                    332 => Ok(Self::FormatExpression(
+                        FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FormatSpecifierContentTransportSlot",
@@ -18596,11 +18605,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     ::napi::Error::from_reason("$type property missing in FormatSpecifierContentTransportSlot")
                 )?;
                 match kind_id {
-                    245 => Ok(Self::Interpolation(
-                        InterpolationTransport::from_napi_value(env, napi_val)?
-                    )),
-                    332 => Ok(Self::Interpolation(
-                        InterpolationTransport::from_napi_value(env, napi_val)?
+                    332 => Ok(Self::FormatExpression(
+                        FormatExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FormatSpecifierContentTransportSlot",
@@ -18644,7 +18650,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierContentTranspor
 
 fn format_specifier_content_transport_slot_to_any(t: FormatSpecifierContentTransportSlot) -> AnyTransport {
     match t {
-        FormatSpecifierContentTransportSlot::Interpolation(inner) => AnyTransport::Interpolation(inner),
+        FormatSpecifierContentTransportSlot::FormatExpression(inner) => AnyTransport::FormatExpression(inner),
         FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => AnyTransport::Literal41_5b_5e_7b_7d_5c_6e_5d_2b,
     }
 }
@@ -18652,7 +18658,7 @@ fn format_specifier_content_transport_slot_to_any(t: FormatSpecifierContentTrans
 impl ::sittir_core::render::Render for FormatSpecifierContentTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FormatSpecifierContentTransportSlot::Interpolation(inner) => inner.render(w),
+            FormatSpecifierContentTransportSlot::FormatExpression(inner) => inner.render(w),
             FormatSpecifierContentTransportSlot::Literal41_5b_5e_7b_7d_5c_6e_5d_2b => w.text("[^{}\\n]+"),
         }
     }
@@ -27961,7 +27967,7 @@ pub struct AsPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+    pub alias: ::sittir_core::SlotValue<Box<AsPatternTargetTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_before"))]
     pub as_keyword_before: Option<u16>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_as_keyword_after"))]
@@ -37753,6 +37759,102 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DedentTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DedentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct AsPatternTargetTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<Box<ExpressionTransport>>,
+}
+
+impl ::sittir_core::view::KindOf for AsPatternTargetTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(331)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for AsPatternTargetTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_as_pattern_target(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for AsPatternTargetTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsPatternTargetTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AsPatternTargetTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsPatternTargetTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AsPatternTargetTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct FormatExpressionTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_trivia"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ::sittir_core::SlotValue<InterpolationTransport>,
+}
+
+impl ::sittir_core::view::KindOf for FormatExpressionTransport {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(332)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for FormatExpressionTransport {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_with_trivia!(self, w, render_format_expression(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for FormatExpressionTransport {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FormatExpressionTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FormatExpressionTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatExpressionTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FormatExpressionTransport::to_napi_value(env, *val)
     }
 }
 
@@ -48198,6 +48300,18 @@ fn render_dedent(t: &DedentTransport, w: &mut dyn ::sittir_core::render::RenderS
     w.text(&t.text)
 }
 
+fn render_as_pattern_target(node: &AsPatternTargetTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    content.render(w)?;
+    Ok(())
+}
+
+fn render_format_expression(node: &FormatExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    content.render(w)?;
+    Ok(())
+}
+
 fn render_import_keyword(t: &ImportKeywordTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
@@ -48880,6 +48994,8 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::Space(inner) => inner.kind_in(kinds),
             Self::Indent(inner) => inner.kind_in(kinds),
             Self::Dedent(inner) => inner.kind_in(kinds),
+            Self::AsPatternTarget(inner) => inner.kind_in(kinds),
+            Self::FormatExpression(inner) => inner.kind_in(kinds),
             Self::ImportKeyword(inner) => inner.kind_in(kinds),
             Self::Dot(inner) => inner.kind_in(kinds),
             Self::FromKeyword(inner) => inner.kind_in(kinds),
@@ -49164,6 +49280,8 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Space(t) => t.render(w),
             AnyTransport::Indent(t) => t.render(w),
             AnyTransport::Dedent(t) => t.render(w),
+            AnyTransport::AsPatternTarget(t) => t.render(w),
+            AnyTransport::FormatExpression(t) => t.render(w),
             AnyTransport::ImportKeyword(t) => t.render(w),
             AnyTransport::Dot(t) => t.render(w),
             AnyTransport::FromKeyword(t) => t.render(w),

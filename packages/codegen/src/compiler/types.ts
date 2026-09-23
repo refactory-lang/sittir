@@ -110,7 +110,7 @@ export interface RawGrammar {
 }
 
 export interface DesugarDivergenceEvent {
-	readonly site: 'inline-alias-source' | 'body-pattern-group';
+	readonly site: 'body-pattern-group';
 	readonly name: string;
 }
 

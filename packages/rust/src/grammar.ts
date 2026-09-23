@@ -60,6 +60,7 @@ export type RustGrammar = {
 			{ type: 'parenthesized_expression'; named: true },
 			{ type: 'range_expression'; named: true },
 			{ type: 'reference_expression'; named: true },
+			{ type: 'reserved_identifier'; named: true },
 			{ type: 'return_expression'; named: true },
 			{ type: 'scoped_identifier'; named: true },
 			{ type: 'self'; named: true },
@@ -116,6 +117,7 @@ export type RustGrammar = {
 			{ type: 'ref_pattern'; named: true },
 			{ type: 'reference_pattern'; named: true },
 			{ type: 'remaining_field_pattern'; named: true },
+			{ type: 'reserved_identifier'; named: true },
 			{ type: 'scoped_identifier'; named: true },
 			{ type: 'slice_pattern'; named: true },
 			{ type: 'struct_pattern'; named: true },
@@ -364,6 +366,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -606,6 +609,7 @@ export type RustGrammar = {
 					{ type: 'metavariable'; named: true },
 					{ type: 'parenthesized_expression'; named: true },
 					{ type: 'reference_expression'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'return_expression'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
@@ -1145,7 +1149,7 @@ export type RustGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'identifier'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'scoped_type_identifier'; named: true },
 					{ type: 'type_identifier'; named: true }
@@ -1386,19 +1390,37 @@ export type RustGrammar = {
 	readonly macro_definition_brace: {
 		type: 'macro_definition_brace';
 		named: true;
-		fields: { name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'identifier'; named: true }, { type: 'reserved_identifier'; named: true }];
+			};
+		};
 		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_definition_bracket: {
 		type: 'macro_definition_bracket';
 		named: true;
-		fields: { name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'identifier'; named: true }, { type: 'reserved_identifier'; named: true }];
+			};
+		};
 		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_definition_paren: {
 		type: 'macro_definition_paren';
 		named: true;
-		fields: { name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
+		fields: {
+			name: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'identifier'; named: true }, { type: 'reserved_identifier'; named: true }];
+			};
+		};
 		children: { multiple: false; required: false; types: [{ type: 'macro_rules'; named: true }] };
 	};
 	readonly macro_invocation: {
@@ -1409,7 +1431,11 @@ export type RustGrammar = {
 			macro: {
 				multiple: false;
 				required: true;
-				types: [{ type: 'identifier'; named: true }, { type: 'scoped_identifier'; named: true }];
+				types: [
+					{ type: 'identifier'; named: true },
+					{ type: 'reserved_identifier'; named: true },
+					{ type: 'scoped_identifier'; named: true }
+				];
 			};
 		};
 	};
@@ -1635,6 +1661,7 @@ export type RustGrammar = {
 		fields: { type: { multiple: false; required: true; types: [{ type: '_type'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'mutable_specifier'; named: true }] };
 	};
+	readonly primitive_type: { type: 'primitive_type'; named: true; fields: {} };
 	readonly qualified_type: {
 		type: 'qualified_type';
 		named: true;
@@ -1700,6 +1727,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -1719,6 +1747,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -1747,6 +1776,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -1844,6 +1874,7 @@ export type RustGrammar = {
 					{ type: 'generic_type'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -1866,6 +1897,7 @@ export type RustGrammar = {
 					{ type: 'generic_type_with_turbofish'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -1885,6 +1917,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -2403,6 +2436,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -2437,6 +2471,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'scoped_use_list'; named: true },
 					{ type: 'self'; named: true },
@@ -2459,6 +2494,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'scoped_use_list'; named: true },
 					{ type: 'self'; named: true },
@@ -2494,6 +2530,7 @@ export type RustGrammar = {
 					{ type: 'crate'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
+					{ type: 'reserved_identifier'; named: true },
 					{ type: 'scoped_identifier'; named: true },
 					{ type: 'self'; named: true },
 					{ type: 'super'; named: true }
@@ -2551,6 +2588,7 @@ export type RustGrammar = {
 				{ type: 'crate'; named: true },
 				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
+				{ type: 'reserved_identifier'; named: true },
 				{ type: 'scoped_identifier'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true }
@@ -2669,7 +2707,9 @@ export type RustGrammar = {
 	readonly _anonymous_async: { type: 'async'; named: false };
 	readonly _anonymous_await: { type: 'await'; named: false };
 	readonly _anonymous_block: { type: 'block'; named: false };
+	readonly _anonymous_bool: { type: 'bool'; named: false };
 	readonly _anonymous_break: { type: 'break'; named: false };
+	readonly _anonymous_char: { type: 'char'; named: false };
 	readonly char_literal_empty: { type: 'char_literal_empty'; named: true };
 	readonly char_literal_escaped: { type: 'char_literal_escaped'; named: true };
 	readonly char_literal_plain: { type: 'char_literal_plain'; named: true };
@@ -2688,12 +2728,19 @@ export type RustGrammar = {
 	readonly _anonymous_expr: { type: 'expr'; named: false };
 	readonly _anonymous_expr_2021: { type: 'expr_2021'; named: false };
 	readonly _anonymous_extern: { type: 'extern'; named: false };
+	readonly _anonymous_f32: { type: 'f32'; named: false };
+	readonly _anonymous_f64: { type: 'f64'; named: false };
 	readonly _anonymous_false: { type: 'false'; named: false };
 	readonly field_identifier: { type: 'field_identifier'; named: true };
 	readonly float_literal: { type: 'float_literal'; named: true };
 	readonly _anonymous_fn: { type: 'fn'; named: false };
 	readonly _anonymous_for: { type: 'for'; named: false };
 	readonly _anonymous_gen: { type: 'gen'; named: false };
+	readonly _anonymous_i128: { type: 'i128'; named: false };
+	readonly _anonymous_i16: { type: 'i16'; named: false };
+	readonly _anonymous_i32: { type: 'i32'; named: false };
+	readonly _anonymous_i64: { type: 'i64'; named: false };
+	readonly _anonymous_i8: { type: 'i8'; named: false };
 	readonly _anonymous_ident: { type: 'ident'; named: false };
 	readonly identifier: { type: 'identifier'; named: true };
 	readonly _anonymous_if: { type: 'if'; named: false };
@@ -2703,6 +2750,7 @@ export type RustGrammar = {
 	readonly integer_literal_decimal: { type: 'integer_literal_decimal'; named: true };
 	readonly integer_literal_hex: { type: 'integer_literal_hex'; named: true };
 	readonly integer_literal_octal: { type: 'integer_literal_octal'; named: true };
+	readonly _anonymous_isize: { type: 'isize'; named: false };
 	readonly _anonymous_item: { type: 'item'; named: false };
 	readonly _anonymous_let: { type: 'let'; named: false };
 	readonly _anonymous_lifetime: { type: 'lifetime'; named: false };
@@ -2719,7 +2767,6 @@ export type RustGrammar = {
 	readonly _anonymous_pat: { type: 'pat'; named: false };
 	readonly _anonymous_pat_param: { type: 'pat_param'; named: false };
 	readonly _anonymous_path: { type: 'path'; named: false };
-	readonly primitive_type: { type: 'primitive_type'; named: true };
 	readonly _anonymous_pub: { type: 'pub'; named: false };
 	readonly _anonymous_raw: { type: 'raw'; named: false };
 	readonly raw_string_literal_end: { type: 'raw_string_literal_end'; named: true };
@@ -2731,6 +2778,7 @@ export type RustGrammar = {
 	readonly shorthand_field_identifier: { type: 'shorthand_field_identifier'; named: true };
 	readonly _anonymous_static: { type: 'static'; named: false };
 	readonly _anonymous_stmt: { type: 'stmt'; named: false };
+	readonly _anonymous_str: { type: 'str'; named: false };
 	readonly string_content: { type: 'string_content'; named: true };
 	readonly string_open: { type: 'string_open'; named: true };
 	readonly _anonymous_struct: { type: 'struct'; named: false };
@@ -2742,9 +2790,15 @@ export type RustGrammar = {
 	readonly _anonymous_ty: { type: 'ty'; named: false };
 	readonly _anonymous_type: { type: 'type'; named: false };
 	readonly type_identifier: { type: 'type_identifier'; named: true };
+	readonly _anonymous_u128: { type: 'u128'; named: false };
+	readonly _anonymous_u16: { type: 'u16'; named: false };
+	readonly _anonymous_u32: { type: 'u32'; named: false };
+	readonly _anonymous_u64: { type: 'u64'; named: false };
+	readonly _anonymous_u8: { type: 'u8'; named: false };
 	readonly _anonymous_union: { type: 'union'; named: false };
 	readonly _anonymous_unsafe: { type: 'unsafe'; named: false };
 	readonly _anonymous_use: { type: 'use'; named: false };
+	readonly _anonymous_usize: { type: 'usize'; named: false };
 	readonly _anonymous_vis: { type: 'vis'; named: false };
 	readonly _anonymous_where: { type: 'where'; named: false };
 	readonly _anonymous_while: { type: 'while'; named: false };

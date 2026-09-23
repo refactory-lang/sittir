@@ -528,40 +528,35 @@ export function isParserHiddenName(name: string): boolean {
 	return name.startsWith('_');
 }
 
-export function selfReferentialFoldOf(
-	name: string,
-	rule: Rule<'link'>
-): { extensionFieldName: string; separator: Rule<'link'> } | undefined {
+export function selfReferentialFoldOf(name: string, rule: Rule<'link'>): { separator: Rule<'link'> } | undefined {
 	if (rule.type !== CHOICE) return undefined;
-	let baseFieldName: string | undefined;
-	let extensionFieldName: string | undefined;
+	const fieldOf = (member: Rule<'link'>): string | undefined => (member.type === FIELD ? member.name : undefined);
+	const operandOf = (member: Rule<'link'>): Rule<'link'> => (member.type === FIELD ? member.content : member);
+	const isSelfRef = (member: Rule<'link'>): boolean => {
+		const content = operandOf(member);
+		return (
+			content.type === SYMBOL &&
+			content.name === name &&
+			isParserHiddenName(content.name) &&
+			(content as { aliasedTo?: string }).aliasedTo === undefined
+		);
+	};
+	let fields: readonly [string | undefined, string | undefined] | undefined;
 	let separator: Rule<'link'> | undefined;
 	let sawSelfRef = false;
-	const isSelfRef = (content: Rule<'link'>): boolean =>
-		content.type === SYMBOL &&
-		content.name === name &&
-		isParserHiddenName(content.name) &&
-		(content as { aliasedTo?: string }).aliasedTo === undefined;
 	for (const arm of rule.members) {
 		if (arm.type !== SEQ || arm.members.length !== 3) return undefined;
-		const m0 = arm.members[0];
-		const sep = arm.members[1];
-		const m2 = arm.members[2];
-		if (m0 === undefined || sep === undefined || m2 === undefined) return undefined;
-		if (m0.type !== FIELD || m2.type !== FIELD || sep.type !== STRING) return undefined;
-		if (baseFieldName === undefined) {
-			baseFieldName = m0.name;
-			extensionFieldName = m2.name;
-		} else if (m0.name !== baseFieldName || m2.name !== extensionFieldName) {
-			return undefined;
-		}
+		const [m0, sep, m2] = arm.members;
+		if (m0 === undefined || sep === undefined || m2 === undefined || sep.type !== STRING) return undefined;
+		if (fields === undefined) fields = [fieldOf(m0), fieldOf(m2)];
+		else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return undefined;
 		if (separator === undefined) separator = sep;
 		else if (separator.type !== STRING || separator.value !== sep.value) return undefined;
-		if (isSelfRef(m0.content)) sawSelfRef = true;
-		else if (isSelfRef(m2.content)) return undefined;
+		if (isSelfRef(m0)) sawSelfRef = true;
+		else if (isSelfRef(m2)) return undefined;
 	}
-	if (!sawSelfRef || extensionFieldName === undefined || separator === undefined) return undefined;
-	return { extensionFieldName, separator };
+	if (!sawSelfRef || separator === undefined) return undefined;
+	return { separator };
 }
 
 export function exclusiveFieldChoiceBranches<P extends PhaseName>(

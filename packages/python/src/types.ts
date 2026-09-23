@@ -777,9 +777,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[328, '_print_arguments_repeat1'],
 	[329, 'except_clause_exception_list_repeat1'],
 	[330, 'match_block_block_repeat1'],
-	[331, '_as_pattern_target'],
-	[332, '_format_expression'],
-	[333, '_names']
+	[331, 'as_pattern_target'],
+	[332, 'format_expression'],
+	[333, 'names']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1785,11 +1785,11 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExceptClauseExceptionListRepeat1;
 		case 'match_block_block_repeat1':
 			return TSKindId.MatchBlockBlockRepeat1;
-		case '_as_pattern_target':
+		case 'as_pattern_target':
 			return TSKindId._AsPatternTarget;
-		case '_format_expression':
+		case 'format_expression':
 			return TSKindId._FormatExpression;
-		case '_names':
+		case 'names':
 			return TSKindId._Names;
 		case 'import':
 			return TSKindId.ImportKeyword;
@@ -1991,12 +1991,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComparisonOperatorComparator;
 		case 'yield_from_clause':
 			return TSKindId.YieldFromClause;
-		case 'as_pattern_target':
-			return TSKindId._AsPatternTarget;
-		case 'format_expression':
-			return TSKindId._FormatExpression;
-		case 'names':
-			return TSKindId._Names;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -3156,17 +3150,17 @@ export interface DictionarySplatPattern {
 export interface AsPattern {
 	readonly $type: TSKindId.AsPattern;
 	readonly _expression: Expression;
-	readonly _alias: Expression;
+	readonly _alias: AsPatternTarget;
 	readonly __inputHints__?: {
 		readonly expression:
 			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
 			| Expression;
-		readonly alias:
-			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
-			| Expression;
+	};
+	readonly __looseHints__?: {
+		readonly alias: readonly Expression[];
 	};
 	expression(): Expression;
-	alias(): Expression;
+	alias(): AsPatternTarget;
 }
 
 export interface NotOperator {
@@ -3751,7 +3745,7 @@ export interface Interpolation {
 		readonly eq_marker?: BooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
-		readonly format_specifier?: readonly ('[^{}\\n]+' | Interpolation)[];
+		readonly format_specifier?: readonly ('[^{}\\n]+' | FormatExpression)[];
 	};
 	expression(): Expression | ExpressionList | PatternList | Yield;
 	eqMarker(): boolean | undefined;
@@ -3761,8 +3755,8 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _content?: readonly ('[^{}\\n]+' | Interpolation)[];
-	contents(): readonly ('[^{}\\n]+' | Interpolation)[];
+	readonly _content?: readonly ('[^{}\\n]+' | FormatExpression)[];
+	contents(): readonly ('[^{}\\n]+' | FormatExpression)[];
 }
 
 export interface Await {
@@ -4270,6 +4264,25 @@ export interface YieldFromClause {
 	expression(): Expression;
 }
 
+export interface AsPatternTarget {
+	readonly $type: TSKindId._AsPatternTarget;
+	readonly _content: Expression;
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
+			| Expression;
+	};
+	readonly __aliasContent__?: AsPatternTarget.Types;
+	content(): Expression;
+}
+
+export interface FormatExpression {
+	readonly $type: TSKindId._FormatExpression;
+	readonly _content: Interpolation;
+	readonly __aliasContent__?: FormatExpression.Types;
+	content(): Interpolation;
+}
+
 // Leaf node types
 export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
 export type WildcardImport = TSKindId.WildcardImport;
@@ -4494,6 +4507,10 @@ export interface ComparisonOperatorComparatorTree extends AnyTreeNode {
 export interface YieldFromClauseTree extends AnyTreeNode {
 	readonly type: '_yield_from_clause';
 }
+export interface AsPatternTargetTree extends AnyTreeNode {
+	readonly type: 'as_pattern_target';
+}
+export interface FormatExpressionTree extends TreeNode<'format_expression'> {}
 export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
 export interface WildcardImportTree extends AnyTreeNode {
 	readonly type: 'wildcard_import';
@@ -5151,7 +5168,9 @@ export type PythonNode =
 	| SuiteBlock
 	| SuiteEmpty
 	| ComparisonOperatorComparator
-	| YieldFromClause;
+	| YieldFromClause
+	| AsPatternTarget
+	| FormatExpression;
 
 export interface KindMap {
 	module: Module;
@@ -5312,6 +5331,8 @@ export interface KindMap {
 	suite_empty: SuiteEmpty;
 	_comparison_operator_comparator: ComparisonOperatorComparator;
 	_yield_from_clause: YieldFromClause;
+	as_pattern_target: AsPatternTarget;
+	format_expression: FormatExpression;
 	import_prefix: ImportPrefix;
 	wildcard_import: WildcardImport;
 	pass_statement: PassStatement;
@@ -7079,6 +7100,28 @@ export interface YieldFromClauseNs extends NodeNs<
 	'expression',
 	'_yield_from_clause'
 > {}
+export interface AsPatternTargetNs extends NodeNs<
+	AsPatternTarget,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	AsPatternTarget.Built,
+	AsPatternTarget.BuildArgs,
+	AsPatternTarget.LooseArgs,
+	'content',
+	'as_pattern_target'
+> {}
+export interface FormatExpressionNs extends NodeNs<
+	FormatExpression,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	FormatExpression.Built,
+	FormatExpression.BuildArgs,
+	FormatExpression.LooseArgs,
+	'content',
+	'format_expression'
+> {}
 export interface WildcardImportNs extends KeywordNs<
 	TSKindId.WildcardImport,
 	'*',
@@ -7350,6 +7393,8 @@ export interface NamespaceMap {
 	[TSKindId.SuiteEmpty]: SuiteEmptyNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
 	[TSKindId.YieldFromClause]: YieldFromClauseNs;
+	[TSKindId._AsPatternTarget]: AsPatternTargetNs;
+	[TSKindId._FormatExpression]: FormatExpressionNs;
 	[TSKindId.WildcardImport]: WildcardImportNs;
 	[TSKindId.PassStatement]: PassStatementNs;
 	[TSKindId.BreakStatement]: BreakStatementNs;
@@ -8690,7 +8735,7 @@ export namespace AsPattern {
 		readonly $named: true;
 		readonly $with: {
 			expression(value: NonNullable<T.AsPattern.Config>['expression']): T.AsPattern.Built;
-			alias(value: NonNullable<T.AsPattern.Config>['alias']): T.AsPattern.Built;
+			alias(value: T.AsPatternTarget | T.AsPatternTarget.Types): T.AsPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.AsPattern>;
@@ -9507,14 +9552,19 @@ export namespace FormatSpecifier {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			contents(...vs: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built;
+			contents(...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]): T.FormatSpecifier.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
-	export type BuildArgs = [...children: ('[^{}\\n]+' | T.Interpolation)[]];
+	export type BuildArgs = [...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]];
 	export type LooseArgs = [
-		...children: LooseValue<'[^{}\\n]+' | T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: LooseValue<
+			('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types,
+			T.LeafScalarMap,
+			T.LeafStringMap,
+			T.NamespaceMap
+		>[]
 	];
 	export type Tree = TreeFor<TSKindId.FormatSpecifier>;
 	export type Kind = 'format_specifier';
@@ -10594,6 +10644,40 @@ export namespace YieldFromClause {
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Tree = TreeFor<TSKindId.YieldFromClause>;
 	export type Kind = '_yield_from_clause';
+}
+export namespace AsPatternTarget {
+	export type Config = ConfigFor<TSKindId._AsPatternTarget>;
+	export type Types = Expression;
+	export interface Built extends T.AsPatternTarget, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: NonNullable<T.Expression>): T.AsPatternTarget.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId._AsPatternTarget>;
+	export type LooseConfig = LooseConfigFor<TSKindId._AsPatternTarget>;
+	export type BuildArgs = [value: T.Expression];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId._AsPatternTarget>;
+	export type Kind = 'as_pattern_target';
+}
+export namespace FormatExpression {
+	export type Config = ConfigFor<TSKindId._FormatExpression>;
+	export type Types = Interpolation;
+	export interface Built extends T.FormatExpression, NodeMethodsOf {
+		readonly $source: 2;
+		readonly $named: true;
+		readonly $with: {
+			content(value: T.Interpolation): T.FormatExpression.Built;
+		};
+	}
+	export type Loose = LooseFor<TSKindId._FormatExpression>;
+	export type LooseConfig = LooseConfigFor<TSKindId._FormatExpression>;
+	export type BuildArgs = [value: T.Interpolation];
+	export type LooseArgs = [value: LooseValue<T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Tree = TreeFor<TSKindId._FormatExpression>;
+	export type Kind = 'format_expression';
 }
 export namespace WildcardImport {
 	export type Config = WildcardImportNs['Config'];

@@ -189,7 +189,9 @@ export const _fromMap = {
 	string_start: coerceToStringStart,
 	_string_content: coerceTo_StringContent,
 	escape_interpolation: coerceToEscapeInterpolation,
-	string_end: coerceToStringEnd
+	string_end: coerceToStringEnd,
+	as_pattern_target: coerceToAsPatternTarget,
+	format_expression: coerceToFormatExpression
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -349,61 +351,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undef
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'expression_statement',
 	'case_pattern',
-	'parenthesized_expression',
-	'_simple_statements',
-	'print_statement',
-	'chevron',
-	'return_statement',
-	'delete_statement',
-	'else_clause',
-	'finally_clause',
-	'with_item',
-	'parameters',
-	'lambda_parameters',
-	'list_splat',
-	'dictionary_splat',
-	'type_parameter',
-	'parenthesized_list_splat',
-	'argument_list',
-	'decorator',
-	'_parameters',
-	'_patterns',
-	'tuple_pattern',
-	'list_pattern',
-	'list_splat_pattern',
-	'dictionary_splat_pattern',
-	'not_operator',
-	'yield',
-	'type',
-	'list',
-	'set',
-	'tuple',
-	'dictionary',
-	'_collection_elements',
-	'if_clause',
-	'await',
-	'simple_statements_elements',
-	'subjects',
-	'case_patterns',
-	'with_clause_with_items',
-	'types',
-	'argument_list_elements',
-	'expression_list_expressions',
-	'list_pattern_case_patterns',
-	'pattern_list_patterns',
-	'subscripts',
-	'dictionary_elements',
-	'slice_group',
-	'case_tuple_pattern',
-	'case_list_pattern',
-	'_print_arguments',
-	'_print_chevron_arguments',
-	'print_statement_plain',
-	'expression_statement_tuple',
-	'with_clause_bare',
-	'with_clause_paren',
-	'suite_inline',
-	'_yield_from_clause'
+	'parenthesized_expression'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
@@ -631,7 +579,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	_yield_from_clause: new Set([
 		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
 		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
-	])
+	]),
+	as_pattern_target: new Set([
+		1, 64, 71, 72, 73, 90, 91, 92, 93, 94, 95, 96, 139, 164, 165, 172, 177, 196, 198, 202, 203, 204, 205, 208, 209, 215,
+		216, 217, 219, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 241, 242, 243, 252, 267, 295
+	]),
+	format_expression: new Set([245])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	49: ['_unary_operator_operator'],
@@ -716,7 +669,7 @@ function _resolveOne<T>(
 	if (!(typeof v === 'object' && !Array.isArray(v))) {
 		const candidates = typeof v === 'string' ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;
 		const target =
-			candidates.length === 1
+			candidates.length === 1 && branchKinds.length === 1
 				? candidates[0]
 				: defaultArm !== undefined && candidates.includes(defaultArm)
 					? defaultArm
@@ -725,9 +678,9 @@ function _resolveOne<T>(
 			return _wrapArray(target, v) as T;
 		}
 		if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;
-		if (typeof v === 'string' && candidates.length > 1) {
+		if (typeof v === 'string' && candidates.length > 0) {
 			throw new Error(
-				`_resolveOne: a bare string fits more than one arm: [${candidates.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
+				`_resolveOne: a bare string picks no arm among [${branchKinds.join(', ')}]; declare the arm (defaultArm()) or name it explicitly`
 			);
 		}
 	}
@@ -775,7 +728,12 @@ function _listElements(
 			? _resolveByKind(wrapperKind, e)
 			: e
 	);
-	return optionsFirst ? [head, ...resolve(elements)] : [...resolve(elements)];
+	const resolved = elements.map((e) =>
+		wrapperKind !== undefined && isNodeData(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
+			? e
+			: resolve([e])[0]
+	);
+	return optionsFirst ? [head, ...resolved] : resolved;
 }
 
 function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
@@ -851,7 +809,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	string_content: TSKindId.StringContent,
 	format_specifier: TSKindId.FormatSpecifier,
 	await: TSKindId.Await,
-	comment: TSKindId.Comment,
 	simple_statements_elements: TSKindId.SimpleStatementsElements,
 	subjects: TSKindId.Subjects,
 	case_patterns: TSKindId.CasePatterns,
@@ -872,16 +829,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_print_chevron_arguments: TSKindId.PrintChevronArguments,
 	print_statement_plain: TSKindId.PrintStatementPlain,
 	_parenthesized_import_list: TSKindId.ParenthesizedImportList,
-	integer_hex: TSKindId.IntegerHex,
-	integer_octal: TSKindId.IntegerOctal,
-	integer_binary: TSKindId.IntegerBinary,
-	escape_sequence_unicode_fixed: TSKindId.EscapeSequenceUnicodeFixed,
-	escape_sequence_unicode_wide: TSKindId.EscapeSequenceUnicodeWide,
-	escape_sequence_hex: TSKindId.EscapeSequenceHex,
-	escape_sequence_octal: TSKindId.EscapeSequenceOctal,
-	escape_sequence_line_break: TSKindId.EscapeSequenceLineBreak,
-	escape_sequence_simple: TSKindId.EscapeSequenceSimple,
-	escape_sequence_named: TSKindId.EscapeSequenceNamed,
 	except_clause_exception_list: TSKindId.ExceptClauseExceptionList,
 	except_clause_exception: TSKindId.ExceptClauseException,
 	expression_statement_tuple: TSKindId.ExpressionStatementTuple,
@@ -891,7 +838,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	suite_inline: TSKindId.SuiteInline,
 	suite_block: TSKindId.SuiteBlock,
 	suite_empty: TSKindId.SuiteEmpty,
-	_yield_from_clause: TSKindId.YieldFromClause
+	_yield_from_clause: TSKindId.YieldFromClause,
+	as_pattern_target: TSKindId._AsPatternTarget,
+	format_expression: TSKindId._FormatExpression
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -925,7 +874,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	dictionary: 'dictionary_elements',
 	if_clause: 'expression',
 	concatenated_string: 'string',
-	format_specifier: 'interpolation',
+	format_specifier: 'format_expression',
 	await: 'primary_expression',
 	simple_statements_elements: '_simple_statement',
 	subjects: 'expression',
@@ -949,7 +898,9 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	match_block_block: 'case_clause',
 	suite_inline: 'simple_statements_elements',
 	suite_block: 'block',
-	_yield_from_clause: 'expression'
+	_yield_from_clause: 'expression',
+	as_pattern_target: 'expression',
+	format_expression: 'interpolation'
 };
 
 const _wrapDirectKinds: ReadonlySet<string> = new Set([
@@ -989,28 +940,19 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'parenthesized_expression',
 	'if_clause',
 	'await',
-	'comment',
 	'slice_group',
 	'case_tuple_pattern',
 	'case_list_pattern',
 	'print_statement_plain',
 	'_parenthesized_import_list',
-	'integer_hex',
-	'integer_octal',
-	'integer_binary',
-	'escape_sequence_unicode_fixed',
-	'escape_sequence_unicode_wide',
-	'escape_sequence_hex',
-	'escape_sequence_octal',
-	'escape_sequence_line_break',
-	'escape_sequence_simple',
-	'escape_sequence_named',
 	'except_clause_exception',
 	'with_clause_paren',
 	'suite_inline',
 	'suite_block',
 	'suite_empty',
-	'_yield_from_clause'
+	'_yield_from_clause',
+	'as_pattern_target',
+	'format_expression'
 ]);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set([
@@ -1131,8 +1073,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToFormatSpecifier as (...args: unknown[]) => unknown)(...children);
 		case 'await':
 			return F.buildAwait(children[0] as Parameters<typeof F.buildAwait>[0]);
-		case 'comment':
-			return F.buildComment(children[0] as Parameters<typeof F.buildComment>[0]);
 		case 'simple_statements_elements':
 			return (coerceToSimpleStatementsElements as (...args: unknown[]) => unknown)(...children);
 		case 'subjects':
@@ -1173,26 +1113,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildPrintStatementPlain(children[0] as Parameters<typeof F.buildPrintStatementPlain>[0]);
 		case '_parenthesized_import_list':
 			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
-		case 'integer_hex':
-			return F.buildIntegerHex(children[0] as Parameters<typeof F.buildIntegerHex>[0]);
-		case 'integer_octal':
-			return F.buildIntegerOctal(children[0] as Parameters<typeof F.buildIntegerOctal>[0]);
-		case 'integer_binary':
-			return F.buildIntegerBinary(children[0] as Parameters<typeof F.buildIntegerBinary>[0]);
-		case 'escape_sequence_unicode_fixed':
-			return F.buildEscapeSequenceUnicodeFixed(children[0] as Parameters<typeof F.buildEscapeSequenceUnicodeFixed>[0]);
-		case 'escape_sequence_unicode_wide':
-			return F.buildEscapeSequenceUnicodeWide(children[0] as Parameters<typeof F.buildEscapeSequenceUnicodeWide>[0]);
-		case 'escape_sequence_hex':
-			return F.buildEscapeSequenceHex(children[0] as Parameters<typeof F.buildEscapeSequenceHex>[0]);
-		case 'escape_sequence_octal':
-			return F.buildEscapeSequenceOctal(children[0] as Parameters<typeof F.buildEscapeSequenceOctal>[0]);
-		case 'escape_sequence_line_break':
-			return F.buildEscapeSequenceLineBreak(children[0] as Parameters<typeof F.buildEscapeSequenceLineBreak>[0]);
-		case 'escape_sequence_simple':
-			return F.buildEscapeSequenceSimple(children[0] as Parameters<typeof F.buildEscapeSequenceSimple>[0]);
-		case 'escape_sequence_named':
-			return F.buildEscapeSequenceNamed(children[0] as Parameters<typeof F.buildEscapeSequenceNamed>[0]);
 		case 'except_clause_exception_list':
 			return (coerceToExceptClauseExceptionList as (...args: unknown[]) => unknown)(...children);
 		case 'except_clause_exception':
@@ -1213,6 +1133,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildSuiteEmpty(children[0] as Parameters<typeof F.buildSuiteEmpty>[0]);
 		case '_yield_from_clause':
 			return F.buildYieldFromClause(children[0] as Parameters<typeof F.buildYieldFromClause>[0]);
+		case 'as_pattern_target':
+			return F.buildAsPatternTarget(children[0] as Parameters<typeof F.buildAsPatternTarget>[0]);
+		case 'format_expression':
+			return F.buildFormatExpression(children[0] as Parameters<typeof F.buildFormatExpression>[0]);
 		default:
 			return undefined;
 	}
@@ -3832,10 +3756,7 @@ export function resolveAsPattern_expression(value: T.AsPattern.LooseConfig['expr
 }
 
 export function resolveAsPattern_alias(value: T.AsPattern.LooseConfig['alias']): T.AsPattern['_alias'] {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
-		[]
-	);
+	return _resolveOneBranch<T.AsPatternTarget>(value, 'as_pattern_target');
 }
 
 export function coerceToAsPattern(input: T.AsPattern.Loose): ReturnType<typeof F.buildAsPattern> {
@@ -5013,7 +4934,7 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 export function coerceToFormatSpecifier(
 	...input: readonly (
 		| T.FormatSpecifier.Loose
-		| LooseValue<'[^{}\\n]+' | T.Interpolation, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<'[^{}\\n]+' | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
@@ -6802,4 +6723,61 @@ export function coerceToEscapeInterpolation(
 export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F.buildStringEnd> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
+}
+
+export function resolveAsPatternTarget_content(
+	value: T.AsPatternTarget.LooseConfig['content']
+): T.AsPatternTarget['_content'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () => _resolveOne<T.Expression>(value, _K7, _K8)),
+		[]
+	);
+}
+
+export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnType<typeof F.buildAsPatternTarget> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId._AsPatternTarget)
+		return input as unknown as ReturnType<typeof F.buildAsPatternTarget>;
+	return F.buildAsPatternTarget(
+		_requireField(
+			'as_pattern_target',
+			'content',
+			coerceMixedEnumStorage(
+				_resolveKindEnum(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+						? input.content
+						: input,
+					() =>
+						_resolveOne<T.Expression>(
+							input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input
+								? input.content
+								: input,
+							_K7,
+							_K8
+						)
+				),
+				[]
+			)
+		)
+	);
+}
+
+export function resolveFormatExpression_content(
+	value: T.FormatExpression.LooseConfig['content']
+): T.FormatExpression['_content'] {
+	return _resolveOneBranch<T.Interpolation>(value, 'interpolation');
+}
+
+export function coerceToFormatExpression(input: T.FormatExpression.Loose): ReturnType<typeof F.buildFormatExpression> {
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId._FormatExpression)
+		return input as unknown as ReturnType<typeof F.buildFormatExpression>;
+	return F.buildFormatExpression(
+		_requireField(
+			'format_expression',
+			'content',
+			_resolveOneBranch<T.Interpolation>(
+				input !== null && typeof input === 'object' && !isNodeData(input) && 'content' in input ? input.content : input,
+				'interpolation'
+			)
+		)
+	);
 }

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 438,
+  "nodeCount": 441,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -170,137 +170,94 @@
     "token_tree_pattern_paren": "tokenTreePattern.paren"
   },
   "fieldAliasMap": {
-    "token_repetition_pattern.token_patterns": {
-      "primitive_type": "char_keyword"
-    },
-    "token_repetition.tokens": {
-      "primitive_type": "char_keyword"
-    },
-    "union_item.name": {
-      "type_identifier": "identifier"
-    },
-    "enum_item.name": {
-      "type_identifier": "identifier"
-    },
-    "field_declaration.name": {
-      "field_identifier": "identifier"
+    "enum_variant.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "field_declaration.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "const_item.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
+    },
+    "const_item.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "static_item.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "type_item.name": {
       "type_identifier": "identifier"
+    },
+    "static_item.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "type_item.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "function_item.return_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "function_signature_item.return_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "where_predicate.left": {
-      "type_identifier": "identifier"
-    },
-    "trait_item.name": {
-      "type_identifier": "identifier"
-    },
-    "associated_type.name": {
       "type_identifier": "identifier"
     },
     "trait_bounds.bounds": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "higher_ranked_trait_bound.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "removed_trait_bound.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "const_parameter.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "type_parameter.name": {
       "type_identifier": "identifier"
     },
     "type_parameter.default_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "let_declaration.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "parameter.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "bracketed_type.content": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "qualified_type.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "qualified_type.alias": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "array_type.element": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "function_type.return_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "generic_type.type": {
       "type_identifier": "identifier"
     },
-    "generic_type_with_turbofish.type": {
+    "let_declaration.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "let_declaration.type": {
+      "type_identifier": "identifier"
+    },
+    "let_declaration.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "variadic_parameter.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "parameter.name": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "parameter.type": {
+      "type_identifier": "identifier"
+    },
+    "bracketed_type.content": {
+      "type_identifier": "identifier"
+    },
+    "qualified_type.type": {
+      "type_identifier": "identifier"
+    },
+    "qualified_type.alias": {
+      "type_identifier": "identifier"
+    },
+    "array_type.element": {
+      "type_identifier": "identifier"
+    },
+    "array_type.length": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "function_type.return_type": {
       "type_identifier": "identifier"
     },
     "bounded_type.left": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "bounded_type.right": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "type_binding.name": {
       "type_identifier": "identifier"
     },
     "type_binding.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "reference_type.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "abstract_type.trait": {
       "type_identifier": "identifier"
     },
-    "dynamic_type.trait": {
+    "reference_type.type": {
       "type_identifier": "identifier"
     },
     "macro_invocation.arguments": {
@@ -312,82 +269,212 @@
     "scoped_type_identifier_in_expression_position.path": {
       "generic_type": "generic_type_with_turbofish"
     },
-    "scoped_type_identifier_in_expression_position.name": {
-      "type_identifier": "identifier"
+    "unary_expression.operand": {
+      "reserved_identifier": "_reserved_identifier"
     },
-    "scoped_type_identifier.name": {
-      "type_identifier": "identifier"
+    "try_expression.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "binary_expression.left": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "binary_expression.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "assignment_expression.left": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "assignment_expression.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "compound_assignment_expr.left": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "compound_assignment_expr.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "type_cast_expression.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "type_cast_expression.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
+    },
+    "return_expression.expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "yield_expression.expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "parenthesized_expression.expression": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "struct_expression.name": {
-      "type_identifier": "identifier",
       "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
     },
-    "field_initializer.field": {
-      "field_identifier": "identifier"
+    "field_initializer.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "base_field_initializer.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "if_expression.condition": {
-      "let_chain": "_let_chain"
+      "let_chain": "_let_chain",
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "let_condition.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "let_condition.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "_let_chain.left": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "_let_chain.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "match_expression.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "last_match_arm.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "match_pattern.pattern": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "match_pattern.condition": {
-      "let_chain": "_let_chain"
+      "let_chain": "_let_chain",
+      "reserved_identifier": "_reserved_identifier"
     },
     "while_expression.condition": {
-      "let_chain": "_let_chain"
+      "let_chain": "_let_chain",
+      "reserved_identifier": "_reserved_identifier"
     },
-    "field_expression.field": {
-      "field_identifier": "identifier"
+    "for_expression.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "for_expression.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "closure_parameters.parameters": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "break_expression.expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "index_expression.object": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "index_expression.index": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "await_expression.expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "field_expression.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "block.trailing_expression": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
-    "struct_pattern.type": {
-      "type_identifier": "identifier"
+    "mut_pattern.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "ref_pattern.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "captured_pattern.pattern": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "reference_pattern.pattern": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "use_bounds_elements.element": {
-      "type_identifier": "identifier"
+    "tuple_pattern_elements.element": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "patterns.pattern": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "_tuple_type_elements.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
+    },
+    "_tuple_expression_elements.element": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "array_expression_semi.element": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "array_expression_semi.length": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "attribute_input.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "attribute_input.arguments": {
       "token_tree": "delim_token_tree"
     },
     "closure_expression_block.return_type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "impl_item_positive_clause.trait": {
       "type_identifier": "identifier"
     },
-    "impl_item_negative_clause.trait": {
-      "type_identifier": "identifier"
+    "closure_expression_expr.body": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "reference_expression_raw_const.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "reference_expression_raw_mut.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "reference_expression_mut.value": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "reference_expression_bare.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "impl_item_body.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "impl_item_semi.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
-    },
-    "function_type_trait_form.trait": {
       "type_identifier": "identifier"
     },
+    "impl_item_semi.type": {
+      "type_identifier": "identifier"
+    },
+    "or_pattern_binary.left": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "or_pattern_binary.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "or_pattern_prefix.right": {
+      "reserved_identifier": "_reserved_identifier"
+    },
     "pointer_type_const.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "pointer_type_mut.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
+    },
+    "range_expression_binary.start": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "range_expression_binary.end": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "range_expression_postfix.start": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "range_expression_prefix.end": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "expression_statement_with_semi.expression": {
+      "reserved_identifier": "_reserved_identifier"
+    },
+    "match_arm_with_comma.value": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "block_comment_doc_outer.doc": {
       "doc_comment": "_block_comment_content"
@@ -395,62 +482,29 @@
     "block_comment_doc_inner.doc": {
       "doc_comment": "_block_comment_content"
     },
-    "token_tree_pattern_paren.token_patterns": {
-      "primitive_type": "char_keyword"
-    },
-    "token_tree_pattern_bracket.token_patterns": {
-      "primitive_type": "char_keyword"
-    },
-    "token_tree_pattern_brace.token_patterns": {
-      "primitive_type": "char_keyword"
-    },
-    "token_tree_paren.tokens": {
-      "primitive_type": "char_keyword"
-    },
-    "token_tree_bracket.tokens": {
-      "primitive_type": "char_keyword"
-    },
-    "token_tree_brace.tokens": {
-      "primitive_type": "char_keyword"
-    },
     "delim_token_tree_paren.delim_tokens": {
-      "token_tree": "delim_token_tree",
-      "primitive_type": "char_keyword"
+      "token_tree": "delim_token_tree"
     },
     "delim_token_tree_bracket.delim_tokens": {
-      "token_tree": "delim_token_tree",
-      "primitive_type": "char_keyword"
+      "token_tree": "delim_token_tree"
     },
     "delim_token_tree_brace.delim_tokens": {
-      "token_tree": "delim_token_tree",
-      "primitive_type": "char_keyword"
+      "token_tree": "delim_token_tree"
     },
-    "field_pattern_shorthand.name": {
-      "shorthand_field_identifier": "identifier"
-    },
-    "field_pattern_named.name": {
-      "field_identifier": "identifier"
-    },
-    "struct_item_brace.name": {
-      "type_identifier": "identifier"
-    },
-    "struct_item_tuple.name": {
-      "type_identifier": "identifier"
-    },
-    "struct_item_unit.name": {
-      "type_identifier": "identifier"
+    "field_pattern_named.pattern": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "_attributed_parameter.content": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
+    },
+    "_attributed_argument.expression": {
+      "reserved_identifier": "_reserved_identifier"
     },
     "_attributed_ordered_field.type": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     },
     "_type_argument.content": {
-      "type_identifier": "identifier",
-      "primitive_type": "char_keyword"
+      "type_identifier": "identifier"
     }
   },
   "factorySlots": {
@@ -1469,29 +1523,11 @@
           "_unit_type",
           "_array_type",
           "_function_type",
-          "_identifier",
           "_macro_invocation",
           "_never_type",
           "_dynamic_type",
           "_bounded_type",
           "_removed_trait_bound",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword",
           "_qualified_type"
         ]
       }
@@ -2315,6 +2351,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
+          "_reserved_identifier",
           "_unary_expression",
           "_reference_expression_raw_const",
           "_reference_expression_raw_mut",
@@ -3322,7 +3359,8 @@
           "_metavariable",
           "_super",
           "_crate",
-          "_scoped_identifier"
+          "_scoped_identifier",
+          "_reserved_identifier"
         ]
       }
     },
@@ -4001,29 +4039,11 @@
           "_unit_type",
           "_array_type",
           "_function_type",
-          "_identifier",
           "_macro_invocation",
           "_never_type",
           "_dynamic_type",
           "_bounded_type",
-          "_removed_trait_bound",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword"
+          "_removed_trait_bound"
         ]
       }
     },
@@ -4064,6 +4084,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
+          "_reserved_identifier",
           "_unary_expression",
           "_reference_expression_raw_const",
           "_reference_expression_raw_mut",
@@ -4166,29 +4187,11 @@
           "_unit_type",
           "_array_type",
           "_function_type",
-          "_identifier",
           "_macro_invocation",
           "_never_type",
           "_dynamic_type",
           "_bounded_type",
           "_removed_trait_bound",
-          "_u8_keyword",
-          "_i8_keyword",
-          "_u16_keyword",
-          "_i16_keyword",
-          "_u32_keyword",
-          "_i32_keyword",
-          "_u64_keyword",
-          "_i64_keyword",
-          "_u128_keyword",
-          "_i128_keyword",
-          "_isize_keyword",
-          "_usize_keyword",
-          "_f32_keyword",
-          "_f64_keyword",
-          "_bool_keyword",
-          "_str_keyword",
-          "_char_keyword",
           "_type_binding",
           "_lifetime",
           "_string_literal",
@@ -4226,6 +4229,42 @@
         ]
       },
       "last_arm": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "reserved_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "type_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "field_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "shorthand_field_identifier": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4743,6 +4782,7 @@
         "range_expression",
         "raw_string_literal",
         "reference_expression",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -4808,9 +4848,24 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
         "delim_token_tree",
-        "dollar"
+        "dollar",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
       ]
     },
     {
@@ -4861,6 +4916,7 @@
         "range_expression",
         "raw_string_literal",
         "reference_expression",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -4937,6 +4993,7 @@
         "parenthesized_expression",
         "raw_string_literal",
         "reference_expression",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -4952,16 +5009,6 @@
         "while_expression",
         "yield_expression"
       ]
-    },
-    {
-      "kind": "_field_identifier",
-      "modelType": "pattern",
-      "typeName": "FieldIdentifier",
-      "factoryName": "fieldIdentifier",
-      "irKey": "fieldIdentifier",
-      "hidden": false,
-      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
-      "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u"
     },
     {
       "kind": "_impl_item_unsafe_marker",
@@ -5310,8 +5357,23 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_literal",
         "_non_special_token",
-        "dollar"
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "dollar",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
       ]
     },
     {
@@ -5323,36 +5385,20 @@
       "transparent": true,
       "subtypes": [
         "_literal",
+        "_primitive_type",
         "_token_keywords",
         "_token_tree_punctuation",
-        "bool_keyword",
         "boolean_literal",
-        "char_keyword",
         "char_literal",
         "crate",
-        "f32_keyword",
-        "f64_keyword",
         "float_literal",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal",
-        "isize_keyword",
         "mutable_specifier",
         "raw_string_literal",
         "self",
-        "str_keyword",
         "string_literal",
-        "super",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "usize_keyword"
+        "super"
       ]
     },
     {
@@ -5386,6 +5432,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super"
@@ -5418,6 +5465,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -5425,6 +5473,34 @@
         "tuple_pattern",
         "tuple_struct_pattern"
       ]
+    },
+    {
+      "kind": "_primitive_type",
+      "modelType": "enum",
+      "typeName": "PrimitiveType",
+      "factoryName": "primitiveType",
+      "irKey": "primitiveType",
+      "hidden": false,
+      "values": [
+        "u8",
+        "i8",
+        "u16",
+        "i16",
+        "u32",
+        "i32",
+        "u64",
+        "i64",
+        "u128",
+        "i128",
+        "isize",
+        "usize",
+        "f32",
+        "f64",
+        "bool",
+        "str",
+        "char"
+      ],
+      "factoryShape": "text"
     },
     {
       "kind": "_range_expression_bare",
@@ -5457,15 +5533,16 @@
     {
       "kind": "_reserved_identifier",
       "modelType": "enum",
-      "typeName": "ReservedIdentifier",
-      "factoryName": "reservedIdentifier",
-      "irKey": "reservedIdentifier",
+      "typeName": "_ReservedIdentifier",
+      "factoryName": "_reservedIdentifier",
+      "irKey": "_reservedIdentifier",
       "hidden": false,
       "values": [
         "default",
         "union",
         "gen"
-      ]
+      ],
+      "factoryShape": "text"
     },
     {
       "kind": "_space",
@@ -5578,8 +5655,23 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
         "metavariable",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super",
         "token_binding_pattern",
         "token_repetition_pattern",
         "token_tree_pattern"
@@ -5649,8 +5741,23 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_keywords",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
         "metavariable",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super",
         "token_repetition",
         "token_tree"
       ]
@@ -5722,6 +5829,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -5759,6 +5867,7 @@
         "type"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -5788,6 +5897,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -5805,23 +5915,13 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
+        "_primitive_type",
         "abstract_type",
         "array_type",
-        "bool_keyword",
         "bounded_type",
-        "char_keyword",
         "dynamic_type",
-        "f32_keyword",
-        "f64_keyword",
         "function_type",
         "generic_type",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
-        "identifier",
-        "isize_keyword",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -5829,15 +5929,9 @@
         "reference_type",
         "removed_trait_bound",
         "scoped_type_identifier",
-        "str_keyword",
         "tuple_type",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "unit_type",
-        "usize_keyword"
+        "type_identifier",
+        "unit_type"
       ]
     },
     {
@@ -5928,16 +6022,6 @@
       ]
     },
     {
-      "kind": "_type_identifier",
-      "modelType": "pattern",
-      "typeName": "TypeIdentifier",
-      "factoryName": "typeIdentifier",
-      "irKey": "typeIdentifier",
-      "hidden": false,
-      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*",
-      "leafPattern": "/^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$/u"
-    },
-    {
       "kind": "_use_clause",
       "modelType": "supertype",
       "typeName": "UseClause",
@@ -5948,6 +6032,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "scoped_use_list",
         "self",
@@ -6022,7 +6107,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier",
             "removed_trait_bound",
             "generic_type",
@@ -6034,7 +6119,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -6196,6 +6281,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -6290,6 +6376,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -6600,13 +6687,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -6778,7 +6865,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -6816,6 +6904,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -7029,6 +7123,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -7158,6 +7253,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -7742,6 +7838,7 @@
         "content"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -7772,6 +7869,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -7876,6 +7974,7 @@
             "yield_expression",
             "_literal",
             "identifier",
+            "reserved_identifier",
             "self",
             "scoped_identifier",
             "generic_function",
@@ -7976,6 +8075,12 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             },
             {
               "kind": "node-ref",
@@ -9512,7 +9617,7 @@
           "storage": "verbatim",
           "kinds": [
             "higher_ranked_trait_bound",
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier",
             "generic_type",
             "function_type",
@@ -9528,7 +9633,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -9563,6 +9668,7 @@
         "trait"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -9592,6 +9698,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -9706,13 +9813,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -10419,6 +10526,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -10521,6 +10629,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -10733,13 +10842,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "field_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "field_identifier",
               "parseKind": "field_identifier"
             }
           ]
@@ -10882,14 +10991,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "field_identifier",
             "integer_literal"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "field_identifier",
               "parseKind": "field_identifier"
             },
             {
@@ -10905,6 +11014,43 @@
       "factoryFields": [
         "value",
         "field"
+      ]
+    },
+    {
+      "kind": "field_identifier",
+      "modelType": "alias",
+      "typeName": "FieldIdentifier",
+      "factoryName": "fieldIdentifier",
+      "irKey": "fieldIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
       ]
     },
     {
@@ -10944,14 +11090,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "field_identifier",
             "integer_literal"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "field_identifier",
               "parseKind": "field_identifier"
             },
             {
@@ -11075,6 +11221,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -11167,6 +11314,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -11257,13 +11405,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "field_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "field_identifier",
               "parseKind": "field_identifier"
             }
           ]
@@ -11358,13 +11506,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "shorthand_field_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "shorthand_field_identifier",
               "parseKind": "shorthand_field_identifier"
             }
           ]
@@ -12319,14 +12467,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -12345,7 +12493,8 @@
       ],
       "bareAccepts": [
         "identifier",
-        "scoped_type_identifier"
+        "scoped_type_identifier",
+        "type_identifier"
       ]
     },
     {
@@ -12562,21 +12711,22 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
+            "reserved_identifier",
             "scoped_type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             },
             {
               "kind": "node-ref",
@@ -12630,14 +12780,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -13143,7 +13293,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier",
             "generic_type"
           ],
@@ -13151,7 +13301,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -13177,7 +13327,8 @@
       "bareAccepts": [
         "generic_type",
         "identifier",
-        "scoped_type_identifier"
+        "scoped_type_identifier",
+        "type_identifier"
       ]
     },
     {
@@ -13200,7 +13351,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier",
             "generic_type"
           ],
@@ -13208,7 +13359,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -13234,7 +13385,8 @@
       "bareAccepts": [
         "generic_type",
         "identifier",
-        "scoped_type_identifier"
+        "scoped_type_identifier",
+        "type_identifier"
       ]
     },
     {
@@ -15048,7 +15200,8 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -15056,6 +15209,12 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -15111,7 +15270,8 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -15119,6 +15279,12 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -15174,7 +15340,8 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -15182,6 +15349,12 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -15235,7 +15408,8 @@
           "storage": "verbatim",
           "kinds": [
             "scoped_identifier",
-            "identifier"
+            "identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -15249,6 +15423,12 @@
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -16107,6 +16287,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -16198,36 +16379,20 @@
       "transparent": true,
       "subtypes": [
         "_literal",
+        "_primitive_type",
         "_token_keywords",
         "_token_tree_punctuation",
-        "bool_keyword",
         "boolean_literal",
-        "char_keyword",
         "char_literal",
         "crate",
-        "f32_keyword",
-        "f64_keyword",
         "float_literal",
-        "i128_keyword",
-        "i16_keyword",
-        "i32_keyword",
-        "i64_keyword",
-        "i8_keyword",
         "identifier",
         "integer_literal",
-        "isize_keyword",
         "mutable_specifier",
         "raw_string_literal",
         "self",
-        "str_keyword",
         "string_literal",
-        "super",
-        "u128_keyword",
-        "u16_keyword",
-        "u32_keyword",
-        "u64_keyword",
-        "u8_keyword",
-        "usize_keyword"
+        "super"
       ]
     },
     {
@@ -16369,6 +16534,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -16415,6 +16581,7 @@
       ],
       "bareAccepts": [
         "_attributed_ordered_field",
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16445,6 +16612,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16484,6 +16652,7 @@
       ],
       "bareAccepts": [
         "_attributed_ordered_field",
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16513,6 +16682,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16641,6 +16811,7 @@
       ],
       "bareAccepts": [
         "_attributed_parameter",
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16673,6 +16844,7 @@
         "self_parameter",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16713,6 +16885,7 @@
       ],
       "bareAccepts": [
         "_attributed_parameter",
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -16744,6 +16917,7 @@
         "self_parameter",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -16835,6 +17009,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -16938,6 +17113,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -17068,6 +17244,7 @@
         "type"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -17097,6 +17274,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17144,6 +17322,7 @@
         "type"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -17173,6 +17352,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -17387,6 +17567,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -17579,6 +17760,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -17681,6 +17863,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -17760,7 +17943,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -17804,6 +17988,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         }
@@ -17841,7 +18031,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -17885,6 +18076,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -18004,7 +18201,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -18048,6 +18246,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         }
@@ -18252,6 +18456,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -18361,6 +18566,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -18463,6 +18669,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -18565,6 +18772,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -18667,6 +18875,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -18861,6 +19070,7 @@
         "type"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -18890,6 +19100,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -18897,6 +19108,50 @@
         "u8_keyword",
         "unit_type",
         "usize_keyword"
+      ]
+    },
+    {
+      "kind": "reserved_identifier",
+      "modelType": "alias",
+      "typeName": "ReservedIdentifier",
+      "factoryName": "reservedIdentifier",
+      "irKey": "reservedIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "default",
+              "parseKind": "default_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "union",
+              "parseKind": "union_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "gen",
+              "parseKind": "gen_keyword"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
       ]
     },
     {
@@ -18980,6 +19235,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -19041,6 +19297,7 @@
             "super",
             "crate",
             "scoped_identifier",
+            "reserved_identifier",
             "bracketed_type",
             "generic_type_with_turbofish"
           ],
@@ -19080,6 +19337,12 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             },
             {
               "kind": "node-ref",
@@ -19152,6 +19415,7 @@
             "super",
             "crate",
             "scoped_identifier",
+            "reserved_identifier",
             "generic_type_with_turbofish",
             "bracketed_type",
             "generic_type"
@@ -19196,6 +19460,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
               "parseKind": "generic_type_with_turbofish"
             },
@@ -19222,13 +19492,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -19263,6 +19533,7 @@
             "super",
             "crate",
             "scoped_identifier",
+            "reserved_identifier",
             "generic_type_with_turbofish"
           ],
           "values": [
@@ -19305,6 +19576,12 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
               "parseKind": "generic_type"
             }
@@ -19319,13 +19596,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -19359,7 +19636,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -19397,6 +19675,12 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -19575,6 +19859,43 @@
       ]
     },
     {
+      "kind": "shorthand_field_identifier",
+      "modelType": "alias",
+      "typeName": "ShorthandFieldIdentifier",
+      "factoryName": "shorthandFieldIdentifier",
+      "irKey": "shorthandFieldIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
+    },
+    {
       "kind": "shorthand_field_initializer",
       "modelType": "branch",
       "typeName": "ShorthandFieldInitializer",
@@ -19734,6 +20055,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -20108,7 +20430,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier_in_expression_position",
             "generic_type_with_turbofish"
           ],
@@ -20116,7 +20438,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -20213,13 +20535,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -20335,13 +20657,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -20457,13 +20779,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -20525,14 +20847,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -21444,13 +21766,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -21688,6 +22010,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",
@@ -21847,6 +22170,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -21911,6 +22235,7 @@
         "ref_pattern",
         "reference_pattern",
         "remaining_field_pattern",
+        "reserved_identifier",
         "scoped_identifier",
         "slice_pattern",
         "string_literal",
@@ -22029,6 +22354,7 @@
         "tuple_type_elements"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "abstract_type",
         "array_type",
@@ -22058,6 +22384,7 @@
         "scoped_type_identifier",
         "str_keyword",
         "tuple_type",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -22113,6 +22440,7 @@
         "type_arguments_elements"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "_type_argument",
         "abstract_type",
@@ -22160,6 +22488,7 @@
         "tuple_type",
         "type_arguments_elements",
         "type_binding",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -22198,6 +22527,7 @@
         "element"
       ],
       "bareAccepts": [
+        "_primitive_type",
         "_tuple_type_elements",
         "_type_argument",
         "abstract_type",
@@ -22244,6 +22574,7 @@
         "true_keyword",
         "tuple_type",
         "type_binding",
+        "type_identifier",
         "u128_keyword",
         "u16_keyword",
         "u32_keyword",
@@ -22270,13 +22601,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -22385,6 +22716,43 @@
       ]
     },
     {
+      "kind": "type_identifier",
+      "modelType": "alias",
+      "typeName": "TypeIdentifier",
+      "factoryName": "typeIdentifier",
+      "irKey": "typeIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
+    },
+    {
       "kind": "type_item",
       "modelType": "branch",
       "typeName": "TypeItem",
@@ -22421,13 +22789,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -22551,13 +22919,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -22857,13 +23225,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -23044,7 +23412,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -23082,6 +23451,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         },
@@ -23149,6 +23524,7 @@
       "bareAccepts": [
         "identifier",
         "lifetime",
+        "type_identifier",
         "use_bounds_elements"
       ]
     },
@@ -23177,7 +23553,8 @@
       ],
       "bareAccepts": [
         "identifier",
-        "lifetime"
+        "lifetime",
+        "type_identifier"
       ]
     },
     {
@@ -23202,6 +23579,7 @@
         "super",
         "crate",
         "scoped_identifier",
+        "reserved_identifier",
         "use_as_clause",
         "use_list",
         "scoped_use_list",
@@ -23215,6 +23593,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "scoped_use_list",
         "self",
@@ -23269,6 +23648,7 @@
             "super",
             "crate",
             "scoped_identifier",
+            "reserved_identifier",
             "use_as_clause",
             "use_list",
             "scoped_use_list",
@@ -23310,6 +23690,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             },
             {
               "kind": "node-ref",
@@ -23393,6 +23779,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "scoped_use_list",
         "self",
@@ -23442,6 +23829,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super",
@@ -23470,7 +23858,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -23508,6 +23897,12 @@
               "multiplicity": "optional",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         }
@@ -23520,6 +23915,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super"
@@ -23652,6 +24048,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super",
@@ -23724,6 +24121,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super",
@@ -23772,6 +24170,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super",
@@ -23804,7 +24203,8 @@
             "metavariable",
             "super",
             "crate",
-            "scoped_identifier"
+            "scoped_identifier",
+            "reserved_identifier"
           ],
           "values": [
             {
@@ -23842,6 +24242,12 @@
               "multiplicity": "single",
               "name": "scoped_identifier",
               "parseKind": "scoped_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "reserved_identifier",
+              "parseKind": "reserved_identifier"
             }
           ]
         }
@@ -23855,6 +24261,7 @@
         "crate",
         "identifier",
         "metavariable",
+        "reserved_identifier",
         "scoped_identifier",
         "self",
         "super"
@@ -23928,14 +24335,15 @@
           "storage": "mixedEnum",
           "kinds": [
             "lifetime",
-            "identifier",
+            "type_identifier",
             "scoped_type_identifier",
             "generic_type",
             "reference_type",
             "pointer_type",
             "tuple_type",
             "array_type",
-            "higher_ranked_trait_bound"
+            "higher_ranked_trait_bound",
+            "_primitive_type"
           ],
           "values": [
             {
@@ -23947,7 +24355,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -23993,105 +24401,9 @@
               "parseKind": "higher_ranked_trait_bound"
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "u8",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i8",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u16",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i16",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u32",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i32",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u64",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i64",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "u128",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "i128",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "isize",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "usize",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f32",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "f64",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "bool",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "str",
-              "parseKind": "primitive_type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "char",
+              "name": "_primitive_type",
               "parseKind": "primitive_type"
             }
           ]
@@ -24331,6 +24643,7 @@
         "reference_expression_mut",
         "reference_expression_raw_const",
         "reference_expression_raw_mut",
+        "reserved_identifier",
         "return_expression",
         "scoped_identifier",
         "self",

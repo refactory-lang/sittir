@@ -111,10 +111,15 @@ export interface ArgumentListTransport {
   _argument_list_after?: number
 }
 
+export interface AsPatternTargetTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<Box<ExpressionTransport>>
+}
+
 export interface AsPatternTransport {
   '$_trivia'?: TransportTrivia
   _expression: SlotValue<Box<ExpressionTransport>>
-  _alias: SlotValue<Box<ExpressionTransport>>
+  _alias: SlotValue<Box<AsPatternTargetTransport>>
   _as_keyword_before?: number
   _as_keyword_after?: number
   _as_pattern_before?: number
@@ -695,6 +700,11 @@ export interface ForInClauseTransport {
   _in_keyword_after?: number
   _for_in_clause_before?: number
   _for_in_clause_after?: number
+}
+
+export interface FormatExpressionTransport {
+  '$_trivia'?: TransportTrivia
+  _content: SlotValue<InterpolationTransport>
 }
 
 export interface FormatSpecifierTransport {

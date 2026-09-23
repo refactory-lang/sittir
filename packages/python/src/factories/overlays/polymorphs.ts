@@ -19,10 +19,14 @@ const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 // merges or partitions a config.
 const _o = (config: unknown) => config as Record<string, unknown>;
 const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
+const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '$type' in v;
+// A seat forwards the parent's trailing options only when given: a
+// bare-text call must keep its one-argument arity.
+const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
+	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
 // A spliced group is present as a whole or absent as a whole: the second
 // overload forbids every one of its keys.
 type NoneOf<T> = { [K in keyof T]?: never };
-const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '$type' in v;
 
 const futureImportStatement$importList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1607,12 +1611,13 @@ const matchStatement$subjects = <PF extends (config: never) => unknown, CF exten
 	child: CF
 ) => {
 	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subjects'> & { subjects: ArgsOf<CF> })
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subjects'> & { subjects: ArgsOf<CF> }),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['subjects'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), subjects: _c(child)(...seat) });
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subjects: _c(child)(...seat) }, options);
 	};
 };
 const matchStatement$seated: (
@@ -1675,12 +1680,13 @@ const caseClause$casePatterns = <PF extends (config: never) => unknown, CF exten
 	child: CF
 ) => {
 	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'casePatterns'> & { casePatterns: ArgsOf<CF> })
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'casePatterns'> & { casePatterns: ArgsOf<CF> }),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['casePatterns'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), casePatterns: _c(child)(...seat) });
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), casePatterns: _c(child)(...seat) }, options);
 	};
 };
 const caseClause$seated: (
@@ -3287,12 +3293,13 @@ const classPattern$arguments = <PF extends (config: never) => unknown, CF extend
 	child: CF
 ) => {
 	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'arguments'> & { arguments: ArgsOf<CF> })
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'arguments'> & { arguments: ArgsOf<CF> }),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['arguments'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), arguments: _c(child)(...seat) });
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), arguments: _c(child)(...seat) }, options);
 	};
 };
 const classPattern$seated: (
@@ -5259,12 +5266,13 @@ const subscript$subscripts = <PF extends (config: never) => unknown, CF extends 
 	child: CF
 ) => {
 	return (
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subscripts'> & { subscripts: ArgsOf<CF> })
+		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'subscripts'> & { subscripts: ArgsOf<CF> }),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['subscripts'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({ ..._o(config), subscripts: _c(child)(...seat) });
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), subscripts: _c(child)(...seat) }, options);
 	};
 };
 const subscript$seated: (
@@ -5878,15 +5886,17 @@ const comparisonOperator$comparators = <
 									: never
 								: never)
 					>;
-			  })
+			  }),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const seat = _o(config)['comparators'];
-		if (!Array.isArray(seat)) return _p<ReturnType<PF>>(parent)(config);
-		return _p<ReturnType<PF>>(parent)({
-			..._o(config),
-			comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))
-		});
+		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
+		return _fwd<ReturnType<PF>>(
+			parent,
+			{ ..._o(config), comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e)) },
+			options
+		);
 	};
 };
 const comparisonOperator$seated: (
@@ -5973,9 +5983,10 @@ const slice$splice =
 		config:
 			| ArgsOf<PF>[0]
 			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'step'> &
-					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>))
+					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>)),
+		options?: unknown
 	): ReturnType<PF> => {
-		if (config === undefined) return _p<ReturnType<PF>>(parent)(config);
+		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		let seated = false;
@@ -5985,7 +5996,7 @@ const slice$splice =
 				seated = seated || value !== undefined;
 			} else rest[key] = value;
 		}
-		return _p<ReturnType<PF>>(parent)(seated ? { ...rest, step: _c(child)(inner['expression']) } : rest);
+		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, step: _c(child)(inner['expression']) } : rest, options);
 	};
 const slice$seated: (
 	config:

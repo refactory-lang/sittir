@@ -547,6 +547,9 @@ export interface IsGuards {
 	exportStatementEqualsExport<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
+	reservedIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId._ReservedIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement;
 	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
@@ -875,6 +878,9 @@ export interface AssertGuards {
 	exportStatementEqualsExport(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
+	reservedIdentifier(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId._ReservedIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	exportStatement(v: { readonly $type: string | number } | number): asserts v is ExportStatement;
 	moduleExportName(v: { readonly $type: string | number } | number): asserts v is ModuleExportName;
@@ -939,13 +945,13 @@ const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160, 161]);
 const _supertype_identifier_ids = new Set<number>([104, 1]);
 const _supertype_metaProperty_ids = new Set<number>([427, 428]);
-const _supertype_pattern_ids = new Set<number>([279]);
-const _supertype_propertyName_ids = new Set<number>([1, 459, 98, 265, 284]);
+const _supertype_pattern_ids = new Set<number>([251, 252, 104, 1, 459, 231, 235, 287, 279]);
+const _supertype_propertyName_ids = new Set<number>([98, 265, 284]);
 const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([370, 367, 332, 336, 322, 323]);
 const _supertype_tupleTypeMember_ids = new Set<number>([327, 328, 329, 330]);
 const _supertype_primaryType_ids = new Set<number>([
-	353, 354, 1, 306, 338, 356, 365, 366, 352, 345, 346, 99, 351, 349, 347, 337, 335, 369, 368
+	353, 354, 306, 338, 356, 365, 366, 352, 345, 346, 99, 351, 349, 347, 337, 335, 369, 368
 ]);
 const _supertype_indexSignature_ids = new Set<number>([401, 402]);
 const _supertype_exportStatementDefault_ids = new Set<number>([418, 419]);
@@ -1120,6 +1126,7 @@ export const is = {
 	exportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
 	exportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
 	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
+	reservedIdentifier: _g(TSKindId._ReservedIdentifier),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	exportStatement: _sg(_supertype_exportStatement_ids),
 	moduleExportName: _sg(_supertype_moduleExportName_ids),
@@ -1367,6 +1374,7 @@ export const assert = {
 	),
 	exportStatementTypeExport: _makeAssert('exportStatementTypeExport', is.exportStatementTypeExport as _AnyGuard),
 	exportStatementEqualsExport: _makeAssert('exportStatementEqualsExport', is.exportStatementEqualsExport as _AnyGuard),
+	reservedIdentifier: _makeAssert('reservedIdentifier', is.reservedIdentifier as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	exportStatement: _makeAssert('exportStatement', is.exportStatement as _AnyGuard),
 	moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),

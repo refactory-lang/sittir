@@ -368,14 +368,6 @@ describe('Evaluate — edge cases', () => {
 		});
 	});
 
-	describe('desugar-divergence — synthesizeInlineAliasSources', () => {
-		it('records a divergence event when an alias target has no declared rule or SYMBOL source', async () => {
-			const raw = await evaluate(fixture('inline-alias-divergence-grammar.js'));
-			expect(raw.rules).toHaveProperty('_orphan_target');
-			expect(raw.desugarDivergences).toEqual([{ site: 'inline-alias-source', name: '_orphan_target' }]);
-		});
-	});
-
 	describe('desugar-divergence — body-pattern-group fallback', () => {
 		it('records a divergence event when a groups: entry mints with no wire-side deposit', async () => {
 			const raw = await evaluate(fixture('body-pattern-group-divergence-grammar.js'));
@@ -620,14 +612,9 @@ describe('Evaluate — evaluate()', () => {
 		expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 	});
 
-	it('records grammar, override, and evaluate-synthesized provenance roots', async () => {
-		// Use a temp grammar with an INLINE alias over a SEQUENCE (not a choice
-		// — a choice now distributes over its arms and mints no hidden rule) so
-		// that evaluate() still synthesizes a `_primitive_type` hidden rule —
-		// the only remaining scenario that produces 'evaluate-synthesized'
-		// provenance. Bare-symbol aliases to existing rules
-		// (e.g. alias($.identifier, $.named_identifier)) are NOT synthesized
-		// since 2026-04-30.
+	it('records grammar and override provenance roots, and synthesizes no rule for inline alias content', async () => {
+		// Inline alias content is left to enrich, which both executions run;
+		// evaluate synthesizing a hidden rule for it would be a sittir-only kind.
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-provenance-'));
 		const baseEntry = resolve(dir, 'base.js');
 		const overrideEntry = resolve(dir, 'override.js');
@@ -661,14 +648,11 @@ module.exports = grammar(base, {
 			const baseContainer = base.ruleCatalog.byId.get(base.ruleCatalog.rootsByKind.get('container')!)!;
 			const overrideContainer = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('container')!)!;
 			const overrideOnly = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('override_only')!)!;
-			// _primitive_type is synthesized by inline-alias rewriting:
-			// alias(seq('u8','u16'), $.primitive_type) → _primitive_type = seq(...)
-			const synthesized = base.ruleCatalog.byId.get(base.ruleCatalog.rootsByKind.get('_primitive_type')!)!;
 
 			expect(baseContainer.provenance).toBe('grammar-authored');
 			expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
 			expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
-			expect(synthesized.provenance).toBe('evaluate-synthesized');
+			expect(base.ruleCatalog.rootsByKind.has('_primitive_type')).toBe(false);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

@@ -2725,11 +2725,20 @@ tightening any of the four regenerates all three grammars differently.
  */
 ```
 
+#### body
+
+```text
+A SYMBOL body is 'alias' when the kind is an alias display
+(isAliasEnvelopeKind, which is why the kind is a parameter); otherwise
+'envelope'. Classification is structural — never keyed on which phase minted
+the rule.
+```
+
 ### `packages/codegen/src/compiler/model/node-map.ts::branchClassFor`
 
 ```text
 /** The constructing class (`AssembledBranch`/`AssembledEnvelope`/
- *  `AssembledPolymorph`) for a compositional rule's `compoundModelTypeFor`
+ *  `AssembledPolymorph`/`AssembledAlias`) for a compositional rule's `compoundModelTypeFor`
  *  classification — `assemble.ts` calls this once it has already ruled
  *  out the SUPERTYPE-body and list-shaped cases, which construct
  *  `AssembledSupertype`/`AssembledList` directly instead. */
@@ -4291,4 +4300,54 @@ True for a slot value that is free text constrained by a pattern rather than a l
 
 ```text
 True for a kind whose slot structure is a token interior; such a kind is skipped by the interior seam pass and owns no edges.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias.aliasTypeId`
+
+```text
+Required: the parser's
+alias type id, which is the node's identity (`$type`) in place of its
+content's grammar id. The reader stamps this id on the node, wrap dispatches
+it to the envelope, and kind-id-rust emits the set as `is_alias_envelope`.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts.aliasTypeId`
+
+```text
+The alias type id, set by assemble for a kind classified 'alias'. The
+AssembledAlias constructor throws without it, since a display with no alias
+row could never be dispatched from a read.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledAlias`
+
+```text
+The single-slot envelope for a display kind the parser issues only under an
+alias symbol (isAliasEnvelopeKind): its identity is the alias type id, its
+one slot the storage it displays. The content alone distinguishes the cases —
+a single storage node (`type_identifier` over `identifier`), or an enum of
+storage kinds with no parser symbol of their own (`reserved_identifier` over
+keyword terminals), where the parser issues each member's terminal under the
+alias id. Reading, wrap dispatch and the factory shape (`direct`) are the
+same for every content. When the displayed rule has its own symbol (a renamed
+hidden rule such as rust `_primitive_type`), that symbol is the container and
+the kind is a plain AssembledEnvelope.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::isAliasEnvelopeKind`
+
+```text
+A display kind the parser only ever issues under an alias symbol, whose node
+is either the storage node itself or a container of it: its simplified body
+is a single SYMBOL, its catalog row is an `alias_sym`, and its storage is not
+hidden (or is itself only an alias row). The per-node choice between storage
+and container is made by the reader from the node's grammar symbol.
+```
+
+### `packages/codegen/src/compiler/model/node-map.ts::aliasEnvelopeOf`
+
+```text
+The alias envelope an alias-site ref displays as, if any. Slot values and
+supertype members at such a site resolve to the envelope, not the storage
+kind, so types, transports and factories agree with what the read delivers.
 ```

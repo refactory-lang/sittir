@@ -202,6 +202,10 @@
         "named": true
       },
       {
+        "type": "reserved_identifier",
+        "named": true
+      },
+      {
         "type": "return_expression",
         "named": true
       },
@@ -369,6 +373,10 @@
       },
       {
         "type": "remaining_field_pattern",
+        "named": true
+      },
+      {
+        "type": "reserved_identifier",
         "named": true
       },
       {
@@ -1065,6 +1073,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -1731,6 +1743,10 @@
           },
           {
             "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -3354,7 +3370,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -4074,6 +4090,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "reserved_identifier",
+            "named": true
           }
         ]
       }
@@ -4100,6 +4120,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "reserved_identifier",
+            "named": true
           }
         ]
       }
@@ -4125,6 +4149,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           }
         ]
@@ -4161,6 +4189,10 @@
         "types": [
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -4815,6 +4847,11 @@
     }
   },
   {
+    "type": "primitive_type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "qualified_type",
     "named": true,
     "fields": {
@@ -4993,6 +5030,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -5030,6 +5071,10 @@
           },
           {
             "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5089,6 +5134,10 @@
           },
           {
             "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -5385,6 +5434,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -5443,6 +5496,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -5486,6 +5543,10 @@
           },
           {
             "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -6963,6 +7024,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -7035,6 +7100,10 @@
             "named": true
           },
           {
+            "type": "reserved_identifier",
+            "named": true
+          },
+          {
             "type": "scoped_identifier",
             "named": true
           },
@@ -7084,6 +7153,10 @@
           },
           {
             "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -7176,6 +7249,10 @@
           },
           {
             "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "reserved_identifier",
             "named": true
           },
           {
@@ -7310,6 +7387,10 @@
         },
         {
           "type": "metavariable",
+          "named": true
+        },
+        {
+          "type": "reserved_identifier",
           "named": true
         },
         {
@@ -7706,7 +7787,15 @@
     "named": false
   },
   {
+    "type": "bool",
+    "named": false
+  },
+  {
     "type": "break",
+    "named": false
+  },
+  {
+    "type": "char",
     "named": false
   },
   {
@@ -7782,6 +7871,14 @@
     "named": false
   },
   {
+    "type": "f32",
+    "named": false
+  },
+  {
+    "type": "f64",
+    "named": false
+  },
+  {
     "type": "false",
     "named": false
   },
@@ -7803,6 +7900,26 @@
   },
   {
     "type": "gen",
+    "named": false
+  },
+  {
+    "type": "i128",
+    "named": false
+  },
+  {
+    "type": "i16",
+    "named": false
+  },
+  {
+    "type": "i32",
+    "named": false
+  },
+  {
+    "type": "i64",
+    "named": false
+  },
+  {
+    "type": "i8",
     "named": false
   },
   {
@@ -7840,6 +7957,10 @@
   {
     "type": "integer_literal_octal",
     "named": true
+  },
+  {
+    "type": "isize",
+    "named": false
   },
   {
     "type": "item",
@@ -7906,10 +8027,6 @@
     "named": false
   },
   {
-    "type": "primitive_type",
-    "named": true
-  },
-  {
     "type": "pub",
     "named": false
   },
@@ -7951,6 +8068,10 @@
   },
   {
     "type": "stmt",
+    "named": false
+  },
+  {
+    "type": "str",
     "named": false
   },
   {
@@ -7998,6 +8119,26 @@
     "named": true
   },
   {
+    "type": "u128",
+    "named": false
+  },
+  {
+    "type": "u16",
+    "named": false
+  },
+  {
+    "type": "u32",
+    "named": false
+  },
+  {
+    "type": "u64",
+    "named": false
+  },
+  {
+    "type": "u8",
+    "named": false
+  },
+  {
     "type": "union",
     "named": false
   },
@@ -8007,6 +8148,10 @@
   },
   {
     "type": "use",
+    "named": false
+  },
+  {
+    "type": "usize",
     "named": false
   },
   {

@@ -137,9 +137,11 @@ var OPTIONAL = "OPTIONAL";
 var CHOICE = "CHOICE";
 var REPEAT = "REPEAT";
 var REPEAT1 = "REPEAT1";
+var FIELD = "FIELD";
 var STRING = "STRING";
 var PATTERN = "PATTERN";
 var SYMBOL = "SYMBOL";
+var ALIAS = "ALIAS";
 var TOKEN = "TOKEN";
 
 // packages/codegen/src/dsl/rule-walker.ts
@@ -1179,6 +1181,34 @@ function resolveRuleLiteral(body) {
   if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
   return null;
 }
+function isParserHiddenName(name) {
+  return name.startsWith("_");
+}
+function selfReferentialFoldOf(name, rule) {
+  if (rule.type !== CHOICE) return void 0;
+  const fieldOf = (member) => member.type === FIELD ? member.name : void 0;
+  const operandOf = (member) => member.type === FIELD ? member.content : member;
+  const isSelfRef = (member) => {
+    const content = operandOf(member);
+    return content.type === SYMBOL && content.name === name && isParserHiddenName(content.name) && content.aliasedTo === void 0;
+  };
+  let fields;
+  let separator;
+  let sawSelfRef = false;
+  for (const arm2 of rule.members) {
+    if (arm2.type !== SEQ || arm2.members.length !== 3) return void 0;
+    const [m0, sep, m2] = arm2.members;
+    if (m0 === void 0 || sep === void 0 || m2 === void 0 || sep.type !== STRING) return void 0;
+    if (fields === void 0) fields = [fieldOf(m0), fieldOf(m2)];
+    else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return void 0;
+    if (separator === void 0) separator = sep;
+    else if (separator.type !== STRING || separator.value !== sep.value) return void 0;
+    if (isSelfRef(m0)) sawSelfRef = true;
+    else if (isSelfRef(m2)) return void 0;
+  }
+  if (!sawSelfRef || separator === void 0) return void 0;
+  return { separator };
+}
 function exclusiveFieldChoiceBranches(member, rulesBag) {
   let target = member;
   if (isSymbolType(member.type)) {
@@ -1463,6 +1493,144 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   return same(a, b) && literalDeltas === 1;
 }
 
+// packages/codegen/src/dsl/rule-transforms.ts
+function innermostNamedAliasContent(rule) {
+  let current = rule;
+  for (let alias3 = current; alias3.type === ALIAS && alias3.named === true && alias3.value; alias3 = current) {
+    current = alias3.content;
+  }
+  return current;
+}
+function choiceArmsOf(content) {
+  if (content.type !== CHOICE) return void 0;
+  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+function distributeInlineAliasChoices(rule, ctx) {
+  const walker = new RuleWalker();
+  const distributed = /* @__PURE__ */ new WeakSet();
+  const visit = (r) => {
+    const choice2 = r;
+    if (choice2.type === CHOICE && choice2.members?.some((m) => distributed.has(m))) {
+      const members = choice2.members.flatMap(
+        (m) => distributed.has(m) ? m.members : [m]
+      );
+      return { ...choice2, members };
+    }
+    const alias3 = r;
+    if (alias3.type !== ALIAS || alias3.named !== true || !alias3.value || ctx.isRuleName(alias3.value)) return r;
+    const arms = choiceArmsOf(innermostNamedAliasContent(alias3.content));
+    if (arms === void 0) return r;
+    const split = {
+      type: CHOICE,
+      members: arms.map((arm2) => ({ ...alias3, content: innermostNamedAliasContent(arm2) }))
+    };
+    distributed.add(split);
+    return split;
+  };
+  return visit(walker.map(rule, visit));
+}
+function mintInlineLiteralAliasStorage(rules) {
+  const walker = new RuleWalker();
+  const literalAliasOf = (r) => {
+    const alias3 = r;
+    if (alias3.type !== ALIAS || alias3.named !== true || !alias3.value || Object.hasOwn(rules, alias3.value)) return void 0;
+    const arms = choiceArmsOf(innermostNamedAliasContent(alias3.content));
+    if (arms === void 0 || !arms.every((arm2) => arm2.type === STRING)) return void 0;
+    const body = { type: CHOICE, members: arms };
+    const literals = JSON.stringify(arms.map((arm2) => arm2.value));
+    return { display: alias3.value, body, literals };
+  };
+  const byDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, byDisplay, (acc, r) => {
+      const site = literalAliasOf(r);
+      if (site === void 0) return acc;
+      const entry = acc.get(site.display);
+      if (entry === void 0) {
+        acc.set(site.display, { literals: /* @__PURE__ */ new Set([site.literals]), body: site.body });
+      } else entry.literals.add(site.literals);
+      return acc;
+    });
+  }
+  const storage = /* @__PURE__ */ new Map();
+  for (const [display, { literals, body }] of byDisplay) {
+    const name = `_${display}`;
+    if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+  }
+  if (storage.size === 0) return rules;
+  const visit = (r) => {
+    const site = literalAliasOf(r);
+    const minted = site === void 0 ? void 0 : storage.get(site.display);
+    if (site === void 0 || minted === void 0) return r;
+    return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  for (const { name, body } of storage.values()) out[name] = body;
+  return out;
+}
+function liftAliasedHiddenRuleBodies(rules) {
+  const displayByRule = /* @__PURE__ */ new Map();
+  for (const [name, rule] of Object.entries(rules)) {
+    const alias3 = rule;
+    if (!name.startsWith("_") || alias3.type !== ALIAS || alias3.named !== true || !alias3.value) continue;
+    if (alias3.content.type === SYMBOL) continue;
+    displayByRule.set(name, alias3);
+  }
+  if (displayByRule.size === 0) return rules;
+  const lifted = (r) => {
+    const name = r.type === SYMBOL ? r.name : void 0;
+    return name !== void 0 && displayByRule.has(name) ? name : void 0;
+  };
+  const walker = new RuleWalker();
+  const visit = (r) => {
+    const name = lifted(r);
+    if (name !== void 0) return { ...displayByRule.get(name), content: r };
+    const alias3 = r;
+    if (alias3.type !== ALIAS) return r;
+    const inner = alias3.content;
+    if (inner.type === ALIAS && lifted(inner.content) !== void 0) return { ...alias3, content: inner.content };
+    return r;
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) {
+    const body = displayByRule.get(name)?.content ?? rule;
+    out[name] = visit(walker.map(body, visit));
+  }
+  return out;
+}
+function unifySplitAliasDisplays(rules) {
+  const walker = new RuleWalker();
+  const aliasOverHidden = (r) => {
+    const alias3 = r;
+    if (alias3.type !== ALIAS || alias3.named !== true || !alias3.value || alias3.content.type !== SYMBOL) return void 0;
+    const storage = alias3.content.name;
+    return storage.startsWith("_") ? { storage, display: alias3.value, alias: alias3 } : void 0;
+  };
+  const splitDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, splitDisplay, (acc, r) => {
+      const site = aliasOverHidden(r);
+      const split = site?.storage.replace(/^_+/, "");
+      if (site !== void 0 && split !== void 0 && site.display === split) acc.set(site.storage, split);
+      return acc;
+    });
+  }
+  if (splitDisplay.size === 0) return rules;
+  const visit = (r) => {
+    const site = aliasOverHidden(r);
+    if (site === void 0) return r;
+    const split = splitDisplay.get(site.storage);
+    if (split === void 0 || site.display === split || !Object.hasOwn(rules, site.display)) return r;
+    return { ...site.alias, value: split };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  return out;
+}
+var flagWalker = new RuleWalker();
+var fuseHeadRepeatListsWalker = new RuleWalker();
+
 // packages/codegen/src/types/parsekind-collisions.ts
 function kindKey(id, name) {
   return id !== void 0 ? `#${id}` : `n:${name}`;
@@ -1683,6 +1851,15 @@ function enrich(baseInput) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
+  Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    enrichedRules[name] = distributeInlineAliasChoices(rule, {
+      isRuleName: (target) => Object.hasOwn(enrichedRules, target) || Object.hasOwn(rulesBag, target)
+    });
+  }
+  Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
@@ -1744,7 +1921,7 @@ function enrich(baseInput) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
     }
   }
-  const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  const mergedRules = unifySplitAliasDisplays({ ...enrichedRules, ...kwRules, ...clauseGroupRules });
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
   for (const name of Object.keys(mergedRules)) {
@@ -3236,6 +3413,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isChoiceType(rule.type)) {
     let choiceRule = rule;
     const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher);
+    const selfFold = selfReferentialFoldOf(parentKind, rule) !== void 0;
     if (permutationChoice && hoistKwRules !== null) {
       choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
     }
@@ -3265,7 +3443,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         ambientPrec
       );
       const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-      const promoted = permutationChoice || literalOnlySplit ? null : mintStructuredChoiceArm(
+      const promoted = permutationChoice || literalOnlySplit || selfFold ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,
@@ -5818,6 +5996,18 @@ var grammar_sittir_default = grammar(
           0: field2("left"),
           2: field2("right")
         },
+        _let_chain: {
+          "0/0": field2("left"),
+          "0/2": field2("right"),
+          "1/0": field2("left"),
+          "1/2": field2("right"),
+          "2/0": field2("left"),
+          "2/2": field2("right"),
+          "3/0": field2("left"),
+          "3/2": field2("right"),
+          "4/0": field2("left"),
+          "4/2": field2("right")
+        },
         closure_expression: { "4/0": variant("block"), "4/1": variant("expr") },
         // A braced, named-field body (`{ x: i32 }`) is what a bare array of
         // field configs means; the parenthesized, ordered-tuple body stays
@@ -6090,6 +6280,12 @@ var grammar_sittir_default = grammar(
           prec.right(0, alias2($._token_tree_punctuation, $.token_tree_punctuation)),
           $._token_keywords
         ),
+        // Enrich mints `_primitive_type` as the storage of upstream's inline
+        // `alias(choice(...primitive types), $.primitive_type)`. As a rule of
+        // its own it is a reduction point, so a bare primitive-type keyword
+        // in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
+        // `_pattern` is the correct read, so this rule yields.
+        _primitive_type: ($, original) => prec(-1, original),
         // `$` is the one token-tree token the base grammar keeps OUT of
         // `_non_special_token` (in macro-definition patterns `$` must stay
         // bindable as the metavariable sigil) and splices into invocation
@@ -6177,16 +6373,6 @@ var grammar_sittir_default = grammar(
           field2("type", $._type),
           optional(field2("where_clause", $.where_clause)),
           choice($.declaration_list, ";")
-        ),
-        _let_chain: ($) => prec.left(
-          3,
-          choice(
-            seq(field2("left", $._let_chain), "&&", field2("right", $.let_condition)),
-            seq(field2("left", $._let_chain), "&&", field2("right", $._expression)),
-            seq(field2("left", $.let_condition), "&&", field2("right", $._expression)),
-            seq(field2("left", $.let_condition), "&&", field2("right", $.let_condition)),
-            seq(field2("left", $._expression), "&&", field2("right", $.let_condition))
-          )
         )
       },
       renderAs: (_$) => ({

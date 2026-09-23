@@ -17,6 +17,156 @@ import { withId } from './rule-attrs.ts';
 
 export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
+type NamedAliasShape<R> = { readonly type: string; readonly named?: boolean; readonly value?: string; readonly content: R };
+
+export function innermostNamedAliasContent<R extends AnyRule>(rule: R): R {
+	let current = rule;
+	for (
+		let alias = current as unknown as NamedAliasShape<R>;
+		alias.type === ALIAS && alias.named === true && alias.value;
+		alias = current as unknown as NamedAliasShape<R>
+	) {
+		current = alias.content;
+	}
+	return current;
+}
+
+function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | undefined {
+	if (content.type !== CHOICE) return undefined;
+	return (content as unknown as { members: readonly R[] }).members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+
+export interface DistributeAliasCtx {
+	readonly isRuleName: (name: string) => boolean;
+}
+
+export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: DistributeAliasCtx): R {
+	const walker = new RuleWalker<R>();
+	const distributed = new WeakSet<object>();
+	const visit = (r: R): R => {
+		const choice = r as unknown as { type: string; members?: readonly R[] };
+		if (choice.type === CHOICE && choice.members?.some((m) => distributed.has(m))) {
+			const members = choice.members.flatMap((m) =>
+				distributed.has(m) ? (m as unknown as { members: readonly R[] }).members : [m]
+			);
+			return { ...choice, members } as unknown as R;
+		}
+		const alias = r as unknown as NamedAliasShape<R>;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || ctx.isRuleName(alias.value)) return r;
+		const arms = choiceArmsOf(innermostNamedAliasContent(alias.content));
+		if (arms === undefined) return r;
+		const split = {
+			type: CHOICE,
+			members: arms.map((arm) => ({ ...alias, content: innermostNamedAliasContent(arm) }))
+		};
+		distributed.add(split);
+		return split as unknown as R;
+	};
+	return visit(walker.map(rule, visit));
+}
+
+export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
+	const walker = new RuleWalker<R>();
+	const literalAliasOf = (r: R): { display: string; body: R; literals: string } | undefined => {
+		const alias = r as unknown as NamedAliasShape<R>;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || Object.hasOwn(rules, alias.value)) return undefined;
+		const arms = choiceArmsOf(innermostNamedAliasContent(alias.content));
+		if (arms === undefined || !arms.every((arm) => arm.type === STRING)) return undefined;
+		const body = { type: CHOICE, members: arms } as unknown as R;
+		const literals = JSON.stringify(arms.map((arm) => (arm as unknown as { value: string }).value));
+		return { display: alias.value, body, literals };
+	};
+	const byDisplay = new Map<string, { literals: Set<string>; body: R }>();
+	for (const rule of Object.values(rules)) {
+		walker.fold(rule, byDisplay, (acc, r) => {
+			const site = literalAliasOf(r);
+			if (site === undefined) return acc;
+			const entry = acc.get(site.display);
+			if (entry === undefined) {
+				acc.set(site.display, { literals: new Set([site.literals]), body: site.body });
+			} else entry.literals.add(site.literals);
+			return acc;
+		});
+	}
+	const storage = new Map<string, { name: string; body: R }>();
+	for (const [display, { literals, body }] of byDisplay) {
+		const name = `_${display}`;
+		if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+	}
+	if (storage.size === 0) return rules;
+	const visit = (r: R): R => {
+		const site = literalAliasOf(r);
+		const minted = site === undefined ? undefined : storage.get(site.display);
+		if (site === undefined || minted === undefined) return r;
+		return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } } as unknown as R;
+	};
+	const out: Record<string, R> = {};
+	for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+	for (const { name, body } of storage.values()) out[name] = body;
+	return out;
+}
+
+export function liftAliasedHiddenRuleBodies<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
+	const displayByRule = new Map<string, NamedAliasShape<R>>();
+	for (const [name, rule] of Object.entries(rules)) {
+		const alias = rule as unknown as NamedAliasShape<R>;
+		if (!name.startsWith('_') || alias.type !== ALIAS || alias.named !== true || !alias.value) continue;
+		if (alias.content.type === SYMBOL) continue;
+		displayByRule.set(name, alias);
+	}
+	if (displayByRule.size === 0) return rules;
+	const lifted = (r: R): string | undefined => {
+		const name = r.type === SYMBOL ? (r as unknown as { name: string }).name : undefined;
+		return name !== undefined && displayByRule.has(name) ? name : undefined;
+	};
+	const walker = new RuleWalker<R>();
+	const visit = (r: R): R => {
+		const name = lifted(r);
+		if (name !== undefined) return { ...displayByRule.get(name)!, content: r } as unknown as R;
+		const alias = r as unknown as NamedAliasShape<R>;
+		if (alias.type !== ALIAS) return r;
+		const inner = alias.content as unknown as NamedAliasShape<R>;
+		if (inner.type === ALIAS && lifted(inner.content) !== undefined) return { ...alias, content: inner.content } as unknown as R;
+		return r;
+	};
+	const out: Record<string, R> = {};
+	for (const [name, rule] of Object.entries(rules)) {
+		const body = displayByRule.get(name)?.content ?? rule;
+		out[name] = visit(walker.map(body, visit));
+	}
+	return out;
+}
+
+export function unifySplitAliasDisplays<R extends AnyRule>(rules: Record<string, R>): Record<string, R> {
+	const walker = new RuleWalker<R>();
+	const aliasOverHidden = (r: R): { storage: string; display: string; alias: NamedAliasShape<R> } | undefined => {
+		const alias = r as unknown as NamedAliasShape<R>;
+		if (alias.type !== ALIAS || alias.named !== true || !alias.value || alias.content.type !== SYMBOL) return undefined;
+		const storage = (alias.content as unknown as { name: string }).name;
+		return storage.startsWith('_') ? { storage, display: alias.value, alias } : undefined;
+	};
+	const splitDisplay = new Map<string, string>();
+	for (const rule of Object.values(rules)) {
+		walker.fold(rule, splitDisplay, (acc, r) => {
+			const site = aliasOverHidden(r);
+			const split = site?.storage.replace(/^_+/, '');
+			if (site !== undefined && split !== undefined && site.display === split) acc.set(site.storage, split);
+			return acc;
+		});
+	}
+	if (splitDisplay.size === 0) return rules;
+	const visit = (r: R): R => {
+		const site = aliasOverHidden(r);
+		if (site === undefined) return r;
+		const split = splitDisplay.get(site.storage);
+		if (split === undefined || site.display === split || !Object.hasOwn(rules, site.display)) return r;
+		return { ...site.alias, value: split } as unknown as R;
+	};
+	const out: Record<string, R> = {};
+	for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+	return out;
+}
+
 export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
 	const outer = outerIn ?? 'single';
 	const inner = innerIn ?? 'single';

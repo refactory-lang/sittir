@@ -3674,7 +3674,13 @@ describe('as_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.asPattern({
 			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			alias: {
+				$type: TSKindId._AsPatternTarget,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.AsPattern);
 		expect(node.$source).toBe(2);
@@ -3682,7 +3688,13 @@ describe('as_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.asPattern({
 			expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			alias: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			alias: {
+				$type: TSKindId._AsPatternTarget,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

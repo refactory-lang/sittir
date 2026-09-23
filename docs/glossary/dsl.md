@@ -1427,8 +1427,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // through (not by carrying the body here). `metadata` is inert to
 // tree-sitter's parse tables. (Debt PR-0c: the compiler side no longer
 // reads this tag — `compiler/link.ts`'s `mintContentAliasKinds` and
-// `resolveRule`'s ALIAS case, and `compiler/evaluate.ts`'s
-// `rewriteInlineAliases`, now identify this population structurally via
+// `resolveRule`'s ALIAS case, now identify this population structurally via
 // `isClauseHoistVisibleGroupAlias`. The write here stays load-bearing for
 // transform-path only.)
 // Route through the runtime-injected symbol constructor (`symbol` under
@@ -4138,9 +4137,9 @@ The whole-text regex source of a token, composed from its interior rule: a strin
 /**
  * Tree-sitter's prec.left self-referential-choice flattening: a CHOICE
  * rule whose arms are all 3-member SEQs
- * `[field(base), STRING(separator), field(extension)]` with the SAME
- * (base, extension) field-name pair and separator literal across every
- * arm, where at least one arm's base field is a bare (non-alias-wrapped)
+ * `[base, STRING(separator), extension]` with the SAME separator literal
+ * and the same fielding at each position across every arm (both operands
+ * fielded under one name pair, or unfielded), where at least one arm's base field is a bare (non-alias-wrapped)
  * SYMBOL reference to THIS rule's own name whose name is
  * `isParserHiddenName` — the PARSER's own hiddenness rule (leading `_`),
  * not `RuleBase.hidden` (sittir's published-visibility fact, which link's
@@ -4163,6 +4162,12 @@ The whole-text regex source of a token, composed from its interior rule: a strin
  * Only meaningful at the TOP of a named rule's own body: the self-reference
  * check requires the SYMBOL's name to equal the rule being processed, so a
  * nested CHOICE inside some OTHER rule's body can never coincidentally match.
+ *
+ * Field-agnostic because enrich asks before `patches:` fields exist: `wire()`
+ * applies patches to the already-enriched rules, and enrich must not lift a
+ * fold's arms into rules of their own — a fold is one flat node, not a
+ * choice of forms — so the same predicate serves enrich (unfielded) and
+ * flatten (fielded).
  */
 ```
 
@@ -6282,3 +6287,67 @@ The same rename for the lists tree-sitter holds as names (`conflicts`, `inline`,
 ### `packages/codegen/src/dsl/enrich.ts::replaceExtras`
 
 A token-form parent that the grammar lists in `extras` is replaced there by its minted arms (`tokenFormArms`, read from the parent's final members after ordinals collapse), for an array of rules, an array of bare names (what sittir's evaluate holds) or a `$ => [...]` function alike. The arms are then renamed with everything else when `variant()` names them, so a grammar no longer restates its extras to swap a parent for its arms.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::DistributeAliasCtx`
+
+The one fact distribution needs from its caller: whether a name is an existing rule, in which case an alias targeting it is a rename and is left whole.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::distributeInlineAliasChoices`
+
+```text
+Distributes a named alias over an inline choice into a choice of aliased arms
+(nested choices flatten), unless the alias target is an existing rule. A
+distributed alias that is itself a member of a choice splices its arms into
+that choice: a nested choice there would be lifted into an arm rule of its
+own, a visible kind the parser would then build. Runs
+in enrich, so tree-sitter's grammar and sittir's evaluate see the same arms —
+an arm lift decided on one shape must be decided on the other. It is the only
+place distribution happens: distributing earlier on one side only would hand
+the two enrich runs different shapes.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::mintInlineLiteralAliasStorage`
+
+```text
+An inline named alias over a choice of literals whose display is not a rule
+(rust `alias(choice('u8', ...), $.primitive_type)`) has no storage symbol, so
+tree-sitter reports every literal under one shared id the catalog cannot
+name. Mint the storage: one hidden rule `_<display>` holding the literal
+choice, shared by every site of that display, and each site becomes
+`alias($._<display>, $.<display>)`. A display whose sites disagree on the
+literal set is left to distribution rather than guessed. Runs in enrich
+before distribution, so both executions mint the same rule; a precedence
+the new reduction point needs is authored as an override on the minted
+rule, which the grammar sees as `original`.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::liftAliasedHiddenRuleBodies`
+
+```text
+A hidden rule whose whole body is a named alias over non-symbol content
+(rust `_reserved_identifier: alias(choice('default', 'union', 'gen'),
+$.identifier)`) becomes that content, and every reference to it becomes the
+alias over the reference. The storage is then a rule of its own and each site
+an ordinary `alias($.R, $.Y)`, the shape the unalias pass reads — the same
+shape upstream typescript already writes. A reference that is already the
+direct content of an outer alias keeps only the outer one, which is the name
+tree-sitter reports. Runs in enrich, so the parser and the model see the same
+storage.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::unifySplitAliasDisplays`
+
+```text
+Makes the unalias pass's split hold for a storage everywhere. The pass
+decides per slot, so it splits a hidden storage off an overloaded display
+only where the colliding sibling shares its slot; this sweep finds every
+storage the pass split (an `alias($._x, $.x)` site) and retargets its
+remaining sites whose display is also a rule to the same split display. The
+storage then has one display across the grammar, as it does upstream.
+```
+
+### `packages/codegen/src/dsl/rule-transforms.ts::innermostNamedAliasContent`
+
+```text
+The content under a chain of named aliases.
+```

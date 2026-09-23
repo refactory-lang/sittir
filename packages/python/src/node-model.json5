@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 299,
+  "nodeCount": 301,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -107,12 +107,6 @@
     },
     "block.statements": {
       "simple_statements": "_simple_statements"
-    },
-    "as_pattern.alias": {
-      "as_pattern_target": "expression"
-    },
-    "format_specifier.content": {
-      "format_expression": "interpolation"
     }
   },
   "factorySlots": {
@@ -2901,6 +2895,24 @@
           "_as_pattern"
         ]
       }
+    },
+    "as_pattern_target": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "format_expression": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
     }
   },
   "nodes": [
@@ -4411,15 +4423,15 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "expression"
+            "as_pattern_target"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "expression",
+              "name": "as_pattern_target",
               "parseKind": "as_pattern_target"
             }
           ]
@@ -4429,6 +4441,88 @@
       "factoryFields": [
         "expression",
         "alias"
+      ]
+    },
+    {
+      "kind": "as_pattern_target",
+      "modelType": "alias",
+      "typeName": "AsPatternTarget",
+      "factoryName": "asPatternTarget",
+      "irKey": "asPatternTarget",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "_collection_elements",
+        "_yield_from_clause",
+        "as_pattern",
+        "attribute",
+        "await",
+        "binary_operator",
+        "boolean_operator",
+        "call",
+        "comparison_operator",
+        "concatenated_string",
+        "conditional_expression",
+        "dictionary",
+        "dictionary_comprehension",
+        "dictionary_elements",
+        "dictionary_splat",
+        "ellipsis",
+        "expression_list",
+        "false",
+        "float_leading_point",
+        "float_point",
+        "float_scientific",
+        "generator_expression",
+        "identifier",
+        "integer_binary",
+        "integer_decimal",
+        "integer_hex",
+        "integer_octal",
+        "lambda",
+        "list",
+        "list_comprehension",
+        "list_splat",
+        "list_splat_pattern",
+        "named_expression",
+        "none",
+        "not_operator",
+        "pair",
+        "parenthesized_expression",
+        "parenthesized_list_splat",
+        "set",
+        "set_comprehension",
+        "string",
+        "subscript",
+        "true",
+        "tuple",
+        "unary_operator",
+        "yield"
       ]
     },
     {
@@ -9607,6 +9701,43 @@
       ]
     },
     {
+      "kind": "format_expression",
+      "modelType": "alias",
+      "typeName": "FormatExpression",
+      "factoryName": "formatExpression",
+      "irKey": "formatExpression",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "interpolation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "interpolation",
+              "parseKind": "interpolation"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "interpolation"
+      ]
+    },
+    {
       "kind": "format_specifier",
       "modelType": "envelope",
       "typeName": "FormatSpecifier",
@@ -9623,7 +9754,7 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "interpolation"
+            "format_expression"
           ],
           "values": [
             {
@@ -9634,7 +9765,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "interpolation",
+              "name": "format_expression",
               "parseKind": "format_expression"
             }
           ]

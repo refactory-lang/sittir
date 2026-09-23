@@ -1920,44 +1920,6 @@ by a plain `generate()` call alike.
  */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::synthesizeInlineAliasSources`
-
-```text
-/**
- * For every `alias(inlineContent, $.target)` whose source isn't a
- * bare symbol reference to an existing rule or external token,
- * synthesize a hidden rule `_${target}` carrying the inline content
- * and rewrite the alias's source to point at it.
- *
- * Before:
- *    alias(choice('u8','u16',...), $.primitive_type)
- *
- * After:
- *    rules[_primitive_type] = choice('u8','u16',...)
- *    alias(symbol(_primitive_type), $.primitive_type)
- *
- * Why: the storage identity an alias's content carries is a NAME
- * (`SymbolRule.name`) — inline content (a CHOICE, a SEQ, …) has no name for
- * `aliasedTo`/`aliasedToId` (wrapper-deletion's `attributeAlias`) to attach
- * to, and without a name the display-name ↔ storage-kind linkage is lost to
- * everything downstream that resolves it by name (the node model's
- * `fieldAliasMap`, validator name normalization). By making every alias
- * source a named hidden rule here, the alias content is always a bare
- * symbol reference, so the storage identity is always a name, uniformly.
- *
- * Also: the rules map now has a single named entry per alias target
- * (the `_${target}` source) without adding entries for visible-only
- * kinds — matching tree-sitter's declaration view.
- *
- * External scanner tokens (listed in `externals`) are treated the same
- * as declared rules: they already have parser-assigned symbol IDs and
- * need no synthetic source. `alias($._line_doc_content, $.doc_comment)`
- * must NOT produce `_doc_comment` — the source is an external with its
- * own parser identity; the visible target `doc_comment` is the alias
- * destination, not a hidden kind.
- */
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::synthesizeFieldEnumRules`
 
 ```text
@@ -3253,11 +3215,9 @@ fallback an unstamped list reports.
 #### body
 
 ```text
-// Kinds that were synthesized by evaluate's inline-alias-source pass
-// (synthesizeInlineAliasSources). These have no parser symbol because
-// tree-sitter inlined the alias body at parse time — the `_doc_comment`
-// intermediary exists only in the codegen rule map. They're intentional
-// pipeline constructs; warn-and-skip at emit time is correct.
+// Kinds evaluate synthesized on the sittir side only (provenance
+// 'evaluate-synthesized') have no parser symbol — tree-sitter's execution
+// never registers them. Warn-and-skip at emit time is correct.
 ```
 
 #### body
@@ -3348,10 +3308,10 @@ fallback an unstamped list reports.
 
 ```text
 /**
- * Collect kinds whose root rule was synthesized by evaluate's inline-alias-
- * source pass (`synthesizeInlineAliasSources`). These have no parser symbol
- * because tree-sitter inlines the alias body at parse time — the `_${target}`
- * intermediary exists only in the codegen rule map.
+ * Collect kinds whose root rule evaluate synthesized on the sittir side only
+ * (the body-pattern-group fallback, synthetic rule injection). These have no
+ * parser symbol: tree-sitter's execution of the grammar never registers them,
+ * so they exist only in the codegen rule map.
  *
  * @remarks
  * The provenance is set to `'evaluate-synthesized'` on the root
@@ -3384,6 +3344,15 @@ fallback an unstamped list reports.
  *    `"is not"`). Ordered AFTER the anon step so an anon twin always wins
  *    for texts both could match; reachable only when steps 1-3 all miss.
  */
+```
+
+#### body
+
+```text
+An `alias_sym` row is never claimed by an exact parser-name match: its
+parser name is `_<display>`, which collides with hidden rules and minted
+content unions of that name. The row resolves only through its display name.
+modelKindOfEntry (kind-discriminant.ts) is the inverse.
 ```
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::findAnonEntryForLiteralText`
@@ -8809,82 +8778,6 @@ carried through a side channel.
 // accumulator. Non-enumerable, matching enrich()'s own attachment.
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::innermostNamedAliasContent`
-
-```text
-/** The content beneath a chain of named aliases. A named alias nested inside
- *  another is two facts, not one inline body: the inner alias gives a
- *  source its visible kind identity (a hidden external token surfacing as
- *  its visible name), the outer alias names the form the parent sees. The
- *  storage identity of the whole chain is the innermost symbol, which is
- *  exactly what wrapper-deletion's `attributeAlias` resolves to — so the
- *  alias-source synthesizer must look through the chain rather than mint a
- *  `_<outerTarget>` source that only sittir would know about (a phantom kind
- *  with no parser symbol, whose id the transport can never accept). */
-```
-
-### `packages/codegen/src/compiler/evaluate.ts::rewriteInlineAliases`
-
-#### body
-
-```text
-// Clause-hoist / visible-group mint aliases (enrich registers
-// their hidden `_<name>` body in the rules bag before this
-// runs) take the `isBareSymbolToKnownSource` path below — no
-// synthesis, alias preserved — and later resolve through
-// link's uniform alias-form routing (`name` the storage kind,
-// `aliasedTo` the display name). The former
-// `isClauseHoistVisibleGroupAlias` early-return here was
-// behaviorally identical for that population and is retired
-// along with link's mint machinery.
-```
-
-#### body
-
-```text
-// Treat both declared rules AND external scanner tokens as
-// "existing" sources — externals already carry parser-assigned
-// symbol IDs and must not trigger `_${target}` synthesis.
-// Without this guard, `alias($._line_doc_content, $.doc_comment)`
-// would synthesize the fictitious hidden kind `_doc_comment`
-// because `_line_doc_content` is external (not in `rules`).
-```
-
-#### body
-
-```text
-// Also skip when the alias TARGET is already a declared
-// kind: `alias(inlineBody, $.existingKind)` just relabels
-// the inline body as that existing kind. Tree-sitter
-// surfaces instances with `$type: existingKind`, and
-// downstream uses the existing rule's factory/shape.
-// Synthesizing `_existingKind` would collide with /
-// over-ride the existing kind's meaning.
-```
-
-#### body
-
-```text
-// A STRING body is self-carrying — link keeps it as the ALIAS(STRING)
-// wrapper and stamps `kindId` on the ALIAS node directly
-// (`canonicalizeRuleLiterals`'s ALIAS case, resolved by the alias name),
-// so no hidden source is needed. Synthesizing here is
-// not just unnecessary: when `_${target}` already exists with a
-// DIFFERENT body (rust `alias('$', $.token_tree_punctuation)` vs
-// the real `_token_tree_punctuation` punctuation choice), the
-// unconditional content rewrite below would silently retarget
-// the alias at that unrelated rule and DISCARD the literal —
-// diverging from the parser, which keeps the string.
-```
-
-#### body
-
-```text
-// This mint has no wire-side counterpart — tree-sitter's
-// separate execution of the same grammar never registers
-// `syntheticHiddenName`, so it phantoms by construction.
-```
-
 ### `packages/codegen/src/compiler/evaluate.ts::appendCallbackMetadataNames`
 
 ```text
@@ -10422,8 +10315,8 @@ second, id-suffixed fallback.
 
 ```text
 /**
- * A mint at an evaluate-only synthesis site (`synthesizeInlineAliasSources`,
- * or the body-pattern-group fallback in `evaluateRulesAndInjectSynthetics`)
+ * A mint at an evaluate-only synthesis site (the body-pattern-group fallback
+ * in `evaluateRulesAndInjectSynthetics`)
  * that fired without a matching wire-side deposit for the same name — the
  * dual-execution divergence the kindid invariant depends on these sites
  * staying free of. See `fromDesugarDivergence` in grammar-diagnostics.ts.
@@ -11221,4 +11114,66 @@ The live arm of an optional or of a choice with a blank and one other member. A 
 Splits a pattern into literal runs and named groups. Escapes of punctuation and the control escapes
 `\n \r \t \f \v \0` are literal text; any class escape, class, quantifier, alternation or unnamed group
 at the top level means the pattern is not a template around slots.
+```
+
+### `packages/codegen/src/compiler/link.ts::collectDisplayUnions`
+
+```text
+Builds the display → storage-kinds map from every aliased ref, reading both
+ref forms (`aliasedTo`, and `aliasedFrom` with the target as `name`).
+```
+
+#### body
+
+```text
+A hidden rule's own catalog row has `parseId` only when the parser also
+issues it a symbol of its own, distinct from the alias's type id
+(`_lhs_expression`: id 253 is its own symbol, parseId 457 is the alias's).
+A dissolved rule's row has no separate symbol — its `id` is the alias's
+borrowed type id — so `content.kindId` cannot tell the two apart; the row's
+own `parseId` presence can.
+
+An alias's content can already be a bare choice: inlineReferences flattens a
+hidden single-use rule's body into its one use site, so distribute over its
+arms directly.
+
+A SUPERTYPE's subtypes are not walked: subtypeParseNames /
+resolveHiddenSubtypes already resolve them, and a second envelope minted for
+the same display name would fight that member resolution.
+```
+
+### `packages/codegen/src/compiler/link.ts::mintDisplayUnionRules`
+
+```text
+A display name with no rule of its own gets one minted here so the rest of
+the pipeline classifies and builds it like an authored rule:
+FIELD('content', ref) over a single storage kind, or FIELD('content',
+SYMBOL `_<display>`) over a minted hidden CHOICE of several. Every minted
+position carries a rule-catalog id from `createRuleId`, because the template
+emitter resolves slots through rule ids.
+
+Only a display the kind catalog lists as an alias symbol is minted. A display
+without one is only the public name of its storage's own symbol (rust
+`_range_expression_bare` 369 shown as `range_expression_bare`): the parser
+issues no node the display could own, so the storage kind is the node, and a
+minted display would be a second kind claiming the same id.
+```
+
+#### body
+
+```text
+memberRef: a member recorded by collectDisplayUnions is either literal text
+(a STRING arm, or a SYMBOL's `.literal`) or a rule name. Literal-text
+resolution is tried first; findEntryForKindName is the fallback for a rule
+name. A literal member keeps `.literal`, which isEnumChoiceRule /
+literalTextOf read to recognize a literal-carrying SYMBOL — dropping it
+re-derives a fact the pipeline already stamps.
+```
+
+### `packages/codegen/src/compiler/collect-slots.ts::SlotDeriveCtx`
+
+```text
+The slice of DeriveCtx slot derivation needs (kindEntries, simplifiedRules),
+passed through from the owning node's derive ctx so slots resolve alias
+envelopes the same way element and value derivation does.
 ```

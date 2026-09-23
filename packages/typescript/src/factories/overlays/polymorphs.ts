@@ -20,6 +20,10 @@ const _s = <R>(f: unknown) => f as (...a: readonly unknown[]) => R;
 const _o = (config: unknown) => config as Record<string, unknown>;
 const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> => ({ ..._o(config), ...extra });
 const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '$type' in v;
+// A seat forwards the parent's trailing options only when given: a
+// bare-text call must keep its one-argument arity.
+const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
+	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
 
 const string$double =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1278,35 +1282,6 @@ export const throwStatement: typeof B.throwStatement & {
 	}
 };
 
-const labeledStatement$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'label'> & { label: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { label: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, label: _c(child)(...seated) } as never, options as never);
-	};
-export const labeledStatement: typeof B.labeledStatement & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildLabeledStatement>[0], 'label'> & {
-				label: ArgsOf<typeof F.buildIdentifier>;
-			},
-			options?: OptionsArg<typeof F.buildLabeledStatement>
-		) => ReturnType<typeof F.buildLabeledStatement>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToLabeledStatement>[0], 'label'> & {
-				label: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToLabeledStatement>
-		) => ReturnType<typeof C.coerceToLabeledStatement>;
-	};
-} = {
-	...B.labeledStatement,
-	identifier: {
-		strict: labeledStatement$identifier(F.buildLabeledStatement, F.buildIdentifier),
-		coerce: labeledStatement$identifier(C.coerceToLabeledStatement, C.coerceToIdentifier)
-	}
-};
-
 const switchCase$sequenceExpression =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'value'> & { value: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1751,11 +1726,11 @@ export const parenthesizedExpression: typeof B.parenthesizedExpression & {
 	}
 };
 
-const objectAssignmentPattern$identifier =
+const objectAssignmentPattern$shorthandPropertyIdentifierPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { left: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
 	};
 const objectAssignmentPattern$objectPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1770,16 +1745,16 @@ const objectAssignmentPattern$arrayPattern =
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
 export const objectAssignmentPattern: typeof B.objectAssignmentPattern & {
-	identifier: {
+	shorthandPropertyIdentifierPattern: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildObjectAssignmentPattern>[0], 'left'> & {
-				left: ArgsOf<typeof F.buildIdentifier>;
+				left: ArgsOf<typeof F.buildShorthandPropertyIdentifierPattern>[0];
 			},
 			options?: OptionsArg<typeof F.buildObjectAssignmentPattern>
 		) => ReturnType<typeof F.buildObjectAssignmentPattern>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToObjectAssignmentPattern>[0], 'left'> & {
-				left: ArgsOf<typeof C.coerceToIdentifier>;
+				left: ArgsOf<typeof C.coerceToShorthandPropertyIdentifierPattern>[0];
 			},
 			options?: OptionsArg<typeof C.coerceToObjectAssignmentPattern>
 		) => ReturnType<typeof C.coerceToObjectAssignmentPattern>;
@@ -1814,9 +1789,15 @@ export const objectAssignmentPattern: typeof B.objectAssignmentPattern & {
 	};
 } = {
 	...B.objectAssignmentPattern,
-	identifier: {
-		strict: objectAssignmentPattern$identifier(F.buildObjectAssignmentPattern, F.buildIdentifier),
-		coerce: objectAssignmentPattern$identifier(C.coerceToObjectAssignmentPattern, C.coerceToIdentifier)
+	shorthandPropertyIdentifierPattern: {
+		strict: objectAssignmentPattern$shorthandPropertyIdentifierPattern(
+			F.buildObjectAssignmentPattern,
+			F.buildShorthandPropertyIdentifierPattern
+		),
+		coerce: objectAssignmentPattern$shorthandPropertyIdentifierPattern(
+			C.coerceToObjectAssignmentPattern,
+			C.coerceToShorthandPropertyIdentifierPattern
+		)
 	},
 	objectPattern: {
 		strict: objectAssignmentPattern$objectPattern(F.buildObjectAssignmentPattern, F.buildObjectPattern),
@@ -3053,16 +3034,28 @@ export const generatorFunctionDeclaration: typeof B.generatorFunctionDeclaration
 	}
 };
 
+const arrowFunctionParameter$reservedIdentifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const arrowFunctionParameter$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const arrowFunctionParameter: {
+	reservedIdentifier: {
+		strict: (...args: ArgsOf<typeof F.buildReservedIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
+		coerce: (...args: ArgsOf<typeof C.coerceToReservedIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
+	};
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
 		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildArrowFunctionParameter>;
 	};
 } = {
+	reservedIdentifier: {
+		strict: arrowFunctionParameter$reservedIdentifier(F.buildArrowFunctionParameter, F.buildReservedIdentifier),
+		coerce: arrowFunctionParameter$reservedIdentifier(F.buildArrowFunctionParameter, C.coerceToReservedIdentifier)
+	},
 	identifier: {
 		strict: arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, F.buildIdentifier),
 		coerce: arrowFunctionParameter$identifier(F.buildArrowFunctionParameter, C.coerceToIdentifier)
@@ -3077,6 +3070,12 @@ const arrowFunction$parameter =
 	): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
+	};
+const arrowFunction$reservedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
 const arrowFunction$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -3098,6 +3097,20 @@ export const arrowFunction: typeof B.arrowFunction & {
 			},
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
+		reservedIdentifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
+					content: ArgsOf<typeof arrowFunctionParameter.reservedIdentifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildArrowFunction>
+			) => ReturnType<typeof F.buildArrowFunction>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToArrowFunction>[0], 'content'> & {
+					content: ArgsOf<typeof arrowFunctionParameter.reservedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToArrowFunction>
+			) => ReturnType<typeof C.coerceToArrowFunction>;
+		};
 		identifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
@@ -3118,6 +3131,13 @@ export const arrowFunction: typeof B.arrowFunction & {
 	parameter: {
 		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
 		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter),
+		reservedIdentifier: {
+			strict: arrowFunction$reservedIdentifier(F.buildArrowFunction, arrowFunctionParameter.reservedIdentifier.strict),
+			coerce: arrowFunction$reservedIdentifier(
+				C.coerceToArrowFunction,
+				arrowFunctionParameter.reservedIdentifier.coerce
+			)
+		},
 		identifier: {
 			strict: arrowFunction$identifier(F.buildArrowFunction, arrowFunctionParameter.identifier.strict),
 			coerce: arrowFunction$identifier(C.coerceToArrowFunction, arrowFunctionParameter.identifier.coerce)
@@ -3498,6 +3518,12 @@ const augmentedAssignmentExpression$subscriptExpression =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
 	};
+const augmentedAssignmentExpression$reservedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
+	};
 const augmentedAssignmentExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -3590,6 +3616,20 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0], 'left'> &
 				ArgsOf<typeof C.coerceToSubscriptExpression>[0],
+			options?: OptionsArg<typeof C.coerceToAugmentedAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAugmentedAssignmentExpression>;
+	};
+	reservedIdentifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAugmentedAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildReservedIdentifier>[0];
+			},
+			options?: OptionsArg<typeof F.buildAugmentedAssignmentExpression>
+		) => ReturnType<typeof F.buildAugmentedAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToReservedIdentifier>[0];
+			},
 			options?: OptionsArg<typeof C.coerceToAugmentedAssignmentExpression>
 		) => ReturnType<typeof C.coerceToAugmentedAssignmentExpression>;
 	};
@@ -3725,6 +3765,16 @@ export const augmentedAssignmentExpression: typeof B.augmentedAssignmentExpressi
 		coerce: augmentedAssignmentExpression$subscriptExpression(
 			C.coerceToAugmentedAssignmentExpression,
 			C.coerceToSubscriptExpression
+		)
+	},
+	reservedIdentifier: {
+		strict: augmentedAssignmentExpression$reservedIdentifier(
+			F.buildAugmentedAssignmentExpression,
+			F.buildReservedIdentifier
+		),
+		coerce: augmentedAssignmentExpression$reservedIdentifier(
+			C.coerceToAugmentedAssignmentExpression,
+			C.coerceToReservedIdentifier
 		)
 	},
 	identifier: {
@@ -6912,6 +6962,10 @@ const restPattern$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$reservedIdentifier =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const restPattern$objectPattern =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -6948,6 +7002,10 @@ export const restPattern: typeof B.restPattern & {
 	identifier: {
 		strict: (...args: ArgsOf<typeof F.buildIdentifier>) => ReturnType<typeof F.buildRestPattern>;
 		coerce: (...args: ArgsOf<typeof C.coerceToIdentifier>) => ReturnType<typeof F.buildRestPattern>;
+	};
+	reservedIdentifier: {
+		strict: (...args: ArgsOf<typeof F.buildReservedIdentifier>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToReservedIdentifier>) => ReturnType<typeof F.buildRestPattern>;
 	};
 	objectPattern: {
 		strict: (...args: ArgsOf<typeof F.buildObjectPattern>) => ReturnType<typeof F.buildRestPattern>;
@@ -6986,6 +7044,10 @@ export const restPattern: typeof B.restPattern & {
 	identifier: {
 		strict: restPattern$identifier(F.buildRestPattern, F.buildIdentifier),
 		coerce: restPattern$identifier(F.buildRestPattern, C.coerceToIdentifier)
+	},
+	reservedIdentifier: {
+		strict: restPattern$reservedIdentifier(F.buildRestPattern, F.buildReservedIdentifier),
+		coerce: restPattern$reservedIdentifier(F.buildRestPattern, C.coerceToReservedIdentifier)
 	},
 	objectPattern: {
 		strict: restPattern$objectPattern(F.buildRestPattern, F.buildObjectPattern),
@@ -7909,19 +7971,19 @@ export const methodDefinition: typeof B.methodDefinition & {
 	}
 };
 
-const pair$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) } as never, options as never);
-	};
-const pair$privatePropertyIdentifier =
+const pair$propertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
 	};
 const pair$string =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { key: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
+	};
+const pair$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { key: seated, ...rest } = config;
@@ -8010,26 +8072,14 @@ const pair$computedPropertyName =
 		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(seated) } as never, options as never);
 	};
 export const pair: typeof B.pair & {
-	identifier: {
+	propertyIdentifier: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildPair>
-		) => ReturnType<typeof F.buildPair>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & { key: ArgsOf<typeof C.coerceToIdentifier> },
-			options?: OptionsArg<typeof C.coerceToPair>
-		) => ReturnType<typeof C.coerceToPair>;
-	};
-	privatePropertyIdentifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & {
-				key: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
-			},
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & { key: ArgsOf<typeof F.buildPropertyIdentifier>[0] },
 			options?: OptionsArg<typeof F.buildPair>
 		) => ReturnType<typeof F.buildPair>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+				key: ArgsOf<typeof C.coerceToPropertyIdentifier>[0];
 			},
 			options?: OptionsArg<typeof C.coerceToPair>
 		) => ReturnType<typeof C.coerceToPair>;
@@ -8063,6 +8113,20 @@ export const pair: typeof B.pair & {
 				options?: OptionsArg<typeof C.coerceToPair>
 			) => ReturnType<typeof C.coerceToPair>;
 		};
+	};
+	privatePropertyIdentifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPair>[0], 'key'> & {
+				key: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof F.buildPair>
+		) => ReturnType<typeof F.buildPair>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPair>[0], 'key'> & {
+				key: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToPair>
+		) => ReturnType<typeof C.coerceToPair>;
 	};
 	hex: {
 		strict: (
@@ -8158,13 +8222,9 @@ export const pair: typeof B.pair & {
 	};
 } = {
 	...B.pair,
-	identifier: {
-		strict: pair$identifier(F.buildPair, F.buildIdentifier),
-		coerce: pair$identifier(C.coerceToPair, C.coerceToIdentifier)
-	},
-	privatePropertyIdentifier: {
-		strict: pair$privatePropertyIdentifier(F.buildPair, F.buildPrivatePropertyIdentifier),
-		coerce: pair$privatePropertyIdentifier(C.coerceToPair, C.coerceToPrivatePropertyIdentifier)
+	propertyIdentifier: {
+		strict: pair$propertyIdentifier(F.buildPair, F.buildPropertyIdentifier),
+		coerce: pair$propertyIdentifier(C.coerceToPair, C.coerceToPropertyIdentifier)
 	},
 	string: {
 		strict: pair$string(F.buildPair, F.buildString),
@@ -8177,6 +8237,10 @@ export const pair: typeof B.pair & {
 			strict: pair$stringSingle(F.buildPair, string.single.strict),
 			coerce: pair$stringSingle(C.coerceToPair, string.single.coerce)
 		}
+	},
+	privatePropertyIdentifier: {
+		strict: pair$privatePropertyIdentifier(F.buildPair, F.buildPrivatePropertyIdentifier),
+		coerce: pair$privatePropertyIdentifier(C.coerceToPair, C.coerceToPrivatePropertyIdentifier)
 	},
 	hex: { strict: pair$hex(F.buildPair, F.buildNumberHex), coerce: pair$hex(C.coerceToPair, C.coerceToNumberHex) },
 	floatPoint: {
@@ -11435,19 +11499,19 @@ export const nestedTypeIdentifier: typeof B.nestedTypeIdentifier & {
 	}
 };
 
-const enumAssignment$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
-const enumAssignment$privatePropertyIdentifier =
+const enumAssignment$propertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
 	};
 const enumAssignment$string =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
+	};
+const enumAssignment$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -11536,28 +11600,16 @@ const enumAssignment$computedPropertyName =
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
 	};
 export const enumAssignment: typeof B.enumAssignment & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildEnumAssignment>
-		) => ReturnType<typeof F.buildEnumAssignment>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToEnumAssignment>
-		) => ReturnType<typeof C.coerceToEnumAssignment>;
-	};
-	privatePropertyIdentifier: {
+	propertyIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+				name: ArgsOf<typeof F.buildPropertyIdentifier>[0];
 			},
 			options?: OptionsArg<typeof F.buildEnumAssignment>
 		) => ReturnType<typeof F.buildEnumAssignment>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+				name: ArgsOf<typeof C.coerceToPropertyIdentifier>[0];
 			},
 			options?: OptionsArg<typeof C.coerceToEnumAssignment>
 		) => ReturnType<typeof C.coerceToEnumAssignment>;
@@ -11601,6 +11653,20 @@ export const enumAssignment: typeof B.enumAssignment & {
 				options?: OptionsArg<typeof C.coerceToEnumAssignment>
 			) => ReturnType<typeof C.coerceToEnumAssignment>;
 		};
+	};
+	privatePropertyIdentifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof F.buildEnumAssignment>
+		) => ReturnType<typeof F.buildEnumAssignment>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToEnumAssignment>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToEnumAssignment>
+		) => ReturnType<typeof C.coerceToEnumAssignment>;
 	};
 	hex: {
 		strict: (
@@ -11719,13 +11785,9 @@ export const enumAssignment: typeof B.enumAssignment & {
 	};
 } = {
 	...B.enumAssignment,
-	identifier: {
-		strict: enumAssignment$identifier(F.buildEnumAssignment, F.buildIdentifier),
-		coerce: enumAssignment$identifier(C.coerceToEnumAssignment, C.coerceToIdentifier)
-	},
-	privatePropertyIdentifier: {
-		strict: enumAssignment$privatePropertyIdentifier(F.buildEnumAssignment, F.buildPrivatePropertyIdentifier),
-		coerce: enumAssignment$privatePropertyIdentifier(C.coerceToEnumAssignment, C.coerceToPrivatePropertyIdentifier)
+	propertyIdentifier: {
+		strict: enumAssignment$propertyIdentifier(F.buildEnumAssignment, F.buildPropertyIdentifier),
+		coerce: enumAssignment$propertyIdentifier(C.coerceToEnumAssignment, C.coerceToPropertyIdentifier)
 	},
 	string: {
 		strict: enumAssignment$string(F.buildEnumAssignment, F.buildString),
@@ -11738,6 +11800,10 @@ export const enumAssignment: typeof B.enumAssignment & {
 			strict: enumAssignment$stringSingle(F.buildEnumAssignment, string.single.strict),
 			coerce: enumAssignment$stringSingle(C.coerceToEnumAssignment, string.single.coerce)
 		}
+	},
+	privatePropertyIdentifier: {
+		strict: enumAssignment$privatePropertyIdentifier(F.buildEnumAssignment, F.buildPrivatePropertyIdentifier),
+		coerce: enumAssignment$privatePropertyIdentifier(C.coerceToEnumAssignment, C.coerceToPrivatePropertyIdentifier)
 	},
 	hex: {
 		strict: enumAssignment$hex(F.buildEnumAssignment, F.buildNumberHex),
@@ -11962,6 +12028,12 @@ const tupleParameter$undefined =
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
+const tupleParameter$reservedIdentifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
 const tupleParameter$objectPattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -12062,6 +12134,20 @@ export const tupleParameter: typeof B.tupleParameter & {
 				options?: OptionsArg<typeof C.coerceToTupleParameter>
 			) => ReturnType<typeof C.coerceToTupleParameter>;
 		};
+		reservedIdentifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildTupleParameter>[0], 'name'> & {
+					name: ArgsOf<typeof restPattern.reservedIdentifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildTupleParameter>
+			) => ReturnType<typeof F.buildTupleParameter>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToTupleParameter>[0], 'name'> & {
+					name: ArgsOf<typeof restPattern.reservedIdentifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToTupleParameter>
+			) => ReturnType<typeof C.coerceToTupleParameter>;
+		};
 		objectPattern: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildTupleParameter>[0], 'name'> & {
@@ -12130,6 +12216,10 @@ export const tupleParameter: typeof B.tupleParameter & {
 			strict: tupleParameter$undefined(F.buildTupleParameter, restPattern.undefined.strict),
 			coerce: tupleParameter$undefined(C.coerceToTupleParameter, restPattern.undefined.coerce)
 		},
+		reservedIdentifier: {
+			strict: tupleParameter$reservedIdentifier(F.buildTupleParameter, restPattern.reservedIdentifier.strict),
+			coerce: tupleParameter$reservedIdentifier(C.coerceToTupleParameter, restPattern.reservedIdentifier.coerce)
+		},
 		objectPattern: {
 			strict: tupleParameter$objectPattern(F.buildTupleParameter, restPattern.objectPattern.strict),
 			coerce: tupleParameter$objectPattern(C.coerceToTupleParameter, restPattern.objectPattern.coerce)
@@ -12162,11 +12252,11 @@ export const templateType: typeof B.templateType & {
 	}
 };
 
-const genericType$identifier =
+const genericType$typeIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
 	};
 const genericType$nestedTypeIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -12179,6 +12269,12 @@ const genericType$nestedTypeIdentifier =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(inner) } as never, options as never);
 	};
+const genericType$identifier =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	};
 const genericType$nestedIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -12186,13 +12282,17 @@ const genericType$nestedIdentifier =
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
 	};
 export const genericType: typeof B.genericType & {
-	identifier: {
+	typeIdentifier: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> },
+			config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildTypeIdentifier>[0];
+			},
 			options?: OptionsArg<typeof F.buildGenericType>
 		) => ReturnType<typeof F.buildGenericType>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'name'> & { name: ArgsOf<typeof C.coerceToIdentifier> },
+			config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToTypeIdentifier>[0];
+			},
 			options?: OptionsArg<typeof C.coerceToGenericType>
 		) => ReturnType<typeof C.coerceToGenericType>;
 	};
@@ -12206,6 +12306,20 @@ export const genericType: typeof B.genericType & {
 				ArgsOf<typeof C.coerceToNestedTypeIdentifier>[0],
 			options?: OptionsArg<typeof C.coerceToGenericType>
 		) => ReturnType<typeof C.coerceToGenericType>;
+		identifier: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'name'> & {
+					name: ArgsOf<typeof nestedTypeIdentifier.identifier.strict>;
+				},
+				options?: OptionsArg<typeof F.buildGenericType>
+			) => ReturnType<typeof F.buildGenericType>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToGenericType>[0], 'name'> & {
+					name: ArgsOf<typeof nestedTypeIdentifier.identifier.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToGenericType>
+			) => ReturnType<typeof C.coerceToGenericType>;
+		};
 		nestedIdentifier: {
 			strict: (
 				config: OmitEach<ArgsOf<typeof F.buildGenericType>[0], 'name'> & {
@@ -12223,13 +12337,17 @@ export const genericType: typeof B.genericType & {
 	};
 } = {
 	...B.genericType,
-	identifier: {
-		strict: genericType$identifier(F.buildGenericType, F.buildIdentifier),
-		coerce: genericType$identifier(C.coerceToGenericType, C.coerceToIdentifier)
+	typeIdentifier: {
+		strict: genericType$typeIdentifier(F.buildGenericType, F.buildTypeIdentifier),
+		coerce: genericType$typeIdentifier(C.coerceToGenericType, C.coerceToTypeIdentifier)
 	},
 	nestedTypeIdentifier: {
 		strict: genericType$nestedTypeIdentifier(F.buildGenericType, F.buildNestedTypeIdentifier),
 		coerce: genericType$nestedTypeIdentifier(C.coerceToGenericType, C.coerceToNestedTypeIdentifier),
+		identifier: {
+			strict: genericType$identifier(F.buildGenericType, nestedTypeIdentifier.identifier.strict),
+			coerce: genericType$identifier(C.coerceToGenericType, nestedTypeIdentifier.identifier.coerce)
+		},
 		nestedIdentifier: {
 			strict: genericType$nestedIdentifier(F.buildGenericType, nestedTypeIdentifier.nestedIdentifier.strict),
 			coerce: genericType$nestedIdentifier(C.coerceToGenericType, nestedTypeIdentifier.nestedIdentifier.coerce)
@@ -14382,19 +14500,19 @@ export const callSignature: typeof B.callSignature & {
 	}
 };
 
-const propertySignature$identifier =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
-	};
-const propertySignature$privatePropertyIdentifier =
+const propertySignature$propertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
 	};
 const propertySignature$string =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { name: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
+	};
+const propertySignature$privatePropertyIdentifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { name: seated, ...rest } = config;
@@ -14483,28 +14601,16 @@ const propertySignature$computedPropertyName =
 		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(seated) } as never, options as never);
 	};
 export const propertySignature: typeof B.propertySignature & {
-	identifier: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> },
-			options?: OptionsArg<typeof F.buildPropertySignature>
-		) => ReturnType<typeof F.buildPropertySignature>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
-			},
-			options?: OptionsArg<typeof C.coerceToPropertySignature>
-		) => ReturnType<typeof C.coerceToPropertySignature>;
-	};
-	privatePropertyIdentifier: {
+	propertyIdentifier: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+				name: ArgsOf<typeof F.buildPropertyIdentifier>[0];
 			},
 			options?: OptionsArg<typeof F.buildPropertySignature>
 		) => ReturnType<typeof F.buildPropertySignature>;
 		coerce: (
 			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+				name: ArgsOf<typeof C.coerceToPropertyIdentifier>[0];
 			},
 			options?: OptionsArg<typeof C.coerceToPropertySignature>
 		) => ReturnType<typeof C.coerceToPropertySignature>;
@@ -14548,6 +14654,20 @@ export const propertySignature: typeof B.propertySignature & {
 				options?: OptionsArg<typeof C.coerceToPropertySignature>
 			) => ReturnType<typeof C.coerceToPropertySignature>;
 		};
+	};
+	privatePropertyIdentifier: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof F.buildPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof F.buildPropertySignature>
+		) => ReturnType<typeof F.buildPropertySignature>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToPropertySignature>[0], 'name'> & {
+				name: ArgsOf<typeof C.coerceToPrivatePropertyIdentifier>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToPropertySignature>
+		) => ReturnType<typeof C.coerceToPropertySignature>;
 	};
 	hex: {
 		strict: (
@@ -14670,16 +14790,9 @@ export const propertySignature: typeof B.propertySignature & {
 	};
 } = {
 	...B.propertySignature,
-	identifier: {
-		strict: propertySignature$identifier(F.buildPropertySignature, F.buildIdentifier),
-		coerce: propertySignature$identifier(C.coerceToPropertySignature, C.coerceToIdentifier)
-	},
-	privatePropertyIdentifier: {
-		strict: propertySignature$privatePropertyIdentifier(F.buildPropertySignature, F.buildPrivatePropertyIdentifier),
-		coerce: propertySignature$privatePropertyIdentifier(
-			C.coerceToPropertySignature,
-			C.coerceToPrivatePropertyIdentifier
-		)
+	propertyIdentifier: {
+		strict: propertySignature$propertyIdentifier(F.buildPropertySignature, F.buildPropertyIdentifier),
+		coerce: propertySignature$propertyIdentifier(C.coerceToPropertySignature, C.coerceToPropertyIdentifier)
 	},
 	string: {
 		strict: propertySignature$string(F.buildPropertySignature, F.buildString),
@@ -14692,6 +14805,13 @@ export const propertySignature: typeof B.propertySignature & {
 			strict: propertySignature$stringSingle(F.buildPropertySignature, string.single.strict),
 			coerce: propertySignature$stringSingle(C.coerceToPropertySignature, string.single.coerce)
 		}
+	},
+	privatePropertyIdentifier: {
+		strict: propertySignature$privatePropertyIdentifier(F.buildPropertySignature, F.buildPrivatePropertyIdentifier),
+		coerce: propertySignature$privatePropertyIdentifier(
+			C.coerceToPropertySignature,
+			C.coerceToPrivatePropertyIdentifier
+		)
 	},
 	hex: {
 		strict: propertySignature$hex(F.buildPropertySignature, F.buildNumberHex),

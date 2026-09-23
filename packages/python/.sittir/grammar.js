@@ -593,9 +593,11 @@ var OPTIONAL = "OPTIONAL";
 var CHOICE = "CHOICE";
 var REPEAT = "REPEAT";
 var REPEAT1 = "REPEAT1";
+var FIELD = "FIELD";
 var STRING = "STRING";
 var PATTERN = "PATTERN";
 var SYMBOL = "SYMBOL";
+var ALIAS = "ALIAS";
 var TOKEN = "TOKEN";
 
 // packages/codegen/src/dsl/rule-walker.ts
@@ -804,19 +806,6 @@ function renameNameList(value, renames) {
   if (Array.isArray(value)) return value.map((entry) => renameNameList(entry, renames));
   if (typeof value === "string") return resolveName(value, renames);
   return renameRule(value, renames);
-}
-
-// packages/codegen/src/dsl/rule-metadata.ts
-function makeRuleMetadata(shape) {
-  return shape;
-}
-function normalizeEnumMembers(members, provenance) {
-  if (members.length === 1) return members[0];
-  return {
-    type: CHOICE,
-    members,
-    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
-  };
 }
 
 // packages/codegen/src/util/word-matcher.ts
@@ -1222,6 +1211,34 @@ function resolveRuleLiteral(body) {
   if (isStringType(t)) return typeof r.value === "string" ? r.value : null;
   return null;
 }
+function isParserHiddenName(name) {
+  return name.startsWith("_");
+}
+function selfReferentialFoldOf(name, rule) {
+  if (rule.type !== CHOICE) return void 0;
+  const fieldOf = (member) => member.type === FIELD ? member.name : void 0;
+  const operandOf = (member) => member.type === FIELD ? member.content : member;
+  const isSelfRef = (member) => {
+    const content = operandOf(member);
+    return content.type === SYMBOL && content.name === name && isParserHiddenName(content.name) && content.aliasedTo === void 0;
+  };
+  let fields;
+  let separator;
+  let sawSelfRef = false;
+  for (const arm2 of rule.members) {
+    if (arm2.type !== SEQ || arm2.members.length !== 3) return void 0;
+    const [m0, sep, m2] = arm2.members;
+    if (m0 === void 0 || sep === void 0 || m2 === void 0 || sep.type !== STRING) return void 0;
+    if (fields === void 0) fields = [fieldOf(m0), fieldOf(m2)];
+    else if (fieldOf(m0) !== fields[0] || fieldOf(m2) !== fields[1]) return void 0;
+    if (separator === void 0) separator = sep;
+    else if (separator.type !== STRING || separator.value !== sep.value) return void 0;
+    if (isSelfRef(m0)) sawSelfRef = true;
+    else if (isSelfRef(m2)) return void 0;
+  }
+  if (!sawSelfRef || separator === void 0) return void 0;
+  return { separator };
+}
 function exclusiveFieldChoiceBranches(member, rulesBag) {
   let target = member;
   if (isSymbolType(member.type)) {
@@ -1506,6 +1523,157 @@ function armsDifferOnlyByLiteralChoice(a, b) {
   return same(a, b) && literalDeltas === 1;
 }
 
+// packages/codegen/src/dsl/rule-transforms.ts
+function innermostNamedAliasContent(rule) {
+  let current = rule;
+  for (let alias2 = current; alias2.type === ALIAS && alias2.named === true && alias2.value; alias2 = current) {
+    current = alias2.content;
+  }
+  return current;
+}
+function choiceArmsOf(content) {
+  if (content.type !== CHOICE) return void 0;
+  return content.members.flatMap((m) => choiceArmsOf(m) ?? [m]);
+}
+function distributeInlineAliasChoices(rule, ctx) {
+  const walker = new RuleWalker();
+  const distributed = /* @__PURE__ */ new WeakSet();
+  const visit = (r) => {
+    const choice2 = r;
+    if (choice2.type === CHOICE && choice2.members?.some((m) => distributed.has(m))) {
+      const members = choice2.members.flatMap(
+        (m) => distributed.has(m) ? m.members : [m]
+      );
+      return { ...choice2, members };
+    }
+    const alias2 = r;
+    if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || ctx.isRuleName(alias2.value)) return r;
+    const arms = choiceArmsOf(innermostNamedAliasContent(alias2.content));
+    if (arms === void 0) return r;
+    const split = {
+      type: CHOICE,
+      members: arms.map((arm2) => ({ ...alias2, content: innermostNamedAliasContent(arm2) }))
+    };
+    distributed.add(split);
+    return split;
+  };
+  return visit(walker.map(rule, visit));
+}
+function mintInlineLiteralAliasStorage(rules) {
+  const walker = new RuleWalker();
+  const literalAliasOf = (r) => {
+    const alias2 = r;
+    if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || Object.hasOwn(rules, alias2.value)) return void 0;
+    const arms = choiceArmsOf(innermostNamedAliasContent(alias2.content));
+    if (arms === void 0 || !arms.every((arm2) => arm2.type === STRING)) return void 0;
+    const body = { type: CHOICE, members: arms };
+    const literals = JSON.stringify(arms.map((arm2) => arm2.value));
+    return { display: alias2.value, body, literals };
+  };
+  const byDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, byDisplay, (acc, r) => {
+      const site = literalAliasOf(r);
+      if (site === void 0) return acc;
+      const entry = acc.get(site.display);
+      if (entry === void 0) {
+        acc.set(site.display, { literals: /* @__PURE__ */ new Set([site.literals]), body: site.body });
+      } else entry.literals.add(site.literals);
+      return acc;
+    });
+  }
+  const storage = /* @__PURE__ */ new Map();
+  for (const [display, { literals, body }] of byDisplay) {
+    const name = `_${display}`;
+    if (literals.size === 1 && !Object.hasOwn(rules, name)) storage.set(display, { name, body });
+  }
+  if (storage.size === 0) return rules;
+  const visit = (r) => {
+    const site = literalAliasOf(r);
+    const minted = site === void 0 ? void 0 : storage.get(site.display);
+    if (site === void 0 || minted === void 0) return r;
+    return { type: ALIAS, named: true, value: site.display, content: { type: SYMBOL, name: minted.name } };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  for (const { name, body } of storage.values()) out[name] = body;
+  return out;
+}
+function liftAliasedHiddenRuleBodies(rules) {
+  const displayByRule = /* @__PURE__ */ new Map();
+  for (const [name, rule] of Object.entries(rules)) {
+    const alias2 = rule;
+    if (!name.startsWith("_") || alias2.type !== ALIAS || alias2.named !== true || !alias2.value) continue;
+    if (alias2.content.type === SYMBOL) continue;
+    displayByRule.set(name, alias2);
+  }
+  if (displayByRule.size === 0) return rules;
+  const lifted = (r) => {
+    const name = r.type === SYMBOL ? r.name : void 0;
+    return name !== void 0 && displayByRule.has(name) ? name : void 0;
+  };
+  const walker = new RuleWalker();
+  const visit = (r) => {
+    const name = lifted(r);
+    if (name !== void 0) return { ...displayByRule.get(name), content: r };
+    const alias2 = r;
+    if (alias2.type !== ALIAS) return r;
+    const inner = alias2.content;
+    if (inner.type === ALIAS && lifted(inner.content) !== void 0) return { ...alias2, content: inner.content };
+    return r;
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) {
+    const body = displayByRule.get(name)?.content ?? rule;
+    out[name] = visit(walker.map(body, visit));
+  }
+  return out;
+}
+function unifySplitAliasDisplays(rules) {
+  const walker = new RuleWalker();
+  const aliasOverHidden = (r) => {
+    const alias2 = r;
+    if (alias2.type !== ALIAS || alias2.named !== true || !alias2.value || alias2.content.type !== SYMBOL) return void 0;
+    const storage = alias2.content.name;
+    return storage.startsWith("_") ? { storage, display: alias2.value, alias: alias2 } : void 0;
+  };
+  const splitDisplay = /* @__PURE__ */ new Map();
+  for (const rule of Object.values(rules)) {
+    walker.fold(rule, splitDisplay, (acc, r) => {
+      const site = aliasOverHidden(r);
+      const split = site?.storage.replace(/^_+/, "");
+      if (site !== void 0 && split !== void 0 && site.display === split) acc.set(site.storage, split);
+      return acc;
+    });
+  }
+  if (splitDisplay.size === 0) return rules;
+  const visit = (r) => {
+    const site = aliasOverHidden(r);
+    if (site === void 0) return r;
+    const split = splitDisplay.get(site.storage);
+    if (split === void 0 || site.display === split || !Object.hasOwn(rules, site.display)) return r;
+    return { ...site.alias, value: split };
+  };
+  const out = {};
+  for (const [name, rule] of Object.entries(rules)) out[name] = visit(walker.map(rule, visit));
+  return out;
+}
+var flagWalker = new RuleWalker();
+var fuseHeadRepeatListsWalker = new RuleWalker();
+
+// packages/codegen/src/dsl/rule-metadata.ts
+function makeRuleMetadata(shape) {
+  return shape;
+}
+function normalizeEnumMembers(members, provenance) {
+  if (members.length === 1) return members[0];
+  return {
+    type: CHOICE,
+    members,
+    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
+  };
+}
+
 // packages/codegen/src/types/parsekind-collisions.ts
 function kindKey(id, name) {
   return id !== void 0 ? `#${id}` : `n:${name}`;
@@ -1726,6 +1894,15 @@ function enrich(baseInput) {
     if (info.flatMembers === members) continue;
     enrichedRules[name] = { ...rule, members: info.flatMembers };
   }
+  Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+  for (const name of Object.keys(enrichedRules)) {
+    const rule = enrichedRules[name];
+    if (!rule) continue;
+    enrichedRules[name] = distributeInlineAliasChoices(rule, {
+      isRuleName: (target) => Object.hasOwn(enrichedRules, target) || Object.hasOwn(rulesBag, target)
+    });
+  }
+  Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
   for (const name of Object.keys(enrichedRules)) {
     const rule = enrichedRules[name];
     if (!rule) continue;
@@ -1787,7 +1964,7 @@ function enrich(baseInput) {
       recordUnaliasDiagnostic(unaliasSink, diagnostic);
     }
   }
-  const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  const mergedRules = unifySplitAliasDisplays({ ...enrichedRules, ...kwRules, ...clauseGroupRules });
   collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
   for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
   for (const name of Object.keys(mergedRules)) {
@@ -3279,6 +3456,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isChoiceType(rule.type)) {
     let choiceRule = rule;
     const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? void 0, hoistWordMatcher);
+    const selfFold = selfReferentialFoldOf(parentKind, rule) !== void 0;
     if (permutationChoice && hoistKwRules !== null) {
       choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
     }
@@ -3308,7 +3486,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         ambientPrec
       );
       const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
-      const promoted = permutationChoice || literalOnlySplit ? null : mintStructuredChoiceArm(
+      const promoted = permutationChoice || literalOnlySplit || selfFold ? null : mintStructuredChoiceArm(
         out,
         parentKind,
         rulesBag,

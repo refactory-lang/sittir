@@ -250,7 +250,7 @@ function classifyIntrinsic(
 	return classifyByType(rule.type, anyChildNonterminal);
 }
 
-function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
+export function createRuleId(ownerKind: string, ctx: { readonly path: readonly RulePathSegment[] }): RuleId {
 	if (ctx.path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
 	return `rule:${encodeURIComponent(ownerKind)}:${ctx.path.map(formatPathSegment).join('/')}`;
 }

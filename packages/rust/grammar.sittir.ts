@@ -284,6 +284,19 @@ export default grammar(
 					2: field('right')
 				},
 
+				_let_chain: {
+					'0/0': field('left'),
+					'0/2': field('right'),
+					'1/0': field('left'),
+					'1/2': field('right'),
+					'2/0': field('left'),
+					'2/2': field('right'),
+					'3/0': field('left'),
+					'3/2': field('right'),
+					'4/0': field('left'),
+					'4/2': field('right')
+				},
+
 				closure_expression: { '4/0': variant('block'), '4/1': variant('expr') },
 
 				// A braced, named-field body (`{ x: i32 }`) is what a bare array of
@@ -599,6 +612,13 @@ export default grammar(
 						$._token_keywords
 					),
 
+				// Enrich mints `_primitive_type` as the storage of upstream's inline
+				// `alias(choice(...primitive types), $.primitive_type)`. As a rule of
+				// its own it is a reduction point, so a bare primitive-type keyword
+				// in a pattern (`fn f((u8))`) reaches it and `_pattern` alike;
+				// `_pattern` is the correct read, so this rule yields.
+				_primitive_type: ($, original) => prec(-1, original),
+
 				// `$` is the one token-tree token the base grammar keeps OUT of
 				// `_non_special_token` (in macro-definition patterns `$` must stay
 				// bindable as the metavariable sigil) and splices into invocation
@@ -700,18 +720,6 @@ export default grammar(
 						field('type', $._type),
 						optional(field('where_clause', $.where_clause)),
 						choice($.declaration_list, ';')
-					),
-
-				_let_chain: ($) =>
-					prec.left(
-						3,
-						choice(
-							seq(field('left', $._let_chain), '&&', field('right', $.let_condition)),
-							seq(field('left', $._let_chain), '&&', field('right', $._expression)),
-							seq(field('left', $.let_condition), '&&', field('right', $._expression)),
-							seq(field('left', $.let_condition), '&&', field('right', $.let_condition)),
-							seq(field('left', $._expression), '&&', field('right', $.let_condition))
-						)
 					)
 			},
 			renderAs: (_$) => ({

@@ -621,81 +621,12 @@
         },
         {
           "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "u8"
-              },
-              {
-                "type": "STRING",
-                "value": "i8"
-              },
-              {
-                "type": "STRING",
-                "value": "u16"
-              },
-              {
-                "type": "STRING",
-                "value": "i16"
-              },
-              {
-                "type": "STRING",
-                "value": "u32"
-              },
-              {
-                "type": "STRING",
-                "value": "i32"
-              },
-              {
-                "type": "STRING",
-                "value": "u64"
-              },
-              {
-                "type": "STRING",
-                "value": "i64"
-              },
-              {
-                "type": "STRING",
-                "value": "u128"
-              },
-              {
-                "type": "STRING",
-                "value": "i128"
-              },
-              {
-                "type": "STRING",
-                "value": "isize"
-              },
-              {
-                "type": "STRING",
-                "value": "usize"
-              },
-              {
-                "type": "STRING",
-                "value": "f32"
-              },
-              {
-                "type": "STRING",
-                "value": "f64"
-              },
-              {
-                "type": "STRING",
-                "value": "bool"
-              },
-              {
-                "type": "STRING",
-                "value": "str"
-              },
-              {
-                "type": "STRING",
-                "value": "char"
-              }
-            ]
-          },
           "named": true,
-          "value": "primitive_type"
+          "value": "primitive_type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_primitive_type"
+          }
         },
         {
           "type": "PREC_RIGHT",
@@ -2005,81 +1936,12 @@
               },
               {
                 "type": "ALIAS",
-                "content": {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "u8"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "i8"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "u16"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "i16"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "u32"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "i32"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "u64"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "i64"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "u128"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "i128"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "isize"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "usize"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "f32"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "f64"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "bool"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "str"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": "char"
-                    }
-                  ]
-                },
                 "named": true,
-                "value": "primitive_type"
+                "value": "primitive_type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_primitive_type"
+                }
               }
             ]
           }
@@ -3164,81 +3026,12 @@
         },
         {
           "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "u8"
-              },
-              {
-                "type": "STRING",
-                "value": "i8"
-              },
-              {
-                "type": "STRING",
-                "value": "u16"
-              },
-              {
-                "type": "STRING",
-                "value": "i16"
-              },
-              {
-                "type": "STRING",
-                "value": "u32"
-              },
-              {
-                "type": "STRING",
-                "value": "i32"
-              },
-              {
-                "type": "STRING",
-                "value": "u64"
-              },
-              {
-                "type": "STRING",
-                "value": "i64"
-              },
-              {
-                "type": "STRING",
-                "value": "u128"
-              },
-              {
-                "type": "STRING",
-                "value": "i128"
-              },
-              {
-                "type": "STRING",
-                "value": "isize"
-              },
-              {
-                "type": "STRING",
-                "value": "usize"
-              },
-              {
-                "type": "STRING",
-                "value": "f32"
-              },
-              {
-                "type": "STRING",
-                "value": "f64"
-              },
-              {
-                "type": "STRING",
-                "value": "bool"
-              },
-              {
-                "type": "STRING",
-                "value": "str"
-              },
-              {
-                "type": "STRING",
-                "value": "char"
-              }
-            ]
-          },
           "named": true,
-          "value": "primitive_type"
+          "value": "primitive_type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_primitive_type"
+          }
         }
       ]
     },
@@ -3555,8 +3348,13 @@
                   "name": "_type_identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "_reserved_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_reserved_identifier"
+                  },
+                  "named": true,
+                  "value": "reserved_identifier"
                 },
                 {
                   "type": "SYMBOL",
@@ -4116,8 +3914,13 @@
           "type": "PREC_LEFT",
           "value": 0,
           "content": {
-            "type": "SYMBOL",
-            "name": "_reserved_identifier"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_reserved_identifier"
+            },
+            "named": true,
+            "value": "reserved_identifier"
           }
         },
         {
@@ -4274,8 +4077,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
               }
             ]
           }
@@ -6717,8 +6525,13 @@
           "name": "struct_pattern"
         },
         {
-          "type": "SYMBOL",
-          "name": "_reserved_identifier"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_reserved_identifier"
+          },
+          "named": true,
+          "value": "reserved_identifier"
         },
         {
           "type": "SYMBOL",
@@ -7789,8 +7602,13 @@
           "name": "scoped_identifier"
         },
         {
-          "type": "SYMBOL",
-          "name": "_reserved_identifier"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_reserved_identifier"
+          },
+          "named": true,
+          "value": "reserved_identifier"
         }
       ]
     },
@@ -7803,26 +7621,21 @@
       "value": "#!(?<content>[\\r\\f\\t\\v ]*(?:[^\\[\\n].*)?)\\n"
     },
     "_reserved_identifier": {
-      "type": "ALIAS",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "default"
-          },
-          {
-            "type": "STRING",
-            "value": "union"
-          },
-          {
-            "type": "STRING",
-            "value": "gen"
-          }
-        ]
-      },
-      "named": true,
-      "value": "identifier"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "default"
+        },
+        {
+          "type": "STRING",
+          "value": "union"
+        },
+        {
+          "type": "STRING",
+          "value": "gen"
+        }
+      ]
     },
     "_type_identifier": {
       "type": "ALIAS",
@@ -7857,6 +7670,83 @@
     "metavariable": {
       "type": "PATTERN",
       "value": "\\$(?<name>[a-zA-Z_]\\w*)"
+    },
+    "_primitive_type": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "u8"
+          },
+          {
+            "type": "STRING",
+            "value": "i8"
+          },
+          {
+            "type": "STRING",
+            "value": "u16"
+          },
+          {
+            "type": "STRING",
+            "value": "i16"
+          },
+          {
+            "type": "STRING",
+            "value": "u32"
+          },
+          {
+            "type": "STRING",
+            "value": "i32"
+          },
+          {
+            "type": "STRING",
+            "value": "u64"
+          },
+          {
+            "type": "STRING",
+            "value": "i64"
+          },
+          {
+            "type": "STRING",
+            "value": "u128"
+          },
+          {
+            "type": "STRING",
+            "value": "i128"
+          },
+          {
+            "type": "STRING",
+            "value": "isize"
+          },
+          {
+            "type": "STRING",
+            "value": "usize"
+          },
+          {
+            "type": "STRING",
+            "value": "f32"
+          },
+          {
+            "type": "STRING",
+            "value": "f64"
+          },
+          {
+            "type": "STRING",
+            "value": "bool"
+          },
+          {
+            "type": "STRING",
+            "value": "str"
+          },
+          {
+            "type": "STRING",
+            "value": "char"
+          }
+        ]
+      }
     },
     "_kw_ref_marker": {
       "type": "STRING",
@@ -10524,30 +10414,6 @@
           }
         }
       ]
-    },
-    "let_chain_arm": {
-      "type": "PREC_LEFT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_expression"
-          },
-          {
-            "type": "STRING",
-            "value": "&&"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "let_condition"
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
     },
     "closure_expression_arm": {
       "type": "PREC",
@@ -13824,8 +13690,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
               }
             ]
           }
@@ -13889,8 +13760,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
               }
             ]
           }
@@ -13954,8 +13830,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
               }
             ]
           }
@@ -15041,13 +14922,6 @@
     ],
     [
       "array_expression_semi"
-    ],
-    [
-      "_let_chain",
-      "let_chain_arm"
-    ],
-    [
-      "let_chain_arm"
     ],
     [
       "closure_expression",

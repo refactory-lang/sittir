@@ -272,6 +272,12 @@
 			"field": "as_pattern_after"
 		}
 	],
+	"as_pattern_target": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"assert_statement": [
 		{
 			"kind": "seam",
@@ -2124,6 +2130,12 @@
 		{
 			"kind": "seam",
 			"field": "for_statement_after"
+		}
+	],
+	"format_expression": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"format_specifier": [

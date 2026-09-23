@@ -37,7 +37,7 @@ export const synonym = {
 		}
 	),
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(name);
+		return F.buildTypeIdentifier(F.buildIdentifier(name));
 	},
 	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -293,19 +293,31 @@ export const identifier: typeof F.buildIdentifier & {
 });
 
 export const pattern: {
+	readonly member: typeof F.memberExpression;
+	readonly subscript: typeof F.subscriptExpression;
+	readonly undefined: typeof F.buildUndefined;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly object: typeof F.objectPattern;
+	readonly array: typeof F.arrayPattern;
+	readonly nonNull: typeof F.nonNullExpression;
 	readonly rest: typeof F.restPattern;
 } = {
+	member: F.memberExpression,
+	subscript: F.subscriptExpression,
+	undefined: F.buildUndefined,
+	identifier: F.buildIdentifier,
+	object: F.objectPattern,
+	array: F.arrayPattern,
+	nonNull: F.nonNullExpression,
 	rest: F.restPattern
 };
 
 export const propertyName: {
-	readonly identifier: typeof F.buildIdentifier;
 	readonly privateIdentifier: typeof F.privatePropertyIdentifier;
 	readonly string: typeof F.string;
 	readonly number: typeof F.number;
 	readonly computed: typeof F.computedPropertyName;
 } = {
-	identifier: F.buildIdentifier,
 	privateIdentifier: F.privatePropertyIdentifier,
 	string: F.string,
 	number: F.number,
@@ -344,7 +356,6 @@ export const tupleTypeMember: {
 
 export const primaryType: {
 	readonly parenthesized: typeof F.parenthesizedType;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly nestedIdentifier: typeof F.nestedTypeIdentifier;
 	readonly generic: typeof F.genericType;
 	readonly object: typeof F.objectType;
@@ -363,7 +374,6 @@ export const primaryType: {
 	readonly union: typeof F.unionType;
 } = {
 	parenthesized: F.parenthesizedType,
-	identifier: F.buildIdentifier,
 	nestedIdentifier: F.nestedTypeIdentifier,
 	generic: F.genericType,
 	object: F.objectType,

@@ -5045,21 +5045,18 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
 				}),
 				{ True: 71, False: 72, None: 73, '...': 64 }
 			),
-			_alias: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'alias',
-					span: (data as _NodeData).$span
-				}),
-				{ True: 71, False: 72, None: 73, '...': 64 }
-			),
+			_alias: normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'alias',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			alias() {
-				return drillIn<T.Expression>(this._alias, tree);
+				return drillIn<T.AsPatternTarget>(this._alias, tree);
 			},
 			$with: {
 				expression: (v: NonNullable<T.AsPattern['_expression']>) =>
@@ -8331,7 +8328,7 @@ export function wrapEscapeSequence(
 
 export function wrapFormatSpecifier(
 	data: T.FormatSpecifier & {
-		readonly _format_expression?: '[^{}\\n]+' | T.Interpolation | readonly ('[^{}\\n]+' | T.Interpolation)[];
+		readonly _format_expression?: '[^{}\\n]+' | T.FormatExpression | readonly ('[^{}\\n]+' | T.FormatExpression)[];
 	},
 	tree: TreeHandle
 ) {
@@ -8352,8 +8349,8 @@ export function wrapFormatSpecifier(
 			),
 
 			contents() {
-				return drillInAll<'[^{}\\n]+' | T.Interpolation>(
-					this._content as readonly ('[^{}\\n]+' | T.Interpolation)[] | undefined,
+				return drillInAll<'[^{}\\n]+' | T.FormatExpression>(
+					this._content as readonly ('[^{}\\n]+' | T.FormatExpression)[] | undefined,
 					tree
 				);
 			},
@@ -10908,6 +10905,61 @@ export function wrapYieldFromClause(
 	return _node;
 }
 
+export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId._AsPatternTarget as const,
+			_content: projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'content',
+					span: (data as _NodeData).$span
+				}),
+				{ True: 71, False: 72, None: 73, '...': 64 }
+			),
+
+			content() {
+				return drillIn<T.Expression>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
+					wrapAsPatternTarget({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
+export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_content']);
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId._FormatExpression as const,
+			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _NodeData).$span
+			}),
+
+			content() {
+				return drillIn<T.Interpolation>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.FormatExpression['_content']>) =>
+					wrapFormatExpression({ ...$edited(data), _content: v }, tree)
+			}
+		},
+		_treeEngine(tree)
+	);
+	return _node;
+}
+
 const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	[TSKindId.Module]: (d, t) => wrapModule(d as unknown as T.Module, t),
 	[TSKindId.Statement]: (d, t) => wrapStatement(d as unknown as T.Statement, t),
@@ -11121,8 +11173,43 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.EscapeInterpolation]: (d) => ({ ...d, $type: TSKindId.EscapeInterpolation as const }),
 	[TSKindId.StringEnd]: (d) => ({ ...d, $type: TSKindId.StringEnd as const }),
 	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
+	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
+	[TSKindId._AsPatternTarget]: (d, t) => wrapAsPatternTarget(_aliasEnvelope(d, t) as unknown as T.AsPatternTarget, t),
+	[TSKindId._FormatExpression]: (d, t) => wrapFormatExpression(_aliasEnvelope(d, t) as unknown as T.FormatExpression, t)
 };
+
+function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
+	type Wire = _NodeData & {
+		readonly $storageType?: number;
+		readonly $_trivia?: unknown;
+		readonly $nodeHandle?: number;
+		readonly $childIndex?: number;
+		readonly $span?: unknown;
+	};
+	const shown = data as Wire;
+	if (shown.$storageType === undefined) {
+		const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);
+		if (slots.length !== 1 || slots[0] === '_content') return data;
+		const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;
+		return { ...container, _content: child } as unknown as _NodeData;
+	}
+	const full = (
+		shown.$nodeHandle != null && shown.$childIndex != null
+			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
+			: shown
+	) as Wire;
+	const { $storageType, $_trivia, $childIndex, ...storage } = full;
+	return {
+		$type: shown.$type,
+		$source: shown.$source,
+		$named: shown.$named,
+		$span: shown.$span,
+		$nodeHandle: shown.$nodeHandle,
+		$childIndex: shown.$childIndex,
+		$_trivia,
+		_content: { ...storage, $type: $storageType }
+	} as unknown as _NodeData;
+}
 
 interface _WrapReturnByKindId {
 	[TSKindId.Module]: ReturnType<typeof wrapModule>;
@@ -11323,6 +11410,8 @@ interface _WrapReturnByKindId {
 	[TSKindId.StringEnd]: _NodeData & { readonly $type: TSKindId.StringEnd };
 	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
 	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
+	[TSKindId._AsPatternTarget]: ReturnType<typeof wrapAsPatternTarget>;
+	[TSKindId._FormatExpression]: ReturnType<typeof wrapFormatExpression>;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

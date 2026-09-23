@@ -1324,7 +1324,7 @@ function projectArmSlot(
 		return setRoute(mount, undefined);
 	}
 	const args = factoryArgs(seat.kind, childShape, config, child, inner);
-	if (seat.seated === true) {
+	if (seat.seated === true && nested === undefined) {
 		if (args.length !== 1) {
 			throw new Error(
 				`ir surface: seated arm ${seat.kind} on ${parentKind} takes ${args.length} arguments; a seated arm takes one`

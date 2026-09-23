@@ -30,7 +30,7 @@ export const synonym = {
 		}
 	),
 	type(name: string): ReturnType<typeof F.buildTypeIdentifier> {
-		return F.buildTypeIdentifier(name);
+		return F.buildTypeIdentifier(F.buildIdentifier(name));
 	},
 	identifier(name: string): ReturnType<typeof F.buildIdentifier> {
 		return F.buildIdentifier(name);
@@ -150,21 +150,61 @@ export const tokenPattern: {
 	readonly repetition: typeof F.tokenRepetitionPattern;
 	readonly binding: typeof F.tokenBindingPattern;
 	readonly metavariable: typeof F.metavariable;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 } = {
 	tree: F.tokenTreePattern,
 	repetition: F.tokenRepetitionPattern,
 	binding: F.tokenBindingPattern,
-	metavariable: F.metavariable
+	metavariable: F.metavariable,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const tokens: {
 	readonly tokenTree: typeof F.tokenTree;
 	readonly tokenRepetition: typeof F.tokenRepetition;
 	readonly metavariable: typeof F.metavariable;
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 } = {
 	tokenTree: F.tokenTree,
 	tokenRepetition: F.tokenRepetition,
-	metavariable: F.metavariable
+	metavariable: F.metavariable,
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const nonSpecialToken: {
@@ -226,7 +266,6 @@ export const type: {
 	readonly unit: typeof F.buildUnitType;
 	readonly array: typeof F.arrayType;
 	readonly function: typeof F.functionType;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly macroInvocation: typeof F.macroInvocation;
 	readonly never: typeof F.buildNeverType;
 	readonly dynamic: typeof F.dynamicType;
@@ -243,7 +282,6 @@ export const type: {
 	unit: F.buildUnitType,
 	array: F.arrayType,
 	function: F.functionType,
-	identifier: F.buildIdentifier,
 	macroInvocation: F.macroInvocation,
 	never: F.buildNeverType,
 	dynamic: F.dynamicType,
@@ -460,9 +498,53 @@ export const expressionEndingWithBlock: {
 };
 
 export const delimTokens: {
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
 	readonly tokenTree: typeof F.delimTokenTree;
 } = {
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate,
 	tokenTree: F.delimTokenTree
+};
+
+export const nonDelimToken: {
+	readonly string: typeof F.stringLiteral;
+	readonly rawString: typeof F.rawStringLiteral;
+	readonly char: typeof F.charLiteral;
+	readonly integer: typeof F.integerLiteral;
+	readonly float: typeof F.buildFloatLiteral;
+	readonly identifier: typeof F.buildIdentifier;
+	readonly mutableSpecifier: typeof F.buildMutableSpecifier;
+	readonly self: typeof F.buildSelf;
+	readonly super: typeof F.buildSuper;
+	readonly crate: typeof F.buildCrate;
+} = {
+	string: F.stringLiteral,
+	rawString: F.rawStringLiteral,
+	char: F.charLiteral,
+	integer: F.integerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutableSpecifier: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 };
 
 export const condition: {
@@ -914,6 +996,7 @@ export const ir: {
 	readonly expression: typeof expression;
 	readonly expressionEndingWithBlock: typeof expressionEndingWithBlock;
 	readonly delimTokens: typeof delimTokens;
+	readonly nonDelimToken: typeof nonDelimToken;
 	readonly condition: typeof condition;
 	readonly pattern: typeof pattern;
 	readonly literal: typeof literal;
@@ -1190,6 +1273,7 @@ export const ir: {
 	expression,
 	expressionEndingWithBlock,
 	delimTokens,
+	nonDelimToken,
 	condition,
 	pattern,
 	literal,

@@ -8,6 +8,7 @@ import {
 	withMethods,
 	withAccessors,
 	methodsEngine,
+	admitAliasContent,
 	admitHiddenText,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -1995,7 +1996,15 @@ export function buildDictionarySplatPattern(
 
 export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 	const _expression = coerceMixedEnumStorage<NonNullable<T.AsPattern['_expression']>>(config.expression, []);
-	const _alias = coerceMixedEnumStorage<NonNullable<T.AsPattern['_alias']>>(config.alias, []);
+	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
+		[
+			[
+				208, 202, 203, 209, 252, 204, 1, 243, 242, 90, 91, 92, 93, 94, 95, 96, 71, 72, 73, 205, 216, 217, 219, 228, 233,
+				231, 234, 229, 235, 230, 237, 236, 64, 196, 241, 139, 198
+			],
+			(v: unknown) => buildAsPatternTarget(v as never)
+		]
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -2007,7 +2016,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Built {
 				$with: {
 					expression: (value: NonNullable<T.AsPattern.Config>['expression']) =>
 						buildAsPattern({ ...config, expression: value }),
-					alias: (value: NonNullable<T.AsPattern.Config>['alias']) => buildAsPattern({ ...config, alias: value })
+					alias: (value: T.AsPatternTarget | T.AsPatternTarget.Types) => buildAsPattern({ ...config, alias: value })
 				}
 			},
 			{
@@ -3229,8 +3238,12 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	);
 }
 
-export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation)[]): T.FormatSpecifier.Built {
-	const _content = children;
+export function buildFormatSpecifier(
+	...children: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]
+): T.FormatSpecifier.Built {
+	const _content = admitAliasContent<NonNullable<T.FormatSpecifier['_content']>>(children, [
+		[[245], (v: unknown) => buildFormatExpression(v as never)]
+	]);
 	return withMethods(
 		withAccessors(
 			{
@@ -3238,7 +3251,10 @@ export function buildFormatSpecifier(...children: ('[^{}\\n]+' | T.Interpolation
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: ('[^{}\\n]+' | T.Interpolation)[]) => buildFormatSpecifier(...vs) }
+				$with: {
+					contents: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
+						buildFormatSpecifier(...vs)
+				}
 			},
 			{
 				contents: () => _content
@@ -5300,6 +5316,48 @@ export function buildDedent(text: string): T.Dedent.Built {
 	);
 }
 
+export function buildAsPatternTarget(value: T.Expression): T.AsPatternTarget.Built {
+	const _content = coerceMixedEnumStorage<NonNullable<T.AsPatternTarget['_content']>>(value, []);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._AsPatternTarget as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: NonNullable<T.Expression>) => buildAsPatternTarget(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildFormatExpression(value: T.Interpolation): T.FormatExpression.Built {
+	const _content = value;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._FormatExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					content: (value: T.Interpolation) => buildFormatExpression(value)
+				}
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export type FluentKindMap = {
 	module: T.Module.Built;
 	_simple_statements: T.SimpleStatements.Built;
@@ -5481,6 +5539,8 @@ export type FluentKindMap = {
 	string_end: T.StringEnd;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	as_pattern_target: T.AsPatternTarget.Built;
+	format_expression: T.FormatExpression.Built;
 };
 
 export const _factoryMap = {
@@ -5663,6 +5723,8 @@ export const _factoryMap = {
 	escape_interpolation: buildEscapeInterpolation,
 	string_end: buildStringEnd,
 	_indent: buildIndent,
-	_dedent: buildDedent
+	_dedent: buildDedent,
+	as_pattern_target: buildAsPatternTarget,
+	format_expression: buildFormatExpression
 } as const;
 export type _FactoryMap = typeof _factoryMap;

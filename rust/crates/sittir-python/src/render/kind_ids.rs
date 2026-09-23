@@ -690,6 +690,13 @@ pub fn is_text_kind(kind: KindId) -> bool {
     matches!(kind.0, 1 | 67 | 74 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 | 100 | 101 | 102 | 103 | 104 | 114 | 115 | 116 | 117 | 118 | 119 | 128 | 269)
 }
 
+/// Whether this parse kind id is an alias envelope: the reader stamps the
+/// grammar symbol beside it when the node is the storage node shown under
+/// the alias, so the wrap layer can seat it as the envelope's content.
+pub fn is_alias_envelope(kind: KindId) -> bool {
+    matches!(kind.0, 331 | 332)
+}
+
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every
 /// slot the parser field-tags a literal into: the separator of a repeated
 /// slot, or a literal a rule puts beside a singular slot under the same

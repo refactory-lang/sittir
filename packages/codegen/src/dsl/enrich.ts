@@ -1,6 +1,12 @@
 import { withAnnotations, withHoistedAnnotation } from './annotations.ts';
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
+import {
+	distributeInlineAliasChoices,
+	liftAliasedHiddenRuleBodies,
+	mintInlineLiteralAliasStorage,
+	unifySplitAliasDisplays
+} from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
@@ -38,6 +44,7 @@ import {
 	armLeadingSymbolName,
 	armStartsWithSymbol,
 	armsDifferOnlyByLiteralChoice,
+	selfReferentialFoldOf,
 	type SeparatedListBodyInfo
 } from './rule-patterns.ts';
 import { ruleKey } from './shared.ts';
@@ -106,6 +113,15 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 		if (info.flatMembers === members) continue;
 		enrichedRules[name] = { ...rule, members: info.flatMembers } as Rule;
 	}
+	Object.assign(enrichedRules, mintInlineLiteralAliasStorage(enrichedRules));
+	for (const name of Object.keys(enrichedRules)) {
+		const rule = enrichedRules[name];
+		if (!rule) continue;
+		enrichedRules[name] = distributeInlineAliasChoices(rule, {
+			isRuleName: (target) => Object.hasOwn(enrichedRules, target) || Object.hasOwn(rulesBag, target)
+		});
+	}
+	Object.assign(enrichedRules, liftAliasedHiddenRuleBodies(enrichedRules));
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
@@ -167,7 +183,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
 	}
-	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	const mergedRules = unifySplitAliasDisplays({ ...enrichedRules, ...kwRules, ...clauseGroupRules });
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, visibleGroupSources, clauseGroupOwners);
 	for (const parent of tokenFormParents) annotateTokenFormArms(parent, mergedRules);
 	for (const name of Object.keys(mergedRules)) {
@@ -1909,6 +1925,7 @@ function applyClauseHoist(
 	if (isChoiceType(rule.type)) {
 		let choiceRule = rule;
 		const permutationChoice = isPermutationChoice(rule, rulesBag, hoistKwRules ?? undefined, hoistWordMatcher);
+		const selfFold = selfReferentialFoldOf(parentKind, rule) !== undefined;
 		if (permutationChoice && hoistKwRules !== null) {
 			choiceRule = promotePermutationArmKeywords(rule, hoistKwRules, rulesBag, hoistWordMatcher);
 		}
@@ -1939,7 +1956,7 @@ function applyClauseHoist(
 			);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
 			const promoted =
-				permutationChoice || literalOnlySplit
+				permutationChoice || literalOnlySplit || selfFold
 					? null
 					: mintStructuredChoiceArm(
 							out,

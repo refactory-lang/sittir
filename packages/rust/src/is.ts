@@ -489,6 +489,9 @@ export interface IsGuards {
 	TupleExpressionElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleExpressionElements };
+	reservedIdentifier<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId._ReservedIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
@@ -759,6 +762,9 @@ export interface AssertGuards {
 	TupleExpressionElements(
 		v: { readonly $type: number } | number
 	): asserts v is { readonly $type: TSKindId.TupleExpressionElements };
+	reservedIdentifier(
+		v: { readonly $type: number } | number
+	): asserts v is { readonly $type: TSKindId._ReservedIdentifier };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
 	statement(v: { readonly $type: string | number } | number): asserts v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): asserts v is DeclarationStatement;
@@ -812,55 +818,56 @@ const _supertype_statement_ids = new Set<number>([
 const _supertype_declarationStatement_ids = new Set<number>([
 	200, 254, 173, 185, 186, 192, 193, 202, 203, 204, 209, 210, 218, 219, 199, 201
 ]);
-const _supertype_macroDefinition_ids = new Set<number>([417, 418, 419]);
-const _supertype_tokenPattern_ids = new Set<number>([180, 179, 129]);
-const _supertype_tokenTreePattern_ids = new Set<number>([406, 407, 408]);
-const _supertype_tokens_ids = new Set<number>([182, 183, 129]);
-const _supertype_nonSpecialToken_ids = new Set<number>([
-	327, 328, 331, 159, 1, 73, 126, 127, 128, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 365, 366
+const _supertype_macroDefinition_ids = new Set<number>([418, 419, 420]);
+const _supertype_tokenPattern_ids = new Set<number>([
+	180, 179, 129, 327, 328, 331, 159, 1, 56, 126, 127, 128, 336, 366, 367
 ]);
-const _supertype_modItem_ids = new Set<number>([387, 388]);
-const _supertype_foreignModItem_ids = new Set<number>([397, 398]);
-const _supertype_structItem_ids = new Set<number>([424, 425, 426]);
-const _supertype_implItem_ids = new Set<number>([381, 382]);
-const _supertype_useClause_ids = new Set<number>([126, 1, 129, 127, 128, 258, 223, 222, 221, 224]);
+const _supertype_tokenTreePattern_ids = new Set<number>([407, 408, 409]);
+const _supertype_tokens_ids = new Set<number>([182, 183, 129, 327, 328, 331, 159, 1, 56, 126, 127, 128, 336, 366, 367]);
+const _supertype_nonSpecialToken_ids = new Set<number>([327, 328, 331, 159, 1, 56, 126, 127, 128, 336, 366, 367]);
+const _supertype_modItem_ids = new Set<number>([388, 389]);
+const _supertype_foreignModItem_ids = new Set<number>([398, 399]);
+const _supertype_structItem_ids = new Set<number>([425, 426, 427]);
+const _supertype_implItem_ids = new Set<number>([382, 383]);
+const _supertype_useClause_ids = new Set<number>([126, 1, 129, 127, 128, 258, 468, 223, 222, 221, 224]);
 const _supertype_type_ids = new Set<number>([
-	250, 247, 129, 241, 260, 238, 239, 235, 237, 1, 254, 249, 251, 243, 213, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
-	38, 39, 40, 41, 42, 43
+	250, 247, 129, 241, 260, 238, 239, 235, 237, 254, 249, 251, 243, 213, 336
 ]);
-const _supertype_pointerType_ids = new Set<number>([391, 392]);
+const _supertype_pointerType_ids = new Set<number>([392, 393]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
-	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 468, 126, 258, 240, 302, 303, 275, 254, 276, 299,
+	300, 301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
 ]);
 const _supertype_expression_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
-	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 468, 126, 258, 240, 302, 303, 275, 254, 276, 299,
+	300, 301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295
 ]);
-const _supertype_delimTokenTree_ids = new Set<number>([412, 413, 414]);
-const _supertype_referenceExpression_ids = new Set<number>([375, 376, 377, 378]);
-const _supertype_arrayExpression_ids = new Set<number>([370, 371]);
+const _supertype_delimTokenTree_ids = new Set<number>([413, 414, 415]);
+const _supertype_delimTokens_ids = new Set<number>([327, 328, 331, 159, 1, 56, 126, 127, 128, 336, 366, 367]);
+const _supertype_nonDelimToken_ids = new Set<number>([327, 328, 331, 159, 1, 56, 126, 127, 128, 336, 366, 367]);
+const _supertype_referenceExpression_ids = new Set<number>([376, 377, 378, 379]);
+const _supertype_arrayExpression_ids = new Set<number>([371, 372]);
 const _supertype_condition_ids = new Set<number>([
-	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 126, 258, 240, 302, 303, 275, 254, 276, 299, 300,
-	301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261, 283, 284
+	262, 263, 265, 266, 267, 268, 271, 269, 270, 327, 328, 331, 159, 1, 468, 126, 258, 240, 302, 303, 275, 254, 276, 299,
+	300, 301, 129, 274, 277, 304, 305, 306, 307, 308, 282, 287, 292, 293, 294, 295, 261, 283, 284
 ]);
-const _supertype_matchArm_ids = new Set<number>([399, 400]);
-const _supertype_closureExpression_ids = new Set<number>([373, 374]);
+const _supertype_matchArm_ids = new Set<number>([400, 401]);
+const _supertype_closureExpression_ids = new Set<number>([374, 375]);
 const _supertype_pattern_ids = new Set<number>([
-	327, 328, 331, 159, 325, 1, 258, 310, 311, 313, 314, 319, 312, 320, 321, 316, 317, 295, 254, 367
+	327, 328, 331, 159, 325, 1, 258, 310, 311, 313, 314, 468, 319, 312, 320, 321, 316, 317, 295, 254, 368
 ]);
-const _supertype_fieldPattern_ids = new Set<number>([415, 416]);
-const _supertype_rangePattern_ids = new Set<number>([423, 420]);
-const _supertype_orPattern_ids = new Set<number>([389, 390]);
+const _supertype_fieldPattern_ids = new Set<number>([416, 417]);
+const _supertype_rangePattern_ids = new Set<number>([424, 421]);
+const _supertype_orPattern_ids = new Set<number>([390, 391]);
 const _supertype_literal_ids = new Set<number>([327, 328, 331, 159]);
 const _supertype_literalPattern_ids = new Set<number>([327, 328, 331, 159, 325]);
 const _supertype_integerLiteral_ids = new Set<number>([139, 140, 141, 142]);
 const _supertype_charLiteral_ids = new Set<number>([143, 144, 145]);
 const _supertype_escapeSequence_ids = new Set<number>([146, 147, 148, 149]);
-const _supertype_path_ids = new Set<number>([126, 1, 129, 127, 128, 258]);
+const _supertype_path_ids = new Set<number>([126, 1, 129, 127, 128, 258, 468]);
 
 export const is = {
 	sourceFile: _g(TSKindId.SourceFile),
@@ -1010,6 +1017,7 @@ export const is = {
 	visibilityModifierGroup: _g(TSKindId.VisibilityModifierGroup),
 	TupleTypeElements: _g(TSKindId.TupleTypeElements),
 	TupleExpressionElements: _g(TSKindId.TupleExpressionElements),
+	reservedIdentifier: _g(TSKindId._ReservedIdentifier),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
@@ -1029,8 +1037,8 @@ export const is = {
 	expression: _sg(_supertype_expression_ids),
 	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
 	delimTokenTree: _sg(_supertype_delimTokenTree_ids),
-	delimTokens: _sg(new Set<number>()),
-	nonDelimToken: _sg(new Set<number>()),
+	delimTokens: _sg(_supertype_delimTokens_ids),
+	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
 	referenceExpression: _sg(_supertype_referenceExpression_ids),
 	arrayExpression: _sg(_supertype_arrayExpression_ids),
 	condition: _sg(_supertype_condition_ids),
@@ -1231,6 +1239,7 @@ export const assert = {
 	visibilityModifierGroup: _makeAssert('visibilityModifierGroup', is.visibilityModifierGroup as _AnyGuard),
 	TupleTypeElements: _makeAssert('TupleTypeElements', is.TupleTypeElements as _AnyGuard),
 	TupleExpressionElements: _makeAssert('TupleExpressionElements', is.TupleExpressionElements as _AnyGuard),
+	reservedIdentifier: _makeAssert('reservedIdentifier', is.reservedIdentifier as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
 	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),

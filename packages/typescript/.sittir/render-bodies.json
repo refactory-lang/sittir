@@ -4573,6 +4573,12 @@
 			"field": "instantiation_expression_after"
 		}
 	],
+	"interface_body": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"interface_declaration": [
 		{
 			"kind": "seam",
@@ -5841,12 +5847,6 @@
 			"field": "object_after"
 		}
 	],
-	"object_arm": [
-		{
-			"kind": "slot",
-			"name": "content"
-		}
-	],
 	"object_assignment_pattern": [
 		{
 			"kind": "seam",
@@ -5905,12 +5905,6 @@
 		{
 			"kind": "seam",
 			"field": "object_pattern_after"
-		}
-	],
-	"object_pattern_arm": [
-		{
-			"kind": "slot",
-			"name": "content"
 		}
 	],
 	"object_type": [
@@ -6405,6 +6399,12 @@
 		{
 			"kind": "seam",
 			"field": "program_after"
+		}
+	],
+	"property_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"property_signature": [
@@ -6925,6 +6925,12 @@
 			"field": "required_parameter_after"
 		}
 	],
+	"reserved_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"rest_pattern": [
 		{
 			"kind": "seam",
@@ -7035,6 +7041,12 @@
 			"field": "satisfies_expression_after"
 		}
 	],
+	"semicolon": [
+		{
+			"kind": "text",
+			"text": ";"
+		}
+	],
 	"sequence_expression": [
 		{
 			"kind": "seam",
@@ -7047,6 +7059,18 @@
 		{
 			"kind": "seam",
 			"field": "sequence_expression_after"
+		}
+	],
+	"shorthand_property_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
+	"shorthand_property_identifier_pattern": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"spread_element": [
@@ -7117,6 +7141,12 @@
 		{
 			"kind": "seam",
 			"field": "statement_block_after"
+		}
+	],
+	"statement_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"string": [
@@ -7780,6 +7810,12 @@
 		{
 			"kind": "seam",
 			"field": "type_assertion_after"
+		}
+	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"type_parameter": [

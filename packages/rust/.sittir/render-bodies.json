@@ -2407,6 +2407,12 @@
 			"field": "field_expression_after"
 		}
 	],
+	"field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"field_initializer": [
 		{
 			"kind": "seam",
@@ -5680,6 +5686,12 @@
 			"field": "removed_trait_bound_after"
 		}
 	],
+	"reserved_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"return_expression": [
 		{
 			"kind": "seam",
@@ -5965,6 +5977,12 @@
 		{
 			"kind": "tokenSeam",
 			"text": "\n"
+		}
+	],
+	"shorthand_field_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"shorthand_field_initializer": [
@@ -7328,6 +7346,12 @@
 		{
 			"kind": "seam",
 			"field": "type_cast_expression_after"
+		}
+	],
+	"type_identifier": [
+		{
+			"kind": "slot",
+			"name": "content"
 		}
 	],
 	"type_item": [

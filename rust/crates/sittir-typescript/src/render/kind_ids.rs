@@ -949,7 +949,14 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
 /// template renders from that text, so the text is the node's content —
 /// free text for a pattern kind, the literal it holds for an enum kind.
 pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 96 | 97 | 98 | 152 | 153 | 154 | 155 | 156 | 157 | 158 | 159 | 160 | 161 | 171 | 172 | 173 | 174 | 176 | 313 | 354 | 388 | 389 | 459 | 465)
+    matches!(kind.0, 1 | 2 | 89 | 90 | 91 | 96 | 97 | 98 | 152 | 153 | 154 | 155 | 156 | 157 | 158 | 159 | 160 | 161 | 171 | 172 | 173 | 174 | 176 | 313 | 354 | 388 | 389 | 459)
+}
+
+/// Whether this parse kind id is an alias envelope: the reader stamps the
+/// grammar symbol beside it when the node is the storage node shown under
+/// the alias, so the wrap layer can seat it as the envelope's content.
+pub fn is_alias_envelope(kind: KindId) -> bool {
+    matches!(kind.0, 456 | 458 | 459 | 460 | 461 | 462 | 463 | 465)
 }
 
 /// (parent kind id, tree-sitter field name, punctuation kind ids) for every

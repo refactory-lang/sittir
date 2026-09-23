@@ -441,16 +441,21 @@ describe('render options on transports', () => {
 
 describe('the typed sink replaces the mark-based Display path', () => {
 	it('accepts a token the parser shows as a nested member kind under the token id', async () => {
-		// rust shows the `default` keyword as an `identifier` (`_reserved_identifier`);
-		// an expression slot must decode `{ $type: <default>, $text }` through the
-		// nesting that reaches `identifier`.
+		// rust shows the `default` keyword as an `identifier` over `_reserved_identifier`;
+		// an expression slot decodes that storage as `ReservedIdentifier`, whose
+		// content decodes `{ $type: <default>, $text }`.
 		const transportRs = await getRustTemplatesRs();
+		const bodyOf = (impl: string): string => {
+			const from = transportRs.indexOf(`impl ::napi::bindgen_prelude::FromNapiValue for ${impl} {`);
+			expect(from, impl).toBeGreaterThan(-1);
+			return transportRs.slice(from, transportRs.indexOf('\n}\n', from));
+		};
 		const tokenId = _rustKindEntries?.find((entry) => entry.literalText === 'default' || entry.symbolName === 'default')?.id;
+		const storageId = _rustKindEntries?.find((entry) => entry.kind === '_reserved_identifier')?.id;
 		expect(tokenId).toBeDefined();
-		const from = transportRs.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {');
-		expect(from).toBeGreaterThan(-1);
-		const body = transportRs.slice(from, transportRs.indexOf('\n}\n', from));
-		expect(body).toContain(`${tokenId} => Ok(Self::`);
+		expect(storageId).toBeDefined();
+		expect(bodyOf('ExpressionTransport')).toContain(`${storageId} => Ok(Self::ReservedIdentifier(`);
+		expect(bodyOf('ReservedIdentifierContentTransportSlot')).toContain(`${tokenId} =>`);
 	});
 	it('classifies a rebuilt list from the gaps between its coordinates before the table fills it', async () => {
 		const transportRs = await getRustTemplatesRs();

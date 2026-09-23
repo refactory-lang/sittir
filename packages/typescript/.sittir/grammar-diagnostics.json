@@ -172,6 +172,22 @@
   },
   {
     "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_reserved_identifier",
+    "message": "[assemble] typeName collision: kind '_reserved_identifier' renamed 'ReservedIdentifier' → '_ReservedIdentifier' (visible sibling(s): 'reserved_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ReservedIdentifier",
+      "newType": "_ReservedIdentifier",
+      "visibleKinds": [
+        "reserved_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -185,16 +201,15 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "6 referenced kind(s) resolved no parser kindId",
+    "message": "5 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
-        "_unary_expression_operator",
-        "object_arm",
-        "object_pattern_arm"
+        "_reserved_identifier",
+        "_unary_expression_operator"
       ]
     },
     "severity": "warning",
@@ -221,6 +236,19 @@
     "grammar": "typescript"
   },
   {
+    "code": "kindid-inline-excluded-symbols",
+    "message": "1 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_reserved_identifier"
+      ]
+    },
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
     "code": "kindid-vaporized-literals",
     "message": "7 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
@@ -241,7 +269,7 @@
   },
   {
     "code": "kindid-unclassified-symbols",
-    "message": "6 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "message": "4 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
     "canProceed": true,
     "severity": "warning",
     "details": {
@@ -249,9 +277,7 @@
         "__number_operator",
         "_augmented_assignment_expression_operator",
         "_operator",
-        "_unary_expression_operator",
-        "object_arm",
-        "object_pattern_arm"
+        "_unary_expression_operator"
       ]
     },
     "scope": "grammar",

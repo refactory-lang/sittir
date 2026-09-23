@@ -1,18 +1,1 @@
-{
-  "ambient_declaration": 1,
-  "class_declaration": 3,
-  "enum_declaration": 2,
-  "export_statement_default_declaration": 2,
-  "formal_parameters": 1,
-  "function_declaration": 1,
-  "function_type": 1,
-  "internal_module": 1,
-  "lexical_declaration": 1,
-  "object": 1,
-  "program": 6,
-  "required_parameter": 1,
-  "return_statement": 1,
-  "statement_block": 2,
-  "type_annotation": 1,
-  "variable_declarator_plain": 1
-}
+{}

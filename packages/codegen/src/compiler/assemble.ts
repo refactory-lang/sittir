@@ -60,8 +60,11 @@ import {
 	isUnresolvedRef,
 	buildParseKindRuleSignatures,
 	type AssembleWarning,
+	AssembledAlias,
 	branchClassFor,
-	compoundModelTypeFor
+	aliasEnvelopeOf,
+	compoundModelTypeFor,
+	type CompoundModelTypeCtx
 } from './model/node-map.ts';
 import { simplifyRule } from './simplify.ts';
 import { matchesWordShape } from '../util/word-matcher.ts';
@@ -150,6 +153,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	} as const;
 
 	for (const [kind, renderRule] of Object.entries(normalized.normalizedRules)) {
+		if (ctx.topLevelAliasBodies.has(kind)) continue;
 		const simplifiedRule = normalized.rules[kind]!;
 		const hoisted = renderRule.annotations?.hoisted === true;
 		const modelType = classifyNode(kind, simplifiedRule, {
@@ -157,7 +161,9 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			variantParents,
 			parentAliasedKinds: normalized.parentAliasedKinds,
 			wordMatcher: wordMatcherRegex,
-			hoisted
+			hoisted,
+			simplifiedRules: normalized.rules,
+			kindEntries
 		});
 		const variantChildKinds = variantChildrenByParent.get(kind);
 
@@ -174,8 +180,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 			case 'branch':
 			case 'envelope':
-			case 'polymorph': {
-				const CompoundClass = branchClassFor(simplifiedRule);
+			case 'polymorph':
+			case 'alias': {
+				const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: normalized.rules, kindEntries };
+				const CompoundClass = branchClassFor(kind, simplifiedRule, compoundCtx);
+				const aliasEntry = CompoundClass === AssembledAlias ? findEntryForKindName(kindEntries, kind) : undefined;
+				const aliasTypeId = aliasEntry !== undefined ? (aliasEntry.parseId ?? aliasEntry.id) : undefined;
 				nodes.set(
 					kind,
 					new CompoundClass(kind, simplifiedRule, renderRule, {
@@ -184,7 +194,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 						parseKindCollisionContext,
 						visibleAliasTargets: normalized.visibleAliasTargets,
 						simplifiedRules: normalized.rules,
-						assembleDiagnostics
+						assembleDiagnostics,
+						aliasTypeId
 					})
 				);
 				break;
@@ -232,7 +243,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					new AssembledList(
 						kind,
 						listRule,
-						{ kindEntries, diagnostics: assembleDiagnostics },
+						{ kindEntries, diagnostics: assembleDiagnostics, simplifiedRules: normalized.rules },
 						{
 							separatorRule,
 							simplifiedRule,
@@ -332,16 +343,17 @@ function resolveSupertypeSubtypes(
 	ctx: AssembleCtx,
 	kindEntries: readonly GeneratedKindEntry[]
 ): SubtypeRef[] {
+	const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: ctx.rules, kindEntries };
+	const refOf = (s: SymbolRule | SupertypeRule['subtypes'][number]): SubtypeRef => {
+		const display = aliasEnvelopeOf(s, compoundCtx);
+		return display !== undefined
+			? { name: display, storageKindId: s.aliasedToId, ...armFactsOf(s) }
+			: { name: s.name, storageKindId: s.kindId, ...armFactsOf(s) };
+	};
 	const subtypes: SubtypeRef[] =
 		rule.type === SUPERTYPE
-			? rule.subtypes.map((s) => ({
-					name: s.name,
-					storageKindId: s.kindId,
-					...armFactsOf(s)
-				}))
-			: rule.members
-					.filter((m): m is SymbolRule => m.type === SYMBOL)
-					.map((m) => ({ name: m.name, storageKindId: m.kindId, ...armFactsOf(m) }));
+			? rule.subtypes.map(refOf)
+			: rule.members.filter((m): m is SymbolRule => m.type === SYMBOL).map(refOf);
 	return resolveHiddenSubtypes(
 		subtypes,
 		ctx,
@@ -453,7 +465,16 @@ function resolveHiddenSubtypes(
 		if (rule.type === SUPERTYPE) {
 			out.push(ref);
 			const nestedParseNames = subtypeParseNamesOf(rule);
+			const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: ctx.rules, kindEntries };
 			for (const subRef of rule.subtypes) {
+				const display = aliasEnvelopeOf(subRef, compoundCtx);
+				if (display !== undefined) {
+					if (!seen.has(display)) {
+						seen.add(display);
+						out.push({ name: display, storageKindId: subRef.aliasedToId });
+					}
+					continue;
+				}
 				const sub = subRef.name;
 				const subStamp = subRef.kindId;
 				const parseName = nestedParseNames[sub];
@@ -983,11 +1004,17 @@ export function classifyNode(
 		wordMatcher?: RegExp;
 		renderRule?: RenderRule;
 		hoisted?: boolean;
+		simplifiedRules?: Readonly<Record<string, SimplifiedRule>>;
+		kindEntries?: readonly GeneratedKindEntry[];
 	}
 ): ModelType {
+	const compoundCtx: CompoundModelTypeCtx = {
+		simplifiedRules: opts?.simplifiedRules ?? {},
+		kindEntries: opts?.kindEntries ?? []
+	};
 	if (opts?.hoisted && !isAllTextShape(rule)) {
 		if (isSeparatedListShape(peelSeparatedListCore(rule))) return 'list';
-		return compoundModelType(rule);
+		return compoundModelTypeFor(kind, rule, compoundCtx);
 	}
 	if (rule.fieldName === undefined && rule.multiplicity === undefined) {
 		if (isEnumChoiceRule(rule)) return 'enum';
@@ -1000,10 +1027,9 @@ export function classifyNode(
 				return matchesWordShape(rule.value, opts?.wordMatcher) ? 'keyword' : 'punctuation';
 		}
 	}
-
 	if (isSeparatedListShape(rule)) return 'list';
-	if (hasSlotBearingContent(rule)) return compoundModelType(rule);
-	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelType(rule);
+	if (hasSlotBearingContent(rule)) return compoundModelTypeFor(kind, rule, compoundCtx);
+	if (opts?.renderRule !== undefined && referencesKind(opts.renderRule)) return compoundModelTypeFor(kind, rule, compoundCtx);
 	return classifyTerminalFallback(kind, rule);
 }
 
@@ -1020,9 +1046,6 @@ function referencesKind(rule: RenderRule): boolean {
 	}
 }
 
-function compoundModelType(rule: SimplifiedRule): 'envelope' | 'branch' | 'polymorph' {
-	return compoundModelTypeFor(rule);
-}
 
 function peelSeparatedListCore(rule: SimplifiedRule): SimplifiedRule {
 	let r: SimplifiedRule = rule;

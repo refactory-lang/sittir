@@ -1,3 +1,4 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { RuleAnnotations } from '../types/rule.ts';
 import { seatOf, type Seat } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
@@ -79,7 +80,7 @@ interface SerializedNodeBase {
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
-	modelType: 'branch' | 'envelope' | 'polymorph';
+	modelType: 'branch' | 'envelope' | 'polymorph' | 'alias';
 	name?: string;
 	slots: SerializedSlot[];
 	separator?: string;
@@ -209,6 +210,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		case 'envelope':
 			return serializeCompoundNode(node, base, nodeMap, wires);
 		case 'polymorph':
+		case 'alias':
 			return serializeCompoundNode(node, base, nodeMap, wires);
 		case 'supertype':
 			return { ...base, modelType: 'supertype', transparent: true, subtypes: [...node.subtypeNames].sort() };
@@ -271,7 +273,7 @@ function seatsOfList(node: AssembledList, nodeMap: NodeMap, wires: PolymorphWire
 }
 
 function serializeCompoundNode(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	base: SerializedNodeBase,
 	nodeMap: NodeMap,
 	wires: PolymorphWires

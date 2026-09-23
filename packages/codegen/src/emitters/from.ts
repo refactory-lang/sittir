@@ -1,8 +1,9 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import {
+import { findOwnKindEntry,
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -18,11 +19,12 @@ import type {
 	AssembledPolymorph
 } from '../compiler/model/node-map.ts';
 
-type BranchLikeForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
-type FormChildForFrom = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
+type BranchLikeForFrom = AuthoredCompound;
+type FormChildForFrom = AuthoredCompound;
 import {
 	anchoredLeafRegexLiteral,
 	classifyFactoryShape,
+	expandAndDedupeContentTypes,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -64,6 +66,7 @@ import {
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
+	AssembledAlias,
 	AssembledBranch,
 	AbstractAssembledCompound,
 	AssembledList,
@@ -471,7 +474,7 @@ function emitRestParamFromResolver(
 	nonEmpty = false
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
-	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
 	const unwrap =
 		unwrapConfigKey === undefined
 			? []
@@ -564,7 +567,7 @@ function emitSingularChildrenFrom(
 	inputWiden?: string
 ): string {
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
-	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
+	const hasNumericDiscriminant = (kindEntries !== undefined && findOwnKindEntry(kindEntries, kind) !== undefined);
 	if (!hasNumericDiscriminant) {
 		return [
 			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
@@ -744,29 +747,6 @@ function emitKeywordFrom(node: LeafFromNode): string {
 }
 
 type KindInterner = (kinds: readonly string[]) => string;
-
-function expandAndDedupeContentTypes(
-	contentTypes: readonly string[],
-	nodeMap: NodeMap,
-	idByKind?: ReadonlyMap<string, number>
-): string[] {
-	const seen = new Set<string>();
-	const expanded: string[] = [];
-	const visit = (kind: string): void => {
-		const node = nodeMap.nodes.get(kind);
-		if (node instanceof AssembledSupertype) {
-			for (const subtype of node.subtypeNames) visit(subtype);
-			return;
-		}
-		const id = idByKind?.get(kind);
-		const key = id !== undefined ? `#${id}` : `n:${kind}`;
-		if (seen.has(key)) return;
-		seen.add(key);
-		expanded.push(kind);
-	};
-	for (const t of contentTypes) visit(t);
-	return expanded;
-}
 
 function classifyKindsForResolver(
 	expanded: string[],
@@ -978,9 +958,25 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 				);
 			}
 			registryEntries.push(`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: ${factory} },`);
+		} else if (node instanceof AssembledAlias) {
+			const leaf = aliasPatternLeaf(node, nodeMap);
+			if (leaf === undefined) continue;
+			const literal = anchoredLeafRegexLiteral(leaf.kind, leaf.textPattern);
+			if (literal === undefined) continue;
+			registryEntries.push(
+				`  ${JSON.stringify(kind)}: { pattern: ${literal}, factory: (text: string) => ${factory}(F.${leaf.rawFactoryName}(text) as never) },`
+			);
 		}
 	}
 	return registryEntries;
+}
+
+function aliasPatternLeaf(node: AssembledAlias, nodeMap: NodeMap): AssembledPattern | undefined {
+	if (node.slots.length !== 1) return undefined;
+	const kinds = slotKindNames(node.slots[0]!);
+	if (kinds.length !== 1) return undefined;
+	const leaf = nodeMap.nodes.get(kinds[0]!);
+	return leaf instanceof AssembledPattern && leaf.rawFactoryName !== undefined ? leaf : undefined;
 }
 
 function emitResolveByKindHelper(lines: string[]): void {
@@ -1019,6 +1015,25 @@ function bareSlotOf(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal
 	}
 }
 
+function bareSlotKinds(kind: string, nodeMap: NodeMap): readonly string[] | undefined {
+	const node = nodeMap.nodes.get(kind);
+	const slot = node === undefined ? undefined : bareSlotOf(node, nodeMap);
+	if (slot === undefined) return undefined;
+	const slotKinds =
+		node instanceof AssembledList ? transparentContentKindNames(slotKindNames(slot), nodeMap) : slotKindNames(slot);
+	return expandAndDedupeContentTypes(slotKinds, nodeMap);
+}
+
+function forwardsBareString(kind: string, nodeMap: NodeMap, seen: ReadonlySet<string> = new Set()): boolean {
+	if (seen.has(kind)) return false;
+	const admitted = bareSlotKinds(kind, nodeMap);
+	if (admitted === undefined || admitted.length !== 1) return false;
+	const only = admitted[0]!;
+	const node = nodeMap.nodes.get(only);
+	if (node !== undefined && isLeafRegistryKind(only, node)) return true;
+	return forwardsBareString(only, nodeMap, new Set([...seen, kind]));
+}
+
 export function bareAcceptClosure(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -1027,12 +1042,7 @@ export function bareAcceptClosure(
 		const names = new Set<string>();
 		if (seen.has(kind)) return names;
 		seen.add(kind);
-		const node = nodeMap.nodes.get(kind);
-		const slot = node === undefined ? undefined : bareSlotOf(node, nodeMap);
-		if (slot === undefined) return names;
-		const slotKinds =
-			node instanceof AssembledList ? transparentContentKindNames(slotKindNames(slot), nodeMap) : slotKindNames(slot);
-		for (const admitted of expandAndDedupeContentTypes(slotKinds, nodeMap)) {
+		for (const admitted of bareSlotKinds(kind, nodeMap) ?? []) {
 			names.add(admitted);
 			const admittedNode = nodeMap.nodes.get(admitted);
 			if (admittedNode instanceof AssembledEnum) for (const member of admittedNode.resolvedKinds) names.add(member);
@@ -1162,25 +1172,20 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const bk = branchKinds[0]!;');
 	lines.push('    if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;');
 	lines.push('  }');
-	// Not a config object, and not already-kinded data (handled above): a
-	// plain string, number, boolean, or array hoists straight into the
-	// field's declared default arm when the grammar names one — a single
-	// admissible arm is not a choice either, so it hoists the same way.
-	// Never a guess among several undeclared candidates.
 	lines.push('  if (!(typeof v === "object" && !Array.isArray(v))) {');
 	lines.push(
 		'    const candidates = typeof v === "string" ? branchKinds.filter((b) => _STRING_CAPABLE_BRANCHES.has(b)) : branchKinds;'
 	);
 	lines.push(
-		'    const target = candidates.length === 1 ? candidates[0] : defaultArm !== undefined && candidates.includes(defaultArm) ? defaultArm : undefined;'
+		'    const target = candidates.length === 1 && branchKinds.length === 1 ? candidates[0] : defaultArm !== undefined && candidates.includes(defaultArm) ? defaultArm : undefined;'
 	);
 	lines.push('    if (target !== undefined && Array.isArray(v) && target in _wrapKindIds) {');
 	lines.push('      return _wrapArray(target, v) as T;');
 	lines.push('    }');
 	lines.push('    if (target !== undefined && _isFromKind(target)) return _resolveByKind(target, v) as T;');
-	lines.push('    if (typeof v === "string" && candidates.length > 1) {');
+	lines.push('    if (typeof v === "string" && candidates.length > 0) {');
 	lines.push(
-		'      throw new Error(`_resolveOne: a bare string fits more than one arm: [${candidates.join(", ")}]; declare the arm (defaultArm()) or name it explicitly`);'
+		'      throw new Error(`_resolveOne: a bare string picks no arm among [${branchKinds.join(", ")}]; declare the arm (defaultArm()) or name it explicitly`);'
 	);
 	lines.push('    }');
 	lines.push('  }');
@@ -1445,13 +1450,8 @@ function emitResolverHelpers(
 			stringCapable.push(kind);
 		}
 	}
-	for (const [kind, admitted] of bareAcceptClosure(nodeMap, kindEntries)) {
-		if (stringCapable.includes(kind)) continue;
-		const reachesLeaf = [...admitted].some((name) => {
-			const node = nodeMap.nodes.get(name);
-			return node !== undefined && isLeafRegistryKind(name, node);
-		});
-		if (reachesLeaf) stringCapable.push(kind);
+	for (const kind of bareAcceptClosure(nodeMap, kindEntries).keys()) {
+		if (!stringCapable.includes(kind) && forwardsBareString(kind, nodeMap)) stringCapable.push(kind);
 	}
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
@@ -1494,7 +1494,10 @@ function emitResolverHelpers(
 	lines.push('      ? _resolveByKind(wrapperKind, e)');
 	lines.push('      : e');
 	lines.push('  );');
-	lines.push('  return optionsFirst ? [head, ...resolve(elements)] : [...resolve(elements)];');
+	lines.push(
+		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNodeData(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
+	);
+	lines.push('  return optionsFirst ? [head, ...resolved] : resolved;');
 	lines.push('}');
 	lines.push('');
 

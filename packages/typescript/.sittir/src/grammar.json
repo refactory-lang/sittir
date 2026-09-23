@@ -1501,22 +1501,27 @@
             "type": "FIELD",
             "name": "label",
             "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
                     "type": "SYMBOL",
                     "name": "identifier"
                   },
-                  {
+                  "named": true,
+                  "value": "statement_identifier"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
                     "type": "SYMBOL",
                     "name": "_reserved_identifier"
-                  }
-                ]
-              },
-              "named": true,
-              "value": "statement_identifier"
+                  },
+                  "named": true,
+                  "value": "statement_identifier"
+                }
+              ]
             }
           },
           {
@@ -1972,17 +1977,17 @@
                             {
                               "type": "ALIAS",
                               "content": {
-                                "type": "CHOICE",
-                                "members": [
-                                  {
-                                    "type": "SYMBOL",
-                                    "name": "identifier"
-                                  },
-                                  {
-                                    "type": "SYMBOL",
-                                    "name": "_reserved_identifier"
-                                  }
-                                ]
+                                "type": "SYMBOL",
+                                "name": "identifier"
+                              },
+                              "named": true,
+                              "value": "shorthand_property_identifier"
+                            },
+                            {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "SYMBOL",
+                                "name": "_reserved_identifier"
                               },
                               "named": true,
                               "value": "shorthand_property_identifier"
@@ -2024,17 +2029,17 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "CHOICE",
-                                      "members": [
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "identifier"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "_reserved_identifier"
-                                        }
-                                      ]
+                                      "type": "SYMBOL",
+                                      "name": "identifier"
+                                    },
+                                    "named": true,
+                                    "value": "shorthand_property_identifier"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "_reserved_identifier"
                                     },
                                     "named": true,
                                     "value": "shorthand_property_identifier"
@@ -2107,17 +2112,17 @@
                             {
                               "type": "ALIAS",
                               "content": {
-                                "type": "CHOICE",
-                                "members": [
-                                  {
-                                    "type": "SYMBOL",
-                                    "name": "identifier"
-                                  },
-                                  {
-                                    "type": "SYMBOL",
-                                    "name": "_reserved_identifier"
-                                  }
-                                ]
+                                "type": "SYMBOL",
+                                "name": "identifier"
+                              },
+                              "named": true,
+                              "value": "shorthand_property_identifier_pattern"
+                            },
+                            {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "SYMBOL",
+                                "name": "_reserved_identifier"
                               },
                               "named": true,
                               "value": "shorthand_property_identifier_pattern"
@@ -2159,17 +2164,17 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "CHOICE",
-                                      "members": [
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "identifier"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "_reserved_identifier"
-                                        }
-                                      ]
+                                      "type": "SYMBOL",
+                                      "name": "identifier"
+                                    },
+                                    "named": true,
+                                    "value": "shorthand_property_identifier_pattern"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "SYMBOL",
+                                      "name": "_reserved_identifier"
                                     },
                                     "named": true,
                                     "value": "shorthand_property_identifier_pattern"
@@ -2239,17 +2244,17 @@
               {
                 "type": "ALIAS",
                 "content": {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_reserved_identifier"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "identifier"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "shorthand_property_identifier_pattern"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "identifier"
                 },
                 "named": true,
                 "value": "shorthand_property_identifier_pattern"
@@ -6319,17 +6324,17 @@
         {
           "type": "ALIAS",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "property_identifier"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_reserved_identifier"
           },
           "named": true,
           "value": "property_identifier"
