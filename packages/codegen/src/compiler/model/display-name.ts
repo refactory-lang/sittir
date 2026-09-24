@@ -1,6 +1,6 @@
 import type { NodeMap } from '../types.ts';
 import { storageKindOfRef, type AssembledNode, type NodeBackedRef } from './node-map.ts';
-import { findAnonEntryForLiteralText, findOwnKindEntry, type KindEntryLike } from '../generated-metadata.ts';
+import { findAnonEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
 import { aliasTargetOf, storageNameOf, type SymbolRule } from '../../types/rule.ts';
 import { isParserHiddenName } from '../../dsl/rule-patterns.ts';
 
@@ -13,8 +13,12 @@ export interface DisplayStamp {
 	readonly source: DisplaySource;
 }
 
-export function stampDisplay(kind: string, kindEntries: readonly KindEntryLike[], rowless: RowlessDisplaySource): DisplayStamp {
-	const own = findOwnKindEntry(kindEntries, kind);
+export function stampDisplay(
+	kind: string,
+	own: KindEntryLike | undefined,
+	kindEntries: readonly KindEntryLike[],
+	rowless: RowlessDisplaySource
+): DisplayStamp {
 	if (own !== undefined) return { name: displayNameOfEntry(own, kindEntries), source: 'catalog' };
 	return { name: displayOfParserName(kind), source: rowless };
 }

@@ -40,7 +40,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const factoryShapes: Record<string, FactoryShape> = {};
 	const forwardsTo: Record<string, string> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.parserHidden && !aliasSet.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
 		if (shape === 'forwarded') forwardsTo[kind] = forwardedTargetKind(node, nodeMap)!;
@@ -57,14 +57,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.parserHidden && !aliasSet.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.parserHidden && !aliasSet.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of node.slots) {
 			const meta = createFactorySlotMeta(false, 1, deriveSlotCardinality(field), field.registeredOption !== undefined);
@@ -86,7 +86,7 @@ function collectVariantAdoptedBranches(
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isAuthoredCompound(node) || node.variantChildKinds.length === 0) continue;
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (node.parserHidden && !aliasSet.has(kind)) continue;
 		polymorphVariants[kind] = {
 			definedBy: 'override',
 			childKind: mapVariantChildKindsToNames(node.variantChildKinds)

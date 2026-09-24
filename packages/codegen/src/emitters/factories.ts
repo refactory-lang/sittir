@@ -65,7 +65,6 @@ import {
 	classifyFactoryEmission,
 	forwardedTargetKind,
 	resolveDirectFactorySlot,
-	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
 	soleSlotFacts,
 	canDefaultToEmpty,
@@ -165,7 +164,7 @@ function slotGuardKey(kind: string, slot: string): string {
 }
 
 function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
-	if (kind.startsWith('_') && isFixedTextLeaf(node)) return undefined;
+	if (node.parserHidden && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
 	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
 	if (literal === undefined) return undefined;
@@ -203,7 +202,7 @@ export function hiddenTextLeaves(f: AssembledNonterminal, nodeMap: NodeMap): Ass
 		const storage = valueStorageOf(value, nodeMap);
 		if (storage === undefined || storage.via !== 'node' || storage.missing) continue;
 		const node = nodeMap.nodes.get(storage.kind);
-		if (node instanceof AssembledPattern && node.kind.startsWith('_') && node.rawFactoryName !== undefined)
+		if (node instanceof AssembledPattern && node.parserHidden && node.rawFactoryName !== undefined)
 			leaves.add(node);
 	}
 	return [...leaves];
@@ -238,12 +237,11 @@ function factoryTypeDiscriminant(
 
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
-	_aliasSourceKinds: Set<string>,
 	kindEntries?: readonly KindEnumEntry[]
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		const isHiddenGroup = kind.startsWith('_') && !(node instanceof AssembledPunctuation);
+		const isHiddenGroup = node.parserHidden && !(node instanceof AssembledPunctuation);
 		if (!node.userFacing && !isHiddenGroup) continue;
 		if (!node.rawFactoryName) continue;
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
@@ -390,7 +388,7 @@ export function childElementType(
 				parts.add(JSON.stringify(storage.kind));
 				continue;
 			}
-			if (storage.kind.startsWith('_') && ref instanceof AssembledPunctuation) {
+			if (ref.parserHidden && ref instanceof AssembledPunctuation) {
 				const visible = nodeMap.nodes.get(storage.kind.slice(1));
 				if (visible) ref = visible;
 			}
@@ -1728,7 +1726,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
 	readonly #leafReConsts: Map<string, string>;
-	readonly #aliasSourceKinds: Set<string>;
 	readonly #refineByKind: Map<string, RefineKindInfo>;
 	readonly #preambleLines: string[];
 	readonly #output: string[] = [];
@@ -1766,7 +1763,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const leafReConsts = buildLeafReConsts(nodeMap, lines);
 		if (leafReConsts.size > 0) lines.push('');
 
-		const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
 		const refineByKind = new Map<string, RefineKindInfo>();
 		for (const info of collectRefineKindInfos(nodeMap) ?? []) {
 			refineByKind.set(info.kind, info);
@@ -1777,7 +1773,6 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
 		this.#leafReConsts = leafReConsts;
-		this.#aliasSourceKinds = aliasSourceKinds;
 		this.#refineByKind = refineByKind;
 		this.#preambleLines = lines;
 	}
@@ -1856,7 +1851,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 			lines.push('');
 		}
 
-		const mapEntries = buildFactoryMapEntries(this.#nodeMap, this.#aliasSourceKinds, this.#kindEntries);
+		const mapEntries = buildFactoryMapEntries(this.#nodeMap, this.#kindEntries);
 		lines.push(...emitFluentKindMap(mapEntries));
 		lines.push('');
 		lines.push(...emitFactoryMapConst(mapEntries));

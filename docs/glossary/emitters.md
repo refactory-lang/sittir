@@ -368,7 +368,6 @@ reach.
  * Build the map entries list for `_factoryMap` and `FluentKindMap`.
  *
  * @param nodeMap - The assembled node map.
- * @param aliasSourceKinds - Set of kinds that are alias sources (included even if hidden).
  * @returns Ordered array of map entry descriptors.
  * @remarks
  *   Every kind with a factory lands here — branches, containers, leaves,
@@ -4582,7 +4581,7 @@ values that may be absent, which is the elidable-list form.
 
 ```text
 /**
- * Collect hidden source kinds (leading `_`) referenced via any field
+ * Collect hidden source kinds (`parserHidden` nodes) referenced via any field
  * / child value slot across the node map, and every hidden subtype a
  * supertype aliases to a visible name (its `subtypeParseNames`). These are
  * the kinds whose factory stamps `$type: '_X'` at construction — emission

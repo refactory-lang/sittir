@@ -72,13 +72,13 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
 		if (n instanceof AssembledSupertype) {
-			for (const name of Object.keys(n.subtypeParseNames ?? {})) if (name.startsWith('_')) out.add(name);
+			for (const name of Object.keys(n.subtypeParseNames ?? {})) if (nodeMap.nodes.get(name)?.parserHidden === true) out.add(name);
 		}
 		for (const slot of n.slots) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = storageKindOfRef(v.node);
-				if (name.startsWith('_')) out.add(name);
+				if (nodeMap.nodes.get(name)?.parserHidden === true) out.add(name);
 			}
 		}
 	}

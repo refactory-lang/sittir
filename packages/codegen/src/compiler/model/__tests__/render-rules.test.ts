@@ -33,7 +33,7 @@ function nodeMapOf(
 	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
-	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, [], 'phantom') });
+	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom') });
 	for (const kind of Object.keys(rules)) nodes.set(kind, stub(kind));
 	const whitespace = ['_tight', '_space', '_newline', '_blankline', '_indent', '_dedent'];
 	if (opts.whitespace !== false) for (const w of whitespace) nodes.set(w, stub(w));

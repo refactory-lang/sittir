@@ -440,7 +440,9 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 /**
  * The generated kind-catalog row for this node — `{ kind, id, parseId?,
  * symbolName?, anon? }` — resolved once from `opts.kindEntries` at
- * construction and read as a stamp thereafter.
+ * construction (`findOwnKindEntry`, the row whose model kind is this node's
+ * kind) and read as a stamp thereafter: display stamping and `parserHidden`
+ * both read it.
  *
  * Absent exactly where the grammar issues no parser symbol for the kind:
  * `AssembledSupertype` (a union declaration, never a CST node) and the
@@ -594,6 +596,25 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 ```text
 /** A node is hidden when it has no factory (supertype, group, token). */
 ```
+
+This is factory absence, not parser visibility: whether the parser issues the
+kind as a visible node is `parserHidden`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::parserHidden`
+
+Whether the parser treats this kind as hidden (never a visible CST node of
+its own), read off the node's catalog row. Three cases:
+
+- a plain row: the row's `hidden`;
+- an alias row (`{ kind: '_x', symbolName: 'x', alias: true, hidden: true }`):
+  not hidden. The row's `hidden` is the storage symbol's metadata (`sym__x`
+  is invisible), while the node the model builds for the row is the display
+  `x`, which the parser issues through the alias and always shows;
+- no row (a symbol-less supertype or a phantom): the canonical name rule
+  `isParserHiddenName`, the same rule `displayOfParserName` applies to a
+  rowless node.
+
+Distinct from `hidden`, which means "has no factory".
 
 ### `packages/codegen/src/compiler/model/node-map.ts::rawFactoryName`
 
@@ -4025,8 +4046,8 @@ phantom-kind ratchet counts, a symbol-less supertype is not.
 
 ### `packages/codegen/src/compiler/model/display-name.ts::stampDisplay`
 
-The display a node is constructed with, decided once from its own catalog
-row (`findOwnKindEntry`): the row's display when there is one (`catalog`),
+The display a node is constructed with, decided from the catalog row the
+node resolved once (`kindEntry`, via `findOwnKindEntry`): the row's display when there is one (`catalog`),
 else its own kind through `displayOfParserName`, labelled with why it has no
 row. Nothing downstream
 derives a display from a kind name.

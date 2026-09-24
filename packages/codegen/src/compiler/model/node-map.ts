@@ -13,7 +13,7 @@ import type {
 	RuleId,
 	RuleAnnotations
 } from '../../types/rule.ts';
-import { isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
+import { isEnumChoiceRule, collectFixedLiteral, isParserHiddenName } from '../../dsl/rule-patterns.ts';
 import {
 	literalTextOf,
 	isLinkSymbol,
@@ -25,7 +25,7 @@ import {
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry } from '../generated-metadata.ts';
 import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
@@ -1067,12 +1067,16 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.typeName = derived.typeName;
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
-		this.kindEntry = findEntryForKindName(opts?.kindEntries ?? [], kind);
-		this.display = stampDisplay(kind, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
+		this.kindEntry = findOwnKindEntry(opts?.kindEntries ?? [], kind);
+		this.display = stampDisplay(kind, this.kindEntry, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
 	get hidden(): boolean {
 		return this.factoryName === undefined;
+	}
+
+	get parserHidden(): boolean {
+		return this.kindEntry === undefined ? isParserHiddenName(this.kind) : this.kindEntry.alias !== true && this.kindEntry.hidden === true;
 	}
 
 	get transparent(): boolean {
