@@ -15266,9 +15266,10 @@ shape and builder.
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::slotValuesOf`
 
 A slot's values as sub-factory derivation sees them: a value whose kind is a
-flattened parent (`AssembledSupertype.variantSubtypes`) expands into that
-parent's variant subtype refs, each carrying its stamped `variant` name and
-the slot value's multiplicity. A parent whose slot holds a flattened parent
+supertype with arm subtypes (`AssembledSupertype.armSubtypes`) expands into
+those subtypes, each carrying its stamped arm facts and the slot value's
+multiplicity. That covers a flattened parent's variant subtypes and an
+undeclared supertype reached through an alias site. A parent whose slot holds a flattened parent
 therefore mounts the variants as ordinary arms (`functionDefinition.block`
 for `_suite`'s `block` variant), exactly as it mounted the polymorph's forms
 before the polymorph was flattened.

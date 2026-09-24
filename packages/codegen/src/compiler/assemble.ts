@@ -175,7 +175,14 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 				}
 				const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
-				nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes, { kindEntries }));
+				nodes.set(
+					kind,
+					new AssembledSupertype(kind, renderRule, subtypes, {
+						kindEntries,
+						declared: normalized.supertypes.has(kind),
+						deriveCtx: { simplifiedRules: normalized.rules, kindEntries }
+					})
+				);
 				break;
 			}
 			case 'branch':

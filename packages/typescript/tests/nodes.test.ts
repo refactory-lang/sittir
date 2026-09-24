@@ -3204,6 +3204,108 @@ describe('assignment_expression sub-factories', () => {
 		expect((node as any).left()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
+	it('memberExpression builds the parent', () => {
+		const node = ir.assignmentExpression.memberExpression({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+			separator: '.',
+			property: {
+				$type: TSKindId.PrivatePropertyIdentifier,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: 'test'
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('memberExpression.dot builds the parent', () => {
+		const node = ir.assignmentExpression.memberExpression.dot({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: [
+				{
+					object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+					property: {
+						$type: TSKindId.PrivatePropertyIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: 'test'
+					} as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('memberExpression.optionalChain builds the parent', () => {
+		const node = ir.assignmentExpression.memberExpression.optionalChain({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: [
+				{
+					object: { $type: TSKindId.Import, $text: 'import', $source: 2, $named: true } as any,
+					property: {
+						$type: TSKindId.PrivatePropertyIdentifier,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: 'test'
+					} as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('subscriptExpression builds the parent', () => {
+		const node = ir.assignmentExpression.subscriptExpression({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			object: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			index: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('undefined builds the parent', () => {
+		const node = ir.assignmentExpression.undefined({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBe(TSKindId.Undefined);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('objectPattern builds the parent', () => {
+		const node = ir.assignmentExpression.objectPattern({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: []
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('arrayPattern builds the parent', () => {
+		const node = ir.assignmentExpression.arrayPattern({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: []
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('nonNullExpression builds the parent', () => {
+		const node = ir.assignmentExpression.nonNullExpression({
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.AssignmentExpression);
+		expect((node as any).left()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('augmented_assignment_expression', () => {

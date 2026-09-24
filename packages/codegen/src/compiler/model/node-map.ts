@@ -796,6 +796,7 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			return rule.subtypes.map((subRef) => {
 				const name = subRef.name;
+				const armFacts = armFactsOf(subRef);
 				const display = aliasEnvelopeValueOf(subRef, ctx, multiplicity);
 				if (display !== undefined) return display;
 				if (subRef.kindId !== undefined) {
@@ -804,6 +805,7 @@ export function deriveValuesForRule(
 						storageKindId: subRef.kindId,
 						parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
 						parseKindId: subRef.aliasedToId ?? subRef.kindId,
+						...armFacts,
 						multiplicity
 					};
 				}
@@ -813,6 +815,7 @@ export function deriveValuesForRule(
 					storageKindId: entry?.id,
 					parseKind: { kind: 'unresolved-ref' as const, name: subRef.aliasedTo ?? name },
 					parseKindId: subRef.aliasedToId ?? entry?.parseId ?? entry?.id,
+					...armFacts,
 					multiplicity
 				};
 			});
@@ -2006,6 +2009,8 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return true;
 	}
 	readonly #subtypes: readonly NodeOrTerminal[];
+	readonly #armValues: readonly NodeOrTerminal[];
+	readonly declaredSupertype: boolean;
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 	optionDefaultArm?: string;
 
@@ -2013,9 +2018,11 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		kind: string,
 		rule: SupertypeRule | ChoiceRule,
 		subtypes: readonly SubtypeRef[],
-		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
+		opts?: { kindEntries?: readonly GeneratedKindEntry[]; declared?: boolean; deriveCtx?: DeriveCtx }
 	) {
 		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: 'supertype' });
+		this.declaredSupertype = opts?.declared === true;
+		this.#armValues = rule.type === SUPERTYPE ? deriveValuesForRule(rule, opts?.deriveCtx, 'single') : [];
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },
@@ -2037,6 +2044,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	get variantSubtypes(): readonly NodeBackedRef[] | undefined {
 		const refs = this.#subtypes.filter(isNodeRef);
 		return refs.length >= 2 && refs.every((ref) => ref.variantOf === this.kind && ref.variant !== undefined) ? refs : undefined;
+	}
+
+	get armSubtypes(): readonly NodeOrTerminal[] | undefined {
+		return this.variantSubtypes ?? (this.declaredSupertype ? undefined : this.#armValues);
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

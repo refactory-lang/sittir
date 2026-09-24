@@ -5263,6 +5263,62 @@ const assignmentExpression$sequence =
 		const { left: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
+const assignmentExpression$memberExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'separator' || key === 'property') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
+	};
+const assignmentExpression$dot =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const assignmentExpression$optionalChain =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const assignmentExpression$subscriptExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'object' || key === 'optionalChain' || key === 'index') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(inner) } as never, options as never);
+	};
+const assignmentExpression$undefined =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, left: _c(child)() } as never, options as never);
+const assignmentExpression$objectPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const assignmentExpression$arrayPattern =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
+	};
+const assignmentExpression$nonNullExpression =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(seated) } as never, options as never);
+	};
 export const assignmentExpression: typeof B.assignmentExpression & {
 	typed: {
 		strict: (
@@ -5290,6 +5346,110 @@ export const assignmentExpression: typeof B.assignmentExpression & {
 			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
 		) => ReturnType<typeof C.coerceToAssignmentExpression>;
 	};
+	memberExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> &
+				ArgsOf<typeof F.buildMemberExpression>[0],
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> &
+				ArgsOf<typeof C.coerceToMemberExpression>[0],
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+		dot: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
+					left: ArgsOf<typeof memberExpression.dot.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAssignmentExpression>
+			) => ReturnType<typeof F.buildAssignmentExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
+					left: ArgsOf<typeof memberExpression.dot.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+			) => ReturnType<typeof C.coerceToAssignmentExpression>;
+		};
+		optionalChain: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
+					left: ArgsOf<typeof memberExpression.optionalChain.strict>;
+				},
+				options?: OptionsArg<typeof F.buildAssignmentExpression>
+			) => ReturnType<typeof F.buildAssignmentExpression>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
+					left: ArgsOf<typeof memberExpression.optionalChain.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+			) => ReturnType<typeof C.coerceToAssignmentExpression>;
+		};
+	};
+	subscriptExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> &
+				ArgsOf<typeof F.buildSubscriptExpression>[0],
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> &
+				ArgsOf<typeof C.coerceToSubscriptExpression>[0],
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+	};
+	undefined: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'>,
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'>,
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+	};
+	objectPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildObjectPattern>;
+			},
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToObjectPattern>;
+			},
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+	};
+	arrayPattern: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildArrayPattern>;
+			},
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToArrayPattern>;
+			},
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+	};
+	nonNullExpression: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildNonNullExpression>[0];
+			},
+			options?: OptionsArg<typeof F.buildAssignmentExpression>
+		) => ReturnType<typeof F.buildAssignmentExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToAssignmentExpression>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToNonNullExpression>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof C.coerceToAssignmentExpression>;
+	};
 } = {
 	...B.assignmentExpression,
 	typed: {
@@ -5299,6 +5459,38 @@ export const assignmentExpression: typeof B.assignmentExpression & {
 	sequence: {
 		strict: assignmentExpression$sequence(F.buildAssignmentExpression, F.buildParenthesizedExpressionSequence),
 		coerce: assignmentExpression$sequence(C.coerceToAssignmentExpression, C.coerceToParenthesizedExpressionSequence)
+	},
+	memberExpression: {
+		strict: assignmentExpression$memberExpression(F.buildAssignmentExpression, F.buildMemberExpression),
+		coerce: assignmentExpression$memberExpression(C.coerceToAssignmentExpression, C.coerceToMemberExpression),
+		dot: {
+			strict: assignmentExpression$dot(F.buildAssignmentExpression, memberExpression.dot.strict),
+			coerce: assignmentExpression$dot(C.coerceToAssignmentExpression, memberExpression.dot.coerce)
+		},
+		optionalChain: {
+			strict: assignmentExpression$optionalChain(F.buildAssignmentExpression, memberExpression.optionalChain.strict),
+			coerce: assignmentExpression$optionalChain(C.coerceToAssignmentExpression, memberExpression.optionalChain.coerce)
+		}
+	},
+	subscriptExpression: {
+		strict: assignmentExpression$subscriptExpression(F.buildAssignmentExpression, F.buildSubscriptExpression),
+		coerce: assignmentExpression$subscriptExpression(C.coerceToAssignmentExpression, C.coerceToSubscriptExpression)
+	},
+	undefined: {
+		strict: assignmentExpression$undefined(F.buildAssignmentExpression, F.buildUndefined),
+		coerce: assignmentExpression$undefined(C.coerceToAssignmentExpression, C.coerceToUndefined)
+	},
+	objectPattern: {
+		strict: assignmentExpression$objectPattern(F.buildAssignmentExpression, F.buildObjectPattern),
+		coerce: assignmentExpression$objectPattern(C.coerceToAssignmentExpression, C.coerceToObjectPattern)
+	},
+	arrayPattern: {
+		strict: assignmentExpression$arrayPattern(F.buildAssignmentExpression, F.buildArrayPattern),
+		coerce: assignmentExpression$arrayPattern(C.coerceToAssignmentExpression, C.coerceToArrayPattern)
+	},
+	nonNullExpression: {
+		strict: assignmentExpression$nonNullExpression(F.buildAssignmentExpression, F.buildNonNullExpression),
+		coerce: assignmentExpression$nonNullExpression(C.coerceToAssignmentExpression, C.coerceToNonNullExpression)
 	}
 };
 

@@ -97,7 +97,7 @@ function slotValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly No
 	return slot.values.flatMap((value) => {
 		if (!isNodeRef(value)) return [value];
 		const child = nodeMap.nodes.get(storageKindOfRef(value.node));
-		const variants = child instanceof AssembledSupertype ? child.variantSubtypes : undefined;
+		const variants = child instanceof AssembledSupertype ? child.armSubtypes : undefined;
 		return variants === undefined ? [value] : variants.map((ref) => ({ ...ref, multiplicity: value.multiplicity }));
 	});
 }

@@ -357,7 +357,7 @@ the model reaches every value shape and every subtype without further edits.
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  *
- * A SYMBOL value carries the arm rule's annotations (variant, declared
+ * A SYMBOL value, and each subtype of a SUPERTYPE, carries the arm rule's annotations (variant, declared
  * default, preference label) through onto the slot value, so an author's
  * declared arm name reaches the emitters as data instead of being
  * reconstructed from the parent's and child's kind names. A literal (STRING / PATTERN) arm carries
@@ -3009,6 +3009,23 @@ least two subtypes, every one stamped as a variant of this kind — or
 `undefined` otherwise. The model attribute emitters read instead of
 re-checking the subtype facts (sub-factory mounting through a slot, route
 emission).
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.declaredSupertype`
+
+Whether the grammar's own `supertypes:` declaration lists this kind
+(`NormalizedGrammar.supertypes`). tree-sitter keeps a declared supertype as a
+node-types entry; an undeclared hidden choice that link classifies as a
+supertype is flattened into its parent's child types instead.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.armSubtypes`
+
+The values a slot holding this supertype mounts as arms: the variant subtypes
+when it is a flattened polymorph parent, else, for an undeclared supertype,
+its subtype values derived by `deriveValuesForRule` on its own rule (the same
+derivation, alias envelopes included, that link's flattening gives an
+unaliased parent's slot). An aliased reference keeps the supertype as one
+slot value (the alias site is an envelope), and this extends the unaliased
+expansion to it. A declared supertype has none.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.<unknown>`
 

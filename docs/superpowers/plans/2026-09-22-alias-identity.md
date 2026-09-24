@@ -812,6 +812,16 @@ git commit -m "refactor(rust,python): four hand-written rules retire into alias(
 
 ---
 
+### Task 7b: A built node carries the alias envelope its read shows
+
+Every alias site is an envelope (the user's rule), and the read materializes it: python `case test():` reads `case_pattern → _simple_pattern {simple_pattern} → _class_pattern`, typescript `a = 1;` reads `assignment_expression._left = {lhs_expression} → _identifier`. A factory or composer at an aliased site builds the content directly (`casePattern.classPattern(...)` → `case_pattern._content = class_pattern`), so built ≠ read; render and the validators still pass because they compare text and parse trees, not the read-vs-built model shape.
+
+Instances: python `_simple_pattern` at case_pattern (alias `simple_pattern`); typescript `_lhs_expression` at assignment_expression and for_header_lhs (alias `lhs_expression`); rust `_non_special_token` at the eleven token-tree kinds (alias `non_special_token`).
+
+- [ ] A composer or factory at an aliased site builds the AssembledAlias envelope, so a built node equals the read node.
+- [ ] Pinned test: built python `casePattern.classPattern` and typescript `assignmentExpression` left equal their read shape (text-stripped).
+- [ ] Gates as Task 7.
+
 ### Task 8: Glossary, spec status, PR
 
 **Files:**
