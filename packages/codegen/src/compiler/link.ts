@@ -30,6 +30,7 @@ import type {
 	StringRule,
 	RepeatRule
 } from '../types/rule.ts';
+import { aliasTargetOf, storageNameOf } from '../types/rule.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import {
 	isSeq,
@@ -87,6 +88,7 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { createRuleId } from './rule-catalog.ts';
 
 export interface LinkOptions {
 	readonly include?: IncludeFilter;
@@ -169,7 +171,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const rawRules: Record<string, Rule<'evaluate'>> = Object.fromEntries(
 		Object.entries(raw.rules).filter(([name]) => name in rules)
 	);
-	unhideAliasedTargets(rules);
 	inlineReferences(rules, linkCtx);
 
 	for (const name of Object.keys(rules)) {
@@ -240,6 +241,8 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	}
 	const stampCtx: StampKindIdsCtx = { kindEntries, misses: stampMisses, aliasBodies };
 	canonicalizeCatalogLiteralRefs(rules, stampCtx);
+	const displayUnions = collectDisplayUnions(rules, stampCtx);
+	mintDisplayUnionRules(rules, { ...stampCtx, displayUnions });
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, stampCtx);
 	pruneInlinedAliasBodies(rules, { ...stampCtx, topLevelAliasBodies });
 	const terminalAliasWireIds = collectTerminalAliasWireIds(
@@ -281,6 +284,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		references,
 		derivations,
 		aliasedHiddenKinds,
+		displayUnions,
 		topLevelAliasBodies,
 		leafTextPatterns: collectLeafTextPatterns(rules),
 		terminalAliasWireIds: terminalAliasWireIds.size > 0 ? terminalAliasWireIds : undefined,
@@ -737,17 +741,6 @@ function topLevelAliasOf(rule: Rule<'link'>): AliasRule<'link'> | undefined {
 
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
 
-function unhideAliasedTargets(rules: Record<string, Rule<'link'>>): void {
-	for (const rule of Object.values(rules)) {
-		aliasedRefWalker.find(rule, (r) => {
-			if (r.type !== ALIAS || !r.named || r.content.type !== SYMBOL) return false;
-			const target = rules[r.content.name];
-			if (target !== undefined && target.hidden === true) rules[r.content.name] = { ...target, hidden: false };
-			return false;
-		});
-	}
-}
-
 function stampLinkMintedVisibility(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
 		if (!(name in ctx.rules) && rule.hidden === undefined) rules[name] = { ...rule, hidden: name.startsWith('_') };
@@ -850,6 +843,100 @@ function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): 
 		if (target) out.set(name, target);
 	}
 	return out;
+}
+
+function collectDisplayUnions(
+	rules: Record<string, Rule<'link'>>,
+	ctx: StampKindIdsCtx
+): ReadonlyMap<string, ReadonlySet<string>> {
+	const { kindEntries } = ctx;
+	const unions = new Map<string, Set<string>>();
+	const add = (entry: { display: string; storage: string }): void => {
+		const set = unions.get(entry.display) ?? new Set<string>();
+		set.add(entry.storage);
+		unions.set(entry.display, set);
+	};
+	const isDissolvedHiddenRef = (content: SymbolRule<'link'>): boolean =>
+		rules[content.name]?.hidden === true && findEntryForKindName(kindEntries, content.name)?.parseId === undefined;
+	const armsOf = (rule: Rule<'link'>): readonly Rule<'link'>[] => (rule.type === CHOICE ? rule.members : [rule]);
+	const addStorage = (entry: { display: string; content: Rule<'link'> }): void => {
+		const { display, content } = entry;
+		if (content.type === SYMBOL && isDissolvedHiddenRef(content)) {
+			for (const arm of armsOf(rules[content.name]!)) addStorage({ display, content: arm });
+			return;
+		}
+		if (content.type === CHOICE) {
+			for (const arm of content.members) addStorage({ display, content: arm });
+			return;
+		}
+		if (content.type === SYMBOL) add({ display, storage: content.literal ?? storageNameOf(content) });
+		else if (content.type === STRING) add({ display, storage: content.value });
+	};
+	const visit = (rule: Rule<'link'>): void => {
+		if (rule.type === ALIAS && rule.named && rule.value) {
+			addStorage({ display: rule.value, content: rule.content });
+			visit(rule.content);
+			return;
+		}
+		if (rule.type === SYMBOL) {
+			const display = aliasTargetOf(rule);
+			if (display !== undefined) addStorage({ display, content: rule });
+			return;
+		}
+		if ('members' in rule) (rule as { members: readonly Rule<'link'>[] }).members.forEach(visit);
+		else if ('content' in rule && rule.content !== undefined) visit((rule as { content: Rule<'link'> }).content);
+	};
+	for (const rule of Object.values(rules)) visit(rule);
+	for (const display of unions.keys()) if (rules[display] !== undefined) add({ display, storage: display });
+	return unions;
+}
+
+function mintDisplayUnionRules(
+	rules: Record<string, Rule<'link'>>,
+	ctx: StampKindIdsCtx & { displayUnions: ReadonlyMap<string, ReadonlySet<string>> }
+): void {
+	const { kindEntries, displayUnions } = ctx;
+	const memberRef = (member: string): Rule<'link'> | undefined => {
+		const literalEntry = findEntryForLiteralText(kindEntries, member);
+		if (literalEntry !== undefined) {
+			return {
+				type: SYMBOL,
+				name: literalEntry.kind,
+				literal: member,
+				inline: isHiddenKind(literalEntry.kind),
+				kindId: literalEntry.parseId ?? literalEntry.id,
+				metadata: makeRuleMetadata({ symbolSource: 'link' })
+			} as Rule<'link'>;
+		}
+		const nameEntry = findEntryForKindName(kindEntries, member);
+		if (nameEntry !== undefined) {
+			return { type: SYMBOL, name: nameEntry.kind, kindId: nameEntry.parseId ?? nameEntry.id } as Rule<'link'>;
+		}
+		return undefined;
+	};
+	for (const [display, members] of displayUnions) {
+		if (display.startsWith('_') || !isAsciiIdentifier(display) || rules[display] !== undefined) continue;
+		const refs = [...members].map(memberRef).filter((r): r is Rule<'link'> => r !== undefined);
+		if (refs.length === 0) continue;
+		if (!kindEntries.some((entry) => entry.alias === true && entry.symbolName === display)) continue;
+		const content: Rule<'link'> =
+			refs.length === 1
+				? { ...refs[0]!, id: createRuleId(display, { path: [{ edge: 'content' }] }) }
+				: ({
+						type: CHOICE,
+						id: createRuleId(display, { path: [{ edge: 'content' }] }),
+						members: refs.map((ref, index) => ({
+							...ref,
+							id: createRuleId(display, { path: [{ edge: 'content' }, { edge: 'members', index }] })
+						}))
+					} as Rule<'link'>);
+		rules[display] = {
+			type: FIELD,
+			name: 'content',
+			id: createRuleId(display, { path: [] }),
+			content
+		} as Rule<'link'>;
+	}
 }
 
 function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {

@@ -12,13 +12,10 @@
     "_import_identifier",
     "_lhs_expression",
     "_module_export_name",
-    "_property_identifier",
     "_property_name",
-    "_shorthand_property_identifier",
-    "_shorthand_property_identifier_pattern",
-    "_statement_identifier",
     "_tuple_type_member",
     "_whitespace",
+    "call_expression",
     "comment",
     "declaration",
     "export_statement",
@@ -29,11 +26,12 @@
     "lhs_expression",
     "meta_property",
     "number",
+    "parenthesized_expression",
     "pattern",
     "primary_expression",
     "primary_type",
-    "property_identifier",
     "statement",
+    "string",
     "type",
     "update_expression",
     "variable_declarator"
@@ -71,13 +69,6 @@
         "import_clause_default_import": "default_import"
       }
     },
-    "parenthesized_expression": {
-      "definedBy": "override",
-      "childKind": {
-        "parenthesized_expression_typed": "typed",
-        "parenthesized_expression_sequence": "sequence"
-      }
-    },
     "class_heritage": {
       "definedBy": "override",
       "childKind": {
@@ -91,25 +82,10 @@
         "arrow_function_parameter": "parameter"
       }
     },
-    "call_expression": {
-      "definedBy": "override",
-      "childKind": {
-        "call_expression_call": "call",
-        "call_expression_template_call": "template_call",
-        "call_expression_member": "member"
-      }
-    },
     "binary_expression": {
       "definedBy": "override",
       "childKind": {
         "binary_expression_in": "in"
-      }
-    },
-    "string": {
-      "definedBy": "override",
-      "childKind": {
-        "string_double": "double",
-        "string_single": "single"
       }
     },
     "class_body": {
@@ -130,6 +106,9 @@
     }
   },
   "variantRoutes": {
+    "call_expression_call": "callExpression.call",
+    "call_expression_member": "callExpression.member",
+    "call_expression_template_call": "callExpression.templateCall",
     "comment_block": "comment.block",
     "comment_line": "comment.line",
     "export_statement_default": "exportStatement.default",
@@ -155,100 +134,30 @@
     "number_float_scientific": "number.floatScientific",
     "number_hex": "number.hex",
     "number_octal": "number.octal",
+    "parenthesized_expression_sequence": "parenthesizedExpression.sequence",
+    "parenthesized_expression_typed": "parenthesizedExpression.typed",
+    "string_double": "string.double",
+    "string_single": "string.single",
     "update_expression_postfix": "updateExpression.postfix",
     "update_expression_prefix": "updateExpression.prefix",
     "variable_declarator_definite": "variableDeclarator.definite",
     "variable_declarator_plain": "variableDeclarator.plain"
   },
   "fieldAliasMap": {
-    "break_statement.label": {
-      "statement_identifier": "identifier"
-    },
-    "continue_statement.label": {
-      "statement_identifier": "identifier"
-    },
-    "parenthesized_expression.content": {
-      "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression"
-    },
     "assignment_pattern.left": {
       "lhs_expression": "_lhs_expression"
     },
     "array_pattern.elements": {
       "lhs_expression": "_lhs_expression"
     },
-    "nested_identifier.object": {
-      "member_expression": "nested_identifier"
-    },
-    "nested_identifier.property": {
-      "property_identifier": "identifier"
-    },
-    "class.name": {
-      "type_identifier": "identifier"
-    },
-    "class_declaration.name": {
-      "type_identifier": "identifier"
-    },
-    "member_expression.property": {
-      "property_identifier": "identifier"
-    },
     "assignment_expression.left": {
       "lhs_expression": "_lhs_expression"
     },
-    "decorator.content": {
-      "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression",
-      "parenthesized_expression": "decorator_parenthesized_expression"
-    },
-    "decorator_member_expression.object": {
-      "member_expression": "decorator_member_expression"
-    },
-    "decorator_member_expression.property": {
-      "property_identifier": "identifier"
-    },
-    "decorator_call_expression.function": {
-      "member_expression": "decorator_member_expression"
+    "template_string.elements": {
+      "string_fragment": "_template_chars"
     },
     "pair_pattern.value": {
       "lhs_expression": "_lhs_expression"
-    },
-    "decorator_parenthesized_expression.content": {
-      "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression"
-    },
-    "as_expression.type_annotation": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "satisfies_expression.type_annotation": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "implements_clause.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "abstract_class_declaration.name": {
-      "type_identifier": "identifier"
-    },
-    "nested_type_identifier.name": {
-      "type_identifier": "identifier"
-    },
-    "interface_declaration.name": {
-      "type_identifier": "identifier"
-    },
-    "interface_declaration.body": {
-      "interface_body": "object_type"
-    },
-    "extends_type_clause.type": {
-      "type_identifier": "identifier"
-    },
-    "type_alias_declaration.name": {
-      "type_identifier": "identifier"
-    },
-    "type_alias_declaration.value": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "required_parameter.pattern": {
       "lhs_expression": "_lhs_expression"
@@ -256,104 +165,12 @@
     "optional_parameter.pattern": {
       "lhs_expression": "_lhs_expression"
     },
-    "omitting_type_annotation.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "adding_type_annotation.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "opting_type_annotation.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "type_annotation.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "_type_query_member_expression_in_type_annotation.object": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "_type_query_member_expression_in_type_annotation.property": {
-      "property_identifier": "identifier"
-    },
-    "_type_query_call_expression_in_type_annotation.function": {
-      "member_expression": "_type_query_member_expression_in_type_annotation"
-    },
-    "optional_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "rest_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "constructor_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
     "template_type.content": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
-    "infer_type.name": {
-      "type_identifier": "identifier"
-    },
-    "infer_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "conditional_type.left": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "conditional_type.right": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "conditional_type.consequence": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "conditional_type.alternative": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "generic_type.name": {
-      "type_identifier": "identifier"
-    },
-    "type_predicate.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "_type_query_member_expression.object": {
-      "subscript_expression": "_type_query_subscript_expression",
-      "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression"
-    },
-    "_type_query_member_expression.property": {
-      "property_identifier": "identifier"
-    },
-    "_type_query_subscript_expression.object": {
-      "subscript_expression": "_type_query_subscript_expression",
-      "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression"
-    },
-    "_type_query_call_expression.function": {
-      "member_expression": "_type_query_member_expression",
-      "subscript_expression": "_type_query_subscript_expression"
-    },
-    "_type_query_instantiation_expression.function": {
-      "member_expression": "_type_query_member_expression",
-      "subscript_expression": "_type_query_subscript_expression"
-    },
-    "type_query.content": {
-      "subscript_expression": "_type_query_subscript_expression",
-      "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression",
-      "instantiation_expression": "_type_query_instantiation_expression"
+    "template_literal_type.elements": {
+      "string_fragment": "_template_chars"
     },
     "index_type_query.type": {
       "type_identifier": "identifier",
@@ -363,91 +180,16 @@
       "type_identifier": "identifier",
       "this_type": "this"
     },
-    "lookup_type.index_type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "mapped_type_clause.name": {
-      "type_identifier": "identifier"
-    },
-    "mapped_type_clause.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "mapped_type_clause.alias": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "literal_type.content": {
-      "unary_expression": "_number"
-    },
     "flow_maybe_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
-    },
-    "parenthesized_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "type_parameter.name": {
-      "type_identifier": "identifier"
-    },
-    "default_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "constraint.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
     },
     "array_type.type": {
       "type_identifier": "identifier",
       "this_type": "this"
     },
-    "readonly_type.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "union_type.left": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "union_type.right": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "intersection_type.left": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "intersection_type.right": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "function_type.return_type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "types.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "tuple_type_members.tuple_type_member": {
-      "required_parameter": "tuple_parameter",
-      "optional_parameter": "optional_tuple_parameter",
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "ambient_declaration_module.name": {
-      "property_identifier": "identifier"
-    },
-    "ambient_declaration_module.type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
-    },
-    "index_signature_colon.index_type": {
-      "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
+    "string_single.elements": {
+      "string_fragment": "unescaped_single_string_fragment"
     },
     "for_header_lhs.left": {
       "lhs_expression": "_lhs_expression"
@@ -488,7 +230,8 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
-          "_string"
+          "_string_double",
+          "_string_single"
         ]
       }
     },
@@ -1015,22 +758,6 @@
         "nonEmpty": false
       }
     },
-    "parenthesized_expression": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_parenthesized_expression_typed",
-          "_parenthesized_expression_sequence",
-          "_identifier",
-          "_member_expression",
-          "_call_expression"
-        ]
-      }
-    },
     "yield_expression": {
       "expression": {
         "unnamed": false,
@@ -1435,20 +1162,6 @@
         "nonEmpty": false
       }
     },
-    "call_expression": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "wireKeys": [
-          "_call_expression_call",
-          "_call_expression_template_call",
-          "_call_expression_member"
-        ]
-      }
-    },
     "new_expression": {
       "constructor": {
         "unnamed": false,
@@ -1660,20 +1373,6 @@
         "nonEmpty": true
       }
     },
-    "string": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false,
-        "registered": true,
-        "wireKeys": [
-          "_string_double",
-          "_string_single"
-        ]
-      }
-    },
     "escape_sequence": {
       "content": {
         "unnamed": false,
@@ -1744,9 +1443,9 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
-          "_member_expression",
-          "_call_expression",
-          "_parenthesized_expression"
+          "_decorator_member_expression",
+          "_decorator_call_expression",
+          "_decorator_parenthesized_expression"
         ]
       }
     },
@@ -1835,7 +1534,28 @@
           "_subscript_expression",
           "_undefined",
           "_identifier",
-          "_reserved_identifier",
+          "_declare_keyword",
+          "_namespace_keyword",
+          "_type_keyword",
+          "_public_keyword",
+          "_private_keyword",
+          "_protected_keyword",
+          "_override_keyword",
+          "_readonly_keyword",
+          "_module_keyword",
+          "_any_keyword",
+          "_number_keyword",
+          "_boolean_keyword",
+          "_string_keyword",
+          "_symbol_keyword",
+          "_export_keyword",
+          "_object_keyword",
+          "_new_keyword",
+          "_get_keyword",
+          "_set_keyword",
+          "_async_keyword",
+          "_static_keyword",
+          "_let_keyword",
           "_object_pattern",
           "_array_pattern",
           "_non_null_expression"
@@ -2255,8 +1975,8 @@
         "nonEmpty": false,
         "wireKeys": [
           "_identifier",
-          "_member_expression",
-          "_call_expression"
+          "_decorator_member_expression",
+          "_decorator_call_expression"
         ]
       }
     },
@@ -2913,7 +2633,6 @@
           "_this_type",
           "_parenthesized_type",
           "_predefined_type",
-          "_identifier",
           "_nested_type_identifier",
           "_generic_type",
           "_object_type",
@@ -3113,10 +2832,10 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_subscript_expression",
-          "_member_expression",
-          "_call_expression",
-          "_instantiation_expression",
+          "_type_query_subscript_expression",
+          "_type_query_member_expression",
+          "_type_query_call_expression",
+          "_type_query_instantiation_expression",
           "_identifier",
           "_this"
         ]
@@ -3178,7 +2897,7 @@
         "multiple": false,
         "nonEmpty": false,
         "wireKeys": [
-          "_unary_expression",
+          "_unary_expression_number",
           "_number_hex",
           "_number_float_point",
           "_number_float_leading_point",
@@ -3187,7 +2906,8 @@
           "_number_binary",
           "_number_octal",
           "_number_bigint",
-          "_string",
+          "_string_double",
+          "_string_single",
           "_true",
           "_false",
           "_null",
@@ -3552,10 +3272,10 @@
         "wireKeys": [
           "_name",
           "_enum_assignment",
-          "_reserved_identifier",
-          "_identifier",
+          "_property_identifier",
           "_private_property_identifier",
-          "_string",
+          "_string_double",
+          "_string_single",
           "_number_hex",
           "_number_float_point",
           "_number_float_leading_point",
@@ -4130,12 +3850,34 @@
           "_instantiation_expression",
           "_internal_module",
           "_type_assertion",
-          "_reserved_identifier",
+          "_identifier",
           "_subscript_expression",
           "_member_expression",
-          "_parenthesized_expression",
+          "_parenthesized_expression_typed",
+          "_parenthesized_expression_sequence",
           "_undefined",
-          "_identifier",
+          "_declare_keyword",
+          "_namespace_keyword",
+          "_type_keyword",
+          "_public_keyword",
+          "_private_keyword",
+          "_protected_keyword",
+          "_override_keyword",
+          "_readonly_keyword",
+          "_module_keyword",
+          "_any_keyword",
+          "_number_keyword",
+          "_boolean_keyword",
+          "_string_keyword",
+          "_symbol_keyword",
+          "_export_keyword",
+          "_object_keyword",
+          "_new_keyword",
+          "_get_keyword",
+          "_set_keyword",
+          "_async_keyword",
+          "_static_keyword",
+          "_let_keyword",
           "_this",
           "_super",
           "_number_hex",
@@ -4146,7 +3888,8 @@
           "_number_binary",
           "_number_octal",
           "_number_bigint",
-          "_string",
+          "_string_double",
+          "_string_single",
           "_template_string",
           "_regex",
           "_true",
@@ -4160,7 +3903,9 @@
           "_class",
           "_meta_property_new_target",
           "_meta_property_import_meta",
-          "_call_expression",
+          "_call_expression_call",
+          "_call_expression_template_call",
+          "_call_expression_member",
           "_non_null_expression",
           "_assignment_expression",
           "_augmented_assignment_expression",
@@ -4598,6 +4343,69 @@
         "multiple": false,
         "nonEmpty": false
       }
+    },
+    "statement_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "shorthand_property_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "shorthand_property_identifier_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "property_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "type_identifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "semicolon": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "interface_body": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
     }
   },
   "nodes": [
@@ -4669,12 +4477,33 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_reserved_identifier",
+        "any_keyword",
+        "async_keyword",
+        "boolean_keyword",
+        "declare_keyword",
+        "export_keyword",
+        "get_keyword",
         "identifier",
+        "let_keyword",
         "member_expression",
+        "module_keyword",
+        "namespace_keyword",
+        "new_keyword",
         "non_null_expression",
+        "number_keyword",
+        "object_keyword",
+        "override_keyword",
         "parenthesized_expression",
-        "subscript_expression"
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "set_keyword",
+        "static_keyword",
+        "string_keyword",
+        "subscript_expression",
+        "symbol_keyword",
+        "type_keyword"
       ]
     },
     {
@@ -4972,13 +4801,34 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_reserved_identifier",
+        "any_keyword",
         "array_pattern",
+        "async_keyword",
+        "boolean_keyword",
+        "declare_keyword",
+        "export_keyword",
+        "get_keyword",
         "identifier",
+        "let_keyword",
         "member_expression",
+        "module_keyword",
+        "namespace_keyword",
+        "new_keyword",
         "non_null_expression",
+        "number_keyword",
+        "object_keyword",
         "object_pattern",
+        "override_keyword",
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "set_keyword",
+        "static_keyword",
+        "string_keyword",
         "subscript_expression",
+        "symbol_keyword",
+        "type_keyword",
         "undefined"
       ]
     },
@@ -5073,18 +4923,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_property_identifier",
-      "modelType": "supertype",
-      "typeName": "_PropertyIdentifier",
-      "irKey": "propertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
       "kind": "_property_name",
       "modelType": "supertype",
       "typeName": "PropertyName",
@@ -5092,68 +4930,11 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_property_identifier",
         "computed_property_name",
         "number",
         "private_property_identifier",
+        "property_identifier",
         "string"
-      ]
-    },
-    {
-      "kind": "_reserved_identifier",
-      "modelType": "enum",
-      "typeName": "ReservedIdentifier",
-      "factoryName": "reservedIdentifier",
-      "irKey": "reservedIdentifier",
-      "hidden": false,
-      "values": [
-        "declare",
-        "namespace",
-        "type",
-        "public",
-        "private",
-        "protected",
-        "override",
-        "readonly",
-        "module",
-        "any",
-        "number",
-        "boolean",
-        "string",
-        "symbol",
-        "export",
-        "object",
-        "new",
-        "get",
-        "set",
-        "async",
-        "static",
-        "let"
-      ],
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_shorthand_property_identifier",
-      "modelType": "supertype",
-      "typeName": "ShorthandPropertyIdentifier",
-      "irKey": "shorthandPropertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
-    },
-    {
-      "kind": "_shorthand_property_identifier_pattern",
-      "modelType": "supertype",
-      "typeName": "ShorthandPropertyIdentifierPattern",
-      "irKey": "shorthandPropertyIdentifierPattern",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
       ]
     },
     {
@@ -5165,18 +4946,6 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " "
-    },
-    {
-      "kind": "_statement_identifier",
-      "modelType": "supertype",
-      "typeName": "StatementIdentifier",
-      "irKey": "statementIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
-        "identifier"
-      ]
     },
     {
       "kind": "_template_chars",
@@ -5223,15 +4992,6 @@
       ]
     },
     {
-      "kind": "_type_identifier",
-      "modelType": "pattern",
-      "typeName": "TypeIdentifier",
-      "factoryName": "typeIdentifier",
-      "irKey": "typeIdentifier",
-      "hidden": false,
-      "leafPattern": "/^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$/u"
-    },
-    {
       "kind": "_type_query_call_expression",
       "modelType": "branch",
       "typeName": "TypeQueryCallExpression",
@@ -5270,13 +5030,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
-              "parseKind": "subscript_expression"
+              "parseKind": "type_query_subscript_expression"
             }
           ]
         },
@@ -5338,7 +5098,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression_in_type_annotation",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression_in_type_annotation"
             }
           ]
         },
@@ -5408,13 +5168,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
-              "parseKind": "subscript_expression"
+              "parseKind": "type_query_subscript_expression"
             }
           ]
         },
@@ -5485,19 +5245,19 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
-              "parseKind": "subscript_expression"
+              "parseKind": "type_query_subscript_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression"
+              "parseKind": "type_query_call_expression"
             }
           ]
         },
@@ -5535,7 +5295,7 @@
           "storage": "verbatim",
           "kinds": [
             "private_property_identifier",
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
@@ -5547,7 +5307,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -5592,13 +5352,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression_in_type_annotation",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression_in_type_annotation"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression_in_type_annotation",
-              "parseKind": "call_expression"
+              "parseKind": "type_query_call_expression_in_type_annotation"
             }
           ]
         },
@@ -5612,7 +5372,7 @@
           "storage": "verbatim",
           "kinds": [
             "private_property_identifier",
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
@@ -5624,7 +5384,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -5676,19 +5436,19 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
-              "parseKind": "subscript_expression"
+              "parseKind": "type_query_subscript_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression"
+              "parseKind": "type_query_call_expression"
             }
           ]
         },
@@ -5804,13 +5564,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -5983,7 +5743,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -5993,7 +5753,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -6229,7 +6121,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -6240,6 +6131,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -6370,13 +6262,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -6685,7 +6577,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -6696,6 +6587,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -6820,15 +6712,140 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_reserved_identifier",
             "identifier"
           ],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "parseKind": "reserved_identifier"
+              "value": "declare",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -6845,30 +6862,7 @@
         "parameter"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
-        "any_keyword",
-        "async_keyword",
-        "boolean_keyword",
-        "declare_keyword",
-        "export_keyword",
-        "get_keyword",
-        "identifier",
-        "let_keyword",
-        "module_keyword",
-        "namespace_keyword",
-        "new_keyword",
-        "number_keyword",
-        "object_keyword",
-        "override_keyword",
-        "private_keyword",
-        "protected_keyword",
-        "public_keyword",
-        "readonly_keyword",
-        "set_keyword",
-        "static_keyword",
-        "string_keyword",
-        "symbol_keyword",
-        "type_keyword"
+        "identifier"
       ]
     },
     {
@@ -7237,7 +7231,6 @@
           "kinds": [
             "member_expression",
             "subscript_expression",
-            "_reserved_identifier",
             "identifier",
             "parenthesized_expression",
             "non_null_expression"
@@ -7256,10 +7249,136 @@
               "parseKind": "subscript_expression"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "parseKind": "reserved_identifier"
+              "value": "declare",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "identifier"
             },
             {
               "kind": "node-ref",
@@ -7363,7 +7482,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -7374,14 +7492,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -7412,7 +7527,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -7424,7 +7538,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -7839,13 +7952,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "statement_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "identifier",
+              "name": "statement_identifier",
               "parseKind": "statement_identifier"
             }
           ]
@@ -7878,77 +7991,23 @@
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "identifier",
+      "forwardsTo": "statement_identifier",
       "factoryFields": [
         "label"
       ],
       "bareAccepts": [
-        "identifier"
+        "identifier",
+        "statement_identifier"
       ]
     },
     {
       "kind": "call_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "CallExpression",
-      "factoryName": "callExpression",
       "irKey": "callExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "call_expression_call",
-            "call_expression_template_call",
-            "call_expression_member"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "call_expression_call",
-              "parseKind": "call_expression_call",
-              "seat": {
-                "kind": "call_expression_call",
-                "shape": "arm",
-                "mount": "call"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "call_expression_template_call",
-              "parseKind": "call_expression_template_call",
-              "seat": {
-                "kind": "call_expression_template_call",
-                "shape": "arm",
-                "mount": "templateCall"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "call_expression_member",
-              "parseKind": "call_expression_member",
-              "seat": {
-                "kind": "call_expression_member",
-                "shape": "arm",
-                "mount": "member"
-              }
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "bareAccepts": [
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call"
@@ -8489,13 +8548,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -8916,13 +8975,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -9368,7 +9427,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -9379,14 +9437,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -9417,7 +9472,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -9429,7 +9483,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -9838,13 +9891,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "statement_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "identifier",
+              "name": "statement_identifier",
               "parseKind": "statement_identifier"
             }
           ]
@@ -9877,12 +9930,13 @@
         }
       ],
       "factoryShape": "forwarded",
-      "forwardsTo": "identifier",
+      "forwardsTo": "statement_identifier",
       "factoryFields": [
         "label"
       ],
       "bareAccepts": [
-        "identifier"
+        "identifier",
+        "statement_identifier"
       ]
     },
     {
@@ -10047,19 +10101,19 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "decorator_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
-              "parseKind": "call_expression"
+              "parseKind": "decorator_call_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_parenthesized_expression",
-              "parseKind": "parenthesized_expression"
+              "parseKind": "decorator_parenthesized_expression"
             }
           ]
         }
@@ -10106,7 +10160,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "decorator_member_expression"
             }
           ]
         },
@@ -10189,7 +10243,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "decorator_member_expression"
             }
           ]
         },
@@ -10202,13 +10256,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -10252,13 +10306,13 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "decorator_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
-              "parseKind": "call_expression"
+              "parseKind": "decorator_call_expression"
             }
           ]
         }
@@ -10361,7 +10415,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -10372,6 +10425,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -10558,7 +10612,6 @@
       ],
       "bareAccepts": [
         "_automatic_semicolon",
-        "_reserved_identifier",
         "abstract_class_declaration",
         "ambient_declaration",
         "ambient_declaration_global",
@@ -10574,7 +10627,6 @@
         "binary_expression",
         "boolean_keyword",
         "break_statement",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
@@ -10583,8 +10635,6 @@
         "continue_statement",
         "debugger_statement",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "do_statement",
         "empty_statement",
         "enum_declaration",
@@ -10642,7 +10692,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -10655,8 +10704,8 @@
         "sequence_expression",
         "set_keyword",
         "statement_block",
+        "statement_identifier",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -10723,7 +10772,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -10733,7 +10782,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -10824,7 +11005,6 @@
         "enum_body_elements"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -10835,15 +11015,12 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "computed_property_name",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "enum_assignment",
         "enum_body_elements",
         "export_keyword",
@@ -10876,11 +11053,11 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
         "private_property_identifier",
+        "property_identifier",
         "protected_keyword",
         "public_keyword",
         "readonly_keyword",
@@ -10889,7 +11066,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -10937,7 +11113,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -10948,15 +11123,12 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "computed_property_name",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "enum_assignment",
         "export_keyword",
         "false",
@@ -10988,11 +11160,11 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
         "private_property_identifier",
+        "property_identifier",
         "protected_keyword",
         "public_keyword",
         "readonly_keyword",
@@ -11001,7 +11173,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -11246,7 +11417,6 @@
         "export_specifier",
         "export_specifiers",
         "identifier",
-        "string",
         "string_double",
         "string_single"
       ]
@@ -11381,7 +11551,6 @@
       "bareAccepts": [
         "export_specifier",
         "identifier",
-        "string",
         "string_double",
         "string_single"
       ]
@@ -11535,7 +11704,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "abstract_class_declaration",
         "ambient_declaration",
         "ambient_declaration_global",
@@ -11550,15 +11718,12 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "class_declaration",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "enum_declaration",
         "export_keyword",
         "export_statement_default_declaration_default_kw_value",
@@ -11598,7 +11763,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -11611,7 +11775,6 @@
         "set_keyword",
         "statement_block",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -11697,7 +11860,6 @@
         "value"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -11708,14 +11870,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -11746,7 +11905,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -11758,7 +11916,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -11886,7 +12043,6 @@
         "export_statement_default_from_ns_from",
         "export_statement_default_from_star_from",
         "identifier",
-        "string",
         "string_double",
         "string_single"
       ]
@@ -12042,13 +12198,11 @@
         }
       ],
       "name": "export_statement_default_from_star_from",
-      "factoryShape": "forwarded",
-      "forwardsTo": "string",
+      "factoryShape": "direct",
       "factoryFields": [
         "source"
       ],
       "bareAccepts": [
-        "string",
         "string_double",
         "string_single"
       ]
@@ -12113,7 +12267,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -12124,14 +12277,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -12162,7 +12312,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -12174,7 +12323,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -12431,7 +12579,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -12442,14 +12589,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -12480,7 +12624,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -12492,7 +12635,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -12574,7 +12716,7 @@
           "nonEmpty": true,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "nested_type_identifier",
             "generic_type"
           ],
@@ -12582,7 +12724,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -12743,7 +12885,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -12754,6 +12895,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -14370,14 +14512,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier",
+            "type_identifier",
             "nested_type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             },
             {
@@ -15590,8 +15732,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "identifier",
-            "_reserved_identifier"
+            "identifier"
           ],
           "values": [
             {
@@ -15601,10 +15742,136 @@
               "parseKind": "identifier"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "parseKind": "reserved_identifier"
+              "value": "declare",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "identifier"
             }
           ]
         },
@@ -15881,7 +16148,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -15892,6 +16158,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -15928,13 +16195,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -16033,6 +16300,43 @@
       ]
     },
     {
+      "kind": "interface_body",
+      "modelType": "alias",
+      "typeName": "InterfaceBody",
+      "factoryName": "interfaceBody",
+      "irKey": "interfaceBody",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "object_type"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_type",
+              "parseKind": "object_type"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "object_type"
+      ]
+    },
+    {
       "kind": "interface_declaration",
       "modelType": "branch",
       "typeName": "InterfaceDeclaration",
@@ -16049,13 +16353,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -16109,13 +16413,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "object_type"
+            "interface_body"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "object_type",
+              "name": "interface_body",
               "parseKind": "interface_body"
             }
           ]
@@ -16314,13 +16618,145 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_statement_identifier"
+            "statement_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_statement_identifier",
+              "name": "statement_identifier",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "statement_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "statement_identifier"
             }
           ]
@@ -16482,13 +16918,34 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_reserved_identifier",
+        "any_keyword",
         "array_pattern",
+        "async_keyword",
+        "boolean_keyword",
+        "declare_keyword",
+        "export_keyword",
+        "get_keyword",
         "identifier",
+        "let_keyword",
         "member_expression",
+        "module_keyword",
+        "namespace_keyword",
+        "new_keyword",
         "non_null_expression",
+        "number_keyword",
+        "object_keyword",
         "object_pattern",
+        "override_keyword",
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "set_keyword",
+        "static_keyword",
+        "string_keyword",
         "subscript_expression",
+        "symbol_keyword",
+        "type_keyword",
         "undefined"
       ]
     },
@@ -16522,7 +16979,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_number",
-              "parseKind": "unary_expression"
+              "parseKind": "unary_expression_number"
             },
             {
               "kind": "node-ref",
@@ -16579,7 +17036,6 @@
         "number_float_scientific",
         "number_hex",
         "number_octal",
-        "string",
         "string_double",
         "string_single",
         "true",
@@ -16708,13 +17164,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -16845,7 +17301,7 @@
           "storage": "verbatim",
           "kinds": [
             "private_property_identifier",
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
@@ -16857,7 +17313,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -17068,7 +17524,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -17078,7 +17534,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -17381,7 +17969,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -17391,7 +17979,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -17690,7 +18410,6 @@
       ],
       "bareAccepts": [
         "identifier",
-        "string",
         "string_double",
         "string_single"
       ]
@@ -17775,7 +18494,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "nested_identifier",
-              "parseKind": "member_expression"
+              "parseKind": "nested_identifier"
             }
           ]
         },
@@ -17788,13 +18507,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "property_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "property_identifier",
               "parseKind": "property_identifier"
             }
           ]
@@ -17850,13 +18569,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -18000,7 +18719,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -18011,14 +18729,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -18049,7 +18764,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -18061,7 +18775,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -18934,7 +19647,7 @@
             "pair",
             "spread_element",
             "method_definition",
-            "_shorthand_property_identifier"
+            "shorthand_property_identifier"
           ],
           "values": [
             {
@@ -18958,7 +19671,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_shorthand_property_identifier",
+              "name": "shorthand_property_identifier",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "declare",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "namespace",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "type",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "public",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "private",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "protected",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "override",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "readonly",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "module",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "any",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "number",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "boolean",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "string",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "symbol",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "export",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "object",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "new",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "get",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "set",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "async",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "static",
+              "parseKind": "shorthand_property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "let",
               "parseKind": "shorthand_property_identifier"
             }
           ]
@@ -18986,15 +19831,147 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_shorthand_property_identifier_pattern",
+            "shorthand_property_identifier_pattern",
             "object_pattern",
             "array_pattern"
           ],
           "values": [
             {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_shorthand_property_identifier_pattern",
+              "name": "shorthand_property_identifier_pattern",
               "parseKind": "shorthand_property_identifier_pattern"
             },
             {
@@ -19069,7 +20046,7 @@
             "pair_pattern",
             "rest_pattern",
             "object_assignment_pattern",
-            "_shorthand_property_identifier_pattern"
+            "shorthand_property_identifier_pattern"
           ],
           "values": [
             {
@@ -19093,7 +20070,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_shorthand_property_identifier_pattern",
+              "name": "shorthand_property_identifier_pattern",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "declare",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "namespace",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "type",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "public",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "private",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "protected",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "override",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "readonly",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "module",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "any",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "number",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "boolean",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "string",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "symbol",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "export",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "object",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "new",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "get",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "set",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "async",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "static",
+              "parseKind": "shorthand_property_identifier_pattern"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "let",
               "parseKind": "shorthand_property_identifier_pattern"
             }
           ]
@@ -19213,7 +20322,6 @@
         "content"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -19224,7 +20332,6 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
@@ -19232,8 +20339,6 @@
         "class",
         "construct_signature",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_clause",
         "export_keyword",
         "export_specifier",
@@ -19278,7 +20383,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -19291,7 +20395,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -19399,7 +20502,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -19410,6 +20512,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -19495,7 +20598,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -19506,6 +20608,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -19823,7 +20926,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -19834,6 +20936,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -19882,7 +20985,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -19892,7 +20995,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -19965,7 +21200,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -19975,7 +21210,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -20040,82 +21407,14 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "ParenthesizedExpression",
-      "factoryName": "parenthesizedExpression",
       "irKey": "parenthesizedExpression",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "parenthesized_expression_typed",
-            "parenthesized_expression_sequence",
-            "identifier",
-            "decorator_member_expression",
-            "decorator_call_expression"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "parenthesized_expression_typed",
-              "parseKind": "parenthesized_expression_typed",
-              "seat": {
-                "kind": "parenthesized_expression_typed",
-                "shape": "arm",
-                "mount": "typed"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "parenthesized_expression_sequence",
-              "parseKind": "parenthesized_expression_sequence",
-              "seat": {
-                "kind": "parenthesized_expression_sequence",
-                "shape": "arm",
-                "mount": "sequence"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "decorator_member_expression",
-              "parseKind": "member_expression"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "decorator_call_expression",
-              "parseKind": "call_expression"
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "bareAccepts": [
-        "decorator_call_expression",
-        "decorator_member_expression",
-        "identifier",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
         "parenthesized_expression_sequence",
-        "parenthesized_expression_typed",
-        "sequence_expression"
+        "parenthesized_expression_typed"
       ]
     },
     {
@@ -20296,7 +21595,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -20307,6 +21605,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -20324,7 +21623,36 @@
       "transparent": true,
       "subtypes": [
         "_lhs_expression",
-        "rest_pattern"
+        "any_keyword",
+        "array_pattern",
+        "async_keyword",
+        "boolean_keyword",
+        "declare_keyword",
+        "export_keyword",
+        "get_keyword",
+        "identifier",
+        "let_keyword",
+        "member_expression",
+        "module_keyword",
+        "namespace_keyword",
+        "new_keyword",
+        "non_null_expression",
+        "number_keyword",
+        "object_keyword",
+        "object_pattern",
+        "override_keyword",
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "rest_pattern",
+        "set_keyword",
+        "static_keyword",
+        "string_keyword",
+        "subscript_expression",
+        "symbol_keyword",
+        "type_keyword",
+        "undefined"
       ]
     },
     {
@@ -20466,29 +21794,50 @@
       "hidden": true,
       "transparent": true,
       "subtypes": [
-        "_reserved_identifier",
+        "any_keyword",
         "array",
         "arrow_function",
+        "async_keyword",
+        "boolean_keyword",
         "call_expression",
         "class",
+        "declare_keyword",
+        "export_keyword",
         "false",
         "function_expression",
         "generator_function",
+        "get_keyword",
         "identifier",
+        "let_keyword",
         "member_expression",
         "meta_property",
+        "module_keyword",
+        "namespace_keyword",
+        "new_keyword",
         "non_null_expression",
         "null",
         "number",
+        "number_keyword",
         "object",
+        "object_keyword",
+        "override_keyword",
         "parenthesized_expression",
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
         "regex",
+        "set_keyword",
+        "static_keyword",
         "string",
+        "string_keyword",
         "subscript_expression",
         "super",
+        "symbol_keyword",
         "template_string",
         "this",
         "true",
+        "type_keyword",
         "undefined"
       ]
     },
@@ -20505,7 +21854,6 @@
         "existential_type",
         "flow_maybe_type",
         "generic_type",
-        "identifier",
         "index_type_query",
         "intersection_type",
         "literal_type",
@@ -20517,6 +21865,7 @@
         "template_literal_type",
         "this",
         "tuple_type",
+        "type_identifier",
         "type_query",
         "union_type"
       ]
@@ -20637,13 +21986,170 @@
     },
     {
       "kind": "property_identifier",
-      "modelType": "supertype",
+      "modelType": "alias",
       "typeName": "PropertyIdentifier",
+      "factoryName": "propertyIdentifier",
       "irKey": "propertyIdentifier",
-      "hidden": true,
-      "transparent": true,
-      "subtypes": [
-        "_reserved_identifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
         "identifier"
       ]
     },
@@ -20742,7 +22248,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -20752,7 +22258,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -21017,7 +22655,7 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "_property_identifier",
+            "property_identifier",
             "private_property_identifier",
             "string",
             "number",
@@ -21027,7 +22665,139 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_property_identifier",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
               "parseKind": "property_identifier"
             },
             {
@@ -21306,7 +23076,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -21317,6 +23086,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -21598,7 +23368,6 @@
             "subscript_expression",
             "undefined",
             "identifier",
-            "_reserved_identifier",
             "object_pattern",
             "array_pattern",
             "non_null_expression"
@@ -21629,10 +23398,136 @@
               "parseKind": "identifier"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "parseKind": "reserved_identifier"
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
             },
             {
               "kind": "node-ref",
@@ -21660,7 +23555,6 @@
         "lhs_expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "array_pattern",
@@ -21672,14 +23566,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -21711,7 +23602,6 @@
         "object_keyword",
         "object_pattern",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -21723,7 +23613,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -21820,7 +23709,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -21831,6 +23719,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -21917,7 +23806,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -21928,14 +23816,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -21966,7 +23851,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -21978,7 +23862,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -22085,6 +23968,38 @@
       "text": ";"
     },
     {
+      "kind": "semicolon",
+      "modelType": "alias",
+      "typeName": "Semicolon",
+      "factoryName": "semicolon",
+      "irKey": "semicolon",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ";",
+              "parseKind": "semi"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
       "kind": "sequence_expression",
       "modelType": "envelope",
       "typeName": "SequenceExpression",
@@ -22128,6 +24043,344 @@
       "stampExpression": "\"set\" as const",
       "text": "set",
       "factoryShape": "text"
+    },
+    {
+      "kind": "shorthand_property_identifier",
+      "modelType": "alias",
+      "typeName": "ShorthandPropertyIdentifier",
+      "factoryName": "shorthandPropertyIdentifier",
+      "irKey": "shorthandPropertyIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
+    },
+    {
+      "kind": "shorthand_property_identifier_pattern",
+      "modelType": "alias",
+      "typeName": "ShorthandPropertyIdentifierPattern",
+      "factoryName": "shorthandPropertyIdentifierPattern",
+      "irKey": "shorthandPropertyIdentifierPattern",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
     },
     {
       "kind": "slash",
@@ -22183,7 +24436,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -22194,14 +24446,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -22232,7 +24481,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -22244,7 +24492,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -22400,6 +24647,175 @@
       ]
     },
     {
+      "kind": "statement_identifier",
+      "modelType": "alias",
+      "typeName": "StatementIdentifier",
+      "factoryName": "statementIdentifier",
+      "irKey": "statementIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "declare_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "namespace_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "type_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "public_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "private_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "protected_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "override_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "readonly_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "module_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "any_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "number_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "boolean_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "string_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "symbol_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "export_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "object_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "new_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "get_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "set_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "async_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "static_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "let_keyword"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
+    },
+    {
       "kind": "static_keyword",
       "modelType": "keyword",
       "typeName": "StaticKeyword",
@@ -22412,55 +24828,12 @@
     },
     {
       "kind": "string",
-      "modelType": "polymorph",
+      "modelType": "supertype",
       "typeName": "String",
-      "factoryName": "string",
       "irKey": "string",
-      "hidden": false,
-      "slots": [
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "storage": "verbatim",
-          "kinds": [
-            "string_double",
-            "string_single"
-          ],
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string_double",
-              "parseKind": "string_double",
-              "seat": {
-                "kind": "string_double",
-                "shape": "arm",
-                "mount": "double"
-              }
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string_single",
-              "parseKind": "string_single",
-              "seat": {
-                "kind": "string_single",
-                "shape": "arm",
-                "mount": "single"
-              }
-            }
-          ]
-        }
-      ],
-      "factoryShape": "direct",
-      "factoryFields": [
-        "content"
-      ],
-      "bareAccepts": [
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
         "string_double",
         "string_single"
       ]
@@ -22493,7 +24866,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
-              "parseKind": "unescaped_double_string_fragment"
+              "parseKind": "string_fragment"
             },
             {
               "kind": "node-ref",
@@ -22549,7 +24922,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
-              "parseKind": "unescaped_single_string_fragment"
+              "parseKind": "string_fragment"
             },
             {
               "kind": "node-ref",
@@ -23023,7 +25396,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -23034,14 +25406,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -23072,7 +25441,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -23084,7 +25452,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -23188,7 +25555,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -23199,6 +25565,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -23373,7 +25740,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -23384,14 +25750,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -23422,7 +25785,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -23434,7 +25796,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -23703,7 +26064,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -23714,6 +26074,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -23738,8 +26099,8 @@
       "trailingDelimiter": "optional",
       "defaultDelimiter": "Delimiter.None",
       "elementKinds": [
-        "required_parameter",
-        "optional_parameter",
+        "tuple_parameter",
+        "optional_tuple_parameter",
         "optional_type",
         "rest_type",
         "type"
@@ -23792,7 +26153,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -23803,6 +26163,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -23845,13 +26206,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -24007,7 +26368,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -24018,6 +26378,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -24104,7 +26465,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -24115,6 +26475,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "types",
         "undefined",
@@ -24180,6 +26541,43 @@
       ]
     },
     {
+      "kind": "type_identifier",
+      "modelType": "alias",
+      "typeName": "TypeIdentifier",
+      "factoryName": "typeIdentifier",
+      "irKey": "typeIdentifier",
+      "hidden": false,
+      "slots": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "verbatim",
+          "kinds": [
+            "identifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier"
+            }
+          ]
+        }
+      ],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ],
+      "bareAccepts": [
+        "identifier"
+      ]
+    },
+    {
       "kind": "type_keyword",
       "modelType": "keyword",
       "typeName": "TypeKeyword",
@@ -24227,13 +26625,13 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "identifier"
+            "type_identifier"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "identifier",
+              "name": "type_identifier",
               "parseKind": "type_identifier"
             }
           ]
@@ -24323,6 +26721,7 @@
       ],
       "bareAccepts": [
         "identifier",
+        "type_identifier",
         "type_parameter",
         "type_parameters_elements"
       ]
@@ -24351,6 +26750,7 @@
       ],
       "bareAccepts": [
         "identifier",
+        "type_identifier",
         "type_parameter"
       ]
     },
@@ -24490,25 +26890,25 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
-              "parseKind": "subscript_expression"
+              "parseKind": "type_query_subscript_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
-              "parseKind": "member_expression"
+              "parseKind": "type_query_member_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression"
+              "parseKind": "type_query_call_expression"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_instantiation_expression",
-              "parseKind": "instantiation_expression"
+              "parseKind": "type_query_instantiation_expression"
             },
             {
               "kind": "node-ref",
@@ -24615,7 +27015,6 @@
         "predefined_type",
         "readonly_type",
         "rest_type",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",
@@ -24626,6 +27025,7 @@
         "tuple_parameter",
         "tuple_type",
         "tuple_type_members",
+        "type_identifier",
         "type_query",
         "undefined",
         "union_type",
@@ -25353,7 +27753,6 @@
         "expression"
       ],
       "bareAccepts": [
-        "_reserved_identifier",
         "any_keyword",
         "array",
         "arrow_function",
@@ -25364,14 +27763,11 @@
         "await_expression",
         "binary_expression",
         "boolean_keyword",
-        "call_expression",
         "call_expression_call",
         "call_expression_member",
         "call_expression_template_call",
         "class",
         "declare_keyword",
-        "decorator_call_expression",
-        "decorator_member_expression",
         "export_keyword",
         "false",
         "function_expression",
@@ -25402,7 +27798,6 @@
         "object",
         "object_keyword",
         "override_keyword",
-        "parenthesized_expression",
         "parenthesized_expression_sequence",
         "parenthesized_expression_typed",
         "private_keyword",
@@ -25414,7 +27809,6 @@
         "sequence_expression",
         "set_keyword",
         "static_keyword",
-        "string",
         "string_double",
         "string_keyword",
         "string_single",

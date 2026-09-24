@@ -5,11 +5,9 @@ import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
 import {
 	collectGrammarDiagnosticsForGrammar,
-	fromParseKindCollision,
 	GrammarDiagnosticError
 } from './diagnostics/grammar-diagnostics.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import { getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
 import type { GeneratedIdTables } from './generated-metadata.ts';
@@ -37,7 +35,6 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
 	const raw = await evaluate(entryPath);
-	const unaliasDiagnostics = getEnrichUnaliasDiagnostics(raw).map((d) => fromParseKindCollision(cfg.grammar, d));
 
 	const { linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics, diagnostics } =
 		collectGrammarDiagnosticsForGrammar({
@@ -60,7 +57,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		nodeMap,
 		diagnostics: compilerDiagnostics,
 		slotGroupingDiagnostics,
-		grammarDiagnostics: [...unaliasDiagnostics, ...diagnostics]
+		grammarDiagnostics: diagnostics
 	};
 }
 

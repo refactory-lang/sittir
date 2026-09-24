@@ -1,3 +1,4 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import {
@@ -18,19 +19,18 @@ import {
 	kindDiscriminantExpr,
 	findKindEntry,
 	findKindEntryForLiteral,
+	findOwnKindEntry,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import {
 	type AssembledNode,
 	type AssembledNonterminal,
-	type AssembledBranch,
 	AssembledPattern,
-	type AssembledEnum,
+	AssembledAlias,
+	AssembledEnum,
 	AbstractAssembledCompound,
 	AssembledList,
-	AssembledEnvelope,
-	AssembledPolymorph,
 	AssembledSupertype,
 	AssembledKeyword,
 	AssembledPunctuation,
@@ -74,7 +74,8 @@ import {
 	emitsPlainBuiltAlias,
 	transparentWrapperContentSlot,
 	isAuthoredCompound,
-	enumMemberDiscriminant
+	enumMemberDiscriminant,
+	expandAndDedupeContentTypes
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -119,7 +120,10 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 					break;
 			}
 			if (hiddenTextLeaves(slot, nodeMap).length > 0) imports.add('admitHiddenText');
+			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
+		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
+			imports.add('admitAliasContent');
 	}
 	for (const [kind, node] of nodeMap.nodes) {
 		if (numericSlotKeys(node).length > 0 || numericLeafShape(kind, node) !== undefined) imports.add('numberText');
@@ -354,7 +358,7 @@ function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReCon
 	return guards;
 }
 
-type FieldCarryingNode = AssembledBranch | AssembledEnvelope | AssembledPolymorph;
+type FieldCarryingNode = AuthoredCompound;
 
 export function childElementType(
 	node: { children: readonly AssembledNonterminal[] },
@@ -463,7 +467,69 @@ function slotStorageFromValueExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	return hiddenTextAdmission(f, storedSlotValueExpr(f, valueExpr, nodeMap, kindEntries, typeName), nodeMap, typeName);
+	return admittedSlotInput(f, storedSlotValueExpr(f, valueExpr, nodeMap, kindEntries, typeName), nodeMap, kindEntries, typeName);
+}
+
+function admittedSlotInput(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeName: string
+): string {
+	const admitted = hiddenTextAdmission(f, expr, nodeMap, typeName);
+	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
+}
+
+function aliasContentTypes(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): string[] {
+	return [...new Set(slots.flatMap((slot) => slotAliases(slot, nodeMap).map((alias) => `T.${alias.typeName}.Types`)))];
+}
+
+function withAliasContentTypes(type: string, f: AssembledNonterminal, nodeMap: NodeMap): string {
+	return [type, ...aliasContentTypes([f], nodeMap)].join(' | ');
+}
+
+export function slotAliases(f: AssembledNonterminal, nodeMap: NodeMap): AssembledAlias[] {
+	const aliases: AssembledAlias[] = [];
+	for (const kind of expandAndDedupeContentTypes(slotKindNames(f), nodeMap)) {
+		const node = nodeMap.nodes.get(kind);
+		if (node instanceof AssembledAlias && node.rawFactoryName !== undefined) aliases.push(node);
+	}
+	return aliases;
+}
+
+function kindIdsOf(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): number[] {
+	const node = nodeMap.nodes.get(kind);
+	if (node instanceof AssembledEnum) return [...node.resolvedKindIds];
+	const id = findOwnKindEntry(kindEntries, kind)?.id;
+	return id === undefined ? [] : [id];
+}
+
+function slotStoredIds(f: AssembledNonterminal, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): number[] {
+	const nodeIds = expandAndDedupeContentTypes(slotKindNames(f), nodeMap).flatMap((kind) => kindIdsOf(kind, nodeMap, kindEntries));
+	const terminalIds = f.values.flatMap((value) =>
+		isTerminalValue(value) && value.resolvedKindId !== undefined ? [value.resolvedKindId] : []
+	);
+	return [...new Set([...nodeIds, ...terminalIds])];
+}
+
+function aliasContentAdmission(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	storedType: string
+): string {
+	if (kindEntries === undefined) return expr;
+	const aliases = slotAliases(f, nodeMap);
+	if (aliases.length === 0) return expr;
+	const direct = new Set(slotStoredIds(f, nodeMap, kindEntries));
+	const table = aliases.flatMap((alias) => {
+		const ids = alias.slots.flatMap((slot) => slotStoredIds(slot, nodeMap, kindEntries)).filter((id) => !direct.has(id));
+		return ids.length === 0 ? [] : [`[${JSON.stringify(ids)}, (v: unknown) => ${alias.rawFactoryName}(v as never)]`];
+	});
+	if (table.length === 0) return expr;
+	return `admitAliasContent<${storedType}>(${expr}, [${table.join(', ')}])`;
 }
 
 function storedSlotValueExpr(
@@ -641,7 +707,9 @@ export function constructionChildElementType(
 	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
-	const type = childElementType(node, nodeMap, kindEntries);
+	const base = childElementType(node, nodeMap, kindEntries);
+	const aliasTypes = aliasContentTypes(node.children, nodeMap);
+	const type = aliasTypes.length === 0 ? base : `(${[base, ...aliasTypes].join(' | ')})`;
 	return admitsHiddenText(node.children, nodeMap) ? `(${type} | string)` : type;
 }
 
@@ -650,7 +718,7 @@ export function constructionFieldElementType(
 	nodeMap: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): string {
-	const type = fieldElementType(f, nodeMap, kindEntries);
+	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	if (numericSlotShape(f) !== undefined) return `${type} | number`;
 	return admitsHiddenText([f], nodeMap) ? `${type} | string` : type;
 }
@@ -969,7 +1037,8 @@ export function constructorSurface(
 		}
 		case 'envelope':
 		case 'branch':
-		case 'polymorph': {
+		case 'polymorph':
+		case 'alias': {
 			if (target instanceof AssembledSupertype) return undefined;
 			const surface = resolveFactorySurface(target, nodeMap, kindEntries);
 			const optionalized = chainParamOptional(kind, nodeMap, kindEntries) && /^\w+: /.test(surface.params);
@@ -1032,7 +1101,7 @@ function emitFieldCarryingFactory(
 		slotsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
-		valueSourceFor = (f) => (f === spreadFacts.slot ? hiddenTextAdmission(f, 'children', nodeMap, node.typeName) : '');
+		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
@@ -1414,8 +1483,8 @@ export function separatedListSurface(
 	readonly storageElementsType: string;
 } {
 	const contentSlot = buildSeparatedListContentSlot(node);
-	let elemType = fieldElementType(contentSlot, nodeMap, kindEntries);
-	const baseElemType = elemType;
+	const baseElemType = fieldElementType(contentSlot, nodeMap, kindEntries);
+	let elemType = withAliasContentTypes(baseElemType, contentSlot, nodeMap);
 	let wrapper: { member: string; factory: string; contentKey: string; typeName: string } | undefined;
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
@@ -1430,7 +1499,7 @@ export function separatedListSurface(
 				contentKey: content.configKey,
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
-			elemType = `${elemType} | ${fieldElementType(content, nodeMap, kindEntries)}`;
+			elemType = `${elemType} | ${withAliasContentTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
 		}
 	}
 	const elemTypeForArray = parenthesizeUnion(elemType);
@@ -1562,7 +1631,8 @@ function emitSeparatedListFactory(
 		if (node.nonEmpty) lines.push(`  _assertNonEmpty(_mapped, '${node.kind}.elements');`);
 		lines.push(`  const ${contentStorageKey} = _mapped;`);
 	} else {
-		lines.push(`  const ${contentStorageKey} = elements;`);
+		const admitted = aliasContentAdmission(buildSeparatedListContentSlot(node), 'elements', nodeMap, kindEntries, surface.storageElementsType);
+		lines.push(`  const ${contentStorageKey} = ${admitted};`);
 	}
 	if (hasSeparatorKindOption) {
 		lines.push(`  const _separator = options.separator ?? ${declaredSeparatorDefault(node, nodeMap, kindEntries)};`);
@@ -1765,6 +1835,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				this.emitBranch(node);
 				break;
 			case 'polymorph':
+			case 'alias':
 				if (node instanceof AssembledSupertype) break;
 				this.emitBranch(node);
 				break;

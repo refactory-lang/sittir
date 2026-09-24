@@ -10,7 +10,7 @@ import {
 	classifyFactoryShape,
 	listRestParamType
 } from '../shared.ts';
-import { listHasOptions, valueStorageExpr } from '../factories.ts';
+import { listHasOptions, spellingTypeOf, valueStorageExpr } from '../factories.ts';
 import { collectCatalogKinds, collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
@@ -312,6 +312,7 @@ function composeSeats(
 	seats: readonly SeatEmission[],
 	wireSet: PolymorphWireSet,
 	wires: PolymorphWires,
+	nodeMap: NodeMap,
 	methods: string[]
 ): SeatedParent | undefined {
 	if (seats.length === 0) return undefined;
@@ -338,9 +339,15 @@ function composeSeats(
 			coerceParam = undefined;
 		}
 	}
+	const optionsType =
+		!spread && 'slots' in wireSet.node && spellingTypeOf(wireSet.node, nodeMap, wires.kindEntries) !== undefined
+			? `T.${wireSet.node.typeName}.Options`
+			: undefined;
+	const withOptions = (params: string): string =>
+		optionsType === undefined ? params : `${params.slice(0, -1)}, options?: ${optionsType})`;
 	const strictName = `${wireSet.parentKey}$seated`;
-	methods.push(`const ${strictName}: ${strictParams} => ReturnType<typeof ${p.strict}> = ${strictExpr};`);
-	if (coerceExpr === undefined) {
+	methods.push(`const ${strictName}: ${withOptions(strictParams)} => ReturnType<typeof ${p.strict}> = ${strictExpr};`);
+	if (coerceExpr === undefined || p.coerce === undefined) {
 		return {
 			refs: { strict: strictName, coerce: undefined },
 			wireLine: `	strict: ${strictName},`,
@@ -348,7 +355,7 @@ function composeSeats(
 		};
 	}
 	const coerceName = `${wireSet.parentKey}$seatedCoerce`;
-	methods.push(`const ${coerceName}: ${coerceParams} => ReturnType<typeof ${p.coerce}> = ${coerceExpr};`);
+	methods.push(`const ${coerceName}: ${withOptions(coerceParams)} => ReturnType<typeof ${p.coerce}> = ${coerceExpr};`);
 	return {
 		refs: { strict: strictName, coerce: coerceName },
 		wireLine: `	strict: ${strictName}, coerce: ${coerceName},`,
@@ -401,6 +408,8 @@ const PFV = 'PF extends (value: never) => unknown';
 const CF = 'CF extends (...args: never[]) => unknown';
 const CALL_P = '_p<ReturnType<PF>>(parent)';
 const CALL_C = '_c(child)';
+const CALL_PO = (arg: string): string => `_fwd<ReturnType<PF>>(parent, ${arg}, options)`;
+const OPTS = 'options?: unknown';
 const ERASED_HELPERS = [
 	'// Erased applications, centralized: TS cannot infer a Cfg type parameter',
 	'// constrained by another inference variable in a contravariant position,',
@@ -417,6 +426,10 @@ const ERASED_HELPERS = [
 	'const _m = (config: unknown, extra: Record<string, unknown>): Record<string, unknown> =>',
 	'\t({ ..._o(config), ...extra });',
 	'const _built = (v: unknown): boolean => typeof v === \'object\' && v !== null && \'$type\' in v;',
+	'// A seat forwards the parent\'s trailing options only when given: a',
+	'// bare-text call must keep its one-argument arity.',
+	'const _fwd = <R,>(f: unknown, arg: unknown, options: unknown): R =>',
+	'\t(options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options));',
 	''
 ];
 
@@ -582,8 +595,8 @@ function spliceShape(
 		return {
 			method: [
 				`const ${m} = <${PFV}, ${CF}>(parent: PF, child: CF) =>`,
-				`	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0]): ReturnType<PF> =>`,
-				`		config === undefined || _built(config) ? ${CALL_P}(config) : ${CALL_P}(${CALL_C}(config));`
+				`	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0], ${OPTS}): ReturnType<PF> =>`,
+				`		config === undefined || _built(config) ? ${CALL_PO('config')} : ${CALL_PO(`${CALL_C}(config)`)};`
 			],
 			paramFor: (p, c) => `(config: ${p} | ArgsOf<typeof ${c}>[0])`
 		};
@@ -597,14 +610,14 @@ function spliceShape(
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF${wrapperSeat ? ', wrapperId: number' : ''}) =>`,
-			`	(config: ${spliced('ArgsOf<PF>[0]', 'CF')}): ReturnType<PF> => {`,
-			`		if (config === undefined) return ${CALL_P}(config);`,
+			`	(config: ${spliced('ArgsOf<PF>[0]', 'CF')}, ${OPTS}): ReturnType<PF> => {`,
+			`		if (config === undefined) return ${CALL_PO('config')};`,
 			...(wrapperSeat
 				? [
 						`		const own = _o(config)[${JSON.stringify(k)}];`,
 						`		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {`,
 						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${keyTests});`,
-						`			if (spelled) return ${CALL_P}(config);`,
+						`			if (spelled) return ${CALL_PO('config')};`,
 						`		}`
 					]
 				: []),
@@ -617,7 +630,7 @@ function spliceShape(
 			`				seated = seated || value !== undefined;`,
 			`			} else rest[key] = value;`,
 			`		}`,
-			`		return ${CALL_P}(seated ? { ...rest, ${k}: ${buildGroup} } : rest);`,
+			`		return ${CALL_PO(`seated ? { ...rest, ${k}: ${buildGroup} } : rest`)};`,
 			`	};`
 		],
 		paramFor: (p, c) => `(config: ${spliced(p, `typeof ${c}`)})`
@@ -662,11 +675,11 @@ function elementsShape(
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) => {`,
 			`	const isConfig = ${configTest(groupKeys)};`,
-			`	return (config: ${seated('ArgsOf<PF>[0]', 'CF')}): ReturnType<PF> => {`,
-			`		if (config === undefined) return ${CALL_P}(config);`,
+			`	return (config: ${seated('ArgsOf<PF>[0]', 'CF')}, ${OPTS}): ReturnType<PF> => {`,
+			`		if (config === undefined) return ${CALL_PO('config')};`,
 			`		const seat = _o(config)[${JSON.stringify(k)}];`,
-			`		if (!Array.isArray(seat)) return ${CALL_P}(config);`,
-			`		return ${CALL_P}({ ..._o(config), ${k}: seat.map((e) => (isConfig(e) ? ${CALL_C}(e) : e)) });`,
+			`		if (!Array.isArray(seat)) return ${CALL_PO('config')};`,
+			`		return ${CALL_PO(`{ ..._o(config), ${k}: seat.map((e) => (isConfig(e) ? ${CALL_C}(e) : e)) }`)};`,
 			`	};`,
 			`};`
 		],
@@ -680,11 +693,11 @@ function tupleShape(k: string, m: string): SeatShape {
 	return {
 		method: [
 			`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) => {`,
-			`	return (config: ${seated('ArgsOf<PF>[0]', 'CF')}): ReturnType<PF> => {`,
-			`		if (config === undefined) return ${CALL_P}(config);`,
+			`	return (config: ${seated('ArgsOf<PF>[0]', 'CF')}, ${OPTS}): ReturnType<PF> => {`,
+			`		if (config === undefined) return ${CALL_PO('config')};`,
 			`		const seat = _o(config)[${JSON.stringify(k)}];`,
-			`		if (!Array.isArray(seat)) return ${CALL_P}(config);`,
-			`		return ${CALL_P}({ ..._o(config), ${k}: ${CALL_C}(...seat) });`,
+			`		if (!Array.isArray(seat)) return ${CALL_PO('config')};`,
+			`		return ${CALL_PO(`{ ..._o(config), ${k}: ${CALL_C}(...seat) }`)};`,
 			`	};`,
 			`};`
 		],
@@ -816,7 +829,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			...(wireSet.elements ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'elements', wires, nodeMap)),
 			...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, nodeMap))
 		];
-		const seated = composeSeats(seats, wireSet, wires, methods);
+		const seated = composeSeats(seats, wireSet, wires, nodeMap, methods);
 		if (methods.some((line) => line.includes('TSKindId.'))) usesKindId = true;
 		const armEntries = new Map<string, ArmEntry>();
 		const flat: { line: string; type: string }[] = [];
@@ -849,8 +862,9 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			}
 			for (const chain of childChains(sub, chainedByKind)) {
 				if (sub.arm.via !== 'node') break;
-				const chainedSub: SubFactory = { ...sub, arm: { ...sub.arm, path: [...sub.arm.path, chain] } };
-				const emission = emitSub(wireSet.node, wireSet.parentKey, chainedSub, wires, nodeMap, seated?.refs, `${sub.name}$${chain}`);
+				const chainedName = `${sub.name}$${chain}`;
+				const chainedSub: SubFactory = { ...sub, name: chainedName, arm: { ...sub.arm, path: [...sub.arm.path, chain] } };
+				const emission = emitSub(wireSet.node, wireSet.parentKey, chainedSub, wires, nodeMap, seated?.refs, chainedName);
 				if (emission === undefined || emission.coerceApply === undefined || emission.coerceType === undefined) continue;
 				methods.push(...emission.method);
 				entry.children.set(chain, {
@@ -959,10 +973,12 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
 		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '../../utils.js';`,
-		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : [])
+		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
+		...(blocks.some((b) => b.includes('?: T.')) ? ["import type * as T from '../../types.js';"] : [])
 	];
-	const anchor = blocks.indexOf(ERASED_HELPERS[ERASED_HELPERS.length - 3]!);
-	if (anchor >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(anchor + 1, 0, ...SPLICE_HELPER);
-	if (anchor >= 0 && blocks.some((b) => b.includes('ListElement<'))) blocks.splice(anchor + 1, 0, ...LIST_HELPER);
+	const start = blocks.indexOf(ERASED_HELPERS[0]!);
+	const end = start + ERASED_HELPERS.length - 1;
+	if (start >= 0 && blocks.some((b) => b.includes('NoneOf<'))) blocks.splice(end, 0, ...SPLICE_HELPER);
+	if (start >= 0 && blocks.some((b) => b.includes('ListElement<'))) blocks.splice(end, 0, ...LIST_HELPER);
 	return [...overlayFrame(overlayImportPath(1), blocks, extraImports), ...blocks].join('\n');
 }

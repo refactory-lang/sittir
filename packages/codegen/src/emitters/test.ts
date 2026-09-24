@@ -1,9 +1,9 @@
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { samplePattern } from '../types/runtime-shapes.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
@@ -110,6 +110,7 @@ export function emitTests(config: EmitTestsConfig): string {
 				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
 				emitSubFactoryTests(target, node, kind, subFactoryBase(kind, key, polymorphWires, routePaths), nodeMap, kindEntries, polymorphWires, config.expectTestFailures);
 				break;
+			case 'alias':
 			case 'supertype':
 				break;
 			case 'list':
@@ -189,7 +190,7 @@ function pushRenderTest(lines: string[], key: string, renderArg: string, registe
 }
 
 function factoryCallArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	strict = false
@@ -228,7 +229,7 @@ function factoryCallArgs(
 }
 
 function soleSlotDummyKind(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): { facts: SoleSlotFacts; firstKindName: string | undefined } | null {
@@ -252,7 +253,7 @@ function patternSlotDummy(slot: AssembledNonterminal): string | undefined {
 }
 
 function childrenCallArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
@@ -264,7 +265,7 @@ function childrenCallArgs(
 }
 
 function childrenCallValueArg(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
@@ -278,7 +279,7 @@ function childrenCallValueArg(
 }
 
 function subFactoryChildrenArgs(
-	node: AssembledBranch | AssembledEnvelope | AssembledPolymorph,
+	node: AuthoredCompound,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
@@ -299,7 +300,8 @@ function childBareCallArgs(
 	switch (child.modelType) {
 		case 'branch':
 		case 'envelope':
-		case 'polymorph': {
+		case 'polymorph':
+		case 'alias': {
 			if (!(child instanceof AbstractAssembledCompound) || child instanceof AssembledList) return undefined;
 			if (testConstructsWithChildren(child, nodeMap)) {
 				return subFactoryChildrenArgs(child, nodeMap, kindEntries);

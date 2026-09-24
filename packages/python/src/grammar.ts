@@ -362,11 +362,6 @@ export type PythonGrammar = {
 				types: [{ type: '_compound_statement'; named: true }, { type: 'simple_statements'; named: true }];
 			};
 		};
-		children: {
-			multiple: false;
-			required: false;
-			types: [{ type: 'match_block_block'; named: true }, { type: 'newline'; named: true }];
-		};
 	};
 	readonly boolean_operator: {
 		type: 'boolean_operator';
@@ -1104,6 +1099,16 @@ export type PythonGrammar = {
 			];
 		};
 	};
+	readonly match_block: {
+		type: 'match_block';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'match_block_block'; named: true }, { type: 'newline'; named: true }];
+		};
+	};
 	readonly match_block_block: {
 		type: 'match_block_block';
 		named: true;
@@ -1112,7 +1117,7 @@ export type PythonGrammar = {
 	readonly match_statement: {
 		type: 'match_statement';
 		named: true;
-		fields: { body: { multiple: false; required: true; types: [{ type: 'block'; named: true }] } };
+		fields: { body: { multiple: false; required: true; types: [{ type: 'match_block'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'subjects'; named: true }] };
 	};
 	readonly member_type: {
@@ -1191,12 +1196,7 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [
-				{ type: 'expression'; named: true },
-				{ type: 'list_splat'; named: true },
-				{ type: 'parenthesized_expression'; named: true },
-				{ type: 'yield'; named: true }
-			];
+			types: [{ type: 'expression'; named: true }, { type: 'yield'; named: true }];
 		};
 	};
 	readonly parenthesized_import_list: {
@@ -1212,7 +1212,7 @@ export type PythonGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_expression'; named: true }];
+			types: [{ type: 'list_splat'; named: true }, { type: 'parenthesized_list_splat'; named: true }];
 		};
 	};
 	readonly pass_statement: { type: 'pass_statement'; named: true; fields: {} };

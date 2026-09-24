@@ -55,5 +55,5 @@ describe('runCodegen calls evaluate() exactly once per generation', () => {
 			process.chdir(previousCwd);
 			rmSync(outDir, { recursive: true, force: true });
 		}
-	});
+	}, 60_000);
 });

@@ -250,6 +250,7 @@ export default grammar(
 				// this because unedited content slices verbatim source bytes
 				// rather than consulting this site at all).
 				unary_expression_operator: { '"!"/after': preference('tight') },
+				number_operator: { '"-"/after': preference('tight'), '"+"/after': preference('tight') },
 
 				object_type_content: {
 					'content:/separator/before': preference('tight'),
@@ -285,7 +286,7 @@ export default grammar(
 				_bindings: {
 					'_/terminator:': 'statements/terminator',
 					'_/automatic_semicolon:': 'statements/terminator',
-					'string/content:': 'quotes/style',
+					'string/variant': 'quotes/style',
 					'class_body/"{"/after': 'body/before',
 					'class_body/"}"/before': 'body/after',
 					'statement_block/"{"/after': 'body/before',

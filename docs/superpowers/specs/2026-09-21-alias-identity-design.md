@@ -235,3 +235,169 @@ reparse stays.
   flip is in progress on its own branch and this spec reads whichever form
   a ref carries through one accessor.
 - Case spelling of prefixes and markers as render options.
+
+## Amendment 2026-09-22 — display unions are virtual supertypes; hidden never flips
+
+**Status:** approved ruling, 2026-09-22, after Task 1 landed and exposed
+the `_reserved_identifier` / `pair.key` regression. Where this section and
+§1–§3 disagree, this section wins; the plan's Task 1 and Task 5 are updated
+to match.
+
+### A.1 Ground truth, from parser.c
+
+Every alias site is a parser-issued kind: `alias_sym_<target>` in
+`ts_symbol_names`. Three shapes exist, and the parser tells them apart:
+
+| shape | example (typescript) | grammar id | type id |
+| --- | --- | --- | --- |
+| nonterminal storage under an alias | `alias($._lhs_expression, $.lhs_expression)` | `sym__lhs_expression` (253) | `alias_sym_lhs_expression` (457) |
+| terminal storage under an alias | `alias($.identifier, $.property_identifier)`, `alias('declare', $.property_identifier)` | the token: `identifier` (1), `anon_sym_declare` (109) | `alias_sym_property_identifier` (458) |
+| dissolved hidden rule | `_reserved_identifier` | none: no `sym__reserved_identifier` exists, in our parser.c or upstream's | n/a |
+
+`ts_non_terminal_alias_map` lists exactly the hidden nonterminals that
+materialize under an alias (`_lhs_expression`, and rust's `_let_chain`,
+python's `_simple_statements`, rust's `_block_comment_content`). A hidden
+choice of terminals (`_reserved_identifier`) is dissolved: the alias lands on
+each token, and at a bare reference the token stays bare. The storage kind at
+`{ declare: 1 }`'s key is the `declare` token, displayed as
+`property_identifier`.
+
+Two facts follow, and they are independent:
+
+- **Hidden is a name fact.** A reference to a `_`-named rule elides at every
+  bare occurrence, always. `RuleBase.hidden` is `isParserHiddenName(name)`
+  and is never flipped by a later phase. `link.ts::unhideAliasedTargets` is
+  deleted. The seven rules that are referenced both bare and through an
+  alias (rust `_tuple_type_elements`, `_let_chain`, `_block_comment_content`;
+  typescript `_jsx_identifier`, `_lhs_expression`; python
+  `_simple_statements`, `_print_arguments`) are then correct without special
+  handling: hidden by name, materialized only where an alias ref says so.
+- **Materialization is a site fact.** Whether a node exists at an occurrence
+  is entirely described by that occurrence's alias ref (`aliasedFrom` /
+  `aliasedTo`). A hidden storage kind that some site displays gets its struct
+  under its storage identifier (§3.2: `_LhsExpression`) and is a member of
+  the display's supertype (A.2). No rule-level flag carries this.
+
+### A.2 A display kind is an envelope over its storage node
+
+§1 called a display union "a name, not a kind: no struct, no factory, no wrap
+function, no supertype entry". Amended: every alias site is a node the
+parser issues (`alias_sym_*`), and the node model gives it a class: an
+**AssembledEnvelope** whose single `content` slot carries the storage node.
+The treatment is identical for every storage shape:
+
+| display | content | example |
+| --- | --- | --- |
+| over a nonterminal | the storage struct | `LhsExpression { $type: 457, content: _LhsExpression {…} }` |
+| over terminals | the AssembledEnum of the storage kinds, or the leaf | rust `doc_comment` over its external comment contents |
+| over a leaf and terminals | the union of both | `PropertyIdentifier { $type: 458, content: Identifier \| TSKindId.DeclareKeyword \| … }` |
+
+The envelope has its own struct, wrap function, transport, factory and
+render template; the template writes the content. It has no `ir` key (user
+ruling): the `ir` surface names kinds a user constructs, and an envelope is
+reached through the storage it wraps. `is.<display>()` narrows to the
+envelope.
+
+**Identity.** The envelope's `$type` is the type id. This revises the settled
+fact in *Global constraints*: the native read stamps `KindId(kind_id())` for
+an aliased node and places the `KindId(grammar_id())` node in `content`;
+for an unaliased node the two ids coincide and nothing changes. One rule,
+no exception: an aliased node is always an envelope over its storage node.
+The storage node keeps its own identity inside the envelope, so transport
+structs, spacing sites and options addresses stay keyed by storage kind.
+The validator (§3.6) is unaffected: it compares parse trees.
+
+**Overloaded displays are unaliased in enrich.** A kind cannot be both a
+struct and an envelope, so `unaliasOverloadedDisplays` gives every display
+one parser identity. Each alias site's storage is classified the way
+tree-sitter's extract_tokens files it (`parserSymbolClassOf`: an external is
+a terminal; an `inline` rule has no symbol; a single-token body used once is
+a terminal unless it is a plain string under a hidden name; everything else
+is a nonterminal), and a unit test holds the classification to every
+alias-site storage in the three generated parsers.
+
+- A display that is a rule of its own keeps its sites over itself. When that
+  rule is a terminal, terminal storages under it stay too: the parser reuses
+  the display's symbol for them (a contextual keyword aliased to `identifier`
+  is `sym_identifier`), so they are the same kind. Every other storage is
+  split off (`member_expression` over `nested_identifier`; `call_expression`
+  over the decorator shapes).
+- A display with no rule of its own splits two or more nonterminal storages;
+  a single nonterminal beside terminals is split unless its underscore-less
+  name is the display, in which case the terminals' aliases are dropped.
+- A split drops the alias over a visible symbol or an inline literal,
+  renames the alias over a hidden symbol to the symbol's underscore-less
+  name (`<display>_<name>` when that is taken; a free name is required), and
+  refuses an inline nonterminal, which needs a rule of its own.
+
+A display over terminals only is the envelope's enum and is not split: rust
+`doc_comment`'s storages are external comment contents, so it is a terminal
+union. The rewrite reaches the parser and the IR alike; the tree then shows
+`decorator_member_expression` where upstream shows `member_expression`, the
+divergence policy already applied to `<text>_keyword` and `number_decimal`.
+After enrich, every nonterminal display is 1:1.
+
+The virtual-supertype alternative (no node class; a type alias and guard
+over the members, `$type` = grammar symbol) was considered and rejected:
+the parser issues a node at every alias site and the model should have one.
+
+### A.3 An alias distributes the way the parser does
+
+§3.1 distributes an alias through a hidden choice rule "when the alias is the
+only use of it". Amended: use count is not the criterion; tree-sitter's
+semantics are, and enrich applies them so the parser and the IR see the same
+arms (`distributeInlineAliasChoices`).
+
+- `alias(choice(a, b), $.t)` becomes `choice(alias(a, $.t), alias(b, $.t))`,
+  recursively, whether or not `t` is a rule of its own. Each arm keeps its
+  own storage with `t` as display: a keyword aliased to `identifier` is
+  stored as the keyword's own symbol, which is what a read reports.
+- An `inline` rule has no symbol — tree-sitter substitutes its body — so an
+  alias over an inlined choice rule, or an inlined choice rule among the
+  arms, contributes that rule's arms. Rust and typescript
+  `alias($._reserved_identifier, $.identifier)` becomes one
+  `alias('<keyword>', $.identifier)` per keyword, the shape python writes
+  directly, and `_reserved_identifier` never enters the node model.
+- A hidden rule whose whole body is an alias (rust `_reserved_identifier:
+  alias(choice(…), $.identifier)`) is lifted first
+  (`liftAliasedHiddenRuleBodies`), so its references read like typescript's
+  alias sites before distribution.
+
+A slot that admits such keywords says so in its type (`Identifier |
+DefaultKeyword | …`): the per-site admitted set the reserved-word guard
+consumes. Options address a displayed literal through its display: it names
+no seam of its own.
+
+### A.4 Mixed displays are a blocking diagnostic
+
+No display in the three grammars sits over both a terminal and a nonterminal
+storage kind (externals such as `_template_chars` and the rust doc-comment
+markers are tokens). A display whose members mix the two has no single
+content shape and is not modelled; the preflight reports
+`display-union-mixed`, naming the display and the members on each side. It
+sits beside `alias-distributed` (§3.5) and is specified with the other shape
+diagnostics in `2026-09-22-unsupported-shape-diagnostics-design.md`.
+
+### A.5 Acceptance additions
+
+- `unhideAliasedTargets` is gone; no `Rule.hidden` differs from
+  `isParserHiddenName(name)` in any linked grammar.
+- `_reserved_identifier` is absent from every node map and no grammar has a
+  `reserved_identifier` kind; node-types.json keeps upstream's `identifier`
+  for contextual keywords. The three `pair.key` fixtures pass and typescript
+  read-render-parse stays at its 112/114 baseline.
+- `parserSymbolClassOf` agrees with each generated parser.c at every
+  alias-site storage.
+- A slot's name-keyed display → storage redirect exists only when the display
+  has exactly one storage there and is not itself a storage there; a
+  supertype decoder claims each member's own storage ids before any id it
+  accepts through a display.
+- For every `alias_sym_*` in each grammar's parser.c after enrich, the node
+  model has exactly one AssembledEnvelope of that name, its content is the
+  set of grammar symbols the parser issues under it, and no nonterminal
+  display name is also a storage kind (a terminal display rule keeps the
+  terminal storages the parser gives its symbol, per A.2).
+- `read_node.rs::stamped_kind` stamps `kind_id()` for an aliased node and
+  the parity fixtures show the envelope with its storage node as content.
+- `display-union-mixed` fires on a unit fixture and is silent on all three
+  grammars.
