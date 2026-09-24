@@ -14,9 +14,7 @@ import { findOwnKindEntry,
 } from './kind-discriminant.ts';
 import type {
 	AssembledNode,
-	AssembledNonterminal,
-	AssembledEnvelope,
-	AssembledPolymorph
+	AssembledNonterminal
 } from '../compiler/model/node-map.ts';
 
 type BranchLikeForFrom = AuthoredCompound;
@@ -67,7 +65,6 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import {
 	AssembledAlias,
-	AssembledBranch,
 	AbstractAssembledCompound,
 	AssembledList,
 	AssembledSupertype,

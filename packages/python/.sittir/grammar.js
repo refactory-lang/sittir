@@ -35,6 +35,20 @@ __export(grammar_sittir_exports, {
 module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
+// packages/codegen/src/types/rule-types.ts
+var SEQ = "SEQ";
+var OPTIONAL = "OPTIONAL";
+var CHOICE = "CHOICE";
+var REPEAT = "REPEAT";
+var REPEAT1 = "REPEAT1";
+var FIELD = "FIELD";
+var STRING = "STRING";
+var PATTERN = "PATTERN";
+var SYMBOL = "SYMBOL";
+var ALIAS = "ALIAS";
+var TOKEN = "TOKEN";
+var IMMEDIATE_TOKEN = "IMMEDIATE_TOKEN";
+
 // packages/codegen/src/types/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
@@ -70,8 +84,11 @@ function isEnrichShapedFieldWrapper(v) {
 function isContainerType(t) {
   return t === "SEQ" || t === "CHOICE";
 }
+function isTokenWrapperType(t) {
+  return t === TOKEN || t === IMMEDIATE_TOKEN;
+}
 function isWrapperType(t) {
-  return t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "TOKEN" || t === "IMMEDIATE_TOKEN" || t === "BLANK";
+  return t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || isTokenWrapperType(t) || t === "BLANK";
 }
 function isPrecWrapper(rule) {
   const t = rule.type;
@@ -461,7 +478,7 @@ function reconstructWrapper(rule, newContent) {
     return carryOverProperties(rule, nativeRequired(t === "REPEAT" ? "repeat" : "repeat1")(newContent));
   }
   if (t === "TOKEN") return carryOverProperties(rule, nativeRequired("token")(newContent));
-  if (t === "IMMEDIATE_TOKEN") {
+  if (t === IMMEDIATE_TOKEN) {
     const immediate = nativeRequired("token").immediate;
     if (typeof immediate !== "function") throw new Error("transform: native token.immediate not available");
     return carryOverProperties(rule, immediate(newContent));
@@ -586,19 +603,6 @@ function withAnnotations(rule, extra) {
 function withHoistedAnnotation(rule) {
   return withAnnotations(rule, { hoisted: true });
 }
-
-// packages/codegen/src/types/rule-types.ts
-var SEQ = "SEQ";
-var OPTIONAL = "OPTIONAL";
-var CHOICE = "CHOICE";
-var REPEAT = "REPEAT";
-var REPEAT1 = "REPEAT1";
-var FIELD = "FIELD";
-var STRING = "STRING";
-var PATTERN = "PATTERN";
-var SYMBOL = "SYMBOL";
-var ALIAS = "ALIAS";
-var TOKEN = "TOKEN";
 
 // packages/codegen/src/dsl/rule-walker.ts
 var RuleWalker = class {
@@ -1214,17 +1218,14 @@ function resolveRuleLiteral(body) {
 function isParserHiddenName(name) {
   return name.startsWith("_");
 }
-function isTokenWrapper(type) {
-  return type === TOKEN || type === "IMMEDIATE_TOKEN";
-}
 function extractedToken(rule) {
   const params = [];
   let tokenized = false;
   let current = rule;
   for (; ; ) {
-    if (isTokenWrapper(current.type)) {
+    if (isTokenWrapperType(current.type)) {
       tokenized = true;
-      if (current.type === "IMMEDIATE_TOKEN") params.push("immediate");
+      if (current.type === IMMEDIATE_TOKEN) params.push("immediate");
     } else if (isPrecWrapper(current)) {
       params.push(`${current.type}:${String(current.value)}`);
     } else break;
@@ -1249,7 +1250,7 @@ function tokenUseCounts(rules) {
   const counts = /* @__PURE__ */ new Map();
   const visit = (rule) => {
     if (rule === void 0 || rule === null || typeof rule !== "object") return;
-    if (isTokenWrapper(rule.type) || rule.type === STRING || rule.type === PATTERN) {
+    if (isTokenWrapperType(rule.type) || rule.type === STRING || rule.type === PATTERN) {
       const token2 = extractedToken(rule);
       if (token2 !== void 0) counts.set(token2.key, (counts.get(token2.key) ?? 0) + 1);
       return;
@@ -1747,8 +1748,8 @@ function unaliasOverloadedDisplays(rules, ctx) {
     } else if (!isParserHiddenName(storage.symbol)) actions.set(`${display} ${storage.key}`, { kind: "drop" });
     else actions.set(`${display} ${storage.key}`, { kind: "rename", display: mintFor({ storage: storage.symbol, display }) });
   };
-  for (const [display, storages] of storagesByDisplay) {
-    const members = [...storages.values()];
+  for (const display of [...storagesByDisplay.keys()].sort()) {
+    const members = [...storagesByDisplay.get(display).values()];
     if (Object.hasOwn(rules, display)) {
       const terminalDisplay = terminalSymbol(display);
       for (const storage of members) {
@@ -1802,9 +1803,8 @@ var contentOf2 = (rule) => rule.content;
 var rebuilt = (rule, patch) => ({ ...rule, ...patch });
 var isBlank = (rule) => typeOf(rule) === "BLANK";
 var isString = (rule) => typeOf(rule) === "STRING";
-function isTokenWrapper2(rule) {
-  const t = typeOf(rule);
-  return t === "TOKEN" || t === "IMMEDIATE_TOKEN";
+function isTokenWrapper(rule) {
+  return isTokenWrapperType(typeOf(rule));
 }
 function classifyTokenChoice(choice2) {
   const arms = membersOf2(choice2);
@@ -1876,7 +1876,7 @@ function distributeTokenForms(rule, kind) {
     precStack.push(core);
     core = contentOf2(core);
   }
-  if (!isTokenWrapper2(core)) return rule;
+  if (!isTokenWrapper(core)) return rule;
   const body = contentOf2(core);
   const site = findOutermostForms(body, []);
   if (site === void 0) return rule;

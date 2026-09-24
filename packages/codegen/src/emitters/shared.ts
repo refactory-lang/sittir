@@ -14,7 +14,6 @@ import type {
 	TextValueStorage
 } from '../compiler/model/node-map.ts';
 import {
-	AssembledBranch,
 	AssembledKeyword,
 	AssembledPunctuation,
 	AssembledEnum,
@@ -31,8 +30,6 @@ import {
 	storageKindOfRef,
 	storageTargetOf,
 	AbstractAssembledCompound,
-	AssembledEnvelope,
-	AssembledPolymorph,
 	AssembledLeaf,
 	AssembledPattern,
 	AssembledList,

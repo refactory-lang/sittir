@@ -27,12 +27,8 @@ import {
 	fixedTextOfKind
 } from '../compiler/model/node-map.ts';
 import type {
-	AssembledBranch,
-	AssembledEnvelope,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledPolymorph,
-	AssembledList,
 	NodeOrTerminal,
 	SeamEdgeClass
 } from '../compiler/model/node-map.ts';

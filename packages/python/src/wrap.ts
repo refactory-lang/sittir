@@ -12057,7 +12057,7 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
 			: shown
 	) as Wire;
-	const { $storageType, $_trivia, $childIndex, ...storage } = full;
+	const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;
 	return {
 		$type: shown.$type,
 		$source: shown.$source,

@@ -1,9 +1,8 @@
-import type { AuthoredCompound, SlotBearingCompound } from '../compiler/model/node-map.ts';
+import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { AssembledAlias, isVisibleTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
 	AssembledList,
@@ -1701,7 +1700,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				'  const full = (',
 				'    shown.$nodeHandle != null && shown.$childIndex != null ? readNode(tree, shown.$nodeHandle, shown.$childIndex) : shown',
 				'  ) as Wire;',
-				'  const { $storageType, $_trivia, $childIndex, ...storage } = full;',
+				'  const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;',
 				'  return {',
 				'    $type: shown.$type,',
 				'    $source: shown.$source,',

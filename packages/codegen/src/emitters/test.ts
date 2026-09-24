@@ -4,7 +4,6 @@ import { samplePattern } from '../types/runtime-shapes.ts';
 import { isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
 import { isVisibleTextLeaf } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
-import type { AssembledBranch, AssembledEnvelope, AssembledPolymorph } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledList,
