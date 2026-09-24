@@ -242,14 +242,16 @@ whose body is `body($)`, and replaces the patched path with a reference to
 it. It is how a patch introduces a rule the base grammar lacks (python's
 `comprehension_clauses`) without a hand-written `rules:` entry. The rule is
 visible or hidden as named, carries no `hoisted` annotation, and is not
-wrapped in the path's precedence (`resolveRulePlaceholder`). The same name
+wrapped in the path's precedence; its body is built by the installed rule from
+that rule's own `$` (`declaredRuleFn`). The same name
 may be declared at several paths with an equal body; a name the grammar
 already has is refused at wire time (`injectPlaceholderHiddenRules`).
 
 ### `packages/codegen/src/dsl/primitives/rule.ts::RulePlaceholder`
 
 The inert value `rule()` returns: a name and a body callback taking the
-grammar's `$`. It resolves inside `transform()` once the patched parent runs.
+grammar's `$`. Inside `transform()` it resolves to a reference
+(`resolveRulePlaceholder`); at wire time it installs the rule (`declaredRuleFn`).
 
 ### `packages/codegen/src/dsl/primitives/rule.ts::isRulePlaceholder`
 

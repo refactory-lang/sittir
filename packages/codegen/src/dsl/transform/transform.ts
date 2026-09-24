@@ -38,8 +38,8 @@ import {
 	wireIsPrecedenceRankedRule,
 	wireRegisterFlattenedParent,
 	wireHasDeposit,
-	wireGetSyntheticRule,
-	wireDollar,
+	wireDeclareRuleBody,
+	makeSimpleDollarProxy,
 	polymorphVisibleName
 } from '../wire/wire.ts';
 import {
@@ -593,15 +593,9 @@ function resolveRulePlaceholder(patch: RulePlaceholder, key: string): RuntimeRul
 	const parentKind = wireGetCurrentRuleKind();
 	if (!parentKind) throw new Error(`rule('${patch.name}'): no current rule kind — rule() must be used inside a rule callback`);
 	const site = `${parentKind}/${key}`;
-	const body = patch.body(wireDollar());
-	const prior = wireGetSyntheticRule(patch.name);
-	if (prior !== undefined) {
-		if (canonicalRuleText(prior.body) !== canonicalRuleText(body)) {
-			throw new Error(`rule('${patch.name}'): bodies differ at ${prior.site} and ${site}`);
-		}
-	} else if (!wireRegisterSyntheticRule(patch.name, body, site)) {
-		throw new Error(`registerSyntheticRule('${patch.name}'): no active wire() context`);
-	}
+	const text = canonicalRuleText(patch.body(makeSimpleDollarProxy()));
+	const prior = wireDeclareRuleBody(patch.name, text, site);
+	if (prior !== undefined) throw new Error(`rule('${patch.name}'): bodies differ at ${prior} and ${site}`);
 	return symbolRef(patch.name);
 }
 

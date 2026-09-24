@@ -37,22 +37,15 @@ exist.
  */
 ```
 
-The optional `site` records where a `rule()` body was declared
-(`<parent kind>/<patch key>`), kept beside the deposit so a second `rule()`
-of the same name with a different body can name both places.
+### `packages/codegen/src/dsl/wire/wire.ts::wireDeclareRuleBody`
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireGetSyntheticRule`
-
-The deposited body under `name` and the site it was declared at, if a patch
-has deposited one in the active wire context.
-
-### `packages/codegen/src/dsl/wire/wire.ts::wireDollar`
-
-The grammar's `$` while a patched parent's patches resolve: the `$` of
-whichever pipeline is executing (tree-sitter's CLI, then sittir's evaluate),
-so a `rule()` body's references are checked by that pipeline's own
-undefined-rule check and never cross runs. Outside a patched parent there is
-no `$`, and asking for one fails.
+Records the body a `rule(name, …)` patch declares at `site`
+(`<parent kind>/<patch key>`), as `canonicalRuleText` of the body built from
+the name-neutral `$` (`makeSimpleDollarProxy`). The first declaration claims
+the name; a later one returns `undefined` when its text is equal and the
+first site when it differs, so `resolveRulePlaceholder` can name both places.
+The installed rule builds the real body itself (`declaredRuleFn`); this record
+exists only for the agreement check.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSyntheticInline`
 
@@ -197,10 +190,6 @@ array form `transform()` consumes as its rest parameter.
  */
 ```
 
-While the patch sets apply, the pipeline's `$` is set on the context
-(`currentDollar`, scoped exactly like `currentRuleKind`), so a `rule()` body
-is built from it (`wireDollar`).
-
 ### `packages/codegen/src/dsl/wire/wire.ts::placeholderHiddenName`
 
 ```text
@@ -285,7 +274,8 @@ A `rule()` name that is already a rule of the grammar (authored, base, or
 patched), or an external, is refused: installing nothing would silently drop
 the body. The first `rule()` of a name claims it, and later ones with the
 same name are the same rule; `resolveRulePlaceholder` checks their bodies
-agree.
+agree. A `rule()` name is installed as `declaredRuleFn`, every other mint as
+`makeDeferredContentFn`.
 
 ```text
 /**
@@ -321,6 +311,14 @@ declared `{ absent: true }`, the hoist names the absent case
 `<parent>_${ABSENT_VARIANT_NAME}`, so wire pre-registers that name with the
 others. If the hoist then does not fire, nothing deposits it and orphan
 pruning removes the empty rule in both pipelines.
+
+### `packages/codegen/src/dsl/wire/wire.ts::declaredRuleFn`
+
+The rule function a `rule(name, body)` installs: it builds `body($)` from the
+`$` the executing pipeline hands this rule (tree-sitter's CLI, then sittir's
+evaluate). The body's references are therefore checked by that pipeline's
+own undefined-rule check and attributed to `name`, not to any parent that
+patched a reference to it in.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::makeDeferredContentFn`
 
@@ -854,9 +852,8 @@ section stamps — an `injects:` or authored hidden rule is an ordinary rule.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext`
 
-`depositSites` holds the site each `rule()` body was declared at;
-`currentDollar` is the pipeline's `$` while a patched parent's patches
-resolve (`wireDollar`).
+`ruleBodies` holds, per `rule()` name, the canonical text of its declared
+body and the first site that declared it (`wireDeclareRuleBody`).
 
 ```text
 /**

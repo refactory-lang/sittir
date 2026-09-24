@@ -14,7 +14,7 @@ import {
 } from '../primitives/spacing.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
-import { isRulePlaceholder } from '../primitives/rule.ts';
+import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import {
 	ABSENT_VARIANT_NAME,
 	isVariantPlaceholder,
@@ -34,7 +34,7 @@ export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<stri
 
 export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
-	readonly depositSites: Map<string, string>;
+	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
 	readonly orphanedSyntheticGroups: Set<string>;
@@ -48,7 +48,6 @@ export interface WireContext {
 	readonly expectTestFailures?: Partial<Record<string, string>>;
 	readonly options?: OptionsConfig;
 	currentRuleKind: string | null;
-	currentDollar: Record<string, RuntimeRule> | null;
 	readonly authoredRuleNames: ReadonlySet<string>;
 	readonly extraRuleNames: ReadonlySet<string>;
 	readonly precedenceRankedNames: ReadonlySet<string>;
@@ -67,22 +66,20 @@ export function getCurrentWireContext(): WireContext | null {
 	return currentContext;
 }
 
-export function wireRegisterSyntheticRule(name: string, content: RuntimeRule, site?: string): boolean {
+export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
-	if (site !== undefined) currentContext.depositSites.set(name, site);
 	return true;
 }
 
-export function wireGetSyntheticRule(name: string): { readonly body: RuntimeRule; readonly site: string | undefined } | undefined {
-	const body = currentContext?.deposits.get(name);
-	return body === undefined ? undefined : { body, site: currentContext?.depositSites.get(name) };
-}
-
-export function wireDollar(): Record<string, RuntimeRule> {
-	const dollar = currentContext?.currentDollar;
-	if (!dollar) throw new Error('wire: no grammar $ in scope; a rule() body is built only while a patched parent is evaluated');
-	return dollar;
+export function wireDeclareRuleBody(name: string, text: string, site: string): string | undefined {
+	if (!currentContext) throw new Error(`rule('${name}'): no active wire() context`);
+	const prior = currentContext.ruleBodies.get(name);
+	if (prior === undefined) {
+		currentContext.ruleBodies.set(name, { text, site });
+		return undefined;
+	}
+	return prior.text === text ? undefined : prior.site;
 }
 
 export function wireHasDeposit(name: string): boolean {
@@ -147,7 +144,7 @@ export function withWireContext<T>(
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
-		depositSites: new Map(),
+		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
@@ -158,7 +155,6 @@ export function withWireContext<T>(
 		renderAs: undefined,
 		options: undefined,
 		currentRuleKind: ruleKind,
-		currentDollar: null,
 		authoredRuleNames: new Set(),
 		extraRuleNames: new Set(),
 		precedenceRankedNames: new Set(),
@@ -319,7 +315,7 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
 	const context: WireContext = {
 		deposits: new Map(),
-		depositSites: new Map(),
+		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
@@ -333,7 +329,6 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 		expectTestFailures: cfg.expectTestFailures,
 		options: cfg.options,
 		currentRuleKind: null,
-		currentDollar: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
 		extraRuleNames: extraRuleNames(cfg, baseArg),
 		precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
@@ -534,13 +529,7 @@ function buildPatchedParentFn(
 	return function wiredPatchedParent($, original) {
 		const base = userFn ? userFn($, original) : (context.deposits.get(kind) ?? original);
 		if (patchSets.length === 0) return base;
-		const prevDollar = context.currentDollar;
-		context.currentDollar = $ as Record<string, RuntimeRule>;
-		try {
-			return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
-		} finally {
-			context.currentDollar = prevDollar;
-		}
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 
@@ -643,12 +632,12 @@ function injectPlaceholderHiddenRules(
 				}
 				declared.add(value.name);
 			}
-			const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
+			const mints = Object.values(patchMap).map((value) => ({ value, hiddenName: placeholderHiddenName(value, kind) }));
 			const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
-			if (defaultAbsent !== undefined) names.push(defaultAbsent);
-			for (const hiddenName of names) {
+			if (defaultAbsent !== undefined) mints.push({ value: undefined, hiddenName: defaultAbsent });
+			for (const { value, hiddenName } of mints) {
 				if (hiddenName === undefined || hiddenName in rules || externals.has(hiddenName)) continue;
-				rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+				rules[hiddenName] = isRulePlaceholder(value) ? declaredRuleFn(value) : makeDeferredContentFn(context, hiddenName);
 			}
 		}
 	}
@@ -662,6 +651,12 @@ function defaultAbsentVariantName(kind: string, patchMap: PatchMap): string | un
 		return segs.length === 3 && segs.every((s) => s.kind === 'index') && (segs[1] as { value: number }).value === 0;
 	});
 	return throughOptional ? polymorphVisibleName(kind, ABSENT_VARIANT_NAME) : undefined;
+}
+
+function declaredRuleFn(placeholder: RulePlaceholder): SittirRuleFn {
+	return function declaredRule($) {
+		return placeholder.body($);
+	};
 }
 
 function makeDeferredContentFn(context: WireContext, hiddenName: string): SittirRuleFn {
@@ -821,10 +816,11 @@ interface WirePatternCandidate {
 	readonly aliasAs?: string;
 }
 
-function makeSimpleDollarProxy(): Record<string, unknown> {
-	return new Proxy({} as Record<string, unknown>, {
-		get(_target, name: string): unknown {
-			return { type: 'SYMBOL', name };
+export function makeSimpleDollarProxy(): Record<string, RuntimeRule> {
+	return new Proxy({} as Record<string, RuntimeRule>, {
+		get(_target, name: string): RuntimeRule {
+			const symbol = { type: 'SYMBOL', name };
+			return symbol;
 		}
 	});
 }

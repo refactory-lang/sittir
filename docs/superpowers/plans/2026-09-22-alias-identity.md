@@ -785,14 +785,16 @@ Delete the `comprehension_clauses` rule and the four comprehension-kind rewrites
 
 ```ts
 patches: {
-	list_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	dictionary_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	set_comprehension: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) },
-	generator_expression: { 1: rule('comprehension_clauses', ($) => repeat1(choice($.for_in_clause, $.if_clause))) }
+	list_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
+	dictionary_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
+	set_comprehension: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) },
+	generator_expression: { 2: rule('comprehension_clauses', ($) => field('content', repeat1(choice($.for_in_clause, $.if_clause)))) }
 }
 ```
 
-The index is the position of `_comprehension_clauses` in each base rule; confirm each against `packages/python/.sittir/src/grammar.json` before writing. Regenerate python; `pnpm run validate:native`.
+`_comprehension_clauses` sits at index 2 in all four base rules (`'['`, `field('body', …)`, the clauses). The `field('content', …)` keeps the options address `comprehension_clauses: { 'content:/separator': … }`.
+
+Prerequisite (landed): a `rule()` body used at several sites is built by the installed rule from that rule's own `$` (`declaredRuleFn`), not at the patch site. Built at the site, each body's symbols carried the patching parent as their owner, so the four equal bodies compared unequal and the refs belonged to `list_comprehension`. Regenerate python; `pnpm run validate:native`.
 Expected: python rows equal; `(x for x in y for z in w)` renders once per clause in the corpus rows.
 
 - [ ] **Step 5: Full gate and commit**

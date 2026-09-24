@@ -105,20 +105,14 @@ export function restoreFakeDsl(): void {
 
 /**
  * Run `transform(original, patches)` as the patched parent `kind` inside a
- * fresh wire context, with a `$` that names symbols, and return the result
- * with the rules the patches deposited.
+ * fresh wire context, and return the result with the rules the patches
+ * deposited.
  */
 export function applyTransformForTest(
 	kind: string,
 	original: unknown,
 	patches: Record<number | string, unknown>
 ): { result: unknown; deposits: ReadonlyMap<string, unknown> } {
-	const $ = new Proxy({} as Record<string, RuntimeRule>, {
-		get: (_target, name: string) => ({ type: 'SYMBOL', name }) as unknown as RuntimeRule
-	});
-	const { result, ctx } = withWireContext(kind, (context) => {
-		context.currentDollar = $;
-		return transform(original as RuntimeRule, patches as Parameters<typeof transform>[1]);
-	});
+	const { result, ctx } = withWireContext(kind, () => transform(original as RuntimeRule, patches as Parameters<typeof transform>[1]));
 	return { result, deposits: ctx.deposits };
 }

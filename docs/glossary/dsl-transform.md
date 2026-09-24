@@ -1010,14 +1010,15 @@ on the way in; an authored body of that name is left as authored.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveRulePlaceholder`
 
-Declares the rule `rule(name, body)` names and leaves a reference to it at the
-path. The body is built from the pipeline's `$` (`wireDollar`) and deposited
-as written: unlike `variant()`, it is not wrapped in the precedence of the
-path it replaces. The author writes the whole rule, and the reference left
-at the path sits under the parent's precedence like any other reference. A
-second `rule()` of the same name, at another path or in another kind, must
-carry an equal body (`canonicalRuleText`); a different body fails naming
-both sites (`<kind>/<key>`).
+Leaves a reference to the rule `rule(name, body)` names at the path. The
+body is not built here: the installed rule builds it from its own `$`
+(`declaredRuleFn`), so it is written as authored and, unlike `variant()`, is
+not wrapped in the precedence of the path it replaces; the reference left at
+the path sits under the parent's precedence like any other reference. Every
+path that declares the name must carry an equal body: each site's body is
+built from the name-neutral `$` and compared as `canonicalRuleText`
+(`wireDeclareRuleBody`), and a different body fails naming both sites
+(`<kind>/<key>`).
 
 ### `packages/codegen/src/dsl/transform/transform.ts::resolveAliasPlaceholder`
 

@@ -4036,20 +4036,19 @@ function resolveToEnumMembersOneLevelDeep(target) {
 
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
-function wireRegisterSyntheticRule(name, content, site) {
+function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
   currentContext.deposits.set(name, content);
-  if (site !== void 0) currentContext.depositSites.set(name, site);
   return true;
 }
-function wireGetSyntheticRule(name) {
-  const body = currentContext?.deposits.get(name);
-  return body === void 0 ? void 0 : { body, site: currentContext?.depositSites.get(name) };
-}
-function wireDollar() {
-  const dollar = currentContext?.currentDollar;
-  if (!dollar) throw new Error("wire: no grammar $ in scope; a rule() body is built only while a patched parent is evaluated");
-  return dollar;
+function wireDeclareRuleBody(name, text, site) {
+  if (!currentContext) throw new Error(`rule('${name}'): no active wire() context`);
+  const prior = currentContext.ruleBodies.get(name);
+  if (prior === void 0) {
+    currentContext.ruleBodies.set(name, { text, site });
+    return void 0;
+  }
+  return prior.text === text ? void 0 : prior.site;
 }
 function wireHasDeposit(name) {
   return currentContext?.deposits.has(name) ?? false;
@@ -4103,7 +4102,7 @@ function wire(config, base2) {
   assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
   const context = {
     deposits: /* @__PURE__ */ new Map(),
-    depositSites: /* @__PURE__ */ new Map(),
+    ruleBodies: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
     inlineRemovals: /* @__PURE__ */ new Set(),
     orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
@@ -4117,7 +4116,6 @@ function wire(config, base2) {
     expectTestFailures: cfg.expectTestFailures,
     options: cfg.options,
     currentRuleKind: null,
-    currentDollar: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {})),
     extraRuleNames: extraRuleNames(cfg, baseArg),
     precedenceRankedNames: precedenceRankedNames(cfg, baseArg),
@@ -4272,13 +4270,7 @@ function buildPatchedParentFn(kind, patchSets, userFn, context) {
   return function wiredPatchedParent($, original) {
     const base2 = userFn ? userFn($, original) : context.deposits.get(kind) ?? original;
     if (patchSets.length === 0) return base2;
-    const prevDollar = context.currentDollar;
-    context.currentDollar = $;
-    try {
-      return transform(base2, ...patchSets);
-    } finally {
-      context.currentDollar = prevDollar;
-    }
+    return transform(base2, ...patchSets);
   };
 }
 function placeholderHiddenName(value, parentKind) {
@@ -4350,12 +4342,12 @@ function injectPlaceholderHiddenRules(rules, patches, context, externals, known)
         }
         declared.add(value.name);
       }
-      const names = Object.values(patchMap).map((value) => placeholderHiddenName(value, kind));
+      const mints = Object.values(patchMap).map((value) => ({ value, hiddenName: placeholderHiddenName(value, kind) }));
       const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
-      if (defaultAbsent !== void 0) names.push(defaultAbsent);
-      for (const hiddenName of names) {
+      if (defaultAbsent !== void 0) mints.push({ value: void 0, hiddenName: defaultAbsent });
+      for (const { value, hiddenName } of mints) {
         if (hiddenName === void 0 || hiddenName in rules || externals.has(hiddenName)) continue;
-        rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+        rules[hiddenName] = isRulePlaceholder(value) ? declaredRuleFn(value) : makeDeferredContentFn(context, hiddenName);
       }
     }
   }
@@ -4368,6 +4360,11 @@ function defaultAbsentVariantName(kind, patchMap) {
     return segs.length === 3 && segs.every((s) => s.kind === "index") && segs[1].value === 0;
   });
   return throughOptional ? polymorphVisibleName(kind, ABSENT_VARIANT_NAME) : void 0;
+}
+function declaredRuleFn(placeholder) {
+  return function declaredRule($) {
+    return placeholder.body($);
+  };
 }
 function makeDeferredContentFn(context, hiddenName) {
   return function deferredHiddenRule(_$, previous) {
@@ -4494,7 +4491,8 @@ var passthroughBaseRuleFn = function passthroughBaseRuleFn2(_$, previous) {
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
-      return { type: "SYMBOL", name };
+      const symbol = { type: "SYMBOL", name };
+      return symbol;
     }
   });
 }
@@ -5256,15 +5254,9 @@ function resolveRulePlaceholder(patch, key) {
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) throw new Error(`rule('${patch.name}'): no current rule kind \u2014 rule() must be used inside a rule callback`);
   const site = `${parentKind}/${key}`;
-  const body = patch.body(wireDollar());
-  const prior = wireGetSyntheticRule(patch.name);
-  if (prior !== void 0) {
-    if (canonicalRuleText(prior.body) !== canonicalRuleText(body)) {
-      throw new Error(`rule('${patch.name}'): bodies differ at ${prior.site} and ${site}`);
-    }
-  } else if (!wireRegisterSyntheticRule(patch.name, body, site)) {
-    throw new Error(`registerSyntheticRule('${patch.name}'): no active wire() context`);
-  }
+  const text = canonicalRuleText(patch.body(makeSimpleDollarProxy()));
+  const prior = wireDeclareRuleBody(patch.name, text, site);
+  if (prior !== void 0) throw new Error(`rule('${patch.name}'): bodies differ at ${prior} and ${site}`);
   return symbolRef(patch.name);
 }
 var wrapInPrec = (content, precStack) => wrapInPrecStack(content, precStack, reconstructPrec);
