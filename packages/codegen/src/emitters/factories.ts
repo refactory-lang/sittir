@@ -1,3 +1,4 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
@@ -19,7 +20,6 @@ import {
 	kindDiscriminantExpr,
 	findKindEntry,
 	findKindEntryForLiteral,
-	findOwnKindEntry,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';

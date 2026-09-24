@@ -1,9 +1,10 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { findEntryForLiteralText, type GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
 import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { RenderRule } from '../types/rule.ts';
-import { findOwnKindEntry, collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { slotSeparatorTexts } from './shared.ts';
 
 export interface EmitKindIdRustConfig {

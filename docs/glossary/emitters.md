@@ -4452,9 +4452,9 @@ property names with the `$`-prefixed keys explicitly.
 ### `packages/codegen/src/emitters/render-module.ts::armSeamPairsOf`
 
 The seam pair each literal arm of an enum owns, keyed by the arm's text. A
-site records the arm's token kind as its slot and `resolvedByText` records
-the same kind for the text, so the two meet without re-deriving the
-identity here. An arm missing either side is left out.
+site records the arm's token as its slot (`armSeamName`), and the arm's text
+names the same token through `anonTokenNameOfText`, the one function both
+sides use. An arm missing either side is left out.
 
 ### `packages/codegen/src/emitters/render-module.ts::renderEnumType`
 
@@ -6485,13 +6485,9 @@ The chooser also takes `onPath`: the kinds already on the stub being built (the 
  *   `alias($.identifier, $.type_identifier)` used inline at a CHOICE
  *   member — the value's `node` resolves to `identifier`, but its
  *   `parseKind` — the wire `$type` tree-sitter actually stamps — is
- *   `type_identifier`). This is the SAME kind of "runtime id diverges
- *   from the modeled storage kind" fact `aliasedHiddenKinds` covers for
- *   HIDDEN alias-source rules, just carried per-value (on `NodeOrTerminal.
- *   parseKind`) instead of globally keyed by hidden rule name — a
- *   visible-to-visible alias reference site has no hidden rule name to key
- *   `aliasedHiddenKinds` by, so it can only be recovered from the slot
- *   that actually saw the alias. Any entry whose source equals `kind` adds
+ *   `type_identifier`). The fact is carried per value (on
+ *   `NodeOrTerminal.parseKind`), so it is recovered from the slot that
+ *   actually saw the alias. Any entry whose source equals `kind` adds
  *   its target id too.
  */
 ```
@@ -6968,9 +6964,9 @@ dropping out of `Options` while the Rust trie still accepts it. The hint lives i
 interface, because a member on the node interfaces is re-examined by every
 derived surface (`Built`, `Loose`, `Tree`, the namespace map) and cost about
 30k instantiations on the typescript grammar however its type was spelled;
-in the namespace it costs nothing until `Options` is read. A hidden kind
-and its visible twin share a root (their public name); the visible one is
-kept, and two hidden spellings for one root fail at codegen.
+in the namespace it costs nothing until `Options` is read. Kinds that share
+a display share a root; the one that owns its display (`ownsItsDisplay`) is
+kept, and any other pair fails at codegen.
 
 ### `packages/codegen/src/emitters/types.ts::leafTextType`
 
@@ -8495,8 +8491,7 @@ restates the default from one that must be spelled.
 	 * `identifier` — see `aliasTargetToSourceMapOf`'s doc comment,
 	 * node-map.ts). A visible-to-visible `alias($.identifier,
 	 * $.type_identifier)` reference site canonicalizes to the SOURCE kind
-	 * here (unlike a hidden hidden-rule alias, which `nodeMap.aliasedHiddenKinds`
-	 * already covers) — so the runtime kind id for the ALIAS TARGET
+	 * here — so the runtime kind id for the ALIAS TARGET
 	 * (`type_identifier`) is otherwise missing from the generated
 	 * `FromNapiValue` match arms. Threaded into `acceptedTransportKinds` so
 	 * the id arm for the storage kind (`identifier`) also accepts the
@@ -9169,15 +9164,6 @@ result is a native stack overflow: rust's `match_arm` slot
 the generated `FromNapiValue` recurses through the whole statement graph.
 Subset slots instead fall through to `heterogeneous`, which emits a per-slot
 enum of exactly their kinds.
-
-### `packages/codegen/src/emitters/transport-common.ts::addVisibleAliasNameOfHiddenKind`
-
-A hidden kind that is also the CONTENT of a named alias
-(`alias(symbol(_X), $.visible)`) shares its runtime kind id with that alias's
-visible name. The generated id catalog (`KIND_NAMES`, see `emitters/types.ts`)
-records the id under the VISIBLE name, not the raw hidden kind key — so without
-adding the alias target, `kindIdByKind.get(kind)` misses on the hidden key
-entirely and the id arm silently drops.
 
 ### `emitIs` — numeric `$type` guard bodies (`packages/codegen/src/emitters/is.ts`)
 
@@ -15752,11 +15738,6 @@ is optional, so the hint is the option shape a caller writes. A root that is
 not a kind's public name (`kinds`) is a label. An address that is a site at
 the root has no hint home and fails at codegen.
 
-### `packages/codegen/src/emitters/options.ts::publicKindNames`
-
-Every kind's public name (`publicKindName`), the set `hintEmitterOf` tells
-kinds from labels by.
-
 ### `render options: LabelOptions` (emitted into `options.ts`)
 
 The virtual kinds a grammar declares in its `options:` block (`body`,
@@ -16297,6 +16278,10 @@ literal tokens: the spacing-table row with `role: 'separator'`, if any.
 ```
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::planRenderOptions`
+
+A row names its kind by display; its path is taken from the preference it
+was built from, which still holds the storage kind, so `pathOf` resolves the
+display once.
 
 Spacing sites are numbered in canonical path order rather than by kind, slot and
 label. That is what makes every descendant of a prefix a contiguous index range,

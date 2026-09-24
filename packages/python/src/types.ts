@@ -5534,6 +5534,7 @@ export interface OptionsHintMap {
 	splatPattern: SplatPattern.Hints;
 	classPattern: ClassPattern.Hints;
 	complexPattern: ComplexPattern.Hints;
+	parametersElements: _Parameters.Hints;
 	patterns: Patterns.Hints;
 	tuplePattern: TuplePattern.Hints;
 	listPattern: ListPattern.Hints;
@@ -5954,16 +5955,6 @@ export namespace Parameters {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly lparen?: { readonly after?: SpacingArm };
-			readonly parameter?: {
-				readonly defaultParameter?: { readonly after?: SpacingArm };
-				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionarySplatPattern?: { readonly after?: SpacingArm };
-				readonly listSplatPattern?: { readonly after?: SpacingArm };
-				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
-				readonly tuplePattern?: { readonly after?: SpacingArm };
-				readonly typedDefaultParameter?: { readonly after?: SpacingArm };
-				readonly typedParameter?: { readonly after?: SpacingArm };
-			};
 			readonly rparen?: { readonly before?: SpacingArm };
 		};
 	}
@@ -6250,6 +6241,23 @@ export namespace ComplexPattern {
 			readonly before?: SpacingArm;
 			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly real?: { readonly after?: SpacingArm };
+		};
+	}
+}
+
+export namespace _Parameters {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly parameter?: {
+				readonly defaultParameter?: { readonly after?: SpacingArm };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly dictionarySplatPattern?: { readonly after?: SpacingArm };
+				readonly listSplatPattern?: { readonly after?: SpacingArm };
+				readonly separator?: { readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
+				readonly tuplePattern?: { readonly after?: SpacingArm };
+				readonly typedDefaultParameter?: { readonly after?: SpacingArm };
+				readonly typedParameter?: { readonly after?: SpacingArm };
+			};
 		};
 	}
 }

@@ -11822,6 +11822,7 @@ export interface OptionsHintMap {
 	indexTypeQuery: IndexTypeQuery.Hints;
 	lookupType: LookupType.Hints;
 	mappedTypeClause: MappedTypeClause.Hints;
+	unaryExpressionNumber: _Number.Hints;
 	flowMaybeType: FlowMaybeType.Hints;
 	parenthesizedType: ParenthesizedType.Hints;
 	typeArguments: TypeArguments.Hints;
@@ -13198,6 +13199,7 @@ export namespace ImplementsClause {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
+				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};
@@ -13646,6 +13648,12 @@ export namespace MappedTypeClause {
 	}
 }
 
+export namespace _Number {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+	}
+}
+
 export namespace FlowMaybeType {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -13924,6 +13932,7 @@ export namespace Types {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
+				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};
@@ -13981,6 +13990,7 @@ export namespace TupleTypeMembers {
 				readonly typeQuery?: { readonly after?: WhitespaceArm };
 				readonly typeQueryCallExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
 				readonly typeQueryMemberExpressionInTypeAnnotation?: { readonly after?: WhitespaceArm };
+				readonly unaryExpressionNumber?: { readonly after?: WhitespaceArm };
 				readonly unionType?: { readonly after?: WhitespaceArm };
 			};
 		};

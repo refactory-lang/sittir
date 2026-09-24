@@ -188,8 +188,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		});
 	}
 
-	const aliasedHiddenKinds = collectAliasedHiddenKinds(rawRules);
-
 	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
 	if (Object.keys(renderAs).length > 0) {
 		const stamped = stampStaticRenderAs(rules, renderAs);
@@ -283,7 +281,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		wordMatcher: wordMatcherRegex,
 		references,
 		derivations,
-		aliasedHiddenKinds,
 		displayUnions,
 		topLevelAliasBodies,
 		leafTextPatterns: collectLeafTextPatterns(rules),
@@ -835,16 +832,6 @@ function cyclicInlineTargets(rules: Record<string, Rule<'link'>>): ReadonlySet<s
 	return cyclic;
 }
 
-function collectAliasedHiddenKinds(rawRules: Record<string, Rule<'evaluate'>>): Map<string, string> {
-	const out = new Map<string, string>();
-	for (const [name, rule] of Object.entries(rawRules)) {
-		if (!name.startsWith('_')) continue;
-		const target = extractTopLevelAliasTarget(rule as Rule<'link'>);
-		if (target) out.set(name, target);
-	}
-	return out;
-}
-
 function collectDisplayUnions(
 	rules: Record<string, Rule<'link'>>,
 	ctx: StampKindIdsCtx
@@ -937,14 +924,6 @@ function mintDisplayUnionRules(
 			content
 		} as Rule<'link'>;
 	}
-}
-
-function extractTopLevelAliasTarget(rule: Rule<'link'>): string | undefined {
-	if (rule.type === ALIAS && rule.named) return rule.value;
-	if (rule.type === TOKEN) {
-		return extractTopLevelAliasTarget((rule as { content: Rule<'link'> }).content);
-	}
-	return undefined;
 }
 
 function collectHiddenNamedArmChoices(rawRules: Record<string, Rule<'evaluate'>>): ReadonlySet<string> {

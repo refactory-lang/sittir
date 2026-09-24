@@ -217,6 +217,7 @@ export interface KindEntryLike {
 	readonly anon?: boolean;
 	readonly literalRule?: boolean;
 	readonly alias?: boolean;
+	readonly hidden?: boolean;
 }
 
 export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
@@ -227,6 +228,15 @@ export function findEntryForKindName<T extends KindEntryLike>(entries: readonly 
 		entries.find((entry) => entry.anon !== true && entry.symbolName === name) ??
 		undefined
 	);
+}
+
+export function modelKindOfEntry(entry: { readonly kind: string; readonly symbolName?: string; readonly alias?: boolean }): string {
+	return entry.alias === true && entry.symbolName !== undefined ? entry.symbolName : entry.kind;
+}
+
+export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
+	const entry = findEntryForKindName(entries, kind);
+	return entry !== undefined && modelKindOfEntry(entry) === kind ? entry : undefined;
 }
 
 export function findAnonEntryForLiteralText<T extends KindEntryLike>(

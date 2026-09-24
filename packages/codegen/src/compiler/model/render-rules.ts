@@ -1,16 +1,17 @@
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForLiteralText, type KindEntryLike } from '../generated-metadata.ts';
-import type { RenderRule, Rule, RuleAnnotations, RuleId, SeamOrigin } from '../../types/rule.ts';
+import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type RuleId, type SeamOrigin } from '../../types/rule.ts';
 import { CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
 import { type AssembledNode, AbstractAssembledCompound, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isBoundaryLeftImmediate, isVisiblePunctuationLeaf, leftmostTerminalImmediate } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/transport-common.ts';
-import { supertypeMembersByPublicName } from './supertype-members.ts';
+import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { spacingArmsOf, whitespaceArmsOf } from './whitespace-arms.ts';
+import { spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
 	FLANK_DEFAULT,
@@ -48,13 +49,10 @@ export function whitespaceTextOf(
 	visibleExternals: Readonly<Record<string, Rule<'evaluate'>>> | undefined,
 	nodeMap: NodeMap
 ): ReadonlyMap<string, string> {
-	const arms = whitespaceArmsOf(nodeMap);
 	const out = new Map<string, string>();
-	for (const [name, rule] of Object.entries(visibleExternals ?? {})) {
-		const kind = publicKindName(name);
-		if (!arms.includes(kind)) continue;
-		const r = rule as { type?: unknown; value?: unknown };
-		if (r.type === STRING && typeof r.value === 'string') out.set(kind, r.value);
+	for (const [arm, symbol] of whitespaceSymbolsOf(nodeMap)) {
+		const r = visibleExternals?.[symbol] as { type?: unknown; value?: unknown } | undefined;
+		if (r?.type === STRING && typeof r.value === 'string') out.set(arm, r.value);
 	}
 	return out;
 }
@@ -122,16 +120,13 @@ type Bag = {
 	readonly inline?: boolean;
 	readonly staticSeamBefore?: 'glued' | 'spaced';
 	readonly members?: readonly RenderRule[];
+	readonly subtypes?: readonly RenderRule[];
 	readonly content?: RenderRule;
 	readonly separator?: { readonly value: RenderRule };
 	readonly annotations?: RuleAnnotations;
 };
 
 const bag = (rule: RenderRule): Bag => rule as unknown as Bag;
-
-export function publicKindName(kind: string): string {
-	return kind.replace(/^_+/, '');
-}
 
 function isRepeated(rule: RenderRule): boolean {
 	const m = bag(rule).multiplicity;
@@ -142,13 +137,25 @@ function admitsNoExtras(rule: RenderRule, rules: Readonly<Record<string, RenderR
 	const r = bag(rule);
 	if (r.tokenized === true || r.immediate === true) return true;
 	if (r.separator !== undefined) return bag(r.separator.value).immediate === true;
-	if (r.type === SYMBOL && r.name !== undefined) {
-		if (externals.has(r.name) || externals.has(`_${publicKindName(r.name)}`)) return true;
-		const target = rules[r.name];
-		return target !== undefined && (bag(target).tokenized === true || bag(target).immediate === true);
-	}
+	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, new Set());
 	if (r.members !== undefined) return r.members.some((m) => admitsNoExtras(m, rules, externals));
 	if (r.content !== undefined) return admitsNoExtras(r.content, rules, externals);
+	return false;
+}
+
+function isLexicalSymbol(name: string, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>): boolean {
+	if (externals.has(name)) return true;
+	const target = rules[name];
+	return target !== undefined && !seen.has(name) && isLexicalRule(target, rules, externals, new Set([...seen, name]));
+}
+
+function isLexicalRule(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>): boolean {
+	const r = bag(rule);
+	if (r.tokenized === true || r.immediate === true) return true;
+	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, seen);
+	const parts = r.members ?? r.subtypes;
+	if (parts !== undefined) return parts.length > 0 && parts.every((m) => isLexicalRule(m, rules, externals, seen));
+	if (r.content !== undefined) return isLexicalRule(r.content, rules, externals, seen);
 	return false;
 }
 
@@ -159,17 +166,17 @@ interface Gap {
 	readonly token?: string;
 }
 
-function gapOf(kind: string, rule: RenderRule, kindEntries: readonly KindEntryLike[]): { readonly token?: string } | undefined {
+function gapOf(kind: string, rule: RenderRule, config: RenderRulesConfig): { readonly token?: string } | undefined {
 	const sep = bag(rule).separator;
 	if (sep === undefined) return {};
 	const value = bag(sep.value);
 	if (value.type === CHOICE && value.members !== undefined && value.members.every((m) => bag(m).type === STRING)) {
-		return { token: publicKindName(kind) };
+		return { token: displayNameOf(kind, config.nodeMap) };
 	}
 	if (value.type !== STRING || typeof value.value !== 'string' || value.value === '') return undefined;
-	const entry = findEntryForLiteralText(kindEntries, value.value);
+	const entry = findEntryForLiteralText(config.kindEntries, value.value);
 	if (entry === undefined) throw new Error(`separator token '${value.value}' has no kind in the catalog`);
-	return { token: publicKindName(entry.kind) };
+	return { token: displayNameOfEntry(entry, config.kindEntries) };
 }
 
 function labelsOf(gap: { readonly token?: string }): readonly { readonly label: string; readonly side: SpacingSide }[] {
@@ -192,7 +199,7 @@ function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, R
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
 			const slot = config.nodeMap.slotByRuleId.get(id)?.name;
 			if (slot === undefined || admitsNoExtras(r, rules, externals)) return undefined;
-			const gap = gapOf(kind, r, config.kindEntries);
+			const gap = gapOf(kind, r, config);
 			if (gap !== undefined) gaps.set(id, { kind, slot, id, ...gap });
 			return undefined;
 		});
@@ -216,9 +223,11 @@ export interface DeclaredArm {
 }
 
 class DefaultResolver {
+	readonly #nodeMap: NodeMap;
 	readonly #declared: ReadonlyMap<string, DeclaredArm>;
 
-	constructor(declared?: ReadonlyMap<string, DeclaredArm>) {
+	constructor(nodeMap: NodeMap, declared?: ReadonlyMap<string, DeclaredArm>) {
+		this.#nodeMap = nodeMap;
 		this.#declared = declared ?? new Map();
 	}
 
@@ -240,12 +249,12 @@ class DefaultResolver {
 	): { readonly label: string; readonly arm: WhitespaceArm; readonly origin: SeamOrigin } {
 		const resolved = this.#resolve(kind, address, fallback);
 		const { arm, origin } = wordShaped && resolved.origin === 'fallback' ? { arm: resolved.arm, origin: 'word-default' as const } : resolved;
-		if (!arms.includes(arm)) throw new Error(`options: '${address}' on ${publicKindName(kind)} is '${arm}', not one of ${arms.join(', ')}`);
+		if (!arms.includes(arm)) throw new Error(`options: '${address}' on ${displayNameOf(kind, this.#nodeMap)} is '${arm}', not one of ${arms.join(', ')}`);
 		return { label: address, arm, origin };
 	}
 
 	resolveFlank(kind: string, side: FlankSide): { readonly label: string; readonly arm: WhitespaceArm } {
-		const address = flankAddress(publicKindName(kind), side);
+		const address = flankAddress(displayNameOf(kind, this.#nodeMap), side);
 		return { label: address, arm: this.#resolve(kind, address, FLANK_DEFAULT).arm };
 	}
 }
@@ -254,9 +263,10 @@ type Symbols = Partial<Record<WhitespaceArm, string>>;
 
 function whitespaceSymbols(nodeMap: NodeMap, arms: readonly WhitespaceArm[]): Symbols | undefined {
 	if (arms.length === 0) return undefined;
+	const symbolOf = whitespaceSymbolsOf(nodeMap);
 	const out: Symbols = {};
 	for (const arm of arms) {
-		const name = nodeMap.nodes.has(arm) ? arm : nodeMap.nodes.has(`_${arm}`) ? `_${arm}` : undefined;
+		const name = symbolOf.get(arm);
 		if (name === undefined) return undefined;
 		out[arm] = name;
 	}
@@ -281,6 +291,7 @@ function whitespaceChoice(part: SpacingPart, arms: readonly WhitespaceArm[], sym
 			nonterminal: true,
 			annotations: {
 				preference: part.label,
+				arm,
 				...(arm === part.defaultArm ? { default: true as const, ...(part.origin === undefined ? {} : { origin: part.origin }) } : {})
 			}
 		}))
@@ -302,6 +313,12 @@ function isWhitespaceChoice(rule: RenderRule): boolean {
 
 const isSpacingChoice = isWhitespaceChoice;
 
+function armOf(member: Bag): WhitespaceArm {
+	const arm = member.annotations?.arm;
+	if (arm === undefined) throw new Error(`render rules: whitespace choice member '${member.name}' carries no arm`);
+	return arm as WhitespaceArm;
+}
+
 function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
 	const r = bag(choice);
 	const members = r.members!.map(bag);
@@ -314,10 +331,10 @@ function partOf(choice: RenderRule, side: SpacingSide): SpacingPart {
 		fieldName: r.fieldName,
 		label: members[0]!.annotations!.preference!,
 		side,
-		defaultArm: publicKindName(defaultMember.name) as WhitespaceArm,
+		defaultArm: armOf(defaultMember),
 		...(defaultMember.annotations?.origin === 'word-default' ? { origin: defaultMember.annotations.origin } : {}),
 		...(edgeLiterals === undefined ? {} : { edgeLiterals }),
-		arms: members.map((m) => publicKindName(m.name!) as WhitespaceArm)
+		arms: members.map(armOf)
 	};
 }
 
@@ -369,7 +386,7 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 	const gaps = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
 	const flanked = flankSyms === undefined ? new Map<string, Gap>() : flankedSlots(gaps);
-	const resolver = new DefaultResolver(declared);
+	const resolver = new DefaultResolver(config.nodeMap, declared);
 	const visit = (r: RenderRule): RenderRule => {
 		const id = bag(r).id;
 		const gap = id === undefined ? undefined : gaps.get(id);
@@ -386,19 +403,19 @@ export function admitsDepth(site: { readonly arms: readonly string[] }): boolean
 	return site.arms.includes('indent') || site.arms.includes('dedent');
 }
 
-export function siteAt(site: RuleSpacingSite): string {
-	const kind = publicKindName(site.kind);
+export function siteAt(site: RuleSpacingSite, nodeMap: NodeMap): string {
+	const kind = displayNameOf(site.kind, nodeMap);
 	return site.side === 'start' || site.side === 'end' ? `${kind}.${site.slot}_${site.side}` : `${kind}.${site.address}`;
 }
 
-export function validateIndentDepth(sites: readonly RuleSpacingSite[]): void {
+export function validateIndentDepth(sites: readonly RuleSpacingSite[], nodeMap: NodeMap): void {
 	const depth = new Map<string, number>();
 	for (const site of sites) {
-		const kind = publicKindName(site.kind);
+		const kind = displayNameOf(site.kind, nodeMap);
 		const current = depth.get(kind) ?? 0;
 		if (site.defaultArm === 'indent') depth.set(kind, current + 1);
 		if (site.defaultArm === 'dedent') {
-			if (current === 0) throw new Error(`defaults: ${siteAt(site)} dedents an indent it never opened; indent and dedent are a pair on one kind`);
+			if (current === 0) throw new Error(`defaults: ${siteAt(site, nodeMap)} dedents an indent it never opened; indent and dedent are a pair on one kind`);
 			depth.set(kind, current - 1);
 		}
 	}
@@ -424,7 +441,7 @@ export function seamChoiceDefault(
 	if (label === undefined) return undefined;
 	for (const member of bag(rule).members ?? []) {
 		const m = bag(member);
-		if (m.annotations?.default === true) return { label, origin: m.annotations.origin, arm: publicKindName(m.name!) };
+		if (m.annotations?.default === true) return { label, origin: m.annotations.origin, arm: armOf(m) };
 	}
 	return undefined;
 }
@@ -446,12 +463,12 @@ function literalTextOf(rule: RenderRule): string | undefined {
 export function tokenNameOfText(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {
 	if (text.trim() === '') return undefined;
 	const entry = findEntryForLiteralText(kindEntries, text);
-	return entry === undefined ? undefined : publicKindName(entry.kind);
+	return entry === undefined ? undefined : displayNameOfEntry(entry, kindEntries);
 }
 
 function isDisplayedLiteral(rule: RenderRule): boolean {
-	const r = bag(rule);
-	return r.aliasedTo !== undefined && (r.type === STRING || (r.type === SYMBOL && r.literal !== undefined));
+	if (rule.type === SYMBOL) return rule.literal !== undefined && aliasTargetOf(rule) !== undefined;
+	return rule.type === STRING && bag(rule).aliasedTo !== undefined;
 }
 function literalTokenOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
 	if (isDisplayedLiteral(rule)) return undefined;
@@ -704,8 +721,12 @@ function armSeamName(rule: RenderRule, config: RenderRulesConfig, includeWords: 
 	if (isDisplayedLiteral(rule)) return undefined;
 	const text = literalTextOf(rule);
 	if (text === undefined || text.trim() === '' || (!includeWords && matchesWordShape(text, config.nodeMap.wordMatcher))) return undefined;
-	const entry = findAnonEntryForLiteralText(config.kindEntries, text);
-	return entry === undefined ? undefined : publicKindName(entry.kind);
+	return anonTokenNameOfText(text, config.kindEntries);
+}
+
+export function anonTokenNameOfText(text: string, kindEntries: readonly KindEntryLike[]): string | undefined {
+	const entry = findAnonEntryForLiteralText(kindEntries, text);
+	return entry === undefined ? undefined : displayNameOfEntry(entry, kindEntries);
 }
 
 function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {
@@ -732,7 +753,8 @@ function isLexedKind(kind: string, nodeMap: NodeMap): boolean {
 
 function ownsKindEdges(kind: string, nodeMap: NodeMap): boolean {
 	if (!(nodeMap.nodes.get(kind) instanceof AbstractAssembledCompound) || isLexedKind(kind, nodeMap)) return false;
-	return kind === publicKindName(kind) || !nodeMap.nodes.has(publicKindName(kind));
+	const display = displayNameOf(kind, nodeMap);
+	return kind === display || !nodeMap.nodes.has(display);
 }
 
 function withKindEdges(
@@ -745,7 +767,7 @@ function withKindEdges(
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined) return rule;
 	const part = (side: SeparatorSide): RenderRule =>
-		seamChoice(kind, seamLabel(publicKindName(kind), side), 'space', resolver, seams, edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config));
+		seamChoice(kind, seamLabel(displayNameOf(kind, config.nodeMap), side), 'space', resolver, seams, edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config));
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
 	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {
@@ -767,7 +789,7 @@ export function seamRenderRules(
 	const seams: SeamArms = flankSyms === undefined ? { arms: spacingArms, symbols } : { arms: whitespaceArmsOf(config.nodeMap), symbols: flankSyms };
 	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules };
 	const build = (): RenderRules => {
-		const resolver = new DefaultResolver(declared);
+		const resolver = new DefaultResolver(config.nodeMap, declared);
 		const out: Record<string, RenderRule> = {};
 		for (const [kind, rule] of Object.entries(spaced.rules)) {
 			if (inlined.has(kind)) {
@@ -787,7 +809,7 @@ export function seamRenderRules(
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
-	validateIndentDepth(sites);
+	validateIndentDepth(sites, config.nodeMap);
 	return result;
 }
 
@@ -810,7 +832,7 @@ export function resolveRenderRules(
 }
 
 function declaredKey(kind: string, address: string): string {
-	return `${publicKindName(kind)}\u0000${address}`;
+	return `${kind}\u0000${address}`;
 }
 
 export function declaredOptionArms(
@@ -819,12 +841,12 @@ export function declaredOptionArms(
 ): ReadonlyMap<string, DeclaredArm> | undefined {
 	const block: OptionsConfig | undefined = config.options;
 	if (block === undefined) return undefined;
-	const kinds = new Set([...config.nodeMap.nodes.keys()].map(publicKindName));
+	const kinds = displayedKinds(config.nodeMap);
 	const { declarations, bindings } = readOptionsBlock(block, kinds);
 	if (declarations.length === 0) return undefined;
-	const addressed = addressSites(sites, config.kindEntries);
+	const addressed = addressSites(sites, config.kindEntries, config.nodeMap);
 	const arms = new Map<string, DeclaredArm>();
-	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, supertypeMembersByPublicName(config.nodeMap), false)) {
+	for (const [index, { arm, origin }] of resolveBindings(declarations, bindings, addressed, supertypeMembersByDisplayName(config.nodeMap), false)) {
 		const site = addressed[index]!;
 		arms.set(declaredKey(site.kind, site.address), { arm, origin });
 	}
@@ -838,7 +860,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 		const key = `${kind} ${part.fieldName}`;
 		const prior = out.get(key);
 		if (prior !== undefined && prior.defaultArm !== part.defaultArm) {
-			throw new Error(`render rules: ${publicKindName(kind)}.${slot} resolves '${part.label}' to both ${prior.defaultArm} and ${part.defaultArm}`);
+			throw new Error(`render rules: ${displayNameOf(kind, nodeMap)}.${slot} resolves '${part.label}' to both ${prior.defaultArm} and ${part.defaultArm}`);
 		}
 		if (prior === undefined) {
 			out.set(key, {
@@ -864,9 +886,9 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 		const flanks = flanksOf(r);
 		if (flanks !== undefined) {
 			const slot = slotOf(kind, flanks.inner);
-			add(kind, slot, flanks.start, flankAddress(publicKindName(kind), 'start'));
+			add(kind, slot, flanks.start, flankAddress(displayNameOf(kind, nodeMap), 'start'));
 			visit(kind, flanks.inner);
-			add(kind, slot, flanks.end, flankAddress(publicKindName(kind), 'end'));
+			add(kind, slot, flanks.end, flankAddress(displayNameOf(kind, nodeMap), 'end'));
 			return;
 		}
 		const b = bag(r);
@@ -906,13 +928,13 @@ function seatedSites(
 ): RuleSpacingSite[] {
 	const edgeOf = new Map<string, RuleSpacingSite>();
 	for (const site of sites) {
-		const own = publicKindName(site.kind);
+		const own = displayNameOf(site.kind, nodeMap);
 		if (site.side === 'seam' && site.address === seamLabel(own, 'after')) edgeOf.set(own, site);
 	}
 	const renderedKinds = (kind: string, seen: Set<string>): string[] => {
 		if (seen.has(kind)) return [];
 		seen.add(kind);
-		if (edgeOf.has(publicKindName(kind))) return [kind];
+		if (edgeOf.has(displayNameOf(kind, nodeMap))) return [kind];
 		const node = nodeMap.nodes.get(kind);
 		if (node instanceof AssembledPolymorph) {
 			return node.slots.flatMap((slot) => slotElementKinds(slot, nodeMap)).flatMap((arm) => renderedKinds(arm, seen));
@@ -926,21 +948,21 @@ function seatedSites(
 		const key = `${seat.kind}\u0000${seat.slot}`;
 		const entry = admitted.get(key) ?? { kind: seat.kind, slot: seat.slot, children: new Set<string>() };
 		for (const c of slotElementKinds(slot, nodeMap)) {
-			for (const rendered of renderedKinds(c, new Set())) entry.children.add(publicKindName(rendered));
+			for (const rendered of renderedKinds(c, new Set())) entry.children.add(displayNameOf(rendered, nodeMap));
 		}
 		admitted.set(key, entry);
 	}
 	const out: RuleSpacingSite[] = [];
 	for (const seat of admitted.values()) {
 		const children = [...seat.children].sort();
-		const parent = publicKindName(seat.kind);
+		const parent = displayNameOf(seat.kind, nodeMap);
 		for (const child of children) {
 			const edge = edgeOf.get(child);
 			if (edge === undefined) continue;
 			const address = `${seat.slot}_${edge.address}`;
 			const arm = declared?.get(declaredKey(seat.kind, address))?.arm;
 			if (arm !== undefined && !edge.arms.includes(arm)) {
-				throw new Error(`options: ${publicKindName(seat.kind)}.${address} is '${arm}', not one of ${edge.arms.join(', ')}`);
+				throw new Error(`options: ${displayNameOf(seat.kind, nodeMap)}.${address} is '${arm}', not one of ${edge.arms.join(', ')}`);
 			}
 			out.push({
 				kind: seat.kind,

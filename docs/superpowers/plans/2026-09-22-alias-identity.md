@@ -324,113 +324,22 @@ git commit -m "feat(compiler): an inline alias distributes over its arms; link b
 
 ---
 
-### Task 2: Split `publicKindName` into a display-name accessor and a storage identifier
+### Task 2: Display names are stamped on the node; `publicKindName` is gone (landed)
 
-**Files:**
-- Create: `packages/codegen/src/compiler/model/display-name.ts`
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts:132` (delete `publicKindName`) and every reference (61 at ad445142f): `render-rules.ts` (26), `site-preferences.ts` (10), `site-addresses.ts` (3), `supertype-members.ts` (2), `whitespace-arms.ts` (2), `emitters/render-module.ts` (11), `emitters/render-options-rs.ts` (2), `emitters/options.ts` (3), `emitters/shared.ts` (2); `find_all_references` on `render-rules.ts::publicKindName` lists them
-- Modify: `packages/codegen/src/compiler/model/render-rules.ts:452-467` (`isDisplayedLiteral`, landed with Task 1: an options address reaches a displayed literal through its display) — it reads the same accessor, not its own strip
-- Audit: `packages/codegen/src/compiler/link.ts:838` (`collectAliasedHiddenKinds`) — list its readers; retire it here if `displayUnions` answers every one
-- Test: `packages/codegen/src/compiler/model/__tests__/display-name.test.ts` (new)
+**What landed** (all 74 `publicKindName` references in 10 files, recounted on the branch; the plan's 61 predates Task 1):
 
-**Why this task is now urgent:** the merged code still strips underscores to address a renamed container: `_number` displays as `unary_expression_number` but is addressed as `number` (the `publicKindName` addressing gap the Task 1 PR lists as a follow-up). Every rename `unaliasOverloadedDisplays` mints is a site where the strip and the display disagree.
+- `compiler/model/display-name.ts`: `stampDisplay` sets `AssembledNodeBase.display = { name, source }` at construction from the kind's own catalog row (`findOwnKindEntry`); `displayNameOf(kind, nodeMap)` reads it and throws for a name that is not a node; `displayNameOfEntry(entry, kindEntries)` answers for a catalog row (an anonymous token has no node); `displayNameOfRef(ref)` is the per-site display. The display is the row's parser symbol (`symbolName`), never the literal spelling: a hidden rule the parser shows as an anonymous token displays as that token's kind (typescript `_ternary_qmark` → `qmark`).
+- One naming rule for a name the parser does not show, `displayOfParserName` → `undisplayedKindAddress`: a hidden-prefixed parser name keeps its underscore-less address (rust `_let_chain`, `_token_keywords`; python `_augmented_assignment_operator`, `_simple_statements`). No other strip survives.
+- A node with no own row: `source` records why, with `supertype` for a supertype tree-sitter issues no symbol for, `alias-name` for a node assemble mints under an alias name, and `phantom` otherwise (the six sittir-minted operator enums, python `keyword_identifier`). Its display comes from the same naming rule. `AssembledSupertype` now receives the catalog; this moved no output.
+- Shared displays: the kind that owns its display (`ownsItsDisplay`) holds the options hint home; any other collision throws. The visible-twin merge in `emitOptionsHints` is gone.
+- Whitespace arms are stamped on each `whitespaceChoice` member (`annotations.arm`) and read back by `partOf`/`seamChoiceDefault`; `whitespaceSymbolsOf` maps arm to member symbol from the `_whitespace` supertype.
+- `admitsNoExtras` names a lexical kind by structure (`isLexicalSymbol`: an external, or a rule lexical all the way down), not by the `_`-reprefix name bridge.
+- `isDisplayedLiteral` reads `aliasTargetOf`. `collectAliasedHiddenKinds` and its plumbing are retired: every entry it held was a non-node kind, which `acceptedTransportKinds` never consulted (byte-identical).
+- No `storageIdentifier`: nothing needed one.
 
-**Interfaces:**
-- Consumes: `aliasTargetOf(ref)` and `storageNameOf(ref)` (`types/rule.ts`, landed); `NodeMap.displayUnions` (landed); `AssembledAlias.kind` as the display of a minted envelope.
-- Produces:
-  - `displayNameOf(kind: string, nodeMap: NodeMap): string` — the kind's display name: `kind` when the grammar has a rule of that name that is visible, else the unique display union that contains `kind` when there is exactly one, else `kind`. A kind that displays under two names at different sites has no single display name; the function throws naming the kind and the names, so a caller that needs a per-site name passes the ref instead.
-  - `displayNameOfRef(ref: SymbolRule<'link'>): string` — `aliasTargetOf(ref) ?? storageNameOf(ref)`.
-  - `storageIdentifier(kind: string): string` — the kind's own name, hidden prefix kept, through the existing identifier casing (`_as_pattern` → `_AsPattern`). Reuses the casing helper the transport already uses for hidden struct names.
+**Output moves (reviewed and accepted):** python `(parameters)/parameter…` → `(parameters_elements)/parameter…`; typescript `_number` owns its edges as `unary_expression_number` (five sites, three seated); display-sharing `Edged` ids (typescript fragments → `string_fragment` 109, `_ternary_qmark` → 126; rust `raw_string_literal_content` → 155).
 
-- [ ] **Step 1: Write the failing test**
-
-```ts
-// packages/codegen/src/compiler/model/__tests__/display-name.test.ts
-import { describe, it, expect } from 'vitest';
-import { displayNameOf, storageIdentifier } from '../display-name.ts';
-import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
-
-describe('display names come from the alias mapping, never from a strip', () => {
-	it('a hidden kind aliased to a non-matching name displays under that name', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['case_as_pattern', new Set(['_as_pattern'])]]) });
-		expect(displayNameOf('_as_pattern', nodeMap)).toBe('case_as_pattern');
-	});
-	it('a kind that is its own rule displays as itself even when it is also an alias target', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['generic_type', new Set(['generic_type', 'generic_type_with_turbofish'])]]) });
-		expect(displayNameOf('generic_type', nodeMap)).toBe('generic_type');
-	});
-	it('a kind with two display names has no single one', () => {
-		const nodeMap = makeNodeMapWith(new Map(), { displayUnions: new Map([['a', new Set(['_x'])], ['b', new Set(['_x'])]]) });
-		expect(() => displayNameOf('_x', nodeMap)).toThrow(/'_x' displays as a, b/);
-	});
-	it('a storage identifier keeps the hidden prefix', () => {
-		expect(storageIdentifier('_as_pattern')).toBe('_AsPattern');
-		expect(storageIdentifier('as_pattern')).toBe('AsPattern');
-	});
-});
-```
-
-- [ ] **Step 2: Run it to verify it fails**
-
-Run: `cd packages/codegen && pnpm exec vitest run src/compiler/model/__tests__/display-name.test.ts`
-Expected: FAIL, module not found.
-
-- [ ] **Step 3: Implement the module**
-
-```ts
-// packages/codegen/src/compiler/model/display-name.ts
-import type { NodeMap } from '../types.ts';
-import type { SymbolRule } from '../../types/rule.ts';
-import { aliasTargetOf, storageNameOf } from '../../types/rule.ts';
-import { toPascalCase } from '../../emitters/naming.ts'; // the casing helper transport struct names use
-
-export function displayNameOf(kind: string, nodeMap: NodeMap): string {
-	const node = nodeMap.nodes.get(kind);
-	if (node !== undefined && !kind.startsWith('_')) return kind;
-	const names = [...nodeMap.displayUnions].filter(([, members]) => members.has(kind)).map(([name]) => name);
-	if (names.length === 1) return names[0]!;
-	if (names.length > 1) throw new Error(`display name: '${kind}' displays as ${names.join(', ')}; resolve it per reference`);
-	return kind;
-}
-
-export function displayNameOfRef(ref: SymbolRule<'link'>): string {
-	return aliasTargetOf(ref) ?? storageNameOf(ref);
-}
-
-export function storageIdentifier(kind: string): string {
-	return kind.startsWith('_') ? `_${toPascalCase(kind.slice(1))}` : toPascalCase(kind);
-}
-```
-
-If the casing helper lives under another name, use that name; do not add a second casing function.
-
-- [ ] **Step 4: Run the test**
-
-Run: `cd packages/codegen && pnpm exec vitest run src/compiler/model/__tests__/display-name.test.ts`
-Expected: PASS
-
-- [ ] **Step 5: Replace every `publicKindName` reference**
-
-For each of the 85 references, decide which question the site asks and substitute:
-
-| the site needs | replace with |
-| --- | --- |
-| a name to match `options:` keys, `bindings.scm`, node-types, or an options address (`site-preferences.ts`, `site-addresses.ts`, `options.ts`, `render-options-rs.ts` address labels) | `displayNameOf(kind, nodeMap)` or `displayNameOfRef(ref)` when a ref is in hand |
-| a key for a spacing site, a struct or enum name, a wrap function name, or a map keyed by kind (`render-rules.ts` `spacingSitesOf`/`seatedSites`/`ownsKindEdges`, `render-module.ts` seat and seam sites, `supertype-members.ts`) | the raw `kind`, and `storageIdentifier(kind)` where an identifier is spelled |
-
-Record the decision per file in the commit message body as a two-column list. Then delete `publicKindName`.
-
-- [ ] **Step 6: Regenerate and gate**
-
-Run the regen loop, `pnpm run validate:native`, `pnpm run type-check`, `cargo check --workspace`, then vitest.
-Expected: generated output byte-identical apart from `generated.manifest.json` and the bundled `grammar.js` (every live alias today strips to its own display name, so the split changes nothing yet). Any generated diff is a real divergence: stop, keep the tree, report the site.
-
-- [ ] **Step 7: Commit**
-
-```bash
-git add -- packages/codegen/src/compiler/model/display-name.ts packages/codegen/src/compiler/model/__tests__/display-name.test.ts packages/codegen/src/compiler/model/render-rules.ts packages/codegen/src/compiler/model/site-preferences.ts packages/codegen/src/compiler/model/site-addresses.ts packages/codegen/src/compiler/model/supertype-members.ts packages/codegen/src/compiler/model/whitespace-arms.ts packages/codegen/src/emitters/render-module.ts packages/codegen/src/emitters/render-options-rs.ts packages/codegen/src/emitters/options.ts packages/codegen/src/emitters/shared.ts packages/*/.sittir/generated.manifest.json packages/*/.sittir/grammar.js
-git commit -m "refactor(compiler,emitters): display names read the alias mapping; storage identifiers keep the hidden prefix"
-```
+**Follow-up:** hidden kinds' `typeName` casing is inconsistent (`_Number` vs `TemplateChars`); unify it through the one identifier casing when a task next touches type names.
 
 ---
 
@@ -617,6 +526,8 @@ Expected: PASS. `transform-enrich-lift.test.ts:35` and `wire.test.ts:118-121` as
 git add -- packages/codegen/src/dsl/transform/transform.ts packages/codegen/src/dsl/__tests__/alias-placeholder.test.ts
 git commit -m "feat(dsl): alias() promotes an unnamed alias; a literal mint is a subtype, not a hoist"
 ```
+
+**Also in this task:** stop minting a supertype under an alias name at `assemble.ts` (the supertype parse-name pass), so the envelope is the only node with that display. Today the minted twins share a display with their storage: typescript `lhs_expression` (`_lhs_expression`), rust `non_special_token` (`_non_special_token`). Python `keyword_identifier` is a rowless grammar rule of the same effect. Task 2's `ownsItsDisplay` rule covers them until then.
 
 ---
 

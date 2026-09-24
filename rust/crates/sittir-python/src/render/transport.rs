@@ -26556,10 +26556,6 @@ pub struct ParametersTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: Option<::sittir_core::SlotValue<_ParametersTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_before"))]
-    pub parameter_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter_separator_space_after"))]
-    pub parameter_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ParametersTransport {
@@ -26583,8 +26579,6 @@ impl ::sittir_core::render::Render for ParametersTransport {
 impl ::sittir_core::prepare::Prepare for ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);
-        self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER].arm);
         self.elements.prepare(ctx)?;
         Ok(())
     }
@@ -28122,7 +28116,7 @@ impl ::sittir_core::view::KindOf for _ParametersTransport {
 }
 
 impl ::sittir_core::options::Edged for _ParametersTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(162) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(188) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -28135,17 +28129,16 @@ impl ::sittir_core::render::Render for _ParametersTransport {
 
 impl ::sittir_core::prepare::Prepare for _ParametersTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        ::sittir_core::prepare::prepare_edges(self, ctx);
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.parameter.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
             if self.parameter_separator_space_before.is_none() { self.parameter_separator_space_before = before; }
             if self.parameter_separator_space_after.is_none() { self.parameter_separator_space_after = after; }
         }
-        self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);
-        self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.parameter.iter_mut().map(Some), options::SEATS_PARAMETERS_PARAMETER, ctx);
-        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_PARAMETER]);
+        self.parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);
+        self.parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER].arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.parameter.iter_mut().map(Some), options::SEATS_PARAMETERS_ELEMENTS_PARAMETER, ctx);
+        self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_PARAMETERS_ELEMENTS_PARAMETER]);
         self.parameter.prepare(ctx)?;
         Ok(())
     }
@@ -36407,7 +36400,7 @@ impl ::sittir_core::view::KindOf for _StringContentTransport {
 }
 
 impl ::sittir_core::options::Edged for _StringContentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(244) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(117) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }

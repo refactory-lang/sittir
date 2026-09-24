@@ -901,8 +901,6 @@ export interface ParametersTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _elements?: SlotValue<_ParametersTransport>
-  _parameter_separator_space_before?: number
-  _parameter_separator_space_after?: number
 }
 
 export interface ParametersTransport {

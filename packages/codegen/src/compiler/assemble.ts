@@ -175,7 +175,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					);
 				}
 				const subtypes = resolveSupertypeSubtypes(renderRule, ctx, kindEntries);
-				nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes));
+				nodes.set(kind, new AssembledSupertype(kind, renderRule, subtypes, { kindEntries }));
 				break;
 			}
 			case 'branch':
@@ -265,7 +265,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			const subRule = normalized.normalizedRules[subName];
 			if (!subRule || subRule.type !== SUPERTYPE) continue;
 			const subtypes = resolveSupertypeSubtypes(subRule, ctx, kindEntries);
-			nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes));
+			nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes, { kindEntries, mintedUnderAliasName: true }));
 		}
 	}
 
@@ -319,7 +319,6 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		nodeByRuleId,
 		nodeByKindId,
 		slotByRuleId,
-		aliasedHiddenKinds: normalized.aliasedHiddenKinds,
 		displayUnions: normalized.displayUnions,
 		terminalAliasWireIds: normalized.terminalAliasWireIds,
 		signatures: computeSignatures(nodes),

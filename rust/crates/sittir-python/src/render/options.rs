@@ -635,18 +635,18 @@ pub const SITE_PAIR_COLON_BEFORE: usize = 626;
 pub const SITE_PAIR_COLON_AFTER: usize = 627;
 pub const SITE_PAIR_PAIR_BEFORE: usize = 628;
 pub const SITE_PAIR_PAIR_AFTER: usize = 629;
-pub const SITE_PARAMETERS_PARAMETER_DEFAULT_PARAMETER_AFTER: usize = 630;
-pub const SITE_PARAMETERS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER: usize = 631;
-pub const SITE_PARAMETERS_PARAMETER_LIST_SPLAT_PATTERN_AFTER: usize = 632;
-pub const SITE_PARAMETERS_PARAMETER_TUPLE_PATTERN_AFTER: usize = 633;
-pub const SITE_PARAMETERS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 634;
-pub const SITE_PARAMETERS_PARAMETER_TYPED_PARAMETER_AFTER: usize = 635;
-pub const SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 636;
-pub const SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 637;
-pub const SITE_PARAMETERS_LPAREN_AFTER: usize = 638;
-pub const SITE_PARAMETERS_RPAREN_BEFORE: usize = 639;
-pub const SITE_PARAMETERS_PARAMETERS_BEFORE: usize = 640;
-pub const SITE_PARAMETERS_PARAMETERS_AFTER: usize = 641;
+pub const SITE_PARAMETERS_LPAREN_AFTER: usize = 630;
+pub const SITE_PARAMETERS_RPAREN_BEFORE: usize = 631;
+pub const SITE_PARAMETERS_PARAMETERS_BEFORE: usize = 632;
+pub const SITE_PARAMETERS_PARAMETERS_AFTER: usize = 633;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_DEFAULT_PARAMETER_AFTER: usize = 634;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER: usize = 635;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_LIST_SPLAT_PATTERN_AFTER: usize = 636;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_TUPLE_PATTERN_AFTER: usize = 637;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER: usize = 638;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_TYPED_PARAMETER_AFTER: usize = 639;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE: usize = 640;
+pub const SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER: usize = 641;
 pub const SITE_PARENTHESIZED_EXPRESSION_LPAREN_AFTER: usize = 642;
 pub const SITE_PARENTHESIZED_EXPRESSION_RPAREN_BEFORE: usize = 643;
 pub const SITE_PARENTHESIZED_EXPRESSION_PARENTHESIZED_EXPRESSION_BEFORE: usize = 644;
@@ -1009,7 +1009,7 @@ pub const DELIM_EXPRESSION_LIST_EXPRESSIONS_EXPRESSION: usize = 5;
 pub const DELIM_EXPRESSION_STATEMENT_TUPLE_EXPRESSION: usize = 6;
 pub const DELIM_IMPORT_LIST_NAME: usize = 7;
 pub const DELIM_LIST_PATTERN_CASE_PATTERNS_CASE_PATTERN: usize = 8;
-pub const DELIM_PARAMETERS_PARAMETER: usize = 9;
+pub const DELIM_PARAMETERS_ELEMENTS_PARAMETER: usize = 9;
 pub const DELIM_PATTERN_LIST_PATTERNS_PATTERN: usize = 10;
 pub const DELIM_PATTERNS_PATTERN: usize = 11;
 pub const DELIM_PRINT_ARGUMENTS_ARGUMENT: usize = 12;
@@ -1653,18 +1653,18 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("pair", "colon_after", "colon_after", &[120, 121, 113, 122, 123]),
     ("pair", "pair_before", "pair_before", &[120, 121, 113, 122, 123]),
     ("pair", "pair_after", "pair_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_default_parameter_after", "default_parameter_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_dictionary_splat_pattern_after", "dictionary_splat_pattern_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_list_splat_pattern_after", "list_splat_pattern_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_tuple_pattern_after", "tuple_pattern_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_typed_default_parameter_after", "typed_default_parameter_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_typed_parameter_after", "typed_parameter_after", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_separator_space_before", "comma_separator_space_before", &[120, 121, 113, 122, 123]),
-    ("parameters", "parameter_separator_space_after", "comma_separator_space_after", &[120, 121, 113, 122, 123]),
     ("parameters", "lparen_after", "lparen_after", &[120, 121, 113, 122, 123]),
     ("parameters", "rparen_before", "rparen_before", &[120, 121, 113, 122, 123]),
     ("parameters", "parameters_before", "parameters_before", &[120, 121, 113, 122, 123]),
     ("parameters", "parameters_after", "parameters_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_default_parameter_after", "default_parameter_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_dictionary_splat_pattern_after", "dictionary_splat_pattern_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_list_splat_pattern_after", "list_splat_pattern_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_tuple_pattern_after", "tuple_pattern_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_typed_default_parameter_after", "typed_default_parameter_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_typed_parameter_after", "typed_parameter_after", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_separator_space_before", "comma_separator_space_before", &[120, 121, 113, 122, 123]),
+    ("parameters_elements", "parameter_separator_space_after", "comma_separator_space_after", &[120, 121, 113, 122, 123]),
     ("parenthesized_expression", "lparen_after", "lparen_after", &[120, 121, 113, 122, 123]),
     ("parenthesized_expression", "rparen_before", "rparen_before", &[120, 121, 113, 122, 123]),
     ("parenthesized_expression", "parenthesized_expression_before", "parenthesized_expression_before", &[120, 121, 113, 122, 123]),
@@ -2046,7 +2046,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 429, after: 430 },
     ::sittir_core::options::EdgeSite { before: 987, after: 988 },
     ::sittir_core::options::EdgeSite { before: 486, after: 487 },
-    ::sittir_core::options::EdgeSite { before: 640, after: 641 },
+    ::sittir_core::options::EdgeSite { before: 632, after: 633 },
     ::sittir_core::options::EdgeSite { before: 585, after: 586 },
     ::sittir_core::options::EdgeSite { before: 282, after: 283 },
     ::sittir_core::options::EdgeSite { before: 504, after: 505 },
@@ -2167,7 +2167,7 @@ pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[
     ("expression_statement_tuple", "expression_delimiter", 2, 0),
     ("import_list", "name_delimiter", 2, 0),
     ("list_pattern_case_patterns", "case_pattern_delimiter", 2, 0),
-    ("parameters", "parameter_delimiter", 2, 0),
+    ("parameters_elements", "parameter_delimiter", 2, 0),
     ("pattern_list_patterns", "pattern_delimiter", 2, 0),
     ("patterns", "pattern_delimiter", 2, 0),
     ("print_arguments", "argument_delimiter", 2, 0),
@@ -2836,17 +2836,17 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 1 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 121, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 120, strength: 2 },
@@ -3592,7 +3592,7 @@ pub static SEATS_MODULE_STATEMENTS: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_PARAMETERS_PARAMETER: &[u16] = &[
+pub static SEATS_PARAMETERS_ELEMENTS_PARAMETER: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -3605,8 +3605,8 @@ pub static SEATS_PARAMETERS_PARAMETER: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    633, NO_SITE, 630, 634, 632, 631, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 635,
+    637, NO_SITE, 634, 638, 636, 635, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 639,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5525,35 +5525,37 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(parameters)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_LPAREN_AFTER, path: "(parameters)/\"(\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "parameter", path: "(parameters)/parameter:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "defaultParameter", path: "(parameters)/parameter:/(default_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_DEFAULT_PARAMETER_AFTER, path: "(parameters)/parameter:/(default_parameter)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PARAMETERS_PARAMETER, path: "(parameters)/parameter:/delimiter" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "dictionarySplatPattern", path: "(parameters)/parameter:/(dictionary_splat_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER, path: "(parameters)/parameter:/(dictionary_splat_pattern)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "listSplatPattern", path: "(parameters)/parameter:/(list_splat_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_LIST_SPLAT_PATTERN_AFTER, path: "(parameters)/parameter:/(list_splat_pattern)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(parameters)/parameter:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(parameters)/parameter:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_AFTER, path: "(parameters)/parameter:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_SEPARATOR_SPACE_BEFORE, path: "(parameters)/parameter:/separator/\",\"/before" }] },
-                ] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(parameters)/parameter:/(tuple_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_TUPLE_PATTERN_AFTER, path: "(parameters)/parameter:/(tuple_pattern)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typedDefaultParameter", path: "(parameters)/parameter:/(typed_default_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER, path: "(parameters)/parameter:/(typed_default_parameter)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "typedParameter", path: "(parameters)/parameter:/(typed_parameter)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_PARAMETER_TYPED_PARAMETER_AFTER, path: "(parameters)/parameter:/(typed_parameter)/after" }] },
-            ] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(parameters)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_RPAREN_BEFORE, path: "(parameters)/\")\"/before" }] },
+        ] },
+    ] },
+    ::sittir_core::options::AddressNode::Branch { key: "parametersElements", path: "(parameters_elements)", children: &[
+        ::sittir_core::options::AddressNode::Branch { key: "parameter", path: "(parameters_elements)/parameter:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "defaultParameter", path: "(parameters_elements)/parameter:/(default_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_DEFAULT_PARAMETER_AFTER, path: "(parameters_elements)/parameter:/(default_parameter)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PARAMETERS_ELEMENTS_PARAMETER, path: "(parameters_elements)/parameter:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "dictionarySplatPattern", path: "(parameters_elements)/parameter:/(dictionary_splat_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_DICTIONARY_SPLAT_PATTERN_AFTER, path: "(parameters_elements)/parameter:/(dictionary_splat_pattern)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "listSplatPattern", path: "(parameters_elements)/parameter:/(list_splat_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_LIST_SPLAT_PATTERN_AFTER, path: "(parameters_elements)/parameter:/(list_splat_pattern)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(parameters_elements)/parameter:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(parameters_elements)/parameter:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_AFTER, path: "(parameters_elements)/parameter:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_SEPARATOR_SPACE_BEFORE, path: "(parameters_elements)/parameter:/separator/\",\"/before" }] },
+                ] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "tuplePattern", path: "(parameters_elements)/parameter:/(tuple_pattern)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_TUPLE_PATTERN_AFTER, path: "(parameters_elements)/parameter:/(tuple_pattern)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "typedDefaultParameter", path: "(parameters_elements)/parameter:/(typed_default_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_TYPED_DEFAULT_PARAMETER_AFTER, path: "(parameters_elements)/parameter:/(typed_default_parameter)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "typedParameter", path: "(parameters_elements)/parameter:/(typed_parameter)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PARAMETERS_ELEMENTS_PARAMETER_TYPED_PARAMETER_AFTER, path: "(parameters_elements)/parameter:/(typed_parameter)/after" }] },
+            ] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "parenthesizedExpression", path: "(parenthesized_expression)", children: &[

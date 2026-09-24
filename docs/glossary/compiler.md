@@ -451,11 +451,9 @@ parents.
 
 ```text
 // Post-synthesis-removal: the rules map is keyed by SOURCE kinds
-// only (hidden `_X`). Subtype names surface as source kinds; we
-// no longer redirect through the aliasedHiddenKinds table (which
-// pointed at visible alias targets). Hidden kinds that have their
-// own rule body are resolved via the rules map directly; the
-// chain terminates at a concrete symbol.
+// only (hidden `_X`). Subtype names surface as source kinds.
+// Hidden kinds that have their own rule body are resolved via the
+// rules map directly; the chain terminates at a concrete symbol.
 ```
 
 #### body
@@ -3753,27 +3751,6 @@ An external is never inlined: a ref to an external keeps its symbol even when th
  *  target reference. */
 ```
 
-### `packages/codegen/src/compiler/link.ts::collectAliasedHiddenKinds`
-
-```text
-/**
- * Walk the raw (pre-Link) rule tree and return a map of
- * `hiddenRuleName → aliasTargetName` for every rule whose body is a
- * top-level named alias. Tree-sitter's `alias($.x, $.y)` emits a
- * parse-tree node typed `y` for every match of `x`; without this map
- * Link's alias-collapse would leave downstream passes thinking the
- * hidden rule still produces the original kind.
- */
-```
-
-#### body
-
-```text
-// rawRules is Rule<'evaluate'> (pre-link); extractTopLevelAliasTarget
-// only walks the OPTIONAL/ALIAS/SEQ/CHOICE shell around a top-level
-// alias, present in both phases — widen the phase view with a cast.
-```
-
 ### `packages/codegen/src/compiler/link.ts::collectHiddenNamedArmChoices`
 
 ```text
@@ -3848,7 +3825,7 @@ An external is never inlined: a ref to an external keeps its symbol even when th
 ```text
 // rawRules is Rule<'evaluate'> (pre-resolveRule); walk only reads
 // ALIAS/SYMBOL/structural shapes present in both phases — widen the phase
-// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
+// view with a cast.
 ```
 
 ### `packages/codegen/src/compiler/link.ts::emitVariantChildDerivations`
@@ -7150,20 +7127,6 @@ collector parameter.
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
-
-```text
-/**
-	 * Hidden-rule → alias-target mapping, collected from `raw.rules` (the
-	 * evaluate-phase, pre-link grammar) for a hidden rule like
-	 * `_type_identifier: $ => alias($.identifier, $.type_identifier)`. Records
-	 * the rename — the name tree-sitter actually emits at parse time — so
-	 * Assemble can rewrite supertype subtype lists from `_type_identifier` to
-	 * `type_identifier`. Optional so unit tests that construct a
-	 * LinkedGrammar directly don't have to fill in an empty map.
-	 */
-```
-
 ### `packages/codegen/src/compiler/types.ts::topLevelAliasBodies`
 
 ```text
@@ -7471,25 +7434,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
 	 * each slot's source-rule positions are registered. Lets consumers walking a
 	 * rule tree look up the slot's propertyName / storageName / paramName directly.
 	 * See feedback_ruleid_backpointer.
-	 */
-```
-
-### `packages/codegen/src/compiler/types.ts::aliasedHiddenKinds`
-
-```text
-/**
-	 * Carried from {@link SimplifiedGrammar.aliasedHiddenKinds} (itself
-	 * carried from `LinkedGrammar`) — hidden alias-source kind → visible
-	 * alias-target name, e.g. `_wrapped_item` → `wrapped_item`. The
-	 * hidden/subtype-resolution family in `compiler/assemble.ts`
-	 * (`resolveHiddenSubtypes`) migrated off this map for ITS purpose
-	 * (see that function's doc comment), but the underlying fact — a
-	 * hidden kind sharing its runtime numeric kind id with a visible
-	 * alias — is still needed by transport emission: the generated id
-	 * catalog (KIND_NAMES, `emitters/types.ts`) records that id under
-	 * the visible name only, so per-slot child enum id-dispatch
-	 * (`emitters/transport-common.ts`'s `acceptedTransportKinds`) must
-	 * resolve a hidden kind to its alias target before looking up its id.
 	 */
 ```
 

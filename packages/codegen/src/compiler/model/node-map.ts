@@ -26,6 +26,7 @@ import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
+import { stampDisplay, type DisplayStamp, type RowlessDisplaySource } from './display-name.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -992,6 +993,7 @@ export type ModelType =
 export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 	readonly kind: string;
 	readonly kindEntry?: GeneratedKindEntry;
+	readonly display: DisplayStamp;
 	readonly wordMatcher: RegExp | undefined;
 	typeName: string;
 	factoryName?: string;
@@ -1052,6 +1054,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 			hidden?: boolean;
 			kindEntries?: readonly GeneratedKindEntry[];
 			wordMatcher?: RegExp;
+			rowless?: RowlessDisplaySource;
 		}
 	) {
 		this.kind = kind;
@@ -1062,6 +1065,7 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.kindEntry = findEntryForKindName(opts?.kindEntries ?? [], kind);
+		this.display = stampDisplay(kind, opts?.kindEntries ?? [], opts?.rowless ?? 'phantom');
 	}
 
 	get hidden(): boolean {
@@ -2005,8 +2009,13 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 	transitiveParseKinds?: readonly NodeOrTerminal[];
 	optionDefaultArm?: string;
 
-	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: readonly SubtypeRef[]) {
-		super(kind, rule, { hidden: true });
+	constructor(
+		kind: string,
+		rule: SupertypeRule | ChoiceRule,
+		subtypes: readonly SubtypeRef[],
+		opts?: { kindEntries?: readonly GeneratedKindEntry[]; mintedUnderAliasName?: true }
+	) {
+		super(kind, rule, { hidden: true, kindEntries: opts?.kindEntries, rowless: opts?.mintedUnderAliasName === true ? 'alias-name' : 'supertype' });
 		this.#subtypes = subtypes.map(
 			({ name, storageKindId, ...armFacts }): NodeOrTerminal => ({
 				node: { kind: 'unresolved-ref', name },

@@ -762,9 +762,9 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
  * node-ref value, the union of
  * `storageKindId` (the modeled storage kind) and `parseKindId` (the wire
  * `$type` tree-sitter actually stamps — the alias TARGET at aliased
- * reference sites). For value-backed kinds this subsumes both name-keyed
- * redirects (`nodeMap.aliasedHiddenKinds` + `aliasTargetToSourceMapOf`
- * pairs) — per-slot, since alias facts are per-reference-site. Kinds whose
+ * reference sites). For value-backed kinds this subsumes the name-keyed
+ * `aliasTargetToSourceMapOf` redirect — per-slot, since alias facts are
+ * per-reference-site. Kinds whose
  * values carry no ids (enrich-synthesized markers, IR-only enum kinds,
  * erased hidden supertypes, hand-built test values) are ABSENT from the
  * map — callers keep the name-based fallback for those.
@@ -3050,7 +3050,18 @@ The arm an `options:` choice at the supertype's variant site names as default. A
 back to it when the slot has no default of its own.
 ```
 
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase.display`
+
+The node's display and why it has it (`DisplayStamp`), stamped at
+construction by `stampDisplay` from the catalog the node is built with.
+Every address, site name and option key reads it; none strips a kind name.
+A subclass that knows why it may have no row says so (`rowless`).
+
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype.constructor`
+
+Takes the catalog like every node, so a supertype carries its own row and
+display. A supertype with no row is stamped `supertype`, or `alias-name`
+when assemble mints it under an alias name (`mintedUnderAliasName`).
 
 #### body
 
@@ -3459,11 +3470,12 @@ refused — the arm is wrong, not merely inapplicable.
 
 ```text
 /**
- * Supertype kind name to its transitive member set, both hidden and
- * visible spellings of every member: the wrap emitter's `SUPERTYPE_MEMBERS`
- * table, which drives read-time drilling through transparent supertypes,
- * so only true supertypes belong here. `supertypeMembersByPublicName` is
- * the wider union map the options emitter uses.
+ * Supertype kind name to its transitive member set, each member beside its
+ * display (the name the parser types it by): the wrap emitter's
+ * `SUPERTYPE_MEMBERS` table, which drives read-time drilling through
+ * transparent supertypes, so only true supertypes belong here.
+ * `supertypeMembersByDisplayName` is the wider union map the options
+ * emitter uses.
  */
 ```
 
@@ -3851,10 +3863,9 @@ Reads back everything a seam choice's resolved default arm was stamped
 with, in one scan of its members — the label (the same address
 `isSeamChoice` parses off member 0), the `origin` (`undefined` for a
 separator gap's whitespace choice, which `resolver.resolveSeparator`
-builds without one), and the arm itself, recovered from the default
-member's symbol name via `publicKindName` (the inverse of
-`whitespaceSymbols`' `arm -> symbols[arm]` mapping, so no second table is
-needed to go back). The template emitter's `seamChoiceBetween` is the one
+builds without one), and the arm itself, read off the default member's
+`annotations.arm`, which `whitespaceChoice` stamps as it builds the
+member. The template emitter's `seamChoiceBetween` is the one
 caller — it reads both facts off a single found node rather than scanning
 twice, and never inspects an `annotations.preference` address itself to
 guess either one.
@@ -3897,10 +3908,44 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
  *  whatever kinds they may be, so a choice element that may be a token
  *  (a typescript enum member may be a `number`) does not glue the list.
  *  An unseparated repeat is glued when the rule or anything beneath its
- *  content is tokenized or immediate, or names an external scanner token
- *  or a kind whose own rule is tokenized or immediate (string and template
- *  fragments, python string content). */
+ *  content is tokenized or immediate, or names a lexical kind
+ *  (`isLexicalSymbol`: string and template fragments, python string
+ *  content). */
 ```
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isLexicalSymbol`
+
+A kind no extra can split: an external scanner token, or a kind whose rule is
+lexical all the way down (`isLexicalRule`). Python's `string_content` is one
+(a repeat of an external, two immediate tokens and a supertype of immediate
+escapes), so the pieces of a string's content admit no whitespace between
+them. A kind with any non-lexical leaf is not, so a statement that merely
+contains a `_newline` external does not glue its list.
+
+This answers "can extras occur inside this node", not "does the parser issue
+this as a token" (`dsl/rule-patterns.ts::parserSymbolClassOf`). The two
+differ both ways: a nonterminal made only of lexical leaves (`string_content`)
+admits no extras, and so does a `token(...)` rule the parser files as a
+nonterminal because it is used more than once. It reads the facts the render
+rules already carry (the `tokenized` / `immediate` stamps and the externals),
+never a rule's shape.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::isLexicalRule`
+
+Every leaf of the rule is tokenized, immediate or a lexical kind; a choice or
+supertype is lexical when all its members are. A bare literal or pattern is
+not: keywords in a repeat stay separable.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::armOf`
+
+The whitespace arm a choice member stands for, as `whitespaceChoice` stamped
+it. A member without one is not a whitespace choice's and fails.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::anonTokenNameOfText`
+
+The display of the anonymous token with this text: the name an arm seam is
+labelled by (`armSeamName`), and the key `armSeamPairsOf` finds that seam
+under, so the two can never name it differently.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::gapOf`
 
@@ -3952,13 +3997,75 @@ token's `_`-scope face through the cascade path rather than from a row
 naming the site; `resolveBindings` decides it, and `render-options-rs.ts::seamStrength`
 turns it into the middle strength tier the writer honours.
 
-### `packages/codegen/src/compiler/model/render-rules.ts::publicKindName`
+### `packages/codegen/src/compiler/model/display-name.ts::DisplaySource`
 
-```text
-/** The name a user addresses a kind by: the model's key with its leading
- *  underscores stripped, the spelling its visible alias and kind-id member
- *  already use. */
-```
+Why a node has the display it has. `catalog`: its own catalog row names it
+(the parser's symbol for the kind). `alias-name`: assemble minted the node
+under an alias name (the supertype parse-name pass), so its kind already is
+a display. `supertype`: a supertype tree-sitter issues no symbol for,
+legitimately rowless. `phantom`: any other rowless node, either a kind sittir
+mints that the parser never sees (the operator enums) or a grammar rule whose
+every use aliases it away (python `keyword_identifier`). The rowless sources
+share one naming rule but stay distinguishable: a phantom is debt the
+phantom-kind ratchet counts, a symbol-less supertype is not.
+
+### `packages/codegen/src/compiler/model/display-name.ts::stampDisplay`
+
+The display a node is constructed with, decided once from its own catalog
+row (`findOwnKindEntry`): the row's display when there is one (`catalog`),
+else its own kind through `displayOfParserName`, labelled with why it has no
+row. A node minted under an alias name names itself. Nothing downstream
+derives a display from a kind name.
+
+### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfEntry`
+
+The display of a catalog row: the parser's own symbol for it (`symbolName`,
+or the kind of an anonymous row) through `displayOfParserName`. A hidden rule
+whose parser symbol is its own spelling (typescript `_ternary_qmark`, shown
+as `"?"`) is shown as that anonymous token, so it displays as the anonymous
+row carrying the same literal (`qmark`), or by its own kind when there is no
+such row (python `_not_in`). A spelling never answers as a display. Sites
+that hold a literal's row rather than a node read this directly: an
+anonymous token has no node.
+
+### `packages/codegen/src/compiler/model/display-name.ts::displayOfParserName`
+
+The one naming rule for a name the parser does not show: a hidden-prefixed
+parser name (rust `_let_chain`, `_token_keywords`; python
+`_simple_statements`) addresses as `undisplayedKindAddress`, and any other
+parser name is its own display.
+
+### `packages/codegen/src/compiler/model/display-name.ts::undisplayedKindAddress`
+
+The underscore-less address of a kind the parser never displays. It is the
+only place a leading underscore is stripped, and only a hidden-prefixed
+parser name reaches it.
+
+### `packages/codegen/src/compiler/model/display-name.ts::displayNameOf`
+
+The display of a kind of this grammar, read off its node's stamp. A name
+that is not a node is a codegen error; a site that holds a second display for
+a kind (a `parseKind`, an alias target) carries it itself
+(`displayNameOfRef`).
+
+### `packages/codegen/src/compiler/model/display-name.ts::ownsItsDisplay`
+
+Whether a kind's display is its own name. Where two kinds share one display
+(a hidden storage and the node assemble minted under its alias name,
+typescript `_lhs_expression` and `lhs_expression`; a symbol-less supertype
+and the visible kind of that name, `_identifier` and `identifier`), the one
+that owns it holds the options hint home (`emitOptionsHints`), and any other
+collision fails at codegen.
+
+### `packages/codegen/src/compiler/model/display-name.ts::displayedKinds`
+
+The display of every node: the names an `options:` block may use as kinds
+(`readOptionsBlock`), and the set `hintEmitterOf` tells kinds from labels by.
+
+### `packages/codegen/src/compiler/model/display-name.ts::displayNameOfRef`
+
+The display at one reference site: the alias target when the reference is
+aliased, else its storage name.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::SpacingSide`
 
@@ -4002,7 +4109,8 @@ labels tell them apart, since a flank label never parses as a seam label.
 ### `packages/codegen/src/compiler/model/render-rules.ts::whitespaceTextOf`
 
 The render text of each member of the grammar's `_whitespace` supertype
-(`whitespaceArmsOf`) that `visibleExternals` declares as a `string(...)`:
+(`whitespaceSymbolsOf`), keyed by arm, for each member symbol
+`visibleExternals` declares as a `string(...)`:
 `_tight` is `''`, python's `_double_newline` is `'\n\n\n'`, and `_indent` /
 `_dedent` carry the writer's depth marks (`INDENT_TEXT`, `DEDENT_TEXT`,
 which `indent()` and `dedent()` stand for). Every whitespace kind is a
@@ -4107,11 +4215,11 @@ literal it opened with.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::unionMemberNames`
 
-The direct member names of a union node, or `null` for a node that is not one: a supertype's subtype names, a polymorph parent's symbol arms. The membership predicate `supertypeMembersByPublicName` hands to `buildMembersMap`.
+The direct member names of a union node, or `null` for a node that is not one: a supertype's subtype names, a polymorph parent's symbol arms. The membership predicate `supertypeMembersByDisplayName` hands to `buildMembersMap`.
 
 ### `packages/codegen/src/compiler/model/supertype-members.ts::buildMembersMap`
 
-The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members in hidden and visible spellings, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
+The one expansion behind both maps: keys are the nodes `directMembers` recognises, values their transitive members by kind, enums expanded to their resolved kinds. The two public maps differ only in the predicate they pass.
 
 A polymorph's arms are its own membership, full stop: an "is a"
 relationship. Chasing each arm's own union too would fold a sibling
@@ -4121,11 +4229,11 @@ field's admitted kinds, including `scoped_identifier`) is not also the
 grouping's membership. Only a true supertype's subtype chain expands
 transitively: that is the parser's own "is a" hierarchy.
 
-### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByPublicName`
+### `packages/codegen/src/compiler/model/supertype-members.ts::supertypeMembersByDisplayName`
 
-The union map keyed and valued by public kind names: the form an address
-spells, so a `(supertype)` segment can be compared with a site's concrete kind
-without either side stripping underscores at the comparison. A union here is a
+The union map keyed and valued by displays (`displayNameOf`): the form an
+address spells, so a `(supertype)` segment is compared with a site's concrete
+kind by the same name on both sides. A union here is a
 supertype (members = its subtypes) or a polymorph parent (members = the symbol
 arms of its pure choice), so an address naming a variant parent reaches the
 sites on its variants exactly as one naming `_expression` reaches expressions;
@@ -4134,15 +4242,19 @@ a polymorph parent is not transparent at read, which is why it is absent from
 `matchAddress` and `resolveBindings` rather than derived inside them, so the
 membership has one source.
 
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceSymbolsOf`
+
+The whitespace kinds a grammar renders, in declaration order, as arm to
+member symbol: the members of its `_whitespace` supertype
+(`WHITESPACE_SUPERTYPE`), each armed by its parse name or its display
+(`tight`, `space`, `newline`, `blankline`, `indent`, `dedent`, python's
+`double_newline`). A grammar without the supertype is an error: nothing in
+codegen lists whitespace kinds by name, so every spacing site, `options.ts`
+union, whitespace text and choice member symbol is read from here.
+
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::whitespaceArmsOf`
 
-The whitespace kinds a grammar renders, in declaration order: the members
-of its `_whitespace` supertype (`WHITESPACE_SUPERTYPE`), each named by the
-visible alias `visibleExternals` registers for it (`tight`, `space`,
-`newline`, `blankline`, `indent`, `dedent`, python's `double_newline`). A
-grammar without the supertype is an error: nothing in codegen lists
-whitespace kinds by name, so every spacing site, `options.ts` union and
-whitespace text is read from here.
+The arms of `whitespaceSymbolsOf`, in declaration order.
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::spacingArmsOf`
 

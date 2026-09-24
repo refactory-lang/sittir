@@ -67552,7 +67552,7 @@ impl ::sittir_core::view::KindOf for UnescapedSingleStringFragmentTransport {
 }
 
 impl ::sittir_core::options::Edged for UnescapedSingleStringFragmentTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(110) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(109) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -73458,7 +73458,7 @@ impl ::sittir_core::view::KindOf for _NumberTransport {
 }
 
 impl ::sittir_core::options::Edged for _NumberTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(350) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -73471,6 +73471,7 @@ impl ::sittir_core::render::Render for _NumberTransport {
 
 impl ::sittir_core::prepare::Prepare for _NumberTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        ::sittir_core::prepare::prepare_edges(self, ctx);
         self.operator.prepare(ctx)?;
         self.argument.prepare(ctx)?;
         Ok(())
@@ -80606,7 +80607,7 @@ impl ::sittir_core::view::KindOf for TemplateCharsTransport {
 }
 
 impl ::sittir_core::options::Edged for TemplateCharsTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(171) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(109) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -81561,7 +81562,7 @@ impl ::sittir_core::view::KindOf for TernaryQmarkTransport {
 }
 
 impl ::sittir_core::options::Edged for TernaryQmarkTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(172) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(126) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
@@ -97638,6 +97639,15 @@ impl ::sittir_core::prepare::SeatTarget for LiteralTypeTransport {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for _NumberTransport {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(350)) {
+            return Some((self.edges.get_or_insert_with(Default::default), site));
+        }
+        None
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for FlowMaybeTypeTransport {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(352)) {
@@ -99297,6 +99307,7 @@ impl ::sittir_core::prepare::SeatTarget for TypeQuerySubscriptExpressionIndexTra
 impl ::sittir_core::prepare::SeatTarget for LiteralTypeContentTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
+            Self::_Number(t) => t.seat_target(table),
             Self::StringDouble(t) => t.seat_target(table),
             Self::StringSingle(t) => t.seat_target(table),
             #[allow(unreachable_patterns)]
@@ -99883,6 +99894,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
             Self::IndexTypeQuery(t) => t.seat_target(table),
             Self::LookupType(t) => t.seat_target(table),
             Self::LiteralType(t) => t.seat_target(table),
+            Self::_Number(t) => t.seat_target(table),
             Self::FlowMaybeType(t) => t.seat_target(table),
             Self::ParenthesizedType(t) => t.seat_target(table),
             Self::ObjectType(t) => t.seat_target(table),
@@ -102221,8 +102233,10 @@ fn render_literal_type(node: &LiteralTypeTransport, w: &mut dyn ::sittir_core::r
 fn render__number(node: &_NumberTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let argument = &node.argument;
     let operator = &node.operator;
+    w.edge(::sittir_core::types::KindId(350), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     operator.render(w)?;
     argument.render(w)?;
+    w.edge(::sittir_core::types::KindId(350), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 

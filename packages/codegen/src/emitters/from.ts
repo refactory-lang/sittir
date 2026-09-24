@@ -1,9 +1,10 @@
+import { findOwnKindEntry } from '../compiler/generated-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
 import { bareInteriorText, interiorOf, numberTextArgs, numericLeafKinds, numericLeafShape, numericSlotShape } from './interior.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findOwnKindEntry,
+import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,

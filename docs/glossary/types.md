@@ -435,6 +435,10 @@ Whether a rule matches nothing, in either runtime's spelling: tree-sitter's
 admit the same input; it is stamped by `arm.default` and read once, by the from
 emitter.
 
+`arm` is the whitespace arm a `whitespaceChoice` member stands for, stamped
+as the member is built; `partOf` and `seamChoiceDefault` read it back rather
+than recover the arm from the member's symbol.
+
 `origin` names where a seam choice's resolved default arm came from, stamped by
 `render-rules.ts::whitespaceChoice` alongside `default: true`. It never selects
 an arm or changes a rendered value: it is read back by the template emitter's

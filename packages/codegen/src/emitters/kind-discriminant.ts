@@ -1,6 +1,6 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable, type KindEntryLike } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText, symbolNameIsNotable } from '../compiler/generated-metadata.ts';
 import { compareOrdinal } from './shared.ts';
 
 export function toPascal(kind: string): string {
@@ -60,15 +60,6 @@ export function collectKindEntries(
 	}
 	entries.sort((a, b) => a.id - b.id || compareOrdinal(a.kind, b.kind));
 	return entries;
-}
-
-export function modelKindOfEntry(entry: { readonly kind: string; readonly symbolName?: string; readonly alias?: boolean }): string {
-	return entry.alias === true && entry.symbolName !== undefined ? entry.symbolName : entry.kind;
-}
-
-export function findOwnKindEntry<T extends KindEntryLike>(entries: readonly T[], kind: string): T | undefined {
-	const entry = findEntryForKindName(entries, kind);
-	return entry !== undefined && modelKindOfEntry(entry) === kind ? entry : undefined;
 }
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {

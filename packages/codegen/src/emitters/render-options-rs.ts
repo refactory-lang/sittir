@@ -2,7 +2,9 @@ import type { SeamOrigin } from '../types/rule.ts';
 import type { KindEntryLike } from '../compiler/generated-metadata.ts';
 import { findEntryForKindName } from '../compiler/generated-metadata.ts';
 import { DelimiterFlags } from '../compiler/model/node-map.ts';
-import { publicKindName, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
+import type { SitePreference, SpacingSide } from '../compiler/model/site-preferences.ts';
+import type { NodeMap } from '../compiler/types.ts';
+import { displayNameOf } from '../compiler/model/display-name.ts';
 import { admitsDepth } from '../compiler/model/render-rules.ts';
 import { DEDENT_TEXT, INDENT_TEXT, depthBreakOf, parseSeamLabel } from '../dsl/primitives/spacing.ts';
 import { pathOf } from '../compiler/model/site-addresses.ts';
@@ -110,26 +112,32 @@ function screaming(s: string): string {
 export function planRenderOptions(
 	sites: readonly SitePreference[],
 	kindEntries: readonly IdEntry[],
+	nodeMap: NodeMap,
 	whitespaceText: ReadonlyMap<string, string>
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
 	const delimiterPaths = new Map<DelimiterSite, readonly PreferenceSegment[]>();
 	const depthCapable: SpacingSite[] = [];
+	const paths = new Map<SpacingSite, readonly PreferenceSegment[]>();
+	const pushSpacing = (row: SpacingSite, site: SitePreference): void => {
+		spacing.push(row);
+		paths.set(row, pathOf(site, kindEntries, nodeMap));
+	};
 	for (const site of sites) {
-		const kind = publicKindName(site.kind);
+		const kind = displayNameOf(site.kind, nodeMap);
 		const at = `${kind}.${site.slot}`;
 		if (site.source === 'delimiter') {
 			const allowed = site.arms.reduce((acc, arm) => acc | (DELIMITER_BITS[arm.value] ?? 0), 0);
 			const row: DelimiterSite = { kind, slot: site.slot, constName: `DELIM_${screaming(kind)}_${screaming(site.slot)}`, allowed, defaultBits: DELIMITER_BITS[site.defaultArm] ?? 0 };
 			delimiters.push(row);
-			delimiterPaths.set(row, pathOf(site, kindEntries));
+			delimiterPaths.set(row, pathOf(site, kindEntries, nodeMap));
 			continue;
 		}
 		if (site.source === 'separator') {
 			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
 			if (defaultEntry?.literalText === undefined) throw new Error(`options.rs: ${at} separator default '${site.defaultArm}' has no token text`);
-			spacing.push({
+			pushSpacing({
 				kind,
 				slot: site.slot,
 				address: site.address,
@@ -142,7 +150,7 @@ export function planRenderOptions(
 				strength: SEAM_DECLARED,
 				role: 'separator',
 				defaultText: defaultEntry.literalText
-			});
+			}, site);
 			continue;
 		}
 		const allowedIds = site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at));
@@ -150,7 +158,7 @@ export function planRenderOptions(
 		if (defaultArm === undefined) throw new Error(`options.rs: ${at} default '${site.defaultArm}' is not one of its arms`);
 		const isFlank = site.side === 'start' || site.side === 'end';
 		const field = isFlank ? `${site.slot}_${site.side}` : site.address;
-		spacing.push({
+		pushSpacing({
 			kind,
 			slot: site.slot,
 			address: site.address,
@@ -164,10 +172,9 @@ export function planRenderOptions(
 			...(site.side === undefined ? {} : { side: site.side }),
 			...(site.seat === undefined ? {} : { seat: site.seat }),
 			...(site.path === undefined ? {} : { path: site.path })
-		});
+		}, site);
 		if (admitsDepth({ arms: site.arms.map((arm) => arm.value) })) depthCapable.push(spacing[spacing.length - 1]!);
 	}
-	const paths = new Map(spacing.map((site) => [site, pathOf(site, kindEntries)]));
 	spacing.sort((a, b) => comparePreferencePaths(paths.get(a)!, paths.get(b)!));
 	delimiters.sort((a, b) => byTuple([a.kind, a.slot], [b.kind, b.slot]));
 	const depthSites = new Map<string, number[]>();

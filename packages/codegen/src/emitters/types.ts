@@ -1,3 +1,4 @@
+import { findOwnKindEntry, modelKindOfEntry } from '../compiler/generated-metadata.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { isWordOrVisibleTextLeaf, isHiddenPunctuationLeaf } from '../compiler/model/node-map.ts';
@@ -5,7 +6,7 @@ import { DelimiterFlags, isFixedTextLeaf, isKindIdStored } from '../compiler/mod
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { bareInteriorText, numericLeafKinds, numericLeafShape, numericSlotKeys, numericSlotShape } from './interior.ts';
-import { findOwnKindEntry, modelKindOfEntry,
+import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -90,8 +91,9 @@ import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
-import { armAliasesOf, hintEmitterOf, publicKindNames, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
-import { publicKindName, type SitePreference } from '../compiler/model/site-preferences.ts';
+import { armAliasesOf, hintEmitterOf, type AddressTables, type HintEmitter, type HintRoot } from './options.ts';
+import type { SitePreference } from '../compiler/model/site-preferences.ts';
+import { displayNameOf, displayedKinds, ownsItsDisplay } from '../compiler/model/display-name.ts';
 
 type StructuralNode = SlotBearingCompound;
 
@@ -177,7 +179,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		lines.push(`export type WhitespaceArm = ${arms.whitespaceType};`);
 		lines.push('');
 	}
-	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, publicKindNames(nodeMap)) : undefined;
+	const hints = kindEntries !== undefined && config.addresses !== undefined ? hintEmitterOf(config.addresses, kindEntries, arms, displayedKinds(nodeMap)) : undefined;
 
 	emitDelimiterEnum(lines);
 
@@ -252,7 +254,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push(';');
 	lines.push('');
 
-	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints);
+	emitOptionsHints(lines, [...allKinds.map((kind) => ({ kind, typeName: nodeMap.nodes.get(kind)?.typeName })), ...emittedSupertypes], generatedTypes, hints, nodeMap);
 
 	assertNoCamelCaseCollisions(nodeKinds);
 
@@ -648,18 +650,19 @@ function emitOptionsHints(
 	lines: string[],
 	kinds: readonly { readonly kind: string; readonly typeName: string | undefined }[],
 	generatedTypes: ReadonlySet<string>,
-	hints: HintEmitter | undefined
+	hints: HintEmitter | undefined,
+	nodeMap: NodeMap
 ): void {
 	const kindRoots = new Map((hints?.roots ?? []).filter((root) => !root.label).map((root) => [root.name, root]));
 	const homes = new Map<string, { kind: string; typeName: string; root: HintRoot }>();
 	for (const { kind, typeName } of kinds) {
-		const root = kindRoots.get(publicKindName(kind));
+		const root = kindRoots.get(displayNameOf(kind, nodeMap));
 		if (root === undefined || typeName === undefined || !generatedTypes.has(typeName)) continue;
 		const prior = homes.get(root.name);
-		if (prior !== undefined && prior.kind !== publicKindName(prior.kind) && kind !== publicKindName(kind)) {
-			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}', neither the visible spelling`);
+		if (prior !== undefined && ownsItsDisplay(prior.kind, nodeMap) === ownsItsDisplay(kind, nodeMap)) {
+			throw new Error(`types emitter: options root '${root.name}' names both '${prior.kind}' and '${kind}'`);
 		}
-		if (prior === undefined || prior.kind !== publicKindName(prior.kind)) homes.set(root.name, { kind, typeName, root });
+		if (prior === undefined || ownsItsDisplay(kind, nodeMap)) homes.set(root.name, { kind, typeName, root });
 	}
 	const homeless = [...kindRoots.keys()].filter((name) => !homes.has(name));
 	if (homeless.length > 0) throw new Error(`types emitter: options roots with no declared type to carry their hint: ${homeless.join(', ')}`);

@@ -29,12 +29,20 @@
 	],
 	"_number": [
 		{
+			"kind": "seam",
+			"field": "unary_expression_number_before"
+		},
+		{
 			"kind": "slot",
 			"name": "operator"
 		},
 		{
 			"kind": "slot",
 			"name": "argument"
+		},
+		{
+			"kind": "seam",
+			"field": "unary_expression_number_after"
 		}
 	],
 	"_type_query_call_expression": [

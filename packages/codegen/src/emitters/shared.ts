@@ -40,8 +40,7 @@ import {
 	valueParseLabelsOf
 } from '../compiler/model/node-map.ts';
 import { matchesWordShape, wordCharClass } from '../util/word-matcher.ts';
-import { type KindEntryLike, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
-import { publicKindName } from '../compiler/model/render-rules.ts';
+import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../compiler/generated-metadata.ts';
 
 export function isSlotBearingCompound(
 	node: AssembledNode
@@ -65,7 +64,7 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { findOwnKindEntry, findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
+import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
 
@@ -381,7 +380,7 @@ export function enumArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): EnumA
 	};
 	const aliasedIntoAnotherKind = (parent: AssembledSupertype, node: AssembledNode): boolean => {
 		const parse = parent.subtypeParseNames?.[node.kind];
-		return parse !== undefined && publicKindName(parse) !== publicKindName(node.kind);
+		return parse !== undefined && parse !== node.display.name;
 	};
 	const visitSubtype = (
 		parent: AssembledSupertype,
