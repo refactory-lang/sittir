@@ -109,9 +109,11 @@ impl ResolvedOptions {
         self.spacing[site]
     }
 
-    /// Resolve `site` to `arm`, at the strength its spec gives that arm.
+    /// Resolve `site` to an arm an options object names. A named arm writes at
+    /// declared strength even when it is the site's default: the caller chose
+    /// it, so it must win a seam merge the default would lose.
     pub fn set_arm(&mut self, site: usize, arm: u16) {
-        self.spacing[site] = self.sites[site].seam(arm);
+        self.spacing[site] = crate::slot::SeamArm { arm, strength: crate::spacing::SEAM_DECLARED };
     }
 
     /// What one side of a kind's edge writes: the stamp when one is set (at its

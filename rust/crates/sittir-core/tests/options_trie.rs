@@ -52,6 +52,13 @@ fn a_leaf_sets_every_site_it_names() {
 }
 
 #[test]
+fn a_value_set_to_the_default_arm_still_writes_at_declared_strength() {
+    let table = resolve(r#"{ "a": { "x": 1 } }"#).unwrap();
+    assert_eq!(table.spacing, vec![SeamArm { arm: 1, strength: SEAM_DECLARED }; 2]);
+    assert_eq!(resolve("{}").unwrap().spacing, vec![SeamArm { arm: 1, strength: 0 }; 2]);
+}
+
+#[test]
 fn indent_and_delimiter_resolve_beside_spacing() {
     let table = resolve(r#"{ "indent": "\t", "a": { "d": 2 } }"#).unwrap();
     assert_eq!(table.indent, "\t");
