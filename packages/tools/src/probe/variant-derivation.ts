@@ -154,7 +154,6 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	const nodeModel = await loadNodeModel(grammar);
 	const committedMap = new Map<string, string[]>();
 	for (const [parent, desc] of Object.entries(nodeModel.polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		committedMap.set(parent, Object.keys(desc.childKind));
 	}
 

@@ -751,7 +751,6 @@ function variantFormsOf(
 		name in modelTypes ? name : `_${name}` in modelTypes ? `_${name}` : undefined;
 	const out = new Map<string, VariantForm>();
 	for (const [parent, descriptor] of Object.entries(variants)) {
-		if (descriptor.definedBy !== 'override') continue;
 		const parentKind = kindOf(parent);
 		if (parentKind === undefined) continue;
 		for (const [child, form] of Object.entries(descriptor.childKind)) {

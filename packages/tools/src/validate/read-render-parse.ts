@@ -58,19 +58,15 @@ export async function loadVariantChildKindsByOwner(grammar: string): Promise<Rea
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const byOwner = new Map<string, ReadonlySet<string>>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		byOwner.set(parent, new Set(Object.keys(desc.childKind)));
 	}
 	return byOwner;
 }
 
 export async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
-	// Only `definedBy: 'override'` descriptors carry a `childKind` map (the
-	// first-named-child dispatch table).
 	const { polymorphVariants } = await loadNodeModel(grammar);
 	const kinds = new Set<string>();
 	for (const [parent, desc] of Object.entries(polymorphVariants)) {
-		if (desc.definedBy !== 'override') continue;
 		kinds.add(parent);
 		for (const childKind of Object.keys(desc.childKind)) kinds.add(childKind);
 	}
