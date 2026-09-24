@@ -31,21 +31,21 @@ pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
 /// has a seat in `table`, or, for a wrapper that is not itself seated, the
 /// seated node it holds. Answers the base edges to fill and the site to read.
 pub trait SeatTarget {
-    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)>;
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)>;
 }
 
 impl<T: SeatTarget + ?Sized> SeatTarget for Box<T> {
-    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
         (**self).seat_target(table)
     }
 }
 
-/// The seated site of `kind` in a per-slot table sorted by kind id.
-pub fn seat_site(table: &[(u16, usize)], kind: KindId) -> Option<usize> {
-    table
-        .binary_search_by_key(&kind.0, |(k, _)| *k)
-        .ok()
-        .map(|i| table[i].1)
+/// The seated site of `kind` in a per-slot table indexed by kind id.
+pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
+    match table.get(kind.0 as usize) {
+        Some(&site) if site != crate::options::NO_SITE => Some(site as usize),
+        _ => None,
+    }
 }
 
 /// Fill the gap after every element but the last from the slot's seat table:
@@ -53,7 +53,7 @@ pub fn seat_site(table: &[(u16, usize)], kind: KindId) -> Option<usize> {
 /// already set it. A coordinate or an absent element is skipped.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     items: impl ExactSizeIterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
-    table: &[(u16, usize)],
+    table: &[u16],
     ctx: &RenderContext<'_>,
 ) {
     let last = items.len().saturating_sub(1);
@@ -63,7 +63,7 @@ pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
         }
         let Some(SlotValue::Transport(t)) = item else { continue };
         if let Some((edges, site)) = t.seat_target(table) {
-            edges.after.get_or_insert(ctx.options.spacing[site]);
+            edges.after.get_or_insert(ctx.options.spacing[site].arm);
         }
     }
 }

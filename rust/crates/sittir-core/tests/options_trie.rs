@@ -1,4 +1,6 @@
-use sittir_core::options::{AddressNode, OptionSites, OptionTables, Options, ResolvedOptions, SiteRef};
+use sittir_core::options::{AddressNode, OptionSites, OptionTables, Options, ResolvedOptions, SiteRef, SiteSpec};
+use sittir_core::slot::SeamArm;
+use sittir_core::spacing::SEAM_DECLARED;
 
 static ADDRESSES: &[AddressNode] = &[AddressNode::Branch {
     key: "a",
@@ -31,8 +33,10 @@ impl OptionSites for Sites {
     };
 }
 
+static SITES: &[SiteSpec] = &[SiteSpec { default_arm: 1, strength: 0 }, SiteSpec { default_arm: 1, strength: 0 }];
+
 fn base() -> ResolvedOptions {
-    ResolvedOptions { spacing: vec![1, 1], delimiter: vec![0], ..ResolvedOptions::default() }
+    ResolvedOptions { spacing: ResolvedOptions::default_spacing(SITES), delimiter: vec![0], sites: SITES, ..ResolvedOptions::default() }
 }
 
 fn resolve(json: &str) -> Result<ResolvedOptions, String> {
@@ -43,7 +47,7 @@ fn resolve(json: &str) -> Result<ResolvedOptions, String> {
 #[test]
 fn a_leaf_sets_every_site_it_names() {
     let table = resolve(r#"{ "a": { "x": 9 } }"#).unwrap();
-    assert_eq!(table.spacing, vec![9, 9]);
+    assert_eq!(table.spacing, vec![SeamArm { arm: 9, strength: SEAM_DECLARED }; 2]);
     assert_eq!(table.delimiter, vec![0]);
 }
 

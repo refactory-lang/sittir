@@ -29,9 +29,13 @@ struct List {
 impl Prepare for List {
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         self.items.prepare(ctx)?;
-        self.space_after.get_or_insert(ctx.options.spacing[0]);
+        self.space_after.get_or_insert(ctx.options.spacing[0].arm);
         Ok(())
     }
+}
+
+fn arms(ids: &[u16]) -> Vec<SeamArm> {
+    ids.iter().map(|&arm| SeamArm { arm, strength: SEAM_DECLARED }).collect()
 }
 
 fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<'a> {
@@ -41,7 +45,7 @@ fn ctx<'a>(options: &'a ResolvedOptions, sources: &'a Sources) -> RenderContext<
 #[test]
 fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() {
     let options = ResolvedOptions {
-        spacing: vec![168],
+        spacing: arms(&[168]),
         ..ResolvedOptions::default()
     };
     let sources = Sources(HashMap::from([(7, Arc::from("fn a() {}"))]));
@@ -62,7 +66,7 @@ fn a_coordinate_is_checked_against_its_tree_and_an_unset_site_takes_the_table() 
 #[test]
 fn a_set_site_keeps_its_wire_value() {
     let options = ResolvedOptions {
-        spacing: vec![168],
+        spacing: arms(&[168]),
         ..ResolvedOptions::default()
     };
     let sources = Sources(HashMap::new());
@@ -103,7 +107,7 @@ fn a_span_outside_its_tree_fails_the_walk() {
 #[test]
 fn a_nested_container_is_walked_to_the_bottom() {
     let options = ResolvedOptions {
-        spacing: vec![168],
+        spacing: arms(&[168]),
         ..ResolvedOptions::default()
     };
     let sources = Sources(HashMap::new());
@@ -117,7 +121,7 @@ fn a_nested_container_is_walked_to_the_bottom() {
     );
 }
 
-use sittir_core::options::{Edged, Edges, EdgeSite, EdgeSlot, Side, SiteSpec};
+use sittir_core::options::{Edged, Edges, EdgeSite, Side, SiteSpec, NO_SITE};
 use sittir_core::prepare::prepare_edges;
 use sittir_core::render::{RenderSink, WhitespaceTable};
 use sittir_core::slot::SeamArm;
@@ -131,13 +135,14 @@ fn two_sites() -> &'static [SiteSpec] {
     ]
 }
 
+fn at_defaults(sites: &'static [SiteSpec]) -> ResolvedOptions {
+    ResolvedOptions { spacing: ResolvedOptions::default_spacing(sites), sites, ..ResolvedOptions::default() }
+}
+
 #[test]
-fn site_arm_uses_the_spec_strength_for_the_default_and_declared_otherwise() {
-    let opts = ResolvedOptions {
-        spacing: vec![7, 9],
-        sites: two_sites(),
-        ..ResolvedOptions::default()
-    };
+fn a_resolved_arm_carries_the_spec_strength_for_the_default_and_declared_otherwise() {
+    let mut opts = at_defaults(two_sites());
+    opts.set_arm(1, 9);
     assert_eq!(opts.site_arm(0), SeamArm { arm: 7, strength: 1 });
     assert_eq!(opts.site_arm(1), SeamArm { arm: 9, strength: SEAM_DECLARED });
 }
@@ -152,11 +157,8 @@ const WS: WhitespaceTable = WhitespaceTable { text_of: ws_text, indent: 0, deden
 
 #[test]
 fn a_sink_writes_a_site_from_the_options_it_holds() {
-    let opts = ResolvedOptions {
-        spacing: vec![7, 9],
-        sites: two_sites(),
-        ..ResolvedOptions::default()
-    };
+    let mut opts = at_defaults(two_sites());
+    opts.set_arm(1, 9);
     let mut out = String::new();
     let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
         .with_table(&WS)
@@ -168,11 +170,13 @@ fn a_sink_writes_a_site_from_the_options_it_holds() {
     assert_eq!(out, "a b");
 }
 
-static EDGE_ROWS: &[EdgeSite] = &[EdgeSite {
-    kind: 3,
-    before: EdgeSlot { site: 0, default_arm: 5, strength: 1 },
-    after: EdgeSlot { site: 1, default_arm: 6, strength: 1 },
-}];
+static EDGE_ROWS: &[EdgeSite] = &[EdgeSite { before: 0, after: 1 }];
+static EDGE_ROW_OF: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+static EDGE_SPECS: &[SiteSpec] = &[SiteSpec { default_arm: 5, strength: 1 }, SiteSpec { default_arm: 6, strength: 1 }];
+
+fn edged_options() -> ResolvedOptions {
+    ResolvedOptions { edges: EDGE_ROWS, edge_rows: EDGE_ROW_OF, ..at_defaults(EDGE_SPECS) }
+}
 
 struct Edged3 {
     edges: Edges,
@@ -191,11 +195,7 @@ impl Edged for Edged3 {
 
 #[test]
 fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
-    let opts = ResolvedOptions {
-        spacing: vec![5, 6],
-        edges: EDGE_ROWS,
-        ..ResolvedOptions::default()
-    };
+    let opts = edged_options();
     let sources = Sources(HashMap::new());
     let mut leaf = Edged3 { edges: Edges::default() };
     prepare_edges(&mut leaf, &ctx(&opts, &sources));
@@ -204,11 +204,7 @@ fn an_edged_transport_prepares_its_edges_from_the_edge_row() {
 
 #[test]
 fn a_stamped_edge_keeps_its_arm_and_carries_declared_strength() {
-    let opts = ResolvedOptions {
-        spacing: vec![5, 6],
-        edges: EDGE_ROWS,
-        ..ResolvedOptions::default()
-    };
+    let opts = edged_options();
     assert_eq!(opts.edge_arm(KindId(3), Side::After, Some(9)), Some(SeamArm { arm: 9, strength: SEAM_DECLARED }));
     assert_eq!(opts.edge_arm(KindId(3), Side::Before, None), Some(SeamArm { arm: 5, strength: 1 }));
     assert_eq!(opts.edge_arm(KindId(4), Side::Before, None), None);
@@ -225,7 +221,7 @@ struct Seatable {
     edges: Edges,
 }
 impl SeatTarget for Seatable {
-    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
         seat_site(table, KindId(self.kind)).map(|site| (&mut self.edges, site))
     }
 }
@@ -235,7 +231,7 @@ struct Wrapper {
     content: Seatable,
 }
 impl SeatTarget for Wrapper {
-    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut Edges, usize)> {
+    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut Edges, usize)> {
         if let Some(site) = seat_site(table, KindId(9)) {
             return Some((&mut self.edges, site));
         }
@@ -255,16 +251,16 @@ fn after_of(item: &Option<SlotValue<Seatable>>) -> Option<u16> {
 }
 
 #[test]
-fn seat_site_finds_a_kind_in_a_sorted_table() {
-    let table: &[(u16, usize)] = &[(3, 0), (4, 1)];
+fn seat_site_reads_a_kind_from_a_table_indexed_by_kind_id() {
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0, 1];
     assert_eq!(seat_site(table, KindId(4)), Some(1));
     assert_eq!(seat_site(table, KindId(5)), None);
 }
 
 #[test]
 fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
-    let table: &[(u16, usize)] = &[(3, 0), (4, 1)];
-    let opts = ResolvedOptions { spacing: vec![70, 80], ..ResolvedOptions::default() };
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0, 1];
+    let opts = ResolvedOptions { spacing: arms(&[70, 80]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![seatable(3), None, seatable(4), seatable(5), seatable(3)];
     fill_seated_gaps(items.iter_mut().map(Option::as_mut), table, &ctx(&opts, &sources));
@@ -276,8 +272,8 @@ fn seated_gaps_fill_the_preceding_elements_after_edge_and_never_the_last() {
 
 #[test]
 fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
-    let table: &[(u16, usize)] = &[(3, 0)];
-    let opts = ResolvedOptions { spacing: vec![70], ..ResolvedOptions::default() };
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let mut items = vec![
         Some(SlotValue::Transport(Seatable { kind: 3, edges: Edges { before: None, after: Some(1) } })),
@@ -289,8 +285,8 @@ fn a_seated_gap_keeps_an_after_edge_the_element_already_carries() {
 
 #[test]
 fn a_wrapper_not_itself_seated_seats_the_node_it_wraps_and_keeps_its_own_edges() {
-    let table: &[(u16, usize)] = &[(3, 0)];
-    let opts = ResolvedOptions { spacing: vec![70], ..ResolvedOptions::default() };
+    let table: &[u16] = &[NO_SITE, NO_SITE, NO_SITE, 0];
+    let opts = ResolvedOptions { spacing: arms(&[70]), ..ResolvedOptions::default() };
     let sources = Sources(HashMap::new());
     let wrapped = || SlotValue::<Wrapper>::Transport(Wrapper { edges: Edges::default(), content: Seatable { kind: 3, edges: Edges::default() } });
     let mut items = vec![wrapped(), wrapped()];

@@ -43,7 +43,13 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages
 ```bash
 pnpm run validate:native      # regen all grammars + native validator counts
 pnpm run validate:history     # compare recorded validation runs (objective before/after)
+cargo test --workspace --no-default-features   # every crate's tests, grammar crates included
 ```
+
+`cargo test -p sittir-core` alone misses the grammar crates' own tests
+(`rust/crates/sittir-<lang>/tests/`), which build against the generated
+transports; `--no-default-features` is what lets their test binaries link
+without a Node runtime.
 
 `validate:native` is the primary gate for codegen-affecting work. For
 corpus-affecting changes report raw per-grammar counts (fromPass/fromTotal,

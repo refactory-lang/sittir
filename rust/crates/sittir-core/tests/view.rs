@@ -42,7 +42,7 @@ fn rt_with_sites(value: &dyn Render) -> String {
         SiteSpec { default_arm: NEWLINE, strength: 2 },
     ];
     let options = ResolvedOptions {
-        spacing: vec![NEWLINE, NEWLINE],
+        spacing: ResolvedOptions::default_spacing(SITES),
         sites: SITES,
         ..ResolvedOptions::default()
     };

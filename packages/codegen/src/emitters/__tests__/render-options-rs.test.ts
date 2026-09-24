@@ -113,7 +113,7 @@ describe('planRenderOptions', () => {
 			';'
 		]);
 		const addresses = deriveAddressTables([...sites, site], entries, kindIdArmType(entries as never), (() => []) as never);
-		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", 20, &[14, 20], 2),');
+		expect(renderOptionsRs(plan, addresses, entries)).toContain('("object_type_content", "content_separator", "separator", &[14, 20]),');
 	});
 
 	it('an arm without a kind id fails loudly', () => {
@@ -157,7 +157,7 @@ describe('renderOptionsRs', () => {
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
 		expect(src).toContain('pub const DELIMITER_SITE_COUNT: usize = 1;');
 		expect(src).toContain('pub const SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 2;');
-		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", 168, &[167, 168, 169], 0),');
+		expect(src).toContain('("formal_parameters", "elements_separator_space_after", "comma_separator_space_after", &[167, 168, 169]),');
 		expect(src).toContain('("formal_parameters", "elements_delimiter", 2, 0),');
 		expect(src).toContain('delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 		expect(src).toContain('pub static DEPTH_SITES: &[(&str, &[usize])] = &[\n];');
@@ -175,6 +175,7 @@ describe('renderOptionsRs', () => {
 		const specs = src.slice(src.indexOf('pub static SITE_SPECS'), src.indexOf('];', src.indexOf('pub static SITE_SPECS')));
 		expect(specs.split('::sittir_core::options::SiteSpec {').length - 1).toBe(plan.spacingSites.length);
 		expect(specs).toContain(`::sittir_core::options::SiteSpec { default_arm: ${plan.spacingSites[0]!.defaultId}, strength: ${plan.spacingSites[0]!.strength} },`);
+		expect(src).toContain('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');
 		expect(src).toContain('        sites: SITE_SPECS,');
 	});
 
@@ -185,7 +186,7 @@ describe('renderOptionsRs', () => {
 		expect(row?.strength).toBe(SEAM_DECLARED);
 	});
 
-	it('builds a seat table per (kind, slot) sorted by the seated kind id, and fails on a seat whose kind has no id', () => {
+	it('builds a dense seat table per (kind, slot) indexed by the seated kind id, and fails on a seat whose kind has no id', () => {
 		const seat = (child: string): SitePreference => ({
 			kind: 'arguments',
 			slot: 'elements',
@@ -202,6 +203,13 @@ describe('renderOptionsRs', () => {
 		expect(tables).toHaveLength(1);
 		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
 		expect(tables[0]!.rows.map((r) => r.kindId)).toEqual([200, 300]);
+		const src = renderOptionsRs(plan, deriveAddressTables([...sites, seat('zeta'), seat('alpha')], entries, kindIdArmType(entries as never), (() => []) as never), entries);
+		const dense = src.slice(src.indexOf(`pub static ${tables[0]!.name}: &[u16] = &[`));
+		const cells = dense.slice(dense.indexOf('\n') + 1, dense.indexOf('];')).split(',').map((c) => c.trim()).filter(Boolean);
+		expect(cells).toHaveLength(301);
+		expect(cells[200]).toBe(String(tables[0]!.rows[0]!.site));
+		expect(cells[300]).toBe(String(tables[0]!.rows[1]!.site));
+		expect(cells[250]).toBe('NO_SITE');
 		const missing = planRenderOptions([...sites, seat('nokind')], entries, whitespaceText);
 		expect(() => seatTablesOf(missing, entries)).toThrow(/nokind/);
 	});
@@ -210,7 +218,7 @@ describe('renderOptionsRs', () => {
 		const plan = planRenderOptions(sites, kindEntries, whitespaceText);
 		const addresses = deriveAddressTables(sites, kindEntries, kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
-		expect(source).toContain("pub fn allowed(site: usize) -> &'static [u16] {\n    SPACING_SITES[site].4\n}");
+		expect(source).toContain("pub fn allowed(site: usize) -> &'static [u16] {\n    SPACING_SITES[site].3\n}");
 	});
 
 	it('emits the whitespace table with plain text and the depth ids', () => {

@@ -4,42 +4,29 @@
 #[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
 
-/// One side of a kind's edge seam: the spacing site it occupies, the arm the
-/// site's table holds by default, and the strength that default carries.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct EdgeSlot {
-    pub site: u16,
-    pub default_arm: u16,
-    pub strength: u8,
-}
-
-impl EdgeSlot {
-    pub const NONE: Self = Self {
-        site: u16::MAX,
-        default_arm: 0,
-        strength: 0,
-    };
-}
-
-/// The seams a kind wraps around itself, from the generated site table: one
-/// row per kind that owns edge seams, sorted by `kind`.
+/// The seams a kind wraps around itself: the spacing site on each side, or
+/// `NO_SITE` when the kind owns no seam there.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeSite {
-    pub kind: u16,
-    pub before: EdgeSlot,
-    pub after: EdgeSlot,
+    pub before: u16,
+    pub after: u16,
 }
+
+/// The cell of a kind-indexed site table for a kind that owns no site there.
+pub const NO_SITE: u16 = u16::MAX;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResolvedOptions {
-    /// Whitespace kind id per spacing site, in generated site order.
-    pub spacing: Vec<u16>,
+    /// Per spacing site, in generated site order: the resolved arm and the strength it writes at.
+    pub spacing: Vec<crate::slot::SeamArm>,
     /// `Delimiter` bitflag per flank site, in generated site order; 0 leaves the field unset.
     pub delimiter: Vec<u8>,
     /// The indentation unit the writer repeats once per depth after a newline.
     pub indent: String,
-    /// The kinds that own edge seams, so a coordinate can meet the same edges a rendered node writes.
+    /// The edge rows of the kinds that own edge seams.
     pub edges: &'static [EdgeSite],
+    /// Per kind id, the index of its row in `edges`, or `NO_SITE`.
+    pub edge_rows: &'static [u16],
     /// Per spacing site, in vector order: the arm its table holds by default and the strength that default carries.
     pub sites: &'static [SiteSpec],
 }
@@ -49,6 +36,14 @@ pub struct ResolvedOptions {
 pub struct SiteSpec {
     pub default_arm: u16,
     pub strength: u8,
+}
+
+impl SiteSpec {
+    /// `arm` at this site: the default's strength when it is the default, declared otherwise.
+    pub fn seam(&self, arm: u16) -> crate::slot::SeamArm {
+        let strength = if arm == self.default_arm { self.strength } else { crate::spacing::SEAM_DECLARED };
+        crate::slot::SeamArm { arm, strength }
+    }
 }
 
 /// The two edges every transport carries in its base: arms only, since the
@@ -79,23 +74,27 @@ pub enum Side {
 }
 
 impl ResolvedOptions {
+    /// Every site at its default arm.
+    pub fn default_spacing(sites: &[SiteSpec]) -> Vec<crate::slot::SeamArm> {
+        sites.iter().map(|spec| spec.seam(spec.default_arm)).collect()
+    }
+
     /// The edge seams the resolved options give a node of `kind`, or none when the kind owns no edge site.
     pub fn edge_arms(&self, kind: crate::types::KindId) -> Option<crate::slot::CoordinateEdges> {
         let row = self.edge_row(kind)?;
-        Some(crate::slot::CoordinateEdges {
-            before: self.row_arm(row, Side::Before, None),
-            after: self.row_arm(row, Side::After, None),
-        })
+        Some(crate::slot::CoordinateEdges { before: self.edge_seam(row.before, None), after: self.edge_seam(row.after, None) })
     }
 
-    /// A site's resolved arm, with the site's default strength when the arm is its default and declared strength otherwise.
     pub fn site_arm(&self, site: usize) -> crate::slot::SeamArm {
-        let arm = self.spacing[site];
-        let spec = &self.sites[site];
-        crate::slot::SeamArm { arm, strength: Self::strength_of(arm, spec.default_arm, spec.strength) }
+        self.spacing[site]
     }
 
-    /// The arm one side of a kind's edge writes: the stamped arm when one is set, else the edge row's resolved arm.
+    /// Resolve `site` to `arm`, at the strength its spec gives that arm.
+    pub fn set_arm(&mut self, site: usize, arm: u16) {
+        self.spacing[site] = self.sites[site].seam(arm);
+    }
+
+    /// The arm one side of a kind's edge writes: the stamped arm when one is set, else the site's resolved arm.
     /// None when the kind owns no edge row or the row has no site on that side.
     pub fn edge_arm(
         &self,
@@ -103,31 +102,25 @@ impl ResolvedOptions {
         side: Side,
         stamped: Option<u16>,
     ) -> Option<crate::slot::SeamArm> {
-        self.row_arm(self.edge_row(kind)?, side, stamped)
+        let row = self.edge_row(kind)?;
+        self.edge_seam(match side { Side::Before => row.before, Side::After => row.after }, stamped)
     }
 
-    fn row_arm(&self, row: &EdgeSite, side: Side, stamped: Option<u16>) -> Option<crate::slot::SeamArm> {
-        let slot = match side {
-            Side::Before => &row.before,
-            Side::After => &row.after,
-        };
-        if slot.site == u16::MAX {
+    fn edge_seam(&self, site: u16, stamped: Option<u16>) -> Option<crate::slot::SeamArm> {
+        if site == NO_SITE {
             return None;
         }
-        let arm = stamped.unwrap_or(self.spacing[slot.site as usize]);
-        Some(crate::slot::SeamArm { arm, strength: Self::strength_of(arm, slot.default_arm, slot.strength) })
+        let site = site as usize;
+        Some(match stamped {
+            Some(arm) => self.sites[site].seam(arm),
+            None => self.spacing[site],
+        })
     }
 
     fn edge_row(&self, kind: crate::types::KindId) -> Option<&EdgeSite> {
-        let index = self.edges.binary_search_by_key(&kind.0, |e| e.kind).ok()?;
-        Some(&self.edges[index])
-    }
-
-    fn strength_of(arm: u16, default_arm: u16, default_strength: u8) -> u8 {
-        if arm == default_arm {
-            default_strength
-        } else {
-            crate::spacing::SEAM_DECLARED
+        match self.edge_rows.get(kind.0 as usize) {
+            Some(&row) if row != NO_SITE => Some(&self.edges[row as usize]),
+            _ => None,
         }
     }
 }
@@ -139,6 +132,7 @@ impl Default for ResolvedOptions {
             delimiter: Vec::new(),
             indent: crate::spacing::DEFAULT_INDENT.to_string(),
             edges: &[],
+            edge_rows: &[],
             sites: &[],
         }
     }
@@ -257,7 +251,7 @@ impl<S: OptionSites> Options<S> {
         for (site, value) in &self.spacing {
             let allowed = (tables.allowed)(site.site);
             match u16::try_from(*value) {
-                Ok(id) if allowed.contains(&id) => table.spacing[site.site] = id,
+                Ok(id) if allowed.contains(&id) => table.set_arm(site.site, id),
                 _ => return Err(format!("options: {} does not admit kind id {value} (allowed: {allowed:?})", site.path)),
             }
         }
@@ -271,7 +265,7 @@ impl<S: OptionSites> Options<S> {
         for (kind, sites) in tables.depth_sites {
             let mut depth = 0usize;
             for site in sites.iter() {
-                let value = table.spacing[*site];
+                let value = table.spacing[*site].arm;
                 if tables.indent != 0 && value == tables.indent {
                     depth += 1;
                 } else if tables.dedent != 0 && value == tables.dedent {

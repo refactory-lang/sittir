@@ -292,7 +292,7 @@ mod tests {
 
     #[test]
     fn a_coordinate_meets_the_edge_seams_of_its_kind_like_a_rendered_node() {
-        use crate::options::{EdgeSite, EdgeSlot, ResolvedOptions};
+        use crate::options::{EdgeSite, ResolvedOptions, SiteSpec, NO_SITE};
         use crate::prepare::{Prepare, RenderContext};
         use crate::spacing::{SEAM_CASCADE, SEAM_DECLARED, SEAM_FALLBACK};
         const TIGHT: u16 = 1;
@@ -309,15 +309,9 @@ mod tests {
             indent: 0,
             dedent: 0,
         };
-        static EDGES: [EdgeSite; 1] = [EdgeSite {
-            kind: 9,
-            before: EdgeSlot {
-                site: 0,
-                default_arm: TIGHT,
-                strength: SEAM_CASCADE,
-            },
-            after: EdgeSlot::NONE,
-        }];
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: 0, after: NO_SITE }];
+        static EDGE_ROWS: [u16; 10] = [NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 0];
+        static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SEAM_CASCADE }];
         let sources = Kinded(Sources(HashMap::from([(1, Arc::from("f()"))])));
         let render_with = |options: &ResolvedOptions, held: u8| {
             let mut slot: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
@@ -340,8 +334,10 @@ mod tests {
             out
         };
         let with_edges = ResolvedOptions {
-            spacing: vec![TIGHT],
+            spacing: ResolvedOptions::default_spacing(&SITES),
             edges: &EDGES,
+            edge_rows: &EDGE_ROWS,
+            sites: &SITES,
             ..ResolvedOptions::default()
         };
         // A cascade-tight edge beats the fallback space held before it, and a

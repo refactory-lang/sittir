@@ -15686,14 +15686,15 @@ origins spell the same value core's `spacing::SEAM_DECLARED` holds.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::edgeSitesOf`
 
-The per-kind edge table: for each spacing site that is its kind's own edge
-(`isKindEdge`), the kind's id (`edgeKindId`) and,
-for its before and after edge, the site index, default arm and strength.
-Kinds whose name resolves to more than one id are dropped, and rows are
-sorted by id so the runtime finds a kind by binary search. A source
-coordinate of that kind meets these seams like a rendered node would, and a
-transport's `prepare_edges` and `w.edge` read the same rows, so the render
-emitter checks a kind with edge sites against this table (`edgeIdOf`).
+The per-kind edge rows: for each spacing site that is its kind's own edge
+(`isKindEdge`), the kind's id (`edgeKindId`) and the site index of its before
+and after edge. Kinds whose name resolves to more than one id are dropped, and
+rows come out in id order. `renderOptionsRs` writes them as `EDGE_SITES` and
+indexes them by kind id in the dense `EDGE_ROWS` table (`denseTable`), so the
+runtime reaches a kind's row by one array read. A source coordinate of that
+kind meets these seams like a rendered node would, and a transport's
+`prepare_edges` and `w.edge` read the same rows, so the render emitter checks
+a kind with edge sites against this table (`edgeIdOf`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::isKindEdge`
 
@@ -15774,62 +15775,42 @@ lands.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::renderOptionsRs`
 
-```text
-/**
- * Source text of a render crate's `options.rs`: the site constants, the
- * tables the resolver walks, `spacing_text` mapping a whitespace kind id to
- * the text its visible external renders, `defaults()`, one generated struct
- * per address branch (root plus every `AddressBranchEntry`) with a
- * `#[cfg(feature = "napi-bindings")]` `FromNapiValue`/`ToNapiValue` pair, and
- * `resolve()`. A text whitespace kind's string is written with the core
- * writer's seam mark in front, so every option-driven whitespace (separator,
- * flank, token seam) coalesces in the writer; the indent and dedent kinds
- * keep their own mark constants. A delimiter site row carries its default
- * bitflag, from the grammar's declared default or none, and `defaults()`
- * fills the delimiter vector from it. Each struct's `FromNapiValue` calls
- * `reject_unknown_keys` with that struct's own canonical address as `at`;
- * the resolver walks every leaf's field-access chain and applies its value
- * to the site(s) its `canonical` entries name — an unknown key, an address
- * naming no site, or a value a site does not admit is an error naming the
- * address. A leaf's own field type (`Option<u16>`/`Option<u8>`) is the
- * TypeScript-checked guard on shape; a value that is not a number at all
- * surfaces as napi's own conversion error naming the property, never the
- * old `options: <address> must be a kind id` message.
- */
-```
+Source text of a render crate's `options.rs`: the site constants,
+`SPACING_SITES`/`DELIMITER_SITES`/`SITE_SPECS`, the edge rows and their
+kind-indexed `EDGE_ROWS`, one dense `SEATS_*` table per seated slot
+(`seatTablesOf`), `DEPTH_SITES`, `spacing_text`, `defaults()`, the address
+trie `ADDRESSES` (`emitAddressTrie`), a `Sites` marker implementing
+`sittir_core::options::OptionSites` over those tables, and
+`pub type Options = sittir_core::options::Options<Sites>`. No per-grammar
+struct, deserializer or resolver is emitted: reading a JS object through the
+trie and resolving it over a base table live once in core, and this file only
+supplies the tables. `defaults()` builds `spacing` through
+`ResolvedOptions::default_spacing`, so every site is already a `SeamArm` at
+its default arm and strength. A text whitespace kind's string is written with
+the core writer's seam mark in front, so every option-driven whitespace
+coalesces in the writer; the indent and dedent kinds keep their own mark
+constants.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::allowed`
 
-`allowed(site) -> &'static [u16]`: the arms a spacing site admits, read
-off the `SPACING_SITES` row the resolver already carries. The prepare
-walk's gap classification asks it which measured gap a site may take.
-
-### `packages/codegen/src/emitters/render-options-rs.ts::structNameOf`
-
-```text
-/** The generated struct name for an address's own segment list: each
- *  segment's nested key (`nestedKey`, never the field-escaped ident —
- *  Rust's field-keyword escaping is irrelevant to a type name), Pascal-cased
- *  and type-escaped (`rustTypeIdent`), concatenated and suffixed `Options`.
- *  The root's struct is named `Options` directly, bypassing this function
- *  (its segment list is empty). */
-```
+`allowed(site) -> &'static [u16]`: the arms a spacing site admits, the last
+column of its `SPACING_SITES` row. It is one of the `OptionTables` a grammar's
+`Sites` marker hands core, so `Options::resolve` refuses a value the site does
+not admit, and the prepare walk's gap classification asks it which measured
+gap a site may take.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteRefsOf`
 
-```text
-/** The site(s) a leaf's `canonical` entries name, looked up in a `SiteIndex`
- *  (`siteIndexOf`) built once per emit and keyed by each site's own
- *  canonical address. `formatPreferencePath` is a bijection over the
- *  `PreferenceSegment` vocabulary — every kind's syntax marker (quotes,
- *  parens, colon suffix, digits, `_`, bare identifier) is mutually
- *  exclusive — so the first hash-bucket entry at a formatted key is the
- *  site, with no separate segment-equality check; `childIndexOf` and
- *  `directChildrenOf` key on the same formatted string with the same
- *  assumption. One entry for an ordinary site, every bound site for a
- *  declaration reached through bindings. A canonical entry naming no site
- *  is a codegen-time error. */
-```
+The site(s) a leaf's `canonical` entries name, looked up in a `SiteIndex`
+(`siteIndexOf`) built once per emit and keyed by each site's own canonical
+address. `formatPreferencePath` is a bijection over the `PreferenceSegment`
+vocabulary (every kind's syntax marker is mutually exclusive), so the first
+bucket entry at a formatted key is the site with no separate segment-equality
+check; `childIndexOf` and `emitAddressLevel` key on the same string. One
+entry for an ordinary site, every bound site for a declaration reached through
+bindings. A canonical entry naming no site, or a leaf whose entries mix
+spacing and delimiter sites (its trie node would have to be two variants), is
+a codegen-time error.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::SiteIndex`
 
@@ -15841,11 +15822,9 @@ walk's gap classification asks it which measured gap a site may take.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteIndexOf`
 
-```text
-/** Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
- *  `formatPreferencePath` of its own `segments` — the canonical string
- *  identity `siteRefsOf`, `childIndexOf` and `directChildrenOf` all share. */
-```
+Builds a `SiteIndex`: every `plan.sitePaths` entry keyed by
+`formatPreferencePath` of its own `segments`, the canonical string identity
+`siteRefsOf`, `childIndexOf` and `emitAddressLevel` all share.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::DirectChild`
 
@@ -15854,107 +15833,89 @@ walk's gap classification asks it which measured gap a site may take.
  *  reached by, and whichever of `branch`/`leaf` it actually is. */
 ```
 
-### `packages/codegen/src/emitters/render-options-rs.ts::directChildrenOf`
-
-```text
-/** Every branch/leaf whose own address is exactly one segment below
- *  `prefix`, read from a `ChildIndex` (`childIndexOf`) built once per emit
- *  and keyed by each entry's own parent address — a struct's fields resolve
- *  by one lookup instead of a scan over every branch and leaf in the
- *  grammar. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::AddressField`
-
-```text
-/** One generated struct field: its JS property key, its Rust field
- *  identifier, and its Rust type (`Option<StructName>` for a branch,
- *  `Option<u16>`/`Option<u8>` for a spacing/delimiter leaf). */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::fieldsOf`
-
-```text
-/** The fields of the struct at `prefix`, in the branch's own child order:
- *  a child that is itself a branch nests that branch's struct; a leaf
- *  child's field width is `u8` when every site its `canonical` entries name
- *  is a delimiter site, `u16` when none is. A leaf whose sites mix
- *  delimiter and spacing sites is a codegen-time error naming the address —
- *  resolving it silently as `u16` would only surface as a cargo type
- *  mismatch downstream, far from the address that caused it. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::emitOptionsStructs`
-
-```text
-/** One `#[derive(Debug, Clone, Default)]` struct, `FromNapiValue` and
- *  `ToNapiValue` impl per address branch — root plus every
- *  `AddressBranchEntry` — sharing one `ChildIndex`/`SiteIndex` pair built
- *  once for the whole emit. `FromNapiValue` refuses an unknown key via
- *  `reject_unknown_keys`; `ToNapiValue` exists only because `EngineOptions`
- *  is a `#[napi(object)]` struct, whose derive requires every field type to
- *  support both directions even though these structs are only ever an
- *  engine input. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::chainOf`
-
-```text
-/** The resolver's field-access expression for one leaf's own segment list:
- *  `options.a.as_ref().and_then(|o| o.b.as_ref())…and_then(|o| o.z)` down to
- *  the leaf's own `Copy` value. A single-segment list (a root-level leaf)
- *  is just `options.a` — there is no branch to borrow through. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::literalOf`
-
-```text
-/** An `Options` struct literal setting one leaf's own segment chain to a
- *  given value, `..Default::default()` elsewhere at every level — used only
- *  by the generated `resolve_tests`, which know both the leaf's address and
- *  the id/bits they are asserting against. */
-```
-
-### `packages/codegen/src/emitters/render-options-rs.ts::resolverBody`
-
-```text
-/** One `if let Some(v) = <chainOf> { set_spacing/set_delimiter(…)? }` block
- *  per leaf, one `set_spacing`/`set_delimiter` call per site the leaf's
- *  `canonical` entries name — a leaf bound to several sites through a
- *  declaration fans the same value out to all of them. */
-```
-
 ### `packages/codegen/src/emitters/render-options-rs.ts::resolveTests`
 
-```text
-/** The generated `#[cfg(test)] mod resolve_tests`: `resolve` over an empty
- *  `Options` is a no-op, and setting the first site (from `plan.sitePaths`)
- *  that admits an id/bits other than its own default resolves to a table
- *  that differs from `defaults()` at exactly that site's index and nowhere
- *  else. The site is chosen from `plan.sitePaths` and its own `segments`,
- *  never through `siteRefsOf`/a leaf: `resolverBody` also reaches its
- *  `SITE_*` constant through `siteRefsOf`, so a test built the same way
- *  would assert against whatever wrong constant a leaf→site mismatch there
- *  produced, not catch it. A grammar where every site's only admitted value
- *  is its own default emits only the first assertion. */
-```
+The generated `#[cfg(test)] mod resolve_tests`, one smoke test per error
+shape the core walk can raise, since the core trie test cannot know a
+grammar's real addresses: no options leaves `defaults()`; an unknown root key
+is refused; an unknown key beneath the first branch is refused naming the
+branch's canonical path; the first leaf with an arm every site it names admits
+and at least one does not hold by default (`admittedEverywhere`) changes
+exactly those sites' arms; the first spacing leaf refuses `65535` naming its
+path; and, where `unbalancedLeafOf` finds one, a single-site indent leaf
+refuses an indent its kind never dedents. Each test feeds a JSON object built
+by `jsonAt` through `Options::read` over a `serde_json` map, the second
+`OptionObject` impl.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::differingArmOf`
+### `packages/codegen/src/emitters/render-options-rs.ts::siteConstOf`
 
-```text
-/** The first id (spacing) or bit pattern (delimiter) a site admits other
- *  than its own default, or `undefined` when the default is the site's only
- *  admitted value. */
-```
+The `SITE_*`/`DELIM_*` constant name a `SitePath` stands for, from the
+spacing or delimiter site it indexes.
 
-### `packages/codegen/src/emitters/render-options-rs.ts::RESOLVER_HELPERS`
+### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressLevel`
 
-```text
-/** `spacing_id`/`set_spacing`/`set_delimiter`: the resolver's per-site
- *  admission check and table write, shared by every generated
- *  `if let Some(v) = …` block in `resolve`. Takes the already-typed
- *  `u16`/`u8` value napi produced — there is no JSON value to parse here. */
-```
+One level of `ADDRESSES`: for each key beneath `prefix`, in the order the
+address tables list it, an `AddressNode::Branch` carrying its canonical path
+(the `at` an unknown key beneath it is reported against) and its children
+recursively, or an `AddressNode::Spacing`/`Delimiter` leaf carrying every
+`SiteRef` (site constant plus canonical path) its `canonical` entries name.
+A key that is neither a branch nor a leaf under that prefix is a codegen-time
+error.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::emitAddressTrie`
+
+`pub static ADDRESSES: &[AddressNode]`, the whole address trie from the
+roots down (`emitAddressLevel`), with a `ChildIndex` built once for the emit.
+Keys are `nestedKey` spellings, the keys the TypeScript `Options` type admits.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SmokeLeaf`
+
+A leaf as the generated smoke tests see it: its key path from the root and
+the sites it names.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::smokeLeavesOf`
+
+Every address leaf as a `SmokeLeaf`, in table order, so the smoke tests pick
+the first leaf of each shape they need.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::jsonAt`
+
+A JSON object literal nesting `value` under `keys`, the wire an options
+object arrives on, for the generated smoke tests.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::admittedEverywhere`
+
+For a spacing leaf, the first arm every site it names admits and at least
+one does not hold by default, or `undefined`: the value whose resolution the
+admitted-value smoke test can assert changed every named site and nothing
+else. A leaf naming several sites through bindings needs a value all of them
+admit.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::unbalancedLeafOf`
+
+The first single-site spacing leaf whose site admits the indent kind and
+sits in a `DEPTH_SITES` row whose other sites hold neither indent nor dedent
+by default, with that row's kind: setting it to indent must trip the
+resolver's depth balance. `undefined` when the grammar has no such leaf
+(python), and the smoke test is then not emitted.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::NO_SITE`
+
+The Rust spelling of an empty cell in a kind-indexed site table
+(`sittir_core::options::NO_SITE`); `NO_SITE_ID` is its value, the bound a
+real site index must stay below (`siteOrNone`).
+
+### `packages/codegen/src/emitters/render-options-rs.ts::denseTable`
+
+`pub static NAME: &[u16]`, a table indexed by kind id up to the highest key
+present, `NO_SITE` in every gap, sixteen cells to a line. `EDGE_ROWS` and the
+`SEATS_*` tables are written through it so a runtime lookup by kind id is one
+array read instead of a search.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
+
+One kind's edge row before emission: its id and the site index of its
+before and after edge, either absent when the kind owns no seam on that side.
 
 ### `packages/codegen/src/emitters/render-module.ts::RenderOptionsInputs`
 
@@ -16157,29 +16118,6 @@ for in `SPACING_SITES` or `DELIMITER_SITES`, and is the table a prefix is
 looked up in. Delimiter rows keep kind-and-slot order among themselves so
 their constants are stable; a delimiter is reached by address like any other
 site, its path ending in `delimiter`.
-
-### `render options: site_range` (emitted into `options.rs`)
-
-The sites an address names — itself and everything beneath it — as a contiguous
-range, because sites are numbered in canonical path order.
-
-The scan is deliberate. That order compares parsed segments, not the bytes of
-the formatted path, so the table is not in byte order and a binary search over
-it would land in the wrong place: within a kind, `for:/before` precedes
-`before`, where bytes would put `after` first. Resolution runs once per options
-change rather than once per render, so a pass over a few hundred short strings
-costs nothing, and correctness here is not negotiable.
-
-### `render options: apply_nested` (emitted into `options.rs`)
-
-A kind-keyed nested object applied by address. The nested object and the path
-are the same address in two layouts, so each nested key is matched against every
-spelling a segment has — a bare name, a quoted literal, or a field.
-
-It is all or nothing. A key that resolves to no site is an error naming the
-full address it was written at, raised before any leaf is applied, so the
-table is untouched. Applying the half it understood would drop the rest in
-silence.
 
 ### `packages/codegen/src/emitters/options.ts::deriveAddressTables`
 

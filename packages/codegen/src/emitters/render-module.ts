@@ -2772,7 +2772,7 @@ function seatReachOf(plan: RenderPlan, nodeMap: NodeMap): SeatReach {
 }
 
 const SEAT_TARGET_SIG =
-	'    fn seat_target(&mut self, table: &[(u16, usize)]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
+	'    fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {';
 
 function seatTargetMatchImpl(typeName: string, variants: readonly string[], exhaustive: boolean): string[] {
 	if (variants.length === 0) return [];
@@ -2882,7 +2882,7 @@ function prepareStructImpl(
 		body.push(...listGapClassification(plan, node));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
-			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}]);`);
+			body.push(`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`);
 		}
 		body.push(...seatLoops(plan, node, nodeMap));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
@@ -2890,7 +2890,7 @@ function prepareStructImpl(
 			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
-		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}]);`);
+		if (sep !== undefined) body.push(`        self.separator_kind.get_or_insert(ctx.options.spacing[options::${sep.constName}].arm);`);
 		for (const f of fillFields) body.push(`        self.${f}.prepare(ctx)?;`);
 	}
 	return [

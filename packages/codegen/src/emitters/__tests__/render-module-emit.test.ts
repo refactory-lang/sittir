@@ -381,10 +381,10 @@ describe('render options on transports', () => {
 		const listImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersElementsTransport {'));
 		const listFill = listImpl.slice(0, listImpl.indexOf('\n}\n'));
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE]);'
+			'self.formal_parameter_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_BEFORE].arm);'
 		);
 		expect(listFill).toContain(
-			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER]);'
+			'self.formal_parameter_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER_SEPARATOR_SPACE_AFTER].arm);'
 		);
 		expect(listFill).toContain('self.delimiter.get_or_insert(ctx.options.delimiter[options::DELIM_FORMAL_PARAMETERS_ELEMENTS_FORMAL_PARAMETER]);');
 		const ownerImpl = src.slice(src.indexOf('impl ::sittir_core::prepare::Prepare for FormalParametersTransport {'));
@@ -564,13 +564,13 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(transportRs).toMatch(/pub enum EnumVariantBodyTransportSlot \{(?:(?!Verbatim)[^}])*\}/s);
 	});
 
-	it('fills seated sibling gaps through one per-slot kind table and a core call; no per-list match block', async () => {
+	it('fills seated sibling gaps through one dense per-slot kind table and a core call; no per-list match block', async () => {
 		const transportRs = await getRustTemplatesRs();
 		const optionsRs = await getRustOptionsRs();
-		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[(u16, usize)] = &['));
-		const rows = [...table.slice(0, table.indexOf('];')).matchAll(/\((\d+), SITE_\w+\)/g)].map((m) => Number(m[1]));
-		expect(rows.length).toBeGreaterThan(0);
-		expect(rows).toEqual([...rows].sort((a, b) => a - b));
+		const table = optionsRs.slice(optionsRs.indexOf('pub static SEATS_SOURCE_FILE_STATEMENTS: &[u16] = &['));
+		const cells = table.slice(table.indexOf('\n') + 1, table.indexOf('];')).split(',').map((c) => c.trim()).filter(Boolean);
+		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
+		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
 			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
 		);

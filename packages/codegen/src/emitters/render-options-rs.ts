@@ -345,7 +345,7 @@ function resolveTests(plan: RenderOptionsPlan, addresses: AddressTables, siteInd
 			'        let expected = defaults();',
 			`        let named = [${consts.join(', ')}];`,
 			'        for i in 0..table.spacing.len() {',
-			`            assert_eq!(table.spacing[i], if named.contains(&i) { ${value} } else { expected.spacing[i] });`,
+			`            assert_eq!(table.spacing[i].arm, if named.contains(&i) { ${value} } else { expected.spacing[i].arm });`,
 			'        }',
 			'        assert_eq!(table.delimiter, expected.delimiter);',
 			'        assert_eq!(table.indent, expected.indent);',
@@ -389,21 +389,15 @@ function unbalancedLeafOf(leaves: readonly SmokeLeaf[], plan: RenderOptionsPlan)
 	return undefined;
 }
 
-interface EdgeSlotRow {
-	readonly site: number;
-	readonly defaultId: number;
-	readonly strength: SeamStrength;
-}
-
 interface EdgeSiteRow {
 	readonly kind: number;
-	readonly before?: EdgeSlotRow;
-	readonly after?: EdgeSlotRow;
+	readonly before?: number;
+	readonly after?: number;
 }
 
 export interface SeatTable {
 	readonly name: string;
-	readonly rows: readonly { readonly kindId: number; readonly site: string }[];
+	readonly rows: readonly { readonly kindId: number; readonly site: number }[];
 }
 
 export function seatTableName(kind: string, slot: string): string {
@@ -419,20 +413,20 @@ export function seatEdgeSide(seat: SpacingSite): 'before' | 'after' {
 }
 
 export function seatTablesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): SeatTable[] {
-	const bySlot = new Map<string, { name: string; rows: Map<number, string> }>();
-	for (const site of plan.spacingSites) {
-		if (site.seat === undefined) continue;
+	const bySlot = new Map<string, { name: string; rows: Map<number, number> }>();
+	plan.spacingSites.forEach((site, index) => {
+		if (site.seat === undefined) return;
 		if (seatEdgeSide(site) !== 'after') {
 			throw new Error(`seated site '${site.address}' fills the element's before edge; a sibling gap is the element's after edge`);
 		}
 		const id = edgeKindId(kindEntries, site.seat.kind);
 		if (id === undefined) throw new Error(`seated site '${site.address}' seats '${site.seat.kind}', which has no kind id`);
 		const name = seatTableName(site.kind, site.slot);
-		const table = bySlot.get(name) ?? { name, rows: new Map<number, string>() };
+		const table = bySlot.get(name) ?? { name, rows: new Map<number, number>() };
 		if (table.rows.has(id)) throw new Error(`${name} seats kind id ${id} twice (at '${site.address}')`);
-		table.rows.set(id, site.constName);
+		table.rows.set(id, index);
 		bySlot.set(name, table);
-	}
+	});
 	return [...bySlot.values()].map(({ name, rows }) => ({
 		name,
 		rows: [...rows.entries()].sort(([a], [b]) => a - b).map(([kindId, site]) => ({ kindId, site }))
@@ -452,7 +446,7 @@ export function edgeKindId(kindEntries: readonly IdEntry[], kind: string): numbe
 }
 
 export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEntry[]): EdgeSiteRow[] {
-	const byKind = new Map<number, { before?: EdgeSlotRow; after?: EdgeSlotRow }>();
+	const byKind = new Map<number, { before?: number; after?: number }>();
 	const ambiguous = new Set<number>();
 	plan.spacingSites.forEach((row, site) => {
 		if (!isKindEdge(row)) return;
@@ -461,7 +455,7 @@ export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEnt
 		if (id === undefined) return;
 		const edges = byKind.get(id) ?? {};
 		if (edges[seam.side] !== undefined) ambiguous.add(id);
-		byKind.set(id, { ...edges, [seam.side]: { site, defaultId: row.defaultId, strength: row.strength } });
+		byKind.set(id, { ...edges, [seam.side]: site });
 	});
 	return [...byKind.entries()]
 		.filter(([id]) => !ambiguous.has(id))
@@ -469,34 +463,47 @@ export function edgeSitesOf(plan: RenderOptionsPlan, kindEntries: readonly IdEnt
 		.map(([kind, edges]) => ({ kind, ...edges }));
 }
 
-function edgeSlotText(slot: EdgeSlotRow | undefined): string {
-	return slot === undefined
-		? '::sittir_core::options::EdgeSlot::NONE'
-		: `::sittir_core::options::EdgeSlot { site: ${slot.site}, default_arm: ${slot.defaultId}, strength: ${slot.strength} }`;
+const NO_SITE = 'NO_SITE';
+
+const NO_SITE_ID = 0xffff;
+
+function siteOrNone(site: number | undefined): string {
+	if (site !== undefined && site >= NO_SITE_ID) throw new Error(`options.rs: site ${site} does not fit a u16 table below NO_SITE`);
+	return site === undefined ? NO_SITE : String(site);
+}
+
+function denseTable(name: string, entries: ReadonlyMap<number, number>): string[] {
+	const width = entries.size === 0 ? 0 : Math.max(...entries.keys()) + 1;
+	const cells = Array.from({ length: width }, (_, id) => siteOrNone(entries.get(id)));
+	const L = [`pub static ${name}: &[u16] = &[`];
+	for (let i = 0; i < cells.length; i += 16) L.push(`    ${cells.slice(i, i + 16).join(', ')},`);
+	L.push('];', '');
+	return L;
 }
 
 export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly IdEntry[]): string {
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
-	L.push('use ::sittir_core::options::ResolvedOptions;', '');
+	L.push('use ::sittir_core::options::{ResolvedOptions, NO_SITE};', '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
 	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`, '');
 	plan.spacingSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	plan.delimiterSites.forEach((s, i) => L.push(`pub const ${s.constName}: usize = ${i};`));
 	L.push('');
-	L.push('/// (kind, address, label, default kind id, allowed kind ids), in canonical path order.');
-	L.push('pub static SPACING_SITES: &[(&str, &str, &str, u16, &[u16], u8)] = &[');
+	L.push('/// (kind, address, label, allowed kind ids), in canonical path order.');
+	L.push('pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[');
 	for (const s of plan.spacingSites) {
-		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, ${s.defaultId}, &[${s.allowedIds.join(', ')}], ${s.strength}),`);
+		L.push(`    (${q(s.kind)}, ${q(s.address)}, ${q(s.label)}, &[${s.allowedIds.join(', ')}]),`);
 	}
 	L.push('];', '');
-	L.push('/// (kind id, before site, after site) of every kind that owns edge seams, sorted by kind id, so a coordinate meets the seams a rendered node writes.');
+	const edgeRows = edgeSitesOf(plan, kindEntries);
+	L.push('/// The before and after site of every kind that owns edge seams, in kind id order.');
 	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
-	for (const e of edgeSitesOf(plan, kindEntries)) {
-		L.push(`    ::sittir_core::options::EdgeSite { kind: ${e.kind}, before: ${edgeSlotText(e.before)}, after: ${edgeSlotText(e.after)} },`);
-	}
+	for (const e of edgeRows) L.push(`    ::sittir_core::options::EdgeSite { before: ${siteOrNone(e.before)}, after: ${siteOrNone(e.after)} },`);
 	L.push('];', '');
+	L.push('/// Per kind id, its row in EDGE_SITES.');
+	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');
 	for (const s of plan.delimiterSites) L.push(`    (${q(s.kind)}, ${q(`${s.slot}_delimiter`)}, ${s.allowed}, ${s.defaultBits}),`);
@@ -515,7 +522,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('        _ => "",');
 	L.push('    }');
 	L.push('}', '');
-	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].4', '}', '');
+	L.push("pub fn allowed(site: usize) -> &'static [u16] {", '    SPACING_SITES[site].3', '}', '');
 	L.push(
 		'pub const WHITESPACE: ::sittir_core::render::WhitespaceTable = ::sittir_core::render::WhitespaceTable { text_of: spacing_text, indent: INDENT_KIND, dedent: DEDENT_KIND };',
 		''
@@ -525,15 +532,15 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	for (const s of plan.spacingSites) L.push(`    ::sittir_core::options::SiteSpec { default_arm: ${s.defaultId}, strength: ${s.strength} },`);
 	L.push('];', '');
 	for (const table of seatTablesOf(plan, kindEntries)) {
-		L.push(`pub static ${table.name}: &[(u16, usize)] = &[`);
-		for (const row of table.rows) L.push(`    (${row.kindId}, ${row.site}),`);
-		L.push('];', '');
+		L.push("/// Per kind id, the site a seated element's after gap reads.");
+		L.push(...denseTable(table.name, new Map(table.rows.map((row) => [row.kindId, row.site]))));
 	}
 	L.push('pub fn defaults() -> ResolvedOptions {');
 	L.push('    ResolvedOptions {');
-	L.push('        spacing: SPACING_SITES.iter().map(|s| s.3).collect(),');
+	L.push('        spacing: ResolvedOptions::default_spacing(SITE_SPECS),');
 	L.push('        delimiter: DELIMITER_SITES.iter().map(|s| s.3).collect(),');
 	L.push('        edges: EDGE_SITES,');
+	L.push('        edge_rows: EDGE_ROWS,');
 	L.push('        sites: SITE_SPECS,');
 	L.push('        ..ResolvedOptions::default()');
 	L.push('    }');
